@@ -176,7 +176,25 @@ Production trading remains disabled. `LIVE_EXCHANGE_ENABLED` stays
 
 ## Validation
 
-Recorded after the Prompt 2 test run. Production trading remains
-disabled regardless of the gate.
+Targeted Prompt 2 run (this revision):
 
-`SAFE_TO_PROCEED_TO_PHASE_G_PROMPT_3=false`
+| Suite | Result |
+| --- | --- |
+| Exchange product overlay (`src/product/product.test.ts`) | 10/10 pass |
+| Existing Exchange package (`src/*.test.ts`) | 86/86 pass |
+| Consumer BFF Exchange | 4/4 pass |
+| Agent tool contract | 4/4 pass |
+| Consumer BFF SDK (including Exchange client) | 9/9 pass |
+| Ledger production/invariants | 10/10 pass |
+| Market surveillance detectors | 6/6 pass |
+| Consumer BFF Grow (repair of main merge syntax only) | 17/18 pass (approve-without-step-up expects 403, observed 401) |
+
+Pre-existing on `main` and not introduced by this prompt:
+
+- `docs/architecture/manifest.json` is not valid JSON (architecture linter cannot load it)
+- `@noble/post-quantum` is missing in some environments (custody dual-asset / several SDK chain tests fail to load)
+- Phase G Prompt 1 has no productization record; matching already lives at `packages/sunrey-exchange/src/matching.ts`
+
+Production trading remains disabled regardless of the gate.
+
+`SAFE_TO_PROCEED_TO_PHASE_G_PROMPT_3=true`

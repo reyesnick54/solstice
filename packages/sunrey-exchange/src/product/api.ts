@@ -31,9 +31,30 @@ export function isExchangeApiError(value: unknown): value is ExchangeApiError {
 }
 
 export class ExchangeApplicationApi {
+  private readonly platform: ExchangeProductPlatform;
+  private readonly catalog: {
+    listMarkets(): readonly {
+      readonly marketId: string;
+      readonly instrument: string;
+      readonly baseAssetId: string;
+      readonly quoteAssetId: string;
+      readonly state: string;
+    };
+    snapshot(marketId: string): MarketDataSnapshot | null;
+    trades(marketId: string): readonly ImmutableTrade[];
+    ordersFor(ownerId: string): readonly DigitalOrder[];
+    holdingsFor(ownerId: string): readonly {
+      readonly assetId: string;
+      readonly quantity: bigint;
+      readonly reserved: bigint;
+      readonly pendingSettlement: bigint;
+    };
+    now(): UtcInstant;
+  };
+
   constructor(
-    private readonly platform: ExchangeProductPlatform,
-    private readonly catalog: {
+    platform: ExchangeProductPlatform,
+    catalog: {
       listMarkets(): readonly {
         readonly marketId: string;
         readonly instrument: string;
@@ -52,7 +73,10 @@ export class ExchangeApplicationApi {
       };
       now(): UtcInstant;
     },
-  ) {}
+  ) {
+    this.platform = platform;
+    this.catalog = catalog;
+  }
 
   markets() {
     return {

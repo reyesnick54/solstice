@@ -31,8 +31,8 @@ function order(input: {
     family: 'DIGITAL_ASSET',
     side: input.side,
     orderType: 'LIMIT',
-    quantity: AssetQuantity.fromScaledUnits(input.remaining ?? 1n, 'SUNREY_COIN'),
-    remaining: AssetQuantity.fromScaledUnits(input.remaining ?? 1n, 'SUNREY_COIN'),
+    quantity: AssetQuantity.fromScaledUnits(input.remaining ?? 1_000_000n, 'SUNREY_COIN'),
+    remaining: AssetQuantity.fromScaledUnits(input.remaining ?? 1_000_000n, 'SUNREY_COIN'),
     limitPrice: exchangePrice({
       baseAssetId: 'SUNREY_COIN',
       quoteAssetId: 'USD',
@@ -71,7 +71,7 @@ describe('Phase G Prompt 2 exchange settlement productization', () => {
     });
     assert.equal(clearing.state, 'PENDING');
     assert.equal(obligation.fillIsFinalSettlement, false);
-    world.seedCoin('seller', 10n);
+    world.seedCoin('seller', 2_000_000n);
     const settled = world.platform.settle({
       obligationId: obligation.obligationId,
       at: NOW,
@@ -87,7 +87,7 @@ describe('Phase G Prompt 2 exchange settlement productization', () => {
   it('coordinates native-chain DVP and refuses finality before BFT', () => {
     const world = createExchangeProductSandbox();
     world.finalized.delete('always');
-    world.seedNative('seller', 'SUNREY_COIN', 5n);
+    world.seedNative('seller', 'SUNREY_COIN', 2_000_000n);
     world.seedNative('buyer', 'USD', 500n);
     const trade = syntheticTrade({ tradeId: 'xtrd_native' });
     const { obligation } = world.platform.recordFill({
@@ -184,7 +184,7 @@ describe('Phase G Prompt 2 exchange settlement productization', () => {
     });
     assert.equal(failed.state, 'REQUIRES_REVIEW');
     assert.equal(failed.failureCode, 'DVP_PARTIAL');
-    world.seedCoin('seller', 10n);
+    world.seedCoin('seller', 2_000_000n);
     const repaired = world.platform.settle({
       obligationId: obligation.obligationId,
       at: NOW,
@@ -278,7 +278,7 @@ describe('Phase G Prompt 2 exchange settlement productization', () => {
           accountId: 'acct_a',
           beneficialParticipantId: 'p1',
           marketId: SUNREY_COIN_USD_MARKET_ID,
-          side: 'BUY',
+          side: 'SELL',
           quantity: 8n,
           remaining: 0n,
           status: 'CANCELLED',
@@ -290,7 +290,7 @@ describe('Phase G Prompt 2 exchange settlement productization', () => {
           accountId: 'acct_a',
           beneficialParticipantId: 'p1',
           marketId: SUNREY_COIN_USD_MARKET_ID,
-          side: 'BUY',
+          side: 'SELL',
           quantity: 8n,
           remaining: 0n,
           status: 'CANCELLED',
@@ -302,12 +302,23 @@ describe('Phase G Prompt 2 exchange settlement productization', () => {
           accountId: 'acct_a',
           beneficialParticipantId: 'p1',
           marketId: SUNREY_COIN_USD_MARKET_ID,
-          side: 'BUY',
+          side: 'SELL',
           quantity: 8n,
           remaining: 0n,
           status: 'CANCELLED',
           createdAt: NOW,
           cancelledAt: NOW,
+        },
+        {
+          orderId: 'ot',
+          accountId: 'acct_b',
+          beneficialParticipantId: 'p2',
+          marketId: SUNREY_COIN_USD_MARKET_ID,
+          side: 'BUY',
+          quantity: 1n,
+          remaining: 0n,
+          status: 'FILLED',
+          createdAt: NOW,
         },
       ],
       trades: [

@@ -176,7 +176,7 @@ export function syntheticTrade(input: {
   readonly priceUnits?: bigint;
   readonly now?: UtcInstant;
 }): ImmutableTrade {
-  const quantity = AssetQuantity.fromScaledUnits(input.quantity ?? 1n, 'SUNREY_COIN');
+  const quantity = AssetQuantity.fromScaledUnits(input.quantity ?? 1_000_000n, 'SUNREY_COIN');
   const price = exchangePrice({
     baseAssetId: 'SUNREY_COIN',
     quoteAssetId: 'USD',
