@@ -175,7 +175,7 @@ describe('consumer BFF payments SDK', () => {
     assert.equal(portfolio.frontendMathAuthoritative, false);
     assert.equal(portfolio.liveState, false);
     await client.getGrowHoldings();
-    await client.getGrowPerformance();
+    await client.getGrowPortfolioPerformance();
     await client.getGrowAllocation();
     await client.getGrowRisk();
     assert.deepEqual(calls, [
