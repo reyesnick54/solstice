@@ -471,7 +471,6 @@ export type AgentResource = {
   readonly createdAt: string;
   readonly mandateId: string | null;
   readonly isCustomer: false;
-  readonly isExecutionAuthority: false;
 };
 
 export type AgentConversationResource = {
@@ -697,6 +696,8 @@ export type NativeEconomySupply = {
       readonly issuedSupply: string;
     };
   }[];
+};
+
 export type ExchangeMarket = {
   readonly marketId: string;
   readonly instrument: string;
