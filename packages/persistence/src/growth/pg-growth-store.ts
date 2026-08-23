@@ -127,6 +127,51 @@ export async function persistGrowthState(pool: Pool, state: GrowthStoreSnapshot)
           );
         }
       }
+      for (const opportunity of state.opportunities ?? []) {
+        await client.query(
+          `INSERT INTO growth.opportunity
+             (opportunity_id, subject_id, detector, category, status, fingerprint,
+              expires_at, updated_at, body_canonical)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+           ON CONFLICT (opportunity_id) DO UPDATE SET
+             status = EXCLUDED.status,
+             fingerprint = EXCLUDED.fingerprint,
+             expires_at = EXCLUDED.expires_at,
+             updated_at = EXCLUDED.updated_at,
+             body_canonical = EXCLUDED.body_canonical`,
+          [
+            opportunity.opportunityId,
+            opportunity.subjectId,
+            opportunity.detector,
+            opportunity.type,
+            opportunity.status,
+            opportunity.fingerprint,
+            opportunity.expiresAt,
+            opportunity.updatedAt,
+            JSON.stringify(opportunity),
+          ],
+        );
+      }
+      for (const preferences of state.opportunityPreferences ?? []) {
+        await client.query(
+          `INSERT INTO growth.opportunity_preference (subject_id, body_canonical, updated_at)
+           VALUES ($1,$2,$3)
+           ON CONFLICT (subject_id) DO UPDATE SET
+             body_canonical = EXCLUDED.body_canonical,
+             updated_at = EXCLUDED.updated_at`,
+          [preferences.subjectId, JSON.stringify(preferences), preferences.updatedAt],
+        );
+      }
+      for (const [subjectId, at] of Object.entries(state.lastOpportunityRecomputeAt ?? {})) {
+        await client.query(
+          `INSERT INTO growth.opportunity_recompute (subject_id, recomputed_at, reason)
+           VALUES ($1,$2,$3)
+           ON CONFLICT (subject_id) DO UPDATE SET
+             recomputed_at = EXCLUDED.recomputed_at,
+             reason = EXCLUDED.reason`,
+          [subjectId, at, 'persist'],
+        );
+      }
       for (const result of state.feasibility) {
         await client.query(
           `INSERT INTO growth.feasibility (action_id, accepted, deferred, reasons_canonical, detail)
@@ -167,6 +212,11 @@ export async function loadGrowthState(pool: Pool): Promise<GrowthStoreSnapshot> 
       reasons_canonical: string;
       detail: string;
     }>('SELECT action_id, accepted, deferred, reasons_canonical, detail FROM growth.feasibility');
+    const opportunities = await client.query<{ body_canonical: string }>('SELECT body_canonical FROM growth.opportunity');
+    const preferences = await client.query<{ body_canonical: string }>('SELECT body_canonical FROM growth.opportunity_preference');
+    const recomputes = await client.query<{ subject_id: string; recomputed_at: Date | string }>(
+      'SELECT subject_id, recomputed_at FROM growth.opportunity_recompute',
+    );
     return {
       drafts: Object.freeze([]),
       mandates: Object.freeze(mandates.rows.map((row) => JSON.parse(row.body_canonical))),
@@ -207,6 +257,11 @@ export async function loadGrowthState(pool: Pool): Promise<GrowthStoreSnapshot> 
           reasons: JSON.parse(row.reasons_canonical),
           detail: row.detail,
         })),
+      ),
+      opportunities: Object.freeze(opportunities.rows.map((row) => JSON.parse(row.body_canonical))),
+      opportunityPreferences: Object.freeze(preferences.rows.map((row) => JSON.parse(row.body_canonical))),
+      lastOpportunityRecomputeAt: Object.freeze(
+        Object.fromEntries(recomputes.rows.map((row) => [row.subject_id, row.recomputed_at instanceof Date ? row.recomputed_at.toISOString() : row.recomputed_at])),
       ),
     } as unknown as GrowthStoreSnapshot;
   });

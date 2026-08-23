@@ -69,6 +69,7 @@ export async function serve(runtime: ConsumerBffRuntime, req: IncomingMessage, r
   }
   const idempotencyKey =
     typeof req.headers['idempotency-key'] === 'string' ? req.headers['idempotency-key'] : undefined;
+  const accept = typeof req.headers.accept === 'string' ? req.headers.accept : undefined;
   const result = handleConsumerBff(runtime, {
     method,
     path: url.pathname,
@@ -76,6 +77,7 @@ export async function serve(runtime: ConsumerBffRuntime, req: IncomingMessage, r
     body,
     authorization,
     ...(idempotencyKey ? { idempotencyKey } : {}),
+    ...(accept ? { accept } : {}),
   });
   if (result.eventStream) {
     res.writeHead(result.status, {
@@ -90,6 +92,15 @@ export async function serve(runtime: ConsumerBffRuntime, req: IncomingMessage, r
 }
 
 function write(res: ServerResponse, status: number, body: unknown, headers: Readonly<Record<string, string>> = {}): void {
+  if (typeof body === 'string' && (headers['content-type'] ?? '').startsWith('text/event-stream')) {
+    res.writeHead(status, {
+      ...headers,
+      'content-type': headers['content-type'] ?? 'text/event-stream; charset=utf-8',
+      'content-length': Buffer.byteLength(body),
+    });
+    res.end(body);
+    return;
+  }
   const json = JSON.stringify(body, (_key, value) => (typeof value === 'bigint' ? value.toString() : value));
   res.writeHead(status, {
     ...headers,

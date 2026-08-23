@@ -38,6 +38,8 @@ export class XaiGrokAiProvider implements AiInferenceProvider {
       kind: 'XAI_GROK',
       supportsStructuredOutput: false,
       supportsToolIntents: false,
+      supportsStreaming: false,
+      supportsCancellation: false,
       externalNetwork: false,
       mayReceivePrivateKeys: false,
       mayExecuteFinancialActions: false,

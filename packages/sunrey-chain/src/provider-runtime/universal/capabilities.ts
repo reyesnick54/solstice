@@ -26,6 +26,7 @@ const CATEGORY_PREFIX: Readonly<Record<ProviderCategory, string>> = Object.freez
   BLOCKCHAIN_ANALYTICS: 'BLOCKCHAIN_ANALYTICS.',
   MARKET_DATA: 'MARKET_DATA.',
   ORACLE: 'ORACLE.',
+  INVESTMENTS: 'INVESTMENT.',
 });
 
 export function capabilityBelongsToCategory(

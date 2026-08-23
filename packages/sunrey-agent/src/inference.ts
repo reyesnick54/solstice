@@ -15,6 +15,7 @@ import type { AgentTransactionProposal, MandateRefusal } from './types.ts';
  */
 export type AiRuntimePort = {
   infer: AiRuntime['infer'];
+  stream?: AiRuntime['infer'];
 };
 
 export function proposalInputFromToolIntent(input: {

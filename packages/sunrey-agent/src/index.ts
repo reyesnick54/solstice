@@ -13,8 +13,24 @@ export {
   proposalInputFromToolIntent,
   type AiRuntimePort,
 } from './inference.ts';
+export {
+  bindAgentModelGateway,
+  agentSafeStream,
+  agentModelOutageIsNotFinancial,
+  refuseRawPublicLlm,
+  type AgentModelGatewayPort,
+} from './model-gateway.ts';
 export { ProposalGate, type KernelSubmitPort } from './gate.ts';
 export { explainProposal } from './explain.ts';
+export {
+  agentCannotExecuteProposal,
+  compareAlternatives as compareGrowthProposalAlternatives,
+  explainProposal as explainGrowthProposal,
+  getGrowthPlan,
+  getProposal as getFinancialProposal,
+  requestProposalModification,
+  type GrowthToolPort,
+} from './growth-tools.ts';
 export { evaluateBudget, emptyUsage, recordUsage, rolloverUsage } from './budget.ts';
 export { evaluateProposalLimits, limitsDoNotOverrideCompliance } from './limits.ts';
 export { approvalSatisfied, detectPromptInjection, evaluateMandateForProposal } from './policy.ts';
@@ -46,6 +62,12 @@ export { createAgentMemory, correctAgentMemory, memoryIsPegDuplicate } from './m
 export { createPersonalization, normalizeLanguageTag, personalizationCannotAlterMath } from './personalization.ts';
 export { emptyPegView, pegViewFromLabels, type PegReadPort } from './peg.ts';
 export { recordAgentRuntimeEvent } from './runtime-events.ts';
+export {
+  GROW_AGENT_TOOL_NAMES,
+  invokeGrowAgentTool,
+  refusePrivilegedGrowExecution,
+} from './grow-tools.ts';
+export type { GrowAgentToolName, GrowAgentToolPort } from './grow-tools.ts';
 export {
   AGENT_ACTION_CLASSES,
   AGENT_APPROVAL_CLASSES,

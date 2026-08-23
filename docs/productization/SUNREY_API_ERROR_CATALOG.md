@@ -114,6 +114,24 @@ a successful write.
 | --- | --- | --- | --- |
 | `INTERNAL_ERROR` | yes | retry later | no |
 
+## Grow My Money (Phase E)
+
+Grow-specific codes are returned in `detailsSafeForClient.growCode`.
+The public `errorCode` stays in the catalog above. Lovable must not
+treat a submitted execution as completed.
+
+| growCode | Public errorCode | Client action |
+| --- | --- | --- |
+| `STEP_UP_REQUIRED` | `STEP_UP_REQUIRED` | complete step-up, then approve again |
+| `AGENT_CANNOT_SELF_APPROVE` / `AGENT_CANNOT_EXECUTE` / `PROPOSAL_FORGED` | `FORBIDDEN_PROFILE_FIELD` | stop; do not retry as success |
+| `PROPOSAL_EXPIRED` / `PROPOSAL_SUPERSEDED` / `REFRESH_PROPOSAL_REQUIRED` | `KERNEL_REFUSED` or `VALIDATION` | request a new proposal |
+| `INSUFFICIENT_FUNDS` / `ACCOUNT_RESTRICTED` | `VALIDATION` | change amount or account |
+| `PROVIDER_UNAVAILABLE` / `PRODUCT_UNAVAILABLE` | `FEATURE_UNAVAILABLE` | degrade; do not fake a fill |
+| `KERNEL_REFUSED` | `KERNEL_REFUSED` | show Kernel state |
+
+Do not display guaranteed-return language. Scenario fields are
+projection, estimate, assumption, or actual result.
+
 ## Money / transaction status (Phase C)
 
 These are domain statuses on payment and card resources, not extra

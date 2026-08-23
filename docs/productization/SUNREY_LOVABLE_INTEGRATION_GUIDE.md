@@ -123,6 +123,36 @@ wallet eligibility. Live issuing is not connected. Lovable must use
 server capability/eligibility responses and must not require PAN/CVV
 to render the card dashboard.
 
+## Grow My Money (Consumer BFF `/api/v1/grow`)
+
+Use `@solstice/sunrey-sdk/bff` (`SunReyConsumerBffClient`). Lovable
+only renders server state and collects decisions. It never calculates
+authoritative balances, never forges proposal content, and never
+treats Agent text as authorization.
+
+Complete sandbox journey:
+
+1. Authenticate (`Authorization: Bearer sandbox.phase_e_grow` in the
+   Phase E harness, or a Grow-capable sandbox session)
+2. `GET /api/v1/accounts` — load accounts
+3. `GET /api/v1/grow` — GROW HOME
+4. `POST /api/v1/grow/goals` — create a goal (integer minor units)
+5. `GET /api/v1/grow/snapshot` — financial snapshot (`ledgerWins: true`)
+6. `GET /api/v1/grow/opportunities`
+7. `GET /api/v1/grow/plan` — Growth Plan (`achievementPromised: false`)
+8. `GET /api/v1/grow/scenarios` — projection/estimate bands only
+9. `POST /api/v1/grow/proposals` — server-owned proposal
+10. `GET /api/v1/grow/proposals/{id}` — explainability
+11. `POST /api/v1/grow/proposals/{id}/modify` — new version
+12. `POST /api/v1/grow/proposals/{id}/approve` with step-up when required
+13. `POST /api/v1/grow/proposals/{id}/execute` with idempotency key
+14. `GET /api/v1/grow/executions/{id}` — submitted is not completed
+15. `GET /api/v1/grow/portfolio` / `performance` / `plan/progress`
+
+Do not send `clientIntent` as trusted proposal state. Do not encode
+guaranteed returns. `productionMoneyMovement` is always `false`.
+Live investment execution is disabled.
+
 ## Approval states
 
 `POST /v1/consumer/actions` currently implements `OPEN_ACCOUNT` only.
@@ -185,6 +215,8 @@ the `/v1/consumer` personas below.
 | `evan-paged` | Paginated activity |
 | `fin-ready` | USD/SAR money sandbox: send, recipients, FX, cards |
 | `agent_enabled` | BFF Agent Home, conversations, streaming chat (`sandbox.agent_enabled`) |
+| `investment` (BFF `sandbox.investment`) | Multi-account investment fixture |
+| `phase_e_grow` (harness `sandbox.phase_e_grow`) | Phase E Grow My Money E2E persona |
 
 Enable only with `SUNREY_SANDBOX_PERSONAS=1` in simulation. Fail closed
 otherwise.
@@ -219,6 +251,22 @@ errors. The SDK generates one when the caller does not.
 - No privileged server secrets in Lovable
 - Webhook URLs are localhost-only in this simulation
 
+## Grow My Money (Consumer BFF `/api/v1/grow`)
+
+Lovable can render:
+
+`I HAVE / MY GOAL / TIME HORIZON / RISK` → `YOUR GROWTH PLAN` with
+cash reserve, investments, recurring contributions, and conservative /
+base / upside ranges.
+
+Use `POST /api/v1/grow/plans` then display the returned `experience`
+(`sunrey.lovable.grow-my-money.v1`). Proposals are server-issued.
+Approve with `POST /api/v1/grow/proposals/{id}/approve`. Approval is
+not Execution Authority and not a guaranteed outcome.
+
+See `docs/productization/PHASE_E_04_GROWTH_PLANS_PROPOSALS.md` and
+`docs/productization/SUNREY_LOVABLE_BFF_MAPPING.md`.
+
 ## What Lovable must never do
 
 Lovable never calculates authoritative balances.
@@ -232,3 +280,32 @@ Lovable never stores privileged server secrets.
 Lovable never treats Agent text as authorization.
 
 Lovable must use server capability/eligibility responses.
+
+## Grow My Money (Phase E PEG)
+
+Use the Consumer BFF. PEG is not the Ledger.
+
+| Screen | Route | Notes |
+| --- | --- | --- |
+| Your Financial Profile | `GET /api/v1/grow/profile` | Net position by currency, cash, investments, income, expenses, goals, risk, liquidity, strengths, areas to improve |
+| Snapshot | `GET /api/v1/grow/snapshot` | `crossCurrencyTotal` is always null |
+| Goals | `GET/POST /api/v1/grow/goals` `PATCH /api/v1/grow/goals/{id}` | User-declared only |
+| Insights | `GET /api/v1/grow/insights` | Deterministic; not recommendations |
+| Risk profile | `GET/POST /api/v1/grow/suitability` | Questionnaire in; LLM does not score |
+| Correct assumptions | `POST /api/v1/grow/assumptions` | Cannot change a SunRey account balance |
+| Correct a category | `POST /api/v1/grow/classifications` | User correction of derived activity class |
+
+SDK helpers: `getGrowProfile`, `getGrowSnapshot`, `listGrowGoals`,
+`createGrowGoal`, `patchGrowGoal`, `listGrowInsights`,
+`getGrowSuitability`, `submitGrowSuitability`.
+
+Grow sandbox tokens: `sandbox.grow_new_user`,
+`sandbox.grow_healthy_saver`, `sandbox.grow_high_idle_cash`,
+`sandbox.grow_high_spender`, `sandbox.grow_investor`,
+`sandbox.grow_multi_currency`, `sandbox.grow_goal_oriented`,
+`sandbox.grow_liquidity_constrained`,
+`sandbox.grow_high_concentration`.
+
+Do not treat snapshot figures as guaranteed investment returns.
+Do not sum unlike currencies on the client.
+Do not let Agent text move money.

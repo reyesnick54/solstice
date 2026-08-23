@@ -5,6 +5,7 @@ import type { SecretProvider } from '../../security/src/secrets.ts';
 import { sha256Canonical } from './ids.ts';
 import { evaluateContextRelease } from './policy.ts';
 import type { AiInferenceProvider } from './provider.ts';
+import { HttpsGenericAiProvider } from './providers/https-generic.ts';
 import { LocalTestAiProvider } from './providers/local-test.ts';
 import { S3mAiProvider } from './providers/s3m.ts';
 import { XaiGrokAiProvider } from './providers/xai-grok.ts';
@@ -57,6 +58,7 @@ export class AiRuntime {
       S3M: providers?.S3M ?? new S3mAiProvider(clock),
       XAI_GROK: providers?.XAI_GROK ?? new XaiGrokAiProvider(clock),
       LOCAL_TEST: providers?.LOCAL_TEST ?? new LocalTestAiProvider(clock),
+      HTTPS_GENERIC: providers?.HTTPS_GENERIC ?? new HttpsGenericAiProvider(clock),
     });
   }
 
@@ -65,6 +67,7 @@ export class AiRuntime {
       S3M: this.providers.S3M.health(),
       XAI_GROK: this.providers.XAI_GROK.health(),
       LOCAL_TEST: this.providers.LOCAL_TEST.health(),
+      HTTPS_GENERIC: this.providers.HTTPS_GENERIC.health(),
     });
   }
 

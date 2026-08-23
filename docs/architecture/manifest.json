@@ -1206,6 +1206,16 @@
         "packages/payments",
         "packages/sunrey-chain",
         "packages/sunrey-agent"
+        "packages/personal-economic-graph",
+        "packages/platform",
+        "packages/investments",
+        "packages/sunrey-agent",
+        "packages/ledger"
+        "packages/platform"
+        "services/investments"
+        "packages/platform",
+        "packages/personal-economic-graph"
+        "services/economic-graph"
       ],
       "codeowners": [
         "@reyesnick54"

@@ -132,7 +132,7 @@ export function computeCapabilities(input: CapabilityInputs): FeatureCapabilityM
     pendingVerification: false,
     providerDown: down.grow === true,
     productized: true,
-    reasonIfDisabled: 'Grow My Money is not productized',
+    reasonIfDisabled: 'Grow My Money is unavailable for this customer',
   });
   const agent = feature({
     key: 'agent',
