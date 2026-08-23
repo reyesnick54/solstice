@@ -60,7 +60,9 @@ export type TimeInForce = (typeof TIME_IN_FORCE)[number];
 
 export const ORDER_STATUSES = [
   'CREATED',
+  'VALIDATING',
   'AUTHORIZED',
+  'ACCEPTED',
   'OPEN',
   'PARTIALLY_FILLED',
   'FILLED',
@@ -89,11 +91,18 @@ export const MARKET_STATES = [
   'CLOSE_ONLY',
   'CANCEL_ONLY',
   'RESTRICTED',
+  'SUSPENDED',
   'CLOSED',
 ] as const;
 export type MarketState = (typeof MARKET_STATES)[number];
 
-export const SELF_TRADE_POLICIES = ['CANCEL_INCOMING', 'PREVENT'] as const;
+export const SELF_TRADE_POLICIES = [
+  'CANCEL_INCOMING',
+  'CANCEL_NEWEST',
+  'CANCEL_OLDEST',
+  'PREVENT',
+  'REJECT',
+] as const;
 export type SelfTradePolicy = (typeof SELF_TRADE_POLICIES)[number];
 
 export const RECONCILIATION_OUTCOMES = [

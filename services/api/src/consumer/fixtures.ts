@@ -51,6 +51,8 @@ import {
 } from '../../../economic-graph/src/index.ts';
 import type { ActionStatusResource } from './action-status.ts';
 import { ConsumerBff, memoryPreferenceStore } from './orchestrator.ts';
+import { createAgentBffFacade, type AgentBffFacade } from './agent-dispatch.ts';
+import { createExchangeBffSurface } from './exchange-bff.ts';
 import { createSandboxAgentRuntime, provisionSandboxAgent } from './agent.ts';
 import type { AgentConversationRuntime } from '../../../../packages/sunrey-agent/src/runtime.ts';
 import type {
@@ -68,6 +70,8 @@ import {
 import type { SessionDirectory } from './session.ts';
 import { ProductGrowthService } from '../../../../packages/platform/src/growth/product/service.ts';
 import { createAgentConversationSurface, type AgentConversationSurface } from './conversation.ts';
+import { createWalletProductFromKernel } from '../../../../packages/custody/src/product/sandbox.ts';
+import type { WalletProductService } from '../../../../packages/custody/src/product/service.ts';
 
 export const SANDBOX_LABEL = 'SANDBOX_FIXTURE_NON_PRODUCTION' as const;
 
@@ -98,6 +102,20 @@ export type SandboxPersonaId = (typeof SANDBOX_PERSONA_IDS)[number];
 export function sandboxToken(persona: SandboxPersonaId): string {
   return `sandbox.${persona}`;
 }
+import {
+  SANDBOX_LABEL,
+  SANDBOX_PERSONA_IDS,
+  sandboxToken,
+  type SandboxPersonaId,
+} from './sandbox-personas.ts';
+
+export {
+  SANDBOX_LABEL,
+  SANDBOX_PERSONA_IDS,
+  sandboxToken,
+  listSandboxPersonas,
+} from './sandbox-personas.ts';
+export type { SandboxPersonaId } from './sandbox-personas.ts';
 
 const NOW = asUtcInstant('2026-08-21T09:00:00.000Z');
 
@@ -118,6 +136,8 @@ const READ_CAPABILITIES: readonly IdentityCapability[] = [
   'PAYMENT_APPROVE',
   'POST_WITHDRAWAL_REQUEST',
   'CARD_MANAGE_REQUEST',
+  'CUSTODY_OPERATE_REQUEST',
+  'ADD_WITHDRAWAL_DESTINATION',
 ];
 
 export type SandboxWorld = {
@@ -128,9 +148,12 @@ export type SandboxWorld = {
   readonly sessions: SessionDirectory;
   readonly personas: Readonly<Record<SandboxPersonaId, BffPrincipal>>;
   readonly payments: PaymentPlatform;
+  readonly agent: AgentBffFacade;
   readonly agentRuntime: AgentConversationRuntime;
   readonly grow: ProductGrowthService;
   readonly conversation: AgentConversationSurface;
+  readonly wallets: WalletProductService;
+  readonly exchange: ReturnType<typeof createExchangeBffSurface>;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -470,7 +493,6 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
         return [];
       },
     },
-    grow: simulationPort('Grow My Money is a simulation laboratory path', 1),
     growPortfolio,
     grow: createGrowOpportunityPort({
       orchestrator: new GrowthOrchestrator({
@@ -507,9 +529,11 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     cards: simulationPort('simulated card issuing; live processors are not connected', 1),
     cardFacade: options.providerDown ? undefined : attachSandboxCards(runtime, personas.basic_verified),
     vault: simulationPort('Personal Data Vault is subject-bound and simulated', 0),
-    providerDown: options.providerDown ? { cards: true, payments: true, fx: true } : {},
+    providerDown: options.providerDown ? { cards: true, payments: true, fx: true, custody: true } : {},
     providerRuntime,
   });
+
+  const wallets = attachSandboxWallets(runtime, personas, { providerDown: options.providerDown === true });
 
   return Object.freeze({
     label: SANDBOX_LABEL,
@@ -519,10 +543,52 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     sessions,
     personas: Object.freeze(personas),
     payments,
+    agent: createAgentBffFacade(NOW),
     agentRuntime,
     grow,
     conversation: createAgentConversationSurface(),
+    wallets,
+    exchange: createExchangeBffSurface(),
   });
+}
+
+function attachSandboxWallets(
+  runtime: SimulationRuntime,
+  personas: Record<SandboxPersonaId, BffPrincipal>,
+  options: { readonly providerDown: boolean },
+): WalletProductService {
+  const wired = createWalletProductFromKernel({
+    clock: runtime.clock,
+    kernel: runtime.kernel,
+    issuer: runtime.issuer,
+    evidence: runtime.evidence,
+    events: runtime.events,
+    identity: runtime.identity.service,
+    keyProvider: runtime.keyProvider,
+    customers: { get: (id) => runtime.customers.get(id as ReturnType<typeof asCustomerId>) },
+    chainAvailable: !options.providerDown,
+    custodyAvailable: !options.providerDown,
+  });
+  const seeds: readonly { persona: SandboxPersonaId; walletId: string; assetId: 'SUNREY_COIN' | 'MOONREY_COIN'; status?: 'ACTIVE' | 'RESTRICTED'; seed: bigint }[] = [
+    { persona: 'basic_verified', walletId: 'wal_sandbox_basic_sunrey', assetId: 'SUNREY_COIN', seed: 2_000_000n },
+    { persona: 'basic_verified', walletId: 'wal_sandbox_basic_moonrey', assetId: 'MOONREY_COIN', seed: 1_000_000n },
+    { persona: 'exchange', walletId: 'wal_sandbox_exchange_sunrey', assetId: 'SUNREY_COIN', seed: 1_500_000n },
+    { persona: 'agent_enabled', walletId: 'wal_sandbox_agent_sunrey', assetId: 'SUNREY_COIN', seed: 800_000n },
+    { persona: 'restricted', walletId: 'wal_sandbox_restricted_sunrey', assetId: 'SUNREY_COIN', status: 'RESTRICTED', seed: 100_000n },
+  ];
+  for (const seed of seeds) {
+    const principal = personas[seed.persona];
+    wired.product.provisionWallet({
+      walletId: seed.walletId,
+      ownerId: principal.customerId,
+      assetId: seed.assetId,
+      custodyModel: 'SUNREY_NATIVE',
+      ...(seed.status ? { status: seed.status } : {}),
+      seedMinorUnits: seed.seed,
+      withdrawalEnabled: seed.status !== 'RESTRICTED',
+    });
+  }
+  return wired.product;
 }
 
 function provisionPersona(
@@ -699,20 +765,6 @@ function openAndFund(
   if (posted.outcome !== 'POSTED') {
     throw new Error(`sandbox deposit failed for ${account.id}: ${posted.outcome}`);
   }
-}
-
-export function listSandboxPersonas(): readonly {
-  readonly id: SandboxPersonaId;
-  readonly token: string;
-  readonly label: typeof SANDBOX_LABEL;
-}[] {
-  return SANDBOX_PERSONA_IDS.map((id) =>
-    Object.freeze({
-      id,
-      token: sandboxToken(id),
-      label: SANDBOX_LABEL,
-    }),
-  );
 }
 
 export function capabilitiesFor(world: SandboxWorld, persona: SandboxPersonaId): FeatureCapabilityMap {

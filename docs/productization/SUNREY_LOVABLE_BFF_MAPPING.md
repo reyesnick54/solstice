@@ -116,6 +116,25 @@ authentication foundation; the BFF only consumes a verified session.
 | WITHDRAW | `/api/v1/wallets/withdrawals/quote` `/withdrawals` | POST | required + owner + approval | quote / withdrawal | Travel Rule + clearing | SANDBOX_FUNCTIONAL | Travel Rule pending refuses |
 | TRANSACTIONS | `/api/v1/wallets/transactions` | GET | required | activity | lifecycle evidence | SANDBOX_FUNCTIONAL | none |
 | ASSET ECONOMY | `/api/v1/economy` `/sunrey-coin` `/moonrey-coin` `/status` | GET | required | configured metrics only | HIN / productive fixtures | SANDBOX_FUNCTIONAL | no fabricated globals |
+| EXCHANGE | `/api/v1/exchange` | GET | required | availability stub | `packages/sunrey-exchange` consumer | AVAILABLE_SIMULATION | none |
+| WALLET | `/api/v1/wallets` | GET | required | `sunrey.consumer.wallet.v1` list | `packages/custody` product | AVAILABLE_SIMULATION | no signing material; production signing disabled |
+| WALLET detail | `/api/v1/wallets/{id}` | GET | required + owner | wallet + balances | same | AVAILABLE_SIMULATION | cross-user denied |
+| WALLET receive | `/api/v1/wallets/{id}/deposit-address` | GET | required + owner | address + QR payload | same | AVAILABLE_SIMULATION | network/asset bound |
+| WALLET history | `/api/v1/wallets/{id}/transactions` | GET | required + owner | client-safe finality | same | AVAILABLE_SIMULATION | none |
+| WALLET quote | `/api/v1/wallets/{id}/withdrawal-quote` | POST | required + owner | fee estimate + Travel Rule | same | AVAILABLE_SIMULATION | estimates only |
+| WALLET withdraw | `/api/v1/wallets/{id}/withdrawals` | POST | required + owner + step-up | withdrawal or Agent proposal | Kernel-gated custody | AVAILABLE_SIMULATION | Agent cannot execute |
+| ASSET detail | `/api/v1/assets/{assetId}` | GET | required | SunRey / MoonRey aggregate | custody + market fixture | AVAILABLE_SIMULATION | supply is not a mint |
+| ECONOMY | `/api/v1/economy` | GET | required | `sunrey.consumer.native-economy.v1` | `packages/sunrey-chain` native-assets + AssetSupplyBook | AVAILABLE_SIMULATION | read-only; no mint/burn; valuation is not market price |
+| ECONOMY supply | `/api/v1/economy/supply` | GET | required | total/issued/circulating supply | singular protocol supply authority | AVAILABLE_SIMULATION | not market cap; tickers NOT_ASSIGNED |
+| ECONOMY asset | `/api/v1/economy/assets/{id}` | GET | required | SUNREY_COIN or MOONREY_COIN metadata | native asset registry | AVAILABLE_SIMULATION | invented assets 404 |
+| EXCHANGE | `/api/v1/exchange` | GET | required | catalog + screens | `packages/sunrey-exchange` product API | AVAILABLE_SIMULATION | production trading disabled |
+| EXCHANGE Home / Markets | `/api/v1/exchange/markets` | GET | required | market list | same | AVAILABLE_SIMULATION | none |
+| EXCHANGE Asset Detail / Chart / Book / History | `/api/v1/exchange/markets/{instrument}` plus `/ticker` `/orderbook` `/trades` `/candles` | GET | required | ticker, book, trades, OHLC | same | AVAILABLE_SIMULATION | freshness is explicit; last trade is not a guaranteed price |
+| EXCHANGE Buy / Sell preview | `/api/v1/exchange/preview` | POST | required | order preview | same | AVAILABLE_SIMULATION | no frontend math; no guaranteed execution price |
+| EXCHANGE orders | `/api/v1/exchange/orders` | GET, POST, DELETE | required + owner | orders | Kernel / approved proposal | AVAILABLE_SIMULATION | agent orders require `proposalId` |
+| EXCHANGE fills / holdings / status | `/api/v1/exchange/fills` `/holdings` | GET | required + owner | fills with clearing state | same | AVAILABLE_SIMULATION | FILLED is not SETTLED |
+| EXCHANGE stream | `/api/v1/exchange/stream` | GET | required | SSE ticker/trade/book/order-status | same | AVAILABLE_SIMULATION | privileged topics are not exposed |
+| WALLET | `/api/v1/wallets` | GET | required | availability stub | cards wallet / chain mobile-sync | NOT_YET_PRODUCTIZED | wallet providers |
 | DATA VAULT | `/api/v1/data` | GET | required | availability stub | `packages/personal-data-vault` | AVAILABLE_SIMULATION | none |
 | PROFILE | `/api/v1/me` | GET, PATCH | required | controlled profile + `identityVerification` | identity + BFF preference store | AVAILABLE_SIMULATION | none; client-safe KYC only |
 | SECURITY | `/api/v1/security` | GET | required | availability + Home security alerts | identity sessions/devices | AVAILABLE_SIMULATION | none |

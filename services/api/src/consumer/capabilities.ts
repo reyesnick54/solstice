@@ -160,9 +160,19 @@ export function computeCapabilities(input: CapabilityInputs): FeatureCapabilityM
     provider: 'SIMULATED',
     eligible: !restricted && principal.capabilities.includes('POST_WITHDRAWAL_REQUEST'),
     pendingVerification: pending,
-    providerDown: down.payments === true,
+    providerDown: down.payments === true || down.custody === true,
     productized: true,
     reasonIfDisabled: 'withdrawals are not productized',
+  });
+  const wallets = feature({
+    key: 'wallets',
+    availability: 'AVAILABLE_SIMULATION',
+    provider: 'SIMULATED',
+    eligible: !restricted,
+    pendingVerification: pending,
+    providerDown: down.custody === true,
+    productized: true,
+    reasonIfDisabled: 'wallets are not productized',
   });
   const dataVault = feature({
     key: 'dataVault',
@@ -191,6 +201,7 @@ export function computeCapabilities(input: CapabilityInputs): FeatureCapabilityM
     agentEnabled: agent.enabled,
     exchangeEnabled: exchange.enabled,
     withdrawalsEnabled: withdrawals.enabled,
+    walletsEnabled: wallets.enabled,
     dataVaultEnabled: dataVault.enabled,
     details: Object.freeze({
       payments,
@@ -200,6 +211,7 @@ export function computeCapabilities(input: CapabilityInputs): FeatureCapabilityM
       agent,
       exchange,
       withdrawals,
+      wallets,
       dataVault,
     }),
   });

@@ -304,12 +304,13 @@
         "packages/information-market",
         "packages/sunrey-chain",
         "packages/config",
-        "packages/sunrey-agent"
+        "packages/sunrey-agent",
+        "packages/sunrey-exchange"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "PostgreSQL adapter behind existing Ledger, Evidence Vault, and store ports. Not a second ledger. Persists security key metadata only."
+      "notes": "PostgreSQL adapter behind existing Ledger, Evidence Vault, and store ports. Not a second ledger. Persists security key metadata only. Exchange-core snapshots reuse this adapter; not a second Exchange."
     },
     {
       "id": "services/compliance",
@@ -1205,12 +1206,12 @@
         "packages/security",
         "packages/payments",
         "packages/sunrey-chain",
-        "packages/sunrey-agent"
+        "packages/sunrey-agent",
         "packages/personal-economic-graph",
         "packages/platform",
         "packages/investments",
-        "packages/sunrey-agent",
         "packages/ledger",
+        "packages/custody",
         "services/investments",
         "services/economic-graph"
       ],

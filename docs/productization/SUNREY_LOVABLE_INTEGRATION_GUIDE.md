@@ -153,6 +153,32 @@ Do not send `clientIntent` as trusted proposal state. Do not encode
 guaranteed returns. `productionMoneyMovement` is always `false`.
 Live investment execution is disabled.
 
+## Exchange (Consumer BFF `/api/v1/exchange`)
+
+Use `@solstice/sunrey-sdk/bff`. Lovable must not implement Exchange
+mathematics, matching, or settlement. Last trade is not a guaranteed
+price. `FILLED` is not `SETTLED`. Production trading remains disabled.
+
+| Screen | Method | Path |
+| --- | --- | --- |
+| Exchange Home / Markets | GET | `/api/v1/exchange/markets` |
+| Asset Detail | GET | `/api/v1/exchange/markets/{instrument}` |
+| Ticker | GET | `/api/v1/exchange/markets/{instrument}/ticker` |
+| Chart | GET | `/api/v1/exchange/markets/{instrument}/candles` |
+| Order Book | GET | `/api/v1/exchange/markets/{instrument}/orderbook` |
+| Trade History | GET | `/api/v1/exchange/markets/{instrument}/trades` |
+| Order Preview | POST | `/api/v1/exchange/preview` |
+| Open / History | GET | `/api/v1/exchange/orders` |
+| Buy / Sell submit | POST | `/api/v1/exchange/orders` with approved `proposalId` |
+| Cancel | DELETE | `/api/v1/exchange/orders/{id}` |
+| Fills | GET | `/api/v1/exchange/fills` |
+| Holdings | GET | `/api/v1/exchange/holdings` |
+| Transaction Status | GET | `/api/v1/exchange/orders/{id}` plus clearing state |
+| Stream | GET | `/api/v1/exchange/stream` (`Accept: text/event-stream`) |
+
+Agent-generated orders must reference an approved proposal. The BFF
+does not expose privileged internal event topics.
+
 ## Approval states
 
 `POST /v1/consumer/actions` currently implements `OPEN_ACCOUNT` only.
@@ -372,3 +398,26 @@ SDK helpers: `getExchangeHome`, `listExchangeMarkets`,
 `approveExchangeProposal`, `submitExchangeProposal`, `getWallet`,
 `simulateWalletDeposit`, `createWithdrawalQuote`, `getEconomyHome`,
 `getSunreyCoinEconomy`, `getMoonreyCoinEconomy`, `getEconomyStatus`.
+## Wallets, deposits, and withdrawals (Phase G Prompt 5)
+
+Use the Consumer BFF. Lovable never holds server-controlled signing
+material. Production signing stays disabled.
+
+| Screen | Route | Notes |
+| --- | --- | --- |
+| Wallet Home / Assets | `GET /api/v1/wallets` | SunRey Coin and MoonRey Coin wallets for `sandbox.basic_verified` |
+| SunRey Coin / MoonRey Coin | `GET /api/v1/assets/SUNREY_COIN` or `MOONREY_COIN` | Aggregated metadata, balance, eligibility, recent activity |
+| Deposit / Receive / QR | `GET /api/v1/wallets/{id}/deposit-address` | Address is bound to the wallet asset and network |
+| Transaction History | `GET /api/v1/wallets/{id}/transactions` | Client-safe finality: PENDING, BROADCAST, CONFIRMING, FINALIZED, FAILED, REVIEW |
+| Send / Network Fee | `POST /api/v1/wallets/{id}/withdrawal-quote` | Estimates only. Travel Rule is customer-safe |
+| Withdrawal Review | `POST /api/v1/wallets/{id}/withdrawals` | Requires `stepUpSatisfied: true`. Agent sets `originatedFromAgent: true` for a proposal only |
+| Confirmation Progress | `GET /api/v1/wallets/{id}/withdrawals/{withdrawalId}` | Do not treat BROADCAST as final |
+
+SDK: `listWallets`, `getWallet`, `getDepositAddress`,
+`listWalletTransactions`, `quoteWithdrawal`, `createWithdrawal`,
+`getWithdrawal`, `getAssetDetail`.
+
+Do not ask the backend for a private key.
+Do not let the Agent sign or broadcast.
+Do not mark a deposit available before `FINALIZED`.
+See `docs/productization/PHASE_G_05_WALLETS_CUSTODY.md`.

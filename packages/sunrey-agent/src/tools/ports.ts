@@ -194,11 +194,42 @@ export type PortfolioPort = {
   get(ownerId: string): PortResult<PortfolioRecord>;
 };
 
+export type ExchangeEligibilityRecord = {
+  readonly ownerId: string;
+  readonly canTrade: boolean;
+  readonly canDeposit: boolean;
+  readonly canWithdraw: boolean;
+  readonly reasonCodes: readonly string[];
+};
+
+export type ExchangeHoldingRecord = {
+  readonly assetId: string;
+  readonly quantityMinorUnits: string;
+  readonly reservedMinorUnits: string;
+};
+
+export type ExchangePreviewRecord = {
+  readonly previewId: string;
+  readonly marketId: string;
+  readonly side: string;
+  readonly quantityMinorUnits: string;
+  readonly estimatedPriceUnits: string | null;
+  readonly guaranteedExecutionPrice: false;
+};
+
 export type ExchangePort = {
   markets(): PortResult<readonly MarketRecord[]>;
   asset(assetId: string): PortResult<{ readonly assetId: string; readonly listed: boolean }>;
   price(marketId: string): PortResult<{ readonly marketId: string; readonly lastPriceUnits: string | null; readonly eligible: boolean }>;
   orders(ownerId: string): PortResult<readonly ExchangeOrderRecord[]>;
+  eligibility(ownerId: string, marketId?: string): PortResult<ExchangeEligibilityRecord>;
+  holdings(ownerId: string): PortResult<readonly ExchangeHoldingRecord[]>;
+  preview(input: {
+    readonly ownerId: string;
+    readonly marketId: string;
+    readonly side: string;
+    readonly quantityMinorUnits: string;
+  }): PortResult<ExchangePreviewRecord>;
 };
 
 export type CustodyPort = {
@@ -214,6 +245,27 @@ export type CardsPort = {
 export type DataPort = {
   consent(ownerId: string): PortResult<ConsentSummary>;
   permissions(ownerId: string): PortResult<{ readonly ownerId: string; readonly scopes: readonly string[] }>;
+};
+
+export type NativeEconomyRecord = {
+  readonly assetId: string;
+  readonly canonicalName: string;
+  readonly tickerStatus: 'NOT_ASSIGNED';
+  readonly totalSupply: string;
+  readonly circulatingSupply: string;
+  readonly protocolNative: true;
+  readonly lastTradeMinorUnits: string | null;
+  readonly valuationIsNotMarketPrice: true;
+};
+
+export type NativeEconomyPort = {
+  asset(assetId: string): PortResult<NativeEconomyRecord>;
+  supply(assetId?: string): PortResult<readonly NativeEconomyRecord[]>;
+  overview(): PortResult<{
+    readonly sunrey: NativeEconomyRecord;
+    readonly moonrey: NativeEconomyRecord;
+    readonly productionActive: false;
+  }>;
 };
 
 export type ToolCompliancePort = {
@@ -234,5 +286,6 @@ export type AgentToolDomainPorts = {
   readonly custody: CustodyPort;
   readonly cards: CardsPort;
   readonly data: DataPort;
+  readonly nativeEconomy: NativeEconomyPort;
   readonly compliance: ToolCompliancePort;
 };
