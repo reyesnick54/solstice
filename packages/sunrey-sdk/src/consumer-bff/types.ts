@@ -365,3 +365,106 @@ export type AccountStatementData = {
     readonly reference: string;
   }[];
 };
+
+/**
+ * Grow My Money portfolio views. Authoritative values come from
+ * packages/investments. Frontend math is not authoritative.
+ * Not a live securities brokerage.
+ */
+export type GrowMoney = {
+  readonly minorUnits: string;
+  readonly currency: string;
+};
+
+export type GrowPortfolio = {
+  readonly schema: 'sunrey.grow.portfolio.v1';
+  readonly portfolioId: string;
+  readonly ownerId: string;
+  readonly status: string;
+  readonly baseCurrency: string;
+  readonly displayCurrency: string;
+  readonly strategyRef: string | null;
+  readonly riskProfileRef: string | null;
+  readonly goalLinks: readonly string[];
+  readonly restrictions: readonly string[];
+  readonly cash: GrowMoney;
+  readonly invested: GrowMoney;
+  readonly total: GrowMoney;
+  readonly environment: 'simulation';
+  readonly liveState: false;
+  readonly securitiesBrokerageLive: false;
+  readonly authoritativeCalculator: 'INVESTMENT_PLATFORM';
+  readonly frontendMathAuthoritative: false;
+};
+
+export type GrowHoldings = {
+  readonly schema: 'sunrey.grow.holdings.v1';
+  readonly portfolioId: string;
+  readonly holdings: readonly {
+    readonly instrumentId: string;
+    readonly identifier: string;
+    readonly displayName: string;
+    readonly assetClass: string;
+    readonly quantityUnits: string;
+    readonly averageCost: GrowMoney;
+    readonly remainingCost: GrowMoney;
+    readonly marketPriceMinorUnits: string | null;
+    readonly marketValue: GrowMoney | null;
+    readonly unrealized: GrowMoney | null;
+    readonly realized: GrowMoney;
+    readonly income: GrowMoney;
+    readonly currency: string;
+    readonly valuation: {
+      readonly source: string;
+      readonly timestamp: string;
+      readonly freshnessMs: string;
+      readonly quality: string;
+      readonly stale: boolean;
+    };
+  }[];
+  readonly frontendMathAuthoritative: false;
+};
+
+export type GrowPerformance = {
+  readonly schema: 'sunrey.grow.performance.v1';
+  readonly methodology: string;
+  readonly formula: string;
+  readonly absoluteReturn: GrowMoney;
+  readonly periodReturnBps: string | null;
+  readonly realized: GrowMoney;
+  readonly unrealized: GrowMoney;
+  readonly income: GrowMoney;
+  readonly cashFlows: readonly { readonly at: string; readonly kind: string; readonly amount: GrowMoney }[];
+  readonly benchmark: { readonly benchmarkId: string; readonly periodReturnBps: string; readonly deltaBps: string | null } | null;
+  readonly insufficientData: boolean;
+  readonly llmAuthoritative: false;
+  readonly frontendMathAuthoritative: false;
+};
+
+export type GrowAllocation = {
+  readonly schema: 'sunrey.grow.allocation.v1';
+  readonly actual: {
+    readonly byAssetClass: readonly { readonly key: string; readonly weightBps: string; readonly marketValue: GrowMoney }[];
+    readonly byInstrument: readonly { readonly key: string; readonly weightBps: string; readonly marketValue: GrowMoney }[];
+    readonly byCurrency: readonly { readonly key: string; readonly weightBps: string; readonly marketValue: GrowMoney }[];
+    readonly byRiskClass: readonly { readonly key: string; readonly weightBps: string; readonly marketValue: GrowMoney }[];
+  };
+  readonly target: {
+    readonly cashTargetBps: string;
+    readonly weights: readonly { readonly key: string; readonly weightBps: string }[];
+  } | null;
+  readonly frontendMathAuthoritative: false;
+};
+
+export type GrowRisk = {
+  readonly schema: 'sunrey.grow.risk.v1';
+  readonly concentration: { readonly largestInstrumentId: string | null; readonly largestWeightBps: string };
+  readonly drawdownBps: string | null;
+  readonly volatilityBps: string | null;
+  readonly volatilityAvailable: boolean;
+  readonly currencyExposure: readonly { readonly currency: string; readonly weightBps: string }[];
+  readonly liquidityExposure: readonly { readonly liquidity: string; readonly weightBps: string }[];
+  readonly assetClassExposure: readonly { readonly assetClass: string; readonly weightBps: string }[];
+  readonly fabricatedStatistics: false;
+  readonly frontendMathAuthoritative: false;
+};

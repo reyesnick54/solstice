@@ -5,6 +5,11 @@
  */
 
 import type {
+  GrowAllocation,
+  GrowHoldings,
+  GrowPerformance,
+  GrowPortfolio,
+  GrowRisk,
   GrowGoal,
   GrowGoalCreateInput,
   GrowInsight,
@@ -143,6 +148,26 @@ export class SunReyConsumerBffClient {
     options?: BffRequestOptions,
   ): Promise<Payment> {
     return this.request('POST', `/api/v1/payments/${encodeURIComponent(id)}/approve`, input, options);
+  }
+
+  async getGrowPortfolio(options?: BffRequestOptions): Promise<GrowPortfolio> {
+    return this.request('GET', '/api/v1/grow/portfolio', undefined, options);
+  }
+
+  async getGrowHoldings(options?: BffRequestOptions): Promise<GrowHoldings> {
+    return this.request('GET', '/api/v1/grow/portfolio/holdings', undefined, options);
+  }
+
+  async getGrowPerformance(options?: BffRequestOptions): Promise<GrowPerformance> {
+    return this.request('GET', '/api/v1/grow/portfolio/performance', undefined, options);
+  }
+
+  async getGrowAllocation(options?: BffRequestOptions): Promise<GrowAllocation> {
+    return this.request('GET', '/api/v1/grow/portfolio/allocation', undefined, options);
+  }
+
+  async getGrowRisk(options?: BffRequestOptions): Promise<GrowRisk> {
+    return this.request('GET', '/api/v1/grow/portfolio/risk', undefined, options);
   }
 
   async request<T>(

@@ -267,6 +267,20 @@ function dispatchAuthenticated(
     );
   }
 
+  if (path === '/api/v1/grow/portfolio' && method === 'GET') {
+    return result(runtime.bff.growPortfolio(principal, requestId), headers);
+  }
+  if (path === '/api/v1/grow/portfolio/holdings' && method === 'GET') {
+    return result(runtime.bff.growHoldings(principal, requestId), headers);
+  }
+  if (path === '/api/v1/grow/portfolio/performance' && method === 'GET') {
+    return result(runtime.bff.growPerformance(principal, requestId), headers);
+  }
+  if (path === '/api/v1/grow/portfolio/allocation' && method === 'GET') {
+    return result(runtime.bff.growAllocation(principal, requestId), headers);
+  }
+  if (path === '/api/v1/grow/portfolio/risk' && method === 'GET') {
+    return result(runtime.bff.growRisk(principal, requestId), headers);
   if ((path === '/api/v1/grow' || path === '/api/v1/grow/opportunities') && method === 'GET') {
     return result(runtime.bff.listGrowOpportunities(principal), headers);
   }
@@ -516,6 +530,11 @@ export const CONSUMER_BFF_ROUTES = [
   'PATCH /api/v1/cards/{id}/controls',
   'GET /api/v1/cards/{id}/wallet',
   'GET /api/v1/grow',
+  'GET /api/v1/grow/portfolio',
+  'GET /api/v1/grow/portfolio/holdings',
+  'GET /api/v1/grow/portfolio/performance',
+  'GET /api/v1/grow/portfolio/allocation',
+  'GET /api/v1/grow/portfolio/risk',
   'GET /api/v1/grow/opportunities',
   'GET /api/v1/grow/opportunities/{id}',
   'POST /api/v1/grow/opportunities/{id}/dismiss',

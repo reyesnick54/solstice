@@ -291,6 +291,9 @@ export class GrowthOrchestrator {
   plan(
     actor: unknown,
     subjectId: string,
+    options: {
+      readonly investmentReview?: PlanningContext['investmentReview'];
+    } = {},
   ): Result<{ readonly cycle: GrowthCycle; readonly plan: GrowthPlan }, GrowthFailure> {
     const access = authorizeViewGrowthPlan(actor, subjectId);
     if (!access.ok) {
@@ -327,6 +330,7 @@ export class GrowthOrchestrator {
     const planning: PlanningContext = {
       eligibleAccounts: this.eligibleAccounts(actor, subjectId),
       investmentExecutionImplemented: false,
+      ...(options.investmentReview ? { investmentReview: options.investmentReview } : {}),
     };
     this.treasury.readPublicContext();
     const generated = generateGrowthCandidates({

@@ -190,6 +190,7 @@ export type ConsumerBffDeps = {
   readonly notifications?: NotificationPort;
   readonly security?: SecurityPort;
   readonly grow?: OptionalDomainPort;
+  readonly growPortfolio?: import('./ports.ts').GrowPortfolioPort;
   readonly growCommands?: GrowCommandPort;
   readonly agent?: OptionalDomainPort;
   readonly exchange?: OptionalDomainPort;
@@ -1312,6 +1313,49 @@ export class ConsumerBff {
         lines: valuation.lines,
       },
     });
+  }
+
+  growPortfolio(principal: BffPrincipal, requestId: string) {
+    return this.growResource(this.deps.growPortfolio?.portfolio(principal), requestId);
+  }
+
+  growHoldings(principal: BffPrincipal, requestId: string) {
+    return this.growResource(this.deps.growPortfolio?.holdings(principal), requestId);
+  }
+
+  growPerformance(principal: BffPrincipal, requestId: string) {
+    return this.growResource(this.deps.growPortfolio?.performance(principal), requestId);
+  }
+
+  growAllocation(principal: BffPrincipal, requestId: string) {
+    return this.growResource(this.deps.growPortfolio?.allocation(principal), requestId);
+  }
+
+  growRisk(principal: BffPrincipal, requestId: string) {
+    return this.growResource(this.deps.growPortfolio?.risk(principal), requestId);
+  }
+
+  private growResource(value: unknown, requestId: string) {
+    if (!this.deps.growPortfolio) {
+      return bffError({
+        errorCode: 'FEATURE_UNAVAILABLE',
+        category: 'TEMPORARY_UNAVAILABLE',
+        message: 'Grow portfolio is not attached to this runtime',
+        retryable: true,
+        requestId,
+      });
+    }
+    if (value && typeof value === 'object' && 'error' in value) {
+      const code = (value as { error: 'NOT_FOUND' | 'RESOURCE_NOT_OWNED' }).error;
+      return bffError({
+        errorCode: code,
+        category: code === 'RESOURCE_NOT_OWNED' ? 'AUTHORIZATION' : 'NOT_FOUND',
+        message: code === 'RESOURCE_NOT_OWNED' ? 'portfolio is owned by another customer' : 'portfolio not found',
+        retryable: false,
+        requestId,
+      });
+    }
+    return value;
   }
 
   private fxOutcome<T>(
