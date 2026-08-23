@@ -31,6 +31,7 @@ import { listSandboxPersonas } from './fixtures.ts';
 import type { IdentityService } from '../../../../packages/identity/src/service.ts';
 import type { PaymentPlatform } from '../../../../packages/payments/src/platform/orchestrator.ts';
 import { listPayments, listRecipients, mapPaymentOutcome } from './payments.ts';
+import { dispatchAgent, type AgentBffFacade } from './agent-dispatch.ts';
 import { createCanonicalToolRegistry } from '../../../../packages/sunrey-agent/src/tools/catalog.ts';
 import {
   agentError,
@@ -77,6 +78,7 @@ export type ConsumerBffRuntime = {
   readonly identity?: IdentityService;
   readonly ingestCardWebhook?: (body: unknown, requestId: string) => unknown;
   readonly payments?: PaymentPlatform;
+  readonly agent?: AgentBffFacade;
   readonly agentRuntime?: AgentConversationRuntime;
   readonly grow?: GrowBffSurface;
   readonly grow?: ProductGrowthService;
@@ -338,6 +340,12 @@ function dispatchAuthenticated(
     );
   }
 
+  if (runtime.agent) {
+    const agent = dispatchAgent(runtime.agent, request, principal, requestId, headers);
+    if (agent) {
+      return agent;
+    }
+  }
   if (runtime.conversation) {
     const conversation = dispatchConversation(runtime.conversation, request, principal, requestId, headers);
     if (conversation) {
@@ -1125,6 +1133,24 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/portfolio',
   'GET /api/v1/agent',
   'POST /api/v1/agent/conversations',
+  'POST /api/v1/agent/conversations/{id}/messages',
+  'GET /api/v1/agent/conversations/{id}/stream',
+  'POST /api/v1/agent/conversations/{id}/close',
+  'GET /api/v1/agent/actions',
+  'GET /api/v1/agent/actions/{id}',
+  'POST /api/v1/agent/actions/{id}/revise',
+  'POST /api/v1/agent/actions/{id}/approve',
+  'POST /api/v1/agent/actions/{id}/step-up',
+  'POST /api/v1/agent/actions/{id}/execute',
+  'POST /api/v1/agent/actions/{id}/outcome',
+  'GET /api/v1/agent/memory',
+  'POST /api/v1/agent/memory',
+  'GET /api/v1/agent/settings',
+  'PATCH /api/v1/agent/settings',
+  'POST /api/v1/agent/pause',
+  'POST /api/v1/agent/revoke',
+  'POST /api/v1/agent/escalations',
+  'GET /api/v1/agent/audit/{actionId}',
   'GET /api/v1/agent/conversations/{id}',
   'POST /api/v1/agent/conversations/{id}/messages',
   'GET /api/v1/agent/conversations/{id}/events',
