@@ -1212,6 +1212,8 @@
         "packages/investments",
         "packages/ledger",
         "packages/custody",
+        "packages/personal-data-vault",
+        "packages/sunrey-exchange",
         "services/investments",
         "services/economic-graph"
       ],

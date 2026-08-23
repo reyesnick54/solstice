@@ -141,6 +141,10 @@ export class PersonalDataVaultProduct {
         message: `${category.categoryId} is ${category.availability} and is not ingested by default`,
       });
     }
+    const opened = this.open(actor, input.subjectId);
+    if (!opened.ok) {
+      return opened;
+    }
     const ingested = this.vault.ingest(actor, input);
     if (!ingested.ok) {
       return ingested;
