@@ -543,8 +543,8 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   });
 
   const wallets = attachSandboxWallets(runtime, personas, { providerDown: options.providerDown === true });
-  const dataRights = attachSandboxDataRights(runtime);
   const vault = attachSandboxVault(runtime, personas);
+  const dataRights = attachSandboxDataRights(runtime);
 
   return Object.freeze({
     label: SANDBOX_LABEL,
@@ -561,6 +561,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     wallets,
     exchange: createExchangeBffSurface(),
     dataRights,
+    vault,
   });
 }
 
@@ -576,7 +577,6 @@ function attachSandboxDataRights(runtime: SimulationRuntime): ConsentDataRightsE
     consent,
     evidence: runtime.evidence,
     events: runtime.events,
-    vault,
   });
 }
 
