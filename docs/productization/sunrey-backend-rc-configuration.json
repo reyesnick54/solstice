@@ -9,7 +9,7 @@
   "source": {
     "repository": "reyesnick54/sunrey",
     "branchPolicy": "document the commit that created this RC; do not treat a feature branch as mainnet",
-    "commitPlaceholder": "filled-at-tag-time",
+    "commitPlaceholder": "c5274daeb3fc830c92c719f41a711aa36eebda8b",
     "packageVersion": "0.1.0"
   },
   "buildArtifacts": {

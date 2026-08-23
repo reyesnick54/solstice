@@ -6,7 +6,7 @@
   "notAProductionRelease": true,
   "evaluatedAtPolicy": "FAIL_CLOSED",
   "recommendation": "BACKEND_RC_READY_PENDING_EXTERNAL_GATES",
-  "commit": "d5d1b0f9d4d7d963c9102c3155f0932b688bd8bf",
+  "commit": "c5274daeb3fc830c92c719f41a711aa36eebda8b",
   "sourceCommitPolicy": "record the git SHA of the RC commit; do not invent a mainnet SHA",
   "buildArtifacts": {
     "sdk": "@solstice/sunrey-sdk@0.1.0",

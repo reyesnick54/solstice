@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "sunrey.backend.rc.evaluation.v1",
-  "evaluatedAtUtc": "2026-08-23T09:16:49.035Z",
+  "evaluatedAtUtc": "2026-08-23T09:28:57.661Z",
   "version": "sunrey-backend-v1.0.0-rc.1",
-  "commit": "d5d1b0f9d4d7d963c9102c3155f0932b688bd8bf",
+  "commit": "c5274daeb3fc830c92c719f41a711aa36eebda8b",
   "findings": [],
   "environment": {
     "node": "v22.14.0",
