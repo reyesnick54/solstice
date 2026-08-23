@@ -42,6 +42,12 @@ import {
   RECIPIENT_PERSONAL_AGENT,
 } from '../../../../../packages/consent/src/recipients.ts';
 import { HumanInformationNetworkEngine } from '../../../../../packages/information-market/src/network/engine.ts';
+import type {
+  ApprovedComputationId,
+  HumanInformationAssetDescriptorId,
+  HumanInformationRequestId,
+  HumanInformationSubjectId,
+} from '../../../../../packages/information-market/src/network/ids.ts';
 import { HinContributionAdapter } from '../../../../../packages/information-market/src/network/contribution/adapter.ts';
 import { createInProcessHumanContributionRegistry } from '../../../../../packages/information-market/src/network/contribution/registry.ts';
 import { InformationMarketService } from '../../../../../packages/information-market/src/service.ts';
@@ -159,8 +165,8 @@ type CustomerBound = {
   readonly subjectId: string;
   vault: PersonalDataVault;
   consent: ConsentService;
-  hinSubjectId: string | null;
-  hinDescriptorId: string | null;
+  hinSubjectId: HumanInformationSubjectId | null;
+  hinDescriptorId: HumanInformationAssetDescriptorId | null;
   hinParticipation: boolean;
   pendingHinStop: { readonly requestId: string; readonly confirmed: false } | null;
   rights: RightsRequest[];
@@ -197,7 +203,7 @@ export class PhaseHProductSurface {
   readonly fiat: ReturnType<typeof createSimulationFiatPort>;
   private readonly bound = new Map<string, CustomerBound>();
   private readonly licenseeRequesterId = 'req_sandbox_licensee';
-  private hinComputationId: string | null = null;
+  private hinComputationId: ApprovedComputationId | null = null;
   private usageCount = 0;
   private compensationJournalIds: string[] = [];
   readonly productive = {
@@ -409,13 +415,17 @@ export class PhaseHProductSurface {
     const bound = this.bindPrincipal(principal);
     const connector = new UserDeclaredConnector();
     const fetched = connector.fetch(input.idempotencyKey ?? 'pref_1');
+    const declaredSchema = SCHEMA_FOR_KIND.USER_DECLARED;
+    if (!declaredSchema) {
+      return fail('SCHEMA_MISSING', 'user-declared schema is not configured');
+    }
     const ingested = bound.vault.ingest(bound.actor, {
       subjectId: bound.subjectId,
       sourceId: fetched.sourceId,
       sourceRecordRef: fetched.sourceRecordRef,
       idempotencyKey: input.idempotencyKey ?? fetched.sourceRecordRef,
-      schemaId: SCHEMA_FOR_KIND.USER_DECLARED.schemaId,
-      schemaVersion: SCHEMA_FOR_KIND.USER_DECLARED.schemaVersion,
+      schemaId: declaredSchema.schemaId,
+      schemaVersion: declaredSchema.schemaVersion,
       contentType: fetched.contentType,
       payload: {
         key: input.key ?? (fetched.body as { key: string }).key,
@@ -444,6 +454,9 @@ export class PhaseHProductSurface {
           : new SimulatedPayrollConnector();
     const fetched = connector.fetch(input.idempotencyKey ?? `${kind.toLowerCase()}_1`);
     const schema = SCHEMA_FOR_KIND[kind];
+    if (!schema) {
+      return fail('SCHEMA_MISSING', 'source schema is not configured');
+    }
     const ingested = bound.vault.ingest(bound.actor, {
       subjectId: bound.subjectId,
       sourceId: fetched.sourceId,
@@ -534,7 +547,7 @@ export class PhaseHProductSurface {
       payload: { key: input.key ?? 'preferred_currency', value: input.value ?? 'EUR' },
       provenanceKind: 'USER_DECLARED',
       purposeRef: 'correct.own',
-      expectedCurrentVersionId: meta.value.currentVersionId ?? undefined,
+      ...(meta.value.currentVersionId ? { expectedCurrentVersionId: meta.value.currentVersionId } : {}),
     });
     if (!updated.ok) {
       return fail(updated.error.code, updated.error.message);
@@ -616,7 +629,9 @@ export class PhaseHProductSurface {
       categories: input.categories as never,
       operations: input.purpose === 'DATA_CONTRIBUTION_RESEARCH' ? ['CONTRIBUTE', 'AGGREGATE'] : ['READ', 'DERIVE', 'AGGREGATE'],
       derivationTypes: input.purpose === 'PERSONAL_AGENT_ANALYSIS' ? ['DERIVED_ONLY'] : ['AGGREGATE_ONLY'],
-      fields: input.purpose === 'PERSONAL_AGENT_ANALYSIS' ? ['netMinor', 'currency', 'periodStart', 'periodEnd'] : undefined,
+      ...(input.purpose === 'PERSONAL_AGENT_ANALYSIS'
+        ? { fields: ['netMinor', 'currency', 'periodStart', 'periodEnd'] }
+        : {}),
       effectiveFrom: NOW,
       expiresAt: EXPIRES,
       requestedRetentionDays: 30,
@@ -931,7 +946,7 @@ export class PhaseHProductSurface {
       requesterId: this.licenseeRequesterId,
       requestedRight: 'ONE_TIME_COMPUTATION',
       purpose: 'AGGREGATED_RESEARCH',
-      computationId: this.hinComputationId ?? undefined,
+      ...(this.hinComputationId ? { computationId: this.hinComputationId } : {}),
       duration: 'P30D',
       compensationAsset: 'APPROVED_FIAT',
       compensationMinor: 1000n,
@@ -967,7 +982,7 @@ export class PhaseHProductSurface {
       return fail('HIN_PARTICIPATION_REQUIRED', 'HIN subject is required');
     }
     const approved = this.hin.approveInformationConsent({
-      requestId: licenseId,
+      requestId: licenseId as HumanInformationRequestId,
       subjectId: bound.hinSubjectId,
       descriptorId: bound.hinDescriptorId,
       processingClass: 'CLEAN_ROOM_COMPUTATION',
@@ -1005,7 +1020,7 @@ export class PhaseHProductSurface {
     const usage = this.hin.recordUsage({
       rightId: right.rightId,
       requesterId: this.licenseeRequesterId,
-      computationId: this.hinComputationId ?? 'cmp_missing',
+      computationId: (this.hinComputationId ?? 'cmp_missing') as ApprovedComputationId,
       outputClass: 'AGGREGATE_STATISTIC',
       settlementRef: `settle:${licenseId}:${this.usageCount + 1}`,
     });
@@ -1014,7 +1029,7 @@ export class PhaseHProductSurface {
     }
     this.usageCount += 1;
     const compensation = this.hin.authorizeCompensation({
-      subjectId: bound.hinSubjectId ?? '',
+      subjectId: (bound.hinSubjectId ?? '') as HumanInformationSubjectId,
       requesterId: this.licenseeRequesterId,
       asset: 'APPROVED_FIAT',
       amountMinor: 1000n,
@@ -1064,7 +1079,7 @@ export class PhaseHProductSurface {
     const future = this.hin.recordUsage({
       rightId: right?.rightId ?? (grantId as never),
       requesterId: this.licenseeRequesterId,
-      computationId: this.hinComputationId ?? 'cmp_missing',
+      computationId: (this.hinComputationId ?? 'cmp_missing') as ApprovedComputationId,
       outputClass: 'AGGREGATE_STATISTIC',
       settlementRef: `settle:revoked:${licenseId}`,
     });

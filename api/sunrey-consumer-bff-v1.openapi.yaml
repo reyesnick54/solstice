@@ -2124,24 +2124,31 @@ paths:
   /api/v1/hin/participation:
     get:
       operationId: getHinParticipation
-      summary: HIN participation
+      summary: Optional HIN participation state
       responses:
         "200":
-          description: Participation status
+          description: NOT_ENROLLED by default; financial services stay open
+  /api/v1/hin/participation/enroll:
+    post:
+      operationId: enrollHinParticipation
+      summary: Explicit optional HIN enrollment
+      responses:
+        "201":
+          description: Enrolled; not a financial-account open
   /api/v1/hin/participation/pause:
     post:
       operationId: pauseHinParticipation
-      summary: Pause HIN participation
+      summary: Pause optional HIN participation
       responses:
         "200":
           description: Paused
   /api/v1/hin/participation/withdraw:
     post:
       operationId: withdrawHinParticipation
-      summary: Withdraw HIN participation
+      summary: Withdraw from optional HIN participation
       responses:
         "200":
-          description: Withdrawn
+          description: Withdrawn without closing ordinary SunRey financial services
   /api/v1/data:
     get:
       operationId: getDataVault
@@ -2165,7 +2172,7 @@ paths:
           description: Simulated connectors only
   /api/v1/data/records:
     get:
-      operationId: listVaultRecords
+      operationId: listDataRecords
       summary: Your data metadata
       responses:
         "200":
@@ -2198,21 +2205,21 @@ paths:
           description: Confirmed grant
   /api/v1/data/hin:
     get:
-      operationId: getHinParticipation
-      summary: HIN participation
+      operationId: getDataHinHome
+      summary: Phase H data-plane HIN home
       responses:
         "200":
-          description: Participation state
+          description: Participation state on the data surface; not a second HIN system
   /api/v1/data/contributions:
     get:
-      operationId: listHinContributions
-      summary: Human contributions
+      operationId: listDataContributions
+      summary: Human contributions on the data surface
       responses:
         "200":
           description: Contribution list without mint quantities
   /api/v1/data/earnings:
     get:
-      operationId: getHinEarnings
+      operationId: getDataEarnings
       summary: Compensation instructions
       responses:
         "200":
@@ -2251,13 +2258,6 @@ paths:
       responses:
         "200":
           description: No individual records
-  /api/v1/economy/productive:
-    get:
-      operationId: getProductiveEconomy
-      summary: Productive-economy overview
-      responses:
-        "200":
-          description: Sandbox observations only
   /api/v1/economy/productive/observe:
     post:
       operationId: observeProductive
@@ -2272,10 +2272,6 @@ paths:
       responses:
         "200":
           description: Proposal only. No supply change.
-      summary: Personal Data Vault home
-      responses:
-        "200":
-          description: Honest availability
   /api/v1/data/permissions:
     get:
       operationId: getDataPermissions
@@ -2300,11 +2296,9 @@ paths:
     post:
       operationId: revokeDataConsent
       summary: Revoke optional consent immediately
-          description: Owner vault summary. SunRey does not own user data.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/VaultHome'
+      responses:
+        "200":
+          description: Consent revoked; optional uses stop immediately
   /api/v1/data/vault:
     get:
       operationId: getVaultHome
@@ -2352,6 +2346,17 @@ paths:
       responses:
         "200":
           description: Downstream access disabled; historical processing retained
+    patch:
+      operationId: correctVaultRecord
+      summary: Correct user-declared data or open a dispute
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Correction or review-pending dispute
   /api/v1/data/access-history:
     get:
       operationId: getDataAccessHistory
@@ -2372,46 +2377,6 @@ paths:
       responses:
         "201":
           description: Request accepted under the jurisdiction pack
-  /api/v1/hin/participation:
-    get:
-      operationId: getHinParticipation
-      summary: Optional HIN participation state
-      responses:
-        "200":
-          description: NOT_ENROLLED by default; financial services stay open
-  /api/v1/hin/participation/enroll:
-    post:
-      operationId: enrollHinParticipation
-      summary: Explicit optional HIN enrollment
-      responses:
-        "201":
-          description: Enrolled; not a financial-account open
-  /api/v1/hin/participation/pause:
-    post:
-      operationId: pauseHinParticipation
-      summary: Pause optional HIN participation
-      responses:
-        "200":
-          description: Paused
-  /api/v1/hin/participation/withdraw:
-    post:
-      operationId: withdrawHinParticipation
-      summary: Withdraw from optional HIN participation
-      responses:
-        "200":
-          description: Withdrawn without closing ordinary SunRey financial services
-          description: Record metadata. Payload is redacted unless explicitly requested.
-    patch:
-      operationId: correctVaultRecord
-      summary: Correct user-declared data or open a dispute
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Correction or review-pending dispute
   /api/v1/data/vault/records/{id}/history:
     get:
       operationId: getVaultRecordHistory

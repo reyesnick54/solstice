@@ -43,6 +43,29 @@ export {
   runControlRoomDemo,
 } from './control-room/index.ts';
 export type { ControlRoomReport, OperationalIncident } from './control-room/index.ts';
+export {
+  ENGINEERING_TARGET_LABEL,
+  IncidentStore,
+  SRE_CAPABILITIES,
+  SreReliabilityPlatform,
+  applyChaos,
+  buildControlRoomReadModel,
+  createIncident,
+  degradedModes,
+  emitOperationalLog,
+  emitProductizationMetric,
+  evaluateProductizationAlerts,
+  killSwitchCatalog,
+  productizationAlerts,
+  productizationSlos,
+  runRestoreTest,
+  runSreDemo,
+  sliDefinitions,
+  telemetryInventory,
+  traceCriticalFlow,
+  transitionIncidentStatus,
+} from './sre/index.ts';
+export type { ControlRoomReadModel, PersistentIncident, RestoreTestRecord } from './sre/index.ts';
 export { metricCatalogComplete, ResiliencePlatform } from './platform.ts';
 export { assertSafeTelemetryRecord, lowCardinalityLabels } from './privacy.ts';
 export { assertEngineeringLabel, engineeringRecoveryObjectives, engineeringSlos } from './slo.ts';

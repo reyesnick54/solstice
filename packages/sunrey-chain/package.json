@@ -43,6 +43,7 @@
     "demo:interop": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/interop/demo.ts",
     "demo:wallet": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/wallet/demo.ts",
     "demo:ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/ops/demo.ts",
+    "demo:sre-dr": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/ops/sre/demo.ts",
     "sunrey-ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/ops/cli-dispatch.ts",
     "demo:pregenesis": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/pregenesis/demo.ts",
     "demo:testnet": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/testnet/demo.ts",
