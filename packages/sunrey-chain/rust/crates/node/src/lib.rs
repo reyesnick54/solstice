@@ -198,6 +198,14 @@ impl LocalNode {
         if self.queue.iter().any(|queued| queued.tx_id == tx_id) {
             return Err(self.reject(RejectReason::Replay));
         }
+        if let Some(signer) = tx.auth.first().map(|row| row.public_key.as_slice()) {
+            if self.queue.iter().any(|queued| {
+                queued.tx.auth.first().map(|row| row.public_key.as_slice()) == Some(signer)
+                    && queued.tx.unsigned.nonce == tx.unsigned.nonce
+            }) {
+                return Err(self.reject(RejectReason::Replay));
+            }
+        }
         let hex = hash_to_hex(&tx_id);
         self.queue.push_back(QueuedTx { tx, tx_id });
         self.persist_queue()?;
@@ -258,7 +266,15 @@ impl LocalNode {
             signer = Some(descriptor.public_key.clone());
         }
         let signer = signer.ok_or(RejectReason::InvalidSignatureDescriptor)?;
-        if unsigned.nonce != view.next_nonce(&signer) {
+        let pending = self
+            .queue
+            .iter()
+            .filter(|queued| {
+                queued.tx.auth.first().map(|row| row.public_key.as_slice())
+                    == Some(signer.as_slice())
+            })
+            .count() as u64;
+        if unsigned.nonce != view.next_nonce(&signer).saturating_add(pending) {
             return Err(RejectReason::Replay);
         }
         if !unsigned.idempotency_key.is_empty()

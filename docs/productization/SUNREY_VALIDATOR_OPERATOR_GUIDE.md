@@ -1,8 +1,8 @@
 # SunRey validator operator guide
 
-This guide is for TESTNET and local/devnet operators. Mainnet remains
-inactive. It does not authorize production, flip `LIVE_*` flags, or
-replace the protocol validator registry.
+This guide is for TESTNET and local/devnet operators. Mainnet remains inactive.
+It does not authorize production, flip `LIVE_*` flags, or replace the protocol
+validator registry.
 
 Companion: `docs/productization/PHASE_G_03_SUNREY_CHAIN_RUNTIME.md`
 and `docs/operators/validator.md`.

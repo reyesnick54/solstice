@@ -159,7 +159,7 @@ Canonical statuses: `PENDING`, `INCLUDED`, `FINALIZED`, `FAILED`.
 | --- | --- |
 | mempool | PENDING |
 | local block observation | INCLUDED |
-| BFT commit certificate | FINALIZED |
+| `COMMIT_CERTIFICATE` | FINALIZED |
 | rejection | FAILED |
 
 `local_observation_is_not_finality` is true unless the source is a
