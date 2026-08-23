@@ -109,6 +109,8 @@ export class SunReyConsumerBffClient {
 
   async startGrowProposal(id: string, options?: BffRequestOptions): Promise<import('./types.ts').GrowProposalReceipt> {
     return this.request('POST', `/api/v1/grow/opportunities/${encodeURIComponent(id)}/start-proposal`, {}, options);
+  }
+
   async getGrowProfile(options?: BffRequestOptions): Promise<GrowProfile> {
     return this.request('GET', '/api/v1/grow/profile', undefined, options);
   }
@@ -153,6 +155,10 @@ export class SunReyConsumerBffClient {
     return this.request('POST', `/api/v1/payments/${encodeURIComponent(id)}/approve`, input, options);
   }
 
+  async listGrowPlans(options?: BffRequestOptions): Promise<{ readonly items: readonly GrowPlan[] }> {
+    return this.request('GET', '/api/v1/grow/plans', undefined, options);
+  }
+
   async createGrowPlan(input: GrowPlanCreateInput, options?: BffRequestOptions): Promise<GrowPlan> {
     return this.request('POST', '/api/v1/grow/plans', input, options);
   }
@@ -187,6 +193,8 @@ export class SunReyConsumerBffClient {
 
   async rejectGrowProposal(id: string, options?: BffRequestOptions): Promise<GrowProposal> {
     return this.request('POST', `/api/v1/grow/proposals/${encodeURIComponent(id)}/reject`, {}, options);
+  }
+
   async getGrowPortfolio(options?: BffRequestOptions): Promise<GrowPortfolio> {
     return this.request('GET', '/api/v1/grow/portfolio', undefined, options);
   }

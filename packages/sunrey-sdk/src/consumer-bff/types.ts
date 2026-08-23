@@ -336,6 +336,8 @@ export type GrowProposal = {
   readonly guaranteedOutcome: false;
   readonly executionAuthorityId: null;
   readonly serverIssued: true;
+};
+
 export type GrowMoney = {
   readonly minorUnits: string;
   readonly currency: string;
@@ -434,11 +436,6 @@ export type AccountStatementData = {
  * packages/investments. Frontend math is not authoritative.
  * Not a live securities brokerage.
  */
-export type GrowMoney = {
-  readonly minorUnits: string;
-  readonly currency: string;
-};
-
 export type GrowPortfolio = {
   readonly schema: 'sunrey.grow.portfolio.v1';
   readonly portfolioId: string;

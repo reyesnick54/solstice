@@ -480,10 +480,18 @@ paths:
     get:
       operationId: getGrowPlan
       summary: Get one owned growth plan
-      summary: Grow My Money availability
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
       responses:
         "200":
-          description: Honest availability
+          description: Growth plan
+        "403":
+          description: Cross-user denied
+        "404":
+          description: Unknown plan
   /api/v1/grow/portfolio:
     get:
       operationId: getGrowPortfolio
@@ -498,28 +506,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GrowPortfolio"
-      summary: Grow My Money opportunity feed
-      description: >
-        Deterministic Growth Orchestrator cards. Does not execute money
-        or promise a return.
-      responses:
-        "200":
-          description: Opportunity feed
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GrowOpportunityFeed"
-  /api/v1/grow/opportunities:
-    get:
-      operationId: listGrowOpportunities
-      summary: List ranked growth opportunities
-      responses:
-        "200":
-          description: Opportunity feed
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GrowOpportunityFeed"
         "401":
           description: Authentication required
         "403":
@@ -572,6 +558,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GrowRisk"
+  /api/v1/grow/opportunities:
+    get:
+      operationId: listGrowOpportunities
+      summary: List ranked growth opportunities
+      description: >
+        Deterministic Growth Orchestrator cards. Does not execute money
+        or promise a return.
+      responses:
+        "200":
+          description: Opportunity feed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowOpportunityFeed"
+        "401":
+          description: Authentication required
+        "403":
+          description: Cross-user denied
   /api/v1/grow/opportunities/{id}:
     get:
       operationId: getGrowOpportunity
@@ -583,11 +587,43 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: Growth plan
+          description: Opportunity
         "403":
           description: Cross-user denied
         "404":
-          description: Unknown plan
+          description: Not found
+  /api/v1/grow/opportunities/{id}/dismiss:
+    post:
+      operationId: dismissGrowOpportunity
+      summary: Dismiss an opportunity
+      description: A dismissed fingerprint is not re-presented unchanged.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Dismissed opportunity
+  /api/v1/grow/opportunities/{id}/start-proposal:
+    post:
+      operationId: startGrowOpportunityProposal
+      summary: Accept an opportunity for proposal
+      description: >
+        Does not execute money, issue Execution Authority, or post a
+        ledger journal.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Proposal receipt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowProposalReceipt"
   /api/v1/grow/proposals:
     get:
       operationId: listGrowProposals
@@ -624,20 +660,45 @@ paths:
       operationId: modifyGrowProposal
       summary: Recalculate a new proposal version
       description: Material terms on a presented proposal are not edited in place.
-          description: Opportunity
-        "403":
-          description: Cross-user denied
-        "404":
-          description: Not found
-  /api/v1/grow/opportunities/{id}/dismiss:
-    post:
-      operationId: dismissGrowOpportunity
-      summary: Dismiss an opportunity
-      description: A dismissed fingerprint is not re-presented unchanged.
-      summary: Grow My Money catalog
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
       responses:
         "200":
-          description: Availability plus simulation posture
+          description: New proposal version
+  /api/v1/grow/proposals/{id}/approve:
+    post:
+      operationId: approveGrowProposal
+      summary: Approve a structured financial proposal
+      description: >
+        Uses the Phase B approval state machine. Approval does not issue
+        Execution Authority and does not post a ledger journal.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Approved proposal
+        "401":
+          description: Step-up required
+        "403":
+          description: Policy, suitability, or cross-user denial
+  /api/v1/grow/proposals/{id}/reject:
+    post:
+      operationId: rejectGrowProposal
+      summary: Reject a structured financial proposal
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Rejected proposal
   /api/v1/grow/profile:
     get:
       operationId: getGrowProfile
@@ -687,51 +748,6 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: New proposal version
-  /api/v1/grow/proposals/{id}/approve:
-    post:
-      operationId: approveGrowProposal
-      summary: Approve a structured financial proposal
-      description: >
-        Uses the Phase B approval state machine. Approval does not issue
-        Execution Authority and does not post a ledger journal.
-          description: Dismissed opportunity
-  /api/v1/grow/opportunities/{id}/start-proposal:
-    post:
-      operationId: startGrowOpportunityProposal
-      summary: Accept an opportunity for proposal
-      description: >
-        Does not execute money, issue Execution Authority, or post a
-        ledger journal.
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Approved proposal
-        "401":
-          description: Step-up required
-        "403":
-          description: Policy, suitability, or cross-user denial
-  /api/v1/grow/proposals/{id}/reject:
-    post:
-      operationId: rejectGrowProposal
-      summary: Reject a structured financial proposal
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Rejected proposal
-          description: Proposal receipt
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GrowProposalReceipt"
           description: Updated goal
   /api/v1/grow/insights:
     get:
@@ -895,12 +911,6 @@ paths:
           description: Honest availability
 components:
   schemas:
-    GrowMoney:
-      type: object
-      required: [minorUnits, currency]
-      properties:
-        minorUnits: { type: string }
-        currency: { type: string }
     GrowProfile:
       type: object
       required: [schema, subjectId, generatedAt, authoritativeBalance, ledgerWins]

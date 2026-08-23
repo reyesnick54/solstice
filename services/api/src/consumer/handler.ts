@@ -323,7 +323,8 @@ function dispatchAuthenticated(
   }
   if (path === '/api/v1/grow/portfolio/risk' && method === 'GET') {
     return result(runtime.bff.growRisk(principal, requestId), headers);
-  if ((path === '/api/v1/grow' || path === '/api/v1/grow/opportunities') && method === 'GET') {
+  }
+  if (path === '/api/v1/grow/opportunities' && method === 'GET') {
     return result(runtime.bff.listGrowOpportunities(principal), headers);
   }
   if (path.startsWith('/api/v1/grow/opportunities/') && path.endsWith('/dismiss') && method === 'POST') {
@@ -337,6 +338,7 @@ function dispatchAuthenticated(
   if (path.startsWith('/api/v1/grow/opportunities/') && method === 'GET') {
     const id = path.slice('/api/v1/grow/opportunities/'.length);
     return result(runtime.bff.getGrowOpportunity(principal, id, requestId), headers);
+  }
   if (path === '/api/v1/grow/profile' && method === 'GET') {
     return result(runtime.bff.growProfile(principal, query.valuationCurrency ?? query.valuation_currency), headers);
   }
