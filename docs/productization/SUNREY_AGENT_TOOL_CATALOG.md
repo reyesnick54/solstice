@@ -98,6 +98,11 @@ beneficiary API. It always returns `NOT_ELIGIBLE`.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | getConsentSummary | Active permits | none | summary | READ | READ_FINANCIAL_STATE | read-only | consent | no |
 | getDataPermissions | Authorized scopes | none | scopes | READ | READ_FINANCIAL_STATE | read-only | consent / PDV | no |
+| getInformationRights | Usage rights for the owner | none | rights | READ | READ_FINANCIAL_STATE | read-only | information-market rights-marketplace | no |
+| getActiveDataPermissions | Licensed purposes | none | permissions | READ | READ_FINANCIAL_STATE | read-only | information-market rights-marketplace | no |
+| getApprovedEarnings | Settled earnings only | none | earnings | READ | READ_FINANCIAL_STATE | read-only | information-market rights-marketplace | no |
+| explainLicense | Explain one license | `licenseId` | license | READ | READ_FINANCIAL_STATE | read-only | information-market rights-marketplace | no |
+| initiateConsentChange | Propose a consent change | none | proposal-only | PROPOSAL | REQUEST_HUMAN_APPROVAL | proposal | information-market + consent | yes |
 | getHinParticipation | Optional HIN state | none | participation | READ | READ_FINANCIAL_STATE | read-only | consent product | no |
 
 ## NATIVE ECONOMY

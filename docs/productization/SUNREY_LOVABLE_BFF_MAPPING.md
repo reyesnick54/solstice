@@ -140,6 +140,14 @@ authentication foundation; the BFF only consumes a verified session.
 | EXCHANGE fills / holdings / status | `/api/v1/exchange/fills` `/holdings` | GET | required + owner | fills with clearing state | same | AVAILABLE_SIMULATION | FILLED is not SETTLED |
 | EXCHANGE stream | `/api/v1/exchange/stream` | GET | required | SSE ticker/trade/book/order-status | same | AVAILABLE_SIMULATION | privileged topics are not exposed |
 | WALLET | `/api/v1/wallets` | GET | required | availability stub | cards wallet / chain mobile-sync | NOT_YET_PRODUCTIZED | wallet providers |
+| YOUR INFORMATION RIGHTS | `/api/v1/hin/rights` | GET | required | `sunrey.consumer.hin.rights.v1` | `packages/information-market` rights-marketplace | AVAILABLE_SIMULATION | usage rights only; not a sale of personal data |
+| HIN PARTICIPATION | `/api/v1/hin/participation` | GET | required | participation status | same | AVAILABLE_SIMULATION | pause / withdraw are explicit |
+| ACTIVE DATA PERMISSIONS | `/api/v1/hin/permissions` | GET | required | purpose-scoped permissions | same | AVAILABLE_SIMULATION | RESEARCH does not imply MARKETING |
+| HOW YOUR INFORMATION IS USED | `/api/v1/hin/usage` | GET | required | licensed purposes | same | AVAILABLE_SIMULATION | no raw query output |
+| ACTIVE LICENSES | `/api/v1/hin/licenses` | GET | required | `sunrey.consumer.hin.licenses.v1` | same | AVAILABLE_SIMULATION | licensee controls are not on this BFF |
+| EARNINGS | `/api/v1/hin/earnings` | GET | required | settled earnings | same | AVAILABLE_SIMULATION | `guaranteed: false` |
+| PAYMENT HISTORY | `/api/v1/hin/earnings/activity` | GET | required | settlement activity | Ledger / native-asset refs | AVAILABLE_SIMULATION | not a second mint |
+| PAUSE / WITHDRAW | `/api/v1/hin/participation/pause` `/withdraw` | POST | required + owner | participation lifecycle | same | AVAILABLE_SIMULATION | future access stops after withdraw |
 | DATA VAULT | `/api/v1/data` | GET | required | availability stub | `packages/personal-data-vault` | AVAILABLE_SIMULATION | none |
 | DATA PERMISSIONS | `/api/v1/data/permissions` | GET | required | `sunrey.consumer.data.permissions.v1` | `packages/consent` product engine | AVAILABLE_SIMULATION | `implicitMonetizationOptIn` is always false |
 | WHO CAN USE MY DATA | `/api/v1/data/who` | GET | required | recipient-class view | same | AVAILABLE_SIMULATION | none |

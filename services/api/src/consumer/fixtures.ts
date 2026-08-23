@@ -72,6 +72,8 @@ import { ProductGrowthService } from '../../../../packages/platform/src/growth/p
 import { createAgentConversationSurface, type AgentConversationSurface } from './conversation.ts';
 import { createWalletProductFromKernel } from '../../../../packages/custody/src/product/sandbox.ts';
 import type { WalletProductService } from '../../../../packages/custody/src/product/service.ts';
+import { createSandboxRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
+import type { InformationRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
 
 import { ConsentService } from '../../../../packages/consent/src/service.ts';
 import { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
@@ -137,6 +139,7 @@ export type SandboxWorld = {
   readonly grow: ProductGrowthService;
   readonly conversation: AgentConversationSurface;
   readonly wallets: WalletProductService;
+  readonly hin: InformationRightsMarketplace;
   readonly exchange: ReturnType<typeof createExchangeBffSurface>;
   readonly dataRights: ConsentDataRightsEngine;
   readonly vault: PersonalDataVaultProduct;
@@ -544,6 +547,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   });
 
   const wallets = attachSandboxWallets(runtime, personas, { providerDown: options.providerDown === true });
+  const hin = createSandboxRightsMarketplace(runtime.clock, personas.basic_verified.customerId);
   const vault = attachSandboxVault(runtime, personas);
   const dataRights = attachSandboxDataRights(runtime);
 
@@ -560,6 +564,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     grow,
     conversation: createAgentConversationSurface(),
     wallets,
+    hin,
     exchange: createExchangeBffSurface(),
     dataRights,
     vault,

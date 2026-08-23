@@ -33,4 +33,18 @@ export class SubjectScopedInformationMarketTool {
       message: 'raw vault records are not a marketplace product',
     });
   }
+
+  acceptMaterialTerms(): Result<never, InformationMarketFailure> {
+    return err({
+      code: 'AGENT_CANNOT_ACCEPT_TERMS',
+      message: 'Personal Economy Agent cannot accept material licensing terms',
+    });
+  }
+
+  changeCompensationPolicy(): Result<never, InformationMarketFailure> {
+    return err({
+      code: 'AGENT_CANNOT_CHANGE_POLICY',
+      message: 'Personal Economy Agent cannot change compensation policy',
+    });
+  }
 }

@@ -95,10 +95,16 @@ export type {
   ExchangeMarkets,
   ExchangeOrderPreview,
   ExchangeOrderSubmit,
+  HinRight,
+  HinRights,
+  HinLicense,
+  HinLicenses,
+  HinEarnings,
+  HinEarningsActivity,
+  HinParticipation,
   DataPermissionCatalog,
   DataConsentGrant,
   DataConsentList,
-  HinParticipation,
   DataRightsRequestResource,
 } from './types.ts';
 export {

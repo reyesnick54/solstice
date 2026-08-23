@@ -1216,6 +1216,7 @@
         "packages/ledger",
         "packages/custody",
         "packages/sunrey-exchange",
+        "packages/information-market",
         "packages/human-economic-contribution",
         "packages/consent",
         "packages/personal-data-vault",
