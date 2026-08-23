@@ -1,0 +1,8 @@
+platformEnvironment: STAGING
+namespace: sunrey-staging
+productionAuthorized: false
+mainnetEnabled: false
+liveProviders: false
+database:
+  replicaCount: 1
+  haModel: PRIMARY_SYNC_REPLICA

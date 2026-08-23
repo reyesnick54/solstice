@@ -565,6 +565,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     conversation: createAgentConversationSurface(),
     wallets,
     hin,
+    vault,
     exchange: createExchangeBffSurface(),
     dataRights,
     vault,
@@ -574,6 +575,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
 function attachSandboxDataRights(
   runtime: SimulationRuntime,
   vault: PersonalDataVaultProduct,
+  _vault: PersonalDataVaultProduct,
 ): ConsentDataRightsEngine {
   const consent = new ConsentService({
     clock: runtime.clock,

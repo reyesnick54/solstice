@@ -33,6 +33,7 @@ function str(value: unknown): string | undefined {
 function present<T extends Record<string, unknown>>(value: T): {
   [K in keyof T as undefined extends T[K] ? K : K]?: Exclude<T[K], undefined>;
 } {
+function present<T extends Record<string, unknown>>(value: T): { [K in keyof T]?: Exclude<T[K], undefined> } {
   const out: Record<string, unknown> = {};
   for (const [key, item] of Object.entries(value)) {
     if (item !== undefined) {
@@ -40,6 +41,16 @@ function present<T extends Record<string, unknown>>(value: T): {
     }
   }
   return out as never;
+function present<T extends Record<string, string | undefined>>(
+  fields: T,
+): { [K in keyof T]?: Exclude<T[K], undefined> } {
+  const out: Record<string, string> = {};
+  for (const [key, value] of Object.entries(fields)) {
+    if (typeof value === 'string') {
+      out[key] = value;
+    }
+  }
+  return out as { [K in keyof T]?: Exclude<T[K], undefined> };
 }
 
 function mapResult(
@@ -102,9 +113,12 @@ export function dispatchPhaseH(
     const ingestKey = str(input.idempotencyKey);
     return mapResult(
       requestId,
-      surface.ingestSourceBacked(principal, {
+      surface.ingestSourceBacked(principal, present({
         kind: kind === 'TRANSACTIONS' || kind === 'RECEIPT' || kind === 'PAYROLL' ? kind : 'PAYROLL',
         ...(ingestKey ? { idempotencyKey: ingestKey } : {}),
+        idempotencyKey: str(input.idempotencyKey),
+      })),
+        ...present({ idempotencyKey: str(input.idempotencyKey) }),
       }),
       201,
     );
@@ -119,6 +133,7 @@ export function dispatchPhaseH(
     const purpose = str(input.purpose) === 'DATA_CONTRIBUTION_RESEARCH' ? 'DATA_CONTRIBUTION_RESEARCH' : 'PERSONAL_AGENT_ANALYSIS';
     const categories = Array.isArray(input.categories) ? input.categories.filter((row): row is string => typeof row === 'string') : ['PAYROLL_DATA'];
     const grantKey = str(input.idempotencyKey);
+    const idempotencyKey = str(input.idempotencyKey);
     return mapResult(
       requestId,
       surface.grantPermission(principal, {
@@ -128,6 +143,11 @@ export function dispatchPhaseH(
       }),
       201,
     );
+        ...(idempotencyKey ? { idempotencyKey } : {}),
+      }),
+      201,
+    );
+    return mapResult(requestId, surface.grantPermission(principal, { purpose, categories, ...present({ idempotencyKey: str(input.idempotencyKey) }) }), 201);
   }
   if (path === '/api/v1/data/consent' && method === 'GET') {
     return json(200, surface.permissions(principal));

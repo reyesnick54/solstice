@@ -1,0 +1,15 @@
+platformEnvironment: PRODUCTION
+namespace: sunrey-production
+productionAuthorized: false
+mainnetEnabled: false
+mainnetActive: false
+liveProviders: false
+liveDataMarketplace: false
+nativeIssuanceEnabled: false
+environment: simulation
+humanApprovalRequired: true
+secrets:
+  isolatedNonProductionAllowed: false
+  productionRequiresApprovedKms: true
+  kmsApproved: false
+  failClosedWithoutKms: true

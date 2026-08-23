@@ -1,0 +1,184 @@
+platformEnvironment: PREPRODUCTION
+namespace: sunrey-preproduction
+productionAuthorized: false
+mainnetEnabled: false
+mainnetActive: false
+liveProviders: false
+liveDataMarketplace: false
+nativeIssuanceEnabled: false
+environment: simulation
+image:
+  repository: ghcr.io/sunrey/platform
+  digest: sha256:6f1c2e8a9b0d4c7e5a3f1b8d2c0e4a6b8d1f3c5e7a9b0c2d4e6f8a0b1c3d5e7f
+  tag: ""
+tls:
+  enabled: true
+  publicPlaintextForbidden: true
+  confirmedDns: false
+  domainTemplates:
+    api: api.${dnsZone}
+    bff: app.${dnsZone}
+    rpc: rpc.${dnsZone}
+    explorer: explorer.${dnsZone}
+    futureApi: api.sunrey.xyz
+  certificateSecretRef: secret://sunrey-preproduction/tls/api
+secrets:
+  scheme: secret://
+  referencesOnly: true
+  isolatedNonProductionAllowed: true
+  productionRequiresApprovedKms: true
+database:
+  tlsRequired: true
+  replicaCount: 1
+  haModel: PRIMARY_SYNC_REPLICA
+queue:
+  persistent: true
+  deadLetterRequired: true
+storage:
+  encryption: PROVIDER_MANAGED
+  publicAccess: false
+  versioning: true
+workloads:
+  - name: api
+    zone: PUBLIC_EDGE
+    public: true
+    replicas: 2
+    cpuRequest: 250m
+    cpuLimit: 1000m
+    memoryRequest: 512Mi
+    memoryLimit: 1Gi
+    healthPath: /health
+    readyPath: /ready
+    strategy: ROLLING
+  - name: bff
+    zone: PUBLIC_EDGE
+    public: true
+    replicas: 2
+    cpuRequest: 250m
+    cpuLimit: 1000m
+    memoryRequest: 512Mi
+    memoryLimit: 1Gi
+    healthPath: /health
+    readyPath: /ready
+    strategy: ROLLING
+  - name: workers
+    zone: DATA_PRIVATE
+    public: false
+    replicas: 2
+    cpuRequest: 200m
+    cpuLimit: 750m
+    memoryRequest: 256Mi
+    memoryLimit: 768Mi
+    healthPath: /health
+    readyPath: /ready
+    strategy: ROLLING
+  - name: event-processor
+    zone: DATA_PRIVATE
+    public: false
+    replicas: 2
+    cpuRequest: 200m
+    cpuLimit: 750m
+    memoryRequest: 256Mi
+    memoryLimit: 768Mi
+    healthPath: /health
+    readyPath: /ready
+    strategy: ROLLING
+  - name: agent
+    zone: OPERATIONS_PRIVATE
+    public: false
+    replicas: 2
+    cpuRequest: 300m
+    cpuLimit: 1500m
+    memoryRequest: 512Mi
+    memoryLimit: 2Gi
+    healthPath: /health
+    readyPath: /ready
+    strategy: CANARY
+  - name: model-gateway
+    zone: OPERATIONS_PRIVATE
+    public: false
+    replicas: 2
+    cpuRequest: 300m
+    cpuLimit: 2000m
+    memoryRequest: 1Gi
+    memoryLimit: 4Gi
+    healthPath: /health
+    readyPath: /ready
+    strategy: CANARY
+  - name: exchange
+    zone: DATA_PRIVATE
+    public: false
+    replicas: 2
+    cpuRequest: 400m
+    cpuLimit: 2000m
+    memoryRequest: 1Gi
+    memoryLimit: 2Gi
+    healthPath: /health
+    readyPath: /ready
+    strategy: BLUE_GREEN
+  - name: operations
+    zone: OPERATIONS_PRIVATE
+    public: false
+    replicas: 2
+    cpuRequest: 200m
+    cpuLimit: 750m
+    memoryRequest: 256Mi
+    memoryLimit: 768Mi
+    healthPath: /health
+    readyPath: /ready
+    strategy: ROLLING
+  - name: treasury
+    zone: OPERATIONS_PRIVATE
+    public: false
+    replicas: 1
+    cpuRequest: 150m
+    cpuLimit: 500m
+    memoryRequest: 256Mi
+    memoryLimit: 512Mi
+    healthPath: /health
+    readyPath: /ready
+    strategy: ROLLING
+  - name: vault
+    zone: DATA_PRIVATE
+    public: false
+    replicas: 2
+    cpuRequest: 200m
+    cpuLimit: 750m
+    memoryRequest: 256Mi
+    memoryLimit: 768Mi
+    healthPath: /health
+    readyPath: /ready
+    strategy: ROLLING
+  - name: hin
+    zone: DATA_PRIVATE
+    public: false
+    replicas: 2
+    cpuRequest: 200m
+    cpuLimit: 750m
+    memoryRequest: 256Mi
+    memoryLimit: 768Mi
+    healthPath: /health
+    readyPath: /ready
+    strategy: ROLLING
+  - name: rpc
+    zone: PUBLIC_RPC
+    public: true
+    replicas: 2
+    cpuRequest: 500m
+    cpuLimit: 2000m
+    memoryRequest: 1Gi
+    memoryLimit: 4Gi
+    healthPath: /health
+    readyPath: /ready
+    strategy: ROLLING
+  - name: explorer
+    zone: PUBLIC_EDGE
+    public: true
+    replicas: 2
+    cpuRequest: 200m
+    cpuLimit: 750m
+    memoryRequest: 256Mi
+    memoryLimit: 768Mi
+    healthPath: /health
+    readyPath: /ready
+    strategy: ROLLING

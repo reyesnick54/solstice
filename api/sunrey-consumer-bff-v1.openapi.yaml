@@ -2126,6 +2126,34 @@ paths:
       responses:
         "200":
           description: Purpose-scoped usage view
+  /api/v1/hin/participation:
+    get:
+      operationId: getHinParticipation
+      summary: Optional HIN participation state
+      responses:
+        "200":
+          description: NOT_ENROLLED by default; financial services stay open
+  /api/v1/hin/participation/enroll:
+    post:
+      operationId: enrollHinParticipation
+      summary: Explicit optional HIN enrollment
+      responses:
+        "201":
+          description: Enrolled; not a financial-account open
+  /api/v1/hin/participation/pause:
+    post:
+      operationId: pauseHinParticipation
+      summary: Pause optional HIN participation
+      responses:
+        "200":
+          description: Paused
+  /api/v1/hin/participation/withdraw:
+    post:
+      operationId: withdrawHinParticipation
+      summary: Withdraw from optional HIN participation
+      responses:
+        "200":
+          description: Withdrawn without closing ordinary SunRey financial services
   /api/v1/data:
     get:
       operationId: getDataVault
@@ -2183,19 +2211,26 @@ paths:
   /api/v1/data/hin:
     get:
       operationId: getDataHinParticipation
+      operationId: getDataPlaneHinParticipation
       summary: HIN participation
+      operationId: getDataHinHome
+      summary: Phase H data-plane HIN home
       responses:
         "200":
-          description: Participation state
+          description: Participation state on the data surface; not a second HIN system
   /api/v1/data/contributions:
     get:
       operationId: listDataContributions
+      operationId: listDataPlaneHinContributions
       summary: Human contributions
+      operationId: listDataContributions
+      summary: Human contributions on the data surface
       responses:
         "200":
           description: Contribution list without mint quantities
   /api/v1/data/earnings:
     get:
+      operationId: getDataPlaneHinEarnings
       operationId: getDataEarnings
       summary: Compensation instructions
       responses:
@@ -2235,6 +2270,13 @@ paths:
       responses:
         "200":
           description: No individual records
+  /api/v1/economy/productive:
+    get:
+      operationId: getSandboxProductiveEconomy
+      summary: Productive-economy overview
+      responses:
+        "200":
+          description: Sandbox observations only
   /api/v1/economy/productive/observe:
     post:
       operationId: observeProductive
@@ -2276,6 +2318,7 @@ paths:
       responses:
         "200":
           description: Optional consent revoked; financial services remain open
+          description: Consent revoked; optional uses stop immediately
   /api/v1/data/vault:
     get:
       operationId: getVaultHome
@@ -2296,7 +2339,7 @@ paths:
           description: Client-safe categories. Highly sensitive classes are not ingested by default.
   /api/v1/data/vault/records:
     get:
-      operationId: listVaultRecords
+      operationId: listPersonalVaultRecords
       summary: List owner vault records
       parameters:
         - name: categoryId
@@ -2356,7 +2399,7 @@ paths:
           description: Request accepted under the jurisdiction pack
   /api/v1/hin/participation:
     get:
-      operationId: getHinParticipation
+      operationId: getOptionalHinParticipation
       summary: Optional HIN participation state
       responses:
         "200":
@@ -2370,14 +2413,14 @@ paths:
           description: Enrolled; not a financial-account open
   /api/v1/hin/participation/pause:
     post:
-      operationId: pauseHinParticipation
+      operationId: pauseOptionalHinParticipation
       summary: Pause optional HIN participation
       responses:
         "200":
           description: Paused
   /api/v1/hin/participation/withdraw:
     post:
-      operationId: withdrawHinParticipation
+      operationId: withdrawOptionalHinParticipation
       summary: Withdraw from optional HIN participation
       responses:
         "200":

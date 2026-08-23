@@ -43,6 +43,7 @@
     "demo:interop": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/interop/demo.ts",
     "demo:wallet": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/wallet/demo.ts",
     "demo:ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/ops/demo.ts",
+    "demo:sre-dr": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/ops/sre/demo.ts",
     "sunrey-ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/ops/cli-dispatch.ts",
     "demo:pregenesis": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/pregenesis/demo.ts",
     "demo:testnet": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/testnet/demo.ts",
@@ -74,6 +75,7 @@
     "demo:sunrey-production-launch-freeze": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/release-candidate/mainnet/launch-freeze/demo.ts",
     "demo:sunrey-launch-authorization-ceremony": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/production-ceremony/launch-candidate/demo.ts",
     "demo:infra": "SUNREY_FIXTURE_ENV=test node --experimental-strip-types --disable-warning=ExperimentalWarning src/infra/demo.ts",
+    "demo:preproduction": "SUNREY_FIXTURE_ENV=test node --experimental-strip-types --disable-warning=ExperimentalWarning src/infra/preproduction/demo.ts",
     "demo:sunrey-production-provider-binding": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/providers/production-binding/demo.ts"
   },
   "engines": {

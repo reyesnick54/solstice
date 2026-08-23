@@ -381,6 +381,8 @@ function dispatchAuthenticated(
       return wallets;
     }
   }
+  if (runtime.hin && typeof (runtime.hin as InformationRightsMarketplace).earningsFor === 'function') {
+    const hin = dispatchHin(runtime.hin as InformationRightsMarketplace, request, principal, requestId, headers);
   if (runtime.hin && isRightsMarketplace(runtime.hin)) {
     const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);
     if (hin) {
@@ -394,7 +396,9 @@ function dispatchAuthenticated(
       principal,
       requestId,
       headers,
-      runtime.identity ? { resolveActorContext: (actorId) => runtime.identity!.resolveActorContext(actorId) } : undefined,
+      runtime.identity
+        ? { resolveActorContext: (actorId) => runtime.identity!.resolveActorContext(actorId) }
+        : undefined,
     );
     if (dataRights) {
       return dataRights;
@@ -674,6 +678,8 @@ function dispatchAuthenticated(
   if (path === '/api/v1/hin/contributions' && method === 'GET') {
     const surface = hinContributions;
     if (!surface) {
+    const surface = runtime.hin;
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, surface.list(principal.customerId), headers);
@@ -681,6 +687,8 @@ function dispatchAuthenticated(
   if (path.startsWith('/api/v1/hin/contributions/') && method === 'GET') {
     const surface = hinContributions;
     if (!surface) {
+    const surface = runtime.hin;
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     const contributionId = path.slice('/api/v1/hin/contributions/'.length);
@@ -703,6 +711,8 @@ function dispatchAuthenticated(
   if (path === '/api/v1/hin/metrics' && method === 'GET') {
     const surface = hinContributions;
     if (!surface) {
+    const surface = runtime.hin;
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, surface.metrics(), headers);
@@ -710,6 +720,8 @@ function dispatchAuthenticated(
   if (path === '/api/v1/hin/me/summary' && method === 'GET') {
     const surface = hinContributions;
     if (!surface) {
+    const surface = runtime.hin;
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, surface.me(principal.customerId), headers);
@@ -717,6 +729,8 @@ function dispatchAuthenticated(
   if (path === '/api/v1/hin/valuation-methodologies' && method === 'GET') {
     const surface = hinContributions;
     if (!surface) {
+    const surface = runtime.hin;
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, { items: surface.methodologies(), isMintFormula: false }, headers);
@@ -1049,6 +1063,13 @@ function dispatchPayments(
     return result(mapPaymentOutcome(platform.getPayment(principal.customerId, id), requestId), headers);
   }
   return null;
+}
+
+function isHinContributionSurface(
+  hin: InformationRightsMarketplace | HinContributionSurface,
+): hin is HinContributionSurface {
+  return typeof (hin as HinContributionSurface).list === 'function'
+    && typeof (hin as HinContributionSurface).metrics === 'function';
 }
 
 function isLifecycleExchange(
@@ -1426,6 +1447,18 @@ function dispatchConversation(
     return result(surface.getAction(principal, id, requestId), headers);
   }
   return null;
+}
+
+function isRightsMarketplace(
+  value: InformationRightsMarketplace | HinContributionSurface,
+): value is InformationRightsMarketplace {
+  return typeof (value as InformationRightsMarketplace).earningsFor === 'function';
+}
+
+function isHinContributionSurface(
+  value: InformationRightsMarketplace | HinContributionSurface,
+): value is HinContributionSurface {
+  return typeof (value as HinContributionSurface).methodologies === 'function';
 }
 
 function str(value: unknown): string | undefined {

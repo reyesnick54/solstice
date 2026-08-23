@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoring
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: monitoring
+    sunrey.zone: OBSERVABILITY
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: monitoring
+  template:
+    metadata:
+      labels:
+        app: monitoring
+        sunrey.zone: OBSERVABILITY
+    spec:
+      containers:
+        - name: monitoring
+          image: ghcr.io/sunrey/platform@sha256:6f1c2e8a9b0d4c7e5a3f1b8d2c0e4a6b8d1f3c5e7a9b0c2d4e6f8a0b1c3d5e7f
+          env:
+            - name: SUNREY_SERVICE
+              value: monitoring
+            - name: CREDENTIALS_LOGGED
+              value: "false"
+          ports:
+            - containerPort: 9090
+              name: metrics
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: backup
+    sunrey.zone: BACKUP
+spec:
+  schedule: "17 3 * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: backup
+            sunrey.zone: BACKUP
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: backup
+              image: ghcr.io/sunrey/platform@sha256:6f1c2e8a9b0d4c7e5a3f1b8d2c0e4a6b8d1f3c5e7a9b0c2d4e6f8a0b1c3d5e7f
+              env:
+                - name: SUNREY_SERVICE
+                  value: backup
+                - name: BACKUP_CREDENTIAL_REF
+                  value: secret://sunrey-preproduction/database/backup
+                - name: OBJECT_STORAGE_REF
+                  value: secret://sunrey-preproduction/storage/objects
+                - name: BACKUP_ENCRYPTION
+                  value: PROVIDER_MANAGED
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi

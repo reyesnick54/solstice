@@ -283,6 +283,15 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'AgentMemoryCreated', version: 1, status: 'current' },
   { eventType: 'AgentMemoryChanged', version: 1, status: 'current' },
   { eventType: 'AgentMandateChanged', version: 1, status: 'current' },
+  { eventType: 'OperationsCaseCreated', version: 1, status: 'current' },
+  { eventType: 'OperationsCaseAssigned', version: 1, status: 'current' },
+  { eventType: 'OperationsCaseEscalated', version: 1, status: 'current' },
+  { eventType: 'OperationsCaseResolved', version: 1, status: 'current' },
+  { eventType: 'OperationsOperatorAction', version: 1, status: 'current' },
+  { eventType: 'OperationsProviderDisabled', version: 1, status: 'current' },
+  { eventType: 'OperationsMarketHalted', version: 1, status: 'current' },
+  { eventType: 'OperationsAccountRestricted', version: 1, status: 'current' },
+  { eventType: 'OperationsSupportViewOpened', version: 1, status: 'current' },
 ];
 
 export const EVENT_COMPATIBILITY_POLICY = Object.freeze({

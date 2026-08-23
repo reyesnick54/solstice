@@ -1,0 +1,11 @@
+apiVersion: v2
+name: sunrey-preproduction
+description: SunRey preproduction platform (simulation topology, not live customer production)
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - sunrey
+  - preproduction
+  - simulation
+home: https://sunrey.xyz

@@ -1,0 +1,61 @@
+{{- if .Values.tls.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sunrey-public-tls
+  namespace: {{ .Values.namespace }}
+  annotations:
+    sunrey.tls/public-plaintext-forbidden: "true"
+    sunrey.tls/confirmed-dns: "false"
+    sunrey.tls/future-api-host: api.sunrey.xyz
+spec:
+  ingressClassName: nginx
+  tls:
+    - secretName: sunrey-preproduction-tls
+      hosts:
+        - api.example.invalid
+        - app.example.invalid
+        - rpc.example.invalid
+        - explorer.example.invalid
+  rules:
+    - host: api.example.invalid
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api
+                port:
+                  number: 8443
+    - host: app.example.invalid
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bff
+                port:
+                  number: 8443
+    - host: rpc.example.invalid
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: rpc
+                port:
+                  number: 8443
+    - host: explorer.example.invalid
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: explorer
+                port:
+                  number: 8443
+{{- end }}

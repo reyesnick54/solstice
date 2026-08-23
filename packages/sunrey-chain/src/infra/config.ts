@@ -44,7 +44,13 @@ export const IAC_MODULES: readonly InfrastructureModule[] = Object.freeze([
   { moduleId: 'exchange', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/exchange', providerNeutral: true },
   { moduleId: 'custody', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/custody', providerNeutral: true },
   { moduleId: 'release', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/release', providerNeutral: true },
+  { moduleId: 'loadbalancer', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/loadbalancer', providerNeutral: true },
+  { moduleId: 'queue', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/queue', providerNeutral: true },
+  { moduleId: 'cache', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/cache', providerNeutral: true },
+  { moduleId: 'dns', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/dns', providerNeutral: true },
+  { moduleId: 'tls', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/tls', providerNeutral: true },
   { moduleId: 'helm-candidate', kind: 'HELM', path: 'infra/sunrey-production/helm/sunrey-production-candidate', providerNeutral: true },
+  { moduleId: 'helm-preproduction', kind: 'HELM', path: 'infra/sunrey-production/helm/sunrey-preproduction', providerNeutral: true },
 ]);
 
 export type SignedInfrastructureBundle = {
