@@ -107,19 +107,21 @@ function harness(fee?: { makerBps: bigint; takerBps: bigint }) {
     },
     coin,
     fiat,
-    feeSchedule: fee
+    ...(fee
       ? {
-          scheduleId: 'fees:simulation-v1' as never,
-          version: 1,
-          makerFeeMinor: 0n,
-          takerFeeMinor: 0n,
-          listingFeeMinor: 0n,
-          computeFeeMinor: 0n,
-          makerBps: fee.makerBps,
-          takerBps: fee.takerBps,
-          commercialPermanence: 'SIMULATION_CONFIGURATION',
+          feeSchedule: {
+            scheduleId: 'fees:simulation-v1' as never,
+            version: 1,
+            makerFeeMinor: 0n,
+            takerFeeMinor: 0n,
+            listingFeeMinor: 0n,
+            computeFeeMinor: 0n,
+            makerBps: fee.makerBps,
+            takerBps: fee.takerBps,
+            commercialPermanence: 'SIMULATION_CONFIGURATION' as const,
+          },
         }
-      : undefined,
+      : {}),
   });
   return { events, evidence, identity, customers, coin, fiat, exchange };
 }

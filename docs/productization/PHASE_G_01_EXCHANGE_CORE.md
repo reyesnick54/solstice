@@ -247,8 +247,9 @@ Preserved:
 
 1. CoinPort / FiatPort on the service path are still simulation adapters.
    Settlement journals remain a later Phase G concern (Prompt 2+).
-2. Customer V034 migrations are duplicated on this tree, so a new V035
-   Exchange-core table was not added. Persistence reuses V025/V027.
+2. Customer productization migrations are now contiguous V034–V037.
+   Exchange-core persistence still reuses V025/V027 rather than adding
+   a new Exchange table.
 3. `PHASE_F_CLOSURE_REPORT.md` is not on this tree. Phase F Prompts 1–4
    exist and this prompt extends that work.
 4. No live Exchange, custody, or bank is connected.

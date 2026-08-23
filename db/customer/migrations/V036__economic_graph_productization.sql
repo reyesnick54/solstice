@@ -1,4 +1,4 @@
--- V034 Phase E PEG productization: overlays, insights, suitability,
+-- V036 Phase E PEG productization: overlays, insights, suitability,
 -- access evidence, and compact history. Not a second ledger.
 
 CREATE TABLE economic_graph.overlay (

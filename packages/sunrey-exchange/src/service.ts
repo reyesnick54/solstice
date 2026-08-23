@@ -198,8 +198,8 @@ export class SunReyExchangeService {
     this.persistence = input.persistence ?? new InMemoryExchangeCorePersistence();
     if (input.feeSchedule) {
       this.feeScheduleState = productizeFeeSchedule(input.feeSchedule, {
-        makerBps: input.feeSchedule.makerBps,
-        takerBps: input.feeSchedule.takerBps,
+        ...(input.feeSchedule.makerBps !== undefined ? { makerBps: input.feeSchedule.makerBps } : {}),
+        ...(input.feeSchedule.takerBps !== undefined ? { takerBps: input.feeSchedule.takerBps } : {}),
       });
     }
     this.seedSimulationRegistry();
@@ -356,9 +356,9 @@ export class SunReyExchangeService {
       quantity: input.quantity,
       limitPrice: input.limitPrice ?? input.protectionPrice ?? null,
       feeSchedule: this.feeScheduleState,
-      feeOverride: input.feeOverride,
-      agentGenerated: input.agentGenerated,
-      agentMandateValid: input.agentMandateValid,
+      ...(input.feeOverride !== undefined ? { feeOverride: input.feeOverride } : {}),
+      ...(input.agentGenerated !== undefined ? { agentGenerated: input.agentGenerated } : {}),
+      ...(input.agentMandateValid !== undefined ? { agentMandateValid: input.agentMandateValid } : {}),
       priceBandOk: input.limitPrice && band ? priceWithinBand(input.limitPrice.priceUnits, band) : true,
       rateLimitOk: rateAllows(rateWindow),
     });
@@ -427,7 +427,7 @@ export class SunReyExchangeService {
         scheduleId: this.feeScheduleState.scheduleId,
         makerBps: this.feeScheduleState.makerBps,
         takerBps: this.feeScheduleState.takerBps,
-        clientOverrideForbidden: true,
+        clientOverrideForbidden: true as const,
       },
     });
     this.store.putOrder(order);
@@ -827,7 +827,7 @@ export class SunReyExchangeService {
   markets(): readonly ExchangeMarket[] {
     return [...this.store.markets.values()];
   }
-  instruments() {
+  listUniversalInstruments() {
     return this.universal.instruments.list();
   }
   auctions() {
