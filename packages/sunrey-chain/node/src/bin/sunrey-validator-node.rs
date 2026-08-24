@@ -75,26 +75,7 @@ async fn main() {
         .parse()
         .expect("SUNREY_OPERATOR_ADDR");
     let hostname = std::env::var("HOSTNAME").ok();
-    let seeds = std::env::var("SUNREY_SEEDS")
-        .ok()
-        .map(|raw| {
-            raw.split(',')
-                .filter_map(|item| {
-                    let (host, port) = item.trim().rsplit_once(':')?;
-                    if hostname
-                        .as_deref()
-                        .is_some_and(|own| host.split('.').next() == Some(own))
-                    {
-                        return None;
-                    }
-                    Some(PeerAddress {
-                        host: host.to_string(),
-                        port: port.parse().ok()?,
-                    })
-                })
-                .collect()
-        })
-        .unwrap_or_default();
+    let seeds = resolve_seeds(std::env::var("SUNREY_SEEDS").ok(), hostname.as_deref()).await;
 
     let mut config = NodeConfig::development(&name, data_dir, listen, operator);
     config.seeds = seeds;
@@ -133,4 +114,43 @@ fn validator_name() -> String {
         }
     }
     "A".into()
+}
+
+async fn resolve_seeds(raw: Option<String>, own_hostname: Option<&str>) -> Vec<PeerAddress> {
+    let Some(raw) = raw else {
+        return Vec::new();
+    };
+    let mut seeds = Vec::new();
+    for item in raw.split(',').map(str::trim).filter(|item| !item.is_empty()) {
+        let Some((host, port_raw)) = item.rsplit_once(':') else {
+            continue;
+        };
+        if own_hostname.is_some_and(|own| host.split('.').next() == Some(own)) {
+            continue;
+        }
+        let Ok(port) = port_raw.parse::<u16>() else {
+            continue;
+        };
+        if let Ok(ip) = host.parse::<std::net::IpAddr>() {
+            seeds.push(PeerAddress {
+                host: ip.to_string(),
+                port,
+            });
+            continue;
+        }
+        match tokio::net::lookup_host((host, port)).await {
+            Ok(addresses) => {
+                if let Some(address) = addresses.into_iter().next() {
+                    seeds.push(PeerAddress {
+                        host: address.ip().to_string(),
+                        port: address.port(),
+                    });
+                }
+            }
+            Err(error) => {
+                tracing::warn!(seed = item, %error, "seed DNS is not ready yet; later peer discovery may retry other seeds");
+            }
+        }
+    }
+    seeds
 }
