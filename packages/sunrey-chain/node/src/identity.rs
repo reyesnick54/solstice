@@ -126,7 +126,7 @@ impl PeerAddress {
     pub fn from_socket(addr: SocketAddr) -> Self {
         Self {
             host: addr.ip().to_string(),
-            port: addr.port,
+            port: addr.port(),
         }
     }
 }
