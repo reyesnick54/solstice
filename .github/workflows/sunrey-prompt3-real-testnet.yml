@@ -32,6 +32,10 @@ jobs:
           node scripts/check-yaml-integrity.mjs
           node scripts/check-production-safety.mjs
           node scripts/sunrey-testnet-validate-manifests.mjs
+      - name: Install pinned Rust components
+        run: |
+          rustup toolchain install 1.83.0 --profile minimal
+          rustup component add --toolchain 1.83.0 rustfmt clippy
       - name: Rust validator checks
         run: |
           cd packages/sunrey-chain/node
