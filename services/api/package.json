@@ -13,7 +13,8 @@
   ],
   "scripts": {
     "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test src/*.test.ts",
-    "start": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/main.ts"
+    "start": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/main.ts",
+    "start:preview": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/preview-main.ts"
   },
   "engines": {
     "node": ">=22"

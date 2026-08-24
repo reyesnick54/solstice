@@ -1,0 +1,61 @@
+import {
+  createNativeEconomySurface,
+  createSandboxWorld,
+  startConsumerBff,
+  type ConsumerBffRuntime,
+} from './consumer/index.ts';
+import type { RunningConsumerBff } from './consumer/http.ts';
+
+export type SunReyPreviewOptions = {
+  readonly host?: string;
+  readonly port?: number;
+  readonly allowedOrigins?: readonly string[];
+  readonly allowLocalOrigins?: boolean;
+  readonly allowSandboxPersonas?: boolean;
+  readonly providerDown?: boolean;
+};
+
+/**
+ * Compose the existing canonical Consumer BFF surfaces into one deployable
+ * simulation runtime for Lovable/mobile/web integration.
+ *
+ * This is preview glue only. It does not create a second ledger, Kernel,
+ * Exchange, Agent runtime, or compliance plane, and it never enables live
+ * financial connectivity.
+ */
+export function createSunReyPreviewRuntime(
+  options: Pick<SunReyPreviewOptions, 'providerDown'> = {},
+): ConsumerBffRuntime {
+  const world = createSandboxWorld({ providerDown: options.providerDown === true });
+  return Object.freeze({
+    bff: world.bff,
+    sessions: world.sessions,
+    identity: world.runtime.identity.service,
+    payments: world.payments,
+    agent: world.agent,
+    agentRuntime: world.agentRuntime,
+    grow: world.grow,
+    conversation: world.conversation,
+    wallets: world.wallets,
+    hin: world.hin,
+    hinContributions: world.hinContributions,
+    nativeEconomy: createNativeEconomySurface(),
+    productiveEconomy: world.productiveEconomy,
+    exchange: world.exchange,
+    dataRights: world.dataRights,
+    vault: world.vault,
+  });
+}
+
+export async function startSunReyPreview(
+  options: SunReyPreviewOptions = {},
+): Promise<RunningConsumerBff> {
+  return startConsumerBff({
+    runtime: createSunReyPreviewRuntime({ providerDown: options.providerDown === true }),
+    ...(options.host ? { host: options.host } : {}),
+    ...(options.port !== undefined ? { port: options.port } : {}),
+    allowedOrigins: options.allowedOrigins ?? [],
+    allowLocalOrigins: options.allowLocalOrigins !== false,
+    allowSandboxPersonas: options.allowSandboxPersonas === true,
+  });
+}

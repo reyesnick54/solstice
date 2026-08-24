@@ -16,11 +16,13 @@ USER 65532
 ENV SUNREY_SERVICE=${SERVICE}
 ENV ENVIRONMENT=simulation
 ENV PRODUCTION_AUTHORIZED=false
+ENV SUNREY_API_HOST=0.0.0.0
+ENV SUNREY_API_PORT=8443
 LABEL org.opencontainers.image.title="sunrey-platform" \
       sunrey.service="${SERVICE}" \
       sunrey.source.commit="${SOURCE_COMMIT}" \
       sunrey.environment="simulation"
 EXPOSE 8443
-HEALTHCHECK --interval=30s --timeout=5s CMD ["node", "--version"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD ["node", "-e", "fetch('http://127.0.0.1:8443/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
 ENTRYPOINT ["node", "--experimental-strip-types", "--disable-warning=ExperimentalWarning"]
-CMD ["services/api/src/main.ts"]
+CMD ["services/api/src/preview-main.ts"]
