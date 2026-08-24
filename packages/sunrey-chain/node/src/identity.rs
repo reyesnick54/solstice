@@ -113,16 +113,20 @@ impl PeerAddress {
         let target = format!("{}:{}", self.host, self.port);
         let mut resolved = tokio::net::lookup_host(target.as_str())
             .await
-            .map_err(|e| NodeError::Peer(format!("peer DNS resolution failed for {target}: {e}")))?;
-        resolved
-            .next()
-            .ok_or_else(|| NodeError::Peer(format!("peer DNS resolution returned no address for {target}")))
+            .map_err(|e| {
+                NodeError::Peer(format!("peer DNS resolution failed for {target}: {e}"))
+            })?;
+        resolved.next().ok_or_else(|| {
+            NodeError::Peer(format!(
+                "peer DNS resolution returned no address for {target}"
+            ))
+        })
     }
 
     pub fn from_socket(addr: SocketAddr) -> Self {
         Self {
             host: addr.ip().to_string(),
-            port: addr.port(),
+            port: addr.port,
         }
     }
 }
