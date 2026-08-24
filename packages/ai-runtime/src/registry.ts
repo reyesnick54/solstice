@@ -9,8 +9,11 @@ export const CANONICAL_LOCAL_TEST_MODEL_ID = asModelId('mdl_sunrey_local_test');
 export const CANONICAL_LOCAL_TEST_MODEL_VERSION = asModelVersion('local-test-v1');
 export const CANONICAL_S3M_MODEL_ID = asModelId('mdl_sunrey_s3m');
 export const CANONICAL_S3M_MODEL_VERSION = asModelVersion('s3m-sim-v1');
-export const CANONICAL_GROK_RESERVED_MODEL_ID = asModelId('mdl_sunrey_grok_reserved');
-export const CANONICAL_GROK_RESERVED_MODEL_VERSION = asModelVersion('grok-reserved-v1');
+export const CANONICAL_GROK_MODEL_ID = asModelId('mdl_sunrey_grok');
+export const CANONICAL_GROK_MODEL_VERSION = asModelVersion('grok-4.6-sandbox-v1');
+/** Backward-compatible aliases retained for callers created before Prompt 4. */
+export const CANONICAL_GROK_RESERVED_MODEL_ID = CANONICAL_GROK_MODEL_ID;
+export const CANONICAL_GROK_RESERVED_MODEL_VERSION = CANONICAL_GROK_MODEL_VERSION;
 
 export function resolveModelRef(
   registry: ModelRegistry,
@@ -115,7 +118,7 @@ function seedAiModel(
     testsExecuted: Object.freeze(['structured-output', 'tool-intent-boundary', 'no-execution']),
     testDatasetReference: 'fixture:ai-runtime-local',
     expectedBehavior: 'Return structured tool intents without executing financial actions',
-    observedBehavior: 'Deterministic LocalTest fixtures stay on the inference plane',
+    observedBehavior: 'Deterministic provider fixtures stay on the inference plane',
     limitations: Object.freeze(['Simulation fixtures only']),
     status: 'PASSED_SIMULATION',
     reviewer: 'operator_1',
@@ -185,11 +188,33 @@ export function seedCanonicalAiModels(
     return s3m;
   }
   const grok = seedAiModel(registry, actor, now, {
-    modelId: CANONICAL_GROK_RESERVED_MODEL_ID,
-    version: CANONICAL_GROK_RESERVED_MODEL_VERSION,
-    description: 'Reserved xAI/Grok binding. Networking is implemented in Chunk 103, not here.',
+    modelId: CANONICAL_GROK_MODEL_ID,
+    version: CANONICAL_GROK_MODEL_VERSION,
+    description: 'xAI Grok Responses API sandbox binding. External inference only; no execution authority.',
     owner: 'solstice-ai-runtime',
-    validationId: 'mvn_grok_reserved_v1',
+    validationId: 'mvn_grok_ai_v1',
+    provider: 'XAI_GROK',
+    inputSchema: 'CanonicalProviderRequest',
+    outputSchema: 'AiInferenceResponse',
+    applicableDomain: 'SUNREY_AI_GROK_SANDBOX',
+    dataRequirements: Object.freeze(['public-or-user-approved-context', 'secret-reference-credential']),
+    supportedTasks: Object.freeze([
+      'GENERAL_ASSISTANT',
+      'FINANCIAL_EXPLANATION',
+      'GROWTH_PLANNING',
+      'PORTFOLIO_REASONING',
+      'ECONOMIC_ANALYSIS',
+      'SUNREY_INFORMATION_REASONING',
+      'MOONREY_PRODUCTIVE_ANALYSIS',
+      'REGULATORY_EXPLANATION',
+      'USER_SUPPORT',
+    ]),
+    limitations: Object.freeze([
+      'External provider receives only policy-authorized context',
+      'Inference plane only; cannot execute payments, trades, mint, burn, or sign',
+      'Cannot issue Execution Authority or override Kernel, risk, jurisdiction, or mandates',
+      'Simulation/sandbox approval only; live connectivity is independently gated',
+    ]),
   });
   if (!grok.ok) {
     return grok;

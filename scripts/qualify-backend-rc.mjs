@@ -101,8 +101,20 @@ function gitObjectExists(sha) {
   if (!/^[0-9a-f]{40}$/.test(sha)) {
     return false;
   }
-  const result = spawnSync('git', ['cat-file', '-e', sha], { cwd: ROOT, encoding: 'utf8' });
-  return result.status === 0;
+  const local = spawnSync('git', ['cat-file', '-e', sha], { cwd: ROOT, encoding: 'utf8' });
+  if (local.status === 0) {
+    return true;
+  }
+  const fetched = spawnSync(
+    'git',
+    ['fetch', '--no-tags', '--depth=1', 'origin', sha],
+    { cwd: ROOT, encoding: 'utf8' },
+  );
+  if (fetched.status !== 0) {
+    return false;
+  }
+  const verified = spawnSync('git', ['cat-file', '-e', sha], { cwd: ROOT, encoding: 'utf8' });
+  return verified.status === 0;
 }
 
 export function evaluateBackendReleaseCandidate(root = ROOT) {
