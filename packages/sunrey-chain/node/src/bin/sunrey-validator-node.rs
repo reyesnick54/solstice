@@ -121,7 +121,11 @@ async fn resolve_seeds(raw: Option<String>, own_hostname: Option<&str>) -> Vec<P
         return Vec::new();
     };
     let mut seeds = Vec::new();
-    for item in raw.split(',').map(str::trim).filter(|item| !item.is_empty()) {
+    for item in raw
+        .split(',')
+        .map(str::trim)
+        .filter(|item| !item.is_empty())
+    {
         let Some((host, port_raw)) = item.rsplit_once(':') else {
             continue;
         };
