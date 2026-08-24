@@ -1,0 +1,13 @@
+{
+  "chunk": "CHUNK-103",
+  "title": "xAI Grok external inference provider for SunRey",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "model-registry",
+    "sunrey-ai-runtime",
+    "sunrey-user-agent-mandates"
+  ],
+  "notes": "Extends the canonical packages/ai-runtime inference plane with a policy-gated xAI Grok Responses API adapter. External networking remains injected and disabled in CI/simulation. Credentials are secret references only. Grok cannot issue Execution Authority, execute financial actions, sign, mint, hold private keys, override the Kernel, or silently replace S3M primary routing."
+}
