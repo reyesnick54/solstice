@@ -1,0 +1,78 @@
+name: SunRey Prompt 3 real Testnet-1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "packages/sunrey-chain/node/**"
+      - "deploy/sunrey-testnet/**"
+      - "scripts/sunrey-testnet-kind.sh"
+      - "scripts/sunrey-testnet-live-verify.sh"
+      - ".github/workflows/sunrey-prompt3-real-testnet.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  real-testnet:
+    name: REAL MULTI-NODE TESTNET-1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+      - name: Install workspace
+        run: npm ci --ignore-scripts
+      - name: Fail-closed repository and production posture
+        run: |
+          node scripts/check-json-integrity.mjs
+          node scripts/check-merge-integrity.mjs
+          node scripts/check-yaml-integrity.mjs
+          node scripts/check-production-safety.mjs
+          node scripts/sunrey-testnet-validate-manifests.mjs
+      - name: Rust validator checks
+        run: |
+          cd packages/sunrey-chain/node
+          cargo +1.83.0 fmt --check
+          cargo +1.83.0 clippy --all-targets --locked -- -D warnings
+          cargo +1.83.0 test --locked consensus::tests::seven_testnet_validators_finalize_and_survive_two_faults
+          cargo +1.83.0 test --locked consensus::tests::seven_validator_partition_without_quorum_has_no_conflicting_finality
+      - name: Install pinned kind
+        shell: bash
+        run: |
+          set -euo pipefail
+          go install sigs.k8s.io/kind@v0.25.0
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+          "$(go env GOPATH)/bin/kind" version
+      - name: Real seven-validator Testnet-1 qualification
+        env:
+          SUNREY_REQUIRE_KIND: "1"
+          SUNREY_TESTNET_VERIFY_TIMEOUT_SECONDS: "240"
+        run: |
+          export PATH="$(go env GOPATH)/bin:$PATH"
+          bash scripts/sunrey-testnet-kind.sh
+      - name: Production remains disabled
+        run: |
+          test "${PRODUCTION_READY:-false}" = "false"
+          test "${PRODUCTION_ACTIVE:-false}" = "false"
+          test "${MAINNET_ACTIVE:-false}" = "false"
+          echo "production_authorized=false"
+          echo "mainnet_active=false"
+      - name: Diagnostic state on failure
+        if: failure()
+        run: |
+          export PATH="$(go env GOPATH)/bin:$PATH"
+          kubectl get pods -A -o wide || true
+          kubectl -n sunrey-testnet-1 describe statefulset sunrey-validator || true
+          kubectl -n sunrey-testnet-1 get events --sort-by=.lastTimestamp || true
+          for pod in $(kubectl -n sunrey-testnet-1 get pods -l app=sunrey-validator -o name 2>/dev/null); do
+            echo "===== ${pod} ====="
+            kubectl -n sunrey-testnet-1 logs "$pod" --tail=120 || true
+          done
+      - name: Delete ephemeral cluster
+        if: always()
+        run: |
+          export PATH="$(go env GOPATH)/bin:$PATH"
+          kind delete cluster --name sunrey-testnet-1 || true
