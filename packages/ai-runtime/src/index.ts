@@ -19,8 +19,19 @@ export type {
   S3mSafetyEvent,
   S3mTransport,
 } from './providers/s3m/index.ts';
-export { XaiGrokAiProvider } from './providers/xai-grok.ts';
+export { XaiGrokAiProvider, XAI_GROK_PROVIDER_ID } from './providers/xai-grok.ts';
+export type { XaiGrokAiProviderOptions } from './providers/xai-grok.ts';
 export {
+  resolveXaiGrokProviderConfig,
+  XAI_GROK_DEFAULT_BASE_URL,
+  XAI_GROK_DEFAULT_MODEL,
+  XAI_GROK_DEFAULT_RESPONSES_PATH,
+  XAI_GROK_DEFAULT_TIMEOUT_MS,
+} from './providers/xai-grok/configuration.ts';
+export type { XaiGrokConfigInput, XaiGrokProviderConfig } from './providers/xai-grok/configuration.ts';
+export {
+  CANONICAL_GROK_MODEL_ID,
+  CANONICAL_GROK_MODEL_VERSION,
   CANONICAL_GROK_RESERVED_MODEL_ID,
   CANONICAL_GROK_RESERVED_MODEL_VERSION,
   CANONICAL_LOCAL_TEST_MODEL_ID,
