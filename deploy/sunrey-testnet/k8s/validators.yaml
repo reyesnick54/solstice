@@ -6,6 +6,7 @@ metadata:
 spec:
   serviceName: sunrey-validator
   replicas: 7
+  podManagementPolicy: Parallel
   selector:
     matchLabels:
       app: sunrey-validator
@@ -15,40 +16,81 @@ spec:
         app: sunrey-validator
         sunrey.role: validator
     spec:
+      terminationGracePeriodSeconds: 15
       securityContext:
         runAsNonRoot: true
         runAsUser: 65532
+        fsGroup: 65532
       containers:
         - name: node
           image: sunrey-node:testnet-1
+          imagePullPolicy: IfNotPresent
           env:
             - name: SUNREY_NETWORK_ID
               valueFrom:
                 configMapKeyRef:
                   name: sunrey-testnet-1-public
                   key: networkId
-            - name: SUNREY_KEY_HANDLE
+            - name: SUNREY_CHAIN_ID
               valueFrom:
-                secretKeyRef:
-                  name: sunrey-testnet-1-key-handles
-                  key: validatorAHandle
+                configMapKeyRef:
+                  name: sunrey-testnet-1-public
+                  key: chainId
+            - name: SUNREY_P2P_ADDR
+              value: 0.0.0.0:26656
+            - name: SUNREY_OPERATOR_ADDR
+              value: 0.0.0.0:26657
+            - name: SUNREY_DATA_DIR
+              value: /var/lib/sunrey
+            - name: SUNREY_SEEDS
+              value: sunrey-validator-0.sunrey-validator.sunrey-testnet-1.svc.cluster.local:26656,sunrey-validator-1.sunrey-validator.sunrey-testnet-1.svc.cluster.local:26656,sunrey-validator-2.sunrey-validator.sunrey-testnet-1.svc.cluster.local:26656,sunrey-validator-3.sunrey-validator.sunrey-testnet-1.svc.cluster.local:26656,sunrey-validator-4.sunrey-validator.sunrey-testnet-1.svc.cluster.local:26656,sunrey-validator-5.sunrey-validator.sunrey-testnet-1.svc.cluster.local:26656,sunrey-validator-6.sunrey-validator.sunrey-testnet-1.svc.cluster.local:26656
+            - name: RUST_LOG
+              value: info
           ports:
-            - name: consensus
+            - name: p2p
               containerPort: 26656
-            - name: sentry
+            - name: operator
               containerPort: 26657
-          livenessProbe:
-            tcpSocket:
-              port: 26656
-            initialDelaySeconds: 10
           readinessProbe:
-            tcpSocket:
-              port: 26656
-            initialDelaySeconds: 5
+            httpGet:
+              path: /ready
+              port: operator
+              scheme: HTTP
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: operator
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 6
           resources:
             requests:
               cpu: 100m
               memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/sunrey
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
 ---
 apiVersion: v1
 kind: Service
@@ -57,8 +99,13 @@ metadata:
   namespace: sunrey-testnet-1
 spec:
   clusterIP: None
+  publishNotReadyAddresses: true
   selector:
     app: sunrey-validator
   ports:
-    - name: consensus
+    - name: p2p
       port: 26656
+      targetPort: p2p
+    - name: operator
+      port: 26657
+      targetPort: operator
