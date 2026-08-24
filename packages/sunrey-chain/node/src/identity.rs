@@ -95,10 +95,32 @@ pub struct PeerAddress {
 }
 
 impl PeerAddress {
+    /// Parse a literal IP address. Retained for deterministic unit tests and
+    /// static/local peer configuration.
     pub fn to_socket_addr(&self) -> NodeResult<SocketAddr> {
         format!("{}:{}", self.host, self.port)
             .parse()
             .map_err(|e| NodeError::Peer(format!("invalid peer address: {e}")))
+    }
+
+    /// Resolve either a literal IP or a DNS hostname. Kubernetes StatefulSet
+    /// peer discovery uses stable pod DNS names, so the real Testnet-1
+    /// deployment cannot assume every seed is an IP literal.
+    pub async fn resolve_socket_addr(&self) -> NodeResult<SocketAddr> {
+        if let Ok(addr) = self.to_socket_addr() {
+            return Ok(addr);
+        }
+        let target = format!("{}:{}", self.host, self.port);
+        let mut resolved = tokio::net::lookup_host(target.as_str())
+            .await
+            .map_err(|e| {
+                NodeError::Peer(format!("peer DNS resolution failed for {target}: {e}"))
+            })?;
+        resolved.next().ok_or_else(|| {
+            NodeError::Peer(format!(
+                "peer DNS resolution returned no address for {target}"
+            ))
+        })
     }
 
     pub fn from_socket(addr: SocketAddr) -> Self {
