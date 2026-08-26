@@ -12,6 +12,9 @@ export type SunReyPreviewOptions = {
   readonly allowedOrigins?: readonly string[];
   readonly allowLocalOrigins?: boolean;
   readonly allowSandboxPersonas?: boolean;
+  readonly allowPreviewAuth?: boolean;
+  readonly previewAuthEmail?: string;
+  readonly previewAuthPassword?: string;
   readonly providerDown?: boolean;
 };
 
@@ -57,5 +60,10 @@ export async function startSunReyPreview(
     allowedOrigins: options.allowedOrigins ?? [],
     allowLocalOrigins: options.allowLocalOrigins !== false,
     allowSandboxPersonas: options.allowSandboxPersonas === true,
+    allowPreviewAuth: options.allowPreviewAuth === true,
+    previewAuth: {
+      ...(options.previewAuthEmail ? { email: options.previewAuthEmail } : {}),
+      ...(options.previewAuthPassword ? { password: options.previewAuthPassword } : {}),
+    },
   });
 }
