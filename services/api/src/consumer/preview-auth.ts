@@ -84,7 +84,7 @@ export function issuePreviewSession(input: {
     !safeEqual(password, configuredPassword)
   ) {
     return bffError({
-      errorCode: 'INVALID_CREDENTIALS',
+      errorCode: 'AUTH_REQUIRED',
       category: 'AUTHENTICATION',
       message: 'email or password is incorrect',
       retryable: false,
@@ -116,7 +116,7 @@ export function issuePreviewSession(input: {
   const identity = input.identity.getIdentity(sourceSession.subjectId);
   if (!identity || identity.status !== 'ACTIVE') {
     return bffError({
-      errorCode: 'IDENTITY_BLOCKED',
+      errorCode: 'FORBIDDEN',
       category: 'AUTHORIZATION',
       message: 'identity is not eligible to authenticate',
       retryable: false,
