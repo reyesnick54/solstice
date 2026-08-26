@@ -44,7 +44,7 @@ function safeEqual(left: string, right: string): boolean {
 export function issuePreviewSession(input: {
   readonly body: unknown;
   readonly sessions: SessionDirectory;
-  readonly identity?: IdentityService;
+  readonly identity: IdentityService | undefined;
   readonly config: PreviewAuthConfig;
   readonly requestId: string;
 }): PreviewSessionResource | BffErrorEnvelope {
