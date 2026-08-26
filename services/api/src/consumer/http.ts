@@ -6,8 +6,12 @@
 
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 
+import { asSessionId } from '../../../../packages/identity/src/ids.ts';
 import { SECURITY_HEADERS } from '../security.ts';
+import { isBffError, statusForError } from './errors.ts';
 import { handleConsumerBff, type ConsumerBffRuntime } from './handler.ts';
+import { issuePreviewSession, type PreviewAuthConfig } from './preview-auth.ts';
+import { resolvePrincipal } from './session.ts';
 
 const BODY_LIMIT = 64 * 1024;
 const LOCAL_ORIGIN = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
@@ -16,6 +20,8 @@ export type ConsumerBffHttpOptions = {
   readonly allowedOrigins?: readonly string[];
   readonly allowLocalOrigins?: boolean;
   readonly allowSandboxPersonas?: boolean;
+  readonly allowPreviewAuth?: boolean;
+  readonly previewAuth?: PreviewAuthConfig;
 };
 
 export type RunningConsumerBff = {
@@ -30,12 +36,16 @@ export async function startConsumerBff(input: {
   readonly allowedOrigins?: readonly string[];
   readonly allowLocalOrigins?: boolean;
   readonly allowSandboxPersonas?: boolean;
+  readonly allowPreviewAuth?: boolean;
+  readonly previewAuth?: PreviewAuthConfig;
 }): Promise<RunningConsumerBff> {
   const host = input.host ?? '127.0.0.1';
   const options: ConsumerBffHttpOptions = {
     allowedOrigins: input.allowedOrigins ?? [],
     allowLocalOrigins: input.allowLocalOrigins !== false,
     allowSandboxPersonas: input.allowSandboxPersonas === true,
+    allowPreviewAuth: input.allowPreviewAuth === true,
+    previewAuth: input.previewAuth ?? {},
   };
   const server: Server = createServer(async (req, res) => {
     await serve(input.runtime, req, res, options);
@@ -135,20 +145,15 @@ export async function serve(
     method === 'GET' &&
     options.allowSandboxPersonas !== true
   ) {
-    write(
-      res,
-      404,
-      {
-        errorCode: 'NOT_FOUND',
-        category: 'NOT_FOUND',
-        message: 'route not found',
-        retryable: false,
-        detailsSafeForClient: {},
-        requestId: 'req_sandbox_disabled',
-        apiVersion: 'v1',
-      },
-      cors.headers,
-    );
+    notFound(res, cors.headers, 'req_sandbox_disabled');
+    return;
+  }
+
+  if (
+    url.pathname.startsWith('/api/v1/auth/preview') &&
+    options.allowPreviewAuth !== true
+  ) {
+    notFound(res, cors.headers, 'req_preview_auth_disabled');
     return;
   }
 
@@ -177,6 +182,85 @@ export async function serve(
   }
 
   const authorization = typeof req.headers.authorization === 'string' ? req.headers.authorization : undefined;
+
+  if (url.pathname === '/api/v1/auth/preview/session' && method === 'POST') {
+    const result = issuePreviewSession({
+      body,
+      sessions: runtime.sessions,
+      identity: runtime.identity,
+      config: options.previewAuth ?? {},
+      requestId: 'req_preview_login',
+    });
+    if (isBffError(result)) {
+      write(res, statusForError(result), result, cors.headers);
+      return;
+    }
+    write(res, 200, result, { ...cors.headers, 'cache-control': 'no-store, no-cache, private' });
+    return;
+  }
+
+  if (url.pathname === '/api/v1/auth/session' && method === 'GET') {
+    const principal = resolvePrincipal({
+      authorization,
+      requestId: 'req_auth_session',
+      directory: runtime.sessions,
+      ...(runtime.identity ? { identity: runtime.identity } : {}),
+    });
+    if (isBffError(principal)) {
+      write(res, statusForError(principal), principal, cors.headers);
+      return;
+    }
+    write(
+      res,
+      200,
+      {
+        schema: 'sunrey.auth-session.v1',
+        authenticated: true,
+        environment: 'simulation',
+        production: false,
+        sessionId: principal.sessionId,
+        customerId: principal.customerId,
+        identityId: principal.identityId,
+        sandboxPersona: principal.sandboxPersona,
+        verification: principal.verification,
+        risk: principal.risk,
+      },
+      { ...cors.headers, 'cache-control': 'no-store, no-cache, private' },
+    );
+    return;
+  }
+
+  if (url.pathname === '/api/v1/auth/logout' && method === 'POST') {
+    const principal = resolvePrincipal({
+      authorization,
+      requestId: 'req_auth_logout',
+      directory: runtime.sessions,
+      ...(runtime.identity ? { identity: runtime.identity } : {}),
+    });
+    if (isBffError(principal)) {
+      write(res, statusForError(principal), principal, cors.headers);
+      return;
+    }
+    if (runtime.identity && runtime.identity.getSession(asSessionId(principal.sessionId))) {
+      runtime.identity.logout(asSessionId(principal.sessionId));
+    } else {
+      const token = bearerToken(authorization);
+      if (token) runtime.sessions.delete(token);
+    }
+    write(
+      res,
+      200,
+      {
+        schema: 'sunrey.auth-logout.v1',
+        authenticated: false,
+        environment: 'simulation',
+        production: false,
+      },
+      { ...cors.headers, 'cache-control': 'no-store, no-cache, private' },
+    );
+    return;
+  }
+
   const query: Record<string, string> = {};
   for (const [key, value] of url.searchParams.entries()) {
     query[key] = value;
@@ -232,6 +316,34 @@ function corsHeaders(
       vary: 'Origin',
     }),
   };
+}
+
+function bearerToken(authorization: string | undefined): string | null {
+  if (!authorization) return null;
+  return authorization.startsWith('Bearer ')
+    ? authorization.slice('Bearer '.length).trim() || null
+    : authorization.trim() || null;
+}
+
+function notFound(
+  res: ServerResponse,
+  headers: Readonly<Record<string, string>>,
+  requestId: string,
+): void {
+  write(
+    res,
+    404,
+    {
+      errorCode: 'NOT_FOUND',
+      category: 'NOT_FOUND',
+      message: 'route not found',
+      retryable: false,
+      detailsSafeForClient: {},
+      requestId,
+      apiVersion: 'v1',
+    },
+    headers,
+  );
 }
 
 function write(

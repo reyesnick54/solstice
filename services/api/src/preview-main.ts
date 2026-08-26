@@ -23,14 +23,20 @@ const host = process.env.SUNREY_API_HOST ?? '0.0.0.0';
 const port = parsePort(process.env.SUNREY_API_PORT ?? process.env.PORT, 8443);
 const allowedOrigins = parseOrigins(process.env.SUNREY_API_ALLOWED_ORIGINS);
 const allowSandboxPersonas = process.env.SUNREY_PREVIEW_SANDBOX_PERSONAS === 'true';
+const allowPreviewAuth = process.env.SUNREY_PREVIEW_AUTH_ENABLED === 'true';
 const allowLocalOrigins = process.env.SUNREY_PREVIEW_ALLOW_LOCAL_ORIGINS !== 'false';
+const previewAuthEmail = process.env.SUNREY_PREVIEW_AUTH_EMAIL;
+const previewAuthPassword = process.env.SUNREY_PREVIEW_AUTH_PASSWORD;
 
 const api = await startSunReyPreview({
   host,
   port,
   allowedOrigins,
   allowSandboxPersonas,
+  allowPreviewAuth,
   allowLocalOrigins,
+  ...(previewAuthEmail ? { previewAuthEmail } : {}),
+  ...(previewAuthPassword ? { previewAuthPassword } : {}),
 });
 
 console.log(
@@ -44,6 +50,7 @@ console.log(
     PRODUCTION_ACTIVE: false,
     LIVE_CONNECTIVITY_ENABLED: false,
     sandboxPersonasExposed: allowSandboxPersonas,
+    previewAuthEnabled: allowPreviewAuth,
   }),
 );
 
