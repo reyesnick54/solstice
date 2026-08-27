@@ -109,12 +109,11 @@ export class PreviewGrowSurface {
     });
     if (!created.ok) return mapGrowFailure(created.error, requestId);
     const proposal = this.growth.createProposal(actor, { planId: created.value.planId });
+    const experience = this.growth.lovableExperience(actor, created.value.planId);
     return {
       ...projectPlan(created.value),
       primaryProposal: proposal.ok ? proposal.value : null,
-      experience: this.growth.lovableExperience(actor, created.value.planId).ok
-        ? this.growth.lovableExperience(actor, created.value.planId).value
-        : null,
+      experience: experience.ok ? experience.value : null,
     };
   }
 
@@ -163,9 +162,14 @@ export class PreviewGrowSurface {
 
   modifyProposal(principal: BffPrincipal, proposalId: string, body: Record<string, unknown>, requestId: string): unknown {
     const actor = actorFromPrincipal(principal);
-    const modified = this.growth.modifyProposal(actor, proposalId, {
-      ...(typeof body.amountMinorUnits === 'string' ? { amountMinorUnits: body.amountMinorUnits } : {}),
-    }, body);
+    const modified = this.growth.modifyProposal(
+      actor,
+      proposalId,
+      {
+        ...(typeof body.amountMinorUnits === 'string' ? { amountMinorUnits: body.amountMinorUnits } : {}),
+      },
+      body,
+    );
     return modified.ok ? modified.value : mapGrowFailure(modified.error, requestId);
   }
 
@@ -233,7 +237,11 @@ function usdCashMinorUnits(bff: ConsumerBff, principal: BffPrincipal): bigint {
   }, 0n);
 }
 
-function latestPlanId(growth: ProductGrowthService, actor: ReturnType<typeof actorFromPrincipal>, customerId: string): string | null {
+function latestPlanId(
+  growth: ProductGrowthService,
+  actor: ReturnType<typeof actorFromPrincipal>,
+  customerId: string,
+): string | null {
   const listed = growth.listPlans(actor, customerId);
   return listed.ok ? listed.value.at(-1)?.planId ?? null : null;
 }
@@ -242,7 +250,12 @@ function projectPlan(plan: {
   readonly planId: string;
   readonly version: number;
   readonly status: string;
-  readonly components: readonly { readonly componentId: string; readonly kind: string; readonly purpose: string; readonly amount: unknown }[];
+  readonly components: readonly {
+    readonly componentId: string;
+    readonly kind: string;
+    readonly purpose: string;
+    readonly amount: unknown;
+  }[];
   readonly assumptions: unknown;
   readonly guaranteedOutcome: false;
   readonly productionActive: false;
