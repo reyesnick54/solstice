@@ -13,10 +13,13 @@ import { actorFromPrincipal, mapGrowFailure } from './grow.ts';
  * never issues Execution Authority and never enables production money movement.
  */
 export class PreviewGrowSurface {
-  constructor(
-    private readonly growth: ProductGrowthService,
-    private readonly bff: ConsumerBff,
-  ) {}
+  private readonly growth: ProductGrowthService;
+  private readonly bff: ConsumerBff;
+
+  constructor(growth: ProductGrowthService, bff: ConsumerBff) {
+    this.growth = growth;
+    this.bff = bff;
+  }
 
   home(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
     const plan = this.plan(principal, requestId);
