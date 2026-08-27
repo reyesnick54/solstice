@@ -74,4 +74,50 @@ describe('SunRey deployable preview', () => {
       await visible.close();
     }
   });
+
+  it('adapts ProductGrowthService to the Lovable Grow lifecycle for the multi-currency preview persona', async () => {
+    const server = await startSunReyPreview({ host: '127.0.0.1', port: 0 });
+    const authorization = `Bearer ${sandboxToken('multi_currency')}`;
+    try {
+      const before = await fetch(`${server.url}/api/v1/grow/plan`, { headers: { authorization } });
+      assert.equal(before.status, 200);
+      const beforeBody = (await before.json()) as { exists: boolean; state: string };
+      assert.equal(beforeBody.exists, false);
+      assert.equal(beforeBody.state, 'NOT_REQUESTED');
+
+      const requested = await fetch(`${server.url}/api/v1/grow/plan/request`, {
+        method: 'POST',
+        headers: { authorization, 'content-type': 'application/json' },
+        body: '{}',
+      });
+      assert.equal(requested.status, 200);
+      const requestedBody = (await requested.json()) as {
+        exists: boolean;
+        planId: string;
+        productionMoneyMovement: boolean;
+        guaranteedOutcome: boolean;
+      };
+      assert.equal(requestedBody.exists, true);
+      assert.ok(requestedBody.planId.startsWith('gmp_'));
+      assert.equal(requestedBody.productionMoneyMovement, false);
+      assert.equal(requestedBody.guaranteedOutcome, false);
+
+      const after = await fetch(`${server.url}/api/v1/grow/plan`, { headers: { authorization } });
+      assert.equal(after.status, 200);
+      const afterBody = (await after.json()) as { exists: boolean; planId: string };
+      assert.equal(afterBody.exists, true);
+      assert.equal(afterBody.planId, requestedBody.planId);
+
+      const snapshot = await fetch(`${server.url}/api/v1/grow/snapshot`, { headers: { authorization } });
+      assert.equal(snapshot.status, 200);
+      const snapshotBody = (await snapshot.json()) as {
+        ledgerWins: boolean;
+        liquidAssetsByCurrency: { currency: string; minorUnits: string }[];
+      };
+      assert.equal(snapshotBody.ledgerWins, true);
+      assert.ok(snapshotBody.liquidAssetsByCurrency.some((row) => row.currency === 'USD' && row.minorUnits === '200000'));
+    } finally {
+      await server.close();
+    }
+  });
 });
