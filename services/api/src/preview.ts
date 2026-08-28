@@ -42,7 +42,7 @@ export function createSunReyPreviewRuntime(
     // PreviewGrowSurface is an HTTP compatibility adapter around the canonical
     // ProductGrowthService. The handler recognizes the lifecycle shape by its
     // home() method; no second growth engine or execution authority is created.
-    grow: previewGrow as unknown as ConsumerBffRuntime['grow'],
+    grow: previewGrow as unknown as NonNullable<ConsumerBffRuntime['grow']>,
     conversation: world.conversation,
     wallets: world.wallets,
     hin: world.hin,

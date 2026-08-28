@@ -49,7 +49,7 @@ describe('Prompt 4 xAI Grok provider binding', () => {
 
     const result = provider.infer(request());
     assert.equal(result.ok, true);
-    if (!result.ok) {
+    if (result.ok === false) {
       throw new Error(result.error.detail);
     }
     assert.equal(result.value.providerKind, 'XAI_GROK');

@@ -28,7 +28,7 @@ export function createSandboxAgentRuntime(
           incomeLabels: ['salary'],
         }),
     },
-    opportunities: options.opportunities,
+    ...(options.opportunities ? { opportunities: options.opportunities } : {}),
   });
 }
 

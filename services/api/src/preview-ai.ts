@@ -46,6 +46,9 @@ export function createPreviewAiGateway(runtime: SimulationRuntime): AiModelGatew
 }
 
 export class PreviewMarketResearchCache {
+  private readonly gateway: AiModelGateway | null;
+  private readonly now: () => string;
+  private readonly ttlSeconds: number;
   private entry: {
     readonly research: MarketOpportunityResearchResult;
     readonly generatedAt: string;
@@ -56,10 +59,14 @@ export class PreviewMarketResearchCache {
   private lastFailure: string | null = null;
 
   constructor(
-    private readonly gateway: AiModelGateway | null,
-    private readonly now: () => string,
-    private readonly ttlSeconds = PREVIEW_MARKET_RESEARCH_TTL_SECONDS,
-  ) {}
+    gateway: AiModelGateway | null,
+    now: () => string,
+    ttlSeconds = PREVIEW_MARKET_RESEARCH_TTL_SECONDS,
+  ) {
+    this.gateway = gateway;
+    this.now = now;
+    this.ttlSeconds = ttlSeconds;
+  }
 
   get(): MarketOpportunityResearchResult | null {
     if (!this.gateway) return null;
@@ -94,8 +101,8 @@ export class PreviewMarketResearchCache {
     this.entry = Object.freeze({
       research: result.value.research,
       generatedAt,
-      provider: result.value.gateway.providerKind,
-      model: result.value.gateway.modelRef.modelId,
+      provider: result.value.gateway.provenance?.provider ?? 'XAI_GROK',
+      model: result.value.gateway.model?.modelId ?? 'unknown',
       expiresAt,
     });
     this.lastFailure = null;

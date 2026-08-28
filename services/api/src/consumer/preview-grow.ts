@@ -66,8 +66,12 @@ export class PreviewGrowSurface {
     return unavailable(requestId, 'Goal editing is not enabled in the unified preview yet');
   }
 
-  opportunities(principal: BffPrincipal): Record<string, unknown> | BffErrorEnvelope {
-    return this.opportunityPort.list(principal);
+  opportunities(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    const listed = this.opportunityPort.list(principal);
+    if (listed && typeof listed === 'object' && !Array.isArray(listed)) {
+      return listed as Record<string, unknown>;
+    }
+    return unavailable(requestId, 'Growth opportunities are temporarily unavailable');
   }
 
   dismissOpportunity(_principal: BffPrincipal, opportunityId: string, _requestId: string): Record<string, unknown> {
