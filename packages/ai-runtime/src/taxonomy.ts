@@ -20,6 +20,7 @@ export const AI_TASK_CLASSES = [
   'ECONOMIC_ANALYSIS',
   'SUNREY_INFORMATION_REASONING',
   'MOONREY_PRODUCTIVE_ANALYSIS',
+  'MARKET_OPPORTUNITY_RESEARCH',
   'REGULATORY_EXPLANATION',
   'USER_SUPPORT',
 ] as const;
@@ -69,6 +70,7 @@ export const AI_APPROVED_PURPOSES = [
   'USER_SUPPORT',
   'REGULATORY_EXPLANATION',
   'GENERAL_ASSISTANT',
+  'MARKET_OPPORTUNITY_RESEARCH',
 ] as const;
 export type AiApprovedPurpose = (typeof AI_APPROVED_PURPOSES)[number];
 
@@ -114,7 +116,7 @@ export const FORBIDDEN_AI_TOOLS = [
 ] as const;
 export type ForbiddenAiToolName = (typeof FORBIDDEN_AI_TOOLS)[number];
 
-export const AI_STRUCTURED_KINDS = ['EXPLANATION', 'FINANCIAL_PROPOSAL'] as const;
+export const AI_STRUCTURED_KINDS = ['EXPLANATION', 'FINANCIAL_PROPOSAL', 'MARKET_OPPORTUNITY_RESEARCH'] as const;
 export type AiStructuredKind = (typeof AI_STRUCTURED_KINDS)[number];
 
 export const AI_FAILURE_CODES = [

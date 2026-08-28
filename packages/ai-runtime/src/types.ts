@@ -33,7 +33,8 @@ export type AiProviderHealth = {
   readonly reason: string | null;
   readonly checkedAt: UtcInstant;
   readonly networkEnabled: boolean;
-  readonly liveConnectivity?: false;
+  readonly liveConnectivity?: boolean;
+  readonly externalAiPreviewConnectivity?: boolean;
 };
 
 export type AiProviderCapabilities = {
@@ -127,7 +128,15 @@ export type AiStructuredFinancialProposal = {
   readonly guaranteedReturn: false;
 };
 
-export type AiStructuredOutput = AiStructuredExplanation | AiStructuredFinancialProposal;
+export type AiStructuredMarketOpportunityResearch = {
+  readonly kind: 'MARKET_OPPORTUNITY_RESEARCH';
+  readonly result: import('./market-research.ts').MarketOpportunityResearchResult;
+};
+
+export type AiStructuredOutput =
+  | AiStructuredExplanation
+  | AiStructuredFinancialProposal
+  | AiStructuredMarketOpportunityResearch;
 
 export type AiInferenceResponse = {
   readonly requestId: AiRequestId;
@@ -239,7 +248,7 @@ export type CanonicalProviderRequest = {
   readonly messages?: readonly AiChatMessage[];
   readonly systemPolicy?: string;
   readonly tools?: readonly string[];
-  readonly responseSchema?: 'EXPLANATION' | 'FINANCIAL_PROPOSAL' | null;
+  readonly responseSchema?: 'EXPLANATION' | 'FINANCIAL_PROPOSAL' | 'MARKET_OPPORTUNITY_RESEARCH' | null;
   readonly temperatureMilli?: number | null;
   readonly maxOutputTokens?: number | null;
   readonly correlationId?: string;

@@ -1,4 +1,5 @@
 import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { MarketOpportunityResearchResult } from '../../../../ai-runtime/src/market-research.ts';
 import type { PersonalEconomicSnapshot } from '../../../../personal-economic-graph/src/snapshot.ts';
 import type { OpportunityId } from '../../ids.ts';
 import type { CompiledEconomicMandate, SerializedMoney } from '../../mandate/types.ts';
@@ -178,6 +179,7 @@ export type OpportunityDiscoveryContext = {
   readonly policy: PolicyControlPort;
   readonly preferences: OpportunityPreferences;
   readonly previous: readonly Opportunity[];
+  readonly marketResearch?: MarketOpportunityResearchResult;
   readonly lastRecomputeAt?: UtcInstant;
 };
 
@@ -210,6 +212,7 @@ export type OpportunityDiscoveryInput = {
   readonly snapshot: PersonalEconomicSnapshot;
   readonly mandate?: CompiledEconomicMandate;
   readonly context: OpportunityDiscoveryContext;
+  readonly marketResearch?: MarketOpportunityResearchResult;
 };
 
 export type OpportunityProposalReceipt = {

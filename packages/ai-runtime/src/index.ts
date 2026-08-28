@@ -57,12 +57,13 @@ export { minimizeContext } from './envelope.ts';
 export { assertPrivacyBoundary, modelMayReceivePrivacy } from './privacy.ts';
 export {
   FixtureHttpsTransport,
+  NodeHttpsInferenceTransport,
   httpsFail,
   httpsOk,
   classifyHttpsStatus,
   isIdempotentSafeRetry,
 } from './transport.ts';
-export type { HttpsInferenceTransport, HttpsTransportRequest } from './transport.ts';
+export type { HttpsInferenceTransport, HttpsTransportRequest, NodeHttpsInferenceTransportOptions } from './transport.ts';
 export { encodeSse, streamEventsFromResponse, publicStreamEvent } from './streaming.ts';
 export type { AiStreamEvent, AiStreamEventType } from './streaming.ts';
 export { UsageAccountant, estimateCostMicros } from './usage.ts';
@@ -78,6 +79,14 @@ export {
 } from './posture.ts';
 export { redactSecrets } from './secrets.ts';
 export { parseStructuredOutput, parseToolIntents } from './structured.ts';
+export {
+  parseMarketOpportunityResearch,
+  isCandidateEligibleForRanking,
+  MARKET_RESEARCH_THRESHOLDS,
+} from './market-research.ts';
+export type { MarketOpportunityCandidate, MarketOpportunityResearchResult } from './market-research.ts';
+export { researchPublicMarketOpportunities } from './market-research-service.ts';
+export type { PublicMarketResearchInput, PublicMarketResearchOutput } from './market-research-service.ts';
 export {
   AI_DATA_CLASSES,
   AI_PRIVACY_CLASSES,
@@ -124,6 +133,7 @@ export type {
   AiRoutingDecision,
   AiRuntimePolicy,
   AiStructuredOutput,
+  AiStructuredMarketOpportunityResearch,
   AiToolIntent,
   AiToolResult,
 } from './types.ts';

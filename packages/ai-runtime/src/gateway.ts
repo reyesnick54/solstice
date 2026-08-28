@@ -58,7 +58,7 @@ export type AiGatewayRequest = {
   readonly messages?: readonly AiChatMessage[];
   readonly context: readonly AiContextObject[];
   readonly tools?: readonly string[];
-  readonly responseSchema?: 'EXPLANATION' | 'FINANCIAL_PROPOSAL' | null;
+  readonly responseSchema?: 'EXPLANATION' | 'FINANCIAL_PROPOSAL' | 'MARKET_OPPORTUNITY_RESEARCH' | null;
   readonly temperatureMilli?: number | null;
   readonly maxOutputTokens?: number | null;
   readonly correlationId: string;
@@ -312,7 +312,8 @@ export class AiModelGateway {
         ? true
         : request.purpose === 'STRUCTURED_PROPOSAL_NARRATION' ||
           request.purpose === 'PAYMENT_PREPARATION' ||
-          request.purpose === 'EXCHANGE_ORDER_PREPARATION',
+          request.purpose === 'EXCHANGE_ORDER_PREPARATION' ||
+          request.purpose === 'MARKET_OPPORTUNITY_RESEARCH',
       requireTools:
         request.purpose === 'PAYMENT_PREPARATION' || request.purpose === 'EXCHANGE_ORDER_PREPARATION',
       requireStreaming: request.requireStreaming === true,

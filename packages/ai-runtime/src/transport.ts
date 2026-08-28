@@ -1,5 +1,6 @@
 import { err, ok, type Result } from '../../domain/src/result.ts';
-import type { SecretReference } from '../../security/src/secrets.ts';
+import { execFileSync } from 'node:child_process';
+import type { SecretProvider, SecretReference } from '../../security/src/secrets.ts';
 import type { AiCancellationToken } from './types.ts';
 import type { AiFailureCode } from './taxonomy.ts';
 
@@ -43,7 +44,7 @@ export type HttpsTransportResult = HttpsTransportSuccess | HttpsTransportFailure
  */
 export type HttpsInferenceTransport = {
   readonly kind: 'HTTPS_INFERENCE_TRANSPORT';
-  readonly liveConnectivity: false;
+  readonly liveConnectivity: boolean;
   exchange(request: HttpsTransportRequest): HttpsTransportResult;
 };
 
@@ -85,6 +86,64 @@ export class FixtureHttpsTransport implements HttpsInferenceTransport {
       return fail('MODEL_UNAVAILABLE', 'no fixture transport case for host/path', true);
     }
     return matched.result;
+  }
+}
+
+export type NodeHttpsInferenceTransportOptions = {
+  readonly enabled?: boolean;
+  readonly secrets: SecretProvider;
+};
+
+/**
+ * Explicit preview-only HTTPS adapter. It is intentionally synchronous because
+ * the canonical inference ports are synchronous. It uses no shell and resolves
+ * credentials only inside this boundary; fixture transport remains the CI path.
+ */
+export class NodeHttpsInferenceTransport implements HttpsInferenceTransport {
+  readonly kind = 'HTTPS_INFERENCE_TRANSPORT' as const;
+  readonly liveConnectivity: boolean;
+  private readonly enabled: boolean;
+  private readonly secrets: SecretProvider;
+
+  constructor(options: NodeHttpsInferenceTransportOptions) {
+    this.enabled = options.enabled === true;
+    this.liveConnectivity = this.enabled;
+    this.secrets = options.secrets;
+  }
+
+  exchange(request: HttpsTransportRequest): HttpsTransportResult {
+    if (!this.enabled) return fail('EXTERNAL_NETWORK_DISABLED', 'external AI preview connectivity is disabled', false);
+    if (request.scheme !== 'HTTPS' || request.method !== 'POST') return fail('MODEL_POLICY_BLOCKED', 'only HTTPS POST is permitted', false);
+    if (request.cancel?.cancelled) return fail('MODEL_CANCELLED', 'request was cancelled before dispatch', false);
+    if (request.timeoutMs <= 0) return fail('MODEL_TIMEOUT', 'timeout must be positive', false);
+    if (!request.credentialRef) return fail('AUTHORIZATION_REQUIRED', 'a credential reference is required', false);
+    const resolved = this.secrets.resolve(request.credentialRef);
+    if (!resolved.ok) return fail('AUTHORIZATION_REQUIRED', 'provider credential could not be resolved', false);
+    const url = `https://${request.host}${request.path.startsWith('/') ? request.path : `/${request.path}`}`;
+    const args = [
+      '--silent', '--show-error', '--fail-with-body', '--request', 'POST', '--max-time',
+      String(Math.ceil(request.timeoutMs / 1000)), '--header', 'content-type: application/json',
+      '--header', `x-request-id: ${request.correlationId}`, '--header', `authorization: Bearer ${resolved.value.revealUtf8()}`,
+      '--data-binary', JSON.stringify(request.body), '--write-out', '\n__SUNREY_STATUS:%{http_code}', url,
+    ];
+    const started = Date.now();
+    try {
+      const output = execFileSync('curl', args, { encoding: 'utf8', timeout: request.timeoutMs + 250, windowsHide: true });
+      const marker = '\n__SUNREY_STATUS:';
+      const at = output.lastIndexOf(marker);
+      const status = Number(output.slice(at + marker.length).trim());
+      const bodyText = at >= 0 ? output.slice(0, at) : output;
+      const parsed: unknown = JSON.parse(bodyText);
+      if (!parsed || typeof parsed !== 'object') return fail('MODEL_OUTPUT_INVALID', 'provider response was not a JSON object', false, status);
+      const classified = classifyHttpsStatus(status);
+      if (!classified.ok) return classified.error;
+      return httpsOk(parsed as Readonly<Record<string, unknown>>, Date.now() - started, status);
+    } catch (error) {
+      if (request.cancel?.cancelled) return fail('MODEL_CANCELLED', 'request was cancelled', false);
+      const detail = error instanceof Error ? error.message.toLowerCase() : '';
+      return fail(detail.includes('timed out') || detail.includes('timeout') ? 'MODEL_TIMEOUT' : 'MODEL_UNAVAILABLE',
+        'external AI preview provider request failed', true);
+    }
   }
 }
 

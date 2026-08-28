@@ -21,6 +21,7 @@ const PUBLIC_PURPOSES: readonly AiApprovedPurpose[] = Object.freeze([
   'SIMPLE_CLASSIFICATION',
   'USER_SUPPORT',
   'GENERAL_ASSISTANT',
+  'MARKET_OPPORTUNITY_RESEARCH',
 ]);
 
 export function seedInferenceModelCatalog(catalog: InferenceModelCatalog): readonly InferenceModelRecord[] {

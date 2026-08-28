@@ -13,6 +13,9 @@ export type XaiGrokProviderConfig = {
   readonly timeoutMs: number;
   readonly maxOutputTokens: number | null;
   readonly credentialRef: SecretReference | null;
+  readonly externalPreviewEnabled: boolean;
+  readonly webSearchEnabled: boolean;
+  readonly xSearchEnabled: boolean;
 };
 
 export type XaiGrokConfigInput = {
@@ -60,5 +63,8 @@ export function resolveXaiGrokProviderConfig(input: XaiGrokConfigInput = {}): Xa
     timeoutMs: input.timeoutMs ?? positiveInteger(env.XAI_TIMEOUT_MS, XAI_GROK_DEFAULT_TIMEOUT_MS),
     maxOutputTokens: input.maxOutputTokens ?? optionalPositiveInteger(env.XAI_MAX_OUTPUT_TOKENS),
     credentialRef: resolveCredentialRef(input.credentialRef, env.XAI_CREDENTIAL_REF),
+    externalPreviewEnabled: env.SUNREY_EXTERNAL_AI_PREVIEW_ENABLED === 'true',
+    webSearchEnabled: env.XAI_WEB_SEARCH_ENABLED === 'true',
+    xSearchEnabled: env.XAI_X_SEARCH_ENABLED === 'true',
   });
 }
