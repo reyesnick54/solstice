@@ -31,7 +31,7 @@ export function createSunReyPreviewRuntime(
   options: Pick<SunReyPreviewOptions, 'providerDown'> = {},
 ): ConsumerBffRuntime {
   const world = createSandboxWorld({ providerDown: options.providerDown === true });
-  const previewGrow = new PreviewGrowSurface(world.grow, world.bff);
+  const previewGrow = new PreviewGrowSurface(world.grow, world.bff, world.growOpportunity);
   return Object.freeze({
     bff: world.bff,
     sessions: world.sessions,
@@ -42,7 +42,8 @@ export function createSunReyPreviewRuntime(
     // PreviewGrowSurface is an HTTP compatibility adapter around the canonical
     // ProductGrowthService. The handler recognizes the lifecycle shape by its
     // home() method; no second growth engine or execution authority is created.
-    grow: previewGrow as unknown as ConsumerBffRuntime['grow'],
+    grow: previewGrow as unknown as NonNullable<ConsumerBffRuntime['grow']>,
+    previewDiagnostics: world.previewDiagnostics,
     conversation: world.conversation,
     wallets: world.wallets,
     hin: world.hin,

@@ -116,6 +116,7 @@ export type ConsumerBffRuntime = {
   readonly phaseH?: PhaseHProductSurface;
   readonly dataRights?: ConsentDataRightsEngine;
   readonly vault?: PersonalDataVaultProduct;
+  readonly previewDiagnostics?: () => Readonly<Record<string, unknown>>;
 };
 
 const STUB_GROUPS = [

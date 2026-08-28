@@ -1207,6 +1207,8 @@
         "packages/identity",
         "packages/permissions",
         "packages/security",
+        "packages/ai-runtime",
+        "packages/model-registry",
         "packages/payments",
         "packages/sunrey-chain",
         "packages/sunrey-agent",

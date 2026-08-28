@@ -49,9 +49,6 @@ describe('Prompt 4 xAI Grok provider binding', () => {
 
     const result = provider.infer(request());
     assert.equal(result.ok, true);
-    if (!result.ok) {
-      throw new Error(result.error.detail);
-    }
     assert.equal(result.value.providerKind, 'XAI_GROK');
     assert.equal(result.value.structured?.kind, 'EXPLANATION');
     assert.equal(result.value.grantsExecutionAuthority, false);

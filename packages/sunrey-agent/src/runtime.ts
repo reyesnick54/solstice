@@ -56,17 +56,20 @@ export class AgentConversationRuntime {
   private readonly clock: Clock;
   private readonly inference: AiRuntime | null;
   private readonly peg: PegReadPort;
+  private readonly opportunities: ((ownerId: string) => readonly { readonly title: string; readonly summary: string }[]) | undefined;
 
   constructor(input: {
     readonly engine: UserAgentMandateEngine;
     readonly clock: Clock;
     readonly inference?: AiRuntime | null;
     readonly peg?: PegReadPort;
+    readonly opportunities?: (ownerId: string) => readonly { readonly title: string; readonly summary: string }[];
   }) {
     this.engine = input.engine;
     this.clock = input.clock;
     this.inference = input.inference ?? null;
     this.peg = input.peg ?? { snapshot: emptyPegView };
+    this.opportunities = input.opportunities;
   }
 
   listAgents(ownerId: string): readonly UserAgent[] {
@@ -533,8 +536,12 @@ export class AgentConversationRuntime {
         providerId: asAiProviderId('aip_local_test'),
         providerKind: 'LOCAL_TEST',
         modelRef: { modelId: 'local-test' as never, version: '1' as never },
-        text: deterministicReply(prompt, context),
-        structured: { kind: 'EXPLANATION', text: deterministicReply(prompt, context), guaranteedReturn: false },
+        text: deterministicReply(prompt, context, this.opportunities?.(agent.ownerId) ?? []),
+        structured: {
+          kind: 'EXPLANATION',
+          text: deterministicReply(prompt, context, this.opportunities?.(agent.ownerId) ?? []),
+          guaranteedReturn: false,
+        },
         toolIntents: Object.freeze([]),
         usage: Object.freeze({ promptTokens: 8, completionTokens: 16, totalTokens: 24 }),
         grantsExecutionAuthority: false,
@@ -640,7 +647,19 @@ export class AgentConversationRuntime {
   }
 }
 
-function deterministicReply(prompt: string, context: ConversationContext): string {
+function deterministicReply(
+  prompt: string,
+  context: ConversationContext,
+  opportunities: readonly { readonly title: string; readonly summary: string }[],
+): string {
+  if (/opportunit|attract|grow my money|grow my wealth|invest/i.test(prompt)) {
+    if (opportunities.length === 0) {
+      return 'No eligible growth opportunities are currently available. I can only prepare proposals for your review.';
+    }
+    return `Here are eligible SunRey growth opportunities: ${opportunities
+      .map((item) => `${item.title} — ${item.summary}`)
+      .join(' | ')}. These are read-only recommendations; your approval is required before any proposal can proceed.`;
+  }
   if (context.financialContext) {
     const goals = context.financialContext.goalLabels.join(', ') || 'none recorded in PEG';
     return `I can explain your profile. Goals come from PEG (${goals}). Saying "done" does not move money.`;
