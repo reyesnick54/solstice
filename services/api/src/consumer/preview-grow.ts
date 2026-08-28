@@ -1,6 +1,7 @@
 import type { ProductGrowthService } from '../../../../packages/platform/src/growth/product/service.ts';
 import type { ConsumerBff } from './orchestrator.ts';
 import type { BffPrincipal } from './ports.ts';
+import type { GrowOpportunityPort } from './grow-adapter.ts';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import { actorFromPrincipal, mapGrowFailure } from './grow.ts';
 
@@ -15,10 +16,12 @@ import { actorFromPrincipal, mapGrowFailure } from './grow.ts';
 export class PreviewGrowSurface {
   private readonly growth: ProductGrowthService;
   private readonly bff: ConsumerBff;
+  private readonly opportunityPort: GrowOpportunityPort;
 
-  constructor(growth: ProductGrowthService, bff: ConsumerBff) {
+  constructor(growth: ProductGrowthService, bff: ConsumerBff, opportunityPort: GrowOpportunityPort) {
     this.growth = growth;
     this.bff = bff;
+    this.opportunityPort = opportunityPort;
   }
 
   home(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
@@ -63,8 +66,8 @@ export class PreviewGrowSurface {
     return unavailable(requestId, 'Goal editing is not enabled in the unified preview yet');
   }
 
-  opportunities(_principal: BffPrincipal, _requestId: string): Record<string, unknown> {
-    return { items: [], environment: 'simulation', productionMoneyMovement: false };
+  opportunities(principal: BffPrincipal): Record<string, unknown> | BffErrorEnvelope {
+    return this.opportunityPort.list(principal);
   }
 
   dismissOpportunity(_principal: BffPrincipal, opportunityId: string, _requestId: string): Record<string, unknown> {

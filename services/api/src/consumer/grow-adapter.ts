@@ -21,6 +21,7 @@ import {
 } from '../../../economic-graph/src/index.ts';
 import type { VerifiedActorContext } from '../../../../packages/identity/src/actor-context.ts';
 import type { IdentityService } from '../../../../packages/identity/src/service.ts';
+import type { MarketOpportunityResearchResult } from '../../../../packages/ai-runtime/src/index.ts';
 
 export type GrowOpportunityPort = OptionalDomainPort & {
   list(principal: BffPrincipal): unknown | BffErrorEnvelope;
@@ -29,7 +30,11 @@ export type GrowOpportunityPort = OptionalDomainPort & {
   startProposal(principal: BffPrincipal, opportunityId: string): unknown | BffErrorEnvelope;
 };
 
-function contextFrom(principal: BffPrincipal, accounts: AccountsReadPort): Partial<OpportunityDiscoveryContext> {
+function contextFrom(
+  principal: BffPrincipal,
+  accounts: AccountsReadPort,
+  marketResearch?: MarketOpportunityResearchResult,
+): Partial<OpportunityDiscoveryContext> {
   const positions = accounts.listAccounts(principal.customerId).map((account) => {
     const position = accounts.positionOf(account);
     const minor =
@@ -63,6 +68,7 @@ function contextFrom(principal: BffPrincipal, accounts: AccountsReadPort): Parti
     ledgerPositions: Object.freeze(positions),
     rateCatalog: SIMULATION_RATE_CATALOG,
     policy: simulationPolicyPort,
+    ...(marketResearch ? { marketResearch } : {}),
   };
 }
 
@@ -138,6 +144,7 @@ export function createGrowOpportunityPort(input: {
   readonly orchestrator: GrowthOrchestrator;
   readonly accounts: AccountsReadPort;
   readonly actorFor: (principal: BffPrincipal) => unknown;
+  readonly marketResearch?: () => MarketOpportunityResearchResult | null;
   readonly requestId?: string;
 }): GrowOpportunityPort {
   const requestId = input.requestId ?? 'grow';
@@ -146,7 +153,7 @@ export function createGrowOpportunityPort(input: {
       const listed = input.orchestrator.listOpportunities(
         input.actorFor(principal),
         principal.identityId,
-        contextFrom(principal, input.accounts),
+        contextFrom(principal, input.accounts, input.marketResearch?.() ?? undefined),
       );
       const count = listed.ok ? listed.value.cards.length : 0;
       return Object.freeze({
@@ -161,7 +168,7 @@ export function createGrowOpportunityPort(input: {
       const listed = input.orchestrator.listOpportunities(
         input.actorFor(principal),
         principal.identityId,
-        contextFrom(principal, input.accounts),
+        contextFrom(principal, input.accounts, input.marketResearch?.() ?? undefined),
       );
       if (!listed.ok) {
         return mapFailure(listed.error.code, failureMessage(listed.error), requestId);

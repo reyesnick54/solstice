@@ -7,7 +7,12 @@ import type { AgentConversation, AgentMemory, UserAgent } from '../../../../pack
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import type { BffPrincipal } from './ports.ts';
 
-export function createSandboxAgentRuntime(now: string): AgentConversationRuntime {
+export function createSandboxAgentRuntime(
+  now: string,
+  options: {
+    readonly opportunities?: (ownerId: string) => readonly { readonly title: string; readonly summary: string }[];
+  } = {},
+): AgentConversationRuntime {
   const engine = new UserAgentMandateEngine({
     clock: new FrozenClock(asUtcInstant(now)),
     kernel: { submit: () => ({ status: 'ALLOW', evidenceRecordId: 'ev_sandbox_agent' }) },
@@ -23,6 +28,7 @@ export function createSandboxAgentRuntime(now: string): AgentConversationRuntime
           incomeLabels: ['salary'],
         }),
     },
+    opportunities: options.opportunities,
   });
 }
 

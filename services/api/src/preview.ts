@@ -31,7 +31,7 @@ export function createSunReyPreviewRuntime(
   options: Pick<SunReyPreviewOptions, 'providerDown'> = {},
 ): ConsumerBffRuntime {
   const world = createSandboxWorld({ providerDown: options.providerDown === true });
-  const previewGrow = new PreviewGrowSurface(world.grow, world.bff);
+  const previewGrow = new PreviewGrowSurface(world.grow, world.bff, world.growOpportunity);
   return Object.freeze({
     bff: world.bff,
     sessions: world.sessions,

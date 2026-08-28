@@ -44,6 +44,8 @@ import { createAccountsReadAdapter } from './accounts-adapter.ts';
 import { createGrowCommandPort } from './grow-adapter.ts';
 import { createFxCommandPort } from './fx-adapter.ts';
 import { createGrowOpportunityPort } from './grow-adapter.ts';
+import type { GrowOpportunityPort } from './grow-adapter.ts';
+import { createPreviewAiGateway, PreviewMarketResearchCache } from '../preview-ai.ts';
 import {
   applyPersonaSeed,
   PEG_PERSONA_SEEDS,
@@ -139,6 +141,7 @@ export type SandboxWorld = {
   readonly agent: AgentBffFacade;
   readonly agentRuntime: AgentConversationRuntime;
   readonly grow: ProductGrowthService;
+  readonly growOpportunity: GrowOpportunityPort;
   readonly conversation: AgentConversationSurface;
   readonly wallets: WalletProductService;
   readonly hin: InformationRightsMarketplace;
@@ -248,6 +251,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   personas.investment = invest.principal;
   sessions.set(sandboxToken('investment'), invest.principal);
   const growPortfolio = attachSandboxGrow(runtime, invest.principal);
+  let growOpportunityForAgent: GrowOpportunityPort | undefined;
 
   const agent = provisionPersona(runtime, {
     persona: 'agent_enabled',
@@ -260,7 +264,18 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   personas.agent_enabled = agent.principal;
   sessions.set(sandboxToken('agent_enabled'), agent.principal);
   agentCounts.set(agent.principal.customerId, 2);
-  const agentRuntime = createSandboxAgentRuntime(NOW);
+  const agentRuntime = createSandboxAgentRuntime(NOW, {
+    opportunities: (ownerId) => {
+      if (!growOpportunityForAgent || ownerId !== agent.principal.customerId) return [];
+      const listed = growOpportunityForAgent.list(agent.principal);
+      if (!listed || typeof listed !== 'object' || !('items' in listed) || !Array.isArray(listed.items)) return [];
+      return listed.items
+        .filter((item): item is { title: string; summary: string } =>
+          Boolean(item && typeof item === 'object' && typeof item.title === 'string' && typeof item.summary === 'string'),
+        )
+        .map((item) => ({ title: item.title, summary: item.summary }));
+    },
+  });
   provisionSandboxAgent(agentRuntime, agent.principal, 'acct_sandbox_agent_usd');
   pendingActions.set(agent.principal.customerId, [
     Object.freeze({
@@ -473,6 +488,23 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     events: runtime.events,
     evidence: runtime.evidence,
   });
+  const previewAiGateway = createPreviewAiGateway(runtime);
+  const marketResearch = new PreviewMarketResearchCache(previewAiGateway, () => runtime.clock.now());
+  const growthOrchestrator = new GrowthOrchestrator({
+    clock: runtime.clock,
+    events: runtime.events,
+    peg: new EconomicGraphService({ clock: runtime.clock, events: runtime.events }),
+  });
+  const growOpportunity = createGrowOpportunityPort({
+    orchestrator: growthOrchestrator,
+    accounts: createAccountsReadAdapter(runtime),
+    marketResearch: () => marketResearch.get(),
+    actorFor(principal) {
+      const actor = runtime.identity.service.resolveActorContext(principal.actorId);
+      return actor.ok ? actor.value : principal;
+    },
+  });
+  growOpportunityForAgent = growOpportunity;
 
   const bff = new ConsumerBff({
     now: () => runtime.clock.now(),
@@ -511,18 +543,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
       },
     },
     growPortfolio,
-    grow: createGrowOpportunityPort({
-      orchestrator: new GrowthOrchestrator({
-        clock: runtime.clock,
-        events: runtime.events,
-        peg: new EconomicGraphService({ clock: runtime.clock, events: runtime.events }),
-      }),
-      accounts: createAccountsReadAdapter(runtime),
-      actorFor(principal) {
-        const actor = runtime.identity.service.resolveActorContext(principal.actorId);
-        return actor.ok ? actor.value : principal;
-      },
-    }),
+    grow: growOpportunity,
     growCommands: createGrowCommandPort({
       peg,
       identity: runtime.identity.service,
@@ -568,6 +589,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     agent: createAgentBffFacade(NOW),
     agentRuntime,
     grow,
+    growOpportunity,
     conversation: createAgentConversationSurface(),
     wallets,
     hin,
