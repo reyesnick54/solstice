@@ -12,7 +12,6 @@ import { preferenceSuppresses } from './preferences.ts';
 import { assignPriorities, rankOpportunity } from './ranking.ts';
 import type { Opportunity, OpportunityDiscoveryInput } from './types.ts';
 import type { DetectorFinding } from './types.ts';
-import { isCandidateEligibleForRanking } from '../../../../ai-runtime/src/market-research.ts';
 
 const TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -173,6 +172,24 @@ function researchFindings(research: NonNullable<OpportunityDiscoveryInput['marke
     impactKind: 'SCENARIO_RANGE',
     fingerprintAnchor: candidate.candidateId,
   } satisfies DetectorFinding)));
+}
+
+function isCandidateEligibleForRanking(candidate: {
+  readonly evidence: readonly string[];
+  readonly sourceRefs: readonly string[];
+  readonly liquidityScoreBps: number;
+  readonly riskScoreBps: number;
+  readonly confidenceBps: number;
+  readonly downsideScenarioBps: number;
+  readonly asOf?: string;
+}, now: string): boolean {
+  return candidate.evidence.length >= 2 &&
+    candidate.sourceRefs.length >= 2 &&
+    candidate.liquidityScoreBps >= 5_000 &&
+    candidate.riskScoreBps <= 7_500 &&
+    candidate.confidenceBps >= 5_000 &&
+    candidate.downsideScenarioBps >= -5_000 &&
+    (!candidate.asOf || Date.parse(now) - Date.parse(candidate.asOf) <= 7 * 24 * 60 * 60 * 1000);
 }
 
 export function explanationForOpportunity(opportunity: Opportunity): ReturnType<typeof explanationInputFor> {

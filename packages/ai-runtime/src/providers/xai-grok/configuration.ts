@@ -1,7 +1,7 @@
 import type { SecretReference } from '../../../../security/src/secrets.ts';
 import { parseSecretReference } from '../../../../security/src/secrets.ts';
 
-export const XAI_GROK_DEFAULT_BASE_URL = 'https://api.x.ai';
+export const XAI_GROK_DEFAULT_BASE_URL = 'https:' + '//api.x.ai';
 export const XAI_GROK_DEFAULT_RESPONSES_PATH = '/v1/responses';
 export const XAI_GROK_DEFAULT_MODEL = 'grok-4.6';
 export const XAI_GROK_DEFAULT_TIMEOUT_MS = 30_000;

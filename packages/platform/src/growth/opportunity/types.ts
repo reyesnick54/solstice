@@ -1,5 +1,4 @@
 import type { UtcInstant } from '../../../../domain/src/time.ts';
-import type { MarketOpportunityResearchResult } from '../../../../ai-runtime/src/market-research.ts';
 import type { PersonalEconomicSnapshot } from '../../../../personal-economic-graph/src/snapshot.ts';
 import type { OpportunityId } from '../../ids.ts';
 import type { CompiledEconomicMandate, SerializedMoney } from '../../mandate/types.ts';
@@ -15,6 +14,28 @@ import type {
   OpportunityStatus,
   OpportunityTimeHorizon,
 } from './taxonomy.ts';
+
+export type MarketResearchCandidate = {
+  readonly candidateId: string;
+  readonly symbol: string;
+  readonly thesis: string;
+  readonly currency: string;
+  readonly timeHorizon: string;
+  readonly catalysts: readonly string[];
+  readonly risks: readonly string[];
+  readonly evidence: readonly string[];
+  readonly sourceRefs: readonly string[];
+  readonly liquidityScoreBps: number;
+  readonly catalystScoreBps: number;
+  readonly riskScoreBps: number;
+  readonly confidenceBps: number;
+  readonly downsideScenarioBps: number;
+};
+
+export type MarketOpportunityResearchResult = {
+  readonly generatedAt: string;
+  readonly candidates: readonly MarketResearchCandidate[];
+};
 
 export type OpportunityEvidence = {
   readonly factRefs: readonly string[];
