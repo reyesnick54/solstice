@@ -17,8 +17,8 @@ XAI_X_SEARCH_ENABLED=true
 ```
 
 In Cloud Run, bind the Google Secret Manager secret named `xai-api-key` to
-the container as an injected environment secret value understood by the
-`cloud-run` SecretProvider. Application code receives only the reference
+the container environment variable `SUNREY_SECRET_XAI_API_KEY`, which is the
+binding consumed by the `cloud-run` SecretProvider. Application code receives only the reference
 `secret://cloud-run/xai-api-key`; the value must not be committed, logged, or
 included in requests, traces, provenance, or API responses.
 

@@ -121,7 +121,7 @@ export class NodeHttpsInferenceTransport implements HttpsInferenceTransport {
     if (!resolved.ok) return fail('AUTHORIZATION_REQUIRED', 'provider credential could not be resolved', false);
     const url = `https:${'//'}${request.host}${request.path.startsWith('/') ? request.path : `/${request.path}`}`;
     const args = [
-      '--silent', '--show-error', '--fail-with-body', '--request', 'POST', '--max-time',
+      '--silent', '--show-error', '--request', 'POST', '--max-time',
       String(Math.ceil(request.timeoutMs / 1000)), '--header', 'content-type: application/json',
       '--header', `x-request-id: ${request.correlationId}`, '--header', `authorization: Bearer ${resolved.value.revealUtf8()}`,
       '--data-binary', JSON.stringify(request.body), '--write-out', '\n__SUNREY_STATUS:%{http_code}', url,
