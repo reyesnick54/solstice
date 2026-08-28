@@ -19,6 +19,15 @@ const PURPOSE_FIELDS: Readonly<Record<AiApprovedPurpose, readonly string[]>> = O
   USER_SUPPORT: Object.freeze(['topic']),
   REGULATORY_EXPLANATION: Object.freeze(['topic', 'jurisdictionRef']),
   GENERAL_ASSISTANT: Object.freeze(['topic']),
+  MARKET_OPPORTUNITY_RESEARCH: Object.freeze([
+    'marketUniverse',
+    'publicContext',
+    'priceBehavior',
+    'marketStatistics',
+    'economicContext',
+    'publicNews',
+    'publicSearchResults',
+  ]),
 });
 
 export const DEFAULT_MAX_CONTEXT_OBJECTS = 8;

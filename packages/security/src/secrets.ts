@@ -105,3 +105,25 @@ export class CompositeSecretProvider implements SecretProvider {
     return match.resolve(reference);
   }
 }
+
+/**
+ * Cloud Run preview provider. Secret Manager injects the secret value into
+ * the process environment; callers still resolve it by SecretReference.
+ */
+export class CloudRunSecretProvider implements SecretProvider {
+  readonly providerId = 'cloud-run';
+  private readonly env: NodeJS.ProcessEnv;
+
+  constructor(env: NodeJS.ProcessEnv = process.env) {
+    this.env = env;
+  }
+
+  resolve(reference: SecretReference): SecurityResult<SecretValue> {
+    if (reference.provider !== this.providerId) {
+      return securityErr('SECRET_UNRESOLVED', `provider cannot resolve '${reference.href}'`);
+    }
+    const name = `SUNREY_SECRET_${reference.path.replace(/[^a-zA-Z0-9]/g, '_').toUpperCase()}`;
+    const value = this.env[name];
+    return value ? securityOk(new SecretValue(value)) : securityErr('SECRET_UNRESOLVED', `secret '${reference.href}' is not injected`);
+  }
+}

@@ -523,6 +523,7 @@ export class GrowthOrchestrator {
       subjectId,
       snapshot,
       ...(mandate ? { mandate } : {}),
+      ...(resolved.marketResearch ? { marketResearch: resolved.marketResearch } : {}),
       context: resolved,
     });
     this.store.replaceOpportunities(subjectId, discovered.all);
@@ -754,6 +755,7 @@ export class GrowthOrchestrator {
       subjectId,
       snapshot: used,
       ...(mandate ? { mandate } : {}),
+      ...(resolved.marketResearch ? { marketResearch: resolved.marketResearch } : {}),
       context: resolved,
     });
     this.store.replaceOpportunities(subjectId, discovered.all);
@@ -952,6 +954,7 @@ export class GrowthOrchestrator {
         this.store.opportunityPreferencesFor(subjectId) ??
         defaultOpportunityPreferences(subjectId, now),
       previous: overlay?.previous ?? this.store.opportunitiesFor(subjectId),
+      ...(overlay?.marketResearch ? { marketResearch: overlay.marketResearch } : {}),
       ...(lastRecomputeAt ? { lastRecomputeAt } : {}),
     };
   }

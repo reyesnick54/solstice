@@ -10,6 +10,7 @@ import type {
   AiStructuredOutput,
   AiToolIntent,
 } from './types.ts';
+import { parseMarketOpportunityResearch } from './market-research.ts';
 
 const INTEGER_STRING = /^-?\d+$/;
 
@@ -45,8 +46,14 @@ export function parseStructuredOutput(
     return fail('INVALID_STRUCTURED_OUTPUT', 'structured output must be an object');
   }
   const record = value as Record<string, unknown>;
-  if (record.guaranteedReturn !== false) {
+  if (record.kind !== 'MARKET_OPPORTUNITY_RESEARCH' && record.guaranteedReturn !== false) {
     return fail('INVALID_STRUCTURED_OUTPUT', 'structured output must set guaranteedReturn=false');
+  }
+  if (record.kind === 'MARKET_OPPORTUNITY_RESEARCH') {
+    const parsed = parseMarketOpportunityResearch(record.result ?? record);
+    return parsed.ok
+      ? ok(Object.freeze({ kind: 'MARKET_OPPORTUNITY_RESEARCH', result: parsed.value }))
+      : parsed;
   }
   if (record.kind === 'EXPLANATION') {
     if (typeof record.text !== 'string' || record.text.length === 0) {

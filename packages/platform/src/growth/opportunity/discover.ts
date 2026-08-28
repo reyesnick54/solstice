@@ -11,6 +11,7 @@ import { transitionOpportunity } from './lifecycle.ts';
 import { preferenceSuppresses } from './preferences.ts';
 import { assignPriorities, rankOpportunity } from './ranking.ts';
 import type { Opportunity, OpportunityDiscoveryInput } from './types.ts';
+import type { DetectorFinding } from './types.ts';
 
 const TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -23,7 +24,10 @@ export function discoverOpportunities(input: OpportunityDiscoveryInput): {
   readonly presented: readonly Opportunity[];
   readonly suppressedCount: number;
 } {
-  const findings = runOpportunityDetectors(input);
+  const findings = [
+    ...runOpportunityDetectors(input),
+    ...(input.marketResearch ? researchFindings(input.marketResearch, input.context.now) : []),
+  ];
   const built: Opportunity[] = [];
   for (const finding of findings) {
     const category = DETECTOR_TO_CATEGORY[finding.detector];
@@ -138,6 +142,54 @@ export function discoverOpportunities(input: OpportunityDiscoveryInput): {
     presented: Object.freeze(merged.filter((item) => presentedIds.has(item.opportunityId) && item.status === 'PRESENTED')),
     suppressedCount: diversity.suppressed.length + ranked.filter((item) => item.status !== 'ELIGIBLE' && item.status !== 'PRESENTED' && item.status !== 'DETECTED').length,
   };
+}
+
+function researchFindings(research: NonNullable<OpportunityDiscoveryInput['marketResearch']>, now: string): readonly DetectorFinding[] {
+  return Object.freeze(research.candidates.filter((candidate) => isCandidateEligibleForRanking(candidate, now)).map((candidate) => ({
+    detector: 'MARKET_RESEARCH_CANDIDATE',
+    title: `${candidate.symbol}: public market research`,
+    summary: candidate.thesis,
+    source: 'PUBLIC_MARKET_RESEARCH',
+    currency: candidate.currency,
+    riskLevel: candidate.riskScoreBps >= 7_500 ? 'HIGH' : candidate.riskScoreBps >= 5_000 ? 'UNCERTAIN_MARKET' : 'MODERATE',
+    liquidityImpact: 'UNKNOWN',
+    timeHorizon: candidate.timeHorizon === 'SHORT_TERM' ? 'NEAR_TERM' : candidate.timeHorizon === 'LONG_TERM' ? 'LONG_TERM' : 'MEDIUM_TERM',
+    fees: Object.freeze([]),
+    dependencies: Object.freeze(['public_research_is_not_customer_advice']),
+    goalIds: Object.freeze([]),
+    evidence: Object.freeze({
+      factRefs: Object.freeze(candidate.sourceRefs),
+      detector: 'MARKET_RESEARCH_CANDIDATE',
+      notes: Object.freeze(candidate.evidence),
+    }),
+    productId: 'prod_paper_investment_review',
+    confidence: candidate.confidenceBps,
+    urgency: candidate.catalystScoreBps,
+    assumptions: Object.freeze([
+      `scenarios are forecasts only: downside=${candidate.downsideScenarioBps}bps, base=${candidate.baseScenarioBps}bps, upside=${candidate.upsideScenarioBps}bps`,
+      'customer suitability and private financial checks occur inside SunRey',
+    ]),
+    impactKind: 'SCENARIO_RANGE',
+    fingerprintAnchor: candidate.candidateId,
+  } satisfies DetectorFinding)));
+}
+
+function isCandidateEligibleForRanking(candidate: {
+  readonly evidence: readonly string[];
+  readonly sourceRefs: readonly string[];
+  readonly liquidityScoreBps: number;
+  readonly riskScoreBps: number;
+  readonly confidenceBps: number;
+  readonly downsideScenarioBps: number;
+  readonly asOf?: string;
+}, now: string): boolean {
+  return candidate.evidence.length >= 2 &&
+    candidate.sourceRefs.length >= 2 &&
+    candidate.liquidityScoreBps >= 5_000 &&
+    candidate.riskScoreBps <= 7_500 &&
+    candidate.confidenceBps >= 5_000 &&
+    candidate.downsideScenarioBps >= -5_000 &&
+    (!candidate.asOf || Date.parse(now) - Date.parse(candidate.asOf) <= 7 * 24 * 60 * 60 * 1000);
 }
 
 export function explanationForOpportunity(opportunity: Opportunity): ReturnType<typeof explanationInputFor> {

@@ -7,7 +7,7 @@ import { resolveProviderCredential } from '../secrets.ts';
 import { streamEventsFromResponse, type AiStreamEvent } from '../streaming.ts';
 import { parseStructuredOutput } from '../structured.ts';
 import type { HttpsInferenceTransport } from '../transport.ts';
-import { FixtureHttpsTransport, classifyHttpsStatus } from '../transport.ts';
+import { FixtureHttpsTransport, NodeHttpsInferenceTransport, classifyHttpsStatus } from '../transport.ts';
 import type {
   AiInferenceResponse,
   AiProviderCapabilities,
@@ -15,6 +15,7 @@ import type {
   AiProviderHealth,
   AiProviderMetadata,
   CanonicalProviderRequest,
+  AiStructuredOutput,
 } from '../types.ts';
 import {
   resolveXaiGrokProviderConfig,
@@ -62,9 +63,12 @@ export class XaiGrokAiProvider implements AiInferenceProvider {
     } else {
       this.clock = clockOrOptions.clock;
       this.config = resolveXaiGrokProviderConfig(clockOrOptions.config ?? {});
-      this.transport = clockOrOptions.transport ?? new FixtureHttpsTransport();
       this.secrets = clockOrOptions.secrets ?? null;
       this.available = clockOrOptions.available ?? true;
+      this.transport = clockOrOptions.transport ??
+        (this.config.externalPreviewEnabled && this.secrets
+          ? new NodeHttpsInferenceTransport({ enabled: true, secrets: this.secrets })
+          : new FixtureHttpsTransport());
     }
   }
 
@@ -109,7 +113,8 @@ export class XaiGrokAiProvider implements AiInferenceProvider {
             : 'Grok credential secret reference is not configured',
       checkedAt: this.clock.now(),
       networkEnabled: this.available,
-      liveConnectivity: false,
+      liveConnectivity: this.transport.liveConnectivity,
+      externalAiPreviewConnectivity: this.transport.liveConnectivity,
     });
   }
 
@@ -157,6 +162,12 @@ export class XaiGrokAiProvider implements AiInferenceProvider {
     if (maxOutputTokens !== null && maxOutputTokens !== undefined) {
       body.max_output_tokens = maxOutputTokens;
     }
+    if (request.purpose === 'MARKET_OPPORTUNITY_RESEARCH') {
+      const tools: { readonly type: string }[] = [];
+      if (this.config.webSearchEnabled) tools.push({ type: 'web_search' });
+      if (this.config.xSearchEnabled) tools.push({ type: 'x_search' });
+      if (tools.length > 0) body.tools = Object.freeze(tools);
+    }
 
     const transported = this.transport.exchange({
       scheme: 'HTTPS',
@@ -189,11 +200,16 @@ export class XaiGrokAiProvider implements AiInferenceProvider {
 
     const text = extractOutputText(transported.body);
     const structuredCandidate = transported.body.structured ?? parseJsonObject(text);
-    const structured = structuredCandidate
+    const structured: Result<AiStructuredOutput, AiProviderFailure> = structuredCandidate
       ? parseStructuredOutput(structuredCandidate)
       : text
         ? parseStructuredOutput({ kind: 'EXPLANATION', text, guaranteedReturn: false })
-        : this.fail('MODEL_OUTPUT_INVALID', 'Grok response did not contain output text or structured output');
+        : err({
+            ok: false,
+            code: 'MODEL_OUTPUT_INVALID',
+            detail: 'Grok response did not contain output text or structured output',
+            providerKind: 'XAI_GROK',
+          });
     if (!structured.ok) {
       return err({ ...structured.error, providerKind: 'XAI_GROK' });
     }

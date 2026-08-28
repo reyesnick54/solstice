@@ -336,6 +336,7 @@ export {
 
 export {
   CompositeSecretProvider,
+  CloudRunSecretProvider,
   InMemorySecretProvider,
   SECRET_REFERENCE_SCHEME,
   parseSecretReference,

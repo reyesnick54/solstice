@@ -103,6 +103,48 @@ export class LocalTestAiProvider implements AiInferenceProvider {
   }
 
   private adapterInfer(request: LocalAdapterRequest): Result<LocalAdapterResponse, AiProviderFailure> {
+    if (request.fixture === 'normal' && request.requestId.startsWith('air_research')) {
+      return ok({
+        text: null,
+        structured: {
+          kind: 'MARKET_OPPORTUNITY_RESEARCH',
+          result: {
+            schemaVersion: 'sunrey.market-opportunity-research.v1',
+            generatedAt: '2026-08-22T12:00:00.000Z',
+            marketRegime: 'SIMULATED',
+            candidates: [{
+              candidateId: 'candidate_local_1',
+              assetId: 'paper_asset_1',
+              symbol: 'SIM',
+              assetName: 'Synthetic asset',
+              assetClass: 'PAPER',
+              market: 'SIMULATION',
+              currency: 'USD',
+              strategyClasses: ['RELATIVE_VALUE'],
+              timeHorizon: 'MEDIUM_TERM',
+              thesis: 'Deterministic synthetic research candidate.',
+              catalysts: ['synthetic event'],
+              risks: ['simulation risk'],
+              evidence: ['synthetic fixture evidence'],
+              liquidityScoreBps: 8000,
+              momentumScoreBps: 6000,
+              fundamentalScoreBps: 6000,
+              catalystScoreBps: 5000,
+              sentimentScoreBps: 5000,
+              riskScoreBps: 4000,
+              confidenceBps: 7000,
+              downsideScenarioBps: -1000,
+              baseScenarioBps: 500,
+              upsideScenarioBps: 1500,
+              asOf: '2026-08-22T12:00:00.000Z',
+              sourceRefs: ['synthetic://market-fixture'],
+            }],
+            warnings: [],
+          },
+        },
+        toolIntents: [],
+      });
+    }
     switch (request.fixture) {
       case 'timeout':
         return err({
