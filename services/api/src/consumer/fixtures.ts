@@ -142,6 +142,7 @@ export type SandboxWorld = {
   readonly agentRuntime: AgentConversationRuntime;
   readonly grow: ProductGrowthService;
   readonly growOpportunity: GrowOpportunityPort;
+  readonly previewDiagnostics: () => Readonly<Record<string, unknown>>;
   readonly conversation: AgentConversationSurface;
   readonly wallets: WalletProductService;
   readonly hin: InformationRightsMarketplace;
@@ -590,6 +591,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     agentRuntime,
     grow,
     growOpportunity,
+    previewDiagnostics: () => marketResearch.diagnostics(),
     conversation: createAgentConversationSurface(),
     wallets,
     hin,

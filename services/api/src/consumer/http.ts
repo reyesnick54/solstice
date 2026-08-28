@@ -117,6 +117,7 @@ export async function serve(
         productionReady: false,
         productionActive: false,
         liveConnectivityEnabled: false,
+        ...(input.runtime.previewDiagnostics ? input.runtime.previewDiagnostics() : {}),
       },
       cors.headers,
     );
