@@ -15,6 +15,7 @@ import type {
   AiProviderHealth,
   AiProviderMetadata,
   CanonicalProviderRequest,
+  AiStructuredOutput,
 } from '../types.ts';
 import {
   resolveXaiGrokProviderConfig,
@@ -199,11 +200,16 @@ export class XaiGrokAiProvider implements AiInferenceProvider {
 
     const text = extractOutputText(transported.body);
     const structuredCandidate = transported.body.structured ?? parseJsonObject(text);
-    const structured = structuredCandidate
+    const structured: Result<AiStructuredOutput, AiProviderFailure> = structuredCandidate
       ? parseStructuredOutput(structuredCandidate)
       : text
         ? parseStructuredOutput({ kind: 'EXPLANATION', text, guaranteedReturn: false })
-        : this.fail('MODEL_OUTPUT_INVALID', 'Grok response did not contain output text or structured output');
+        : err({
+            ok: false,
+            code: 'MODEL_OUTPUT_INVALID',
+            detail: 'Grok response did not contain output text or structured output',
+            providerKind: 'XAI_GROK',
+          });
     if (!structured.ok) {
       return err({ ...structured.error, providerKind: 'XAI_GROK' });
     }

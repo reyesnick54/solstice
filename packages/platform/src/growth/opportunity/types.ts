@@ -30,6 +30,9 @@ export type MarketResearchCandidate = {
   readonly riskScoreBps: number;
   readonly confidenceBps: number;
   readonly downsideScenarioBps: number;
+  readonly baseScenarioBps: number;
+  readonly upsideScenarioBps: number;
+  readonly asOf: string;
 };
 
 export type MarketOpportunityResearchResult = {

@@ -32,7 +32,7 @@ export function researchPublicMarketOpportunities(
   const context: AiContextObject = Object.freeze({
     objectId: 'public-market-context',
     dataClass: 'PUBLIC',
-    authorizedProviders: Object.freeze(['XAI_GROK', 'S3M', 'LOCAL_TEST']),
+    authorizedProviders: Object.freeze(['XAI_GROK', 'S3M', 'LOCAL_TEST'] as const),
     userApproved: true,
     payload: Object.freeze({
       marketUniverse: Object.freeze([...input.marketUniverse]),

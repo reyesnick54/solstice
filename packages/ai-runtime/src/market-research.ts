@@ -113,12 +113,16 @@ function parseCandidate(value: unknown, index: number): Result<MarketOpportunity
     const values = item[field];
     if (!Array.isArray(values) || values.some((entry) => typeof entry !== 'string')) return invalid(`candidates[${index}].${field} must be string[]`);
   }
-  if (item.evidence.length === 0 || item.sourceRefs.length === 0) return invalid(`candidates[${index}] requires evidence and sourceRefs`);
+  const evidence = item.evidence as unknown[];
+  const sourceRefs = item.sourceRefs as unknown[];
+  if (evidence.length === 0 || sourceRefs.length === 0) return invalid(`candidates[${index}] requires evidence and sourceRefs`);
   for (const field of SCORE_FIELDS) {
-    if (!Number.isSafeInteger(item[field]) || item[field] < 0 || item[field] > 10_000) return invalid(`${field} must be an integer in [0,10000]`);
+    const score = item[field];
+    if (typeof score !== 'number' || !Number.isSafeInteger(score) || score < 0 || score > 10_000) return invalid(`${field} must be an integer in [0,10000]`);
   }
   for (const field of ['downsideScenarioBps', 'baseScenarioBps', 'upsideScenarioBps']) {
-    if (!Number.isSafeInteger(item[field]) || item[field] < -1_000_000 || item[field] > 1_000_000) return invalid(`${field} must be a signed integer basis-point scenario`);
+    const scenario = item[field];
+    if (typeof scenario !== 'number' || !Number.isSafeInteger(scenario) || scenario < -1_000_000 || scenario > 1_000_000) return invalid(`${field} must be a signed integer basis-point scenario`);
   }
   return ok(Object.freeze(item as unknown as MarketOpportunityCandidate));
 }
