@@ -186,6 +186,7 @@ Historical discussion remains below the table.
 | sunrey-wallet-security | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-mobile-wallet-sync | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-user-agent-mandates | IMPLEMENTED | packages/sunrey-agent |
+| sunrey-access-fabric | IMPLEMENTED | packages/sunrey-access-fabric |
 | sunrey-exchange-consumer-trading | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-exchange-capacity-access | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-human-information-network | IMPLEMENTED | packages/information-market |
