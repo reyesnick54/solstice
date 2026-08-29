@@ -4674,6 +4674,62 @@
       "notes": "Chunk 96 wallet security at packages/sunrey-chain/src/wallet/security. Application authentication is not native signing."
     },
     {
+      "id": "sunrey-exchange-capacity-access",
+      "name": "SunRey Exchange productive capacity markets and dual-economy clearing",
+      "canonicalOwner": "packages/sunrey-exchange",
+      "canonicalPath": "packages/sunrey-exchange/src/access-fabric/clearing.ts",
+      "publicInterface": "packages/sunrey-exchange/src/access-fabric/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [
+        {
+          "name": "DualEconomyClearingAdapter",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/access-fabric",
+        "packages/capacity-exchange",
+        "packages/dual-economy-clearing",
+        "packages/clearing-house",
+        "packages/entitlements",
+        "packages/access-ledger"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "ACCESS-09 dual-economy clearing at packages/sunrey-exchange/src/access-fabric/clearing.ts. Fiat settles on the canonical Ledger under a scoped Execution Authority. SunRey Coin and MoonRey Coin move only on canonical custody or native chain rails. Entitlement and reward credit are consumed at the owning port and are neither transferable nor redeemable for money. No fixed SunRey/MoonRey ratio, no coin issuance, no third currency, no competing balance ledger. Production activation remains off."
+    },
+    {
+      "id": "sunrey-exchange-capacity-market-engine",
+      "name": "SunRey Exchange capacity access market orchestration",
+      "canonicalOwner": "packages/sunrey-exchange",
+      "canonicalPath": "packages/sunrey-exchange/src/access-fabric/engine.ts",
+      "publicInterface": "packages/sunrey-exchange/src/access-fabric/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [
+        {
+          "name": "CapacityAccessMarketEngine",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/capacity-market",
+        "packages/capacity-markets"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "ACCESS-09 orchestration for capacity discovery, reservations, fixed-price offers, RFQ, batch auction over the canonical clearAuction, queue/allocation markets, and delivery-linked settlement. Orchestration only. Stores reservations, delivery evidence, receipts, and refund intents; stores no balance. Batch clearing delegates to packages/sunrey-exchange/src/auction.ts."
+    },
+    {
       "id": "sunrey-exchange-consumer-trading",
       "name": "SunRey consumer Exchange, portfolio, quote, and simple trading APIs",
       "canonicalOwner": "packages/sunrey-exchange",
@@ -7082,6 +7138,13 @@
       "owner": "packages/sunrey-exchange",
       "protected": true,
       "notes": "Chunk 99 consumer Exchange APIs. No second Exchange or native-asset balance ledger."
+    },
+    {
+      "id": "sunrey-exchange-capacity-access",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-exchange",
+      "protected": true,
+      "notes": "ACCESS-09 productive capacity markets and dual-economy clearing at packages/sunrey-exchange/src/access-fabric. Extends the canonical Exchange families; delegates batch clearing to the canonical clearAuction. Fiat on the canonical Ledger, native coin on custody or chain rails, entitlement and reward credit consumed at the owning port. No second exchange, matching engine, or balance ledger. No fixed SunRey/MoonRey ratio, no coin issuance, no third currency. Do not create packages/access-fabric, packages/capacity-exchange, packages/capacity-market, packages/dual-economy-clearing, packages/clearing-house, packages/entitlements, or packages/access-ledger."
     },
     {
       "id": "sunrey-human-information-network",
