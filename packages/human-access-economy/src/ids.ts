@@ -23,3 +23,7 @@ export function newAccessEntitlementId(): string {
 export function newAccessActivityId(): string {
   return `acc_act_${randomUUID()}`;
 }
+
+export function newAccessRedemptionId(): string {
+  return `acc_red_${randomUUID()}`;
+}

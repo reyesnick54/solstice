@@ -72,7 +72,9 @@ export function mapAccessOutcome<T>(
         ? 'NOT_FOUND'
         : outcome.error.code === 'FEATURE_DISABLED'
           ? 'FEATURE_UNAVAILABLE'
-          : 'VALIDATION';
+          : outcome.error.code === 'PROVIDER_UNAVAILABLE' || outcome.error.code === 'REDEMPTION_BLOCKED'
+            ? 'VALIDATION'
+            : 'VALIDATION';
   return bffError({
     errorCode,
     category:
@@ -154,7 +156,42 @@ export function dispatchAccess(
       headers,
     );
   }
+  if (path === '/api/v1/access/providers' && method === 'GET') {
+    return result(mapAccessOutcome(product.providers(actor), requestId), headers);
+  }
+  if (path === '/api/v1/access/search' && method === 'POST') {
+    return result(
+      mapAccessOutcome(
+        product.searchProviders(actor, {
+          category: categoryOf(rec.category) ?? 'MOBILITY',
+          query: str(rec.query) ?? str(rec.summary) ?? '',
+          ...(str(rec.location) ? { location: str(rec.location) } : {}),
+          ...(str(rec.providerId) ? { providerId: str(rec.providerId) } : {}),
+        }),
+        requestId,
+      ),
+      headers,
+    );
+  }
   if (path === '/api/v1/access/quotes' && method === 'POST') {
+    if (str(rec.providerId) && str(rec.catalogItemId)) {
+      return result(
+        mapAccessOutcome(
+          product.createProviderQuote(actor, {
+            providerId: str(rec.providerId)!,
+            catalogItemId: str(rec.catalogItemId)!,
+            quantity: num(rec.quantity) ?? 1,
+            startsAt: str(rec.startsAt) ?? '2026-08-29T10:00:00.000Z',
+            endsAt: str(rec.endsAt) ?? '2026-09-02T10:00:00.000Z',
+            ...(str(rec.location) ? { location: str(rec.location) } : {}),
+            idempotencyKey,
+          }),
+          requestId,
+        ),
+        headers,
+        201,
+      );
+    }
     return result(
       mapAccessOutcome(
         product.createQuote(actor, {
@@ -192,6 +229,78 @@ export function dispatchAccess(
   if (path.startsWith('/api/v1/access/reservations/') && path.endsWith('/cancel') && method === 'POST') {
     const id = path.slice('/api/v1/access/reservations/'.length, -'/cancel'.length);
     return result(mapAccessOutcome(product.cancelReservation(actor, decodeURIComponent(id)), requestId), headers);
+  }
+  if (path === '/api/v1/access/redemptions/preview' && method === 'POST') {
+    return result(
+      mapAccessOutcome(
+        product.previewRedemption(actor, {
+          category: categoryOf(rec.category) ?? 'MOBILITY',
+          providerId: str(rec.providerId) ?? 'turo',
+          quoteId: str(rec.quoteId) ?? '',
+          entitlementId: str(rec.entitlementId) ?? '',
+          entitlementClass: str(rec.entitlementClass) ?? 'MOBILITY_STANDARD',
+          requestedQuantity: num(rec.requestedQuantity) ?? num(rec.quantity) ?? 1,
+          ...(str(rec.redemptionId) ? { redemptionId: str(rec.redemptionId) } : {}),
+          ...(str(rec.intentId) ? { intentId: str(rec.intentId) } : {}),
+          ...(str(rec.maxUserContributionMinorUnits)
+            ? { maxUserContributionMinorUnits: str(rec.maxUserContributionMinorUnits) }
+            : {}),
+          idempotencyKey,
+        }),
+        requestId,
+      ),
+      headers,
+    );
+  }
+  if (path === '/api/v1/access/redemptions' && method === 'POST') {
+    return result(
+      mapAccessOutcome(
+        product.startRedemption(actor, {
+          category: categoryOf(rec.category) ?? 'MOBILITY',
+          providerId: str(rec.providerId) ?? 'turo',
+          quoteId: str(rec.quoteId) ?? '',
+          entitlementId: str(rec.entitlementId) ?? '',
+          entitlementClass: str(rec.entitlementClass) ?? 'MOBILITY_STANDARD',
+          requestedQuantity: num(rec.requestedQuantity) ?? num(rec.quantity) ?? 1,
+          ...(str(rec.redemptionId) ? { redemptionId: str(rec.redemptionId) } : {}),
+          ...(str(rec.intentId) ? { intentId: str(rec.intentId) } : {}),
+          ...(str(rec.maxUserContributionMinorUnits)
+            ? { maxUserContributionMinorUnits: str(rec.maxUserContributionMinorUnits) }
+            : {}),
+          idempotencyKey,
+        }),
+        requestId,
+      ),
+      headers,
+      201,
+    );
+  }
+  if (path.startsWith('/api/v1/access/redemptions/') && path.endsWith('/confirm') && method === 'POST') {
+    const id = path.slice('/api/v1/access/redemptions/'.length, -'/confirm'.length);
+    return result(
+      mapAccessOutcome(
+        product.confirmRedemption(actor, decodeURIComponent(id), {
+          ...(rec.userApproved === true ? { userApproved: true } : {}),
+          ...(str(rec.userFiatMinorUnits) ? { userFiatMinorUnits: str(rec.userFiatMinorUnits) } : {}),
+        }),
+        requestId,
+      ),
+      headers,
+    );
+  }
+  if (path.startsWith('/api/v1/access/redemptions/') && path.endsWith('/cancel') && method === 'POST') {
+    const id = path.slice('/api/v1/access/redemptions/'.length, -'/cancel'.length);
+    return result(mapAccessOutcome(product.cancelRedemption(actor, decodeURIComponent(id)), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/access/redemptions/') && path.endsWith('/status') && method === 'GET') {
+    const id = path.slice('/api/v1/access/redemptions/'.length, -'/status'.length);
+    return result(mapAccessOutcome(product.getRedemption(actor, decodeURIComponent(id)), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/access/redemptions/') && method === 'GET') {
+    const id = path.slice('/api/v1/access/redemptions/'.length);
+    if (!id.includes('/')) {
+      return result(mapAccessOutcome(product.getRedemption(actor, decodeURIComponent(id)), requestId), headers);
+    }
   }
   if (path === '/api/v1/access/experiences/quote' && method === 'POST') {
     return result(

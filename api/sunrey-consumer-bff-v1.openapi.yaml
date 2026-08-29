@@ -2366,18 +2366,94 @@ paths:
       responses:
         "200":
           description: Explicit availability state; capacityKnown remains false unless fixture-backed
+  /api/v1/access/providers:
+    get:
+      operationId: listAccessProviders
+      summary: Provider capability registry for the SunRey Access Network
+      responses:
+        "200":
+          description: Registered providers with integration states; live connectivity remains disabled
+  /api/v1/access/search:
+    post:
+      operationId: searchAccessProviders
+      summary: Search provider catalog through the Access Provider Gateway
+      responses:
+        "200":
+          description: Normalized provider catalog items from simulation adapters
   /api/v1/access/quotes:
     post:
       operationId: createAccessQuote
-      summary: Request a simulation-backed access quote
-      description: Returns 503 when no fixture matches; never fabricates live pricing.
+      summary: Request a provider-backed or simulation-backed access quote
+      description: Provider quotes require providerId and catalogItemId. Legacy fixture quotes remain supported without those fields.
       responses:
         "201":
-          description: Quote from simulation fixture
+          description: Quote from provider gateway or simulation fixture
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AccessQuote'
+  /api/v1/access/redemptions/preview:
+    post:
+      operationId: previewAccessRedemption
+      summary: Preview entitlement coverage and user contribution for a provider quote
+      responses:
+        "200":
+          description: Redemption decision preview without holding entitlement
+  /api/v1/access/redemptions:
+    post:
+      operationId: startAccessRedemption
+      summary: Start a governed access redemption and hold entitlement units
+      responses:
+        "201":
+          description: Redemption started
+  /api/v1/access/redemptions/{id}:
+    get:
+      operationId: getAccessRedemptionById
+      summary: Get redemption by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Redemption record
+  /api/v1/access/redemptions/{id}/confirm:
+    post:
+      operationId: confirmAccessRedemption
+      summary: Confirm redemption after user approval
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Redemption confirmed and provider booking attempted
+  /api/v1/access/redemptions/{id}/cancel:
+    post:
+      operationId: cancelAccessRedemption
+      summary: Cancel redemption and release entitlement hold
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Redemption cancelled
+  /api/v1/access/redemptions/{id}/status:
+    get:
+      operationId: getAccessRedemptionStatus
+      summary: Redemption status alias
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Redemption status
   /api/v1/access/reservations/{id}/confirm:
     post:
       operationId: confirmAccessReservation
@@ -3287,11 +3363,12 @@ components:
               enum: [false]
     AccessPosture:
       type: object
-      required: [productionReady, productionActive, liveConnectivityEnabled]
+      required: [productionReady, productionActive, liveConnectivityEnabled, liveProviderConnectivity]
       properties:
         productionReady: { type: boolean, enum: [false] }
         productionActive: { type: boolean, enum: [false] }
         liveConnectivityEnabled: { type: boolean, enum: [false] }
+        liveProviderConnectivity: { type: boolean, enum: [false] }
     AccessCapability:
       type: object
       required: [enabled, state, reason]
@@ -3305,9 +3382,12 @@ components:
       allOf:
         - $ref: '#/components/schemas/AccessPosture'
         - type: object
-          required: [schema, capability, activeEntitlements, upcomingReservations, activeExperiences, recommendations, availabilityStatus]
+          required: [schema, navigationLabel, primarySurface, primaryCta, capability, activeEntitlements, upcomingReservations, activeExperiences, recommendations, availabilityStatus]
           properties:
             schema: { type: string, enum: [sunrey.consumer.access.overview.v1] }
+            navigationLabel: { type: string, enum: [Access] }
+            primarySurface: { type: string, enum: [YOUR_ACCESS] }
+            primaryCta: { type: string, enum: [REDEEM_ACCESS] }
             capability: { $ref: '#/components/schemas/AccessCapability' }
     AccessCategories:
       allOf:
