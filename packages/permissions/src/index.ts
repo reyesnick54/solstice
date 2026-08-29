@@ -141,6 +141,11 @@ export type {
   CloseCardIntent,
   RehearseAuthorityPathIntent,
   RehearseAuthorityPathPayload,
+  ConfirmCapacityReservationIntent,
+  ConfirmCapacityReservationPayload,
+  ActivateCapacityReservationIntent,
+  ActivateCapacityReservationPayload,
+  AccessFabricIntent,
 } from './action-types.ts';
 export { ACTION_TYPES } from './action-types.ts';
 

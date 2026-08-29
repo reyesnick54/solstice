@@ -88,6 +88,8 @@ export const ACTION_TYPES = {
   RESTRICT_EXCHANGE_PARTICIPANT: 'RESTRICT_EXCHANGE_PARTICIPANT',
   SET_EXCHANGE_CONTROL: 'SET_EXCHANGE_CONTROL',
   REHEARSE_AUTHORITY_PATH: 'REHEARSE_AUTHORITY_PATH',
+  CONFIRM_CAPACITY_RESERVATION: 'CONFIRM_CAPACITY_RESERVATION',
+  ACTIVATE_CAPACITY_RESERVATION: 'ACTIVATE_CAPACITY_RESERVATION',
   PROPOSE_ACCESS_INTENT: 'PROPOSE_ACCESS_INTENT',
 } as const;
 
@@ -905,6 +907,28 @@ export type RehearseAuthorityPathPayload = {
 export type RehearseAuthorityPathIntent = ActionIntent<RehearseAuthorityPathPayload> & {
   readonly actionType: typeof ACTION_TYPES.REHEARSE_AUTHORITY_PATH;
 };
+
+export type ConfirmCapacityReservationPayload = {
+  readonly accountId: AccountId;
+  readonly reservationId: string;
+  readonly poolId: string;
+  readonly units: number;
+};
+
+export type ActivateCapacityReservationPayload = {
+  readonly accountId: AccountId;
+  readonly reservationId: string;
+};
+
+export type ConfirmCapacityReservationIntent = ActionIntent<ConfirmCapacityReservationPayload> & {
+  readonly actionType: typeof ACTION_TYPES.CONFIRM_CAPACITY_RESERVATION;
+};
+
+export type ActivateCapacityReservationIntent = ActionIntent<ActivateCapacityReservationPayload> & {
+  readonly actionType: typeof ACTION_TYPES.ACTIVATE_CAPACITY_RESERVATION;
+};
+
+export type AccessFabricIntent = ConfirmCapacityReservationIntent | ActivateCapacityReservationIntent;
 
 export type ProposeAccessIntentPayload = {
   readonly accessIntentId: string;
