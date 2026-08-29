@@ -6,6 +6,7 @@
  */
 
 import { createIntegratedEconomicStack, type IntegratedEconomicStack } from '../../../sunrey-chain/src/economics/stack.ts';
+import { runAccessEconomyScenario } from '../access-economy/engine.ts';
 import { PRODUCTIVE_SIM_CATEGORIES } from '../ids.ts';
 import { createMachineLab, machineSnapshot, runMachineEpoch } from '../machine.ts';
 import { createMarket, marketConserves, runMarketEpoch } from '../market.ts';
@@ -33,6 +34,36 @@ const UNIT_FOR: Record<(typeof PRODUCTIVE_SIM_CATEGORIES)[number], string> = {
   REAL_ESTATE_USE: 'm2_hour',
   SERVICES: 'service_hour',
 };
+
+/**
+ * ACCESS-13: each ACCESS_* protocol shock drives one Access Economy
+ * scenario owned by src/access-economy. The stress lab observes the access
+ * outcome; it does not reimplement allocation.
+ */
+const ACCESS_SCENARIO_FOR_SHOCK: Readonly<Partial<Record<ShockKind, string>>> = Object.freeze({
+  ACCESS_ABUNDANCE: 'ACCESS-SIM-01-abundance',
+  ACCESS_DEMAND_SURGE: 'ACCESS-SIM-02-demand-surge',
+  ACCESS_PRODUCTIVE_SHOCK: 'ACCESS-SIM-03-productive-shock',
+  ACCESS_GEOGRAPHIC_SCARCITY: 'ACCESS-SIM-04-geographic-scarcity',
+  ACCESS_TEMPORAL_SCARCITY: 'ACCESS-SIM-05-temporal-scarcity',
+  ACCESS_PROVIDER_FAILURE: 'ACCESS-SIM-06-provider-failure',
+  ACCESS_ORACLE_STALE: 'ACCESS-SIM-07-oracle-stale',
+  ACCESS_EXCHANGE_UNAVAILABLE: 'ACCESS-SIM-08-exchange-unavailable',
+  ACCESS_SETTLEMENT_FAILURE: 'ACCESS-SIM-09-settlement-failure',
+  ACCESS_POLICY_CHANGE: 'ACCESS-SIM-10-policy-change-during-reservation',
+  ACCESS_MASS_CONCURRENCY: 'ACCESS-SIM-11-mass-reservation-concurrency',
+  ACCESS_ABUNDANT_VEHICLE: 'ACCESS-SIM-12-abundant-vehicle-class',
+  ACCESS_PREMIUM_SCARCE_VEHICLE: 'ACCESS-SIM-13-premium-scarce-vehicle',
+  ACCESS_COMPOSITE_TRAVEL: 'ACCESS-SIM-14-japan-composite-travel',
+  ACCESS_HOUSEHOLD_FOOD: 'ACCESS-SIM-15-household-food-access',
+  ACCESS_COMPUTE_CAPACITY: 'ACCESS-SIM-16-compute-capacity',
+  ACCESS_ROBOT_CAPACITY: 'ACCESS-SIM-17-robot-capacity',
+  ACCESS_ENERGY_ACCESS: 'ACCESS-SIM-18-energy-access',
+});
+
+export function accessScenarioForShock(shock: ShockKind): string | undefined {
+  return ACCESS_SCENARIO_FOR_SHOCK[shock];
+}
 
 export function runEconomicStressScenario(
   scenarioId: string,
@@ -64,6 +95,10 @@ export function executeScenario(
     oracleFabricated: false,
     dvpDuplicated: false,
     custodyBlindResubmit: false,
+    accessCapacityOversoldUnits: 0n,
+    accessAuthorityMissing: false,
+    accessIssuedNativeAsset: false,
+    accessEvidenceChainBroken: false,
   };
   const mutableAux = { ...aux };
   registerObjects(stack, scenario);
@@ -170,7 +205,7 @@ function applyShock(
   shock: ShockKind,
   epoch: number,
   rng: DeterministicRng,
-  aux: LabAuxState & Record<string, boolean>,
+  aux: LabAuxState,
   market: ReturnType<typeof createMarket>,
   machines: ReturnType<typeof createMachineLab>,
   dual: ReturnType<typeof loadScenario>,
@@ -351,6 +386,51 @@ function applyShock(
       degradedAvailability = true;
       runMachineEpoch(machines, epoch, false);
       break;
+    case 'ACCESS_ABUNDANCE':
+    case 'ACCESS_DEMAND_SURGE':
+    case 'ACCESS_PRODUCTIVE_SHOCK':
+    case 'ACCESS_GEOGRAPHIC_SCARCITY':
+    case 'ACCESS_TEMPORAL_SCARCITY':
+    case 'ACCESS_PROVIDER_FAILURE':
+    case 'ACCESS_ORACLE_STALE':
+    case 'ACCESS_EXCHANGE_UNAVAILABLE':
+    case 'ACCESS_SETTLEMENT_FAILURE':
+    case 'ACCESS_POLICY_CHANGE':
+    case 'ACCESS_MASS_CONCURRENCY':
+    case 'ACCESS_ABUNDANT_VEHICLE':
+    case 'ACCESS_PREMIUM_SCARCE_VEHICLE':
+    case 'ACCESS_COMPOSITE_TRAVEL':
+    case 'ACCESS_HOUSEHOLD_FOOD':
+    case 'ACCESS_COMPUTE_CAPACITY':
+    case 'ACCESS_ROBOT_CAPACITY':
+    case 'ACCESS_ENERGY_ACCESS': {
+      if (epoch !== 1) {
+        break;
+      }
+      const accessScenarioId = ACCESS_SCENARIO_FOR_SHOCK[shock];
+      if (!accessScenarioId) {
+        break;
+      }
+      const access = runAccessEconomyScenario(accessScenarioId);
+      aux.accessCapacityOversoldUnits += access.oversoldUnits;
+      aux.accessAuthorityMissing =
+        aux.accessAuthorityMissing ||
+        access.decisions.some(
+          (row) =>
+            (row.outcome === 'CONFIRMED' || row.outcome === 'HELD_FOR_POLICY_REVIEW') && row.authorityRef === null,
+        );
+      aux.accessIssuedNativeAsset =
+        aux.accessIssuedNativeAsset ||
+        access.nativeIssuance.sunreyIssuedBySimulation !== 0n ||
+        access.nativeIssuance.moonreyIssuedBySimulation !== 0n;
+      aux.accessEvidenceChainBroken = aux.accessEvidenceChainBroken || !access.evidence.chainVerified;
+      failClosed = access.scarcityMode === 'UNAVAILABLE';
+      degradedAvailability = (access.outcomeCounts.REFUSED_CAPACITY_EXHAUSTED ?? 0) > 0;
+      if (access.scarcityMode === 'SCARCE') {
+        warnings.push(`access scarcity ${access.scarcityDimension} on ${accessScenarioId}`);
+      }
+      break;
+    }
     case 'AUTO_SHOCK':
     case 'HUM_DEMAND_FALL':
     case 'HUM_DEMAND_RISE':

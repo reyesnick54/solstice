@@ -84,3 +84,30 @@ export type {
   EconomicStressResult,
   EconomicStressScenario,
 } from './stress/index.ts';
+export {
+  ACCESS_CANONICAL_INTEGRATIONS,
+  ACCESS_ECONOMY_CATALOG,
+  ACCESS_ECONOMY_INVARIANT_IDS,
+  ACCESS_FABRIC_QUALIFICATION_STATE,
+  ACCESS_INVARIANT_STATEMENTS,
+  ACCESS_SIM_SCENARIO_IDS,
+  accessCatalogComplete,
+  accessScenarioById,
+  accessScenarioIds,
+  qualifyAccessEconomy,
+  renderAccessQualification,
+  runAccessEconomyCommand,
+  runAccessEconomyDemo,
+  runAccessEconomyScenario,
+} from './access-economy/index.ts';
+export type {
+  AccessCapacityLedgerRow,
+  AccessCapacityPool,
+  AccessDecision,
+  AccessEconomyQualificationReport,
+  AccessEconomyScenario,
+  AccessEconomyScenarioResult,
+  AccessEvidenceSummary,
+  AccessInvariantResult,
+  AccessRequest,
+} from './access-economy/index.ts';

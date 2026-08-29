@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { addMs, isExpired, type Clock } from '../../config/src/clock.ts';
-import { isErr } from '../../domain/src/result.ts';
+import { isErr, err, ok, type Result } from '../../domain/src/result.ts';
 import type { EvidenceVault } from '../../evidence/src/vault.ts';
 import type { DomainEventLog } from '../../events/src/events.ts';
 import type { IdentityAuthorityPort } from '../../identity/src/index.ts';
@@ -22,14 +22,32 @@ import {
   EVIDENCE_CAPACITY_REQUESTED,
   EVIDENCE_CAPACITY_WAITLISTED,
 } from './evidence.ts';
-import { asCapacityPoolId, asCapacityReservationId } from './ids.ts';
+import { asCapacityPoolId, asCapacityReservationId, newPersonalAccessEnvelopeId } from './ids.ts';
 import { canTransitionReservation } from './lifecycle.ts';
+import { assertAccessEntitlementInvariants, scanForbiddenAccessPayload } from './invariants.ts';
+import { policyDecisionIndex } from './policy-port.ts';
+import {
+  activeReservationsTotal,
+  nextReplenishmentAt,
+  replenishmentWindow,
+  usageInWindow,
+} from './replenishment.ts';
 import type { AccessPolicyPort } from './policy.ts';
-import { freezeReservation, type CapacityStore } from './store.ts';
+import { freezeReservation, CapacityStore } from './store.ts';
 import type { SettlementIntentPort } from './settlement-port.ts';
-import type { CapacityPool, CapacityQuote, CapacityReservation } from './types.ts';
+import type {
+  AccessEntitlement,
+  AccessEntitlementEngineInput,
+  AccessEntitlementEngineResult,
+  AccessFabricFailure,
+  AccessMandateConstraint,
+  CapacityPool,
+  CapacityQuote,
+  CapacityReservation,
+  EligibleAccessRequest,
+  PersonalAccessEnvelope,
+} from './types.ts';
 import { authorizeCapacityIntent, type CapacityAuthorizePorts } from './authorize.ts';
-import { CapacityStore } from './store.ts';
 import { WaitlistStore } from './waitlist.ts';
 
 export const DEFAULT_HOLD_TTL_MS = 10n * 60n * 1000n;
@@ -727,25 +745,7 @@ export class CapacityReservationEngine {
       purpose: 'CUSTOMER_DIGITAL_ASSET',
     };
   }
-import { err, ok, type Result } from '../../domain/src/result.ts';
-import { newPersonalAccessEnvelopeId } from './ids.ts';
-import { assertAccessEntitlementInvariants, scanForbiddenAccessPayload } from './invariants.ts';
-import { policyDecisionIndex } from './policy-port.ts';
-import {
-  activeReservationsTotal,
-  nextReplenishmentAt,
-  replenishmentWindow,
-  usageInWindow,
-} from './replenishment.ts';
-import type {
-  AccessEntitlement,
-  AccessEntitlementEngineInput,
-  AccessEntitlementEngineResult,
-  AccessFabricFailure,
-  AccessMandateConstraint,
-  EligibleAccessRequest,
-  PersonalAccessEnvelope,
-} from './types.ts';
+}
 
 type UsageSlice = {
   readonly consumedAt: string;

@@ -1072,6 +1072,32 @@
       "notes": "Isolated SunRey adversarial cyber-economic test range. Adapter/harness only. Red actors are in-process test doubles. Not a second ledger, Kernel, or live pentest service."
     },
     {
+      "id": "packages/access-fabric",
+      "npmName": "@solstice/access-fabric",
+      "path": "packages/access-fabric",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/config",
+        "packages/evidence",
+        "packages/events",
+        "packages/identity",
+        "packages/kernel",
+        "packages/permissions",
+        "packages/security",
+        "packages/sunrey-coin"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "ACCESS-04 entitlement evaluation and ACCESS-07 capacity reservation implementation module beneath packages/access-economy. Not money, not a transferable balance, and not a human-worth score. Not a second ledger, Exchange, custody system, or monetary authority."
+    },
+    {
       "id": "packages/sunrey-economics",
       "npmName": "@solstice/sunrey-economics",
       "path": "packages/sunrey-economics",
@@ -1082,8 +1108,10 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "allowedDependencies": [
+        "packages/access-fabric",
         "packages/config",
         "packages/domain",
+        "packages/evidence",
         "packages/money",
         "packages/sunrey-chain",
         "packages/sunrey-exchange",
@@ -1092,7 +1120,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 75 SunRey/MoonRey dual-economy simulation laboratory. Consumes canonical protocol owners. Does not predict prices, promise returns, or activate production monetary policy."
+      "notes": "Chunk 75 dual-economy simulation laboratory, Chunk 76 economic stress laboratory, and ACCESS-13 Access Economy qualification at src/access-economy. Consumes canonical protocol, entitlement, and evidence owners. Does not predict prices, promise returns, or activate production monetary policy."
     },
     {
       "id": "packages/sunrey-agent",
@@ -1142,7 +1170,8 @@
         "packages/money",
         "packages/config",
         "packages/evidence",
-        "packages/events"
+        "packages/events",
+        "packages/sunrey-chain"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -1228,6 +1257,46 @@
       "notes": "ACCESS-01 SunRey Access Fabric / Human Access Economy foundation. Orchestrates governed non-ownership AccessRight and AccessIntent records. Not money, mint, settlement, custody, Exchange, Kernel, Execution Authority, oracle consensus, identity truth, or legal eligibility truth. Simulation only."
     },
     {
+      "id": "packages/sunrey-access",
+      "npmName": "@solstice/sunrey-access",
+      "path": "packages/sunrey-access",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/config"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "ACCESS-05 verified capacity state and ACCESS-06 scarcity/allocation intelligence. Not a ledger, Exchange, custody system, or monetary authority."
+    },
+    {
+      "id": "packages/human-access-economy",
+      "npmName": "@solstice/human-access-economy",
+      "path": "packages/human-access-economy",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/config",
+        "packages/access-economy",
+        "packages/sunrey-access"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Consumer BFF adapter for Human Access Economy simulation. Orchestrates canonical access engines for preview routes. Not a ledger, Kernel, Exchange, or live provider connector."
+    },
+    {
       "id": "services/api",
       "npmName": "@solstice/platform-api",
       "path": "services/api",
@@ -1266,6 +1335,7 @@
         "packages/clean-room",
         "packages/sunrey-coin",
         "packages/human-economic-contribution",
+        "packages/human-access-economy",
         "packages/sunrey-exchange",
         "packages/information-market",
         "packages/human-economic-contribution",
@@ -4702,7 +4772,6 @@
         }
       ],
       "forbiddenAliases": [
-        "packages/access-fabric",
         "packages/experience-composer",
         "packages/capacity-reservation",
         "packages/access-rights"
@@ -4759,7 +4828,6 @@
         }
       ],
       "forbiddenAliases": [
-        "packages/access-fabric",
         "packages/capacity-exchange",
         "packages/dual-economy-clearing",
         "packages/clearing-house",
@@ -5135,8 +5203,8 @@
       "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry. Not HIN, PDV, PEG, Human Economic Contribution Registry, oracle consensus, productive engine, or native monetary supply. Registration does not authorize settlement or minting."
     },
     {
-      "id": "sunrey-access-fabric",
-      "name": "SunRey Access Fabric / Human Access Economy",
+      "id": "sunrey-access-economy-domain",
+      "name": "SunRey Access Economy domain registry",
       "canonicalOwner": "packages/access-economy",
       "canonicalPath": "packages/access-economy/src/service.ts",
       "publicInterface": "packages/access-economy/src/index.ts",
@@ -5152,17 +5220,74 @@
         }
       ],
       "forbiddenAliases": [
-        "packages/access-fabric",
         "packages/access-economy-v2",
         "packages/access-coin",
         "packages/access-exchange",
-        "packages/access-ledger",
-        "packages/human-access-economy"
+        "packages/access-ledger"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
       "notes": "ACCESS-01 access-domain orchestration for governed non-ownership AccessRight records. Not ownership, money, mint, settlement, custody, Exchange, Kernel, Execution Authority, oracle consensus, human-worth score, or Access Coin."
+    },
+    {
+      "id": "sunrey-access-entitlement-engine",
+      "name": "SunRey Access Fabric entitlement engine and Personal Access Envelope",
+      "canonicalOwner": "packages/access-fabric",
+      "canonicalPath": "packages/access-fabric/src/engine.ts",
+      "publicInterface": "packages/access-fabric/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "AccessEntitlementEngine",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/access-coin",
+        "packages/access-ledger",
+        "packages/access-exchange",
+        "packages/access-custody",
+        "packages/entitlements"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "ACCESS-04 canonical access entitlement engine. Answers what a person may currently request. Does not reserve, price, settle, or score."
+    },
+    {
+      "id": "sunrey-access-economy-simulation",
+      "name": "SunRey Access Economy simulation and qualification",
+      "canonicalOwner": "packages/sunrey-economics",
+      "canonicalPath": "packages/sunrey-economics/src/access-economy/types.ts",
+      "publicInterface": "packages/sunrey-economics/src/access-economy/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "AccessEconomyScenario",
+          "kind": "type"
+        },
+        {
+          "name": "AccessEconomyQualificationReport",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/access-simulation",
+        "packages/access-coin"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "ACCESS-13 Access Economy simulation scenarios, permanent access invariants, and end-to-end qualification. Not a second economics engine, ledger, Exchange, custody system, or monetary authority."
     },
     {
       "id": "sunrey-economic-unit-normalization",
@@ -6433,6 +6558,11 @@
     "packages/access-chain",
     "packages/access-ledger",
     "packages/access-coin",
+    "packages/access-core",
+    "packages/access-exchange",
+    "packages/access-custody",
+    "packages/access-simulation",
+    "packages/entitlements",
     "packages/access-token",
     "packages/access-rights-chain",
     "packages/reservation-chain",
@@ -6854,7 +6984,7 @@
       "notes": "Chunk 45 machine economic identity and machine-to-machine commerce at packages/sunrey-chain/src/machine-economy. Controller-bound identities, explicit capabilities, integer mandates, bilateral matching port, native-asset escrow, oracle-backed delivery, deterministic settlement, revocation, and CryptoSuite key rotation. Machines cannot validate, govern, issue Execution Authority, or issue MoonRey. Do not create packages/machine-economy, packages/machine-identity, or a second exchange."
     },
     {
-      "id": "sunrey-access-fabric",
+      "id": "sunrey-chain-access-fabric",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
@@ -7370,11 +7500,18 @@
       "notes": "Chunk 113 master dataset and economic-asset metadata registry. Not a blob store, HIN, PDV, PEG, contribution registry, oracle, productive engine, or monetary supply book. Do not create packages/dataset-registry, packages/economic-assets, packages/data-assets-v2, packages/universal-data-registry, or packages/tokenized-data."
     },
     {
-      "id": "sunrey-access-fabric",
+      "id": "sunrey-access-economy-domain",
       "status": "IMPLEMENTED",
       "owner": "packages/access-economy",
       "protected": true,
       "notes": "ACCESS-01 SunRey Access Fabric foundation. Orchestrates AccessRight and AccessIntent records only. Not money, mint, settlement, custody, Exchange, Kernel, Execution Authority, oracle consensus, identity truth, legal eligibility truth, Access Coin, or social credit. Do not create packages/access-fabric, packages/access-coin, packages/access-exchange, or packages/access-ledger."
+    },
+    {
+      "id": "sunrey-access-economy-simulation",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-economics",
+      "protected": true,
+      "notes": "ACCESS-13 Access Economy simulation, permanent access invariants, and end-to-end qualification at packages/sunrey-economics/src/access-economy. Simulation cannot activate production."
     },
     {
       "id": "sunrey-human-contribution-valuation",

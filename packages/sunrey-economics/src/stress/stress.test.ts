@@ -18,7 +18,7 @@ describe('Chunk 76 economic stress laboratory', () => {
   });
 
   it('covers every required invariant', () => {
-    assert.equal(ECONOMIC_INVARIANT_IDS.length, 14);
+    assert.equal(ECONOMIC_INVARIANT_IDS.length, 18);
     const smoke = runEconomicStressScenario('ECON-LIQ-001');
     assert.deepEqual(
       smoke.invariants.map((row) => row.invariant),
@@ -83,5 +83,34 @@ describe('Chunk 76 economic stress laboratory', () => {
 
   it('refuses extended campaigns in ordinary workflows', () => {
     assert.throws(() => runStressCampaign('extended-120'), /extended workflow/);
+  });
+
+  it('runs the ACCESS-13 access economy campaign without violations', () => {
+    const report = runStressCampaign('access-economy');
+    assert.equal(report.scenarioCount, 18);
+    assert.equal(report.violations, 0);
+    assert.equal(report.productionAuthorization, false);
+    assert.equal(report.results.every((row) => row.preservedInvariants), true);
+  });
+
+  it('reports access invariants on every stress scenario, access or not', () => {
+    const access = runEconomicStressScenario('ECON-ACC-011');
+    const liquidity = runEconomicStressScenario('ECON-LIQ-001');
+    for (const result of [access, liquidity]) {
+      const byId = new Map(result.invariants.map((row) => [row.invariant, row]));
+      assert.equal(byId.get('ACCESS_CAPACITY_NOT_OVERSOLD')?.held, true);
+      assert.equal(byId.get('ACCESS_RESERVATION_REQUIRES_EXECUTION_AUTHORITY')?.held, true);
+      assert.equal(byId.get('ACCESS_ACTIVITY_ISSUES_NO_NATIVE_ASSET')?.held, true);
+      assert.equal(byId.get('ACCESS_EVIDENCE_CHAIN_RECONSTRUCTS')?.held, true);
+    }
+    assert.match(
+      access.invariants.find((row) => row.invariant === 'ACCESS_CAPACITY_NOT_OVERSOLD')?.evidence ?? '',
+      /accessOversoldUnits=0/,
+    );
+  });
+
+  it('fail-closes access when capacity evidence or Exchange quotes are missing', () => {
+    assert.equal(runEconomicStressScenario('ECON-ACC-007').failClosed, true);
+    assert.equal(runEconomicStressScenario('ECON-ACC-008').failClosed, true);
   });
 });

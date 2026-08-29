@@ -31,12 +31,12 @@ export function asCapacityResourceId(value: string): CapacityResourceId {
     throw new TypeError('CapacityResourceId must be a non-empty string');
   }
   return brandAs<string, 'CapacityResourceId'>(value);
-import { brandAs } from '../../domain/src/brand.ts';
+}
 
-export type AccessEntitlementId = string & { readonly __brand: 'AccessEntitlementId' };
-export type AccessReservationId = string & { readonly __brand: 'AccessReservationId' };
-export type AccessUsageEventId = string & { readonly __brand: 'AccessUsageEventId' };
-export type PersonalAccessEnvelopeId = string & { readonly __brand: 'PersonalAccessEnvelopeId' };
+export type AccessEntitlementId = Brand<string, 'AccessEntitlementId'>;
+export type AccessReservationId = Brand<string, 'AccessReservationId'>;
+export type AccessUsageEventId = Brand<string, 'AccessUsageEventId'>;
+export type PersonalAccessEnvelopeId = Brand<string, 'PersonalAccessEnvelopeId'>;
 
 export const ACCESS_ENTITLEMENT_ID_PREFIX = 'aent_';
 export const ACCESS_RESERVATION_ID_PREFIX = 'ares_';

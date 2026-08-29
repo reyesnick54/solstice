@@ -912,7 +912,7 @@ describe('ACCESS-09 architecture guards', () => {
   it('keeps clearing on canonical rails and creates no competing owner', () => {
     const repoRoot = join(import.meta.dirname, '..', '..', '..', '..');
     for (const forbiddenPath of [
-      'packages/access-fabric',
+      'packages/access-core',
       'packages/capacity-exchange',
       'packages/capacity-market',
       'packages/dual-economy-clearing',

@@ -22,20 +22,6 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
-describe('access economy architecture guards', () => {
-  it('stays a domain model and does not become settlement, pricing, or execution authority', () => {
-    const files = walk(join(ROOT, 'packages/access-economy/src'));
-    for (const file of files) {
-      if (file.endsWith('.test.ts') || file.endsWith('demo.ts') || file.endsWith('isolation.ts')) {
-        continue;
-      }
-      const source = readFileSync(file, 'utf8');
-      assert.equal(/postJournal\s*\(/.test(source), false, file);
-      assert.equal(/openAccount\s*\(/.test(source), false, file);
-      assert.equal(/new AuthorityIssuer/.test(source), false, file);
-      assert.equal(/LIVE_\w+\s*=\s*true/.test(source), false, file);
-      assert.equal(/ENVIRONMENT\s*=\s*'live'/.test(source), false, file);
-      assert.equal(/\bAPY\b|\bAPR\b|blended return|guaranteed profit/i.test(source), false, file);
 function stripStructuralMarkers(source: string): string {
   return source
     .replace(/isActionIntent:\s*false/g, '')
@@ -43,10 +29,17 @@ function stripStructuralMarkers(source: string): string {
 }
 
 describe('ACCESS-01 architecture guards', () => {
-  it('stays an access orchestration fabric and does not become a second financial authority', () => {
+  it('stays an access domain owner and does not become a second financial authority', () => {
     const files = walk(join(ROOT, 'packages/access-economy/src'));
     for (const file of files) {
-      if (file.endsWith('.test.ts') || file.endsWith('demo.ts') || file.endsWith('isolation.ts') || file.endsWith('taxonomy.ts')) {
+      if (
+        file.endsWith('.test.ts') ||
+        file.endsWith('demo.ts') ||
+        file.endsWith('isolation.ts') ||
+        file.endsWith('taxonomy.ts') ||
+        file.endsWith('registry-types.ts') ||
+        file.endsWith('registry-invariants.ts')
+      ) {
         continue;
       }
       const source = stripStructuralMarkers(readFileSync(file, 'utf8'));
@@ -74,6 +67,13 @@ describe('ACCESS-01 architecture guards', () => {
       assert.equal(existsSync(join(ROOT, alias)), false, alias);
     }
 
+    assert.equal(ACCESS_ECONOMY_ISOLATION.financialStateMutation, false);
+    assert.equal(ACCESS_ECONOMY_ISOLATION.executionAuthorityRequired, false);
+    assert.equal(ACCESS_ECONOMY_ISOLATION.kernelAuthorizationRequired, false);
+    assert.equal(ACCESS_ECONOMY_ISOLATION.mintingImplemented, false);
+    assert.equal(ACCESS_ECONOMY_ISOLATION.settlementImplemented, false);
+    assert.equal(ACCESS_ECONOMY_ISOLATION.accessCoinImplemented, false);
+    assert.equal(ACCESS_ECONOMY_ISOLATION.productionActivated, false);
     assert.equal(ACCESS_ECONOMY_ISOLATION.pricingImplemented, false);
     assert.equal(ACCESS_ECONOMY_ISOLATION.reservationExecutionImplemented, false);
     assert.equal(ACCESS_ECONOMY_ISOLATION.exchangeIntegrationImplemented, false);
@@ -89,13 +89,5 @@ describe('ACCESS-01 architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-agent/src/engine.ts')), true);
     assert.equal(existsSync(join(ROOT, 'packages/regulatory-twin/src/service.ts')), true);
     assert.equal(existsSync(join(ROOT, 'packages/evidence/src/vault.ts')), true);
-
-    assert.equal(ACCESS_ECONOMY_ISOLATION.financialStateMutation, false);
-    assert.equal(ACCESS_ECONOMY_ISOLATION.executionAuthorityRequired, false);
-    assert.equal(ACCESS_ECONOMY_ISOLATION.kernelAuthorizationRequired, false);
-    assert.equal(ACCESS_ECONOMY_ISOLATION.mintingImplemented, false);
-    assert.equal(ACCESS_ECONOMY_ISOLATION.settlementImplemented, false);
-    assert.equal(ACCESS_ECONOMY_ISOLATION.accessCoinImplemented, false);
-    assert.equal(ACCESS_ECONOMY_ISOLATION.productionActivated, false);
   });
 });

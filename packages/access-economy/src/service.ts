@@ -6,16 +6,16 @@ import {
   validateAccessIntentInput,
   validateAccessRightInput,
 } from './invariants.ts';
+import type { AccessRegistryIntentId, AccessRegistryRightId } from './registry-ids.ts';
 import type {
   AccessFabricFailure,
   AccessFabricPort,
   AccessFabricSnapshot,
-  AccessIntent,
-  AccessRight,
+  AccessFabricIntent,
+  AccessFabricRight,
   ProposeAccessIntentInput,
   RegisterAccessRightInput,
-} from './types.ts';
-import type { AccessIntentId, AccessRightId } from './ids.ts';
+} from './registry-types.ts';
 
 /**
  * SunRey Access Fabric — ACCESS-01 foundation.
@@ -27,10 +27,10 @@ import type { AccessIntentId, AccessRightId } from './ids.ts';
  * identity truth, or legal eligibility truth.
  */
 export class AccessFabric implements AccessFabricPort {
-  private readonly rights = new Map<AccessRightId, AccessRight>();
-  private readonly intents = new Map<AccessIntentId, AccessIntent>();
+  private readonly rights = new Map<AccessRegistryRightId, AccessFabricRight>();
+  private readonly intents = new Map<AccessRegistryIntentId, AccessFabricIntent>();
 
-  proposeIntent(input: ProposeAccessIntentInput): Result<AccessIntent, AccessFabricFailure> {
+  proposeIntent(input: ProposeAccessIntentInput): Result<AccessFabricIntent, AccessFabricFailure> {
     accessFabricDoesNotMint();
     accessFabricDoesNotSettle();
     accessFabricRefusesAuthorityIssuance();
@@ -43,7 +43,7 @@ export class AccessFabric implements AccessFabricPort {
       return err(Object.freeze({ code: 'STATE_CONFLICT', message: `Access intent already exists: ${input.id}` }));
     }
 
-    const intent: AccessIntent = Object.freeze({
+    const intent: AccessFabricIntent = Object.freeze({
       id: input.id,
       kind: input.kind,
       subjectRef: input.subjectRef,
@@ -60,7 +60,7 @@ export class AccessFabric implements AccessFabricPort {
     return ok(intent);
   }
 
-  registerRight(input: RegisterAccessRightInput): Result<AccessRight, AccessFabricFailure> {
+  registerRight(input: RegisterAccessRightInput): Result<AccessFabricRight, AccessFabricFailure> {
     accessFabricDoesNotMint();
     accessFabricDoesNotSettle();
     accessFabricRefusesAuthorityIssuance();
@@ -73,7 +73,7 @@ export class AccessFabric implements AccessFabricPort {
       return err(Object.freeze({ code: 'STATE_CONFLICT', message: `Access right already exists: ${input.id}` }));
     }
 
-    const right: AccessRight = Object.freeze({
+    const right: AccessFabricRight = Object.freeze({
       id: input.id,
       subjectRef: input.subjectRef,
       capacityRef: input.capacityRef,
@@ -98,11 +98,11 @@ export class AccessFabric implements AccessFabricPort {
     return ok(right);
   }
 
-  getRight(id: AccessRightId): AccessRight | null {
+  getRight(id: AccessRegistryRightId): AccessFabricRight | null {
     return this.rights.get(id) ?? null;
   }
 
-  getIntent(id: AccessIntentId): AccessIntent | null {
+  getIntent(id: AccessRegistryIntentId): AccessFabricIntent | null {
     return this.intents.get(id) ?? null;
   }
 

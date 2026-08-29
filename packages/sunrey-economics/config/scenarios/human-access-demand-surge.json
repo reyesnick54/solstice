@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "scenarioId": "human-access-demand-surge",
+  "title": "Human demand surge concentrated on scarce experiences",
+  "parameterClass": "ENGINEERING_SIMULATION_PARAMETERS",
+  "simulationLabel": "SIMULATION",
+  "seed": 75,
+  "epochs": 12,
+  "epochDurationLabel": "ABSTRACT_EPOCH",
+  "human": {
+    "participants": 4200,
+    "demandScale": "2600000",
+    "laborShareBps": "4800",
+    "informationRightIntensityBps": "2200",
+    "creativeIntensityBps": "1800",
+    "entrepreneurialIntensityBps": "1400",
+    "communityIntensityBps": "2600",
+    "governedDistributionBps": "900"
+  },
+  "automation": {
+    "penetrationBps": "4200",
+    "aiProductivityBps": "5200",
+    "robotDeploymentBps": "3600",
+    "productiveSystemCount": 14
+  },
+  "productive": {
+    "energyAvailabilityBps": "10000",
+    "computeAvailabilityBps": "10000",
+    "manufacturingCapacityBps": "9000",
+    "logisticsCapacityBps": "8000",
+    "categoryWeightsBps": {
+      "ENERGY": "1600",
+      "COMPUTE": "1600",
+      "AI_COMPUTE": "1400",
+      "AUTOMATED_MACHINE_OUTPUT": "800",
+      "MANUFACTURING": "1000",
+      "FOOD_AGRICULTURE": "800",
+      "WATER": "500",
+      "STORAGE": "400",
+      "LOGISTICS_TRANSPORTATION": "700",
+      "BANDWIDTH_COMMUNICATIONS": "500",
+      "MINERALS_RAW_MATERIALS": "400",
+      "REAL_ESTATE_USE": "400",
+      "SERVICES": "300"
+    }
+  },
+  "oracle": {
+    "providerCount": 3,
+    "stale": false,
+    "conflict": false,
+    "removeProviders": 0
+  },
+  "market": {
+    "volatilityBps": "420",
+    "makerSpreadBps": "140",
+    "startingPriceUnits": "2000000",
+    "orderSize": "60",
+    "makerInventorySunrey": "18000",
+    "makerInventoryMoonrey": "30000"
+  },
+  "fees": {
+    "utilizationBps": "5200",
+    "txPerEpoch": 8,
+    "transferAmount": "80"
+  },
+  "validators": {
+    "count": 4,
+    "unavailable": [],
+    "penaltyValidatorId": null,
+    "penaltyBps": "0",
+    "feeRevenueMode": "high"
+  },
+  "concentration": {
+    "operatorCount": 8,
+    "dominantShareBps": "2000"
+  },
+  "policies": {
+    "sunreyIssuanceScaleBps": "10000",
+    "moonreyEpochCapScaleBps": "10000",
+    "feeMaxUnits": "10000",
+    "validatorRewardBpsOverride": null,
+    "productiveNormalizationBps": "10000",
+    "becomesProductionPolicy": false
+  },
+  "assumptions": [
+    "Abstract epochs are not calendar years unless configured.",
+    "A demand surge does not create productive capacity that does not exist.",
+    "Human aggregates are synthetic and contain no personal information.",
+    "Excess demand is refused deterministically rather than oversold.",
+    "Simulation evidence is not production authorization."
+  ]
+}
