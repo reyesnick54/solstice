@@ -88,6 +88,7 @@ export const ACTION_TYPES = {
   RESTRICT_EXCHANGE_PARTICIPANT: 'RESTRICT_EXCHANGE_PARTICIPANT',
   SET_EXCHANGE_CONTROL: 'SET_EXCHANGE_CONTROL',
   REHEARSE_AUTHORITY_PATH: 'REHEARSE_AUTHORITY_PATH',
+  PROPOSE_ACCESS_INTENT: 'PROPOSE_ACCESS_INTENT',
 } as const;
 
 export type ActionType = (typeof ACTION_TYPES)[keyof typeof ACTION_TYPES];
@@ -903,6 +904,23 @@ export type RehearseAuthorityPathPayload = {
 
 export type RehearseAuthorityPathIntent = ActionIntent<RehearseAuthorityPathPayload> & {
   readonly actionType: typeof ACTION_TYPES.REHEARSE_AUTHORITY_PATH;
+};
+
+export type ProposeAccessIntentPayload = {
+  readonly accessIntentId: string;
+  readonly subjectId: string;
+  readonly category: string;
+  readonly kind: string;
+  readonly experienceLevel: string;
+  readonly purpose: string;
+  readonly mandateRef: string | null;
+  readonly consentRefs: readonly string[];
+  readonly pegContextRefs: readonly string[];
+  readonly intentHash: string;
+};
+
+export type ProposeAccessIntentAction = ActionIntent<ProposeAccessIntentPayload> & {
+  readonly actionType: typeof ACTION_TYPES.PROPOSE_ACCESS_INTENT;
 };
 
 export type SunReyExchangeIntent =
