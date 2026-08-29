@@ -15,6 +15,49 @@ export {
   type AgentInterpretationId,
   type AgentProposalId,
 } from './ids.ts';
+export {
+  accessIntentProposalFromIntent,
+  compareAccessAlternatives,
+  composeAccessIntentFromRequest,
+  parseAgentAccessIntentDraft,
+  type AccessIntentRequest,
+} from './access-intent.ts';
+export {
+  ACCESS_CATEGORIES,
+  ACCESS_CONSTRAINT_KINDS,
+  ACCESS_DURATION_UNITS,
+  ACCESS_EXPERIENCE_LEVELS,
+  ACCESS_INTENT_KINDS,
+  ACCESS_RECURRENCE,
+  AUTHORIZED_GRAPH_CATEGORIES,
+  asAccessIntentId,
+  consumeAuthorizedGraphContext,
+  deterministicAccessIntentId,
+  freezeAccessIntent,
+  isAccessCategory,
+  isAccessIntentKind,
+  isAuthorizedGraphCategory,
+  validateAccessIntentDraft,
+} from './access-fabric/index.ts';
+export type {
+  AccessCategory,
+  AccessConstraint,
+  AccessConstraintKind,
+  AccessDurationUnit,
+  AccessExperienceLevel,
+  AccessGeography,
+  AccessIntent,
+  AccessIntentFailure,
+  AccessIntentId,
+  AccessIntentKind,
+  AccessIntentProposal,
+  AccessRecurrence,
+  AccessSubstitution,
+  AccessTargetCriteria,
+  AccessWindow,
+  AuthorizedGraphCategory,
+  AuthorizedGraphSlice,
+} from './access-fabric/index.ts';
 export { generateCandidateIdeas } from './ideas.ts';
 export {
   INTERPRETED_CONSTRAINT_KINDS,
