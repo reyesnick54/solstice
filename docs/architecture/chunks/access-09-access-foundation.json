@@ -1,0 +1,13 @@
+{
+  "chunk": "ACCESS-09",
+  "title": "SunRey Access Fabric — AccessRights and CapacityReservations",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "domain",
+    "money",
+    "evidence",
+    "sunrey-access-fabric"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-access-fabric/src/types/access-right.ts and packages/sunrey-access-fabric/src/types/capacity-reservation.ts. AccessRight models scoped entitlements; CapacityReservation models temporary holds and commits. Simulation providers at packages/sunrey-access-fabric/src/ports/capacity-provider.ts. Does not issue Execution Authority or post journals."
+}

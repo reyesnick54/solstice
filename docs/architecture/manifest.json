@@ -1128,6 +1128,28 @@
       "notes": "Chunk 98 user-controlled AI agent mandates, transaction proposals, and bounded financial automation. ProposalGate only. Does not issue Execution Authority, post journals, hold master keys, or become a second wallet, Exchange, Kernel, or ledger. Personal Economy Agent remains proposal-only at packages/agent."
     },
     {
+      "id": "packages/sunrey-access-fabric",
+      "npmName": "@solstice/sunrey-access-fabric",
+      "path": "packages/sunrey-access-fabric",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/config",
+        "packages/evidence",
+        "packages/events"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "ACCESS-09 AccessRight and CapacityReservation foundation plus ACCESS-10 Composite Experience Composer. Saga orchestration for experience bundles. AI proposes; humans confirm. Does not issue Execution Authority, post journals, or create a second workflow engine. Simulation only."
+    },
+    {
       "id": "packages/ai-runtime",
       "npmName": "@solstice/ai-runtime",
       "path": "packages/ai-runtime",
@@ -4645,6 +4667,34 @@
       "notes": "Chunk 98. Human-created mandates authorize bounded AI proposals. Final transaction authority remains wallet delegated key, custody approval, or Execution Authority. AI identity alone cannot sign."
     },
     {
+      "id": "sunrey-access-fabric",
+      "name": "SunRey Access Fabric — AccessRights, CapacityReservations, and Experience Composer",
+      "canonicalOwner": "packages/sunrey-access-fabric",
+      "canonicalPath": "packages/sunrey-access-fabric/src/experience-composer.ts",
+      "publicInterface": "packages/sunrey-access-fabric/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ExperienceComposer",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/access-fabric",
+        "packages/experience-composer",
+        "packages/capacity-reservation",
+        "packages/access-rights"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "ACCESS-09 foundation and ACCESS-10 Composite Experience Composer. Transforms experience intents into coordinated AccessRight / CapacityReservation bundles. AI proposes composition; humans confirm. ALL_OR_NOTHING, PARTIAL_WITH_APPROVAL, BEST_EFFORT policies. Does not issue Execution Authority or post journals."
+    },
+    {
       "id": "sunrey-wallet-security",
       "name": "SunRey advanced wallet security, recovery, device trust, and transaction authorization",
       "canonicalOwner": "packages/sunrey-chain",
@@ -7075,6 +7125,13 @@
       "owner": "packages/sunrey-agent",
       "protected": true,
       "notes": "Chunk 98 user-controlled AI agent mandates. Owner: packages/sunrey-agent. AI proposes."
+    },
+    {
+      "id": "sunrey-access-fabric",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-access-fabric",
+      "protected": true,
+      "notes": "ACCESS-09 AccessRight / CapacityReservation foundation and ACCESS-10 Experience Composer. Simulation only. AI proposes; humans confirm bundles."
     },
     {
       "id": "sunrey-exchange-consumer-trading",
