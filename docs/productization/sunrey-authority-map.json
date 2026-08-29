@@ -230,6 +230,14 @@
       "owner": "apps/explorer",
       "authoritativePath": "apps/explorer/app.js",
       "unique": true
+    },
+    {
+      "id": "access-fabric",
+      "authority": "Access Fabric",
+      "role": "governed non-ownership access rights over productive capacity",
+      "owner": "packages/access-economy",
+      "authoritativePath": "packages/access-economy/src/service.ts",
+      "unique": true
     }
   ],
   "requiredAuthorityIds": [
