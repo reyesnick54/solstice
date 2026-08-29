@@ -1188,6 +1188,24 @@
       "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry for datasets and economic evidence assets. Sits above HIN, PDV, PEG, Human Economic Contribution Registry, oracles, productive registries, and the monetary constitution. Not a blob store, mint, or second source-specific registry. Simulation only."
     },
     {
+      "id": "packages/access-economy",
+      "npmName": "@solstice/access-economy",
+      "path": "packages/access-economy",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "ACCESS-01 SunRey Access Fabric / Human Access Economy foundation. Orchestrates governed non-ownership AccessRight and AccessIntent records. Not money, mint, settlement, custody, Exchange, Kernel, Execution Authority, oracle consensus, identity truth, or legal eligibility truth. Simulation only."
+    },
+    {
       "id": "services/api",
       "npmName": "@solstice/platform-api",
       "path": "services/api",
@@ -4906,6 +4924,44 @@
       "notes": "Chunk 139 privacy-safe HIN adapter over existing SunReyChainService. Creates schemas and ChainWriteIntent records. HIN remains the rights owner. SunRey Chain remains the only chain owner. Lifecycle and finality complete in Chunk 140. Does not mint, transfer ownership, or rewrite historical HIN records."
     },
     {
+      "id": "sunrey-access-rights-commitments",
+      "name": "SunRey Chain access rights, reservations, and commitments",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/access/service.ts",
+      "publicInterface": "packages/sunrey-chain/src/access/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "AccessRightsChainService",
+          "kind": "class"
+        },
+        {
+          "name": "accessFinalityFor",
+          "kind": "function"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/access-chain",
+        "packages/access-ledger",
+        "packages/access-coin",
+        "packages/access-token",
+        "packages/access-rights-chain",
+        "packages/reservation-chain",
+        "packages/reservation-ledger",
+        "packages/rights-chain",
+        "packages/mobility-chain",
+        "packages/entitlement-chain"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "ACCESS-08 Access Fabric commitments over the existing SunReyChainService at packages/sunrey-chain/src/access. Records access-right creation and revocation, reservation commit, confirm, expiry and cancellation, usage, delivery, and settlement evidence references. Deterministic state transitions and replay only. Access, usage, lease, and reservation rights are distinct from ownership and never convey title. No new blockchain, side ledger, token wrapper, Access Coin, mint, or SunRey/MoonRey issuance path. Raw personal data, travel history, health data, personal preferences, private itinerary contents, and payment credentials never reach a chain payload."
+    },
+    {
       "id": "sunrey-human-economic-contributions",
       "name": "SunRey Human Economic Contribution ontology",
       "canonicalOwner": "packages/human-economic-contribution",
@@ -5027,6 +5083,36 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry. Not HIN, PDV, PEG, Human Economic Contribution Registry, oracle consensus, productive engine, or native monetary supply. Registration does not authorize settlement or minting."
+    },
+    {
+      "id": "sunrey-access-fabric",
+      "name": "SunRey Access Fabric / Human Access Economy",
+      "canonicalOwner": "packages/access-economy",
+      "canonicalPath": "packages/access-economy/src/service.ts",
+      "publicInterface": "packages/access-economy/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "AccessFabric",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/access-fabric",
+        "packages/access-economy-v2",
+        "packages/access-coin",
+        "packages/access-exchange",
+        "packages/access-ledger",
+        "packages/human-access-economy"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "ACCESS-01 access-domain orchestration for governed non-ownership AccessRight records. Not ownership, money, mint, settlement, custody, Exchange, Kernel, Execution Authority, oracle consensus, human-worth score, or Access Coin."
     },
     {
       "id": "sunrey-economic-unit-normalization",
@@ -6293,7 +6379,17 @@
     "packages/final-architecture",
     "packages/super-app",
     "packages/everything",
-    "packages/production-v2"
+    "packages/production-v2",
+    "packages/access-chain",
+    "packages/access-ledger",
+    "packages/access-coin",
+    "packages/access-token",
+    "packages/access-rights-chain",
+    "packages/reservation-chain",
+    "packages/reservation-ledger",
+    "packages/rights-chain",
+    "packages/mobility-chain",
+    "packages/entitlement-chain"
   ],
   "capabilities": [
     {
@@ -7189,6 +7285,13 @@
       "notes": "Chunk 139 HIN to SunRey Chain anchoring foundation at packages/information-market/src/network/chain-anchor. Uses existing SunReyChainService. Not a second chain, consent ledger, or Evidence Vault. Lifecycle completion is Chunk 140. Do not create packages/hin-chain, packages/information-blockchain, packages/privacy-chain, packages/consent-chain, or packages/human-data-ledger."
     },
     {
+      "id": "sunrey-access-rights-commitments",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "ACCESS-08 Access Fabric access rights, reservations, and commitments at packages/sunrey-chain/src/access. Extends the existing SunRey Chain owner and uses SunReyChainService for classification, signing, evidence, finality, and reconciliation. Ownership is distinct from access, usage, lease, and reservation; an access right never conveys title. No new blockchain, side ledger, token wrapper, Access Coin, minting pathway, or automatic SunRey/MoonRey issuance. Do not create packages/access-chain, packages/access-ledger, packages/access-coin, packages/access-token, packages/reservation-chain, packages/rights-chain, packages/mobility-chain, or packages/entitlement-chain."
+    },
+    {
       "id": "sunrey-human-economic-contributions",
       "status": "IMPLEMENTED",
       "owner": "packages/human-economic-contribution",
@@ -7201,6 +7304,13 @@
       "owner": "packages/economic-asset-registry",
       "protected": true,
       "notes": "Chunk 113 master dataset and economic-asset metadata registry. Not a blob store, HIN, PDV, PEG, contribution registry, oracle, productive engine, or monetary supply book. Do not create packages/dataset-registry, packages/economic-assets, packages/data-assets-v2, packages/universal-data-registry, or packages/tokenized-data."
+    },
+    {
+      "id": "sunrey-access-fabric",
+      "status": "IMPLEMENTED",
+      "owner": "packages/access-economy",
+      "protected": true,
+      "notes": "ACCESS-01 SunRey Access Fabric foundation. Orchestrates AccessRight and AccessIntent records only. Not money, mint, settlement, custody, Exchange, Kernel, Execution Authority, oracle consensus, identity truth, legal eligibility truth, Access Coin, or social credit. Do not create packages/access-fabric, packages/access-coin, packages/access-exchange, or packages/access-ledger."
     },
     {
       "id": "sunrey-human-contribution-valuation",

@@ -29,6 +29,7 @@ function mandateInput(overrides: Partial<CreateMandateInput> = {}): CreateMandat
         'PREPARE_PAYMENT',
         'PREPARE_EXCHANGE_ORDER',
         'REBALANCE_WITHIN_POLICY',
+        'PROPOSE_ACCESS_INTENT',
         'REQUEST_HUMAN_APPROVAL',
       ],
       assets: [
@@ -103,6 +104,7 @@ function setup(overrides: Parameters<typeof createFixtureToolPorts>[0] = {}, man
       'nativeEconomy',
       'productiveEconomy',
       'hin',
+      'access',
     ],
     approvedToolVersions: {},
     modelText: 'help me with my finances',
@@ -199,11 +201,13 @@ describe('tool contract matrix', () => {
       getHinMetrics: {},
       getHinSummary: {},
       getHinValuationMethodologies: {},
+      proposeAccessIntent: { sourceText: 'I want a Mustang convertible in Miami for two weeks.' },
+      confirmAccessReservation: { reservationId: 'res_1' },
     };
     for (const tool of CANONICAL_AGENT_TOOLS) {
       const result = runtime.invoke({ ...session, turnId: `valid_${tool.toolId}` }, { toolId: tool.toolId, input: samples[tool.toolId] ?? {} });
       assert.equal(result.executed, false, tool.toolId);
-      if (tool.toolId === 'createRecipientProposal') {
+      if (tool.toolId === 'createRecipientProposal' || tool.toolId === 'confirmAccessReservation') {
         assert.equal(result.status, 'NOT_ELIGIBLE', tool.toolId);
         continue;
       }

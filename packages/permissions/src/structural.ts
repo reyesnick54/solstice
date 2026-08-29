@@ -402,6 +402,26 @@ export function validateIntentStructure(
     }
     return ok(true);
   }
+  if (intent.actionType === ACTION_TYPES.CONFIRM_CAPACITY_RESERVATION) {
+    const payload = intent.payload as { reservationId?: unknown; poolId?: unknown; units?: unknown };
+    if (typeof payload.reservationId !== 'string' || payload.reservationId.length === 0) {
+      return reject('reservationId', 'reservation id is required');
+    }
+    if (typeof payload.poolId !== 'string' || payload.poolId.length === 0) {
+      return reject('poolId', 'pool id is required');
+    }
+    if (!Number.isInteger(payload.units) || (payload.units as number) <= 0) {
+      return reject('units', 'units must be a positive integer');
+    }
+    return ok(true);
+  }
+  if (intent.actionType === ACTION_TYPES.ACTIVATE_CAPACITY_RESERVATION) {
+    const payload = intent.payload as { reservationId?: unknown };
+    if (typeof payload.reservationId !== 'string' || payload.reservationId.length === 0) {
+      return reject('reservationId', 'reservation id is required');
+    }
+    return ok(true);
+  }
   return reject('actionType', `unknown actionType ${intent.actionType}`);
 }
 

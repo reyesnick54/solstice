@@ -1,0 +1,16 @@
+{
+  "chunk": "ACCESS-08",
+  "title": "SunRey Blockchain Access Rights, Reservations and Commitments",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "identity",
+    "evidence",
+    "events",
+    "sunrey-chain",
+    "blockchain-protocol",
+    "sunrey-productive-capacity",
+    "sunrey-access-rights-commitments"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/access by extending the existing SunRey Chain owner. Access-domain lifecycle events become privacy-safe commitments through SunReyChainService: access-right creation and revocation, reservation commit, confirm, expiry and cancellation, usage, delivery, and settlement evidence references. State transitions are deterministic and replayable. An AccessRight points at a productive object and is denominated in that object's unit schema. OWNERSHIP is distinct from ACCESS, USAGE, LEASE, and RESERVATION; an access right never conveys title. No new blockchain, side ledger, generic token wrapper, Access Coin, minting pathway, or automatic SunRey/MoonRey issuance. Raw personal data, travel history, health data, personal preferences, private itinerary contents, and payment credentials never reach a chain payload. Do not create packages/access-chain, packages/access-ledger, packages/access-coin, packages/access-token, packages/reservation-chain, packages/rights-chain, packages/mobility-chain, or packages/entitlement-chain."
+}

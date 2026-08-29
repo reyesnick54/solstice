@@ -4,6 +4,9 @@
   "canonicalPackageCount": 51,
   "canonicalCapabilityCount": 165,
   "canonicalComponentCount": 139,
+  "canonicalPackageCount": 52,
+  "canonicalCapabilityCount": 165,
+  "canonicalComponentCount": 138,
   "chunkDeclarationCount": 168,
   "singleTestScriptInvariant": true
 }
