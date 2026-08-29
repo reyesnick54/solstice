@@ -26,6 +26,7 @@ export {
   SANDBOX_LABEL,
   SANDBOX_PERSONA_IDS,
 } from './fixtures.ts';
+export { dispatchAccess } from './access.ts';
 export { handleConsumerBff, CONSUMER_BFF_ROUTES, type ConsumerBffRuntime } from './handler.ts';
 export { createNativeEconomySurface } from './native-economy-adapter.ts';
 export { createProductiveEconomySurface } from './productive-economy-adapter.ts';

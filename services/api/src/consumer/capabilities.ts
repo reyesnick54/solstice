@@ -194,6 +194,16 @@ export function computeCapabilities(input: CapabilityInputs): FeatureCapabilityM
     productized: true,
     reasonIfDisabled: 'information rights marketplace is not productized',
   });
+  const access = feature({
+    key: 'access',
+    availability: 'AVAILABLE_SIMULATION',
+    provider: 'SIMULATED',
+    eligible: !restricted && principal.capabilities.includes('VIEW_ECONOMIC_GRAPH'),
+    pendingVerification: pending,
+    providerDown: down.access === true,
+    productized: true,
+    reasonIfDisabled: 'Human Access Economy is not productized for this customer',
+  });
 
   void input.grow;
   void input.agent;
@@ -214,6 +224,7 @@ export function computeCapabilities(input: CapabilityInputs): FeatureCapabilityM
     walletsEnabled: wallets.enabled,
     dataVaultEnabled: dataVault.enabled,
     hinEnabled: hin.enabled,
+    accessEnabled: access.enabled,
     details: Object.freeze({
       payments,
       fx,
@@ -225,6 +236,7 @@ export function computeCapabilities(input: CapabilityInputs): FeatureCapabilityM
       wallets,
       dataVault,
       hin,
+      access,
     }),
   });
 }

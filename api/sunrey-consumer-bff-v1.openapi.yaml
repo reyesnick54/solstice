@@ -2284,6 +2284,147 @@ paths:
       responses:
         "200":
           description: Proposal only. No supply change.
+  /api/v1/access/overview:
+    get:
+      operationId: getAccessOverview
+      summary: Human Access Economy home overview
+      description: Simulation-only access surface. Live provider connectivity remains disabled.
+      responses:
+        "200":
+          description: Access overview with explicit disabled states when capability is off
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessOverview'
+        "401":
+          description: Authentication required
+  /api/v1/access/categories:
+    get:
+      operationId: listAccessCategories
+      summary: Presentation metadata for access categories
+      responses:
+        "200":
+          description: Category labels only; productive taxonomy remains in domain owners
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessCategories'
+  /api/v1/access/entitlements:
+    get:
+      operationId: listAccessEntitlements
+      summary: Active and historical access entitlements
+      responses:
+        "200":
+          description: Entitlement list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessEntitlementList'
+  /api/v1/access/reservations:
+    get:
+      operationId: listAccessReservations
+      summary: Access reservations for the authenticated customer
+      responses:
+        "200":
+          description: Reservation list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessReservationList'
+    post:
+      operationId: createAccessReservation
+      summary: Hold an access reservation from a simulation quote
+      responses:
+        "201":
+          description: Reservation created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessReservation'
+  /api/v1/access/activity:
+    get:
+      operationId: listAccessActivity
+      summary: Access economy activity timeline
+      responses:
+        "200":
+          description: Activity records without raw provider payloads
+  /api/v1/access/intents:
+    post:
+      operationId: createAccessIntent
+      summary: Submit an access intent
+      responses:
+        "201":
+          description: Intent recorded for matching and quoting
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessIntent'
+  /api/v1/access/availability:
+    post:
+      operationId: checkAccessAvailability
+      summary: Check category availability without asserting live capacity
+      responses:
+        "200":
+          description: Explicit availability state; capacityKnown remains false unless fixture-backed
+  /api/v1/access/quotes:
+    post:
+      operationId: createAccessQuote
+      summary: Request a simulation-backed access quote
+      description: Returns 503 when no fixture matches; never fabricates live pricing.
+      responses:
+        "201":
+          description: Quote from simulation fixture
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessQuote'
+  /api/v1/access/reservations/{id}/confirm:
+    post:
+      operationId: confirmAccessReservation
+      summary: Confirm a held access reservation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Reservation confirmed
+  /api/v1/access/reservations/{id}/cancel:
+    post:
+      operationId: cancelAccessReservation
+      summary: Cancel an access reservation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Reservation cancelled
+  /api/v1/access/experiences/quote:
+    post:
+      operationId: quoteAccessExperience
+      summary: Quote a curated experience package
+      responses:
+        "201":
+          description: Experience quote
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessExperience'
+  /api/v1/access/experiences/{id}/confirm:
+    post:
+      operationId: confirmAccessExperience
+      summary: Confirm a quoted experience
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Experience confirmed
   /api/v1/data/permissions:
     get:
       operationId: getDataPermissionCatalog
@@ -3144,3 +3285,122 @@ components:
             modelMayAlterAuthoritativeNumbers:
               type: boolean
               enum: [false]
+    AccessPosture:
+      type: object
+      required: [productionReady, productionActive, liveConnectivityEnabled]
+      properties:
+        productionReady: { type: boolean, enum: [false] }
+        productionActive: { type: boolean, enum: [false] }
+        liveConnectivityEnabled: { type: boolean, enum: [false] }
+    AccessCapability:
+      type: object
+      required: [enabled, state, reason]
+      properties:
+        enabled: { type: boolean }
+        state:
+          type: string
+          enum: [READY, SIMULATION_ONLY, FEATURE_DISABLED, USER_INELIGIBLE, PENDING_VERIFICATION]
+        reason: { type: string }
+    AccessOverview:
+      allOf:
+        - $ref: '#/components/schemas/AccessPosture'
+        - type: object
+          required: [schema, capability, activeEntitlements, upcomingReservations, activeExperiences, recommendations, availabilityStatus]
+          properties:
+            schema: { type: string, enum: [sunrey.consumer.access.overview.v1] }
+            capability: { $ref: '#/components/schemas/AccessCapability' }
+    AccessCategories:
+      allOf:
+        - $ref: '#/components/schemas/AccessPosture'
+        - type: object
+          required: [schema, items]
+          properties:
+            schema: { type: string, enum: [sunrey.consumer.access.categories.v1] }
+            items:
+              type: array
+              items:
+                type: object
+                required: [category, label, productiveTaxonomyOwnedBy]
+                properties:
+                  category: { type: string }
+                  label: { type: string }
+                  productiveTaxonomyOwnedBy: { type: string }
+    AccessEntitlement:
+      type: object
+      required: [entitlementId, category, label, status, simulationFixture]
+      properties:
+        entitlementId: { type: string }
+        category: { type: string }
+        label: { type: string }
+        status: { type: string }
+        scope: { type: string }
+        remainingUses: { type: integer, nullable: true }
+        simulationFixture: { type: boolean, enum: [true] }
+    AccessEntitlementList:
+      allOf:
+        - $ref: '#/components/schemas/AccessPosture'
+        - type: object
+          required: [schema, capability, items]
+          properties:
+            schema: { type: string, enum: [sunrey.consumer.access.entitlements.v1] }
+            capability: { $ref: '#/components/schemas/AccessCapability' }
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/AccessEntitlement' }
+    AccessQuote:
+      allOf:
+        - $ref: '#/components/schemas/AccessPosture'
+        - type: object
+          required: [schema, quoteId, category, summary, capacityKnown, simulationFixture]
+          properties:
+            schema: { type: string, enum: [sunrey.consumer.access.quote.v1] }
+            quoteId: { type: string }
+            category: { type: string }
+            summary: { type: string }
+            capacityKnown: { type: boolean, enum: [false] }
+            simulationFixture: { type: boolean, enum: [true] }
+    AccessReservation:
+      allOf:
+        - $ref: '#/components/schemas/AccessPosture'
+        - type: object
+          required: [schema, reservationId, category, summary, status]
+          properties:
+            schema: { type: string, enum: [sunrey.consumer.access.reservation.v1] }
+            reservationId: { type: string }
+            category: { type: string }
+            summary: { type: string }
+            status: { type: string }
+    AccessReservationList:
+      allOf:
+        - $ref: '#/components/schemas/AccessPosture'
+        - type: object
+          required: [schema, capability, items]
+          properties:
+            schema: { type: string, enum: [sunrey.consumer.access.reservations.v1] }
+            capability: { $ref: '#/components/schemas/AccessCapability' }
+            items:
+              type: array
+              items: { $ref: '#/components/schemas/AccessReservation' }
+    AccessIntent:
+      allOf:
+        - $ref: '#/components/schemas/AccessPosture'
+        - type: object
+          required: [schema, intentId, category, summary, status]
+          properties:
+            schema: { type: string, enum: [sunrey.consumer.access.intent.v1] }
+            intentId: { type: string }
+            category: { type: string }
+            summary: { type: string }
+            status: { type: string }
+    AccessExperience:
+      allOf:
+        - $ref: '#/components/schemas/AccessPosture'
+        - type: object
+          required: [schema, experienceId, title, destination, durationDays, status]
+          properties:
+            schema: { type: string, enum: [sunrey.consumer.access.experience.v1] }
+            experienceId: { type: string }
+            title: { type: string }
+            destination: { type: string }
+            durationDays: { type: integer }
+            status: { type: string }

@@ -58,6 +58,18 @@ import type {
   WithdrawalQuote,
   WithdrawalQuoteInput,
   WithdrawalResource,
+  AccessOverview,
+  AccessCategories,
+  AccessEntitlement,
+  AccessIntent,
+  AccessIntentCreateInput,
+  AccessAvailabilityInput,
+  AccessQuote,
+  AccessQuoteCreateInput,
+  AccessReservation,
+  AccessReservationCreateInput,
+  AccessExperience,
+  AccessExperienceQuoteInput,
 } from './types.ts';
 
 export type BffAuthProvider = {
@@ -913,6 +925,58 @@ export class SunReyConsumerBffClient {
 
   async getMoonReyEconomicInput(options?: BffRequestOptions): Promise<ProductiveEconomyOverview['moonreyInput']> {
     return this.request('GET', '/api/v1/economy/productive/moonrey-input', undefined, options);
+  }
+
+  async getAccessOverview(options?: BffRequestOptions): Promise<AccessOverview> {
+    return this.request('GET', '/api/v1/access/overview', undefined, options);
+  }
+
+  async listAccessCategories(options?: BffRequestOptions): Promise<AccessCategories> {
+    return this.request('GET', '/api/v1/access/categories', undefined, options);
+  }
+
+  async listAccessEntitlements(options?: BffRequestOptions): Promise<{ readonly capability: AccessOverview['capability']; readonly items: readonly AccessEntitlement[] }> {
+    return this.request('GET', '/api/v1/access/entitlements', undefined, options);
+  }
+
+  async listAccessReservations(options?: BffRequestOptions): Promise<{ readonly capability: AccessOverview['capability']; readonly items: readonly AccessReservation[] }> {
+    return this.request('GET', '/api/v1/access/reservations', undefined, options);
+  }
+
+  async listAccessActivity(options?: BffRequestOptions): Promise<{ readonly items: readonly unknown[] }> {
+    return this.request('GET', '/api/v1/access/activity', undefined, options);
+  }
+
+  async createAccessIntent(input: AccessIntentCreateInput, options?: BffRequestOptions): Promise<AccessIntent> {
+    return this.request('POST', '/api/v1/access/intents', input, options);
+  }
+
+  async checkAccessAvailability(input: AccessAvailabilityInput, options?: BffRequestOptions): Promise<unknown> {
+    return this.request('POST', '/api/v1/access/availability', input, options);
+  }
+
+  async createAccessQuote(input: AccessQuoteCreateInput, options?: BffRequestOptions): Promise<AccessQuote> {
+    return this.request('POST', '/api/v1/access/quotes', input, options);
+  }
+
+  async createAccessReservation(input: AccessReservationCreateInput, options?: BffRequestOptions): Promise<AccessReservation> {
+    return this.request('POST', '/api/v1/access/reservations', input, options);
+  }
+
+  async confirmAccessReservation(id: string, options?: BffRequestOptions): Promise<AccessReservation> {
+    return this.request('POST', `/api/v1/access/reservations/${encodeURIComponent(id)}/confirm`, {}, options);
+  }
+
+  async cancelAccessReservation(id: string, options?: BffRequestOptions): Promise<AccessReservation> {
+    return this.request('POST', `/api/v1/access/reservations/${encodeURIComponent(id)}/cancel`, {}, options);
+  }
+
+  async quoteAccessExperience(input: AccessExperienceQuoteInput, options?: BffRequestOptions): Promise<AccessExperience> {
+    return this.request('POST', '/api/v1/access/experiences/quote', input, options);
+  }
+
+  async confirmAccessExperience(id: string, options?: BffRequestOptions): Promise<AccessExperience> {
+    return this.request('POST', `/api/v1/access/experiences/${encodeURIComponent(id)}/confirm`, {}, options);
   }
 
   async getVaultHome(options?: BffRequestOptions): Promise<VaultHome> {

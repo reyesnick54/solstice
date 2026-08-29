@@ -78,6 +78,8 @@ import { dispatchDataRights } from './data-rights.ts';
 import type { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
 import type { PersonalDataVaultProduct } from '../../../../packages/personal-data-vault/src/product/index.ts';
 import { dispatchVault } from './vault.ts';
+import { dispatchAccess } from './access.ts';
+import type { HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
 
 export type BffRequest = {
   readonly method: string;
@@ -116,6 +118,7 @@ export type ConsumerBffRuntime = {
   readonly phaseH?: PhaseHProductSurface;
   readonly dataRights?: ConsentDataRightsEngine;
   readonly vault?: PersonalDataVaultProduct;
+  readonly access?: HumanAccessEconomyProduct;
   readonly previewDiagnostics?: () => Readonly<Record<string, unknown>>;
 };
 
@@ -415,6 +418,12 @@ function dispatchAuthenticated(
     );
     if (vault) {
       return vault;
+    }
+  }
+  if (runtime.access) {
+    const access = dispatchAccess(runtime.access, request, principal, requestId, headers);
+    if (access) {
+      return access;
     }
   }
   if (runtime.payments) {
@@ -1744,6 +1753,19 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/data/vault/export',
   'GET /api/v1/data/vault/export/status',
   'GET /api/v1/data/vault/export/{id}',
+  'GET /api/v1/access/overview',
+  'GET /api/v1/access/categories',
+  'GET /api/v1/access/entitlements',
+  'GET /api/v1/access/reservations',
+  'GET /api/v1/access/activity',
+  'POST /api/v1/access/intents',
+  'POST /api/v1/access/availability',
+  'POST /api/v1/access/quotes',
+  'POST /api/v1/access/reservations',
+  'POST /api/v1/access/reservations/{id}/confirm',
+  'POST /api/v1/access/reservations/{id}/cancel',
+  'POST /api/v1/access/experiences/quote',
+  'POST /api/v1/access/experiences/{id}/confirm',
   'GET /api/v1/security',
   'GET /api/v1/notifications',
   'GET /api/v1/catalog/resources',
