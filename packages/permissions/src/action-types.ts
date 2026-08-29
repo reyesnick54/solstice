@@ -90,6 +90,7 @@ export const ACTION_TYPES = {
   REHEARSE_AUTHORITY_PATH: 'REHEARSE_AUTHORITY_PATH',
   CONFIRM_CAPACITY_RESERVATION: 'CONFIRM_CAPACITY_RESERVATION',
   ACTIVATE_CAPACITY_RESERVATION: 'ACTIVATE_CAPACITY_RESERVATION',
+  PROPOSE_ACCESS_INTENT: 'PROPOSE_ACCESS_INTENT',
 } as const;
 
 export type ActionType = (typeof ACTION_TYPES)[keyof typeof ACTION_TYPES];
@@ -928,6 +929,23 @@ export type ActivateCapacityReservationIntent = ActionIntent<ActivateCapacityRes
 };
 
 export type AccessFabricIntent = ConfirmCapacityReservationIntent | ActivateCapacityReservationIntent;
+
+export type ProposeAccessIntentPayload = {
+  readonly accessIntentId: string;
+  readonly subjectId: string;
+  readonly category: string;
+  readonly kind: string;
+  readonly experienceLevel: string;
+  readonly purpose: string;
+  readonly mandateRef: string | null;
+  readonly consentRefs: readonly string[];
+  readonly pegContextRefs: readonly string[];
+  readonly intentHash: string;
+};
+
+export type ProposeAccessIntentAction = ActionIntent<ProposeAccessIntentPayload> & {
+  readonly actionType: typeof ACTION_TYPES.PROPOSE_ACCESS_INTENT;
+};
 
 export type SunReyExchangeIntent =
   | OpenExchangeAccountIntent
