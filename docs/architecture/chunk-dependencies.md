@@ -187,6 +187,7 @@ Historical discussion remains below the table.
 | sunrey-mobile-wallet-sync | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-user-agent-mandates | IMPLEMENTED | packages/sunrey-agent |
 | sunrey-exchange-consumer-trading | IMPLEMENTED | packages/sunrey-exchange |
+| sunrey-exchange-capacity-access | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-human-information-network | IMPLEMENTED | packages/information-market |
 | sunrey-ai-runtime | IMPLEMENTED | packages/ai-runtime |
 | sunrey-s3m-provider | IMPLEMENTED | packages/ai-runtime |
@@ -928,6 +929,25 @@ remains dependent on real external authorization. Do not create
 `packages/consumer-exchange`, `packages/sunrey-consumer-exchange`,
 `packages/retail-exchange`, or `packages/consumer-trading`. The
 evaluator returns `mustStop: false`.
+ACCESS-09 implements productive capacity markets and dual-economy
+clearing at `packages/sunrey-exchange/src/access-fabric`. Capability
+`sunrey-exchange-capacity-access` is `IMPLEMENTED`. See
+[`exchange-capacity-access-fabric.md`](./exchange-capacity-access-fabric.md).
+It extends the canonical `PRODUCTIVE_CAPACITY` and
+`INTELLIGENCE_COMPUTE` families and delegates batch clearing to the
+canonical `clearAuction`. It does not create a second Exchange, matching
+engine, or balance ledger. Fiat consideration settles through
+`Ledger.postJournal` under a scoped Execution Authority; SunRey Coin and
+MoonRey Coin move only on canonical custody or native chain rails;
+access entitlement and permitted reward credit are consumed at the
+owning port and are neither transferable nor redeemable for money.
+There is no fixed SunRey/MoonRey ratio, no coin issuance, and no third
+currency. Corrections are compensating refund intents. Production
+activation remains off. Do not create `packages/access-fabric`,
+`packages/capacity-exchange`, `packages/capacity-market`,
+`packages/dual-economy-clearing`, `packages/clearing-house`,
+`packages/entitlements`, or `packages/access-ledger`. The evaluator
+returns `mustStop: false`.
 Chunk 94 implements the SunRey developer application platform at
 `packages/sunrey-sdk/src/developer-platform`. Capability
 `sunrey-developer-platform` is `IMPLEMENTED`. See
