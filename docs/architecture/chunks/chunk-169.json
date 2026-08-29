@@ -1,0 +1,13 @@
+{
+  "chunk": "CHUNK-169",
+  "title": "SunRey Access Fabric / Human Access Economy Foundation (ACCESS-01)",
+  "requires": [
+    "architecture-linting",
+    "domain",
+    "personal-economic-graph",
+    "personal-economy-agent",
+    "sunrey-agent",
+    "sunrey-access-fabric"
+  ],
+  "notes": "IMPLEMENTED at packages/access-economy (ACCESS-01 foundation only). Orchestrates governed non-ownership AccessRight and AccessIntent records for bounded access to productive capacity. Not money, mint, settlement, custody, Exchange, Kernel, Execution Authority, oracle consensus, identity truth, legal eligibility truth, Access Coin, or social credit. evaluateChunkRequirements returns mustStop: false. Do not create packages/access-fabric, packages/access-coin, packages/access-exchange, or packages/access-ledger."
+}
