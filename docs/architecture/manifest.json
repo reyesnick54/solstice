@@ -6652,6 +6652,13 @@
       "notes": "Chunk 45 machine economic identity and machine-to-machine commerce at packages/sunrey-chain/src/machine-economy. Controller-bound identities, explicit capabilities, integer mandates, bilateral matching port, native-asset escrow, oracle-backed delivery, deterministic settlement, revocation, and CryptoSuite key rotation. Machines cannot validate, govern, issue Execution Authority, or issue MoonRey. Do not create packages/machine-economy, packages/machine-identity, or a second exchange."
     },
     {
+      "id": "sunrey-access-fabric",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "ACCESS-10/11 SunRey Access Fabric at packages/sunrey-chain/src/access-fabric. Reservation, grant, usage proof, delivery claim, completion workflows, dispute, and refund-adjustment proposals across vehicle, hospitality, compute, energy, food, and generic services. Reuses existing oracle facts and Evidence Vault. Privacy-safe chain commitments only. Refund adjustments route through Kernel financial authority, not direct ledger posts. Do not create packages/access-fabric, packages/access, or a second oracle network."
+    },
+    {
       "id": "sunrey-productive-capacity",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
