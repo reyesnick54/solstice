@@ -75,6 +75,7 @@
     "demo:sunrey-hin-chain-finality": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/information-market/src/network/chain-anchor/finality-demo.ts",
     "sunrey-information": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/information-market/src/network/cli-main.ts",
     "demo:sunrey-chain": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/demo.ts",
+    "demo:sunrey-access-rights": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/access/demo.ts",
     "demo:sunrey-node": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/local-node/demo.ts",
     "demo:sunrey-governance": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/governance/demo.ts",
     "demo:sunrey-machine-economy": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/machine-economy/demo.ts",
