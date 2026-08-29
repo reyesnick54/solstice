@@ -13,11 +13,18 @@ import {
   explainCapitalProposal,
   explainRisk,
 } from './explain.ts';
+import {
+  accessIntentProposalFromIntent,
+  composeAccessIntentFromRequest,
+  type AccessIntentRequest,
+} from './access-intent.ts';
 import { freezeProposal, type AgentProposal } from './proposal.ts';
 import { deterministicProposalId } from './ids.ts';
+import type { AccessIntent, AccessIntentFailure } from './access-fabric/index.ts';
 
 export type AgentFailure =
   | InterpretationFailure
+  | AccessIntentFailure
   | { readonly code: 'ACTOR_CONTEXT_REQUIRED'; readonly message: string }
   | { readonly code: 'PORTS_INVALID'; readonly message: string };
 
@@ -176,6 +183,39 @@ export class PersonalEconomyAgent {
         now: this.clock.now(),
       }),
     );
+  }
+
+  proposeAccessIntent(
+    actor: unknown,
+    ports: AgentRuntimePorts,
+    request: AccessIntentRequest,
+  ): Result<{ readonly intent: AccessIntent; readonly proposal: AgentProposal }, AgentFailure> {
+    if (!isVerifiedActorContext(actor)) {
+      return err({
+        code: 'ACTOR_CONTEXT_REQUIRED',
+        message: 'access intent proposals require a verified ActorContext',
+      });
+    }
+    try {
+      const frozen = freezeAgentPorts(ports);
+      const intent = composeAccessIntentFromRequest({
+        ports: frozen,
+        request,
+        now: this.clock.now(),
+      });
+      if (!intent.ok) {
+        return intent;
+      }
+      return ok({
+        intent: intent.value,
+        proposal: accessIntentProposalFromIntent({ intent: intent.value, now: this.clock.now() }),
+      });
+    } catch (error) {
+      return err({
+        code: 'PORTS_INVALID',
+        message: error instanceof Error ? error.message : 'invalid agent ports',
+      });
+    }
   }
 
   interpretationProposal(interpretation: AgentMandateInterpretation): AgentProposal {

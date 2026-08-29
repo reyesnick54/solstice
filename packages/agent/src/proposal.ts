@@ -4,6 +4,7 @@ import type { AgentProposalId } from './ids.ts';
 export const AGENT_PROPOSAL_KINDS = [
   'MANDATE_INTERPRETATION',
   'CANDIDATE_IDEA',
+  'ACCESS_INTENT_PROPOSAL',
   'PLAN_EXPLANATION',
   'GOAL_EXPLANATION',
   'VALUE_EXPLANATION',

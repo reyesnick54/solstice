@@ -356,6 +356,26 @@ export type HinContributionPort = {
   methodologies(): PortResult<readonly { readonly methodologyId: string; readonly isMintFormula: false }[]>;
 };
 
+import type { ActionIntent } from '../../permissions/src/action-intent.ts';
+import type { AccessIntent, AuthorizedGraphSlice } from '../../consent/src/access-fabric/index.ts';
+
+export type AccessPort = {
+  proposeIntent(input: {
+    readonly ownerId: string;
+    readonly sourceText: string;
+    readonly mandateId: string | null;
+    readonly graphSlice: AuthorizedGraphSlice;
+    readonly requestedGraphCategories?: readonly string[];
+    readonly requestedGraphLabels?: Readonly<Record<string, readonly string[]>>;
+  }): PortResult<{
+    readonly intent: AccessIntent;
+    readonly proposalId: string;
+    readonly explanation: string;
+    readonly actionIntent: ActionIntent;
+  }>;
+  confirmReservation(ownerId: string): PortResult<never>;
+};
+
 export type AgentToolDomainPorts = {
   readonly accounts: AccountsPort;
   readonly payments: PaymentsPort;
@@ -366,6 +386,7 @@ export type AgentToolDomainPorts = {
   readonly custody: CustodyPort;
   readonly cards: CardsPort;
   readonly data: DataPort;
+  readonly access: AccessPort;
   readonly nativeEconomy: NativeEconomyPort;
   readonly productiveEconomy: ProductiveEconomyPort;
   readonly hin: HinContributionPort;

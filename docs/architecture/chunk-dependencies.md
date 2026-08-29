@@ -196,6 +196,7 @@ Historical discussion remains below the table.
 | sunrey-access-rights-commitments | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-human-economic-contributions | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-economic-asset-registry | IMPLEMENTED | packages/economic-asset-registry |
+| sunrey-access-fabric | IMPLEMENTED | packages/access-economy |
 | sunrey-human-contribution-valuation | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-human-contribution-verification | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-economic-unit-normalization | IMPLEMENTED | packages/sunrey-chain |
@@ -1104,6 +1105,17 @@ minting. Do not create `packages/dataset-registry`,
 `packages/economic-assets`, `packages/data-assets-v2`,
 `packages/universal-data-registry`, or `packages/tokenized-data`. The
 evaluator returns `mustStop: false`.
+ACCESS-01 implements the SunRey Access Fabric at
+`packages/access-economy`. Capability `sunrey-access-fabric` is
+`IMPLEMENTED` at foundation scope. See
+[`SUNREY_ACCESS_FABRIC.md`](./SUNREY_ACCESS_FABRIC.md) and
+[`chunk-169-access-fabric-foundation.md`](./chunk-169-access-fabric-foundation.md).
+It orchestrates governed non-ownership `AccessRight` and `AccessIntent`
+records. It is not money, mint, settlement, custody, Exchange, Kernel,
+Execution Authority, oracle consensus, identity truth, legal eligibility
+truth, Access Coin, or social credit. Do not create
+`packages/access-fabric`, `packages/access-coin`, `packages/access-exchange`,
+or `packages/access-ledger`. The evaluator returns `mustStop: false`.
 Chunk 114 extends the same owner with rights, provenance, and lineage
 verification at `packages/economic-asset-registry/src/verification`.
 Capability `sunrey-economic-asset-verification` is `IMPLEMENTED` on

@@ -343,6 +343,10 @@ export function handleTool(ctx: HandlerContext): Omit<AgentToolResult, 'duration
         methodologies,
         isMintFormula: false,
       }), []);
+    case 'proposeAccessIntent':
+      return accessIntentProposal(ctx);
+    case 'confirmAccessReservation':
+      return accessReservationRefusal(ctx);
     default:
       return refuse(ctx, 'FAILED', 'UNKNOWN_TOOL', 'That tool is not registered.');
   }
@@ -693,6 +697,52 @@ function hint(component: LovableComponentHint, authoritativeNumericPaths: readon
     modelMaySummarize: true as const,
     modelMayAlterAuthoritativeNumbers: false as const,
   });
+}
+
+function accessIntentProposal(ctx: HandlerContext): Omit<AgentToolResult, 'durationMs' | 'correlationId'> {
+  const proposed = ctx.ports.access.proposeIntent({
+    ownerId: ctx.session.ownerId,
+    sourceText: str(ctx.input.sourceText),
+    mandateId: ctx.mandate.mandateId,
+    graphSlice: {
+      mandateId: ctx.mandate.mandateId,
+      purpose: 'AGENT_ANALYSIS',
+      authorizedCategories: Object.freeze(['GOAL', 'PREFERENCE', 'INSIGHT']),
+      categoryLabels: Object.freeze({
+        GOAL: Object.freeze(['Travel goals']),
+        PREFERENCE: Object.freeze(['Family travel']),
+      }),
+      consentRefs: Object.freeze(['consent_fixture_access']),
+    },
+    ...(typeof ctx.input.requestedGraphCategories === 'string'
+      ? { requestedGraphCategories: Object.freeze(ctx.input.requestedGraphCategories.split(',').map((item) => item.trim())) }
+      : {}),
+  });
+  if (!proposed.ok) {
+    return refuse(ctx, 'FAILED', proposed.code, proposed.message);
+  }
+  return {
+    status: 'SUCCESS',
+    toolId: ctx.tool.toolId,
+    version: ctx.tool.version,
+    executed: false,
+    payload: Object.freeze({
+      intent: proposed.value.intent,
+      explanation: proposed.value.explanation,
+      actionIntent: proposed.value.actionIntent,
+      confirmsReservation: false,
+      grantsEntitlement: false,
+    }),
+    rendering: hint('APPROVAL_CARD', []),
+    error: null,
+    proposalId: proposed.value.proposalId,
+    workflowId: null,
+  };
+}
+
+function accessReservationRefusal(ctx: HandlerContext): Omit<AgentToolResult, 'durationMs' | 'correlationId'> {
+  const refused = ctx.ports.access.confirmReservation(ctx.session.ownerId);
+  return refuse(ctx, 'NOT_ELIGIBLE', refused.ok ? 'UNKNOWN' : refused.code, refused.message);
 }
 
 function str(value: unknown): string {
