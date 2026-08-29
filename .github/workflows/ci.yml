@@ -262,6 +262,8 @@ jobs:
         run: npm run demo:sunrey-exchange
       - name: SunRey Exchange native settlement demo
         run: npm run demo:sunrey-exchange-native
+      - name: SunRey Exchange capacity access and dual-economy clearing demo
+        run: npm run demo:sunrey-exchange-capacity-access
       - name: SunRey Exchange four-validator DVP demo
         run: npm run demo:sunrey-exchange-settlement
       - name: Custody deposit and withdrawal demo

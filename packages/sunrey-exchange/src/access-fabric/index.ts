@@ -1,0 +1,163 @@
+/**
+ * ACCESS-09 — capacity markets and dual-economy clearing on the canonical
+ * SunRey Exchange. Not a second exchange, matching engine, or balance ledger.
+ */
+export { InMemoryAccessEntitlementPort, InMemoryRewardCreditPort } from './adapters.ts';
+export {
+  capacityAuctionAcceptsAt,
+  capacityAuctionOrder,
+  clearCapacityAuction,
+  openCapacityAuction,
+  submitCapacityAuctionOrder,
+} from './auction.ts';
+export {
+  DualEconomyClearingAdapter,
+  type ClearingRequest,
+  type DeliverySettlementRequest,
+  type DualEconomyClearingPorts,
+  type RefundClearingRequest,
+} from './clearing.ts';
+export {
+  NATIVE_COIN_ASSET_IDS,
+  considerationDenominations,
+  considerationKinds,
+  considerationTerms,
+  permittedConsiderationFor,
+  prorateConsiderationUnits,
+  validateConsideration,
+  type ConsiderationValidation,
+  type NativeCoinAssetId,
+} from './consideration.ts';
+export { CapacityDiscoveryIndex } from './discovery.ts';
+export {
+  CapacityAccessMarketEngine,
+  type CapacityDeliveryResult,
+  type CapacityRefundResult,
+  type CapacityReservationRequest,
+  type CapacityReservationResult,
+} from './engine.ts';
+export {
+  fiatConsiderationFor,
+  nativeConsiderationFor,
+  offerRemainingQuantity,
+  openFixedPriceAccessOffer,
+  takeFixedPriceAccessOffer,
+  withdrawFixedPriceAccessOffer,
+  type FixedPriceTake,
+} from './offers.ts';
+export {
+  capacityMarketConfiguration,
+  considerationRequiresAuthority,
+  evaluateCapacityAccess,
+  jurisdictionForbidden,
+  type CapacityAccessDecision,
+  type CapacityAccessRequest,
+} from './policy.ts';
+export { allocateCapacityQueue, enqueueCapacityRequest, sortQueueTickets } from './queue.ts';
+export {
+  cancellationIntentFor,
+  compensationIntentFor,
+  legUnits,
+  refundSettlementIntent,
+  refundableByDenomination,
+  splitConsiderationForPartialDelivery,
+  withUnits,
+} from './refunds.ts';
+export {
+  canTransition,
+  capacityDeliveryEvidence,
+  deliveryEvidenceAccepted,
+  openCapacityReservation,
+  transitionReservation,
+  undeliveredQuantity,
+} from './reservations.ts';
+export {
+  acceptsQuoteAt,
+  awardCapacityRfq,
+  cancelCapacityRfq,
+  closeCapacityRfq,
+  evaluateCapacityQuote,
+  filterPermittedQuotes,
+  openCapacityRfq,
+  submitCapacityQuote,
+} from './rfq.ts';
+export {
+  ACCESS_CLEARING_FAILURE_CODES,
+  ACCESS_FABRIC_EVIDENCE_KIND,
+  ACCESS_FABRIC_POSTURE,
+  ACCESS_POLICY_REFUSAL_CODES,
+  ACCESS_SETTLEMENT_SEMANTICS,
+  CAPACITY_CLEARING_OUTCOMES,
+  CAPACITY_OFFER_STATES,
+  CAPACITY_RESERVATION_STATES,
+  CAPACITY_TRADE_MECHANISMS,
+  CONSIDERATION_KINDS,
+  DELIVERY_EVIDENCE_QUALITIES,
+  MONETARY_CONSIDERATION_KINDS,
+  NON_MONETARY_CONSIDERATION_KINDS,
+  QUEUE_PRIORITY_CLASSES,
+  QUEUE_PRIORITY_ORDER,
+  REFUND_REASONS,
+  RFQ_STATES,
+  accessFabricPosture,
+  isMonetaryConsideration,
+  isNonMonetaryConsideration,
+  type AccessClearingFailureCode,
+  type AccessPolicyRefusalCode,
+  type AccessSettlementSemantics,
+  type CapacityClearingOutcome,
+  type CapacityOfferState,
+  type CapacityReservationState,
+  type CapacityTradeMechanism,
+  type ConsiderationKind,
+  type DeliveryEvidenceQuality,
+  type MonetaryConsiderationKind,
+  type NonMonetaryConsiderationKind,
+  type QueuePriorityClass,
+  type RefundReason,
+  type RfqState,
+} from './taxonomy.ts';
+export {
+  capacityAccessTerms,
+  evaluateTermsCompleteness,
+  provenanceRecordedAt,
+  termsFromInstrument,
+  termsInstrumentId,
+  windowCoversHeight,
+  windowsOverlap,
+} from './terms.ts';
+export type {
+  AccessDeliveryRequirements,
+  AccessEntitlementConsiderationLeg,
+  AccessEntitlementPort,
+  AccessFabricFailure,
+  AccessGeography,
+  AccessPolicyRequirements,
+  AccessProvenance,
+  AccessRightsTerms,
+  AccessServiceClass,
+  CapacityAccessTerms,
+  CapacityClearingReceipt,
+  CapacityDeliveryEvidence,
+  CapacityDiscoveryQuery,
+  CapacityDiscoveryRecord,
+  CapacityMarketConfiguration,
+  CapacityQuote,
+  CapacityQuoteEvaluation,
+  CapacityQueueAllocation,
+  CapacityQueueTicket,
+  CapacityReservation,
+  CapacityRfq,
+  CapacityRfqAward,
+  ClearingLegReference,
+  ConsiderationLeg,
+  ConsiderationTerms,
+  FiatConsiderationLeg,
+  FixedPriceAccessOffer,
+  NativeAssetConsiderationLeg,
+  ProductiveObjectReference,
+  RefundSettlementIntent,
+  RewardCreditConsiderationLeg,
+  RewardCreditPort,
+  TermsCompleteness,
+} from './types.ts';

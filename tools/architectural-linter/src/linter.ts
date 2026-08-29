@@ -45,7 +45,8 @@ export function lintSource(file: string, source: string): Finding[] {
     /packages\/investments\/src\/(journals|service)\.ts$/.test(rel) ||
     /packages\/sunrey-coin\/src\/service\.ts$/.test(rel) ||
     /packages\/information-market\/src\/fiat\.ts$/.test(rel) ||
-    /packages\/sunrey-exchange\/src\/product\/settlement\.ts$/.test(rel);
+    /packages\/sunrey-exchange\/src\/product\/settlement\.ts$/.test(rel) ||
+    /packages\/sunrey-exchange\/src\/access-fabric\/clearing\.ts$/.test(rel);
   const isBalanceOrGrowth =
     /balances\.ts$/.test(rel) || /growth\.ts$/.test(rel) || /position/.test(rel) || /\/value\//.test(rel);
   const isMoneyPath =

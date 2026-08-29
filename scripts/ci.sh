@@ -175,6 +175,7 @@ npm run demo:sunrey-exchange
 npm run demo:sunrey-exchange-ops
 npm run demo:sunrey-exchange-consumer
 npm run demo:sunrey-exchange-native
+npm run demo:sunrey-exchange-capacity-access
 npm run demo:sunrey-exchange-settlement
 npm run demo:custody
 npm run demo:institutional-custody
