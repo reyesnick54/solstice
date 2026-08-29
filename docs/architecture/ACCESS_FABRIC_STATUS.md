@@ -142,7 +142,7 @@ Measured on this branch with Node 22 and the repository test runner.
 | Dual-economy simulator | `node --test packages/sunrey-economics/src/dual-economy.test.ts` | 14 |
 | Economic stress laboratory | `node --test packages/sunrey-economics/src/stress/stress.test.ts` | 14 |
 | **ACCESS-13 relevant total** | | **100** |
-| Repository suite | `npm test` | see the CI log for the full count |
+| Repository suite | `npm test` | 3843 tests in 635 suites: 3842 pass, 0 fail, 1 skipped |
 
 Scenario and invariant coverage:
 
