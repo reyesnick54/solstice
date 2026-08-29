@@ -188,14 +188,17 @@ Historical discussion remains below the table.
 | sunrey-user-agent-mandates | IMPLEMENTED | packages/sunrey-agent |
 | sunrey-access-fabric | IMPLEMENTED | packages/sunrey-access-fabric |
 | sunrey-exchange-consumer-trading | IMPLEMENTED | packages/sunrey-exchange |
+| sunrey-exchange-capacity-access | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-human-information-network | IMPLEMENTED | packages/information-market |
 | sunrey-ai-runtime | IMPLEMENTED | packages/ai-runtime |
 | sunrey-s3m-provider | IMPLEMENTED | packages/ai-runtime |
 | sunrey-human-contribution-monetary-bridge | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-hin-contribution-integration | IMPLEMENTED | packages/information-market |
 | sunrey-hin-chain-anchoring | IMPLEMENTED | packages/information-market |
+| sunrey-access-rights-commitments | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-human-economic-contributions | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-economic-asset-registry | IMPLEMENTED | packages/economic-asset-registry |
+| sunrey-access-fabric | IMPLEMENTED | packages/access-economy |
 | sunrey-human-contribution-valuation | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-human-contribution-verification | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-economic-unit-normalization | IMPLEMENTED | packages/sunrey-chain |
@@ -927,6 +930,25 @@ remains dependent on real external authorization. Do not create
 `packages/consumer-exchange`, `packages/sunrey-consumer-exchange`,
 `packages/retail-exchange`, or `packages/consumer-trading`. The
 evaluator returns `mustStop: false`.
+ACCESS-09 implements productive capacity markets and dual-economy
+clearing at `packages/sunrey-exchange/src/access-fabric`. Capability
+`sunrey-exchange-capacity-access` is `IMPLEMENTED`. See
+[`exchange-capacity-access-fabric.md`](./exchange-capacity-access-fabric.md).
+It extends the canonical `PRODUCTIVE_CAPACITY` and
+`INTELLIGENCE_COMPUTE` families and delegates batch clearing to the
+canonical `clearAuction`. It does not create a second Exchange, matching
+engine, or balance ledger. Fiat consideration settles through
+`Ledger.postJournal` under a scoped Execution Authority; SunRey Coin and
+MoonRey Coin move only on canonical custody or native chain rails;
+access entitlement and permitted reward credit are consumed at the
+owning port and are neither transferable nor redeemable for money.
+There is no fixed SunRey/MoonRey ratio, no coin issuance, and no third
+currency. Corrections are compensating refund intents. Production
+activation remains off. Do not create `packages/access-fabric`,
+`packages/capacity-exchange`, `packages/capacity-market`,
+`packages/dual-economy-clearing`, `packages/clearing-house`,
+`packages/entitlements`, or `packages/access-ledger`. The evaluator
+returns `mustStop: false`.
 Chunk 94 implements the SunRey developer application platform at
 `packages/sunrey-sdk/src/developer-platform`. Capability
 `sunrey-developer-platform` is `IMPLEMENTED`. See
@@ -1104,6 +1126,17 @@ minting. Do not create `packages/dataset-registry`,
 `packages/economic-assets`, `packages/data-assets-v2`,
 `packages/universal-data-registry`, or `packages/tokenized-data`. The
 evaluator returns `mustStop: false`.
+ACCESS-01 implements the SunRey Access Fabric at
+`packages/access-economy`. Capability `sunrey-access-fabric` is
+`IMPLEMENTED` at foundation scope. See
+[`SUNREY_ACCESS_FABRIC.md`](./SUNREY_ACCESS_FABRIC.md) and
+[`chunk-169-access-fabric-foundation.md`](./chunk-169-access-fabric-foundation.md).
+It orchestrates governed non-ownership `AccessRight` and `AccessIntent`
+records. It is not money, mint, settlement, custody, Exchange, Kernel,
+Execution Authority, oracle consensus, identity truth, legal eligibility
+truth, Access Coin, or social credit. Do not create
+`packages/access-fabric`, `packages/access-coin`, `packages/access-exchange`,
+or `packages/access-ledger`. The evaluator returns `mustStop: false`.
 Chunk 114 extends the same owner with rights, provenance, and lineage
 verification at `packages/economic-asset-registry/src/verification`.
 Capability `sunrey-economic-asset-verification` is `IMPLEMENTED` on
@@ -1721,3 +1754,24 @@ evaluator returns `mustStop: false`. Do not create
 `packages/rollback-engine`, `packages/incident-v2`, or
 `packages/recovery-v2`. See
 [`chunk-167-launch-abort-recovery.md`](../operations/chunk-167-launch-abort-recovery.md).
+
+ACCESS-08 integrates Access Fabric economic rights with the existing
+SunRey Chain at `packages/sunrey-chain/src/access`. Capability
+`sunrey-access-rights-commitments` is `IMPLEMENTED` on
+`packages/sunrey-chain`. Access-domain lifecycle events become
+privacy-safe commitments through the existing `SunReyChainService`:
+access-right creation and revocation, reservation commit, confirm,
+expiry and cancellation, usage, delivery, and settlement evidence
+references. State transitions are deterministic and the committed event
+log replays to a byte-identical state commitment. An `AccessRight`
+points at a productive object and is denominated in that object's unit
+schema. OWNERSHIP is distinct from ACCESS, USAGE, LEASE, and
+RESERVATION; an access right never conveys title. There is no new
+blockchain, side ledger, generic token wrapper, Access Coin, minting
+pathway, or automatic SunRey/MoonRey issuance. The evaluator returns
+`mustStop: false`. Do not create `packages/access-chain`,
+`packages/access-ledger`, `packages/access-coin`,
+`packages/access-token`, `packages/reservation-chain`,
+`packages/rights-chain`, `packages/mobility-chain`, or
+`packages/entitlement-chain`. See
+[`access-08-chain-access-rights.md`](./access-08-chain-access-rights.md).

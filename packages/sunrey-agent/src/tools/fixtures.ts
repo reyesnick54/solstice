@@ -1,3 +1,7 @@
+import { asUtcInstant } from '../../../domain/src/time.ts';
+import { composeAccessIntentFromRequest } from '../../../agent/src/access-intent.ts';
+import { toProposeAccessActionIntent, refuseAgentConfirmReservation } from '../access/gate.ts';
+import { deterministicProposalId } from '../../../agent/src/ids.ts';
 import type { AgentToolDomainPorts, PortResult } from './ports.ts';
 
 function ok<T>(value: T): PortResult<T> {
@@ -377,6 +381,81 @@ export function createFixtureToolPorts(overrides: FixtureOverrides = {}): AgentT
       metrics: () => ok({ verifiedContributors: 1, individualRecordsExposed: false, isMintAmount: false }),
       summary: (ownerId) => ok({ ownerId, issuancePromised: false, compensation: { mintRequested: false } }),
       methodologies: () => ok([{ methodologyId: 'hin-evi-governed-schedule', isMintFormula: false }]),
+    },
+    access: {
+      proposeIntent(input) {
+        if (input.ownerId !== owner) {
+          return fail('NOT_OWNED', 'access intents are owner-scoped');
+        }
+        const now = asUtcInstant('2026-08-15T12:00:00.000Z');
+        const ports = {
+          context: {
+            subjectId: input.ownerId,
+            generatedAt: now,
+            writePath: false as const,
+            liquidMinorUnitsByCurrency: {},
+            incomeLabels: [],
+            obligationLabels: [],
+            debtLabels: [],
+            goalLabels: ['Travel goals'],
+            opportunityLabels: [],
+          },
+          claims: {
+            actorId: `actor_${input.ownerId}`,
+            subjectId: input.ownerId,
+            authorizedCapabilities: ['CREATE_ACCESS_PROPOSAL'],
+            mayProposeOnly: true as const,
+            mayExecute: false as const,
+          },
+          mandates: input.mandateId
+            ? [
+                {
+                  mandateId: input.mandateId,
+                  version: 1,
+                  status: 'ACTIVE',
+                  hardConstraintSummaries: Object.freeze(['Ask me before any movement over $1,000.']),
+                  goalSummaries: Object.freeze(['Travel goals']),
+                  softPreferenceSummaries: Object.freeze(['Family travel']),
+                },
+              ]
+            : [],
+        };
+        const composed = composeAccessIntentFromRequest({
+          ports,
+          request: {
+            subjectId: input.ownerId,
+            sourceText: input.sourceText,
+            graphSlice: input.graphSlice,
+            ...(input.requestedGraphCategories ? { requestedGraphCategories: input.requestedGraphCategories } : {}),
+            ...(input.requestedGraphLabels ? { requestedGraphLabels: input.requestedGraphLabels } : {}),
+          },
+          now,
+        });
+        if (!composed.ok) {
+          return fail('NOT_ELIGIBLE', composed.error.message);
+        }
+        const action = toProposeAccessActionIntent({
+          intent: composed.value,
+          actorId: `actor_${input.ownerId}`,
+          requestedAt: now,
+        });
+        if (!action.ok) {
+          return fail('NOT_ELIGIBLE', action.detail);
+        }
+        return ok({
+          intent: composed.value,
+          proposalId: deterministicProposalId('ACCESS_INTENT', composed.value.intentId),
+          explanation: composed.value.explanation,
+          actionIntent: action.actionIntent,
+        });
+      },
+      confirmReservation(ownerId) {
+        if (ownerId !== owner) {
+          return fail('NOT_OWNED', 'access reservations are owner-scoped');
+        }
+        const refusal = refuseAgentConfirmReservation({ actorOriginatedFromAgent: true });
+        return fail('NOT_ELIGIBLE', refusal.detail);
+      },
     },
     compliance: {
       evaluate: () => ({ status: overrides.kernelStatus ?? 'ALLOW', detail: overrides.kernelStatus ?? 'ALLOW' }),

@@ -121,6 +121,7 @@ never be two implementations of these systems.
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
 | SunRey Human Economic Contribution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/registry.ts` | IMPLEMENTED |
 | SunRey Dataset and Economic Asset Registry | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/registry.ts` | IMPLEMENTED |
+| SunRey Access Fabric / Human Access Economy | `packages/access-economy` | `packages/access-economy/src/service.ts` | IMPLEMENTED |
 | MoonRey source-to-productive taxonomy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/source-taxonomy/registry.ts` | IMPLEMENTED |
 | MoonRey Productive Value Function constitution | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/value-function/registry.ts` | IMPLEMENTED |
 | MoonRey V2 shadow evaluation and migration | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/shadow-economics/evaluator.ts` | IMPLEMENTED |
@@ -151,7 +152,7 @@ the same architecture-linting system, not a second linter.
 `treasury`, `investments`, `regulatory-twin`, `risk`, `model-registry`,
 `agentic-capital-mesh`, `sunrey-agent`, `ai-runtime`, `strategy-lab`, `personal-data-vault`,
 `consent`, `clean-room`, `sunrey-coin`, `information-market`,
-`human-economic-contribution`, `economic-asset-registry`,
+`human-economic-contribution`, `economic-asset-registry`, `access-economy`,
 `sunrey-chain`, `sunrey-explorer`, `sunrey-exchange`, `sunrey-range`, `custody`,
 `market-surveillance`, `sunrey-sdk`, `sunrey-economics`.
 
@@ -517,6 +518,7 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/cards` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `services/cards` | `packages/cards`, `services/accounts`, and the cards package dependencies needed to wire holds |
 | `packages/personal-economic-graph` | `packages/domain`, `packages/money`, `packages/identity`, `packages/events`, `packages/config` |
+| `packages/access-economy` | `packages/domain` |
 | `services/economic-graph` | `packages/personal-economic-graph` |
 | `packages/treasury` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security`, `packages/payments` |
 | `services/treasury` | `packages/treasury` |
@@ -1503,6 +1505,17 @@ eligibility, or native supply. Do not create `packages/dataset-registry`,
 `packages/economic-assets`, `packages/data-assets-v2`,
 `packages/universal-data-registry`, or `packages/tokenized-data`. See
 [`chunk-113-economic-asset-registry-foundation.md`](./chunk-113-economic-asset-registry-foundation.md).
+ACCESS-01 implements the SunRey Access Fabric / Human Access Economy at
+`packages/access-economy`. Capability `sunrey-access-fabric` is
+`IMPLEMENTED` at foundation scope. It orchestrates governed,
+non-ownership `AccessRight` and `AccessIntent` records for bounded access
+to productive capacity. It is not money, ownership, mint, settlement,
+custody, Exchange, Kernel, Execution Authority, oracle consensus,
+identity truth, legal eligibility truth, Access Coin, or a social-credit
+score. Do not create `packages/access-fabric`, `packages/access-coin`,
+`packages/access-exchange`, or `packages/access-ledger`. See
+[`SUNREY_ACCESS_FABRIC.md`](./SUNREY_ACCESS_FABRIC.md) and
+[`chunk-169-access-fabric-foundation.md`](./chunk-169-access-fabric-foundation.md).
 Chunk 116 implements the canonical MoonRey source-to-productive
 taxonomy at `packages/sunrey-chain/src/productive/source-taxonomy`.
 Capability `moonrey-source-taxonomy` is `IMPLEMENTED`. It is the
@@ -2145,6 +2158,42 @@ chunk does not duplicate those evaluators. Do not create
 `packages/integrations-v2`, `packages/vendor-connectivity`,
 `packages/provider-manager`, or `packages/live-providers`. See
 [`docs/operations/chunk-162-production-provider-binding.md`](../operations/chunk-162-production-provider-binding.md).
+
+ACCESS-08 integrates SunRey Access Fabric economic rights with the
+existing SunRey Chain at `packages/sunrey-chain/src/access`. Capability
+`sunrey-access-rights-commitments` is `IMPLEMENTED` and extends the
+canonical chain owner. It records authoritative references and economic
+state for access-domain events: access-right creation and revocation,
+reservation commit, confirm, expiry and cancellation, usage, delivery,
+and settlement evidence references. Every commitment travels through the
+existing `SunReyChainService`, so classification, signing, evidence
+sealing, finality, and reconciliation stay with their canonical owner.
+
+An `AccessRight` points at a productive object registered by
+`packages/sunrey-chain/src/productive` and is denominated in that
+object's unit schema. OWNERSHIP is a different right from ACCESS,
+USAGE, LEASE, and RESERVATION. Ownership classes and title-conveying
+operations are structurally refused, so no sequence of access
+commitments can transfer title. Access state transitions are
+deterministic: the committed event log replays to a byte-identical
+state commitment, and chain finality changes confidence in a record
+rather than the state a replay produces.
+
+Only commitments, rights identifiers, policy and consent references,
+provenance, timestamps, state, and evidence references reach a chain
+payload. Raw personal data, travel history, health data, personal
+preferences, private itinerary contents, and payment credentials do
+not. Holders bind through pseudonymous scoped subject references.
+
+There is no new blockchain, side ledger, generic token wrapper, Access
+Coin, minting pathway, or automatic SunRey or MoonRey issuance.
+Settlement evidence may only reference a journal the canonical internal
+ledger already recorded. Do not create `packages/access-chain`,
+`packages/access-ledger`, `packages/access-coin`,
+`packages/access-token`, `packages/reservation-chain`,
+`packages/rights-chain`, `packages/mobility-chain`, or
+`packages/entitlement-chain`. See
+[`access-08-chain-access-rights.md`](./access-08-chain-access-rights.md).
 
 ## Agent stop rule
 

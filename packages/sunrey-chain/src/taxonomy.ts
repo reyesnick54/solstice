@@ -81,6 +81,7 @@ export const SOURCE_SUBSYSTEMS = [
   'kernel',
   'regulatory-twin',
   'personal-data-vault',
+  'access-fabric',
 ] as const;
 export type SourceSubsystem = (typeof SOURCE_SUBSYSTEMS)[number];
 

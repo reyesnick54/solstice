@@ -1,0 +1,18 @@
+{
+  "chunk": "ACCESS-09",
+  "title": "SunRey Exchange Capacity Markets and Dual-Economy Clearing",
+  "requires": [
+    "sunrey-exchange",
+    "sunrey-exchange-native-settlement",
+    "ledger",
+    "permissions",
+    "kernel",
+    "custody",
+    "sunrey-native-assets",
+    "sunrey-productive-capacity",
+    "sunrey-economic-unit-normalization",
+    "moonrey-source-taxonomy",
+    "config"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-exchange/src/access-fabric. Extends the canonical Exchange with productive capacity discovery, fixed-price access offers, RFQ, a batch-auction adapter over the canonical clearAuction, queue/allocation markets, capacity reservations, and delivery-linked settlement. Capability sunrey-exchange-capacity-access. Not a second exchange, matching engine, or balance ledger. Fiat consideration settles through Ledger.postJournal under a scoped Execution Authority. SunRey Coin and MoonRey Coin move only on canonical custody or native chain rails. Access entitlement and permitted reward credit are consumed at their owning port and are neither transferable nor redeemable for money. No fixed SunRey/MoonRey ratio, no coin issuance, no third currency. Corrections are compensating refund intents; postings are never edited. Regulated execution stays behind existing eligibility, jurisdiction, and authority gates. Production activation remains off. Do not create packages/access-fabric, packages/capacity-exchange, packages/capacity-market, packages/dual-economy-clearing, packages/clearing-house, packages/entitlements, or packages/access-ledger."
+}

@@ -16,6 +16,7 @@
     "demo:governance": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/governance/demo.ts",
     "demo:machine-economy": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/machine-economy/demo.ts",
     "demo:productive": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/productive/demo.ts",
+    "demo:access-rights": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/access/demo.ts",
     "demo:moonrey-source-taxonomy": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/productive/source-taxonomy/demo.ts",
     "demo:moonrey-attribution-policy": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/productive/policy-governance/attribution/demo.ts",
     "demo:oracle": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/oracle/demo.ts",
