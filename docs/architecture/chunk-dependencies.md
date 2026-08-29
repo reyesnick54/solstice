@@ -163,6 +163,8 @@ Historical discussion remains below the table.
 | sunrey-dual-economy-simulator | IMPLEMENTED | packages/sunrey-economics |
 | sunrey-monetary-constitution | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-economic-stress-lab | IMPLEMENTED | packages/sunrey-economics |
+| sunrey-access-fabric | IMPLEMENTED | packages/access-fabric |
+| sunrey-access-economy-simulation | IMPLEMENTED | packages/sunrey-economics |
 | sunrey-protocol-treasury | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-economic-rc | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-governance-operations | IMPLEMENTED | packages/sunrey-chain |
@@ -1732,3 +1734,22 @@ evaluator returns `mustStop: false`. Do not create
 `packages/rollback-engine`, `packages/incident-v2`, or
 `packages/recovery-v2`. See
 [`chunk-167-launch-abort-recovery.md`](../operations/chunk-167-launch-abort-recovery.md).
+
+ACCESS-04 introduces `sunrey-access-fabric` at `packages/access-fabric`:
+the canonical access entitlement engine and Personal Access Envelope. An
+`AccessEntitlement` is not money, not a transferable balance, and not a
+human-worth score. Do not create `packages/access-coin`,
+`packages/access-economy`, `packages/access-ledger`,
+`packages/access-exchange`, `packages/access-custody`, or
+`packages/entitlements`.
+
+ACCESS-13 introduces `sunrey-access-economy-simulation` at
+`packages/sunrey-economics/src/access-economy`. It extends
+`sunrey-dual-economy-simulator` and `sunrey-economic-stress-lab` with
+fifteen Access Economy scenarios, sixteen permanent access invariants, and
+an end-to-end qualification. `ACCESS_FABRIC_CODE_COMPLETE_CANDIDATE` is an
+engineering label. `PRODUCTION_READY`, `LIVE_CONNECTIVITY_ENABLED`, and
+`PRODUCTION_ACTIVE` remain false and are not derived from a passing test
+run. See [`ACCESS_FABRIC_STATUS.md`](./ACCESS_FABRIC_STATUS.md) and
+[`access-fabric-architecture.md`](./access-fabric-architecture.md). Do not
+create `packages/access-economy` or `packages/access-simulation`.

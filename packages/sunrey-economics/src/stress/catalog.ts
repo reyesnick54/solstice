@@ -112,7 +112,26 @@ export const ECONOMIC_STRESS_CATALOG: readonly EconomicStressScenario[] = Object
   scenario('ECON-COMP-147-005', 'COMPOUND', 'network congestion + settlement backlog', 14705, ['EXCH_SETTLEMENT_CONGESTION', 'FEE_SATURATION'], 'AVAILABILITY_DEGRADATION', 'Chunk 147 congestion does not duplicate DVP', 2),
   scenario('ECON-COMP-147-006', 'COMPOUND', 'policy upgrade + reconciliation delay', 14706, ['CUST_RECONCILIATION_LAG', 'FEE_BURST'], 'AVAILABILITY_DEGRADATION', 'Chunk 147 upgrade does not silently recompute historical supply', 2),
   scenario('ECON-NQ-001', 'NO_QUORUM', 'no-quorum economic freeze', 7721, ['NO_QUORUM_FREEZE'], 'AVAILABILITY_DEGRADATION', 'No synthetic accounting without finality', 1, true),
+  scenario('ECON-ACC-001', 'ACCESS', 'access abundance under autonomous production', 7731, ['ACCESS_ABUNDANCE'], null, 'ACCESS-13: scarcity falls and access expands only as policy allows', 1),
+  scenario('ECON-ACC-002', 'ACCESS', 'access demand surge on one scarce experience', 7732, ['ACCESS_DEMAND_SURGE'], null, 'ACCESS-13: deterministic allocation; published capacity is not oversold', 1),
+  scenario('ECON-ACC-003', 'ACCESS', 'access under a productive capacity shock', 7733, ['ACCESS_PRODUCTIVE_SHOCK'], null, 'ACCESS-13: quotes contract with real capacity; confirmed rights stay honoured', 1),
+  scenario('ECON-ACC-004', 'ACCESS', 'access geographic scarcity inside a global surplus', 7734, ['ACCESS_GEOGRAPHIC_SCARCITY'], 'CONCENTRATION_RISK', 'ACCESS-13: surplus elsewhere does not satisfy a location-bound request', 1),
+  scenario('ECON-ACC-005', 'ACCESS', 'access temporal scarcity on a peak date', 7735, ['ACCESS_TEMPORAL_SCARCITY'], 'CONCENTRATION_RISK', 'ACCESS-13: a peak date is scarce while surrounding dates stay abundant', 1),
+  scenario('ECON-ACC-006', 'ACCESS', 'access provider failure', 7736, ['ACCESS_PROVIDER_FAILURE'], 'AVAILABILITY_DEGRADATION', 'ACCESS-13: a failed provider refuses rather than reassigning silently', 1),
+  scenario('ECON-ACC-007', 'ACCESS', 'access under stale capacity evidence', 7737, ['ACCESS_ORACLE_STALE'], 'EXPECTED_FAIL_CLOSED_BEHAVIOR', 'ACCESS-13: stale evidence fails closed; capacity is not assumed', 1),
+  scenario('ECON-ACC-008', 'ACCESS', 'access while the Exchange is unavailable', 7738, ['ACCESS_EXCHANGE_UNAVAILABLE'], 'EXPECTED_FAIL_CLOSED_BEHAVIOR', 'ACCESS-13: no fallback price, no invented conversion, no peg', 1),
+  scenario('ECON-ACC-009', 'ACCESS', 'access ledger and custody settlement failure', 7739, ['ACCESS_SETTLEMENT_FAILURE'], 'AVAILABILITY_DEGRADATION', 'ACCESS-13: failed settlement releases its reservation', 1),
+  scenario('ECON-ACC-010', 'ACCESS', 'access policy change during reservation', 7740, ['ACCESS_POLICY_CHANGE'], null, 'ACCESS-13: confirmed rights honoured; later reservations held for review', 1),
+  scenario('ECON-ACC-011', 'ACCESS', 'mass concurrent access reservations', 7741, ['ACCESS_MASS_CONCURRENCY'], null, 'ACCESS-13: concurrency stress does not oversell a single unit', 1),
+  scenario('ECON-ACC-012', 'ACCESS', 'abundant mass-market vehicle class access', 7742, ['ACCESS_ABUNDANT_VEHICLE'], null, 'ACCESS-13: abundance still requires authority and eligibility', 1),
+  scenario('ECON-ACC-013', 'ACCESS', 'premium scarce vehicle class access', 7743, ['ACCESS_PREMIUM_SCARCE_VEHICLE'], null, 'ACCESS-13: genuine scarcity refuses; it is not priced into a new unit', 1),
+  scenario('ECON-ACC-014', 'ACCESS', 'composite multi-leg travel experience', 7744, ['ACCESS_COMPOSITE_TRAVEL'], null, 'ACCESS-13: each leg is a separate bucket and can refuse independently', 1),
+  scenario('ECON-ACC-015', 'ACCESS', 'recurring household food and water access', 7745, ['ACCESS_HOUSEHOLD_FOOD'], null, 'ACCESS-13: essential recurring access never becomes a transferable balance', 1),
 ]);
+
+export const ACCESS_STRESS_IDS: readonly string[] = Object.freeze(
+  ECONOMIC_STRESS_CATALOG.filter((row) => row.domain === 'ACCESS').map((row) => row.scenarioId),
+);
 
 export function scenarioById(scenarioId: string): EconomicStressScenario | undefined {
   return ECONOMIC_STRESS_CATALOG.find((row) => row.scenarioId === scenarioId);
@@ -141,6 +160,7 @@ export const STRESS_CAMPAIGNS: readonly EconomicStressCampaign[] = Object.freeze
       'ECON-CUST-003',
       'ECON-COMP-001',
       'ECON-NQ-001',
+      'ECON-ACC-002',
     ]),
     epochs: 2,
     extendedWorkflow: false,
@@ -192,6 +212,13 @@ export const STRESS_CAMPAIGNS: readonly EconomicStressCampaign[] = Object.freeze
       'ECON-COMP-147-006',
     ]),
     epochs: 2,
+    extendedWorkflow: false,
+  },
+  {
+    campaignId: 'access-economy',
+    title: 'ACCESS-13 Access Economy campaign',
+    scenarioIds: ACCESS_STRESS_IDS,
+    epochs: 1,
     extendedWorkflow: false,
   },
 ]);

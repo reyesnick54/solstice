@@ -48,26 +48,25 @@ const jurisdictionCapability: JurisdictionCapability = {
   geographicScopes: ['US-CA'],
 };
 
-const policyEligibility: AccessPolicyEligibilityDecision[] = [
-  {
-    entitlementId: '' as never,
+function policyDecision(entitlementId: AccessEntitlement['entitlementId']): AccessPolicyEligibilityDecision {
+  return {
+    entitlementId,
     eligible: true,
     policyRef: 'rdt.simulation.access-transit.v1',
     evaluatedAt: NOW,
     reasonCode: 'POLICY_ALLOW',
-  },
-];
+  };
+}
 
 function run(input: Partial<AccessEntitlementEngineInput>): void {
   const baseEntitlement = entitlement();
-  policyEligibility[0] = { ...policyEligibility[0], entitlementId: baseEntitlement.entitlementId };
   const engine = new AccessEntitlementEngine();
   const result = engine.evaluate({
     subjectId: SUBJECT,
     evaluatedAt: NOW,
     entitlements: [baseEntitlement],
     mandates: [],
-    policyEligibility,
+    policyEligibility: [policyDecision(baseEntitlement.entitlementId)],
     usage: [],
     reservations: [],
     jurisdictionCapability,

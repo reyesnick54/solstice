@@ -88,6 +88,9 @@ export const SCENARIO_IDS = [
   'validator-unavailability',
   'validator-penalty',
   'policy-experiment',
+  'post-scarcity-abundance',
+  'human-access-demand-surge',
+  'productive-capacity-collapse',
 ] as const;
 export type ScenarioId = (typeof SCENARIO_IDS)[number];
 

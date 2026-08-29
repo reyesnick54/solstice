@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "scenarioId": "productive-capacity-collapse",
+  "title": "Simultaneous energy, logistics, and manufacturing productivity shock",
+  "parameterClass": "ENGINEERING_SIMULATION_PARAMETERS",
+  "simulationLabel": "SIMULATION",
+  "seed": 75,
+  "epochs": 12,
+  "epochDurationLabel": "ABSTRACT_EPOCH",
+  "human": {
+    "participants": 1000,
+    "demandScale": "900000",
+    "laborShareBps": "5800",
+    "informationRightIntensityBps": "1800",
+    "creativeIntensityBps": "1400",
+    "entrepreneurialIntensityBps": "1200",
+    "communityIntensityBps": "1800",
+    "governedDistributionBps": "800"
+  },
+  "automation": {
+    "penetrationBps": "3200",
+    "aiProductivityBps": "3400",
+    "robotDeploymentBps": "2400",
+    "productiveSystemCount": 10
+  },
+  "productive": {
+    "energyAvailabilityBps": "2800",
+    "computeAvailabilityBps": "6000",
+    "manufacturingCapacityBps": "2400",
+    "logisticsCapacityBps": "2000",
+    "categoryWeightsBps": {
+      "ENERGY": "1800",
+      "COMPUTE": "1400",
+      "AI_COMPUTE": "1200",
+      "AUTOMATED_MACHINE_OUTPUT": "800",
+      "MANUFACTURING": "1200",
+      "FOOD_AGRICULTURE": "800",
+      "WATER": "500",
+      "STORAGE": "400",
+      "LOGISTICS_TRANSPORTATION": "900",
+      "BANDWIDTH_COMMUNICATIONS": "400",
+      "MINERALS_RAW_MATERIALS": "300",
+      "REAL_ESTATE_USE": "200",
+      "SERVICES": "100"
+    }
+  },
+  "oracle": {
+    "providerCount": 3,
+    "stale": false,
+    "conflict": false,
+    "removeProviders": 0
+  },
+  "market": {
+    "volatilityBps": "380",
+    "makerSpreadBps": "160",
+    "startingPriceUnits": "2000000",
+    "orderSize": "40",
+    "makerInventorySunrey": "14000",
+    "makerInventoryMoonrey": "22000"
+  },
+  "fees": {
+    "utilizationBps": "4200",
+    "txPerEpoch": 6,
+    "transferAmount": "80"
+  },
+  "validators": {
+    "count": 4,
+    "unavailable": [],
+    "penaltyValidatorId": null,
+    "penaltyBps": "0",
+    "feeRevenueMode": "normal"
+  },
+  "concentration": {
+    "operatorCount": 8,
+    "dominantShareBps": "2200"
+  },
+  "policies": {
+    "sunreyIssuanceScaleBps": "10000",
+    "moonreyEpochCapScaleBps": "10000",
+    "feeMaxUnits": "10000",
+    "validatorRewardBpsOverride": null,
+    "productiveNormalizationBps": "10000",
+    "becomesProductionPolicy": false
+  },
+  "assumptions": [
+    "Abstract epochs are not calendar years unless configured.",
+    "A capacity shock reduces what can be offered; it does not cancel confirmed rights by itself.",
+    "Human aggregates are synthetic and contain no personal information.",
+    "MoonRey issuance falls with verified output rather than being backfilled.",
+    "Simulation evidence is not production authorization."
+  ]
+}

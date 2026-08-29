@@ -1,4 +1,5 @@
 import { err, ok, type Result } from '../../domain/src/result.ts';
+import type { UtcInstant } from '../../domain/src/time.ts';
 import { newPersonalAccessEnvelopeId } from './ids.ts';
 import { assertAccessEntitlementInvariants, scanForbiddenAccessPayload } from './invariants.ts';
 import { policyDecisionIndex } from './policy-port.ts';
@@ -19,13 +20,13 @@ import type {
 } from './types.ts';
 
 type UsageSlice = {
-  readonly consumedAt: string;
+  readonly consumedAt: UtcInstant;
   readonly quantity: bigint;
 };
 
 type ReservationSlice = {
   readonly quantity: bigint;
-  readonly expiresAt: string;
+  readonly expiresAt: UtcInstant;
 };
 
 function failure(code: AccessFabricFailure['code'], message: string): AccessFabricFailure {
