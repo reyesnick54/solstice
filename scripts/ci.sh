@@ -119,6 +119,7 @@ npm run demo:sunrey-human-contribution-ontology
 npm run demo:sunrey-human-contribution-registry
 npm run demo:sunrey-human-contribution-valuation-policy
 npm run demo:sunrey-chain
+npm run demo:sunrey-access-rights
 npm run demo:sunrey-node
 npm run demo:sunrey-governance
 npm run demo:moonrey-productive
@@ -175,6 +176,7 @@ npm run demo:sunrey-exchange
 npm run demo:sunrey-exchange-ops
 npm run demo:sunrey-exchange-consumer
 npm run demo:sunrey-exchange-native
+npm run demo:sunrey-exchange-capacity-access
 npm run demo:sunrey-exchange-settlement
 npm run demo:custody
 npm run demo:institutional-custody

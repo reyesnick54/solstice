@@ -99,6 +99,7 @@ const STATE_CHANGING_PATHS = [
   { symbol: 'addDestination', file: 'packages/custody/src/service.ts' },
   { symbol: 'initiateWithdrawal', file: 'packages/custody/src/service.ts' },
   { symbol: 'requestWithdrawal', file: 'packages/custody/src/institutional/service.ts' },
+  { symbol: 'confirmReservation', file: 'packages/access-fabric/src/engine.ts' },
 ];
 
 const failures = [];
@@ -153,7 +154,8 @@ for (const path of STATE_CHANGING_PATHS) {
     body.includes('this.kernel.submit') ||
     body.includes('this.gate(') ||
     body.includes('this.move(') ||
-    body.includes('authorizeIntent(');
+    body.includes('authorizeIntent(') ||
+    body.includes('authorizeCapacityIntent(');
   if (!gated) {
     addFailure(
       path.file,

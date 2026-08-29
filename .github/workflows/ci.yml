@@ -194,6 +194,8 @@ jobs:
         run: npm run demo:sunrey-human-contribution-registry
       - name: Demo sunrey-chain
         run: npm run demo:sunrey-chain
+      - name: SunRey Chain access rights and reservations demo
+        run: npm run demo:sunrey-access-rights
       - name: MoonRey productive capacity demo
         run: npm run demo:moonrey-productive
       - name: SunRey economic unit normalization demo
@@ -262,6 +264,8 @@ jobs:
         run: npm run demo:sunrey-exchange
       - name: SunRey Exchange native settlement demo
         run: npm run demo:sunrey-exchange-native
+      - name: SunRey Exchange capacity access and dual-economy clearing demo
+        run: npm run demo:sunrey-exchange-capacity-access
       - name: SunRey Exchange four-validator DVP demo
         run: npm run demo:sunrey-exchange-settlement
       - name: Custody deposit and withdrawal demo

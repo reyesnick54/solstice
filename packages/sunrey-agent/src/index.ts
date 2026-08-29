@@ -20,6 +20,14 @@ export {
   refuseRawPublicLlm,
   type AgentModelGatewayPort,
 } from './model-gateway.ts';
+export { AccessDemandEngine, type AccessDemandEngineResult } from './access/index.ts';
+export {
+  accessIntentHash,
+  refuseAgentConfirmReservation,
+  refuseSelfIssuedExecutionAuthority,
+  toProposeAccessActionIntent,
+} from './access/index.ts';
+export type { AccessIntentGateRefusal, ProposeAccessIntentPayload } from './access/index.ts';
 export { ProposalGate, type KernelSubmitPort } from './gate.ts';
 export { explainProposal } from './explain.ts';
 export {

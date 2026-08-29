@@ -1,0 +1,14 @@
+{
+  "chunk": "ACCESS-10",
+  "title": "SunRey Access Fabric — Composite Experience Composer",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "domain",
+    "money",
+    "evidence",
+    "events",
+    "sunrey-access-fabric"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-access-fabric/src/experience-composer.ts. Transforms high-level experience requests into coordinated AccessRight / CapacityReservation bundles with saga orchestration. AI proposes; humans confirm. Supports ALL_OR_NOTHING, PARTIAL_WITH_APPROVAL, BEST_EFFORT failure policies. Does not issue Execution Authority, post journals, or create a second workflow engine. Extends ACCESS-09 AccessRight and CapacityReservation types. Simulation only. No frontend UI."
+}
