@@ -36,6 +36,28 @@ describe('access economy architecture guards', () => {
       assert.equal(/LIVE_\w+\s*=\s*true/.test(source), false, file);
       assert.equal(/ENVIRONMENT\s*=\s*'live'/.test(source), false, file);
       assert.equal(/\bAPY\b|\bAPR\b|blended return|guaranteed profit/i.test(source), false, file);
+function stripStructuralMarkers(source: string): string {
+  return source
+    .replace(/isActionIntent:\s*false/g, '')
+    .replace(/isExecutionAuthority:\s*false/g, '');
+}
+
+describe('ACCESS-01 architecture guards', () => {
+  it('stays an access orchestration fabric and does not become a second financial authority', () => {
+    const files = walk(join(ROOT, 'packages/access-economy/src'));
+    for (const file of files) {
+      if (file.endsWith('.test.ts') || file.endsWith('demo.ts') || file.endsWith('isolation.ts') || file.endsWith('taxonomy.ts')) {
+        continue;
+      }
+      const source = stripStructuralMarkers(readFileSync(file, 'utf8'));
+      assert.equal(/postJournal\s*\(/.test(source), false, file);
+      assert.equal(/openAccount\s*\(/.test(source), false, file);
+      assert.equal(/new AuthorityIssuer/.test(source), false, file);
+      assert.equal(/ComplianceKernel/.test(source), false, file);
+      assert.equal(/ActionIntent/.test(source), false, file);
+      assert.equal(/LIVE_\w+\s*=\s*true/.test(source), false, file);
+      assert.equal(/ENVIRONMENT\s*=\s*'live'/.test(source), false, file);
+      assert.equal(/\bAPY\b|\bAPR\b|blended return|guaranteed profit|access coin|social credit/i.test(source), false, file);
       assert.equal(/\bfetch\s*\(/.test(source), false, file);
       assert.equal(/https?:\/\//.test(source), false, file);
       assert.equal(/parseFloat\s*\(/.test(source), false, file);
@@ -58,5 +80,22 @@ describe('access economy architecture guards', () => {
     assert.equal(ACCESS_ECONOMY_ISOLATION.issuesExecutionAuthority, false);
     assert.equal(ACCESS_ECONOMY_ISOLATION.authorizesMinting, false);
     assert.equal(ACCESS_ECONOMY_ISOLATION.authorizesSettlement, false);
+    assert.equal(existsSync(join(ROOT, 'packages/kernel/src/kernel.ts')), true);
+    assert.equal(existsSync(join(ROOT, 'packages/permissions/src/execution-authority.ts')), true);
+    assert.equal(existsSync(join(ROOT, 'packages/ledger/src/journal.ts')), true);
+    assert.equal(existsSync(join(ROOT, 'packages/sunrey-exchange/src/service.ts')), true);
+    assert.equal(existsSync(join(ROOT, 'packages/personal-economic-graph/src/service.ts')), true);
+    assert.equal(existsSync(join(ROOT, 'packages/agent/src/service.ts')), true);
+    assert.equal(existsSync(join(ROOT, 'packages/sunrey-agent/src/engine.ts')), true);
+    assert.equal(existsSync(join(ROOT, 'packages/regulatory-twin/src/service.ts')), true);
+    assert.equal(existsSync(join(ROOT, 'packages/evidence/src/vault.ts')), true);
+
+    assert.equal(ACCESS_ECONOMY_ISOLATION.financialStateMutation, false);
+    assert.equal(ACCESS_ECONOMY_ISOLATION.executionAuthorityRequired, false);
+    assert.equal(ACCESS_ECONOMY_ISOLATION.kernelAuthorizationRequired, false);
+    assert.equal(ACCESS_ECONOMY_ISOLATION.mintingImplemented, false);
+    assert.equal(ACCESS_ECONOMY_ISOLATION.settlementImplemented, false);
+    assert.equal(ACCESS_ECONOMY_ISOLATION.accessCoinImplemented, false);
+    assert.equal(ACCESS_ECONOMY_ISOLATION.productionActivated, false);
   });
 });
