@@ -163,6 +163,9 @@ npm run sunrey-launch -- economic-verify
 npm run sunrey-launch -- economic-audit
 npm run demo:sunrey-dual-economy
 npm run sunrey-economics -- dual simulate --scenario baseline --epochs 2
+npm run demo:sunrey-access-economy
+npm run sunrey-economics -- access qualify
+npm run sunrey-economics -- stress campaign --id access-economy
 npm run demo:sunrey-validator-economics
 node scripts/sunrey-testnet-validate-manifests.mjs
 node scripts/sunrey-testnet-sbom.mjs

@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "scenarioId": "post-scarcity-abundance",
+  "title": "Post-scarcity productive abundance under rapid automation",
+  "parameterClass": "ENGINEERING_SIMULATION_PARAMETERS",
+  "simulationLabel": "SIMULATION",
+  "seed": 75,
+  "epochs": 12,
+  "epochDurationLabel": "ABSTRACT_EPOCH",
+  "human": {
+    "participants": 1400,
+    "demandScale": "1100000",
+    "laborShareBps": "2600",
+    "informationRightIntensityBps": "2600",
+    "creativeIntensityBps": "2200",
+    "entrepreneurialIntensityBps": "1600",
+    "communityIntensityBps": "2400",
+    "governedDistributionBps": "1400"
+  },
+  "automation": {
+    "penetrationBps": "8200",
+    "aiProductivityBps": "9200",
+    "robotDeploymentBps": "8600",
+    "productiveSystemCount": 26
+  },
+  "productive": {
+    "energyAvailabilityBps": "22000",
+    "computeAvailabilityBps": "24000",
+    "manufacturingCapacityBps": "20000",
+    "logisticsCapacityBps": "19000",
+    "categoryWeightsBps": {
+      "ENERGY": "1400",
+      "COMPUTE": "1500",
+      "AI_COMPUTE": "1400",
+      "AUTOMATED_MACHINE_OUTPUT": "900",
+      "MANUFACTURING": "1000",
+      "FOOD_AGRICULTURE": "800",
+      "WATER": "500",
+      "STORAGE": "400",
+      "LOGISTICS_TRANSPORTATION": "800",
+      "BANDWIDTH_COMMUNICATIONS": "400",
+      "MINERALS_RAW_MATERIALS": "300",
+      "REAL_ESTATE_USE": "600",
+      "SERVICES": "600"
+    }
+  },
+  "oracle": {
+    "providerCount": 4,
+    "stale": false,
+    "conflict": false,
+    "removeProviders": 0
+  },
+  "market": {
+    "volatilityBps": "220",
+    "makerSpreadBps": "70",
+    "startingPriceUnits": "2000000",
+    "orderSize": "40",
+    "makerInventorySunrey": "26000",
+    "makerInventoryMoonrey": "52000"
+  },
+  "fees": {
+    "utilizationBps": "3000",
+    "txPerEpoch": 6,
+    "transferAmount": "80"
+  },
+  "validators": {
+    "count": 4,
+    "unavailable": [],
+    "penaltyValidatorId": null,
+    "penaltyBps": "0",
+    "feeRevenueMode": "normal"
+  },
+  "concentration": {
+    "operatorCount": 12,
+    "dominantShareBps": "1200"
+  },
+  "policies": {
+    "sunreyIssuanceScaleBps": "10000",
+    "moonreyEpochCapScaleBps": "10000",
+    "feeMaxUnits": "10000",
+    "validatorRewardBpsOverride": null,
+    "productiveNormalizationBps": "10000",
+    "becomesProductionPolicy": false
+  },
+  "assumptions": [
+    "Abstract epochs are not calendar years unless configured.",
+    "Abundance is modelled as higher productive availability, never as free money.",
+    "Human aggregates are synthetic and contain no personal information.",
+    "Falling labour share does not reduce anyone's access entitlement by itself.",
+    "MoonRey issuance still requires oracle-verified productive output.",
+    "Simulation evidence is not production authorization."
+  ]
+}

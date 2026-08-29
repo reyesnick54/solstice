@@ -43,6 +43,10 @@ export function runPropertyStream(seed = 76, steps = 12): {
     oracleFabricated: false,
     dvpDuplicated: false,
     custodyBlindResubmit: false,
+    accessCapacityOversoldUnits: 0n,
+    accessAuthorityMissing: false,
+    accessIssuedNativeAsset: false,
+    accessEvidenceChainBroken: false,
   };
   for (let step = 0; step < steps; step += 1) {
     const operation = OPERATIONS[rng.nextBounded(OPERATIONS.length)]!;

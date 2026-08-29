@@ -298,6 +298,12 @@ jobs:
         run: npm run sunrey-economics -- stress campaign --id smoke
       - name: SunRey economic stress laboratory demo
         run: npm run demo:sunrey-economic-stress
+      - name: SunRey Access Economy simulation demo
+        run: npm run demo:sunrey-access-economy
+      - name: SunRey Access Economy end-to-end qualification
+        run: npm run sunrey-economics -- access qualify
+      - name: SunRey Access Economy stress campaign
+        run: npm run sunrey-economics -- stress campaign --id access-economy
       - name: SunRey Testnet RC smoke qualification
         run: node scripts/sunrey-release.mjs rc qualify --profile smoke
       - name: SunRey Testnet RC verify

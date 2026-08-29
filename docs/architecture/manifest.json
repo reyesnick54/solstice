@@ -885,7 +885,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation — not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Chunk 107 HIN contribution adapter lives at src/network/contribution and uses the Chunk 109 verifier. Chunk 139/140 HIN chain-anchor lifecycle lives at src/network/chain-anchor and uses existing SunReyChainService. Do not implement a second chain, matching engine, or mint."
+      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation \u2014 not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Chunk 107 HIN contribution adapter lives at src/network/contribution and uses the Chunk 109 verifier. Chunk 139/140 HIN chain-anchor lifecycle lives at src/network/chain-anchor and uses existing SunReyChainService. Do not implement a second chain, matching engine, or mint."
     },
     {
       "id": "packages/sunrey-chain",
@@ -1072,6 +1072,24 @@
       "notes": "Isolated SunRey adversarial cyber-economic test range. Adapter/harness only. Red actors are in-process test doubles. Not a second ledger, Kernel, or live pentest service."
     },
     {
+      "id": "packages/access-fabric",
+      "npmName": "@solstice/access-fabric",
+      "path": "packages/access-fabric",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "SunRey Access Fabric. Canonical access entitlement engine and Personal Access Envelope. An AccessEntitlement is not money, not a transferable balance, and not a human-worth score. Not a second ledger, Exchange, custody system, or monetary authority."
+    },
+    {
       "id": "packages/sunrey-economics",
       "npmName": "@solstice/sunrey-economics",
       "path": "packages/sunrey-economics",
@@ -1082,8 +1100,10 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "allowedDependencies": [
+        "packages/access-fabric",
         "packages/config",
         "packages/domain",
+        "packages/evidence",
         "packages/money",
         "packages/sunrey-chain",
         "packages/sunrey-exchange",
@@ -1092,7 +1112,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 75 SunRey/MoonRey dual-economy simulation laboratory. Consumes canonical protocol owners. Does not predict prices, promise returns, or activate production monetary policy."
+      "notes": "Chunk 75 dual-economy simulation laboratory, Chunk 76 economic stress laboratory, and the ACCESS-13 Access Economy simulation at src/access-economy. Consumes canonical protocol, entitlement, and evidence owners. Does not predict prices, promise returns, or activate production monetary policy."
     },
     {
       "id": "packages/sunrey-agent",
@@ -2547,7 +2567,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "One SunRey Chain owner. Append-only simulation receipts and anchors. Not a second ledger, wallet, exchange, or live network. Settlement anchors happen after canonical ledger transfers. Chunk 31 freezes production architecture (ADR-0016–ADR-0033) without implementing a production node. Chunk 37 implements a development Tendermint-class ConsensusEngine at packages/sunrey-chain/rust/crates/consensus. Chunk 36R/38/39 implement the development validator set, networked BFT, and simulation accountability. Runtime/storage/P2P/validators remain internal modules, not competing packages. Production consensus is not implemented."
+      "notes": "One SunRey Chain owner. Append-only simulation receipts and anchors. Not a second ledger, wallet, exchange, or live network. Settlement anchors happen after canonical ledger transfers. Chunk 31 freezes production architecture (ADR-0016\u2013ADR-0033) without implementing a production node. Chunk 37 implements a development Tendermint-class ConsensusEngine at packages/sunrey-chain/rust/crates/consensus. Chunk 36R/38/39 implement the development validator set, networked BFT, and simulation accountability. Runtime/storage/P2P/validators remain internal modules, not competing packages. Production consensus is not implemented."
     },
     {
       "id": "sunrey-explorer",
@@ -2818,7 +2838,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 65 readiness evidence, activation matrix, and genesis-candidate tooling. Consumes exact Chunk 76–81 engineering evidence hashes without overwriting external evidence status. Chunk 160 adds the external production evidence registry at src/mainnet/external-evidence. Does not launch mainnet or enable LIVE_* services. External legal/audit evidence remains explicit and unfabricated."
+      "notes": "Chunk 65 readiness evidence, activation matrix, and genesis-candidate tooling. Consumes exact Chunk 76\u201381 engineering evidence hashes without overwriting external evidence status. Chunk 160 adds the external production evidence registry at src/mainnet/external-evidence. Does not launch mainnet or enable LIVE_* services. External legal/audit evidence remains explicit and unfabricated."
     },
     {
       "id": "sunrey-launch-rehearsal",
@@ -3000,7 +3020,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–138 provider-family data fabrics and the unified economic data fabric live at packages/sunrey-chain/src/oracle/production. Chunk 150 external provider candidates live at packages/sunrey-chain/src/oracle/production/external-provider-candidate. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
+      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129\u2013138 provider-family data fabrics and the unified economic data fabric live at packages/sunrey-chain/src/oracle/production. Chunk 150 external provider candidates live at packages/sunrey-chain/src/oracle/production/external-provider-candidate. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
     },
     {
       "id": "sunrey-provider-certification",
@@ -3668,6 +3688,71 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 125 Productive Value to MoonRey settlement conversion bridge at packages/sunrey-chain/src/productive/policy-governance/value-settlement. GPUV is not MoonRey. Chunk 71 MonetaryIssuanceAuthority remains the only mint. Production remains inactive. Do not create packages/moonrey-mint, packages/gpuv-token, packages/value-settlement, packages/moonrey-conversion, or packages/productive-settlement."
+    },
+    {
+      "id": "sunrey-access-entitlement-engine",
+      "name": "SunRey Access Fabric entitlement engine and Personal Access Envelope",
+      "canonicalOwner": "packages/access-fabric",
+      "canonicalPath": "packages/access-fabric/src/engine.ts",
+      "publicInterface": "packages/access-fabric/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "AccessEntitlementEngine",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/access-coin",
+        "packages/access-economy",
+        "packages/access-ledger",
+        "packages/access-exchange",
+        "packages/access-custody",
+        "packages/entitlements"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "ACCESS-04 canonical access entitlement engine. Answers what a person may currently request. Does not reserve, price, settle, or score. An AccessEntitlement is not money and not transferable by default."
+    },
+    {
+      "id": "sunrey-access-economy-simulation",
+      "name": "SunRey Access Economy simulation and qualification",
+      "canonicalOwner": "packages/sunrey-economics",
+      "canonicalPath": "packages/sunrey-economics/src/access-economy/types.ts",
+      "publicInterface": "packages/sunrey-economics/src/access-economy/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "AccessEconomyScenario",
+          "kind": "type"
+        },
+        {
+          "name": "AccessEconomyScenarioResult",
+          "kind": "type"
+        },
+        {
+          "name": "AccessEconomyQualificationReport",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/access-economy",
+        "packages/access-simulation",
+        "packages/access-coin"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "ACCESS-13 Access Economy simulation scenarios, permanent access invariants, and end-to-end qualification. Extends the Chunk 75 dual-economy simulator and the Chunk 76 stress laboratory. Not a second economics engine, ledger, Exchange, custody system, entitlement engine, or monetary authority. ACCESS_FABRIC_CODE_COMPLETE_CANDIDATE is not PRODUCTION_READY, LIVE_CONNECTIVITY_ENABLED, or PRODUCTION_ACTIVE."
     },
     {
       "id": "sunrey-dual-economy-simulator",
@@ -4812,7 +4897,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN → HumanContributionRegistryPort. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint."
+      "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN \u2192 HumanContributionRegistryPort. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint."
     },
     {
       "id": "sunrey-hin-chain-anchoring",
@@ -6237,7 +6322,15 @@
     "packages/final-architecture",
     "packages/super-app",
     "packages/everything",
-    "packages/production-v2"
+    "packages/production-v2",
+    "packages/access-coin",
+    "packages/access-economy",
+    "packages/access-ledger",
+    "packages/access-exchange",
+    "packages/access-custody",
+    "packages/entitlements",
+    "packages/access-simulation",
+    "packages/access-fabric-v2"
   ],
   "capabilities": [
     {
@@ -6539,7 +6632,9 @@
       "status": "PLANNED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "supersededBy": ["sunrey-local-node"],
+      "supersededBy": [
+        "sunrey-local-node"
+      ],
       "notes": "Chunk 168 classification: obsolete planned placeholder. SUPERSEDED by sunrey-local-node. Do not create a second node package. Production public node operations remain externally gated."
     },
     {
@@ -6555,7 +6650,9 @@
       "status": "PLANNED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "supersededBy": ["sunrey-p2p"],
+      "supersededBy": [
+        "sunrey-p2p"
+      ],
       "notes": "Chunk 168 classification: obsolete planned placeholder. SUPERSEDED by sunrey-p2p. Do not create packages/p2p or packages/sunrey-p2p."
     },
     {
@@ -6577,7 +6674,10 @@
       "status": "PLANNED",
       "owner": null,
       "protected": true,
-      "supersededBy": ["sunrey-native-assets", "moonrey-issuance-engine"],
+      "supersededBy": [
+        "sunrey-native-assets",
+        "moonrey-issuance-engine"
+      ],
       "notes": "Chunk 168 classification A: obsolete public-product placeholder. SUPERSEDED by sunrey-native-assets (protocol-native MOONREY_COIN) and moonrey-issuance-engine. Do not create packages/moonrey-coin. The MoonRey native-asset path is implemented on SunRey Chain. Public ticker remains NOT_ASSIGNED (human decision). Production issuance remains externally gated. Not a missing software owner."
     },
     {
@@ -6855,7 +6955,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification, Chunk 129–138 provider-family and unified economic data fabrics, and Chunk 150 external provider candidates extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
+      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification, Chunk 129\u2013138 provider-family and unified economic data fabrics, and Chunk 150 external provider candidates extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
     },
     {
       "id": "sunrey-provider-certification",
@@ -7390,6 +7490,20 @@
       "owner": "services/api",
       "protected": true,
       "notes": "Phase B Platform API runtime at services/api. Canonical /api/v1 application entry. Not a second ledger, Kernel, Execution Authority, Agent runtime, or Exchange. Do not create packages/sunrey-api, packages/api-gateway, packages/bff, or services/platform-api."
+    },
+    {
+      "id": "sunrey-access-fabric",
+      "status": "IMPLEMENTED",
+      "owner": "packages/access-fabric",
+      "protected": true,
+      "notes": "ACCESS-04 access entitlement engine and Personal Access Envelope. Access is not money, not a transferable balance, and not a human-worth score. Do not create packages/access-coin, packages/access-economy, packages/access-ledger, packages/access-exchange, packages/access-custody, or packages/entitlements."
+    },
+    {
+      "id": "sunrey-access-economy-simulation",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-economics",
+      "protected": true,
+      "notes": "ACCESS-13 Access Economy simulation, permanent access invariants, and end-to-end qualification at packages/sunrey-economics/src/access-economy. Extends the existing dual-economy and stress laboratories. Simulation cannot activate production. Do not create packages/access-economy or packages/access-simulation."
     }
   ],
   "boundedContexts": [
@@ -7740,6 +7854,15 @@
       ],
       "protected": true,
       "notes": "Chunk 75 dual-economy simulation laboratory. Not a second ledger, Kernel, or production monetary-policy engine."
+    },
+    {
+      "id": "ACCESS_FABRIC",
+      "status": "IMPLEMENTED",
+      "reservedPaths": [
+        "packages/access-fabric"
+      ],
+      "protected": true,
+      "notes": "SunRey Access Fabric. Entitlement eligibility only. Not a ledger, Exchange, custody system, or monetary authority."
     }
   ],
   "liveFlags": [
@@ -7954,6 +8077,13 @@
     "packages/sunrey-bff",
     "packages/http-gateway",
     "packages/platform-api-v2",
-    "services/platform-api"
+    "services/platform-api",
+    "packages/access-coin",
+    "packages/access-economy",
+    "packages/access-ledger",
+    "packages/access-exchange",
+    "packages/access-custody",
+    "packages/entitlements",
+    "packages/access-simulation"
   ]
 }
