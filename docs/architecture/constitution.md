@@ -2146,6 +2146,42 @@ chunk does not duplicate those evaluators. Do not create
 `packages/provider-manager`, or `packages/live-providers`. See
 [`docs/operations/chunk-162-production-provider-binding.md`](../operations/chunk-162-production-provider-binding.md).
 
+ACCESS-08 integrates SunRey Access Fabric economic rights with the
+existing SunRey Chain at `packages/sunrey-chain/src/access`. Capability
+`sunrey-access-rights-commitments` is `IMPLEMENTED` and extends the
+canonical chain owner. It records authoritative references and economic
+state for access-domain events: access-right creation and revocation,
+reservation commit, confirm, expiry and cancellation, usage, delivery,
+and settlement evidence references. Every commitment travels through the
+existing `SunReyChainService`, so classification, signing, evidence
+sealing, finality, and reconciliation stay with their canonical owner.
+
+An `AccessRight` points at a productive object registered by
+`packages/sunrey-chain/src/productive` and is denominated in that
+object's unit schema. OWNERSHIP is a different right from ACCESS,
+USAGE, LEASE, and RESERVATION. Ownership classes and title-conveying
+operations are structurally refused, so no sequence of access
+commitments can transfer title. Access state transitions are
+deterministic: the committed event log replays to a byte-identical
+state commitment, and chain finality changes confidence in a record
+rather than the state a replay produces.
+
+Only commitments, rights identifiers, policy and consent references,
+provenance, timestamps, state, and evidence references reach a chain
+payload. Raw personal data, travel history, health data, personal
+preferences, private itinerary contents, and payment credentials do
+not. Holders bind through pseudonymous scoped subject references.
+
+There is no new blockchain, side ledger, generic token wrapper, Access
+Coin, minting pathway, or automatic SunRey or MoonRey issuance.
+Settlement evidence may only reference a journal the canonical internal
+ledger already recorded. Do not create `packages/access-chain`,
+`packages/access-ledger`, `packages/access-coin`,
+`packages/access-token`, `packages/reservation-chain`,
+`packages/rights-chain`, `packages/mobility-chain`, or
+`packages/entitlement-chain`. See
+[`access-08-chain-access-rights.md`](./access-08-chain-access-rights.md).
+
 ## Agent stop rule
 
 If a task requires a **protected** capability that is not

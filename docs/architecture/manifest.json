@@ -4850,6 +4850,44 @@
       "notes": "Chunk 139 privacy-safe HIN adapter over existing SunReyChainService. Creates schemas and ChainWriteIntent records. HIN remains the rights owner. SunRey Chain remains the only chain owner. Lifecycle and finality complete in Chunk 140. Does not mint, transfer ownership, or rewrite historical HIN records."
     },
     {
+      "id": "sunrey-access-rights-commitments",
+      "name": "SunRey Chain access rights, reservations, and commitments",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/access/service.ts",
+      "publicInterface": "packages/sunrey-chain/src/access/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "AccessRightsChainService",
+          "kind": "class"
+        },
+        {
+          "name": "accessFinalityFor",
+          "kind": "function"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/access-chain",
+        "packages/access-ledger",
+        "packages/access-coin",
+        "packages/access-token",
+        "packages/access-rights-chain",
+        "packages/reservation-chain",
+        "packages/reservation-ledger",
+        "packages/rights-chain",
+        "packages/mobility-chain",
+        "packages/entitlement-chain"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "ACCESS-08 Access Fabric commitments over the existing SunReyChainService at packages/sunrey-chain/src/access. Records access-right creation and revocation, reservation commit, confirm, expiry and cancellation, usage, delivery, and settlement evidence references. Deterministic state transitions and replay only. Access, usage, lease, and reservation rights are distinct from ownership and never convey title. No new blockchain, side ledger, token wrapper, Access Coin, mint, or SunRey/MoonRey issuance path. Raw personal data, travel history, health data, personal preferences, private itinerary contents, and payment credentials never reach a chain payload."
+    },
+    {
       "id": "sunrey-human-economic-contributions",
       "name": "SunRey Human Economic Contribution ontology",
       "canonicalOwner": "packages/human-economic-contribution",
@@ -6237,7 +6275,17 @@
     "packages/final-architecture",
     "packages/super-app",
     "packages/everything",
-    "packages/production-v2"
+    "packages/production-v2",
+    "packages/access-chain",
+    "packages/access-ledger",
+    "packages/access-coin",
+    "packages/access-token",
+    "packages/access-rights-chain",
+    "packages/reservation-chain",
+    "packages/reservation-ledger",
+    "packages/rights-chain",
+    "packages/mobility-chain",
+    "packages/entitlement-chain"
   ],
   "capabilities": [
     {
@@ -7124,6 +7172,13 @@
       "owner": "packages/information-market",
       "protected": true,
       "notes": "Chunk 139 HIN to SunRey Chain anchoring foundation at packages/information-market/src/network/chain-anchor. Uses existing SunReyChainService. Not a second chain, consent ledger, or Evidence Vault. Lifecycle completion is Chunk 140. Do not create packages/hin-chain, packages/information-blockchain, packages/privacy-chain, packages/consent-chain, or packages/human-data-ledger."
+    },
+    {
+      "id": "sunrey-access-rights-commitments",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "ACCESS-08 Access Fabric access rights, reservations, and commitments at packages/sunrey-chain/src/access. Extends the existing SunRey Chain owner and uses SunReyChainService for classification, signing, evidence, finality, and reconciliation. Ownership is distinct from access, usage, lease, and reservation; an access right never conveys title. No new blockchain, side ledger, token wrapper, Access Coin, minting pathway, or automatic SunRey/MoonRey issuance. Do not create packages/access-chain, packages/access-ledger, packages/access-coin, packages/access-token, packages/reservation-chain, packages/rights-chain, packages/mobility-chain, or packages/entitlement-chain."
     },
     {
       "id": "sunrey-human-economic-contributions",
