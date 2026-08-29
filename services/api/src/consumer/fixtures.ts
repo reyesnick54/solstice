@@ -78,6 +78,7 @@ import { createSandboxRightsMarketplace } from '../../../../packages/information
 import type { InformationRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
 import { createHinContributionSurface, type HinContributionSurface } from './hin-adapter.ts';
 import { createProductiveEconomySurface, type ProductiveEconomySurface } from './productive-economy-adapter.ts';
+import { createSandboxAccessEconomy, type HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
 
 import { ConsentService } from '../../../../packages/consent/src/service.ts';
 import { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
@@ -151,6 +152,7 @@ export type SandboxWorld = {
   readonly exchange: ReturnType<typeof createExchangeBffSurface>;
   readonly dataRights: ConsentDataRightsEngine;
   readonly vault: PersonalDataVaultProduct;
+  readonly access: HumanAccessEconomyProduct;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -578,6 +580,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   const productiveEconomy = createProductiveEconomySurface();
   const vault = attachSandboxVault(runtime, personas);
   const dataRights = attachSandboxDataRights(runtime, vault);
+  const access = createSandboxAccessEconomy(personas.basic_verified.customerId);
 
   return Object.freeze({
     label: SANDBOX_LABEL,
@@ -600,6 +603,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     vault,
     exchange: createExchangeBffSurface(),
     dataRights,
+    access,
   });
 }
 

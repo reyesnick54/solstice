@@ -1043,6 +1043,167 @@ export type DataRightsRequestResource = {
   readonly applicable: boolean;
 };
 
+export const ACCESS_CATEGORIES = [
+  'MOBILITY',
+  'TRAVEL',
+  'STAY_HOUSING',
+  'FOOD',
+  'EXPERIENCES',
+  'COMPUTE_AI',
+  'ROBOTS_SERVICES',
+  'ENERGY',
+  'GOODS',
+] as const;
+export type AccessCategory = (typeof ACCESS_CATEGORIES)[number];
+
+export type AccessPosture = {
+  readonly productionReady: false;
+  readonly productionActive: false;
+  readonly liveConnectivityEnabled: false;
+};
+
+export type AccessCapability = {
+  readonly enabled: boolean;
+  readonly state:
+    | 'READY'
+    | 'SIMULATION_ONLY'
+    | 'FEATURE_DISABLED'
+    | 'USER_INELIGIBLE'
+    | 'PENDING_VERIFICATION';
+  readonly reason: string;
+};
+
+export type AccessCollectionField<T> = {
+  readonly state: string;
+  readonly availability: string;
+  readonly items: readonly T[];
+  readonly reason: string | null;
+};
+
+export type AccessEntitlement = {
+  readonly entitlementId: string;
+  readonly category: AccessCategory;
+  readonly label: string;
+  readonly status: string;
+  readonly scope?: string;
+  readonly validFrom?: string;
+  readonly validUntil?: string | null;
+  readonly remainingUses?: number | null;
+  readonly simulationFixture: true;
+};
+
+export type AccessOverview = AccessPosture & {
+  readonly schema: 'sunrey.consumer.access.overview.v1';
+  readonly capability: AccessCapability;
+  readonly activeEntitlements: AccessCollectionField<AccessEntitlement>;
+  readonly upcomingReservations: AccessCollectionField<AccessReservation>;
+  readonly activeExperiences: AccessCollectionField<AccessExperience>;
+  readonly recommendations: AccessCollectionField<AccessRecommendation>;
+  readonly availabilityStatus: AccessAvailabilityStatus;
+};
+
+export type AccessCategories = AccessPosture & {
+  readonly schema: 'sunrey.consumer.access.categories.v1';
+  readonly items: readonly {
+    readonly category: AccessCategory;
+    readonly label: string;
+    readonly productiveTaxonomyOwnedBy: 'packages/sunrey-chain';
+  }[];
+};
+
+export type AccessIntent = AccessPosture & {
+  readonly schema: 'sunrey.consumer.access.intent.v1';
+  readonly intentId: string;
+  readonly category: AccessCategory;
+  readonly summary: string;
+  readonly location?: string | null;
+  readonly status: string;
+};
+
+export type AccessQuote = AccessPosture & {
+  readonly schema: 'sunrey.consumer.access.quote.v1';
+  readonly quoteId: string;
+  readonly category: AccessCategory;
+  readonly summary: string;
+  readonly pricing?: { readonly currency: string; readonly minorUnits: string; readonly source: 'SIMULATION_FIXTURE' } | null;
+  readonly capacityKnown: false;
+  readonly simulationFixture: true;
+};
+
+export type AccessReservation = AccessPosture & {
+  readonly schema: 'sunrey.consumer.access.reservation.v1';
+  readonly reservationId: string;
+  readonly category: AccessCategory;
+  readonly summary: string;
+  readonly location?: string | null;
+  readonly status: string;
+};
+
+export type AccessExperience = AccessPosture & {
+  readonly schema: 'sunrey.consumer.access.experience.v1';
+  readonly experienceId: string;
+  readonly title: string;
+  readonly destination: string;
+  readonly durationDays: number;
+  readonly status: string;
+};
+
+export type AccessRecommendation = {
+  readonly recommendationId: string;
+  readonly category: AccessCategory;
+  readonly title: string;
+  readonly summary: string;
+  readonly eligible: boolean;
+  readonly reason: string;
+};
+
+export type AccessAvailabilityStatus = {
+  readonly overallState: string;
+  readonly categories: readonly {
+    readonly category: AccessCategory;
+    readonly state: string;
+    readonly reason: string;
+    readonly capacityKnown: false;
+    readonly earliestKnown: string | null;
+  }[];
+};
+
+export type AccessIntentCreateInput = {
+  readonly category: AccessCategory;
+  readonly summary: string;
+  readonly location?: string;
+  readonly idempotencyKey?: string;
+};
+
+export type AccessAvailabilityInput = {
+  readonly category: AccessCategory;
+  readonly summary?: string;
+  readonly location?: string;
+  readonly intentId?: string;
+};
+
+export type AccessQuoteCreateInput = {
+  readonly category: AccessCategory;
+  readonly summary: string;
+  readonly location?: string;
+  readonly intentId?: string;
+  readonly idempotencyKey?: string;
+};
+
+export type AccessReservationCreateInput = {
+  readonly quoteId: string;
+  readonly startsAt?: string;
+  readonly endsAt?: string;
+  readonly idempotencyKey?: string;
+};
+
+export type AccessExperienceQuoteInput = {
+  readonly destination: string;
+  readonly durationDays: number;
+  readonly title?: string;
+  readonly idempotencyKey?: string;
+};
+
 export type ActionCenterList = {
   readonly schema: 'sunrey.consumer.action-center.v1';
   readonly view: string;

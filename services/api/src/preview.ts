@@ -53,6 +53,7 @@ export function createSunReyPreviewRuntime(
     exchange: world.exchange,
     dataRights: world.dataRights,
     vault: world.vault,
+    access: world.access,
   });
 }
 

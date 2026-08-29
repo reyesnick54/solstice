@@ -55,6 +55,7 @@ export type FeatureCapabilityMap = {
   readonly walletsEnabled: boolean;
   readonly dataVaultEnabled: boolean;
   readonly hinEnabled: boolean;
+  readonly accessEnabled: boolean;
   readonly details: Readonly<Record<string, FeatureCapability>>;
 };
 
