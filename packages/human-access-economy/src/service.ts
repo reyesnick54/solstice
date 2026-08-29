@@ -12,11 +12,13 @@ import {
   seedSandboxAccessFixtures,
 } from './fixtures.ts';
 import { createCanonicalAccessRuntime, toCanonicalRuntimeCategory } from './canonical-runtime.ts';
+import { AccessProviderNetworkService, createAccessProviderNetworkService } from './provider-network.ts';
 import {
   newAccessExperienceId,
   newAccessIntentId,
   newAccessQuoteId,
   newAccessReservationId,
+  newAccessRedemptionId,
 } from './ids.ts';
 import {
   projectAccessCategories,
@@ -44,6 +46,11 @@ import type {
   CreateAccessQuoteInput,
   CreateAccessReservationInput,
   QuoteAccessExperienceInput,
+  SearchAccessProvidersInput,
+  CreateProviderQuoteInput,
+  PreviewAccessRedemptionInput,
+  StartAccessRedemptionInput,
+  ConfirmAccessRedemptionInput,
 } from './types.ts';
 
 const NOW = asUtcInstant('2026-08-23T12:00:00.000Z');
@@ -103,13 +110,23 @@ function mustangMatch(input: { readonly summary?: string; readonly location?: st
 export class HumanAccessEconomyProduct {
   private readonly store: HumanAccessEconomyStore;
   private readonly canonical = createCanonicalAccessRuntime();
+  private readonly providerNetwork: AccessProviderNetworkService;
 
-  constructor(store: HumanAccessEconomyStore = new HumanAccessEconomyStore()) {
+  constructor(
+    store: HumanAccessEconomyStore = new HumanAccessEconomyStore(),
+    providerNetwork: AccessProviderNetworkService = createAccessProviderNetworkService(),
+  ) {
     this.store = store;
+    this.providerNetwork = providerNetwork;
   }
 
   seedCustomer(customerId: string): void {
     seedSandboxAccessFixtures(this.store, customerId);
+    for (const entitlement of this.store.listEntitlements(customerId)) {
+      if (entitlement.remainingUses !== null) {
+        this.providerNetwork.seedEntitlement(entitlement.entitlementId, customerId, entitlement.remainingUses);
+      }
+    }
   }
 
   overview(actor: AccessActor) {
@@ -521,6 +538,299 @@ export class HumanAccessEconomyProduct {
       referenceId: confirmed.experienceId,
     });
     return ok(projectAccessResource('sunrey.consumer.access.experience.v1', confirmed));
+  }
+
+  providers(actor: AccessActor) {
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    return ok(
+      Object.freeze({
+        schema: 'sunrey.consumer.access.providers.v1',
+        ...ACCESS_POSTURE,
+        items: this.providerNetwork.listProviders(),
+      }),
+    );
+  }
+
+  searchProviders(actor: AccessActor, input: SearchAccessProvidersInput) {
+    const auth = authorizeAccessMutate(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    const category = parseCategory(input.category);
+    if (!category) {
+      return err({ code: 'INVALID_CATEGORY', message: 'access category is invalid' });
+    }
+    const outcome = this.providerNetwork.search({
+      query: input.query,
+      category,
+      ...(input.location !== undefined ? { location: input.location } : {}),
+      ...(input.providerId ? { providerId: input.providerId as import('../../access-economy/src/providers/types.ts').AccessProviderId } : {}),
+    });
+    if (!outcome.ok) {
+      return err({ code: 'PROVIDER_UNAVAILABLE', message: outcome.message });
+    }
+    recordActivity(this.store, {
+      customerId: actor.customerId,
+      kind: 'PROVIDER_SEARCH',
+      summary: `${input.query} provider search`,
+    });
+    return ok(
+      Object.freeze({
+        schema: 'sunrey.consumer.access.search.v1',
+        ...ACCESS_POSTURE,
+        items: outcome.value.items.map((item) =>
+          Object.freeze({
+            catalogItemId: item.catalogItemId,
+            providerId: item.providerId,
+            title: item.title,
+            description: item.description,
+            location: item.location,
+            canonicalUnit: item.canonicalUnit,
+            rightKind: item.rightKind,
+          }),
+        ),
+      }),
+    );
+  }
+
+  createProviderQuote(actor: AccessActor, input: CreateProviderQuoteInput) {
+    const auth = authorizeAccessMutate(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    const existing = this.store.idempotency.get(`provider-quote:${input.idempotencyKey}`);
+    if (existing) {
+      const quote = this.providerNetwork.getQuote(existing);
+      if (quote) {
+        return ok(this.projectProviderQuote(quote));
+      }
+    }
+    const outcome = this.providerNetwork.createQuote({
+      providerId: input.providerId as import('../../access-economy/src/providers/types.ts').AccessProviderId,
+      catalogItemId: input.catalogItemId,
+      quantity: input.quantity,
+      startsAt: input.startsAt,
+      endsAt: input.endsAt,
+      idempotencyKey: input.idempotencyKey,
+      ...(input.location !== undefined ? { location: input.location } : {}),
+    });
+    if (!outcome.ok) {
+      return err({ code: 'PROVIDER_UNAVAILABLE', message: outcome.message });
+    }
+    this.store.idempotency.set(`provider-quote:${input.idempotencyKey}`, outcome.value.quoteId);
+    recordActivity(this.store, {
+      customerId: actor.customerId,
+      kind: 'QUOTE_CREATED',
+      summary: `provider quote ${outcome.value.quoteId}`,
+      referenceId: outcome.value.quoteId,
+    });
+    return ok(this.projectProviderQuote(outcome.value));
+  }
+
+  previewRedemption(actor: AccessActor, input: PreviewAccessRedemptionInput) {
+    const auth = authorizeAccessMutate(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    const entitlement = this.store.entitlements.get(input.entitlementId);
+    if (!entitlement || entitlement.customerId !== actor.customerId) {
+      return err({ code: 'NOT_FOUND', message: 'entitlement not found' });
+    }
+    const redemptionId = input.redemptionId ?? newAccessRedemptionId();
+    const outcome = this.providerNetwork.previewRedemption({
+      redemptionId,
+      customerId: actor.customerId,
+      category: input.category,
+      providerId: input.providerId as import('../../access-economy/src/providers/types.ts').AccessProviderId,
+      quoteId: input.quoteId,
+      entitlementId: input.entitlementId,
+      entitlementClass: input.entitlementClass,
+      requestedQuantity: input.requestedQuantity,
+      maxUserContributionMinorUnits: input.maxUserContributionMinorUnits ?? '0',
+      ...(input.intentId !== undefined ? { intentId: input.intentId } : {}),
+    });
+    if (!outcome.ok) {
+      return err({ code: 'REDEMPTION_BLOCKED', message: outcome.message });
+    }
+    recordActivity(this.store, {
+      customerId: actor.customerId,
+      kind: 'REDEMPTION_PREVIEWED',
+      summary: `redemption preview ${redemptionId}`,
+      referenceId: redemptionId,
+    });
+    return ok(
+      Object.freeze({
+        schema: 'sunrey.consumer.access.redemption.preview.v1',
+        ...ACCESS_POSTURE,
+        redemptionId,
+        status: outcome.value.status,
+        providerPriceMinorUnits: outcome.value.providerPriceMinorUnits.toString(),
+        coverageMinorUnits: outcome.value.coverage?.appliedCoverageMinorUnits.toString() ?? null,
+        userContributionMinorUnits: outcome.value.userContributionMinorUnits.toString(),
+        entitlementUnitsHeld: Number(outcome.value.entitlementUnitsHeld),
+        explanation: outcome.value.explanation,
+      }),
+    );
+  }
+
+  startRedemption(actor: AccessActor, input: StartAccessRedemptionInput) {
+    const auth = authorizeAccessMutate(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    const redemptionId = input.redemptionId ?? newAccessRedemptionId();
+    const outcome = this.providerNetwork.startRedemption(
+      {
+        redemptionId,
+        customerId: actor.customerId,
+        category: input.category,
+        providerId: input.providerId as import('../../access-economy/src/providers/types.ts').AccessProviderId,
+        quoteId: input.quoteId,
+        entitlementId: input.entitlementId,
+        entitlementClass: input.entitlementClass,
+        requestedQuantity: input.requestedQuantity,
+        maxUserContributionMinorUnits: input.maxUserContributionMinorUnits ?? '0',
+        ...(input.intentId !== undefined ? { intentId: input.intentId } : {}),
+      },
+      input.idempotencyKey,
+    );
+    if (!outcome.ok) {
+      return err({ code: 'REDEMPTION_BLOCKED', message: outcome.message });
+    }
+    recordActivity(this.store, {
+      customerId: actor.customerId,
+      kind: 'REDEMPTION_STARTED',
+      summary: `redemption ${redemptionId}`,
+      referenceId: redemptionId,
+    });
+    return ok(this.projectRedemption(outcome.value));
+  }
+
+  confirmRedemption(actor: AccessActor, redemptionId: string, input: ConfirmAccessRedemptionInput = {}) {
+    const auth = authorizeAccessMutate(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    const existing = this.providerNetwork.getRedemption(redemptionId);
+    if (!existing || existing.subjectRef !== actor.customerId) {
+      return err({ code: 'NOT_FOUND', message: 'redemption not found' });
+    }
+    const outcome = this.providerNetwork.confirmRedemption(
+      redemptionId,
+      {
+        ...(input.userApproved === true ? { userApproved: true as const } : {}),
+        ...(input.userFiatMinorUnits !== undefined ? { userFiatMinorUnits: input.userFiatMinorUnits } : {}),
+      },
+    );
+    if (!outcome.ok) {
+      return err({ code: 'REDEMPTION_BLOCKED', message: outcome.message });
+    }
+    recordActivity(this.store, {
+      customerId: actor.customerId,
+      kind: 'REDEMPTION_CONFIRMED',
+      summary: `redemption confirmed ${redemptionId}`,
+      referenceId: redemptionId,
+    });
+    return ok(this.projectRedemption(outcome.value));
+  }
+
+  cancelRedemption(actor: AccessActor, redemptionId: string) {
+    const auth = authorizeAccessMutate(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    const existing = this.providerNetwork.getRedemption(redemptionId);
+    if (!existing || existing.subjectRef !== actor.customerId) {
+      return err({ code: 'NOT_FOUND', message: 'redemption not found' });
+    }
+    const outcome = this.providerNetwork.cancelRedemption(redemptionId);
+    if (!outcome.ok) {
+      return err({ code: 'REDEMPTION_BLOCKED', message: outcome.message });
+    }
+    recordActivity(this.store, {
+      customerId: actor.customerId,
+      kind: 'REDEMPTION_CANCELLED',
+      summary: `redemption cancelled ${redemptionId}`,
+      referenceId: redemptionId,
+    });
+    return ok(this.projectRedemption(outcome.value));
+  }
+
+  getRedemption(actor: AccessActor, redemptionId: string) {
+    const auth = authorizeAccessView(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    const record = this.providerNetwork.getRedemption(redemptionId);
+    if (!record || record.subjectRef !== actor.customerId) {
+      return err({ code: 'NOT_FOUND', message: 'redemption not found' });
+    }
+    return ok(this.projectRedemption(record));
+  }
+
+  private projectProviderQuote(quote: import('../../access-economy/src/providers/types.ts').ProviderQuote) {
+    return Object.freeze({
+      schema: 'sunrey.consumer.access.provider-quote.v1',
+      ...ACCESS_POSTURE,
+      quoteId: quote.quoteId,
+      providerId: quote.providerId,
+      catalogItemId: quote.catalogItemId,
+      canonicalUnit: quote.canonicalUnit,
+      quantity: Number(quote.quantity),
+      providerPriceMinorUnits: quote.providerPriceMinorUnits.toString(),
+      currency: quote.currency,
+      expiresAt: quote.expiresAt,
+      simulationOnly: true as const,
+    });
+  }
+
+  private projectRedemption(record: import('../../access-economy/src/providers/redemption/types.ts').RedemptionRecord) {
+    return Object.freeze({
+      schema: 'sunrey.consumer.access.redemption.v1',
+      ...ACCESS_POSTURE,
+      redemptionId: record.redemptionId,
+      status: record.status,
+      providerId: record.providerId,
+      providerQuoteId: record.providerQuoteId,
+      providerBookingId: record.providerBookingId,
+      accessRightRef: record.accessRightRef,
+      rightKind: record.rightKind,
+      entitlementHoldState: record.entitlementHoldState,
+      providerPriceMinorUnits: record.decision.providerPriceMinorUnits.toString(),
+      userContributionMinorUnits: record.decision.userContributionMinorUnits.toString(),
+      coverageMinorUnits: record.decision.coverage?.appliedCoverageMinorUnits.toString() ?? null,
+    });
   }
 }
 

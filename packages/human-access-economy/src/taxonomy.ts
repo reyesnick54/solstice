@@ -88,6 +88,11 @@ export const ACCESS_ACTIVITY_KINDS = [
   'RESERVATION_CANCELLED',
   'EXPERIENCE_QUOTED',
   'EXPERIENCE_CONFIRMED',
+  'PROVIDER_SEARCH',
+  'REDEMPTION_PREVIEWED',
+  'REDEMPTION_STARTED',
+  'REDEMPTION_CONFIRMED',
+  'REDEMPTION_CANCELLED',
 ] as const;
 export type AccessActivityKind = (typeof ACCESS_ACTIVITY_KINDS)[number];
 
@@ -95,4 +100,5 @@ export const ACCESS_POSTURE = Object.freeze({
   productionReady: false as const,
   productionActive: false as const,
   liveConnectivityEnabled: false as const,
+  liveProviderConnectivity: false as const,
 });

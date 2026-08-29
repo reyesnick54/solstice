@@ -300,6 +300,7 @@ export {
   fixtureUsageProof,
 } from './fixtures.ts';
 export { AccessFabric } from './service.ts';
+export * from './providers/index.ts';
 export type {
   AccessBound,
   AccessFabricFailure,

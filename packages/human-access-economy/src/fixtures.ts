@@ -39,6 +39,34 @@ export function seedSandboxAccessFixtures(store: HumanAccessEconomyStore, custom
   });
   store.entitlements.set(foodEntitlement.entitlementId, foodEntitlement);
 
+  const mobilityEntitlement: AccessEntitlement = Object.freeze({
+    entitlementId: newAccessEntitlementId(),
+    customerId,
+    category: 'MOBILITY',
+    label: 'MOBILITY_STANDARD — 4 vehicle-days',
+    status: 'ACTIVE',
+    scope: 'Qualifying standard mobility — simulation',
+    validFrom: NOW,
+    validUntil: '2027-08-23T12:00:00.000Z',
+    remainingUses: 4,
+    simulationFixture: true,
+  });
+  store.entitlements.set(mobilityEntitlement.entitlementId, mobilityEntitlement);
+
+  const stayEntitlement: AccessEntitlement = Object.freeze({
+    entitlementId: newAccessEntitlementId(),
+    customerId,
+    category: 'STAY_HOUSING',
+    label: 'STAY_STANDARD — 5 room-nights',
+    status: 'ACTIVE',
+    scope: 'Qualifying stay access — simulation',
+    validFrom: NOW,
+    validUntil: '2027-08-23T12:00:00.000Z',
+    remainingUses: 5,
+    simulationFixture: true,
+  });
+  store.entitlements.set(stayEntitlement.entitlementId, stayEntitlement);
+
   const recommendations: readonly AccessRecommendation[] = [
     Object.freeze({
       recommendationId: 'rec_mobility_miami',

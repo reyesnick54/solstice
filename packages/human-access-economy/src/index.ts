@@ -25,6 +25,7 @@ export {
   newAccessIntentId,
   newAccessQuoteId,
   newAccessReservationId,
+  newAccessRedemptionId,
 } from './ids.ts';
 export type {
   AccessActivityRecord,
@@ -67,3 +68,4 @@ export {
   seedSandboxAccessFixtures,
 } from './fixtures.ts';
 export { HumanAccessEconomyProduct, createSandboxAccessEconomy } from './service.ts';
+export { AccessProviderNetworkService, createAccessProviderNetworkService } from './provider-network.ts';

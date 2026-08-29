@@ -109,7 +109,9 @@ export type AccessFailure = {
     | 'INVALID_CATEGORY'
     | 'INVALID_TRANSITION'
     | 'FEATURE_DISABLED'
-    | 'QUOTE_EXPIRED';
+    | 'QUOTE_EXPIRED'
+    | 'PROVIDER_UNAVAILABLE'
+    | 'REDEMPTION_BLOCKED';
   readonly message: string;
 };
 
@@ -147,4 +149,92 @@ export type QuoteAccessExperienceInput = {
   readonly durationDays: number;
   readonly title?: string;
   readonly idempotencyKey: string;
+};
+
+export type AccessProviderView = {
+  readonly providerId: string;
+  readonly displayName: string;
+  readonly integrationState: string;
+  readonly categories: readonly string[];
+  readonly liveEnabled: boolean;
+};
+
+export type AccessProviderCatalogItemView = {
+  readonly catalogItemId: string;
+  readonly providerId: string;
+  readonly title: string;
+  readonly description: string;
+  readonly location: string | null;
+  readonly canonicalUnit: string;
+  readonly rightKind: string;
+};
+
+export type AccessProviderQuoteView = {
+  readonly quoteId: string;
+  readonly providerId: string;
+  readonly catalogItemId: string;
+  readonly canonicalUnit: string;
+  readonly quantity: number;
+  readonly providerPriceMinorUnits: string;
+  readonly currency: string;
+  readonly expiresAt: string;
+  readonly simulationOnly: true;
+};
+
+export type AccessRedemptionPreviewView = {
+  readonly redemptionId: string;
+  readonly status: string;
+  readonly providerPriceMinorUnits: string;
+  readonly coverageMinorUnits: string | null;
+  readonly userContributionMinorUnits: string;
+  readonly entitlementUnitsHeld: number;
+  readonly explanation: readonly string[];
+};
+
+export type AccessRedemptionView = {
+  readonly redemptionId: string;
+  readonly status: string;
+  readonly providerId: string;
+  readonly providerQuoteId: string;
+  readonly providerBookingId: string | null;
+  readonly accessRightRef: string | null;
+  readonly rightKind: string | null;
+  readonly entitlementHoldState: string;
+};
+
+export type SearchAccessProvidersInput = {
+  readonly query: string;
+  readonly location?: string;
+  readonly category: AccessCategory;
+  readonly providerId?: string;
+};
+
+export type CreateProviderQuoteInput = {
+  readonly providerId: string;
+  readonly catalogItemId: string;
+  readonly quantity: number;
+  readonly startsAt: string;
+  readonly endsAt: string;
+  readonly location?: string;
+  readonly idempotencyKey: string;
+};
+
+export type PreviewAccessRedemptionInput = {
+  readonly redemptionId?: string;
+  readonly quoteId: string;
+  readonly entitlementId: string;
+  readonly entitlementClass: string;
+  readonly requestedQuantity: number;
+  readonly maxUserContributionMinorUnits?: string;
+  readonly intentId?: string;
+  readonly category: AccessCategory;
+  readonly providerId: string;
+  readonly idempotencyKey: string;
+};
+
+export type StartAccessRedemptionInput = PreviewAccessRedemptionInput;
+
+export type ConfirmAccessRedemptionInput = {
+  readonly userApproved?: boolean;
+  readonly userFiatMinorUnits?: string;
 };

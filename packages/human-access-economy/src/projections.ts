@@ -31,6 +31,10 @@ export type AccessOverviewView = {
   readonly productionReady: false;
   readonly productionActive: false;
   readonly liveConnectivityEnabled: false;
+  readonly liveProviderConnectivity: false;
+  readonly navigationLabel: 'Access';
+  readonly primarySurface: 'YOUR_ACCESS';
+  readonly primaryCta: 'REDEEM_ACCESS';
   readonly capability: AccessCapabilityView;
   readonly activeEntitlements: AccessCollectionField<AccessEntitlement>;
   readonly upcomingReservations: AccessCollectionField<AccessReservation>;
@@ -105,6 +109,9 @@ export function projectAccessOverview(input: {
   return Object.freeze({
     schema: 'sunrey.consumer.access.overview.v1',
     ...ACCESS_POSTURE,
+    navigationLabel: 'Access',
+    primarySurface: 'YOUR_ACCESS',
+    primaryCta: 'REDEEM_ACCESS',
     capability: input.capability,
     activeEntitlements: collectionField(
       enabled,

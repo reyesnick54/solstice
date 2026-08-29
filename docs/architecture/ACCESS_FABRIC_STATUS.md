@@ -1,4 +1,4 @@
-# SunRey Human Access Economy — ACCESS-13R status
+# SunRey Human Access Economy — ACCESS-13R / ACCESS-14 status
 
 Classification: engineering simulation on current `main`.
 
@@ -27,6 +27,7 @@ A passing qualification run does **not** move any production state. `ENVIRONMENT
 | ACCESS-09 exchange capacity markets / clearing | `packages/sunrey-exchange/src/access-fabric` |
 | ACCESS-10/11 experience composer + completion | `packages/sunrey-access-fabric` + `packages/sunrey-chain/src/access-fabric` |
 | ACCESS-13 qualification laboratory | `packages/sunrey-economics/src/access-economy` |
+| ACCESS-14 provider network + redemption engine | `packages/access-economy/src/providers/` |
 | Consumer BFF projection | `packages/human-access-economy` → `services/api/src/consumer/access.ts` |
 
 ## Data flow (simulation)
@@ -43,6 +44,7 @@ Consumer intent
   → chain access commitment + completion evidence (sunrey-chain/access*)
   → Evidence Vault
   → Consumer BFF projection (human-access-economy)
+  → Provider gateway + redemption (access-economy/providers) [ACCESS-14]
 ```
 
 The BFF adapter now registers domain intents through `packages/human-access-economy/src/canonical-runtime.ts` while preserving the frontend-safe simulation contract (`productionReady=false`, `capacityKnown=false` unless explicitly fixture-matched).
@@ -67,13 +69,26 @@ The BFF adapter now registers domain intents through `packages/human-access-econ
 | ACCESS-13 qualification | `packages/sunrey-economics/src/access-economy/*.test.ts` |
 | ACCESS-13 integration | `tests/access-13-access-economy-qualification.test.ts` |
 | ACCESS-13R E2E | `tests/access-economy-e2e-qualification.test.ts` |
+| ACCESS-14 provider network | `packages/access-economy/src/providers/access-14-e2e.test.ts` |
+| ACCESS-14 BFF integration | `tests/access-14-provider-network.test.ts` |
 | Consumer BFF | `services/api/src/consumer-access.test.ts` |
+
+## ACCESS-14 provider network (simulation)
+
+| State | Value |
+| --- | --- |
+| `ACCESS-14 provider-network foundation` | **implemented** on current main |
+| `LIVE_PROVIDER_CONNECTIVITY` | **false** |
+
+Provider adapters: Expedia (simulated), Turo, DoorDash, Amazon, Airbnb (partner-gated simulation scaffolds).
+
+See `docs/architecture/ACCESS_PROVIDER_NETWORK.md`.
 
 ## Remaining simulation-only components
 
-- Consumer quote/reservation fixtures in `packages/human-access-economy` for non-fixture requests
-- Full Kernel → Exchange → chain wiring through the BFF (orchestrator registers domain state only)
-- Live provider capacity, pricing, and settlement rails
+- Live provider capacity, pricing, and settlement rails (provider adapters are simulation/partner-gated only)
+- Full Kernel → Exchange → chain wiring through every BFF redemption path
+- Legacy consumer quote/reservation fixtures in `packages/human-access-economy` for non-provider requests
 
 ## Remaining real provider dependencies
 
@@ -97,7 +112,7 @@ The BFF adapter now registers domain intents through `packages/human-access-econ
 ## Remaining technical debt
 
 - Duplicate `sunrey-access-fabric` capability naming across ACCESS-01 and ACCESS-09/10 modules (documented in `ACCESS_FABRIC_CANONICALIZATION.md`)
-- BFF still uses fixture-backed quotes for most requests; canonical reservation engine not yet exposed on all `/api/v1/access/*` routes
+- BFF legacy fixture quotes remain for non-provider requests; provider gateway now backs search/quote/redemption routes
 - Agent `AccessIntent` model not yet mapped to domain `AccessFabricIntent` at ProposalGate
 
 ## Production posture
@@ -108,4 +123,5 @@ PRODUCTION_READY=false
 LIVE_CONNECTIVITY_ENABLED=false
 PRODUCTION_ACTIVE=false
 ACCESS_FABRIC_CODE_COMPLETE_CANDIDATE=<set by passing qualification only>
+LIVE_PROVIDER_CONNECTIVITY=false
 ```
