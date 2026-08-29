@@ -1,0 +1,9 @@
+{
+  "chunk": "ACCESS-04",
+  "title": "SunRey Access Fabric — access entitlement engine and Personal Access Envelope",
+  "requires": [
+    "domain",
+    "config"
+  ],
+  "notes": "IMPLEMENTED at packages/access-fabric. Canonical owner of access entitlement eligibility and the Personal Access Envelope. Answers what a person may currently request. Does not reserve, price, settle, or score. An AccessEntitlement carries isMonetaryAsset=false and isTransferableBalance=false, and transferability defaults to false. Not a second ledger, Exchange, custody system, entitlement store, or monetary authority. Do not create packages/access-coin, packages/access-economy, packages/access-ledger, packages/access-exchange, packages/access-custody, or packages/entitlements."
+}

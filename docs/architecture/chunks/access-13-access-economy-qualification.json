@@ -1,0 +1,14 @@
+{
+  "chunk": "ACCESS-13",
+  "title": "Post-automation Access Economy simulation, end-to-end qualification, and architecture closure",
+  "requires": [
+    "sunrey-access-fabric",
+    "sunrey-dual-economy-simulator",
+    "sunrey-economic-stress-lab",
+    "evidence",
+    "config",
+    "domain",
+    "architecture-linting"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-economics/src/access-economy. Extends sunrey-dual-economy-simulator and sunrey-economic-stress-lab with fifteen Access Economy scenarios, sixteen permanent access invariants, and an end-to-end qualification. Adds the ACCESS stress domain and ECON-ACC-001..015. Not a second economics engine, ledger, Exchange, custody system, entitlement engine, or monetary authority. Access activity issues no SunRey and no MoonRey and asserts no fixed SunRey/MoonRey peg. ACCESS_FABRIC_CODE_COMPLETE_CANDIDATE is an engineering label; PRODUCTION_READY, LIVE_CONNECTIVITY_ENABLED, and PRODUCTION_ACTIVE remain false and are not derived from a passing test run. Do not create packages/access-economy or packages/access-simulation. See docs/architecture/ACCESS_FABRIC_STATUS.md and docs/architecture/access-fabric-architecture.md."
+}
