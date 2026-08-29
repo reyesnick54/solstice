@@ -11,6 +11,7 @@ import {
   recordActivity,
   seedSandboxAccessFixtures,
 } from './fixtures.ts';
+import { createCanonicalAccessRuntime, toCanonicalRuntimeCategory } from './canonical-runtime.ts';
 import {
   newAccessExperienceId,
   newAccessIntentId,
@@ -101,6 +102,7 @@ function mustangMatch(input: { readonly summary?: string; readonly location?: st
 
 export class HumanAccessEconomyProduct {
   private readonly store: HumanAccessEconomyStore;
+  private readonly canonical = createCanonicalAccessRuntime();
 
   constructor(store: HumanAccessEconomyStore = new HumanAccessEconomyStore()) {
     this.store = store;
@@ -199,6 +201,12 @@ export class HumanAccessEconomyProduct {
     });
     this.store.intents.set(intent.intentId, intent);
     this.store.idempotency.set(`intent:${input.idempotencyKey}`, intent.intentId);
+    this.canonical.registerConsumerIntent({
+      customerId: actor.customerId,
+      summary: intent.summary,
+      category: toCanonicalRuntimeCategory(category),
+      location: intent.location,
+    });
     recordActivity(this.store, {
       customerId: actor.customerId,
       kind: 'INTENT_CREATED',

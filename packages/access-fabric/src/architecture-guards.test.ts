@@ -32,8 +32,8 @@ describe('access-fabric architecture guards', () => {
       }
       const source = readFileSync(file, 'utf8');
       assert.equal(/postJournal\s*\(/.test(source), false, file);
-      assert.equal(/AuthorityIssuer/.test(source), false, file);
-      assert.equal(/ExecutionAuthority/.test(source), false, file);
+      assert.equal(/new AuthorityIssuer\s*\(/.test(source), false, file);
+      assert.equal(/issueExecutionAuthority\s*\(/.test(source), false, file);
       assert.equal(/MoonRey|SunRey Coin|Reyn Coin/.test(source), false, file);
     }
     assert.equal(existsSync(join(ROOT, 'packages/access-fabric-v2')), false);

@@ -187,6 +187,9 @@ Historical discussion remains below the table.
 | sunrey-mobile-wallet-sync | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-user-agent-mandates | IMPLEMENTED | packages/sunrey-agent |
 | sunrey-access-fabric | IMPLEMENTED | packages/sunrey-access-fabric |
+| sunrey-chain-access-fabric | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-access-economy-domain | IMPLEMENTED | packages/access-economy |
+| sunrey-access-economy-simulation | IMPLEMENTED | packages/sunrey-economics |
 | sunrey-exchange-consumer-trading | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-exchange-capacity-access | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-human-information-network | IMPLEMENTED | packages/information-market |
@@ -198,7 +201,6 @@ Historical discussion remains below the table.
 | sunrey-access-rights-commitments | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-human-economic-contributions | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-economic-asset-registry | IMPLEMENTED | packages/economic-asset-registry |
-| sunrey-access-fabric | IMPLEMENTED | packages/access-economy |
 | sunrey-human-contribution-valuation | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-human-contribution-verification | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-economic-unit-normalization | IMPLEMENTED | packages/sunrey-chain |

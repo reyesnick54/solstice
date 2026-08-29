@@ -1,5 +1,5 @@
 {
-  "chunk": "ACCESS-09",
+  "chunk": "ACCESS-03",
   "title": "SunRey Access Fabric — AccessRights and CapacityReservations",
   "requires": [
     "architecture-linting",

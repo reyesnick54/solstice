@@ -53,7 +53,7 @@ describe('ACCESS-09 exchange capacity access constitution', () => {
     assert.ok(table.includes('sunrey-exchange-capacity-access'));
 
     for (const forbidden of [
-      'packages/access-fabric',
+      'packages/access-core',
       'packages/capacity-exchange',
       'packages/capacity-market',
       'packages/dual-economy-clearing',

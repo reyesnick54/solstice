@@ -57,10 +57,15 @@ export { WaitlistStore, type WaitlistEntry, type WaitlistHooks } from './waitlis
 export { authorizeCapacityIntent, type CapacityAuthorizePorts } from './authorize.ts';
 export {
   CapacityReservationEngine,
+  AccessEntitlementEngine,
+  buildPersonalAccessEnvelope,
+  transferAllowed,
   DEFAULT_HOLD_TTL_MS,
   DEFAULT_CONFIRMATION_TTL_MS,
   type CapacityReservationEnginePorts,
   type CapacityEngineOutcome,
+} from './engine.ts';
+export {
   ACCESS_ENTITLEMENT_SOURCES,
   ACCESS_FABRIC_INVARIANTS,
   ACCESS_RESTRICTION_KINDS,
@@ -122,9 +127,3 @@ export {
   replenishmentWindow,
   usageInWindow,
 } from './replenishment.ts';
-
-export {
-  AccessEntitlementEngine,
-  buildPersonalAccessEnvelope,
-  transferAllowed,
-} from './engine.ts';

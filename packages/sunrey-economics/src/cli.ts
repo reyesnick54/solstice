@@ -7,6 +7,7 @@ import { writeFileSync } from 'node:fs';
 import { runTreasuryCommand } from '../../sunrey-chain/src/economics/treasury/cli.ts';
 import { runEconomicsCommand as runMonetaryCommand } from '../../sunrey-chain/src/economics/cli.ts';
 import { runSunreyEconomicsCli } from '../../sunrey-chain/src/fees/v2/cli.ts';
+import { runAccessEconomyCommand } from './access-economy/cli.ts';
 import { analyzeReport } from './analysis.ts';
 import { runAdversarialSmoke } from './adversarial.ts';
 import { compareScenarios } from './compare.ts';
@@ -35,6 +36,9 @@ export function runEconomicsCommand(argv: readonly string[]): string {
   }
   if (plane === 'stress') {
     return runStressCommand([command ?? '', ...rest]);
+  }
+  if (plane === 'access') {
+    return runAccessEconomyCommand([command ?? '', ...rest]);
   }
   if (plane === 'fees') {
     return runSunreyEconomicsCli(argv).trimEnd();
@@ -87,6 +91,10 @@ function usage(): string {
     'sunrey-economics stress report --campaign <id>',
     'sunrey-economics stress compare --left <id> --right <id>',
     'sunrey-economics stress replay --scenario <id> --seed n',
+    'sunrey-economics access scenario [--list] [--id <id>]',
+    'sunrey-economics access run --scenario <id> [--seed n]',
+    'sunrey-economics access invariants',
+    'sunrey-economics access qualify [--seed n] [--json]',
     'sunrey-economics policy verify | supply verify | fees <policy|verify>',
   ].join('\n');
 }

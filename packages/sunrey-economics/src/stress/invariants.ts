@@ -17,6 +17,11 @@ export type LabAuxState = {
   oracleFabricated: boolean;
   dvpDuplicated: boolean;
   custodyBlindResubmit: boolean;
+  /** ACCESS-13: set by ACCESS_* shocks. Default state is "invariant holds". */
+  accessCapacityOversoldUnits: bigint;
+  accessAuthorityMissing: boolean;
+  accessIssuedNativeAsset: boolean;
+  accessEvidenceChainBroken: boolean;
 };
 
 export function checkInvariants(stack: IntegratedEconomicStack, aux: LabAuxState): readonly EconomicInvariantResult[] {
@@ -81,6 +86,22 @@ export function checkInvariants(stack: IntegratedEconomicStack, aux: LabAuxState
     ORACLE_FAILURE_DOES_NOT_FABRICATE_FACTS: {
       held: !aux.oracleFabricated,
       evidence: `oracleFabricated=${aux.oracleFabricated} rejectedMoonRey=${stack.rejectedMoonRey}`,
+    },
+    ACCESS_CAPACITY_NOT_OVERSOLD: {
+      held: aux.accessCapacityOversoldUnits === 0n,
+      evidence: `accessOversoldUnits=${aux.accessCapacityOversoldUnits}`,
+    },
+    ACCESS_RESERVATION_REQUIRES_EXECUTION_AUTHORITY: {
+      held: !aux.accessAuthorityMissing,
+      evidence: `accessAuthorityMissing=${aux.accessAuthorityMissing}`,
+    },
+    ACCESS_ACTIVITY_ISSUES_NO_NATIVE_ASSET: {
+      held: !aux.accessIssuedNativeAsset,
+      evidence: `accessIssuedNativeAsset=${aux.accessIssuedNativeAsset}`,
+    },
+    ACCESS_EVIDENCE_CHAIN_RECONSTRUCTS: {
+      held: !aux.accessEvidenceChainBroken,
+      evidence: `accessEvidenceChainBroken=${aux.accessEvidenceChainBroken}`,
     },
   };
   return Object.freeze(

@@ -133,21 +133,6 @@ export const ACCESS_BOUND_KINDS = Object.freeze([
 
 export type AccessBoundKind = (typeof ACCESS_BOUND_KINDS)[number];
 
-export const ACCESS_RIGHT_STATES = Object.freeze([
-  'DRAFT',
-  'PROPOSED',
-  'POLICY_PENDING',
-  'AUTHORIZED',
-  'RESERVED',
-  'ACTIVE',
-  'FULFILLED',
-  'EXPIRED',
-  'REVOKED',
-  'REFUSED',
-] as const);
-
-export type AccessRightState = (typeof ACCESS_RIGHT_STATES)[number];
-
 export const ACCESS_INTENT_KINDS = Object.freeze([
   'REQUEST',
   'RENEW',
