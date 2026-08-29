@@ -22,6 +22,20 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
+describe('access economy architecture guards', () => {
+  it('stays a domain model and does not become settlement, pricing, or execution authority', () => {
+    const files = walk(join(ROOT, 'packages/access-economy/src'));
+    for (const file of files) {
+      if (file.endsWith('.test.ts') || file.endsWith('demo.ts') || file.endsWith('isolation.ts')) {
+        continue;
+      }
+      const source = readFileSync(file, 'utf8');
+      assert.equal(/postJournal\s*\(/.test(source), false, file);
+      assert.equal(/openAccount\s*\(/.test(source), false, file);
+      assert.equal(/new AuthorityIssuer/.test(source), false, file);
+      assert.equal(/LIVE_\w+\s*=\s*true/.test(source), false, file);
+      assert.equal(/ENVIRONMENT\s*=\s*'live'/.test(source), false, file);
+      assert.equal(/\bAPY\b|\bAPR\b|blended return|guaranteed profit/i.test(source), false, file);
 function stripStructuralMarkers(source: string): string {
   return source
     .replace(/isActionIntent:\s*false/g, '')
@@ -60,6 +74,12 @@ describe('ACCESS-01 architecture guards', () => {
       assert.equal(existsSync(join(ROOT, alias)), false, alias);
     }
 
+    assert.equal(ACCESS_ECONOMY_ISOLATION.pricingImplemented, false);
+    assert.equal(ACCESS_ECONOMY_ISOLATION.reservationExecutionImplemented, false);
+    assert.equal(ACCESS_ECONOMY_ISOLATION.exchangeIntegrationImplemented, false);
+    assert.equal(ACCESS_ECONOMY_ISOLATION.issuesExecutionAuthority, false);
+    assert.equal(ACCESS_ECONOMY_ISOLATION.authorizesMinting, false);
+    assert.equal(ACCESS_ECONOMY_ISOLATION.authorizesSettlement, false);
     assert.equal(existsSync(join(ROOT, 'packages/kernel/src/kernel.ts')), true);
     assert.equal(existsSync(join(ROOT, 'packages/permissions/src/execution-authority.ts')), true);
     assert.equal(existsSync(join(ROOT, 'packages/ledger/src/journal.ts')), true);
