@@ -176,3 +176,4 @@ export type { NativeCustodyChainPort } from './native-custody/index.ts';
 export * as economicUnits from './units/index.ts';
 export * as productionEconomicActivation from './economics/production-activation/index.ts';
 export * as chainRuntime from './runtime/index.ts';
+export * as accessRights from './access/index.ts';
