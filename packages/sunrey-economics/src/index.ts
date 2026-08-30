@@ -111,3 +111,7 @@ export type {
   AccessInvariantResult,
   AccessRequest,
 } from './access-economy/index.ts';
+export {
+  runProductiveAccessBridgeIntegrationDemo,
+  runProductiveAccessIntegration,
+} from './productive-access-bridge/index.ts';

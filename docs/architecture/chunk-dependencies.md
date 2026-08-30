@@ -190,6 +190,7 @@ Historical discussion remains below the table.
 | sunrey-chain-access-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-access-economy-domain | IMPLEMENTED | packages/access-economy |
 | sunrey-access-economy-simulation | IMPLEMENTED | packages/sunrey-economics |
+| sunrey-productive-access-bridge | IMPLEMENTED | packages/access-economy |
 | sunrey-exchange-consumer-trading | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-exchange-capacity-access | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-human-information-network | IMPLEMENTED | packages/information-market |

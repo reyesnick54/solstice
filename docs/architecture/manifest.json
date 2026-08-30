@@ -1110,6 +1110,7 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "allowedDependencies": [
+        "packages/access-economy",
         "packages/access-fabric",
         "packages/config",
         "packages/domain",
@@ -1122,7 +1123,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 75 dual-economy simulation laboratory, Chunk 76 economic stress laboratory, and ACCESS-13 Access Economy qualification at src/access-economy. Consumes canonical protocol, entitlement, and evidence owners. Does not predict prices, promise returns, or activate production monetary policy."
+      "notes": "Chunk 75 dual-economy simulation laboratory, Chunk 76 economic stress laboratory, ACCESS-13 Access Economy qualification at src/access-economy, and ACCESS-19 productive-access bridge integration at src/productive-access-bridge. Consumes canonical protocol, entitlement, and evidence owners. Does not predict prices, promise returns, or activate production monetary policy."
     },
     {
       "id": "packages/sunrey-agent",
@@ -5302,6 +5303,33 @@
       "notes": "ACCESS-13 Access Economy simulation scenarios, permanent access invariants, and end-to-end qualification. Not a second economics engine, ledger, Exchange, custody system, or monetary authority."
     },
     {
+      "id": "sunrey-productive-access-bridge",
+      "name": "MoonRey Productive Capacity to Access Bridge",
+      "canonicalOwner": "packages/access-economy",
+      "canonicalPath": "packages/access-economy/src/productive-access-bridge/types.ts",
+      "publicInterface": "packages/access-economy/src/productive-access-bridge/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "AccessCapacityCommitment",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/moonrey-access-bridge",
+        "packages/productive-access-ledger",
+        "packages/capacity-commitment-engine"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "ACCESS-19 MoonRey productive capacity to Access bridge. AccessCapacityCommitment commits verified productive capacity to Access pools without minting MoonRey. Productive-engine integration at packages/sunrey-economics/src/productive-access-bridge. Not a second MoonRey engine, ledger, or Access Coin."
+    },
+    {
       "id": "sunrey-economic-unit-normalization",
       "name": "SunRey canonical economic unit normalization",
       "canonicalOwner": "packages/sunrey-chain",
@@ -7524,6 +7552,13 @@
       "owner": "packages/sunrey-economics",
       "protected": true,
       "notes": "ACCESS-13 Access Economy simulation, permanent access invariants, and end-to-end qualification at packages/sunrey-economics/src/access-economy. Simulation cannot activate production."
+    },
+    {
+      "id": "sunrey-productive-access-bridge",
+      "status": "IMPLEMENTED",
+      "owner": "packages/access-economy",
+      "protected": true,
+      "notes": "ACCESS-19 MoonRey productive capacity to Access bridge at packages/access-economy/src/productive-access-bridge with Chunk 44 integration at packages/sunrey-economics/src/productive-access-bridge. AccessCapacityCommitment does not mint MoonRey. Simulation only."
     },
     {
       "id": "sunrey-human-contribution-valuation",
