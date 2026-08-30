@@ -8,6 +8,7 @@ import { runTreasuryCommand } from '../../sunrey-chain/src/economics/treasury/cl
 import { runEconomicsCommand as runMonetaryCommand } from '../../sunrey-chain/src/economics/cli.ts';
 import { runSunreyEconomicsCli } from '../../sunrey-chain/src/fees/v2/cli.ts';
 import { runAccessEconomyCommand } from './access-economy/cli.ts';
+import { runAccess22Command } from './dual-economy-access-stress/cli.ts';
 import { analyzeReport } from './analysis.ts';
 import { runAdversarialSmoke } from './adversarial.ts';
 import { compareScenarios } from './compare.ts';
@@ -39,6 +40,9 @@ export function runEconomicsCommand(argv: readonly string[]): string {
   }
   if (plane === 'access') {
     return runAccessEconomyCommand([command ?? '', ...rest]);
+  }
+  if (plane === 'access22') {
+    return runAccess22Command([command ?? '', ...rest]);
   }
   if (plane === 'fees') {
     return runSunreyEconomicsCli(argv).trimEnd();
