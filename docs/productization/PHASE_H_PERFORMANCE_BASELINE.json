@@ -6,64 +6,35 @@
   "samples": [
     {
       "label": "vault_summary",
-      "ns": "110015"
+      "ns": "107471"
     },
     {
       "label": "permissions",
-      "ns": "106830"
+      "ns": "116477"
     },
     {
       "label": "access_history",
-      "ns": "95347"
+      "ns": "92810"
     },
     {
       "label": "hin_contribution_summary",
-      "ns": "60488"
+      "ns": "60007"
     },
     {
       "label": "aggregate_hin_metrics",
-      "ns": "53981"
+      "ns": "82242"
     },
     {
       "label": "earnings",
-      "ns": "47447"
+      "ns": "49036"
     },
     {
       "label": "productive_overview",
-      "ns": "111018"
+      "ns": "116097"
     },
     {
       "label": "category_metric_history",
-      "ns": "30780"
-      "ns": "144338"
-    },
-    {
-      "label": "permissions",
-      "ns": "153882"
-    },
-    {
-      "label": "access_history",
-      "ns": "112579"
-    },
-    {
-      "label": "hin_contribution_summary",
-      "ns": "65571"
-    },
-    {
-      "label": "aggregate_hin_metrics",
-      "ns": "53255"
-    },
-    {
-      "label": "earnings",
-      "ns": "65552"
-    },
-    {
-      "label": "productive_overview",
-      "ns": "116761"
-    },
-    {
-      "label": "category_metric_history",
-      "ns": "31514"
+      "ns": "33533"
     }
   ]
 }

@@ -14,7 +14,7 @@ import { evaluateProviderAlerts } from './alerting.ts';
 import { ProviderCacheTracker } from './cache-tracker.ts';
 import { rollupDependencyStatus } from './dependency-status.ts';
 import { ProviderLogEmitter } from './logging.ts';
-import { ProviderMetricsCollector } from './metrics.ts';
+import { ProviderMetricsCollector, type ProviderMetricLabels } from './metrics.ts';
 import { ProviderSchedulerTracker } from './scheduler-tracker.ts';
 import { ProviderStatusService } from './status-service.ts';
 import { ProviderTraceBridge } from './tracing.ts';
@@ -51,10 +51,10 @@ export class ProviderObservabilityPlane {
     this.status = new ProviderStatusService({
       runtime: options.runtime,
       activation: this.#activation,
-      deploymentTier: options.deploymentTier,
+      ...(options.deploymentTier !== undefined ? { deploymentTier: options.deploymentTier } : {}),
       cacheTracker: this.cache,
       schedulerTracker: this.scheduler,
-      catalogTotal: options.catalogTotal,
+      ...(options.catalogTotal !== undefined ? { catalogTotal: options.catalogTotal } : {}),
       nowUtc: this.#nowUtc,
     });
   }
@@ -82,17 +82,17 @@ export class ProviderObservabilityPlane {
     readonly domain?: string;
   }): void {
     const health = this.#runtime.healthOf(input.providerId);
-    const labels = {
+    const labels: ProviderMetricLabels = {
       provider_id: input.providerId,
       category: input.category,
       capability: String(input.capability),
-      environment: input.environment,
+      ...(input.environment !== undefined ? { environment: input.environment } : {}),
     };
     this.metrics.recordRequest({
       labels,
       durationMs: input.durationMs,
       result: input.result,
-      errorClass: input.errorClass,
+      ...(input.errorClass !== undefined ? { errorClass: input.errorClass } : {}),
     });
     if (input.retryCount > 0) {
       this.metrics.recordRetry(labels);

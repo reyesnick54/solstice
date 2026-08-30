@@ -35,8 +35,8 @@ export class ProviderStatusService {
   readonly #runtime: UniversalProviderRuntime;
   readonly #activation: ProviderActivationConfig;
   readonly #deploymentTier: DeploymentTier;
-  readonly #cacheTracker?: ProviderCacheTracker;
-  readonly #schedulerTracker?: ProviderSchedulerTracker;
+  readonly #cacheTracker: ProviderCacheTracker | undefined;
+  readonly #schedulerTracker: ProviderSchedulerTracker | undefined;
   readonly #catalogTotal: number;
   readonly #nowUtc: () => string;
   readonly #latencySamples = new Map<string, number[]>();
