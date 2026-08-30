@@ -6,8 +6,6 @@ import {
   FIXTURE_MUSTANG_DAILY_USD,
   fixtureJapanExperience,
   fixtureMustangIntent,
-  fixtureMustangQuote,
-  fixtureMustangReservation,
   recordActivity,
   seedSandboxAccessFixtures,
 } from './fixtures.ts';
@@ -116,6 +114,9 @@ export class HumanAccessEconomyProduct {
   private readonly store: HumanAccessEconomyStore;
   private readonly canonical = createCanonicalAccessRuntime();
   private readonly providerNetwork: AccessProviderNetworkService;
+  private readonly providerQuoteByAccessQuote = new Map<string, string>();
+  private readonly redemptionByReservation = new Map<string, string>();
+  private readonly bundleByExperience = new Map<string, string>();
   private readonly allocationProjection = new AccessAllocationProjection();
 
   constructor(
@@ -342,12 +343,45 @@ export class HumanAccessEconomyProduct {
         message: 'no simulation quote fixture matches this request; live pricing is not connected',
       });
     }
-    const intentId = input.intentId ?? null;
-    const quote = fixtureMustangQuote(actor.customerId, intentId ?? newAccessIntentId());
-    const stored: AccessQuote = Object.freeze({
-      ...quote,
-      intentId,
+    const search = this.providerNetwork.search({
+      query: input.summary,
+      category,
+      location: input.location ?? undefined,
+      providerId: 'turo',
     });
+    if (!search.ok || search.value.items.length === 0) {
+      return err({ code: 'PROVIDER_UNAVAILABLE', message: 'provider search returned no catalog items' });
+    }
+    const catalogItem = search.value.items[0]!;
+    const providerQuote = this.providerNetwork.createQuote({
+      providerId: 'turo',
+      catalogItemId: catalogItem.catalogItemId,
+      quantity: 4,
+      startsAt: '2026-08-29T10:00:00.000Z',
+      endsAt: '2026-09-02T10:00:00.000Z',
+      location: input.location ?? 'Miami, FL',
+      idempotencyKey: input.idempotencyKey,
+    });
+    if (!providerQuote.ok) {
+      return err({ code: 'PROVIDER_UNAVAILABLE', message: providerQuote.message });
+    }
+    const intentId = input.intentId ?? null;
+    const stored: AccessQuote = Object.freeze({
+      quoteId: newAccessQuoteId(),
+      customerId: actor.customerId,
+      intentId,
+      category,
+      summary: input.summary,
+      pricing: Object.freeze({
+        currency: providerQuote.value.currency,
+        minorUnits: providerQuote.value.providerPriceMinorUnits.toString(),
+        source: 'SIMULATION_FIXTURE' as const,
+      }),
+      capacityKnown: false as const,
+      expiresAt: providerQuote.value.expiresAt,
+      simulationFixture: true as const,
+    });
+    this.providerQuoteByAccessQuote.set(stored.quoteId, providerQuote.value.quoteId);
     this.store.quotes.set(stored.quoteId, stored);
     this.store.idempotency.set(`quote:${input.idempotencyKey}`, stored.quoteId);
     recordActivity(this.store, {
@@ -385,21 +419,56 @@ export class HumanAccessEconomyProduct {
     if (quote.expiresAt < NOW) {
       return err({ code: 'QUOTE_EXPIRED', message: 'access quote has expired' });
     }
-    const reservation = fixtureMustangReservation(actor.customerId, quote.quoteId);
-    const stored: AccessReservation = Object.freeze({
-      ...reservation,
-      startsAt: input.startsAt ?? reservation.startsAt,
-      endsAt: input.endsAt ?? reservation.endsAt,
+    const providerQuoteId = this.providerQuoteByAccessQuote.get(input.quoteId);
+    if (!providerQuoteId) {
+      return err({ code: 'NOT_FOUND', message: 'provider quote mapping not found' });
+    }
+    const entitlement = this.store.listEntitlements(actor.customerId).find((row) => row.category === 'MOBILITY');
+    if (!entitlement) {
+      return err({ code: 'NOT_FOUND', message: 'mobility entitlement not found' });
+    }
+    const redemptionId = newAccessRedemptionId();
+    const started = this.providerNetwork.startRedemption(
+      {
+        redemptionId,
+        customerId: actor.customerId,
+        category: 'MOBILITY',
+        providerId: 'turo',
+        quoteId: providerQuoteId,
+        entitlementId: entitlement.entitlementId,
+        entitlementClass: 'MOBILITY_STANDARD',
+        requestedQuantity: 4,
+        maxUserContributionMinorUnits: '0',
+        intentId: quote.intentId ?? undefined,
+      },
+      input.idempotencyKey,
+    );
+    if (!started.ok) {
+      return err({ code: 'REDEMPTION_BLOCKED', message: started.message });
+    }
+    const reservation: AccessReservation = Object.freeze({
+      reservationId: newAccessReservationId(),
+      customerId: actor.customerId,
+      quoteId: quote.quoteId,
+      category: quote.category,
+      summary: quote.summary,
+      location: 'Miami, FL',
+      status: 'HELD',
+      startsAt: input.startsAt ?? '2026-08-29T10:00:00.000Z',
+      endsAt: input.endsAt ?? '2026-08-31T10:00:00.000Z',
+      pricing: quote.pricing,
+      createdAt: NOW,
     });
-    this.store.reservations.set(stored.reservationId, stored);
-    this.store.idempotency.set(`reservation:${input.idempotencyKey}`, stored.reservationId);
+    this.redemptionByReservation.set(reservation.reservationId, redemptionId);
+    this.store.reservations.set(reservation.reservationId, reservation);
+    this.store.idempotency.set(`reservation:${input.idempotencyKey}`, reservation.reservationId);
     recordActivity(this.store, {
       customerId: actor.customerId,
       kind: 'RESERVATION_CREATED',
-      summary: stored.summary,
-      referenceId: stored.reservationId,
+      summary: reservation.summary,
+      referenceId: reservation.reservationId,
     });
-    return ok(projectAccessResource('sunrey.consumer.access.reservation.v1', stored));
+    return ok(projectAccessResource('sunrey.consumer.access.reservation.v1', reservation));
   }
 
   confirmReservation(
@@ -423,6 +492,13 @@ export class HumanAccessEconomyProduct {
         code: 'INVALID_TRANSITION',
         message: 'reservation cannot be confirmed from its current status',
       });
+    }
+    const redemptionId = this.redemptionByReservation.get(reservationId);
+    if (redemptionId) {
+      const confirmed = this.providerNetwork.confirmRedemption(redemptionId, { userApproved: true });
+      if (!confirmed.ok) {
+        return err({ code: 'REDEMPTION_BLOCKED', message: confirmed.message });
+      }
     }
     const confirmed: AccessReservation = Object.freeze({
       ...reservation,
@@ -506,6 +582,66 @@ export class HumanAccessEconomyProduct {
       ...experience,
       title: input.title ?? experience.title,
     });
+    const bundleId = `bundle_${stored.experienceId}`;
+    this.bundleByExperience.set(stored.experienceId, bundleId);
+    const mobilitySearch = this.providerNetwork.search({
+      query: 'Mustang Miami',
+      category: 'MOBILITY',
+      location: 'Miami, FL',
+      providerId: 'turo',
+    });
+    const staySearch = this.providerNetwork.search({
+      query: 'Rome hotel',
+      category: 'STAY_HOUSING',
+      location: 'Rome, IT',
+      providerId: 'expedia',
+    });
+    const foodSearch = this.providerNetwork.search({
+      query: 'meal delivery',
+      category: 'FOOD',
+      location: 'Miami, FL',
+      providerId: 'doordash',
+    });
+    const components: {
+      componentId: string;
+      providerId: import('../../access-economy/src/providers/types.ts').AccessProviderId;
+      category: string;
+      quote: import('../../access-economy/src/providers/types.ts').ProviderQuote;
+    }[] = [];
+    for (const [componentId, search, category, providerId, location] of [
+      ['mobility', mobilitySearch, 'MOBILITY', 'turo', 'Miami, FL'],
+      ['stay', staySearch, 'HOUSING_ROOM_NIGHTS', 'expedia', 'Rome, IT'],
+      ['food', foodSearch, 'FOOD', 'doordash', 'Miami, FL'],
+    ] as const) {
+      if (!search.ok || search.value.items.length === 0) {
+        continue;
+      }
+      const quoted = this.providerNetwork.createQuote({
+        providerId,
+        catalogItemId: search.value.items[0]!.catalogItemId,
+        quantity: 1,
+        startsAt: '2026-09-01T00:00:00.000Z',
+        endsAt: '2026-09-15T00:00:00.000Z',
+        location,
+        idempotencyKey: `${bundleId}_${componentId}`,
+      });
+      if (quoted.ok) {
+        components.push({
+          componentId,
+          providerId,
+          category,
+          quote: quoted.value,
+        });
+      }
+    }
+    if (components.length > 0) {
+      this.providerNetwork.orchestrateBundle({
+        bundleId,
+        subjectRef: actor.customerId,
+        failurePolicy: 'ALL_OR_NOTHING',
+        components,
+      });
+    }
     this.store.experiences.set(stored.experienceId, stored);
     this.store.idempotency.set(`experience:${input.idempotencyKey}`, stored.experienceId);
     recordActivity(this.store, {
@@ -538,6 +674,17 @@ export class HumanAccessEconomyProduct {
         code: 'INVALID_TRANSITION',
         message: 'experience cannot be confirmed from its current status',
       });
+    }
+    const bundleId = this.bundleByExperience.get(experienceId);
+    if (bundleId) {
+      const confirmedBundle = this.providerNetwork.confirmBundle({
+        bundleId,
+        failurePolicy: 'ALL_OR_NOTHING',
+        userApproved: true,
+      });
+      if (!confirmedBundle.ok) {
+        return err({ code: 'REDEMPTION_BLOCKED', message: confirmedBundle.message });
+      }
     }
     const confirmed: AccessExperience = Object.freeze({
       ...experience,
