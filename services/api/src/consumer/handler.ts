@@ -83,6 +83,8 @@ import { dispatchVault } from './vault.ts';
 import { dispatchAccess } from './access.ts';
 import { dispatchPersonalEconomy, type PersonalEconomyBffSurface } from './personal-economy.ts';
 import type { HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
+import type { MarketReferenceBffSurface } from './market-reference.ts';
+import { createMarketReferenceBffSurface } from './market-reference.ts';
 
 export type BffRequest = {
   readonly method: string;
@@ -125,6 +127,7 @@ export type ConsumerBffRuntime = {
   readonly vault?: PersonalDataVaultProduct;
   readonly access?: HumanAccessEconomyProduct;
   readonly personalEconomy?: PersonalEconomyBffSurface;
+  readonly marketReference?: MarketReferenceBffSurface;
   readonly previewDiagnostics?: () => Readonly<Record<string, unknown>>;
 };
 
@@ -728,6 +731,27 @@ function dispatchAuthenticated(
     return json(200, { schema: 'sunrey.consumer.productive-economy.v1', ...surface.moonreyInput() }, headers);
   }
 
+  const marketReference = runtime.marketReference ?? createMarketReferenceBffSurface();
+  if (path === '/api/v1/markets/reference' && method === 'GET') {
+    return json(200, marketReference.reference(principal, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/markets/assets/') && path.endsWith('/history') && method === 'GET') {
+    const assetId = path.slice('/api/v1/markets/assets/'.length, -'/history'.length);
+    const body = marketReference.history(principal, assetId, request.query, requestId);
+    return json(isBffError(body) ? statusForError(body) : 200, body, headers);
+  }
+  if (path.startsWith('/api/v1/markets/assets/') && method === 'GET') {
+    const assetId = path.slice('/api/v1/markets/assets/'.length);
+    const body = marketReference.asset(principal, assetId, requestId);
+    return json(isBffError(body) ? statusForError(body) : 200, body, headers);
+  }
+  if (path === '/api/v1/world/resources' && method === 'GET') {
+    return json(200, marketReference.worldResources(principal, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/world/resources/') && method === 'GET') {
+    const resource = path.slice('/api/v1/world/resources/'.length);
+    const body = marketReference.worldResource(principal, resource, requestId);
+    return json(isBffError(body) ? statusForError(body) : 200, body, headers);
   if (path === '/api/v1/world/economy' && method === 'GET') {
     const surface = runtime.worldEconomy;
     if (!surface) {
@@ -1728,6 +1752,11 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/economy/productive/history',
   'GET /api/v1/economy/productive/sources',
   'GET /api/v1/economy/productive/moonrey-input',
+  'GET /api/v1/markets/reference',
+  'GET /api/v1/markets/assets/{id}',
+  'GET /api/v1/markets/assets/{id}/history',
+  'GET /api/v1/world/resources',
+  'GET /api/v1/world/resources/{resource}',
   'GET /api/v1/hin/contributions',
   'GET /api/v1/hin/contributions/{id}',
   'GET /api/v1/hin/metrics',
