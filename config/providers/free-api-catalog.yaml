@@ -1,0 +1,18 @@
+schema_version: "1.0.0"
+catalog_id: sunrey-free-api-catalog
+expected_provider_count: 126
+population_status: awaiting_master_list
+
+source_list:
+  document: null
+  version: null
+  verified_at: null
+
+notes: >
+  Wave 0 preflight catalog shell. The authoritative 126-provider master list
+  was not found anywhere in the SunRey repository during Wave 0 inspection
+  (searched docs/, packages/, config/, and provider/oracle documentation).
+  Do not populate this catalog with invented providers. Supply the master list
+  before population. Validation tooling and schema are ready.
+
+providers: []
