@@ -150,7 +150,7 @@ export const MACRO_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Object.fre
       launch_tier: 'production_candidate',
       authority_class: 'authoritative_official',
       integration_state: 'adapter_implemented',
-      existing_adapter: 'packages/sunrey-economics/src/macro/adapters/fred.ts',
+      existing_adapter: 'packages/sunrey-chain/src/macro/adapters/fred.ts',
     },
   }),
   macroProvider({
@@ -181,7 +181,7 @@ export const MACRO_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Object.fre
       notes: null,
     },
     data_characteristics: {
-      freshness: 'annual',
+      freshness: 'historical',
       geographic_scope: ['GLOBAL'],
       historical_data: true,
       realtime: false,
@@ -195,7 +195,7 @@ export const MACRO_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Object.fre
       launch_tier: 'production_candidate',
       authority_class: 'authoritative_official',
       integration_state: 'adapter_implemented',
-      existing_adapter: 'packages/sunrey-economics/src/macro/adapters/world-bank.ts',
+      existing_adapter: 'packages/sunrey-chain/src/macro/adapters/world-bank.ts',
     },
   }),
   macroProvider({
@@ -237,7 +237,7 @@ export const MACRO_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Object.fre
       launch_tier: 'secondary_source',
       authority_class: 'derived_data',
       integration_state: 'adapter_implemented',
-      existing_adapter: 'packages/sunrey-economics/src/macro/adapters/econdb.ts',
+      existing_adapter: 'packages/sunrey-chain/src/macro/adapters/econdb.ts',
     },
     verification: {
       status: 'partially_verified',
@@ -280,7 +280,7 @@ export const MACRO_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Object.fre
       launch_tier: 'production_candidate',
       authority_class: 'authoritative_official',
       integration_state: 'adapter_implemented',
-      existing_adapter: 'packages/sunrey-economics/src/macro/adapters/us-treasury-fiscaldata.ts',
+      existing_adapter: 'packages/sunrey-chain/src/macro/adapters/us-treasury-fiscaldata.ts',
     },
   }),
   macroProvider({
@@ -304,7 +304,7 @@ export const MACRO_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Object.fre
       notes: null,
     },
     data_characteristics: {
-      freshness: 'annual',
+      freshness: 'historical',
       geographic_scope: ['US'],
       historical_data: true,
       realtime: false,
@@ -318,7 +318,7 @@ export const MACRO_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Object.fre
       launch_tier: 'secondary_source',
       authority_class: 'derived_data',
       integration_state: 'adapter_implemented',
-      existing_adapter: 'packages/sunrey-economics/src/macro/adapters/data-usa.ts',
+      existing_adapter: 'packages/sunrey-chain/src/macro/adapters/data-usa.ts',
     },
   }),
   macroProvider({
@@ -342,7 +342,7 @@ export const MACRO_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Object.fre
       notes: 'Free API key from Census developer registration.',
     },
     data_characteristics: {
-      freshness: 'annual',
+      freshness: 'historical',
       geographic_scope: ['US'],
       historical_data: true,
       realtime: false,
@@ -356,7 +356,7 @@ export const MACRO_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Object.fre
       launch_tier: 'production_candidate',
       authority_class: 'authoritative_official',
       integration_state: 'adapter_implemented',
-      existing_adapter: 'packages/sunrey-economics/src/macro/adapters/census-gov.ts',
+      existing_adapter: 'packages/sunrey-chain/src/macro/adapters/census-gov.ts',
     },
   }),
   macroProvider({
@@ -380,7 +380,7 @@ export const MACRO_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Object.fre
       notes: null,
     },
     data_characteristics: {
-      freshness: 'annual',
+      freshness: 'historical',
       geographic_scope: ['SA'],
       historical_data: true,
       realtime: false,
@@ -394,7 +394,7 @@ export const MACRO_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Object.fre
       launch_tier: 'secondary_source',
       authority_class: 'authoritative_official',
       integration_state: 'adapter_implemented',
-      existing_adapter: 'packages/sunrey-economics/src/macro/adapters/saudi-open-data.ts',
+      existing_adapter: 'packages/sunrey-chain/src/macro/adapters/saudi-open-data.ts',
     },
     verification: {
       status: 'partially_verified',
@@ -438,7 +438,7 @@ export const MACRO_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Object.fre
       launch_tier: 'production_candidate',
       authority_class: 'authoritative_official',
       integration_state: 'adapter_implemented',
-      existing_adapter: 'packages/sunrey-economics/src/macro/adapters/usaspending.ts',
+      existing_adapter: 'packages/sunrey-chain/src/macro/adapters/usaspending.ts',
     },
   }),
   macroProvider({
@@ -476,7 +476,7 @@ export const MACRO_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Object.fre
       launch_tier: 'fallback_source',
       authority_class: 'authoritative_official',
       integration_state: 'adapter_implemented',
-      existing_adapter: 'packages/sunrey-economics/src/macro/adapters/federal-register.ts',
+      existing_adapter: 'packages/sunrey-chain/src/macro/adapters/federal-register.ts',
     },
   }),
 ]);

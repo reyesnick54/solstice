@@ -1,226 +1,13 @@
 /**
- * Wave 1 — canonical external observation envelope.
+ * Canonical SunRey external-data provider and observation types.
  *
- * Shared normalization contract for third-party API payloads. Not a
- * provider integration, not a second oracle, and not Execution Authority.
+ * Provider IDs map to `provider_id` in config/providers/free-api-catalog.yaml.
  */
 
 import type { UtcInstant } from '../../domain/src/time.ts';
 
 export const EXTERNAL_OBSERVATION_SCHEMA = 'sunrey.external-observation.v1' as const;
 export const NORMALIZATION_SCHEMA_VERSION = 1 as const;
-
-export const PROVIDER_CATEGORIES = [
-  'banking',
-  'payments',
-  'fx',
-  'cards',
-  'identity',
-  'kyc',
-  'kyb',
-  'aml',
-  'sanctions',
-  'fraud',
-  'travel_rule',
-  'custody',
-  'blockchain_analytics',
-  'market_data',
-  'oracle',
-  'economic_data',
-  'regulatory',
- * Wave 1 — shared provider SDK types.
- *
- * Simulation only. No live provider connectivity.
- */
-
-export const HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE'] as const;
-export type HttpMethod = (typeof HTTP_METHODS)[number];
-
-export const CIRCUIT_STATES = ['CLOSED', 'OPEN', 'HALF_OPEN'] as const;
-export type CircuitState = (typeof CIRCUIT_STATES)[number];
-
-export const FAILURE_CLASSIFICATIONS = [
-  'retryable',
-  'non_retryable',
-  'rate_limited',
-  'authentication_failure',
-  'provider_unavailable',
-  'invalid_payload',
-  'security_failure',
-] as const;
-export type FailureClassification = (typeof FAILURE_CLASSIFICATIONS)[number];
-
-export type ProviderTransportRequest = {
-  readonly method: HttpMethod;
-  readonly path: string;
-  readonly headers?: Readonly<Record<string, string>>;
-  readonly body?: unknown;
-  /** When true, mutation retries are permitted under policy. */
-  readonly idempotent?: boolean;
-};
-
-export type ProviderTransportResponse = {
-  readonly status: number;
-  readonly headers: Readonly<Record<string, string>>;
-  readonly body: unknown;
-};
-
-/**
- * Injectable transport from Prompt 3. Reliability middleware wraps this.
- */
-export type ProviderTransport = {
-  readonly providerId: string;
-  execute(
-    request: ProviderTransportRequest,
-    options?: { readonly signal?: AbortSignal; readonly deadlineMs?: number },
-  ): Promise<ProviderTransportResponse>;
-};
-
-export type ProviderError = {
-  readonly classification: FailureClassification;
-  readonly code: string;
-  readonly message: string;
-  readonly status?: number;
-  readonly retryAfterMs?: number;
-  readonly providerId: string;
-};
-
-export type ReliabilityOutcome<T> =
-  | {
-      readonly ok: true;
-      readonly value: T;
-      readonly attempts: number;
-      readonly durationMs: number;
-      readonly circuitState: CircuitState;
-      readonly fallbackEligible: boolean;
-    }
-  | {
-      readonly ok: false;
-      readonly error: ProviderError;
-      readonly attempts: number;
-      readonly durationMs: number;
-      readonly circuitState: CircuitState;
-      readonly fallbackEligible: boolean;
-      readonly cooldownUntilMs?: number;
-    };
-
-export type DeadlineContext = {
-  readonly deadlineMs: number;
-  readonly nowMs?: () => number;
-};
-
-export type FallbackContext = {
-  readonly providerId: string;
-  readonly error: ProviderError;
-  readonly attempts: number;
-  readonly staleFallbackAllowed: boolean;
-  readonly circuitState: CircuitState;
-};
-
-export type FallbackDecision =
-  | { readonly action: 'none' }
-  | { readonly action: 'try_alternate'; readonly reason: string }
-  | { readonly action: 'use_stale_cache'; readonly reason: string };
-
-export type FallbackHook = (context: FallbackContext) => FallbackDecision;
-
-export type Clock = {
-  readonly nowMs: () => number;
-  readonly sleep: (ms: number) => Promise<void>;
-};
-
-export const defaultClock = (): Clock => ({
-  nowMs: () => Date.now(),
-  sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
-});
-
-export function isSafeReadMethod(method: HttpMethod): boolean {
-  return method === 'GET' || method === 'HEAD';
- * Wave 1 Prompt 3 — universal provider HTTP transport contract.
- *
- * Vendor-neutral outbound transport for external provider adapters.
- * Not a second provider runtime, ledger, Kernel, or Execution Authority.
- */
-
-import type { ProviderTransportError } from './errors.ts';
-
-export const PROVIDER_HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
-export type ProviderHttpMethod = (typeof PROVIDER_HTTP_METHODS)[number];
-
-export const PROVIDER_CONTENT_TYPES = [
-  'application/json',
-  'text/json',
-  'text/plain',
-  'text/csv',
-  'application/xml',
-  'text/xml',
-  'application/x-www-form-urlencoded',
-] as const;
-export type ProviderContentType = (typeof PROVIDER_CONTENT_TYPES)[number] | '*';
-
-export type ProviderRequestContext = {
-  readonly providerId: string;
-  readonly requestId: string;
-  readonly traceId?: string | undefined;
-  readonly method: ProviderHttpMethod;
-  /** Path relative to the configured provider base URL. Must start with /. */
-  readonly path: string;
-  readonly query?: Readonly<Record<string, string | number | boolean>> | undefined;
-  readonly headers?: Readonly<Record<string, string>> | undefined;
-  readonly body?: string | undefined;
-  readonly timeoutMs?: number | undefined;
-  readonly expectedContentType?: ProviderContentType | undefined;
-  readonly maximumResponseBytes?: number | undefined;
-};
-
-export type ProviderResponseMetadata = {
-  readonly providerId: string;
-  readonly requestId: string;
-  readonly traceId: string;
-  readonly httpStatus: number;
-  readonly durationMs: number;
-  readonly contentType: string | null;
-  readonly providerRequestId: string | null;
-  readonly startedAtUtc: string;
-  readonly finalUrl: string;
-};
-
-export type ProviderParsedBody =
-  | { readonly format: 'json'; readonly value: unknown }
-  | { readonly format: 'text'; readonly value: string }
-  | { readonly format: 'raw'; readonly value: string };
-
-export type ProviderTransportResponse<T = unknown> = {
-  readonly metadata: ProviderResponseMetadata;
-  readonly body: ProviderParsedBody;
-  readonly parsed: T | undefined;
-};
-
-export type ProviderTransportSuccess<T> = {
-  readonly ok: true;
-  readonly value: ProviderTransportResponse<T>;
-};
-
-export type ProviderTransportFailure = {
-  readonly ok: false;
-  readonly error: ProviderTransportError;
-};
-
-export type ProviderTransportResult<T = unknown> = ProviderTransportSuccess<T> | ProviderTransportFailure;
-
-/**
- * Shared outbound HTTP transport used by all SunRey provider adapters.
- */
-export type ProviderTransport = {
-  readonly transportId: string;
-  request<T = unknown>(context: ProviderRequestContext): Promise<ProviderTransportResult<T>>;
-};
- * Canonical SunRey external-data provider types.
- *
- * Provider IDs map to `provider_id` in config/providers/free-api-catalog.yaml.
- * This package is the data-plane SDK for free/public API providers. Regulated
- * financial provider runtime remains at packages/sunrey-chain/src/provider-runtime.
- */
 
 export const PROVIDER_ID_PATTERN = /^[a-z][a-z0-9_-]{1,63}$/;
 
@@ -261,7 +48,6 @@ export const PROVIDER_CATEGORIES = [
 ] as const;
 export type ProviderCategory = (typeof PROVIDER_CATEGORIES)[number];
 
-export const AUTHORITY_CLASSES = [
 export const PROVIDER_CAPABILITIES = [
   'macroeconomic_indicators',
   'interest_rates',
@@ -291,17 +77,6 @@ export const PROVIDER_CAPABILITIES = [
 ] as const;
 export type ProviderCapability = (typeof PROVIDER_CAPABILITIES)[number] | string;
 
-export const PROVIDER_STATUSES = [
-  'registered',
-  'initializing',
-  'ready',
-  'degraded',
-  'unhealthy',
-  'shutting_down',
-  'shutdown',
-] as const;
-export type ProviderStatus = (typeof PROVIDER_STATUSES)[number];
-
 export const PROVIDER_AUTHORITY_CLASSES = [
   'authoritative_official',
   'regulated_provider',
@@ -310,7 +85,11 @@ export const PROVIDER_AUTHORITY_CLASSES = [
   'community_data',
   'derived_data',
 ] as const;
-export type AuthorityClass = (typeof AUTHORITY_CLASSES)[number];
+export type ProviderAuthorityClass = (typeof PROVIDER_AUTHORITY_CLASSES)[number];
+
+/** Alias for observation envelope authority classes. */
+export const AUTHORITY_CLASSES = PROVIDER_AUTHORITY_CLASSES;
+export type AuthorityClass = ProviderAuthorityClass;
 
 export const FRESHNESS_STATUSES = ['fresh', 'aging', 'stale', 'expired', 'unknown'] as const;
 export type FreshnessStatus = (typeof FRESHNESS_STATUSES)[number];
@@ -354,75 +133,16 @@ export const CONFIDENCE_BASIS = [
 ] as const;
 export type ConfidenceBasis = (typeof CONFIDENCE_BASIS)[number];
 
-export type ObservationSource = {
-  readonly provider: string;
-  readonly dataset: string;
-  readonly sourceUrl: string | null;
-};
-
-export type ObservationTime = {
-  /** When SunRey retrieved the payload from the provider. */
-  readonly retrievedAt: UtcInstant;
-  /** When the provider says the underlying value was generated, if known. */
-  readonly sourceTimestamp: UtcInstant | null;
-  /** When the value is considered effective for use, if known. */
-  readonly effectiveAt: UtcInstant | null;
-  /** Hard expiry after which the observation must not be used without override. */
-  readonly expiresAt: UtcInstant | null;
-  /** Soft staleness boundary from provider/capability policy. */
-  readonly staleAfter: UtcInstant | null;
-};
-
-export type ObservationConfidence = {
-  /** 0.0–1.0 inclusive when scored; null when unknown. */
-  readonly score: number | null;
-  readonly basis: readonly ConfidenceBasis[];
-};
-
-export type ObservationQuality = {
-  readonly confidence: ObservationConfidence;
-  readonly freshnessStatus: FreshnessStatus;
-  readonly validationStatus: ValidationStatus;
-};
-
-export type ObservationProvenance = {
-  readonly requestId: string | null;
-  readonly rawPayloadHash: string;
-  readonly providerSchemaVersion: string;
-  readonly normalizationVersion: string;
-  readonly canonicalModelVersion: string | null;
-};
-
-export type ObservationLicensing = {
-  readonly commercialUseStatus: CommercialUseStatus;
-  readonly redistributionStatus: RedistributionStatus;
-};
-
-/**
- * Canonical normalized external observation envelope.
- * `data` holds provider-specific mapped domain payload after normalization.
- */
-export type ExternalObservation<T> = {
-  readonly observationId: string;
-  readonly providerId: string;
-  readonly providerCategory: ProviderCategory;
-  readonly capability: string;
-  readonly data: T;
-  readonly source: ObservationSource;
-  readonly time: ObservationTime;
-  readonly quality: ObservationQuality;
-  readonly authority: {
-    readonly authorityClass: AuthorityClass;
-  };
-  readonly provenance: ObservationProvenance;
-  readonly licensing: ObservationLicensing;
-  readonly schemaVersion: typeof EXTERNAL_OBSERVATION_SCHEMA;
-};
-
-export type ProviderResult<T> =
-  | { readonly ok: true; readonly value: T }
-  | { readonly ok: false; readonly code: string; readonly message: string };
-export type ProviderAuthorityClass = (typeof PROVIDER_AUTHORITY_CLASSES)[number];
+export const PROVIDER_STATUSES = [
+  'registered',
+  'initializing',
+  'ready',
+  'degraded',
+  'unhealthy',
+  'shutting_down',
+  'shutdown',
+] as const;
+export type ProviderStatus = (typeof PROVIDER_STATUSES)[number];
 
 export const PROVIDER_LAUNCH_TIERS = [
   'production_candidate',
@@ -471,6 +191,65 @@ export const PROVIDER_HEALTH_STATES = [
   'unknown',
 ] as const;
 export type ProviderHealthState = (typeof PROVIDER_HEALTH_STATES)[number];
+
+export type ObservationSource = {
+  readonly provider: string;
+  readonly dataset: string;
+  readonly sourceUrl: string | null;
+};
+
+export type ObservationTime = {
+  readonly retrievedAt: UtcInstant;
+  readonly sourceTimestamp: UtcInstant | null;
+  readonly effectiveAt: UtcInstant | null;
+  readonly expiresAt: UtcInstant | null;
+  readonly staleAfter: UtcInstant | null;
+};
+
+export type ObservationConfidence = {
+  readonly score: number | null;
+  readonly basis: readonly ConfidenceBasis[];
+};
+
+export type ObservationQuality = {
+  readonly confidence: ObservationConfidence;
+  readonly freshnessStatus: FreshnessStatus;
+  readonly validationStatus: ValidationStatus;
+};
+
+export type ObservationProvenance = {
+  readonly requestId: string | null;
+  readonly rawPayloadHash: string;
+  readonly providerSchemaVersion: string;
+  readonly normalizationVersion: string;
+  readonly canonicalModelVersion: string | null;
+};
+
+export type ObservationLicensing = {
+  readonly commercialUseStatus: CommercialUseStatus;
+  readonly redistributionStatus: RedistributionStatus;
+};
+
+export type ExternalObservation<T> = {
+  readonly observationId: string;
+  readonly providerId: string;
+  readonly providerCategory: ProviderCategory;
+  readonly capability: string;
+  readonly data: T;
+  readonly source: ObservationSource;
+  readonly time: ObservationTime;
+  readonly quality: ObservationQuality;
+  readonly authority: {
+    readonly authorityClass: AuthorityClass;
+  };
+  readonly provenance: ObservationProvenance;
+  readonly licensing: ObservationLicensing;
+  readonly schemaVersion: typeof EXTERNAL_OBSERVATION_SCHEMA;
+};
+
+export type ProviderResult<T> =
+  | { readonly ok: true; readonly value: T }
+  | { readonly ok: false; readonly code: string; readonly message: string };
 
 export type SecretReferenceName = {
   readonly environmentVariable: string;

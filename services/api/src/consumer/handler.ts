@@ -69,6 +69,7 @@ import type { NativeEconomySurface } from './native-economy-adapter.ts';
 import { DATA_SOURCE_STATUSES, RIGHTS_REQUEST_KINDS, RIGHTS_REQUEST_STATES, dispatchPhaseH } from './phase-h/index.ts';
 import type { PhaseHProductSurface } from './phase-h/index.ts';
 import type { ProductiveEconomySurface } from './productive-economy-adapter.ts';
+import type { WorldEconomySurface } from './world-economy-adapter.ts';
 import type { HinContributionSurface } from './hin-adapter.ts';
 import {
   HIN_PRODUCT_CATEGORIES,
@@ -116,6 +117,7 @@ export type ConsumerBffRuntime = {
   readonly hinContributions?: HinContributionSurface;
   readonly nativeEconomy?: NativeEconomySurface;
   readonly productiveEconomy?: ProductiveEconomySurface;
+  readonly worldEconomy?: WorldEconomySurface;
   readonly exchange?: ExchangeLifecycleSurface | ExchangeProductSurface;
   readonly phaseH?: PhaseHProductSurface;
   readonly dataRights?: ConsentDataRightsEngine;
@@ -703,6 +705,38 @@ function dispatchAuthenticated(
       return json(200, runtime.bff.featureStub('economy', principal), headers);
     }
     return json(200, { schema: 'sunrey.consumer.productive-economy.v1', ...surface.moonreyInput() }, headers);
+  }
+
+  if (path === '/api/v1/world/economy' && method === 'GET') {
+    const surface = runtime.worldEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('world', principal), headers);
+    }
+    return json(200, surface.overview(), headers);
+  }
+  if (path === '/api/v1/world/economy/indicators' && method === 'GET') {
+    const surface = runtime.worldEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('world', principal), headers);
+    }
+    return json(200, surface.indicators(), headers);
+  }
+  if (path.startsWith('/api/v1/world/economy/countries/') && method === 'GET') {
+    const surface = runtime.worldEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('world', principal), headers);
+    }
+    const country = path.slice('/api/v1/world/economy/countries/'.length);
+    return json(200, surface.country(country), headers);
+  }
+  if (path.startsWith('/api/v1/world/economy/series/') && method === 'GET') {
+    const surface = runtime.worldEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('world', principal), headers);
+    }
+    const indicatorId = path.slice('/api/v1/world/economy/series/'.length);
+    const country = request.query?.country;
+    return json(200, surface.series(indicatorId, country), headers);
   }
 
   if (path === '/api/v1/hin/contributions' && method === 'GET') {

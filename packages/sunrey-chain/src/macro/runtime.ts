@@ -14,8 +14,8 @@ import {
   type HttpProviderTransport,
   type ProviderRegistry,
 } from '../../../provider-sdk/src/index.ts';
-import { ProviderDataDeliveryService } from '../../../sunrey-chain/src/provider-runtime/data-delivery/service.ts';
-import type { ProviderFetchFn, ProviderFetchResult } from '../../../sunrey-chain/src/provider-runtime/data-delivery/types.ts';
+import { ProviderDataDeliveryService } from '../provider-runtime/data-delivery/service.ts';
+import type { ProviderFetchFn, ProviderFetchResult } from '../provider-runtime/data-delivery/types.ts';
 import { MACRO_CATALOG_ENTRIES } from './catalog-entries.ts';
 import {
   createMacroAdapter,

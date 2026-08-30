@@ -2,8 +2,7 @@
  * Per-provider circuit breaker — CLOSED / OPEN / HALF_OPEN.
  */
 
-import type { CircuitState } from './types.ts';
-import type { Clock } from './types.ts';
+import type { CircuitState, ReliabilityClock } from './reliability-types.ts';
 import type { ProviderReliabilityPolicy } from './policy.ts';
 
 export type CircuitSnapshot = {
@@ -26,11 +25,11 @@ export class ProviderCircuitBreaker {
     ProviderReliabilityPolicy,
     'circuitBreakerThreshold' | 'circuitBreakerWindow' | 'circuitBreakerCooldown'
   >;
-  private readonly clock: Clock;
+  private readonly clock: ReliabilityClock;
 
   constructor(
     policy: Pick<ProviderReliabilityPolicy, 'circuitBreakerThreshold' | 'circuitBreakerWindow' | 'circuitBreakerCooldown'>,
-    clock: Clock,
+    clock: ReliabilityClock,
   ) {
     this.policy = policy;
     this.clock = clock;

@@ -6,8 +6,8 @@ import type {
   FailureClassification,
   HttpMethod,
   ProviderError,
-  ProviderTransportResponse,
-} from './types.ts';
+  ReliabilityTransportResponse,
+} from './reliability-types.ts';
 
 const RETRYABLE_STATUSES = new Set([408, 429, 500, 502, 503, 504]);
 const NON_RETRYABLE_STATUSES = new Set([400, 401, 403, 404, 405, 409, 422]);
@@ -54,7 +54,7 @@ export function parseRetryAfterMs(headers: Readonly<Record<string, string>>, now
 
 export function normalizeTransportError(input: {
   readonly providerId: string;
-  readonly response?: ProviderTransportResponse;
+  readonly response?: ReliabilityTransportResponse;
   readonly networkError?: boolean;
   readonly timeout?: boolean;
   readonly nowMs?: number;
@@ -126,6 +126,9 @@ export function shouldRetryOperation(input: {
     return input.idempotent === true;
   }
   return false;
+}
+
+/**
  * Normalized provider transport errors.
  *
  * Messages are safe for logs and adapter surfaces. Secrets are never included.
@@ -317,6 +320,8 @@ export function mapHttpStatusToError(
     return serverError(providerId, requestId, status);
   }
   return clientError(providerId, requestId, status, `provider returned HTTP ${status}`);
+}
+
 export const PROVIDER_SDK_ERROR_CODES = [
   'PROVIDER_NOT_FOUND',
   'PROVIDER_ALREADY_REGISTERED',

@@ -2,7 +2,7 @@
  * Metrics hooks for Prompt 7 observability integration.
  */
 
-import type { CircuitState } from './types.ts';
+import type { CircuitState } from './reliability-types.ts';
 
 export const PROVIDER_METRIC_NAMES = Object.freeze([
   'provider_requests_total',

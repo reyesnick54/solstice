@@ -24,10 +24,10 @@ import {
   parseRetryAfterMs,
   shouldRetryOperation,
   normalizeTransportError,
-  type Clock,
+  type ReliabilityClock,
 } from './index.ts';
 
-function createTestClock(startMs = 1_000): Clock & { advance(ms: number): void } {
+function createTestClock(startMs = 1_000): ReliabilityClock & { advance(ms: number): void } {
   let now = startMs;
   return {
     nowMs: () => now,

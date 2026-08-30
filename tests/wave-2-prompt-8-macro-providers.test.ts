@@ -10,7 +10,7 @@ import {
   normalizeCountryCode,
   resolveCanonicalIndicatorId,
   toAgentEvidenceRef,
-} from '../packages/sunrey-economics/src/macro/index.ts';
+} from '../packages/sunrey-chain/src/macro/index.ts';
 
 describe('Wave 2 Prompt 8 macro providers', () => {
   it('normalizes country codes and indicator mappings', () => {
