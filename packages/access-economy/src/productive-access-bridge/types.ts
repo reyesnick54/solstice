@@ -29,7 +29,7 @@ export type GeographyRef = {
   readonly jurisdiction: string;
 };
 
-export type ProviderSettlementTerms = {
+export type AccessCapacitySettlementTerms = {
   readonly kind: ProviderSettlementKind;
   readonly currency: string;
   /** Integer minor units for FIAT/SR legs; MR uses canonical minor units. */
@@ -62,7 +62,7 @@ export type AccessCapacityCommitment = {
   readonly availabilityWindow: AvailabilityWindow;
   readonly geography: GeographyRef;
   readonly qualityClass: string;
-  readonly settlementTerms: ProviderSettlementTerms;
+  readonly settlementTerms: AccessCapacitySettlementTerms;
   readonly evidenceRefs: readonly string[];
   readonly oracleRefs: readonly string[];
   readonly expiration: UtcInstant;
@@ -115,7 +115,7 @@ export type ProviderSettlementRecord = {
   readonly settlementId: string;
   readonly deliveryId: string;
   readonly providerRef: ProviderRef;
-  readonly terms: ProviderSettlementTerms;
+  readonly terms: AccessCapacitySettlementTerms;
   readonly settledAt: UtcInstant;
   readonly moonreyIssuanceRef: null;
 };

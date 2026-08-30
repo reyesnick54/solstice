@@ -25,7 +25,7 @@ export type {
   ProductiveObjectRef,
   ProviderRef,
   ProviderSettlementRecord,
-  ProviderSettlementTerms,
+  AccessCapacitySettlementTerms,
   RevocationPolicy,
   VerifiedAvailableCapacity,
 } from './types.ts';

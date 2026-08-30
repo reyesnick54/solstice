@@ -2,10 +2,11 @@
  * ACCESS-19 productive access bridge fixtures.
  */
 
+import { asUtcInstant } from '../../../domain/src/time.ts';
 import type { VerifiedAvailableCapacity } from './types.ts';
 
-const NOW = '2026-08-30T00:00:00.000Z' as const;
-const UNTIL = '2026-12-31T23:59:59.000Z' as const;
+const NOW = asUtcInstant('2026-08-30T00:00:00.000Z');
+const UNTIL = asUtcInstant('2026-12-31T23:59:59.000Z');
 const GEO = Object.freeze({ geographyId: 'geo.sim.us.fl', jurisdiction: 'US-FL' });
 
 function baseCapacity(input: {

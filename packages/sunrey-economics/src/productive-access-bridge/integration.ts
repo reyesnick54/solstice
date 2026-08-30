@@ -20,8 +20,10 @@ import {
   fixtureRight,
 } from '../../../sunrey-chain/src/productive/fixtures.ts';
 
-const NOW = '2026-08-30T00:00:00.000Z' as const;
-const UNTIL = '2026-12-31T23:59:59.000Z' as const;
+import { asUtcInstant } from '../../../domain/src/time.ts';
+
+const NOW = asUtcInstant('2026-08-30T00:00:00.000Z');
+const UNTIL = asUtcInstant('2026-12-31T23:59:59.000Z');
 
 export type ProductiveAccessIntegrationResult = {
   readonly bridge: ProductiveAccessBridge;

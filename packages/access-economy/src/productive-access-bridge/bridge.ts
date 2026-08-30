@@ -18,7 +18,7 @@ import type {
   ProductiveAccessBridgeReconciliation,
   ProductiveAccessInvariantResult,
   ProviderSettlementRecord,
-  ProviderSettlementTerms,
+  AccessCapacitySettlementTerms,
   RevocationPolicy,
   VerifiedAvailableCapacity,
 } from './types.ts';
@@ -35,7 +35,7 @@ export type CommitCapacityInput = {
   readonly availabilityWindow: VerifiedAvailableCapacity['availabilityWindow'];
   readonly geography: VerifiedAvailableCapacity['geography'];
   readonly qualityClass: string;
-  readonly settlementTerms: ProviderSettlementTerms;
+  readonly settlementTerms: AccessCapacitySettlementTerms;
   readonly evidenceRefs: readonly string[];
   readonly oracleRefs: readonly string[];
   readonly expiration: UtcInstant;
@@ -59,7 +59,7 @@ export type SettleProviderInput = {
   readonly settlementId: string;
   readonly deliveryId: string;
   readonly providerRef: string;
-  readonly terms: ProviderSettlementTerms;
+  readonly terms: AccessCapacitySettlementTerms;
   readonly settledAt: UtcInstant;
 };
 
