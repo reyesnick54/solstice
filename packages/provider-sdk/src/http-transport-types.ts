@@ -1,0 +1,90 @@
+/**
+ * Wave 1 Prompt 3 — universal provider HTTP transport contract.
+ */
+
+import type { ProviderTransportError } from './errors.ts';
+
+export const PROVIDER_HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
+export type ProviderHttpMethod = (typeof PROVIDER_HTTP_METHODS)[number];
+
+export const PROVIDER_CONTENT_TYPES = [
+  'application/json',
+  'text/json',
+  'text/plain',
+  'text/csv',
+  'application/xml',
+  'text/xml',
+  'application/x-www-form-urlencoded',
+] as const;
+export type ProviderContentType = (typeof PROVIDER_CONTENT_TYPES)[number] | '*';
+
+export type ProviderHttpRequestContext = {
+  readonly providerId: string;
+  readonly requestId: string;
+  readonly traceId?: string | undefined;
+  readonly method: ProviderHttpMethod;
+  readonly path: string;
+  readonly query?: Readonly<Record<string, string | number | boolean>> | undefined;
+  readonly headers?: Readonly<Record<string, string>> | undefined;
+  readonly body?: string | undefined;
+  readonly timeoutMs?: number | undefined;
+  readonly expectedContentType?: ProviderContentType | undefined;
+  readonly maximumResponseBytes?: number | undefined;
+};
+
+export type ProviderHttpResponseMetadata = {
+  readonly providerId: string;
+  readonly requestId: string;
+  readonly traceId: string;
+  readonly httpStatus: number;
+  readonly durationMs: number;
+  readonly contentType: string | null;
+  readonly providerRequestId: string | null;
+  readonly startedAtUtc: string;
+  readonly finalUrl: string;
+};
+
+export type ProviderParsedBody =
+  | { readonly format: 'json'; readonly value: unknown }
+  | { readonly format: 'text'; readonly value: string }
+  | { readonly format: 'raw'; readonly value: string };
+
+export type ProviderHttpTransportResponse<T = unknown> = {
+  readonly metadata: ProviderHttpResponseMetadata;
+  readonly body: ProviderParsedBody;
+  readonly parsed: T | undefined;
+};
+
+export type ProviderHttpTransportSuccess<T> = {
+  readonly ok: true;
+  readonly value: ProviderHttpTransportResponse<T>;
+};
+
+export type ProviderHttpTransportFailure = {
+  readonly ok: false;
+  readonly error: ProviderTransportError;
+};
+
+export type ProviderHttpTransportResult<T = unknown> =
+  | ProviderHttpTransportSuccess<T>
+  | ProviderHttpTransportFailure;
+
+export type ProviderHttpTransport = {
+  readonly transportId: string;
+  request<T = unknown>(context: ProviderHttpRequestContext): Promise<ProviderHttpTransportResult<T>>;
+};
+
+/** @deprecated Use ProviderHttpRequestContext */
+export type ProviderRequestContext = ProviderHttpRequestContext;
+/** @deprecated Use ProviderHttpResponseMetadata */
+export type ProviderResponseMetadata = ProviderHttpResponseMetadata;
+/** @deprecated Use ProviderHttpTransportResponse */
+export type ProviderTransportResponse<T = unknown> = ProviderHttpTransportResponse<T>;
+/** @deprecated Use ProviderHttpTransportResult */
+export type ProviderTransportResult<T = unknown> = ProviderHttpTransportResult<T>;
+/** @deprecated Use ProviderHttpTransportSuccess */
+export type ProviderTransportSuccess<T> = ProviderHttpTransportSuccess<T>;
+/** @deprecated Use ProviderHttpTransportFailure */
+export type ProviderTransportFailure = ProviderHttpTransportFailure;
+/** @deprecated Use ProviderHttpTransport */
+export type ProviderTransport = ProviderHttpTransport;

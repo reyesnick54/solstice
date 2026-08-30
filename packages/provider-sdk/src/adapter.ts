@@ -6,7 +6,7 @@
  * storage, caching, or business authority — those belong to shared infra.
  */
 
-import type { ProviderId, ProviderRequestContext, ProviderResponseMetadata } from './types.ts';
+import type { ProviderId, ProviderRequestContext, ProviderResponseMetadata } from './registry-types.ts';
 
 export type AdapterRequest<TParams = unknown> = {
   readonly providerId: ProviderId;

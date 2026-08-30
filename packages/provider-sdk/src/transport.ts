@@ -26,11 +26,11 @@ import {
 import type {
   ProviderHttpMethod,
   ProviderParsedBody,
-  ProviderRequestContext,
-  ProviderTransport,
-  ProviderTransportResponse,
-  ProviderTransportResult,
-} from './types.ts';
+  ProviderHttpRequestContext,
+  ProviderHttpTransport,
+  ProviderHttpTransportResponse,
+  ProviderHttpTransportResult,
+} from './http-transport-types.ts';
 
 export type FetchLike = (input: string | URL, init?: RequestInit) => Promise<Response>;
 
@@ -54,7 +54,7 @@ export type FetchProviderTransportOptions = {
 
 const SUPPORTED_METHODS = new Set<ProviderHttpMethod>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']);
 
-export class FetchProviderTransport implements ProviderTransport {
+export class FetchProviderTransport implements ProviderHttpTransport {
   readonly transportId = 'provider-sdk.fetch-http';
   private readonly config: ProviderTransportConfig;
   private readonly authResolver: ProviderAuthResolver;
@@ -85,7 +85,7 @@ export class FetchProviderTransport implements ProviderTransport {
     Object.freeze(this);
   }
 
-  async request<T = unknown>(context: ProviderRequestContext): Promise<ProviderTransportResult<T>> {
+  async request<T = unknown>(context: ProviderHttpRequestContext): Promise<ProviderHttpTransportResult<T>> {
     const startedAtMs = this.clock.nowMs();
     const startedAtUtc = this.clock.nowIsoUtc();
     const traceId = context.traceId ?? context.requestId;
@@ -217,7 +217,7 @@ export class FetchProviderTransport implements ProviderTransport {
         finalUrl: safeLogUrl,
       });
 
-      const value: ProviderTransportResponse<T> = Object.freeze({
+      const value: ProviderHttpTransportResponse<T> = Object.freeze({
         metadata,
         body: parsedBody.body,
         parsed: parsedBody.body.format === 'json' ? (parsedBody.body.value as T) : undefined,

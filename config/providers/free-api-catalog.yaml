@@ -1,18 +1,1021 @@
-schema_version: "1.0.0"
+schema_version: 1.0.0
 catalog_id: sunrey-free-api-catalog
 expected_provider_count: 126
-population_status: awaiting_master_list
-
+population_status: partial
 source_list:
-  document: null
-  version: null
-  verified_at: null
-
-notes: >
-  Wave 0 preflight catalog shell. The authoritative 126-provider master list
-  was not found anywhere in the SunRey repository during Wave 0 inspection
-  (searched docs/, packages/, config/, and provider/oracle documentation).
-  Do not populate this catalog with invented providers. Supply the master list
-  before population. Validation tooling and schema are ready.
-
-providers: []
+  document: config/providers/wave2-catalog-entries.yaml
+  version: wave2-prompt-11
+  verified_at: 2026-08-30
+notes: Wave 2 partial catalog. Remaining 126-master-list providers await
+  authoritative source.
+providers:
+  - provider_id: fred
+    name: FRED API
+    short_name: FRED
+    description: >
+      Federal Reserve Economic Data (FRED) API from the St. Louis Fed providing
+      authoritative U.S. and international macroeconomic time series including
+      interest rates, inflation, employment, and GDP indicators.
+    primary_category: macroeconomics
+    capabilities:
+      - macroeconomic_indicators
+      - interest_rates
+      - inflation
+      - employment
+      - gdp
+      - monetary_policy
+    endpoints:
+      base_url: https://api.stlouisfed.org/fred
+      api_version: v1
+      documentation_url: https://fred.stlouisfed.org/docs/api/fred/
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: FRED_API_KEY
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Free API key registration at fred.stlouisfed.org.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: FRED data attribution required per St. Louis Fed terms.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 120
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: 120 requests per minute per API key per official documentation.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - US
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - economic_graph
+        - grow
+      canonical_provider_interface: MacroDataProvider
+      priority: critical
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Official FRED API documentation reviewed.
+  - provider_id: world-bank
+    name: World Bank Open Data
+    short_name: World Bank
+    description: >
+      World Bank Open Data API providing global development and macroeconomic
+      indicators including poverty, education, health, and national accounts
+      statistics for countries worldwide.
+    primary_category: macroeconomics
+    capabilities:
+      - macroeconomic_indicators
+      - development_indicators
+      - national_accounts
+      - poverty_metrics
+    endpoints:
+      base_url: https://api.worldbank.org
+      api_version: v2
+      documentation_url: https://datahelpdesk.worldbank.org/knowledgebase/articles/889392
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Open public API with no authentication required.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: allowed
+      notes: World Bank open data license permits redistribution with attribution.
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: No published rate limits in official documentation.
+    data_characteristics:
+      freshness: monthly
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - economic_graph
+        - grow
+      canonical_provider_interface: MacroDataProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Official World Bank API documentation reviewed.
+  - provider_id: bls
+    name: BLS Public Data API
+    short_name: BLS
+    description: >
+      U.S. Bureau of Labor Statistics Public Data API providing employment,
+      unemployment, inflation (CPI/PPI), productivity, and wage statistics.
+    primary_category: macroeconomics
+    capabilities:
+      - employment
+      - unemployment
+      - inflation
+      - wages
+      - productivity
+    endpoints:
+      base_url: https://api.bls.gov/publicAPI/v2
+      api_version: v2
+      documentation_url: https://www.bls.gov/developers/
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: BLS_API_KEY
+      notes: Optional registration increases daily query limits.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Free registration at bls.gov/developers.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: BLS data attribution required per agency terms.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 500
+      monthly_quota: null
+      concurrency_limit: null
+      notes: 500 queries per day with registered API key; 25 per day without key.
+    data_characteristics:
+      freshness: monthly
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - economic_graph
+        - grow
+      canonical_provider_interface: MacroDataProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Official BLS developer documentation reviewed.
+  - provider_id: imf-data
+    name: IMF Data API
+    short_name: IMF
+    description: >
+      International Monetary Fund Data API providing global macroeconomic
+      indicators, exchange rates, financial statistics, and country economic
+      outlook data through SDMX and DataMapper endpoints.
+    primary_category: macroeconomics
+    capabilities:
+      - macroeconomic_indicators
+      - exchange_rates
+      - financial_statistics
+      - country_outlook
+    endpoints:
+      base_url: https://www.imf.org/external/datamapper/api/v1
+      api_version: v1
+      documentation_url: https://data.imf.org/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Public API endpoints require no authentication.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: IMF data redistribution requires attribution per IMF terms.
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: No published rate limits in official documentation.
+    data_characteristics:
+      freshness: monthly
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - economic_graph
+        - grow
+      canonical_provider_interface: MacroDataProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Official IMF data portal documentation reviewed.
+  - provider_id: frankfurter
+    name: Frankfurter ECB Rates
+    short_name: Frankfurter
+    description: >
+      Frankfurter API providing foreign exchange reference rates sourced from
+      the European Central Bank for major currency pairs with historical data.
+    primary_category: foreign_exchange
+    capabilities:
+      - fx_rates
+      - historical_fx_rates
+      - currency_conversion
+    endpoints:
+      base_url: https://api.frankfurter.app
+      api_version: null
+      documentation_url: https://www.frankfurter.app/docs/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Open public API with no authentication required.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: allowed
+      notes: Open source project; ECB reference data attribution recommended.
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: No published rate limits; fair-use expected.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: ECB reference rates updated on business days.
+    sunrey:
+      domain:
+        - exchange
+        - world
+      canonical_provider_interface: FxRateProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Official Frankfurter API documentation reviewed.
+  - provider_id: exchangerate-host
+    name: ExchangeRate.host
+    short_name: ExchangeRate.host
+    description: >
+      ExchangeRate.host API providing foreign exchange rates and currency
+      conversion for major and minor currency pairs with optional API key for
+      higher limits.
+    primary_category: foreign_exchange
+    capabilities:
+      - fx_rates
+      - historical_fx_rates
+      - currency_conversion
+    endpoints:
+      base_url: https://api.exchangerate.host
+      api_version: null
+      documentation_url: https://exchangerate.host/#docs
+      status_url: null
+    authentication:
+      type: api_key
+      required: false
+      registration_required: false
+      environment_variable: EXCHANGERATE_HOST_API_KEY
+      notes: API key optional; increases rate limits when provided.
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: false
+      notes: Free tier available without registration; optional key for higher limits.
+    commercial_use:
+      status: unclear
+      notes: Commercial use terms not fully verified against official documentation.
+    redistribution:
+      status: unclear
+      notes: Redistribution terms not fully verified.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Rate limits vary by authentication tier; exact quotas require
+        verification.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - exchange
+        - world
+      canonical_provider_interface: FxRateProvider
+      priority: medium
+      launch_tier: secondary_source
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: null
+    verification:
+      status: partially_verified
+      verified_against_official_docs: false
+      last_verified: 2026-08-30
+      notes: Base URL and optional auth confirmed; commercial terms pending review.
+  - provider_id: alpha-vantage
+    name: Alpha Vantage
+    short_name: Alpha Vantage
+    description: >
+      Alpha Vantage API providing stock quotes, forex rates, cryptocurrency
+      prices, and technical indicators for global equity and currency markets.
+    primary_category: markets
+    capabilities:
+      - equity_quotes
+      - forex_quotes
+      - technical_indicators
+      - market_data
+    endpoints:
+      base_url: https://www.alphavantage.co
+      api_version: null
+      documentation_url: https://www.alphavantage.co/documentation/
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: ALPHAVANTAGE_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Free tier with daily and per-minute limits; paid tiers available.
+    commercial_use:
+      status: restricted
+      notes: Free tier restricted to personal/non-commercial use per provider terms.
+    redistribution:
+      status: prohibited
+      notes: Redistribution of Alpha Vantage data is prohibited under free tier terms.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 5
+      requests_per_hour: null
+      requests_per_day: 500
+      monthly_quota: null
+      concurrency_limit: null
+      notes: 5 API requests per minute and 500 per day on free tier.
+    data_characteristics:
+      freshness: delayed
+      geographic_scope:
+        - US
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Free tier provides delayed market data.
+    sunrey:
+      domain:
+        - exchange
+        - financial_agent
+      canonical_provider_interface: MarketQuoteSource
+      priority: medium
+      launch_tier: secondary_source
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Official Alpha Vantage documentation reviewed.
+  - provider_id: finnhub
+    name: Finnhub
+    short_name: Finnhub
+    description: >
+      Finnhub API providing real-time and historical stock market data, company
+      fundamentals, earnings, and news for global equity markets.
+    primary_category: markets
+    capabilities:
+      - equity_quotes
+      - company_fundamentals
+      - earnings
+      - market_news
+    endpoints:
+      base_url: https://finnhub.io/api/v1
+      api_version: v1
+      documentation_url: https://finnhub.io/docs/api
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: FINNHUB_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Free tier with per-minute limits; paid tiers available.
+    commercial_use:
+      status: restricted
+      notes: Free tier restricted to personal use per provider terms.
+    redistribution:
+      status: prohibited
+      notes: Redistribution prohibited under free tier terms.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 60
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: 60 API calls per minute on free tier.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - US
+        - global
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: Real-time data available on free tier with limits.
+    sunrey:
+      domain:
+        - exchange
+        - financial_agent
+      canonical_provider_interface: MarketQuoteSource
+      priority: medium
+      launch_tier: secondary_source
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Official Finnhub API documentation reviewed.
+  - provider_id: sec-edgar
+    name: SEC EDGAR
+    short_name: SEC EDGAR
+    description: >
+      U.S. Securities and Exchange Commission EDGAR full-text search and company
+      filing API providing corporate filings, 10-K/10-Q reports, and registrant
+      metadata from data.sec.gov.
+    primary_category: corporate_filings
+    capabilities:
+      - corporate_filings
+      - company_metadata
+      - full_text_search
+      - financial_statements
+    endpoints:
+      base_url: https://data.sec.gov
+      api_version: null
+      documentation_url: https://www.sec.gov/edgar/sec-api-documentation
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: User-Agent header with contact information required per SEC policy.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Public API; User-Agent header required per SEC fair access policy.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: SEC data redistribution requires attribution per agency terms.
+    rate_limits:
+      documented: true
+      requests_per_second: 10
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: 10 requests per second per SEC fair access guidelines.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - financial_agent
+        - world
+        - research
+      canonical_provider_interface: CompanyIntelligenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Official SEC EDGAR API documentation reviewed.
+  - provider_id: us-treasury-fiscal
+    name: US Treasury Fiscal Data
+    short_name: US Treasury
+    description: >
+      U.S. Department of the Treasury Fiscal Data API providing federal debt,
+      revenue, spending, interest rates, and fiscal operations data from
+      fiscaldata.treasury.gov.
+    primary_category: government_open_data
+    capabilities:
+      - federal_debt
+      - treasury_yields
+      - government_revenue
+      - government_spending
+      - fiscal_operations
+    endpoints:
+      base_url: https://api.fiscaldata.treasury.gov/services/api/v1
+      api_version: v1
+      documentation_url: https://fiscaldata.treasury.gov/api-documentation/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Open public API with no authentication required.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: allowed
+      notes: U.S. government open data; attribution recommended.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Pagination-based access; no hard rate limit published.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - economic_graph
+        - grow
+      canonical_provider_interface: MacroDataProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Official Treasury Fiscal Data API documentation reviewed.
+  - provider_id: federal-register
+    name: Federal Register API
+    short_name: Federal Register
+    description: >
+      Federal Register API providing U.S. government regulatory documents,
+      presidential documents, proposed rules, and final rules from the National
+      Archives and Records Administration.
+    primary_category: government_open_data
+    secondary_categories:
+      - research
+    capabilities:
+      - regulatory_documents
+      - presidential_documents
+      - proposed_rules
+      - final_rules
+    endpoints:
+      base_url: https://www.federalregister.gov/api/v1
+      api_version: v1
+      documentation_url: https://www.federalregister.gov/reader-aids/developer-resources
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Open public API with no authentication required.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: allowed
+      notes: U.S. government open data; attribution recommended.
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: No published rate limits in official documentation.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - research
+        - world
+        - compliance
+      canonical_provider_interface: MacroDataProvider
+      priority: medium
+      launch_tier: secondary_source
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Official Federal Register developer documentation reviewed.
+  - provider_id: fred-commodity
+    name: FRED Commodity Prices
+    short_name: FRED Commodities
+    description: >
+      Secondary commodity price source using FRED API commodity-related economic
+      series including energy, metals, agriculture, and PPI commodity indexes
+      from the St. Louis Fed.
+    primary_category: commodities
+    capabilities:
+      - commodity_prices
+      - energy_prices
+      - metals_prices
+      - agriculture_prices
+    endpoints:
+      base_url: https://api.stlouisfed.org/fred
+      api_version: v1
+      documentation_url: https://fred.stlouisfed.org/docs/api/fred/
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: FRED_API_KEY
+      notes: Shares FRED_API_KEY credential with primary fred provider.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Uses same FRED API key as primary fred provider.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: FRED data attribution required per St. Louis Fed terms.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 120
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: 120 requests per minute per API key; shared with primary fred provider.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - US
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Commodity series subset of FRED macroeconomic data.
+    sunrey:
+      domain:
+        - world
+        - economic_graph
+        - moonrey
+      canonical_provider_interface: MacroDataProvider
+      priority: medium
+      launch_tier: secondary_source
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Commodity series catalog verified against FRED API documentation.
+  - provider_id: yahoo-finance-unofficial
+    name: Yahoo Finance Unofficial
+    short_name: Yahoo Finance
+    description: >
+      Unofficial Yahoo Finance data endpoints used by community scrapers and
+      third-party wrappers. Not an official API; terms, stability, and legal
+      status are unverified. Blocked pending legal and compliance review.
+    primary_category: markets
+    capabilities:
+      - equity_quotes
+      - market_data
+    endpoints:
+      base_url: null
+      api_version: null
+      documentation_url: null
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: No official API; unofficial endpoints vary and are not cataloged.
+    access:
+      status: unclear
+      free_tier_verified: false
+      registration_required: false
+      notes: No official free API; unofficial access methods blocked.
+    commercial_use:
+      status: requires_legal_review
+      notes: No verified commercial use terms; legal review required.
+    redistribution:
+      status: prohibited
+      notes: Redistribution prohibited; unofficial data source.
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: null
+      geographic_scope: []
+      historical_data: null
+      realtime: null
+      data_format: null
+      notes: Data characteristics unverified for unofficial endpoints.
+    sunrey:
+      domain:
+        - exchange
+      canonical_provider_interface: MarketQuoteSource
+      priority: low
+      launch_tier: blocked_pending_review
+      authority_class: derived_data
+      integration_state: catalog_only
+      existing_adapter: null
+    verification:
+      status: unverified
+      verified_against_official_docs: false
+      last_verified: null
+      notes: Blocked pending legal and compliance review; no official API exists.
+  - provider_id: quandl-nasdaq-data-link
+    name: Quandl Nasdaq Data Link
+    short_name: Nasdaq Data Link
+    description: >
+      Nasdaq Data Link (formerly Quandl) financial and economic data platform.
+      Former free API tiers have been restricted; access terms and pricing
+      require review. Blocked pending compliance and licensing review.
+    primary_category: markets
+    capabilities:
+      - market_data
+      - economic_data
+      - alternative_data
+    endpoints:
+      base_url: https://data.nasdaq.com/api/v3
+      api_version: v3
+      documentation_url: https://docs.data.nasdaq.com/
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: NASDAQ_DATA_LINK_API_KEY
+      notes: API key required; free tier availability unclear.
+    access:
+      status: unclear
+      free_tier_verified: false
+      registration_required: true
+      notes: Free tier status unclear after Quandl-to-Nasdaq Data Link transition.
+    commercial_use:
+      status: requires_legal_review
+      notes: Licensing terms require legal review before integration.
+    redistribution:
+      status: prohibited
+      notes: Redistribution prohibited under standard data licenses.
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Rate limits vary by dataset subscription tier.
+    data_characteristics:
+      freshness: null
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: null
+      data_format: json
+      notes: Data characteristics vary by dataset; not verified for free tier.
+    sunrey:
+      domain:
+        - exchange
+        - research
+      canonical_provider_interface: MarketQuoteSource
+      priority: low
+      launch_tier: blocked_pending_review
+      authority_class: regulated_provider
+      integration_state: catalog_only
+      existing_adapter: null
+    verification:
+      status: unverified
+      verified_against_official_docs: false
+      last_verified: null
+      notes: Blocked pending compliance and licensing review.
+  - provider_id: treasury-direct-legacy-xml
+    name: Treasury Direct Legacy XML
+    short_name: Treasury Direct XML
+    description: >
+      Legacy U.S. Treasury Direct XML feeds for auction results and debt
+      statistics. Service deprecated and unavailable; superseded by US Treasury
+      Fiscal Data API (us-treasury-fiscal provider).
+    primary_category: government_open_data
+    capabilities:
+      - treasury_auctions
+      - federal_debt
+    endpoints:
+      base_url: null
+      api_version: null
+      documentation_url: null
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: no_longer_free
+      free_tier_verified: false
+      registration_required: false
+      notes: Legacy XML endpoints deprecated and no longer available.
+    commercial_use:
+      status: unknown
+      notes: null
+    redistribution:
+      status: unknown
+      notes: null
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: null
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: false
+      data_format: xml
+      notes: Legacy XML format; service unavailable.
+    sunrey:
+      domain:
+        - world
+      canonical_provider_interface: MacroDataProvider
+      priority: low
+      launch_tier: fallback_source
+      authority_class: authoritative_official
+      integration_state: catalog_only
+      existing_adapter: null
+    verification:
+      status: deprecated
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Deprecated; superseded by us-treasury-fiscal provider.

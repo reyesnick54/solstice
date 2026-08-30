@@ -1,9 +1,9 @@
 {
-  "name": "@solstice/provider-sdk",
+  "name": "@solstice/external-data",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "SunRey universal external-data provider SDK — lifecycle, registry, transport, reliability, provenance",
+  "description": "Wave 2 external reference data plane — macro, FX, markets, commodities, filings, fiscal, regulatory",
   "exports": {
     ".": "./src/index.ts"
   },

@@ -113,8 +113,8 @@ describe('free API provider catalog', () => {
     const { catalog } = loadCatalog(ROOT);
     const result = validateCatalog(catalog);
     assert.equal(result.ok, true, result.errors.join('\n'));
-    assert.equal(catalog.population_status, 'awaiting_master_list');
-    assert.equal(result.stats.total, 0);
+    assert.equal(catalog.population_status, 'partial');
+    assert.equal(result.stats.total, 15);
   });
 
   it('requires unique provider_id values', () => {

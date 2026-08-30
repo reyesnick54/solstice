@@ -123,6 +123,7 @@ export type ConsumerBffRuntime = {
   readonly vault?: PersonalDataVaultProduct;
   readonly access?: HumanAccessEconomyProduct;
   readonly personalEconomy?: PersonalEconomyBffSurface;
+  readonly worldExternalData?: import('./world-external-data-adapter.ts').WorldExternalDataBff;
   readonly previewDiagnostics?: () => Readonly<Record<string, unknown>>;
 };
 
@@ -703,6 +704,42 @@ function dispatchAuthenticated(
       return json(200, runtime.bff.featureStub('economy', principal), headers);
     }
     return json(200, { schema: 'sunrey.consumer.productive-economy.v1', ...surface.moonreyInput() }, headers);
+  }
+
+  if (path === '/api/v1/world/economy' && method === 'GET') {
+    const world = runtime.worldExternalData;
+    if (!world) {
+      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'World external data unavailable', requestId }), headers);
+    }
+    return json(200, world.economy(), headers);
+  }
+  if (path === '/api/v1/world/fx' && method === 'GET') {
+    const world = runtime.worldExternalData;
+    if (!world) {
+      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'World FX reference unavailable', requestId }), headers);
+    }
+    return json(200, world.fx(), headers);
+  }
+  if (path === '/api/v1/world/markets' && method === 'GET') {
+    const world = runtime.worldExternalData;
+    if (!world) {
+      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'World market reference unavailable', requestId }), headers);
+    }
+    return json(200, world.markets(), headers);
+  }
+  if (path === '/api/v1/world/filings' && method === 'GET') {
+    const world = runtime.worldExternalData;
+    if (!world) {
+      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Company filings unavailable', requestId }), headers);
+    }
+    return json(200, world.filings(), headers);
+  }
+  if (path === '/api/v1/world/regulatory' && method === 'GET') {
+    const world = runtime.worldExternalData;
+    if (!world) {
+      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Regulatory publications unavailable', requestId }), headers);
+    }
+    return json(200, world.regulatory(), headers);
   }
 
   if (path === '/api/v1/hin/contributions' && method === 'GET') {

@@ -31,20 +31,20 @@ import { decideRetryDelay, waitForRetry } from './retry.ts';
 import { ProviderTimeoutError, withTimeout } from './timeout.ts';
 import {
   defaultClock,
-  type Clock,
   type DeadlineContext,
   type FallbackHook,
   type ProviderError,
-  type ProviderTransport,
-  type ProviderTransportRequest,
-  type ProviderTransportResponse,
+  type ReliabilityClock,
   type ReliabilityOutcome,
-} from './types.ts';
+  type ReliabilityProviderTransport,
+  type ReliabilityTransportRequest,
+  type ReliabilityTransportResponse,
+} from './reliability-types.ts';
 
 export type ProviderReliabilityOptions = {
   readonly policy?: Partial<ProviderReliabilityPolicy>;
   readonly globalLimits?: Partial<GlobalSafetyLimits>;
-  readonly clock?: Clock;
+  readonly clock?: ReliabilityClock;
   readonly metrics?: ProviderMetricsRecorder;
   readonly fallbackHook?: FallbackHook;
   readonly rateLimiter?: ProviderRateLimiter;
@@ -55,7 +55,7 @@ export type ProviderReliabilityOptions = {
 export class ProviderReliabilityControlPlane {
   readonly policy: ProviderReliabilityPolicy;
   readonly globalLimits: GlobalSafetyLimits;
-  readonly clock: Clock;
+  readonly clock: ReliabilityClock;
   readonly metrics: ProviderMetricsRecorder;
   private readonly fallbackHook: FallbackHook | undefined;
   private readonly rateLimiter: ProviderRateLimiter;
@@ -94,17 +94,17 @@ export class ProviderReliabilityControlPlane {
     return this.circuits.snapshot(providerId);
   }
 
-  async execute<T = ProviderTransportResponse>(
-    transport: ProviderTransport,
-    request: ProviderTransportRequest,
+  async execute<T = ReliabilityTransportResponse>(
+    transport: ReliabilityProviderTransport,
+    request: ReliabilityTransportRequest,
     input: {
       readonly deadline?: DeadlineContext;
-      readonly mapResponse?: (response: ProviderTransportResponse) => T;
+      readonly mapResponse?: (response: ReliabilityTransportResponse) => T;
     } = {},
   ): Promise<ReliabilityOutcome<T>> {
     const providerId = transport.providerId;
     const startedMs = this.clock.nowMs();
-    const mapResponse = input.mapResponse ?? ((response: ProviderTransportResponse) => response as T);
+    const mapResponse = input.mapResponse ?? ((response: ReliabilityTransportResponse) => response as T);
     recordRequestStart(this.metrics, providerId, request.method);
 
     let deadlineMs: number;
