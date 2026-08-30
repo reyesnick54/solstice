@@ -80,6 +80,7 @@ import type { ConsentDataRightsEngine } from '../../../../packages/consent/src/p
 import type { PersonalDataVaultProduct } from '../../../../packages/personal-data-vault/src/product/index.ts';
 import { dispatchVault } from './vault.ts';
 import { dispatchAccess } from './access.ts';
+import { dispatchPersonalEconomy, type PersonalEconomyBffSurface } from './personal-economy.ts';
 import type { HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
 
 export type BffRequest = {
@@ -121,6 +122,7 @@ export type ConsumerBffRuntime = {
   readonly hinAccess?: import('../../../../packages/human-access-economy/src/hin-access.ts').HumanInformationAccessBridge;
   readonly vault?: PersonalDataVaultProduct;
   readonly access?: HumanAccessEconomyProduct;
+  readonly personalEconomy?: PersonalEconomyBffSurface;
   readonly previewDiagnostics?: () => Readonly<Record<string, unknown>>;
 };
 
@@ -432,6 +434,18 @@ function dispatchAuthenticated(
     const access = dispatchAccess(runtime.access, request, principal, requestId, headers);
     if (access) {
       return access;
+    }
+  }
+  if (runtime.personalEconomy) {
+    const personalEconomy = dispatchPersonalEconomy(
+      runtime.personalEconomy,
+      request,
+      principal,
+      requestId,
+      headers,
+    );
+    if (personalEconomy) {
+      return json(personalEconomy.status, personalEconomy.body, personalEconomy.headers);
     }
   }
   if (runtime.payments) {

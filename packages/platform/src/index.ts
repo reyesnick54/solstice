@@ -262,3 +262,4 @@ export type {
   OpportunityProposalReceipt,
   OpportunityDiscoveryContext,
 } from './growth/opportunity/types.ts';
+export * from './personal-economy/index.ts';
