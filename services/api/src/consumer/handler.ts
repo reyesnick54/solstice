@@ -343,6 +343,27 @@ function dispatchAuthenticated(
   if (path === '/api/v1/fx/currencies' && method === 'GET') {
     return json(200, runtime.bff.listFxCurrencies(), headers);
   }
+  if (path === '/api/v1/fx/reference' && method === 'GET') {
+    if (query.base && query.quote) {
+      return json(200, runtime.bff.fxReferenceRate(String(query.base), String(query.quote)), headers);
+    }
+    if (query.base && query.quotes) {
+      const quotes = String(query.quotes).split(',').map((part) => part.trim()).filter(Boolean);
+      return json(200, runtime.bff.fxReferenceRates(String(query.base), quotes), headers);
+    }
+    return json(200, runtime.bff.listFxReferenceProviders(), headers);
+  }
+  const referencePairMatch = /^\/api\/v1\/fx\/reference\/([^/]+)\/([^/]+)$/.exec(path);
+  if (referencePairMatch && method === 'GET') {
+    const [, base, quote] = referencePairMatch;
+    return json(200, runtime.bff.fxReferenceRate(base!, quote!), headers);
+  }
+  const referenceHistoryMatch = /^\/api\/v1\/fx\/reference\/([^/]+)\/([^/]+)\/history$/.exec(path);
+  if (referenceHistoryMatch && method === 'GET') {
+    const [, base, quote] = referenceHistoryMatch;
+    const date = String(query.date ?? query.on ?? '2026-08-30');
+    return json(200, runtime.bff.fxReferenceHistory(base!, quote!, date), headers);
+  }
   if (path === '/api/v1/fx/valuation' && method === 'GET') {
     return json(200, runtime.bff.valuation(principal, query.targetCurrency ?? query.target ?? 'USD'), headers);
   }

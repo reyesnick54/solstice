@@ -224,6 +224,10 @@ export {
   type SimulatedResponse,
 } from './simulate.ts';
 
+/**
+ * Wave 1 Prompt 3 — universal provider HTTP transport and authentication layer.
+ */
+
 export {
   PROVIDER_HTTP_METHODS,
   PROVIDER_CONTENT_TYPES,

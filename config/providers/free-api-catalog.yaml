@@ -3,6 +3,33 @@ catalog_id: sunrey-free-api-catalog
 expected_provider_count: 126
 population_status: partial
 source_list:
+  document: packages/payments/src/fx-reference/catalog-entries.ts
+  version: wave-2-prompt-9
+  verified_at: 2026-08-30
+notes: Partial FX reference provider population for Wave 2 Prompt 9. Full 126-provider master list still pending.
+providers:
+  - provider_id: bank-of-russia
+    name: Bank of Russia FX Reference
+    short_name: CBR FX
+    description: Official daily foreign-exchange reference rates published by the Central Bank of Russia.
+    primary_category: foreign_exchange
+    secondary_categories:
+      - macroeconomics
+    capabilities:
+      - fx_rates
+      - central_bank_fx
+      - currency_conversion
+    endpoints:
+      base_url: https://www.cbr-xml-daily.ru
+      api_version: v1
+      documentation_url: https://www.cbr.ru/development/SXML/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
   document: packages/sunrey-chain/src/macro/catalog-entries.ts
   version: wave-2-prompt-8
   verified_at: 2026-08-30
@@ -40,6 +67,9 @@ providers:
       notes: null
     commercial_use:
       status: verified_allowed
+      notes: Open reference FX feed for simulation integration.
+    redistribution:
+      status: attribution_required
       notes: null
     redistribution:
       status: allowed
@@ -49,6 +79,26 @@ providers:
       requests_per_second: null
       requests_per_minute: null
       requests_per_hour: null
+      requests_per_day: 1000
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - RU
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - exchange
+        - financial_agent
+        - grow
+      canonical_provider_interface: FxReferenceProvider
       requests_per_day: null
       monthly_quota: null
       concurrency_limit: null
@@ -72,11 +122,28 @@ providers:
       launch_tier: production_candidate
       authority_class: authoritative_official
       integration_state: adapter_implemented
+      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
       existing_adapter: packages/sunrey-chain/src/macro/adapters/fred.ts
     verification:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
+      notes: Wave 2 Prompt 9 fixture-backed adapter.
+  - provider_id: national-bank-poland
+    name: National Bank of Poland FX Tables
+    short_name: NBP FX
+    description: Official NBP table A foreign exchange reference rates.
+    primary_category: foreign_exchange
+    secondary_categories:
+      - macroeconomics
+    capabilities:
+      - fx_rates
+      - central_bank_fx
+    endpoints:
+      base_url: https://api.nbp.pl
+      api_version: v1
+      documentation_url: https://api.nbp.pl/en.html
+      status_url: null
       notes: Wave 2 Prompt 8 macro subset.
   - provider_id: world-bank
     name: World Bank Open Data API
@@ -107,6 +174,15 @@ providers:
       notes: null
     commercial_use:
       status: verified_allowed
+      notes: Open reference FX feed for simulation integration.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: 120
       notes: null
     redistribution:
       status: allowed
@@ -121,6 +197,26 @@ providers:
       concurrency_limit: null
       notes: null
     data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - PL
+        - EU
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - exchange
+        - financial_agent
+        - grow
+      canonical_provider_interface: FxReferenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: adapter_implemented
+      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
       freshness: historical
       geographic_scope:
         - GLOBAL
@@ -143,6 +239,24 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
+      notes: Wave 2 Prompt 9 fixture-backed adapter.
+  - provider_id: frankfurter
+    name: Frankfurter
+    short_name: Frankfurter
+    description: Free ECB-backed foreign exchange reference rates without API keys.
+    primary_category: foreign_exchange
+    secondary_categories:
+      - macroeconomics
+    capabilities:
+      - fx_rates
+      - foreign_exchange
+      - currency_conversion
+    endpoints:
+      base_url: https://api.frankfurter.app
+      api_version: v1
+      documentation_url: https://www.frankfurter.app/docs/
+      status_url: null
+    authentication:
       notes: Wave 2 Prompt 8 macro subset.
   - provider_id: econdb
     name: Econdb
@@ -236,6 +350,15 @@ providers:
       notes: null
     commercial_use:
       status: verified_allowed
+      notes: Open reference FX feed for simulation integration.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: 1000
       notes: null
     redistribution:
       status: allowed
@@ -252,6 +375,24 @@ providers:
     data_characteristics:
       freshness: daily
       geographic_scope:
+        - EU
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - exchange
+        - financial_agent
+        - grow
+      canonical_provider_interface: FxReferenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
         - US
       historical_data: true
       realtime: false
@@ -272,6 +413,44 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
+      notes: Wave 2 Prompt 9 fixture-backed adapter.
+  - provider_id: currency-api
+    name: Currency API
+    short_name: CurrencyAPI
+    description: Free-tier currency conversion and FX reference feed.
+    primary_category: foreign_exchange
+    secondary_categories:
+      - macroeconomics
+    capabilities:
+      - fx_rates
+      - currency_conversion
+    endpoints:
+      base_url: https://api.currencyapi.com
+      api_version: v1
+      documentation_url: https://currencyapi.com/docs
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: CURRENCY_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: Open reference FX feed for simulation integration.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: 300
       notes: Wave 2 Prompt 8 macro subset.
   - provider_id: data-usa
     name: Data USA
@@ -314,6 +493,11 @@ providers:
       concurrency_limit: null
       notes: null
     data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
       freshness: historical
       geographic_scope:
         - US
@@ -324,6 +508,43 @@ providers:
     sunrey:
       domain:
         - world
+        - exchange
+        - financial_agent
+        - grow
+      canonical_provider_interface: FxReferenceProvider
+      priority: medium
+      launch_tier: secondary_source
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
+    verification:
+      status: partially_verified
+      verified_against_official_docs: false
+      last_verified: 2026-08-30
+      notes: Wave 2 Prompt 9 fixture-backed adapter.
+  - provider_id: exchangerate-dev
+    name: ExchangeRate.dev
+    short_name: ExchangeRate.dev
+    description: Free foreign exchange rates API with historical support.
+    primary_category: foreign_exchange
+    secondary_categories:
+      - macroeconomics
+    capabilities:
+      - fx_rates
+      - foreign_exchange
+    endpoints:
+      base_url: https://api.exchangerate.dev
+      api_version: v1
+      documentation_url: https://exchangerate.dev/docs
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: free_tier
         - grow
       canonical_provider_interface: MacroDataProvider
       priority: medium
@@ -363,6 +584,15 @@ providers:
       notes: null
     commercial_use:
       status: verified_allowed
+      notes: Open reference FX feed for simulation integration.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: 250
       notes: null
     redistribution:
       status: allowed
@@ -377,6 +607,44 @@ providers:
       concurrency_limit: null
       notes: null
     data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - exchange
+        - financial_agent
+        - grow
+      canonical_provider_interface: FxReferenceProvider
+      priority: medium
+      launch_tier: secondary_source
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
+    verification:
+      status: partially_verified
+      verified_against_official_docs: false
+      last_verified: 2026-08-30
+      notes: Wave 2 Prompt 9 fixture-backed adapter.
+  - provider_id: exchangerate-host
+    name: ExchangeRate.host
+    short_name: ExchangeRate.host
+    description: Free FX conversion and reference rates with fallback usage.
+    primary_category: foreign_exchange
+    secondary_categories:
+      - macroeconomics
+    capabilities:
+      - fx_rates
+      - currency_conversion
+    endpoints:
+      base_url: https://api.exchangerate.host
+      api_version: v1
+      documentation_url: https://exchangerate.host/documentation
       freshness: historical
       geographic_scope:
         - US
@@ -427,6 +695,15 @@ providers:
       notes: null
     commercial_use:
       status: verified_allowed
+      notes: Open reference FX feed for simulation integration.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: 100
       notes: null
     redistribution:
       status: allowed
@@ -441,6 +718,45 @@ providers:
       concurrency_limit: null
       notes: null
     data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - exchange
+        - financial_agent
+        - grow
+      canonical_provider_interface: FxReferenceProvider
+      priority: low
+      launch_tier: fallback_source
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 2 Prompt 9 fixture-backed adapter.
+  - provider_id: economia-awesome
+    name: Economia.AwesomeAPI
+    short_name: Economia
+    description: Brazilian open economics API including foreign exchange reference quotes.
+    primary_category: foreign_exchange
+    secondary_categories:
+      - macroeconomics
+    capabilities:
+      - fx_rates
+      - foreign_exchange
+    endpoints:
+      base_url: https://economia.awesomeapi.com.br
+      api_version: v1
+      documentation_url: https://docs.awesomeapi.com.br/api-de-moedas
+      status_url: null
       freshness: historical
       geographic_scope:
         - SA
@@ -490,6 +806,15 @@ providers:
       notes: null
     commercial_use:
       status: verified_allowed
+      notes: Open reference FX feed for simulation integration.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: 100
       notes: null
     redistribution:
       status: allowed
@@ -504,6 +829,26 @@ providers:
       concurrency_limit: null
       notes: null
     data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - BR
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - exchange
+        - financial_agent
+        - grow
+      canonical_provider_interface: FxReferenceProvider
+      priority: medium
+      launch_tier: secondary_source
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
       freshness: daily
       geographic_scope:
         - US
@@ -526,6 +871,40 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
+      notes: Wave 2 Prompt 9 fixture-backed adapter.
+  - provider_id: currencyapi-com
+    name: CurrencyAPI.com (blocked)
+    short_name: CurrencyAPI.com
+    description: Blocked pending commercial and legal review. Not activated.
+    primary_category: foreign_exchange
+    secondary_categories:
+      - macroeconomics
+    capabilities:
+      - fx_rates
+    endpoints:
+      base_url: https://api.currencyapi.com
+      api_version: v1
+      documentation_url: https://currencyapi.com/docs
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: CURRENCYAPI_COM_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: Open reference FX feed for simulation integration.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
       notes: Wave 2 Prompt 8 macro subset.
   - provider_id: federal-register
     name: Federal Register API
@@ -567,6 +946,30 @@ providers:
       concurrency_limit: null
       notes: null
     data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - exchange
+        - financial_agent
+        - grow
+      canonical_provider_interface: FxReferenceProvider
+      priority: low
+      launch_tier: blocked_pending_review
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
+    verification:
+      status: unverified
+      verified_against_official_docs: false
+      last_verified: 2026-08-30
+      notes: Wave 2 Prompt 9 fixture-backed adapter.
       freshness: daily
       geographic_scope:
         - US

@@ -286,3 +286,4 @@ export {
   paymentProviderIdempotencyKey,
 } from "./operation-recovery.ts";
 export * from "./platform/index.ts";
+export * from "./fx-reference/index.ts";

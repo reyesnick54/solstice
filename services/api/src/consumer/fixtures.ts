@@ -43,6 +43,7 @@ import { GrowthOrchestrator } from '../../../../packages/platform/src/service.ts
 import { createAccountsReadAdapter } from './accounts-adapter.ts';
 import { createGrowCommandPort } from './grow-adapter.ts';
 import { createFxCommandPort } from './fx-adapter.ts';
+import { createFxReferenceBffPort } from './fx-reference-adapter.ts';
 import { createGrowOpportunityPort } from './grow-adapter.ts';
 import type { GrowOpportunityPort } from './grow-adapter.ts';
 import { createPreviewAiGateway, PreviewMarketResearchCache } from '../preview-ai.ts';
@@ -541,6 +542,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     accounts: createAccountsReadAdapter(runtime),
     preferences: memoryPreferenceStore(),
     fxEngine: createFxCommandPort(paymentsService, () => runtime.clock.now()),
+    fxReference: createFxReferenceBffPort(),
     actions: {
       list(principal) {
         return pendingActions.get(principal.customerId) ?? [];
