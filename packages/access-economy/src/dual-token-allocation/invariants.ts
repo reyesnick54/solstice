@@ -2,9 +2,15 @@
  * ACCESS-15 permanent economic invariants.
  */
 
-import { ACCESS_FABRIC_INVARIANTS } from '../../../access-fabric/src/index.ts';
 import { totalAllocated } from './allocate.ts';
 import type { AllocationRunResult } from './types.ts';
+
+/** Canonical access-fabric entitlement semantics (mirrored without cross-package import). */
+const CANONICAL_ENTITLEMENT_SEMANTICS = Object.freeze({
+  humanWorthScore: false as const,
+  isMonetaryAsset: false as const,
+  isTransferableBalance: false as const,
+});
 
 export const ACCESS_15_INVARIANT_IDS = [
   'ACCESS_ALLOCATION_NEVER_EXCEEDS_POOL',
@@ -76,9 +82,9 @@ export function checkAccess15Invariants(
     },
     NO_HUMAN_WORTH_SCORE: {
       held:
-        ACCESS_FABRIC_INVARIANTS.humanWorthScore === false &&
+        CANONICAL_ENTITLEMENT_SEMANTICS.humanWorthScore === false &&
         !serialized.includes('"humanWorthScore":true'),
-      evidence: `humanWorthScore=${ACCESS_FABRIC_INVARIANTS.humanWorthScore}`,
+      evidence: `humanWorthScore=${CANONICAL_ENTITLEMENT_SEMANTICS.humanWorthScore}`,
     },
     NO_SOCIAL_CREDIT_SCORE: {
       held: !serialized.includes('socialCreditScore'),
@@ -86,9 +92,9 @@ export function checkAccess15Invariants(
     },
     NO_ACCESS_CASH_BALANCE: {
       held:
-        ACCESS_FABRIC_INVARIANTS.isMonetaryAsset === false &&
-        ACCESS_FABRIC_INVARIANTS.isTransferableBalance === false,
-      evidence: `isMonetaryAsset=${ACCESS_FABRIC_INVARIANTS.isMonetaryAsset}`,
+        CANONICAL_ENTITLEMENT_SEMANTICS.isMonetaryAsset === false &&
+        CANONICAL_ENTITLEMENT_SEMANTICS.isTransferableBalance === false,
+      evidence: `isMonetaryAsset=${CANONICAL_ENTITLEMENT_SEMANTICS.isMonetaryAsset}`,
     },
     ACCESS_ENTITLEMENT_NON_WITHDRAWABLE: {
       held: result.entitlements.every((row) => row.isWithdrawable === false),
