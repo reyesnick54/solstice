@@ -1,0 +1,53 @@
+/**
+ * ACCESS-20 unified Personal Economy Agent taxonomy.
+ * Proposal-only recommendations. No guaranteed returns.
+ */
+
+export const PERSONAL_ECONOMY_RECOMMENDATION_TYPES = [
+  'FIAT_INVESTMENT',
+  'LIQUIDITY_ADJUSTMENT',
+  'SR_ACQUISITION',
+  'MR_ACQUISITION',
+  'SR_REDUCTION',
+  'MR_REDUCTION',
+  'ACCESS_RESERVATION',
+  'DATA_OPPORTUNITY_PARTICIPATION',
+  'PRODUCTIVE_CAPACITY_CONTRIBUTION',
+  'NO_ACTION',
+] as const;
+
+export type PersonalEconomyRecommendationType = (typeof PERSONAL_ECONOMY_RECOMMENDATION_TYPES)[number];
+
+export const PERSONAL_ECONOMY_INVARIANTS = [
+  'AGENT_CANNOT_SELF_APPROVE',
+  'AGENT_CANNOT_ISSUE_EXECUTION_AUTHORITY',
+  'AGENT_CANNOT_MINT_SR',
+  'AGENT_CANNOT_MINT_MR',
+  'AGENT_CANNOT_INVENT_ACCESS',
+  'AGENT_CANNOT_PROMISE_RETURNS',
+  'AGENT_CANNOT_OPTIMIZE_FOR_HUMAN_WORTH',
+  'AGENT_CANNOT_OVERRIDE_USER_RISK_CONSTRAINTS',
+  'NO_DEPOSIT_COUNTED_AS_INVESTMENT_PERFORMANCE',
+] as const;
+
+export type PersonalEconomyInvariant = (typeof PERSONAL_ECONOMY_INVARIANTS)[number];
+
+export const PERSONAL_ECONOMY_SCENARIO_KINDS = [
+  'FIAT_INVESTMENT',
+  'SR_ACQUISITION',
+  'MR_ACQUISITION',
+  'HOLD_TOKENS',
+  'ACCESS_TRAVEL_DEMAND',
+  'PRODUCTIVE_GPU_CONTRIBUTION',
+  'TOKEN_PRICE_SHOCK',
+  'MARKET_SHOCK',
+] as const;
+
+export type PersonalEconomyScenarioKind = (typeof PERSONAL_ECONOMY_SCENARIO_KINDS)[number];
+
+export const PERSONAL_ECONOMY_RISK_PROFILES = ['CONSERVATIVE', 'MODERATE', 'BALANCED', 'GROWTH'] as const;
+
+export type PersonalEconomyRiskProfile = (typeof PERSONAL_ECONOMY_RISK_PROFILES)[number];
+
+export const SIMULATION_DISCLAIMER =
+  'Simulations are projections only. Markets can lose value. No outcome is guaranteed.';

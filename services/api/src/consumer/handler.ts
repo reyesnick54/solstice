@@ -75,10 +75,12 @@ import {
   HIN_VERIFICATION_STATES,
 } from '../../../../packages/human-economic-contribution/src/hin-value/index.ts';
 import { dispatchDataRights } from './data-rights.ts';
+import { dispatchHinAccess } from './hin-access.ts';
 import type { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
 import type { PersonalDataVaultProduct } from '../../../../packages/personal-data-vault/src/product/index.ts';
 import { dispatchVault } from './vault.ts';
 import { dispatchAccess } from './access.ts';
+import { dispatchPersonalEconomy, type PersonalEconomyBffSurface } from './personal-economy.ts';
 import type { HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
 
 export type BffRequest = {
@@ -117,8 +119,10 @@ export type ConsumerBffRuntime = {
   readonly exchange?: ExchangeLifecycleSurface | ExchangeProductSurface;
   readonly phaseH?: PhaseHProductSurface;
   readonly dataRights?: ConsentDataRightsEngine;
+  readonly hinAccess?: import('../../../../packages/human-access-economy/src/hin-access.ts').HumanInformationAccessBridge;
   readonly vault?: PersonalDataVaultProduct;
   readonly access?: HumanAccessEconomyProduct;
+  readonly personalEconomy?: PersonalEconomyBffSurface;
   readonly previewDiagnostics?: () => Readonly<Record<string, unknown>>;
 };
 
@@ -407,6 +411,12 @@ function dispatchAuthenticated(
       return dataRights;
     }
   }
+  if (runtime.hinAccess) {
+    const hinAccess = dispatchHinAccess(runtime.hinAccess, request, principal, requestId, headers);
+    if (hinAccess) {
+      return hinAccess;
+    }
+  }
   if (runtime.vault && runtime.identity) {
     const vault = dispatchVault(
       runtime.vault,
@@ -424,6 +434,18 @@ function dispatchAuthenticated(
     const access = dispatchAccess(runtime.access, request, principal, requestId, headers);
     if (access) {
       return access;
+    }
+  }
+  if (runtime.personalEconomy) {
+    const personalEconomy = dispatchPersonalEconomy(
+      runtime.personalEconomy,
+      request,
+      principal,
+      requestId,
+      headers,
+    );
+    if (personalEconomy) {
+      return json(personalEconomy.status, personalEconomy.body, personalEconomy.headers);
     }
   }
   if (runtime.payments) {
@@ -1736,6 +1758,13 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/data/who',
   'POST /api/v1/data/rights/requests',
   'GET /api/v1/data/rights/requests',
+  'GET /api/v1/data/opportunities',
+  'GET /api/v1/data/opportunities/{id}',
+  'POST /api/v1/data/opportunities/{id}/opt-in',
+  'POST /api/v1/data/opportunities/{id}/decline',
+  'GET /api/v1/data/participation/history',
+  'GET /api/v1/data/compensation/history',
+  'GET /api/v1/data/consent/status',
   'GET /api/v1/hin/participation',
   'POST /api/v1/hin/participation/enroll',
   'POST /api/v1/hin/participation/pause',

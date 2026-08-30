@@ -1,4 +1,5 @@
-# SunRey Human Access Economy — ACCESS-13R / ACCESS-14 status
+# SunRey Human Access Economy — ACCESS-13R / ACCESS-14 / ACCESS-17 status
+# SunRey Human Access Economy — ACCESS-13R / ACCESS-14 / ACCESS-15 status
 
 Classification: engineering simulation on current `main`.
 
@@ -28,6 +29,8 @@ A passing qualification run does **not** move any production state. `ENVIRONMENT
 | ACCESS-10/11 experience composer + completion | `packages/sunrey-access-fabric` + `packages/sunrey-chain/src/access-fabric` |
 | ACCESS-13 qualification laboratory | `packages/sunrey-economics/src/access-economy` |
 | ACCESS-14 provider network + redemption engine | `packages/access-economy/src/providers/` |
+| ACCESS-17 canonical redemption orchestrator | `packages/human-access-economy/src/canonical-redemption-orchestrator.ts` |
+| ACCESS-15 dual-token access allocation protocol | `packages/access-economy/src/dual-token-allocation/` |
 | Consumer BFF projection | `packages/human-access-economy` → `services/api/src/consumer/access.ts` |
 
 ## Data flow (simulation)
@@ -45,9 +48,15 @@ Consumer intent
   → Evidence Vault
   → Consumer BFF projection (human-access-economy)
   → Provider gateway + redemption (access-economy/providers) [ACCESS-14]
+  → Canonical redemption orchestrator (ACCESS-17) with Kernel / Exchange / chain
+  → Dual-token epoch allocation (access-economy/dual-token-allocation) [ACCESS-15]
 ```
 
-The BFF adapter now registers domain intents through `packages/human-access-economy/src/canonical-runtime.ts` while preserving the frontend-safe simulation contract (`productionReady=false`, `capacityKnown=false` unless explicitly fixture-matched).
+The BFF adapter registers domain intents and runs redemptions through
+`CanonicalAccessRedemptionOrchestrator` while preserving the frontend-safe simulation
+contract (`productionReady=false`, `capacityKnown=false` unless explicitly matched).
+
+See `docs/architecture/ACCESS_17_CANONICAL_RUNTIME.md`.
 
 ## Implemented qualification
 
@@ -71,6 +80,9 @@ The BFF adapter now registers domain intents through `packages/human-access-econ
 | ACCESS-13R E2E | `tests/access-economy-e2e-qualification.test.ts` |
 | ACCESS-14 provider network | `packages/access-economy/src/providers/access-14-e2e.test.ts` |
 | ACCESS-14 BFF integration | `tests/access-14-provider-network.test.ts` |
+| ACCESS-17 canonical runtime | `tests/access-17-canonical-runtime.test.ts` |
+| ACCESS-15 dual-token allocation | `packages/access-economy/src/dual-token-allocation/access-15.test.ts` |
+| ACCESS-15 BFF integration | `tests/access-15-dual-token-allocation.test.ts` |
 | Consumer BFF | `services/api/src/consumer-access.test.ts` |
 
 ## ACCESS-14 provider network (simulation)
@@ -84,11 +96,28 @@ Provider adapters: Expedia (simulated), Turo, DoorDash, Amazon, Airbnb (partner-
 
 See `docs/architecture/ACCESS_PROVIDER_NETWORK.md`.
 
+## ACCESS-15 dual-token allocation (simulation)
+
+| State | Value |
+| --- | --- |
+| `ACCESS-15 dual-token allocation protocol` | **implemented** on current main |
+| `PRODUCTION_READY` | **false** |
+| `LIVE_CONNECTIVITY_ENABLED` | **false** |
+
+Converts time-weighted SunRey + MoonRey participation into non-cash Access entitlements backed by verified capacity pools. No third token. No fixed goods per token.
+
+See `docs/economics/ACCESS_15_DUAL_TOKEN_ACCESS_ALLOCATION.md`.
+
 ## Remaining simulation-only components
 
 - Live provider capacity, pricing, and settlement rails (provider adapters are simulation/partner-gated only)
-- Full Kernel → Exchange → chain wiring through every BFF redemption path
-- Legacy consumer quote/reservation fixtures in `packages/human-access-economy` for non-provider requests
+- Production chain finality and live Exchange connectivity
+
+## Resolved in ACCESS-17
+
+- Full Kernel → Exchange → chain wiring through BFF redemption and legacy reservation confirm paths
+- Agent `AccessIntent` mapping to domain `AccessFabricIntent` at ProposalGate
+- BFF legacy quote/reservation paths route through provider gateway + canonical orchestrator (fixtures remain seed-only)
 
 ## Remaining real provider dependencies
 
@@ -105,15 +134,11 @@ See `docs/architecture/ACCESS_PROVIDER_NETWORK.md`.
 
 ## Unresolved architecture decisions
 
-- Full BFF orchestration through canonical reservation, Exchange clearing, and chain commitment (domain intent registration exists; quote/reservation paths remain fixture-backed for most requests)
-- Agent `AccessIntent` mapping to domain `AccessFabricIntent` at ProposalGate
 - Consolidation of overlapping `sunrey-access-fabric` capability naming across ACCESS-01 and ACCESS-09/10 modules (see `ACCESS_FABRIC_CANONICALIZATION.md`)
 
 ## Remaining technical debt
 
 - Duplicate `sunrey-access-fabric` capability naming across ACCESS-01 and ACCESS-09/10 modules (documented in `ACCESS_FABRIC_CANONICALIZATION.md`)
-- BFF legacy fixture quotes remain for non-provider requests; provider gateway now backs search/quote/redemption routes
-- Agent `AccessIntent` model not yet mapped to domain `AccessFabricIntent` at ProposalGate
 
 ## Production posture
 

@@ -79,6 +79,12 @@ import type { InformationRightsMarketplace } from '../../../../packages/informat
 import { createHinContributionSurface, type HinContributionSurface } from './hin-adapter.ts';
 import { createProductiveEconomySurface, type ProductiveEconomySurface } from './productive-economy-adapter.ts';
 import { createSandboxAccessEconomy, type HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
+import {
+  PersonalEconomyBffSurface,
+  type PersonalEconomyBffDeps,
+} from './personal-economy.ts';
+import { createSandboxHinAccessBridge } from '../../../../packages/information-market/src/network/access-integration/index.ts';
+import type { HumanInformationAccessBridge } from '../../../../packages/human-access-economy/src/hin-access.ts';
 
 import { ConsentService } from '../../../../packages/consent/src/service.ts';
 import { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
@@ -153,6 +159,8 @@ export type SandboxWorld = {
   readonly dataRights: ConsentDataRightsEngine;
   readonly vault: PersonalDataVaultProduct;
   readonly access: HumanAccessEconomyProduct;
+  readonly personalEconomy: PersonalEconomyBffSurface;
+  readonly hinAccess: HumanInformationAccessBridge;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -370,6 +378,25 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   personas.provider_down = providerDown.principal;
   sessions.set(sandboxToken('provider_down'), providerDown.principal);
 
+  const personalEconomyPersona = provisionPersona(runtime, {
+    persona: 'personal_economy',
+    customerId: 'cust_sandbox_personal_economy',
+    kyc: 'VERIFIED',
+    customerActive: true,
+    restricted: false,
+    accounts: [
+      {
+        id: 'acct_sandbox_pe_cash',
+        currency: 'USD',
+        productId: 'prod_demand_usd_gb',
+        accountClass: 'DEMAND_DEPOSIT',
+        deposit: 25_000n,
+      },
+    ],
+  });
+  personas.personal_economy = personalEconomyPersona.principal;
+  sessions.set(sandboxToken('personal_economy'), personalEconomyPersona.principal);
+
   const growPersona = provisionPersona(runtime, {
     persona: 'grow',
     customerId: 'cust_sandbox_grow',
@@ -581,6 +608,124 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   const vault = attachSandboxVault(runtime, personas);
   const dataRights = attachSandboxDataRights(runtime, vault);
   const access = createSandboxAccessEconomy(personas.basic_verified.customerId);
+  const hinAccess = createSandboxHinAccessBridge(runtime.clock, personas.basic_verified.identityId);
+
+  const personalEconomyPeg = new EconomicGraphService({ clock: new FrozenClock(NOW), events: runtime.events });
+  personalEconomyPeg.registerAccountCurrency('acct_sandbox_pe_cash', 'USD');
+  personalEconomyPeg.ingestAll(
+    [
+      {
+        eventType: 'AccountOpened',
+        schemaVersion: 1,
+        occurredAt: NOW,
+        eventId: 'evt_sandbox_pe_open',
+        payload: {
+          accountId: asAccountId('acct_sandbox_pe_cash'),
+          ownerId: personalEconomyPersona.customer.id,
+          accountClass: 'DEMAND_DEPOSIT',
+          executionAuthorityId: 'ea_sandbox_pe',
+          intentId: 'I-sandbox-pe-open',
+        },
+      },
+      {
+        eventType: 'DepositPosted',
+        schemaVersion: 1,
+        occurredAt: NOW,
+        eventId: 'evt_sandbox_pe_deposit',
+        payload: {
+          journalId: 'j_sandbox_pe_deposit',
+          accountId: asAccountId('acct_sandbox_pe_cash'),
+          amountMinorUnits: '2500000',
+          currency: 'USD',
+        },
+      },
+    ],
+    personalEconomyPersona.principal.identityId,
+  );
+  const personalEconomyOrchestrator = new GrowthOrchestrator({
+    clock: runtime.clock,
+    events: runtime.events,
+    peg: personalEconomyPeg,
+  });
+  const personalEconomySnapshotPorts = () =>
+    Object.freeze({
+      investmentLabels: Object.freeze([
+        Object.freeze({ label: 'Brokerage portfolio', minorUnits: '10000000', currency: 'USD' }),
+      ]),
+      sunReyHoldings: Object.freeze({
+        assetId: 'SUNREY_COIN' as const,
+        label: 'SunRey Coin',
+        quantityMinorUnits: '100',
+        valuationCurrency: 'USD',
+        estimatedValueMinorUnits: '10000',
+        authoritativeBalance: false as const,
+        simulationOnly: true as const,
+      }),
+      moonReyHoldings: Object.freeze({
+        assetId: 'MOONREY_COIN' as const,
+        label: 'MoonRey Coin',
+        quantityMinorUnits: '100',
+        valuationCurrency: 'USD',
+        estimatedValueMinorUnits: '8000',
+        authoritativeBalance: false as const,
+        simulationOnly: true as const,
+      }),
+      accessEntitlements: Object.freeze([
+        Object.freeze({
+          category: 'TRAVEL',
+          label: 'Travel access',
+          remainingUnits: 1,
+          expiresAt: asUtcInstant('2027-01-01T00:00:00.000Z'),
+          reservationRef: null,
+        }),
+      ]),
+      plannedAccessDemand: Object.freeze([
+        Object.freeze({
+          category: 'TRAVEL',
+          label: 'Two vacations next year',
+          plannedUnits: 2,
+          targetWindow: '2027',
+          premiumTopUpRequiredMinorUnits: '300000',
+          currency: 'USD',
+        }),
+      ]),
+      productiveContributionOpportunities: Object.freeze([
+        Object.freeze({
+          opportunityId: 'prod_gpu_spare',
+          kind: 'PRODUCTIVE_CAPACITY' as const,
+          title: 'Contribute spare GPU capacity',
+          category: 'COMPUTE',
+          executable: false as const,
+          rationale: 'Productive contribution may support network goals without promising returns.',
+        }),
+      ]),
+    });
+  const personalEconomy = new PersonalEconomyBffSurface({
+    peg: personalEconomyPeg,
+    orchestrator: personalEconomyOrchestrator,
+    clock: runtime.clock,
+    resolveActor(principal) {
+      const actor = runtime.identity.service.resolveActorContext(principal.actorId);
+      return actor.ok ? actor.value : principal;
+    },
+    snapshotPortsFor(principal) {
+      if (principal.customerId !== personalEconomyPersona.principal.customerId) {
+        return Object.freeze({});
+      }
+      return personalEconomySnapshotPorts();
+    },
+    constraintsFor(principal) {
+      if (principal.customerId !== personalEconomyPersona.principal.customerId) {
+        return Object.freeze({ minimumEmergencyCash: { minorUnits: '0', currency: 'USD' } });
+      }
+      return Object.freeze({
+        minimumEmergencyCash: { minorUnits: '1500000', currency: 'USD' },
+        maximumInvestmentRisk: 'MODERATE' as const,
+        desiredTravelAccessUnits: 2,
+        timeHorizonMonths: 12,
+      });
+    },
+  } satisfies PersonalEconomyBffDeps);
 
   return Object.freeze({
     label: SANDBOX_LABEL,
@@ -604,6 +749,8 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     exchange: createExchangeBffSurface(),
     dataRights,
     access,
+    personalEconomy,
+    hinAccess,
   });
 }
 

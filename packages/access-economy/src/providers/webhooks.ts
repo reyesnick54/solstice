@@ -18,7 +18,8 @@ export type RawProviderWebhook = {
   readonly signature: string | null;
   readonly idempotencyKey: string;
   readonly receivedAt: string;
-  readonly simulationOnly: true;
+  readonly simulationOnly: boolean;
+  readonly sandboxOnly?: true;
 };
 
 const PROVIDER_KIND_MAP: Readonly<Record<string, CanonicalFulfillmentEventKind>> = Object.freeze({
@@ -73,7 +74,8 @@ export class ProviderWebhookNormalizer {
       canonicalKind,
       idempotencyKey: raw.idempotencyKey,
       signatureVerified,
-      simulationOnly: true,
+      simulationOnly: raw.simulationOnly,
+      ...(raw.sandboxOnly ? { sandboxOnly: true as const } : {}),
       evidenceRef,
     });
   }

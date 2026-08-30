@@ -1,10 +1,7 @@
 import { PersonalEconomyAgent } from '../../../agent/src/service.ts';
 import type { AccessIntentFailure } from '../../../agent/src/access-fabric/index.ts';
-import {
-  refuseAgentConfirmReservation,
-  refuseSelfIssuedExecutionAuthority,
-  toProposeAccessActionIntent,
-} from './gate.ts';
+import { agentAccessIntentToDomainInput } from './domain-intent-bridge.ts';
+import { refuseAgentConfirmReservation, refuseSelfIssuedExecutionAuthority, toProposeAccessActionIntent } from './gate.ts';
 import type { ActionIntent } from '../../../permissions/src/action-intent.ts';
 import type { AgentRuntimePorts } from '../../../agent/src/ports.ts';
 import type { AuthorizedGraphSlice } from '../../../agent/src/access-fabric/index.ts';
@@ -17,6 +14,7 @@ export type AccessDemandEngineResult =
       readonly proposalId: string;
       readonly explanation: string;
       readonly actionIntent: ActionIntent;
+      readonly domainIntentId: string;
     }
   | { readonly ok: false; readonly error: AccessIntentFailure };
 
@@ -55,12 +53,14 @@ export class AccessDemandEngine {
     if (!action.ok) {
       return { ok: false, error: { code: action.code, message: action.detail } };
     }
+    const domainInput = agentAccessIntentToDomainInput({ intent: composed.value.intent });
     return {
       ok: true,
       intent: composed.value.intent,
       proposalId: composed.value.proposal.proposalId,
       explanation: composed.value.intent.explanation,
       actionIntent: action.actionIntent,
+      domainIntentId: domainInput.id,
     };
   }
 

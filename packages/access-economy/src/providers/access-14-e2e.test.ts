@@ -18,7 +18,7 @@ describe('ACCESS-14 provider capability registry', () => {
     const gateway = createAccessProviderGateway();
     const providers = gateway.listProviders();
     assert.equal(providers.length, 5);
-    assert.equal(providers.find((row) => row.providerId === 'expedia')?.integrationState, 'SIMULATED');
+    assert.equal(providers.find((row) => row.providerId === 'expedia')?.integrationState, 'SANDBOX_AVAILABLE');
     assert.equal(providers.find((row) => row.providerId === 'turo')?.integrationState, 'PARTNER_APPROVAL_REQUIRED');
   });
 
@@ -30,9 +30,10 @@ describe('ACCESS-14 provider capability registry', () => {
 });
 
 describe('ACCESS-14 provider contracts', () => {
-  it('documents Expedia simulation mode', () => {
+  it('documents Expedia sandbox mode', () => {
     assert.equal(EXPEDIA_PROVIDER_CONTRACT.liveConnectivity, false);
-    assert.equal(EXPEDIA_PROVIDER_CONTRACT.integrationMode, 'SIMULATED');
+    assert.equal(EXPEDIA_PROVIDER_CONTRACT.integrationMode, 'SANDBOX_AVAILABLE');
+    assert.equal(EXPEDIA_PROVIDER_CONTRACT.sandboxConnectivity, true);
   });
 
   it('documents Turo partner approval requirement', () => {
@@ -277,6 +278,6 @@ describe('ACCESS-14 provider webhook normalization', () => {
 
 describe('ACCESS-14 permanent invariants', () => {
   it('declares all ACCESS-14 invariant ids', () => {
-    assert.equal(ACCESS_PROVIDER_INVARIANT_IDS.length, 17);
+    assert.equal(ACCESS_PROVIDER_INVARIANT_IDS.length, 23);
   });
 });
