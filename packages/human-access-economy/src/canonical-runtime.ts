@@ -1,20 +1,23 @@
 /**
  * Canonical Access engine orchestration for the Consumer BFF adapter.
  *
- * Wires ACCESS-01 domain registration with ACCESS-06 scarcity intelligence.
- * Reservation, exchange clearing, and chain commitment remain in their
- * canonical owners; this runtime does not execute them.
+ * ACCESS-17 wires the full redemption pipeline through canonical owners while
+ * preserving the frontend-safe simulation contract.
  */
 
+import {
+  CanonicalAccessRedemptionOrchestrator,
+  createCanonicalAccessRedemptionOrchestrator,
+} from './canonical-redemption-orchestrator.ts';
+import { createCanonicalRedemptionSimulationWorld } from './canonical-redemption-world.ts';
+import { AccessFabric } from '../../access-economy/src/service.ts';
+import { AccessFabricService } from '../../sunrey-access/src/service.ts';
 import { FrozenClock } from '../../config/src/clock.ts';
 import { asUtcInstant } from '../../domain/src/time.ts';
-import { AccessFabric } from '../../access-economy/src/service.ts';
 import {
   accessRegistryIntentIdFor,
   capacityRefFor,
 } from '../../access-economy/src/registry-ids.ts';
-import { AccessFabricService } from '../../sunrey-access/src/service.ts';
-import { asAccessResourceId } from '../../sunrey-access/src/ids.ts';
 import type { AccessCategory } from './taxonomy.ts';
 
 const SIMULATION_NOW = asUtcInstant('2026-08-23T12:00:00.000Z');
@@ -51,12 +54,18 @@ export type CanonicalAccessRuntimeSnapshot = Readonly<{
   readonly domainIntents: number;
   readonly domainRights: number;
   readonly lastScarcityState: string | null;
+  readonly orchestratorRedemptions: number;
 }>;
 
 export class CanonicalAccessRuntime {
   private readonly domain = new AccessFabric();
   private readonly scarcity = new AccessFabricService({ clock: new FrozenClock(SIMULATION_NOW) });
+  readonly orchestrator: CanonicalAccessRedemptionOrchestrator;
   private lastScarcityState: string | null = null;
+
+  constructor(orchestrator: CanonicalAccessRedemptionOrchestrator = createCanonicalAccessRedemptionOrchestrator()) {
+    this.orchestrator = orchestrator;
+  }
 
   registerConsumerIntent(input: {
     readonly customerId: string;
@@ -90,7 +99,7 @@ export class CanonicalAccessRuntime {
     });
 
     const capacity = this.scarcity.buildCapacity({
-      resourceId: asAccessResourceId(`sim-${input.category}-${input.location ?? 'global'}`),
+      resourceId: `sim-${input.category}-${input.location ?? 'global'}` as never,
       availableUnits: input.summary.toLowerCase().includes('mustang') ? 120n : 12n,
       totalUnits: input.summary.toLowerCase().includes('mustang') ? 200n : 20n,
       evidenceRefs: ['simulation-fixture'],
@@ -120,6 +129,7 @@ export class CanonicalAccessRuntime {
       domainIntents: view.intents.length,
       domainRights: view.rights.length,
       lastScarcityState: this.lastScarcityState,
+      orchestratorRedemptions: 0,
     });
   }
 }
@@ -127,3 +137,5 @@ export class CanonicalAccessRuntime {
 export function createCanonicalAccessRuntime(): CanonicalAccessRuntime {
   return new CanonicalAccessRuntime();
 }
+
+export { createCanonicalRedemptionSimulationWorld, createCanonicalAccessRedemptionOrchestrator };

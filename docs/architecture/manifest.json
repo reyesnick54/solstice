@@ -875,12 +875,14 @@
         "packages/ledger",
         "packages/consent",
         "packages/clean-room",
+        "packages/personal-data-vault",
         "packages/sunrey-coin",
         "packages/platform",
         "packages/sunrey-exchange",
         "packages/human-economic-contribution",
         "packages/economic-asset-registry",
-        "packages/sunrey-chain"
+        "packages/sunrey-chain",
+        "packages/access-economy"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -1290,7 +1292,17 @@
         "packages/domain",
         "packages/config",
         "packages/access-economy",
-        "packages/sunrey-access"
+        "packages/sunrey-access",
+        "packages/access-fabric",
+        "packages/kernel",
+        "packages/permissions",
+        "packages/evidence",
+        "packages/events",
+        "packages/identity",
+        "packages/security",
+        "packages/sunrey-exchange",
+        "packages/sunrey-chain",
+        "packages/sunrey-coin"
       ],
       "codeowners": [
         "@reyesnick54"
