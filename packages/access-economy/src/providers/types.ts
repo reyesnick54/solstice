@@ -86,11 +86,14 @@ export type ProviderCapability = {
   readonly notes: string | null;
 };
 
+export type ProviderConnectivityTag = 'SIMULATION' | 'SANDBOX' | 'LIVE';
+
 export type ProviderSettlementTerms = {
   readonly currency: string;
   readonly settlementRail: 'FIAT_PAYMENTS' | 'CUSTODY_SUNREY' | 'CUSTODY_MOONREY' | 'REWARD_CREDIT';
   readonly providerReceivesMinorUnits: bigint;
-  readonly simulationOnly: true;
+  readonly simulationOnly: boolean;
+  readonly sandboxOnly?: true;
 };
 
 export type ProviderEvidenceReference = {
@@ -128,7 +131,8 @@ export type ProviderAvailabilityResult = {
   readonly availableQuantity: bigint;
   readonly earliestStart: string | null;
   readonly reason: string;
-  readonly simulationOnly: true;
+  readonly simulationOnly: boolean;
+  readonly sandboxOnly?: true;
 };
 
 export type ProviderQuoteRequest = {
@@ -152,7 +156,9 @@ export type ProviderQuote = {
   readonly currency: string;
   readonly expiresAt: string;
   readonly settlementTerms: ProviderSettlementTerms;
-  readonly simulationOnly: true;
+  readonly simulationOnly: boolean;
+  readonly sandboxOnly?: true;
+  readonly providerRateToken?: string | null;
 };
 
 export type ProviderReservationRequest = {
@@ -169,7 +175,9 @@ export type ProviderReservation = {
   readonly quoteId: string;
   readonly state: 'HELD' | 'CONFIRMED' | 'CANCELLED' | 'EXPIRED' | 'FAILED';
   readonly expiresAt: string;
-  readonly simulationOnly: true;
+  readonly simulationOnly: boolean;
+  readonly sandboxOnly?: true;
+  readonly providerHoldToken?: string | null;
 };
 
 export type ProviderBookingRequest = {
@@ -187,7 +195,9 @@ export type ProviderBooking = {
   readonly state: 'CONFIRMED' | 'CANCELLED' | 'FAILED';
   readonly rightKind: ProviderRightKind;
   readonly accessRightRef: string | null;
-  readonly simulationOnly: true;
+  readonly simulationOnly: boolean;
+  readonly sandboxOnly?: true;
+  readonly providerItineraryId?: string | null;
 };
 
 export type ProviderCancellationRequest = {
@@ -203,7 +213,8 @@ export type ProviderCancellation = {
   readonly providerId: AccessProviderId;
   readonly bookingId: string;
   readonly state: 'CANCELLED' | 'REFUND_PENDING' | 'FAILED';
-  readonly simulationOnly: true;
+  readonly simulationOnly: boolean;
+  readonly sandboxOnly?: true;
 };
 
 export const CANONICAL_FULFILLMENT_EVENTS = [
@@ -231,7 +242,8 @@ export type ProviderFulfillmentEvent = {
   readonly kind: CanonicalFulfillmentEventKind;
   readonly occurredAt: string;
   readonly evidenceRef: ProviderEvidenceReference;
-  readonly simulationOnly: true;
+  readonly simulationOnly: boolean;
+  readonly sandboxOnly?: true;
 };
 
 export type ProviderWebhookEvent = {
@@ -243,7 +255,8 @@ export type ProviderWebhookEvent = {
   readonly canonicalKind: CanonicalFulfillmentEventKind;
   readonly idempotencyKey: string;
   readonly signatureVerified: boolean;
-  readonly simulationOnly: true;
+  readonly simulationOnly: boolean;
+  readonly sandboxOnly?: true;
   readonly evidenceRef: ProviderEvidenceReference;
 };
 
@@ -266,7 +279,8 @@ export type ProviderSearchRequest = {
 export type ProviderSearchResult = {
   readonly requestId: string;
   readonly items: readonly ProviderCatalogItem[];
-  readonly simulationOnly: true;
+  readonly simulationOnly: boolean;
+  readonly sandboxOnly?: true;
 };
 
 export type AccessProviderSuccess<T> = {

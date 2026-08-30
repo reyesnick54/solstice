@@ -8,7 +8,7 @@
 import { createSimulationAirbnbProvider } from './adapters/airbnb/simulation.ts';
 import { createSimulationAmazonProvider } from './adapters/amazon/simulation.ts';
 import { createSimulationDoorDashProvider } from './adapters/doordash/simulation.ts';
-import { createSimulationExpediaProvider } from './adapters/expedia/simulation.ts';
+import { createExpediaProvider } from './adapters/expedia/factory.ts';
 import { createSimulationTuroProvider } from './adapters/turo/simulation.ts';
 import { ProviderCapabilityRegistry, createProviderCapabilityRegistry } from './capabilities.ts';
 import type {
@@ -38,7 +38,7 @@ export class AccessProviderGateway {
   constructor(input?: { readonly providers?: Partial<Record<AccessProviderId, AccessProvider>> }) {
     this.registry = createProviderCapabilityRegistry();
     this.providers = Object.freeze({
-      expedia: input?.providers?.expedia ?? createSimulationExpediaProvider(),
+      expedia: input?.providers?.expedia ?? createExpediaProvider(),
       turo: input?.providers?.turo ?? createSimulationTuroProvider(),
       doordash: input?.providers?.doordash ?? createSimulationDoorDashProvider(),
       amazon: input?.providers?.amazon ?? createSimulationAmazonProvider(),
@@ -64,14 +64,14 @@ export class AccessProviderGateway {
     if (health.integrationState === 'LIVE_ENABLED') {
       return execute();
     }
-    if (health.integrationState === 'SIMULATED') {
+    if (health.integrationState === 'SIMULATED' || health.integrationState === 'SANDBOX_AVAILABLE') {
       const registration = this.registry.get(providerId);
       const row = registration?.capabilities.find((candidate) => candidate.capabilityId === capabilityId);
       if (!row?.supported) {
         return Object.freeze({
           ok: false,
           code: 'CAPABILITY_UNAVAILABLE',
-          message: `${providerId} does not support ${capabilityId} in simulation`,
+          message: `${providerId} does not support ${capabilityId}`,
         });
       }
       return execute();
@@ -102,7 +102,12 @@ export class AccessProviderGateway {
     }
     return Object.freeze({
       ok: true,
-      value: Object.freeze({ requestId: request.requestId, items: Object.freeze(merged), simulationOnly: true }),
+      value: Object.freeze({
+        requestId: request.requestId,
+        items: Object.freeze(merged),
+        simulationOnly: merged.every((item) => item.providerId !== 'expedia'),
+        ...(merged.some((item) => item.providerId === 'expedia') ? { sandboxOnly: true as const } : {}),
+      }),
     });
   }
 
