@@ -75,6 +75,7 @@ import {
   HIN_VERIFICATION_STATES,
 } from '../../../../packages/human-economic-contribution/src/hin-value/index.ts';
 import { dispatchDataRights } from './data-rights.ts';
+import { dispatchHinAccess } from './hin-access.ts';
 import type { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
 import type { PersonalDataVaultProduct } from '../../../../packages/personal-data-vault/src/product/index.ts';
 import { dispatchVault } from './vault.ts';
@@ -118,6 +119,7 @@ export type ConsumerBffRuntime = {
   readonly exchange?: ExchangeLifecycleSurface | ExchangeProductSurface;
   readonly phaseH?: PhaseHProductSurface;
   readonly dataRights?: ConsentDataRightsEngine;
+  readonly hinAccess?: import('../../../../packages/human-access-economy/src/hin-access.ts').HumanInformationAccessBridge;
   readonly vault?: PersonalDataVaultProduct;
   readonly access?: HumanAccessEconomyProduct;
   readonly personalEconomy?: PersonalEconomyBffSurface;
@@ -407,6 +409,12 @@ function dispatchAuthenticated(
     );
     if (dataRights) {
       return dataRights;
+    }
+  }
+  if (runtime.hinAccess) {
+    const hinAccess = dispatchHinAccess(runtime.hinAccess, request, principal, requestId, headers);
+    if (hinAccess) {
+      return hinAccess;
     }
   }
   if (runtime.vault && runtime.identity) {
@@ -1750,6 +1758,13 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/data/who',
   'POST /api/v1/data/rights/requests',
   'GET /api/v1/data/rights/requests',
+  'GET /api/v1/data/opportunities',
+  'GET /api/v1/data/opportunities/{id}',
+  'POST /api/v1/data/opportunities/{id}/opt-in',
+  'POST /api/v1/data/opportunities/{id}/decline',
+  'GET /api/v1/data/participation/history',
+  'GET /api/v1/data/compensation/history',
+  'GET /api/v1/data/consent/status',
   'GET /api/v1/hin/participation',
   'POST /api/v1/hin/participation/enroll',
   'POST /api/v1/hin/participation/pause',

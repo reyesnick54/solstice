@@ -72,7 +72,7 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
     case 'ACCESS':
       return row(group, '/api/v1/access', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/human-access-economy', 'EXTERNAL_PROVIDER_REQUIRED for live access providers', 'Human Access Economy overview, entitlements, reservations, and simulation-only quotes. Live connectivity remains disabled.');
     case 'DATA':
-      return row(group, '/api/v1/data', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/personal-data-vault + packages/consent + packages/information-market + packages/human-economic-contribution', 'EXTERNAL_PROVIDER_REQUIRED for live data monetization', 'Vault, consent, HIN, contributions, licenses, earnings, and data-rights. Live marketplace remains disabled.');
+      return row(group, '/api/v1/data', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/consent + packages/personal-data-vault + packages/access-economy/hin-access + packages/information-market', 'EXTERNAL_PROVIDER_REQUIRED for live data monetization', 'Data opportunities, participation history, compensation history, consent status, vault, and rights. No raw PDV through access APIs.');
       return row(group, '/api/v1/data', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/consent + packages/personal-data-vault', 'none', 'Granular consent, purpose catalog, rights requests, HIN participation. No implicit monetization opt-in.');
       return row(group, '/api/v1/data', ['GET', 'PATCH', 'POST'], 'AVAILABLE_SIMULATION', 'packages/personal-data-vault', 'none', 'Subject-bound vault home, categories, records, history, correction, and export. No raw storage paths.');
     case 'SECURITY':

@@ -83,6 +83,8 @@ import {
   PersonalEconomyBffSurface,
   type PersonalEconomyBffDeps,
 } from './personal-economy.ts';
+import { createSandboxHinAccessBridge } from '../../../../packages/information-market/src/network/access-integration/index.ts';
+import type { HumanInformationAccessBridge } from '../../../../packages/human-access-economy/src/hin-access.ts';
 
 import { ConsentService } from '../../../../packages/consent/src/service.ts';
 import { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
@@ -158,6 +160,7 @@ export type SandboxWorld = {
   readonly vault: PersonalDataVaultProduct;
   readonly access: HumanAccessEconomyProduct;
   readonly personalEconomy: PersonalEconomyBffSurface;
+  readonly hinAccess: HumanInformationAccessBridge;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -605,6 +608,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   const vault = attachSandboxVault(runtime, personas);
   const dataRights = attachSandboxDataRights(runtime, vault);
   const access = createSandboxAccessEconomy(personas.basic_verified.customerId);
+  const hinAccess = createSandboxHinAccessBridge(runtime.clock, personas.basic_verified.identityId);
 
   const personalEconomyPeg = new EconomicGraphService({ clock: new FrozenClock(NOW), events: runtime.events });
   personalEconomyPeg.registerAccountCurrency('acct_sandbox_pe_cash', 'USD');
@@ -746,6 +750,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     dataRights,
     access,
     personalEconomy,
+    hinAccess,
   });
 }
 
