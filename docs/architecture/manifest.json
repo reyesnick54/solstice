@@ -5294,7 +5294,7 @@
       "id": "sunrey-productive-access-bridge",
       "name": "MoonRey Productive Capacity to Access Bridge",
       "canonicalOwner": "packages/access-economy",
-      "canonicalPath": "packages/access-economy/src/productive-access-bridge/types.ts",
+      "canonicalPath": "packages/access-economy/src/productive-access-bridge/bridge.ts",
       "publicInterface": "packages/access-economy/src/productive-access-bridge/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
