@@ -8,8 +8,8 @@
 import {
   CanonicalAccessRedemptionOrchestrator,
   createCanonicalAccessRedemptionOrchestrator,
-  createCanonicalRedemptionSimulationWorld,
-} from '../../access-economy/src/providers/index.ts';
+} from './canonical-redemption-orchestrator.ts';
+import { createCanonicalRedemptionSimulationWorld } from './canonical-redemption-world.ts';
 import { AccessFabric } from '../../access-economy/src/service.ts';
 import { AccessFabricService } from '../../sunrey-access/src/service.ts';
 import { FrozenClock } from '../../config/src/clock.ts';

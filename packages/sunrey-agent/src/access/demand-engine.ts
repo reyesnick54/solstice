@@ -1,11 +1,11 @@
 import { PersonalEconomyAgent } from '../../../agent/src/service.ts';
 import type { AccessIntentFailure } from '../../../agent/src/access-fabric/index.ts';
-import { AccessFabric, agentAccessIntentToDomainInput } from '../../../access-economy/src/index.ts';
-import type { AccessIntent } from '../../../agent/src/access-fabric/types.ts';
+import { agentAccessIntentToDomainInput } from './domain-intent-bridge.ts';
 import { refuseAgentConfirmReservation, refuseSelfIssuedExecutionAuthority, toProposeAccessActionIntent } from './gate.ts';
 import type { ActionIntent } from '../../../permissions/src/action-intent.ts';
 import type { AgentRuntimePorts } from '../../../agent/src/ports.ts';
 import type { AuthorizedGraphSlice } from '../../../agent/src/access-fabric/index.ts';
+import type { AccessIntent } from '../../../agent/src/access-fabric/types.ts';
 
 export type AccessDemandEngineResult =
   | {
@@ -34,7 +34,6 @@ export class AccessDemandEngine {
     readonly requestedGraphCategories?: readonly string[];
     readonly requestedGraphLabels?: Readonly<Record<string, readonly string[]>>;
     readonly actorId: string;
-    readonly domain?: AccessFabric;
   }): AccessDemandEngineResult {
     const composed = this.agent.proposeAccessIntent(input.actor, input.ports, {
       subjectId: input.subjectId,
@@ -54,19 +53,14 @@ export class AccessDemandEngine {
     if (!action.ok) {
       return { ok: false, error: { code: action.code, message: action.detail } };
     }
-    const domain = input.domain ?? new AccessFabric();
     const domainInput = agentAccessIntentToDomainInput({ intent: composed.value.intent });
-    const registered = domain.proposeIntent(domainInput);
-    if (!registered.ok) {
-      return { ok: false, error: { code: 'MALFORMED_INTENT', message: registered.error.message } };
-    }
     return {
       ok: true,
       intent: composed.value.intent,
       proposalId: composed.value.proposal.proposalId,
       explanation: composed.value.intent.explanation,
       actionIntent: action.actionIntent,
-      domainIntentId: registered.value.id,
+      domainIntentId: domainInput.id,
     };
   }
 

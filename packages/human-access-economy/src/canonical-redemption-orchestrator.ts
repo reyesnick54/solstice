@@ -5,36 +5,37 @@
  * creating a parallel domain, ledger, Kernel, Exchange, or chain.
  */
 
-import { authorizeCapacityIntent } from '../../../../access-fabric/src/authorize.ts';
-import { asJurisdiction } from '../../../../domain/src/jurisdiction.ts';
-import { isOk } from '../../../../domain/src/result.ts';
-import { asIntentId } from '../../../../permissions/src/action-intent.ts';
-import { ACTION_TYPES } from '../../../../permissions/src/action-types.ts';
-import { asExchangeAccountId } from '../../../../sunrey-exchange/src/ids.ts';
-import { fiatConsiderationFor } from '../../../../sunrey-exchange/src/access-fabric/offers.ts';
-import { CAPACITY_ACCESS_MARKET_ID } from '../../../../sunrey-exchange/src/access-fabric/sandbox.ts';
+import { authorizeCapacityIntent } from '../../access-fabric/src/authorize.ts';
+import { asJurisdiction } from '../../domain/src/jurisdiction.ts';
+import { asIntentId } from '../../permissions/src/action-intent.ts';
+import { ACTION_TYPES } from '../../permissions/src/action-types.ts';
+import { asExchangeAccountId } from '../../sunrey-exchange/src/ids.ts';
+import { fiatConsiderationFor } from '../../sunrey-exchange/src/access-fabric/offers.ts';
+import { CAPACITY_ACCESS_MARKET_ID } from '../../sunrey-exchange/src/access-fabric/sandbox.ts';
 import {
   accessRightRequest,
   reservationRequest,
-} from '../../../../sunrey-chain/src/access/fixtures.ts';
+} from '../../sunrey-chain/src/access/fixtures.ts';
 import {
   SIMULATION_DIGITAL_CUSTODY_GB,
   SIMULATION_SOLSTICE_UK,
-} from '../../../../sunrey-coin/src/simulation-catalog.ts';
+} from '../../sunrey-coin/src/simulation-catalog.ts';
 import {
   accessRegistryIntentIdFor,
   capacityRefFor,
-} from '../../registry-ids.ts';
-import type { AccessProviderGateway } from '../gateway.ts';
-import { RedemptionFundingRouter, type FundingIntentPort } from '../funding-router.ts';
-import { EntitlementHoldStore } from './entitlement-store.ts';
-import { evaluateRedemption } from './engine.ts';
+} from '../../access-economy/src/registry-ids.ts';
+import type { AccessProviderGateway } from '../../access-economy/src/providers/gateway.ts';
 import {
-  CANONICAL_CHAIN_ACTORS,
+  RedemptionFundingRouter,
+  type FundingIntentPort,
+} from '../../access-economy/src/providers/funding-router.ts';
+import { EntitlementHoldStore } from '../../access-economy/src/providers/redemption/entitlement-store.ts';
+import { evaluateRedemption } from '../../access-economy/src/providers/redemption/engine.ts';
+import {
   CANONICAL_REDEMPTION_NOW,
   createCanonicalRedemptionSimulationWorld,
   type CanonicalRedemptionSimulationWorld,
-} from './simulation-world.ts';
+} from './canonical-redemption-world.ts';
 import type {
   BundleFailurePolicy,
   ExperienceBundleComponent,
@@ -42,8 +43,8 @@ import type {
   RedemptionRecord,
   RedemptionRequest,
   RedemptionStatus,
-} from './types.ts';
-import type { ProviderQuote } from '../types.ts';
+} from '../../access-economy/src/providers/redemption/types.ts';
+import type { ProviderQuote } from '../../access-economy/src/providers/types.ts';
 
 export const CANONICAL_REDEMPTION_PIPELINE = [
   'QUOTE',

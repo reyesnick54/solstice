@@ -1289,7 +1289,17 @@
         "packages/domain",
         "packages/config",
         "packages/access-economy",
-        "packages/sunrey-access"
+        "packages/sunrey-access",
+        "packages/access-fabric",
+        "packages/kernel",
+        "packages/permissions",
+        "packages/evidence",
+        "packages/events",
+        "packages/identity",
+        "packages/security",
+        "packages/sunrey-exchange",
+        "packages/sunrey-chain",
+        "packages/sunrey-coin"
       ],
       "codeowners": [
         "@reyesnick54"

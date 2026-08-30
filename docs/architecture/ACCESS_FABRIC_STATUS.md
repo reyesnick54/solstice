@@ -28,7 +28,7 @@ A passing qualification run does **not** move any production state. `ENVIRONMENT
 | ACCESS-10/11 experience composer + completion | `packages/sunrey-access-fabric` + `packages/sunrey-chain/src/access-fabric` |
 | ACCESS-13 qualification laboratory | `packages/sunrey-economics/src/access-economy` |
 | ACCESS-14 provider network + redemption engine | `packages/access-economy/src/providers/` |
-| ACCESS-17 canonical redemption orchestrator | `packages/access-economy/src/providers/redemption/orchestrator.ts` |
+| ACCESS-17 canonical redemption orchestrator | `packages/human-access-economy/src/canonical-redemption-orchestrator.ts` |
 | Consumer BFF projection | `packages/human-access-economy` → `services/api/src/consumer/access.ts` |
 
 ## Data flow (simulation)

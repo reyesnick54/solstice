@@ -9,7 +9,7 @@ preserving simulation mode and stable Consumer BFF routes.
 
 ## Canonical orchestrator
 
-**Owner:** `packages/access-economy/src/providers/redemption/orchestrator.ts`
+**Owner:** `packages/human-access-economy/src/canonical-redemption-orchestrator.ts`
 
 `CanonicalAccessRedemptionOrchestrator` is the single application orchestrator. It
 coordinates existing modules and does not create a parallel domain owner.
@@ -27,7 +27,7 @@ coordinates existing modules and does not create a parallel domain owner.
 | Chain commitment | `packages/sunrey-chain/src/access` | Access-right and reservation commitments |
 | Evidence Vault | `packages/evidence` | Seals every consequential step |
 
-Simulation world bootstrap: `packages/access-economy/src/providers/redemption/simulation-world.ts`
+Simulation world bootstrap: `packages/human-access-economy/src/canonical-redemption-world.ts`
 
 ## Order of operations
 
@@ -80,7 +80,7 @@ payment, or entitlement consumption.
 
 ## Agent intent mapping
 
-**Bridge:** `packages/access-economy/src/agent-intent-bridge.ts`
+**Bridge:** `packages/sunrey-agent/src/access/domain-intent-bridge.ts`
 
 **ProposalGate:** `packages/sunrey-agent/src/access/gate.ts` + `demand-engine.ts`
 

@@ -3,15 +3,17 @@
  */
 
 import {
-  CanonicalAccessRedemptionOrchestrator,
-  ProviderEconomicMetrics,
   createAccessProviderGateway,
-  createCanonicalAccessRedemptionOrchestrator,
-  createCanonicalRedemptionSimulationWorld,
+  ProviderEconomicMetrics,
 } from '../../access-economy/src/providers/index.ts';
 import type { AccessProviderId } from '../../access-economy/src/providers/types.ts';
 import type { RedemptionRecord, RedemptionRequest } from '../../access-economy/src/providers/redemption/types.ts';
-import type { CanonicalRedemptionTrace } from '../../access-economy/src/providers/redemption/orchestrator.ts';
+import {
+  CanonicalAccessRedemptionOrchestrator,
+  createCanonicalAccessRedemptionOrchestrator,
+  type CanonicalRedemptionTrace,
+} from './canonical-redemption-orchestrator.ts';
+import { createCanonicalRedemptionSimulationWorld } from './canonical-redemption-world.ts';
 
 export type ProviderNetworkSearchInput = {
   readonly query: string;

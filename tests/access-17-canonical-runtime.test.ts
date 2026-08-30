@@ -16,7 +16,7 @@ import { AccessDemandEngine } from '../packages/sunrey-agent/src/access/demand-e
 import {
   CANONICAL_REDEMPTION_PIPELINE,
   createCanonicalAccessRedemptionOrchestrator,
-} from '../packages/access-economy/src/providers/redemption/orchestrator.ts';
+} from '../packages/human-access-economy/src/canonical-redemption-orchestrator.ts';
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
 import { handleConsumerBff, type ConsumerBffRuntime } from '../services/api/src/consumer/handler.ts';
 

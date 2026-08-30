@@ -4,15 +4,15 @@
  * Wires canonical owners behind one orchestration surface. Simulation only.
  */
 
-import { FrozenClock } from '../../../../config/src/clock.ts';
-import { asJurisdiction } from '../../../../domain/src/jurisdiction.ts';
-import { asUtcInstant } from '../../../../domain/src/time.ts';
-import { EvidenceVault } from '../../../../evidence/src/vault.ts';
-import { DomainEventLog } from '../../../../events/src/events.ts';
-import { SimulatedIdentityAdapter } from '../../../../identity/src/simulation.ts';
-import { ComplianceKernel } from '../../../../kernel/src/kernel.ts';
-import { AuthorityIssuer } from '../../../../permissions/src/execution-authority.ts';
-import { createSimulationKeyProvider } from '../../../../security/src/simulation.ts';
+import { FrozenClock } from '../../config/src/clock.ts';
+import { asJurisdiction } from '../../domain/src/jurisdiction.ts';
+import { asUtcInstant } from '../../domain/src/time.ts';
+import { EvidenceVault } from '../../evidence/src/vault.ts';
+import { DomainEventLog } from '../../events/src/events.ts';
+import { SimulatedIdentityAdapter } from '../../identity/src/simulation.ts';
+import { ComplianceKernel } from '../../kernel/src/kernel.ts';
+import { AuthorityIssuer } from '../../permissions/src/execution-authority.ts';
+import { createSimulationKeyProvider } from '../../security/src/simulation.ts';
 import {
   CapacityReservationEngine,
   DEFAULT_CONFIRMATION_TTL_MS,
@@ -20,19 +20,22 @@ import {
   InMemoryCapacitySource,
   InMemorySettlementIntentPort,
   PermissiveSimulationPolicy,
-} from '../../../../access-fabric/src/index.ts';
-import { AccessFabric } from '../../service.ts';
-import { AccessFabricService } from '../../../../sunrey-access/src/service.ts';
-import { createCapacityAccessSandbox } from '../../../../sunrey-exchange/src/access-fabric/sandbox.ts';
+} from '../../access-fabric/src/index.ts';
+import { AccessFabric } from '../../access-economy/src/service.ts';
+import { AccessFabricService } from '../../sunrey-access/src/service.ts';
+import { createCapacityAccessSandbox } from '../../sunrey-exchange/src/access-fabric/sandbox.ts';
 import {
   ACCESS_FIXTURE_BLOCK_HEIGHT,
   ACCESS_FIXTURE_BLOCK_TIME,
   FIXTURE_OPERATOR_ACTOR,
   FIXTURE_TRAVELLER_ACTOR,
   provisionAccessChainFixture,
-} from '../../../../sunrey-chain/src/access/fixtures.ts';
-import { AccessProviderGateway, createAccessProviderGateway } from '../gateway.ts';
-import { InMemoryFundingIntentPort } from '../funding-router.ts';
+} from '../../sunrey-chain/src/access/fixtures.ts';
+import {
+  AccessProviderGateway,
+  createAccessProviderGateway,
+} from '../../access-economy/src/providers/gateway.ts';
+import { InMemoryFundingIntentPort } from '../../access-economy/src/providers/funding-router.ts';
 
 export const CANONICAL_REDEMPTION_NOW = asUtcInstant('2026-08-23T12:00:00.000Z');
 
