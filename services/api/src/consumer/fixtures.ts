@@ -79,6 +79,8 @@ import { createSandboxRightsMarketplace } from '../../../../packages/information
 import type { InformationRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
 import { createHinContributionSurface, type HinContributionSurface } from './hin-adapter.ts';
 import { createProductiveEconomySurface, type ProductiveEconomySurface } from './productive-economy-adapter.ts';
+import { createExternalDataPlane } from '../../../../packages/external-data/src/index.ts';
+import { createWorldExternalDataBff, type WorldExternalDataBff } from './world-external-data-adapter.ts';
 import { createSandboxAccessEconomy, type HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
 import {
   PersonalEconomyBffSurface,
@@ -162,6 +164,7 @@ export type SandboxWorld = {
   readonly access: HumanAccessEconomyProduct;
   readonly personalEconomy: PersonalEconomyBffSurface;
   readonly hinAccess: HumanInformationAccessBridge;
+  readonly worldExternalData: WorldExternalDataBff;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -729,6 +732,8 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     },
   } satisfies PersonalEconomyBffDeps);
 
+  const worldExternalData = createWorldExternalDataBff(createExternalDataPlane({ nowUtc: NOW }));
+
   return Object.freeze({
     label: SANDBOX_LABEL,
     production: false,
@@ -753,6 +758,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     access,
     personalEconomy,
     hinAccess,
+    worldExternalData,
   });
 }
 

@@ -1,4 +1,5 @@
 /**
+ * Wave 1 Prompt 4 — provider reliability control plane types.
  * Wave 1 Prompt 4 — reliability-layer transport types.
  *
  * Distinct from HTTP transport types in http-transport-types.ts.
@@ -35,6 +36,7 @@ export type ReliabilityTransportResponse = {
   readonly body: unknown;
 };
 
+export type ReliabilityProviderTransport = {
 /** Injectable transport wrapped by the reliability control plane. */
 export type ReliabilityTransport = {
   readonly providerId: string;
@@ -105,3 +107,12 @@ export const defaultClock = (): ReliabilityClock => ({
 export function isSafeReadMethod(method: HttpMethod): boolean {
   return method === 'GET' || method === 'HEAD';
 }
+
+/** @deprecated Use ReliabilityTransportRequest */
+export type ProviderTransportRequest = ReliabilityTransportRequest;
+/** @deprecated Use ReliabilityTransportResponse */
+export type ProviderTransportResponse = ReliabilityTransportResponse;
+/** @deprecated Use ReliabilityProviderTransport */
+export type ProviderTransport = ReliabilityProviderTransport;
+/** @deprecated Use ReliabilityClock */
+export type Clock = ReliabilityClock;

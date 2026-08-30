@@ -39,6 +39,7 @@ import {
   type ProviderError,
   type ReliabilityClock,
   type ReliabilityOutcome,
+  type ReliabilityProviderTransport,
   type ReliabilityTransport,
   type ReliabilityTransportRequest,
   type ReliabilityTransportResponse,
@@ -98,6 +99,7 @@ export class ProviderReliabilityControlPlane {
   }
 
   async execute<T = ReliabilityTransportResponse>(
+    transport: ReliabilityProviderTransport,
     transport: ReliabilityTransport,
     request: ReliabilityTransportRequest,
     input: {

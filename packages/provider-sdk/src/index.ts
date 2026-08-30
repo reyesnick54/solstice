@@ -138,6 +138,7 @@ export {
   type HttpMethod,
   type CircuitState,
   type FailureClassification,
+  type ReliabilityProviderTransport,
   type ReliabilityTransport,
   type ReliabilityTransportRequest,
   type ReliabilityTransportResponse,
@@ -148,6 +149,7 @@ export {
   type FallbackDecision,
   type FallbackHook,
   type ReliabilityClock,
+} from './types.ts';
 } from './reliability-types.ts';
 
 export {
@@ -233,6 +235,15 @@ export {
   PROVIDER_CONTENT_TYPES,
   type ProviderHttpMethod,
   type ProviderContentType,
+  type ProviderHttpRequestContext,
+  type ProviderHttpResponseMetadata,
+  type ProviderParsedBody,
+  type ProviderHttpTransportResponse,
+  type ProviderHttpTransportResult,
+  type ProviderHttpTransportSuccess,
+  type ProviderHttpTransportFailure,
+  type ProviderHttpTransport,
+} from './types.ts';
   type HttpProviderRequestContext,
   type HttpProviderResponseMetadata,
   type ProviderParsedBody,
@@ -313,6 +324,39 @@ export {
   type FetchLike,
   type TransportClock,
 } from './transport.ts';
+
+export {
+  PROVIDER_ID_PATTERN,
+  PROVIDER_CAPABILITIES,
+  PROVIDER_STATUSES,
+  PROVIDER_AUTHORITY_CLASSES,
+  PROVIDER_LAUNCH_TIERS,
+  PROVIDER_PRIORITIES,
+  PROVIDER_ACTIVATION_MODES,
+  SUNREY_CONSUMER_DOMAINS,
+  PROVIDER_HEALTH_STATES,
+  isProviderId,
+  isProviderCategory,
+  isKnownProviderCapability,
+  isSunReyConsumerDomain,
+  type ProviderId,
+  type ProviderCapability,
+  type ProviderStatus,
+  type ProviderAuthorityClass,
+  type ProviderLaunchTier,
+  type ProviderPriority,
+  type ProviderActivationMode,
+  type SunReyConsumerDomain,
+  type ProviderHealthState,
+  type SecretReferenceName,
+  type ProviderConfiguration,
+  type ProviderDescriptor,
+  type ProviderRuntimeContext,
+  type ProviderRequestContext,
+  type ProviderResponseMetadata,
+  type ProviderHealthStatus,
+  type ProviderRegistration,
+} from './registry-types.ts';
 
 export * from './types.ts';
 export * from './contract.ts';

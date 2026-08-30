@@ -3,6 +3,7 @@
  */
 
 import type {
+  ReliabilityProviderTransport,
   ReliabilityTransport,
   ReliabilityTransportRequest,
   ReliabilityTransportResponse,
@@ -14,6 +15,7 @@ export type SimulatedResponse =
   | { readonly error: 'timeout' | 'network' }
   | (() => ReliabilityTransportResponse | Promise<ReliabilityTransportResponse>);
 
+export class SimulatedProviderTransport implements ReliabilityProviderTransport {
 export class SimulatedProviderTransport implements ReliabilityTransport {
   readonly providerId: string;
   readonly calls: ReliabilityTransportRequest[] = [];

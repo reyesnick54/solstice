@@ -33,6 +33,9 @@ export function hashRawJsonPayload(value: unknown): RawPayloadHash {
 }
 
 function sortKeys(value: unknown): unknown {
+  if (typeof value === 'bigint') {
+    return value.toString();
+  }
   if (value === null || typeof value !== 'object') {
     return value;
   }

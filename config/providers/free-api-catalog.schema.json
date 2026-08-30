@@ -340,6 +340,7 @@
                 "simulated",
                 "sandbox",
                 "production_candidate",
+                "implemented",
                 null
               ]
             },
