@@ -79,6 +79,8 @@ import type { InformationRightsMarketplace } from '../../../../packages/informat
 import { createHinContributionSurface, type HinContributionSurface } from './hin-adapter.ts';
 import { createProductiveEconomySurface, type ProductiveEconomySurface } from './productive-economy-adapter.ts';
 import { createSandboxAccessEconomy, type HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
+import { createSandboxHinAccessBridge } from '../../../../packages/information-market/src/network/access-integration/index.ts';
+import type { HumanInformationAccessBridge } from '../../../../packages/human-access-economy/src/hin-access.ts';
 
 import { ConsentService } from '../../../../packages/consent/src/service.ts';
 import { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
@@ -153,6 +155,7 @@ export type SandboxWorld = {
   readonly dataRights: ConsentDataRightsEngine;
   readonly vault: PersonalDataVaultProduct;
   readonly access: HumanAccessEconomyProduct;
+  readonly hinAccess: HumanInformationAccessBridge;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -581,6 +584,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   const vault = attachSandboxVault(runtime, personas);
   const dataRights = attachSandboxDataRights(runtime, vault);
   const access = createSandboxAccessEconomy(personas.basic_verified.customerId);
+  const hinAccess = createSandboxHinAccessBridge(runtime.clock, personas.basic_verified.identityId);
 
   return Object.freeze({
     label: SANDBOX_LABEL,
@@ -604,6 +608,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     exchange: createExchangeBffSurface(),
     dataRights,
     access,
+    hinAccess,
   });
 }
 

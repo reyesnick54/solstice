@@ -63,6 +63,7 @@
     "demo:mesh": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/agentic-capital-mesh/src/demo.ts",
     "demo:consent": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/consent/src/demo.ts",
     "demo:access-fabric": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/access-fabric/src/demo.ts",
+    "demo:access-18-human-information-to-access": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/information-market/src/network/access-integration/demo.ts",
     "demo:clean-room": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/clean-room/src/demo.ts",
     "demo:sunrey-coin": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-coin/src/demo.ts",
     "demo:information-market": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/information-market/src/demo.ts",
