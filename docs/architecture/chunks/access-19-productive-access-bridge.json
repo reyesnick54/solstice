@@ -1,0 +1,17 @@
+{
+  "chunk": "ACCESS-19",
+  "title": "MoonRey Productive Capacity to Access Bridge",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "domain",
+    "evidence",
+    "sunrey-access-economy-domain",
+    "sunrey-productive-capacity",
+    "moonrey-issuance-engine",
+    "sunrey-access-economy-simulation",
+    "sunrey-access-entitlement-engine",
+    "sunrey-exchange-capacity-access"
+  ],
+  "notes": "IMPLEMENTED at packages/access-economy/src/productive-access-bridge with productive-engine integration at packages/sunrey-economics/src/productive-access-bridge. Introduces AccessCapacityCommitment as a commitment of verified productive capacity to Access pools. Productive contribution evidence, MoonRey issuance, provider settlement, capacity commitment, and Access delivery remain distinct. Double-count protections enforce NO_PRODUCTIVE_CAPACITY_DOUBLE_COUNT, NO_ACCESS_USAGE_MINTS_MOONREY, NO_PROVIDER_SETTLEMENT_EQUALS_MOONREY_ISSUANCE, CAPACITY_COMMITMENT_LE_VERIFIED_AVAILABLE_CAPACITY, NO_OUTPUT_DELIVERY_DOUBLE_ISSUANCE, NO_PHANTOM_PRODUCTIVE_CAPACITY, NO_ORACLE_FACT_ALONE_MINTS, and ONLY_CANONICAL_MR_BALANCE_AFFECTS_MR_TWAB. Does not mint MoonRey from Access usage, define 1 productive unit = 1 MR, or create a second MoonRey engine. Simulation only."
+}
