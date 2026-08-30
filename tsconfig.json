@@ -19,6 +19,7 @@
     "packages/**/*.ts",
     "services/**/*.ts",
     "tools/**/*.ts",
-    "tests/**/*.ts"
+    "tests/**/*.ts",
+    "scripts/lib/**/*.d.ts"
   ]
 }
