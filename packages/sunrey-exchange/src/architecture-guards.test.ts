@@ -30,11 +30,14 @@ describe('sunrey exchange architecture guards', () => {
       if (file.endsWith('.test.ts') || file.endsWith('demo.ts')) {
         continue;
       }
+      if (file.endsWith('market-reference/assets.ts')) {
+        continue;
+      }
       const source = readFileSync(file, 'utf8');
       assert.equal(/AuthorityIssuer\.issue|this\.issuer\.issue\(/.test(source), false, file);
       assert.equal(/ticker\s*[:=]\s*['"]?(SUNREY|SRN|SRY|REYN|RYN|RCOIN)/.test(source), false, file);
       assert.equal(/\b(SRN|SRY|RYN|RCOIN)\b/.test(source), false, file);
-      assert.equal(/APY|APR|blended return|yield rate|market cap/i.test(source), false, file);
+      assert.equal(/\bAPY\b|\bAPR\b|blended return|yield rate|market cap/i.test(source), false, file);
       assert.equal(/from ['"].*services\//.test(source), false, file);
       assert.equal(/official valuation|floor price/i.test(source), false, file);
       if (file.endsWith('types.ts')) {

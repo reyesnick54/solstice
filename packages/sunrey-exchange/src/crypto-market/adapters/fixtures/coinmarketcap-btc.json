@@ -1,0 +1,20 @@
+{
+  "data": {
+    "BTC": {
+      "id": 1,
+      "name": "Bitcoin",
+      "symbol": "BTC",
+      "quote": {
+        "USD": {
+          "price": 67234.56,
+          "volume_24h": 28456789012,
+          "market_cap": 1324567890123,
+          "percent_change_24h": 2.34,
+          "percent_change_7d": -1.12
+        }
+      },
+      "last_updated": "2026-08-21T08:59:00.000Z"
+    }
+  },
+  "status": { "error_code": 0 }
+}

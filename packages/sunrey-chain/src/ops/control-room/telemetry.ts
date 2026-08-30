@@ -1,4 +1,5 @@
 import type { MetricRegistry, StructuredLogSink, TraceCollector } from '../observability.ts';
+import { PROVIDER_RUNTIME_METRICS } from '../observability.ts';
 import { assertAllowedMetricLabels } from './catalog.ts';
 import type {
   AiSafetySnapshot,
@@ -52,6 +53,18 @@ export function ingestProviderSnapshot(metrics: MetricRegistry, snapshot: Provid
   metrics.observe('provider_circuit_open', snapshot.circuitOpen ? 1n : 0n, common);
   metrics.observe('provider_schema_drift', snapshot.schemaDrift ? 1n : 0n, common);
   metrics.observe('provider_revalidation_required', snapshot.revalidationRequired ? 1n : 0n, common);
+  for (const name of PROVIDER_RUNTIME_METRICS) {
+    if (
+      name === 'provider_sessions' ||
+      name === 'provider_auth_failures' ||
+      name === 'provider_circuit_open' ||
+      name === 'provider_schema_drift' ||
+      name === 'provider_revalidation_required'
+    ) {
+      continue;
+    }
+    metrics.observe(name, 0n, common);
+  }
 }
 
 export function ingestPaymentSnapshot(metrics: MetricRegistry, snapshot: PaymentSnapshot): void {
