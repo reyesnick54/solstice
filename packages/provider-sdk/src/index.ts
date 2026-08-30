@@ -228,6 +228,8 @@ export {
   errorResponse,
   type SimulatedResponse,
 } from './simulate.ts';
+
+/**
  * Wave 1 Prompt 3 — universal provider HTTP transport and authentication layer.
  */
 
@@ -243,7 +245,7 @@ export {
   type ProviderTransportResult,
   type ProviderTransportSuccess,
   type ProviderTransportFailure,
-  type ProviderTransport,
+  type ProviderHttpTransport,
 } from './types.ts';
 
 export {

@@ -3,10 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "SunRey canonical external data normalization, provenance, and trust framework",
-  "description": "Shared provider reliability control plane — timeouts, retries, rate limits, bulkheads, circuit breakers",
-  "description": "Universal governed outbound HTTP transport for SunRey external provider adapters",
-  "description": "SunRey universal external-data provider SDK — lifecycle, registry, catalog integration, and adapter contracts",
+  "description": "SunRey universal external-data provider SDK — lifecycle, registry, catalog integration, transport, reliability, and adapter contracts",
   "exports": {
     ".": "./src/index.ts"
   },
@@ -15,7 +12,6 @@
   ],
   "scripts": {
     "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec src/**/*.test.ts"
-    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test src/**/*.test.ts"
   },
   "engines": {
     "node": ">=22"

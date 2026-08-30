@@ -10,26 +10,8 @@ import type { UtcInstant } from '../../domain/src/time.ts';
 export const EXTERNAL_OBSERVATION_SCHEMA = 'sunrey.external-observation.v1' as const;
 export const NORMALIZATION_SCHEMA_VERSION = 1 as const;
 
-export const PROVIDER_CATEGORIES = [
-  'banking',
-  'payments',
-  'fx',
-  'cards',
-  'identity',
-  'kyc',
-  'kyb',
-  'aml',
-  'sanctions',
-  'fraud',
-  'travel_rule',
-  'custody',
-  'blockchain_analytics',
-  'market_data',
-  'oracle',
-  'economic_data',
-  'regulatory',
- * Wave 1 — shared provider SDK types.
- *
+/**
+ * Wave 1 — shared provider SDK types (reliability plane).
  * Simulation only. No live provider connectivity.
  */
 
@@ -136,6 +118,9 @@ export const defaultClock = (): Clock => ({
 
 export function isSafeReadMethod(method: HttpMethod): boolean {
   return method === 'GET' || method === 'HEAD';
+}
+
+/**
  * Wave 1 Prompt 3 — universal provider HTTP transport contract.
  *
  * Vendor-neutral outbound transport for external provider adapters.
@@ -211,10 +196,12 @@ export type ProviderTransportResult<T = unknown> = ProviderTransportSuccess<T> |
 /**
  * Shared outbound HTTP transport used by all SunRey provider adapters.
  */
-export type ProviderTransport = {
+export type ProviderHttpTransport = {
   readonly transportId: string;
   request<T = unknown>(context: ProviderRequestContext): Promise<ProviderTransportResult<T>>;
 };
+
+/**
  * Canonical SunRey external-data provider types.
  *
  * Provider IDs map to `provider_id` in config/providers/free-api-catalog.yaml.
@@ -262,6 +249,14 @@ export const PROVIDER_CATEGORIES = [
 export type ProviderCategory = (typeof PROVIDER_CATEGORIES)[number];
 
 export const AUTHORITY_CLASSES = [
+  'authoritative_official',
+  'regulated_provider',
+  'reference_data',
+  'research_data',
+  'community_data',
+  'derived_data',
+] as const;
+
 export const PROVIDER_CAPABILITIES = [
   'macroeconomic_indicators',
   'interest_rates',
@@ -302,14 +297,6 @@ export const PROVIDER_STATUSES = [
 ] as const;
 export type ProviderStatus = (typeof PROVIDER_STATUSES)[number];
 
-export const PROVIDER_AUTHORITY_CLASSES = [
-  'authoritative_official',
-  'regulated_provider',
-  'reference_data',
-  'research_data',
-  'community_data',
-  'derived_data',
-] as const;
 export type AuthorityClass = (typeof AUTHORITY_CLASSES)[number];
 
 export const FRESHNESS_STATUSES = ['fresh', 'aging', 'stale', 'expired', 'unknown'] as const;
@@ -422,7 +409,7 @@ export type ExternalObservation<T> = {
 export type ProviderResult<T> =
   | { readonly ok: true; readonly value: T }
   | { readonly ok: false; readonly code: string; readonly message: string };
-export type ProviderAuthorityClass = (typeof PROVIDER_AUTHORITY_CLASSES)[number];
+export type ProviderAuthorityClass = (typeof AUTHORITY_CLASSES)[number];
 
 export const PROVIDER_LAUNCH_TIERS = [
   'production_candidate',
@@ -508,14 +495,14 @@ export type ProviderRuntimeContext = {
   readonly catalogId: string;
 };
 
-export type ProviderRequestContext = {
+export type ProviderAdapterRequestContext = {
   readonly requestId: string;
   readonly correlationId: string;
   readonly consumerDomain: SunReyConsumerDomain;
   readonly nowUtc: string;
 };
 
-export type ProviderResponseMetadata = {
+export type ProviderAdapterResponseMetadata = {
   readonly providerId: ProviderId;
   readonly requestId: string;
   readonly correlationId: string;

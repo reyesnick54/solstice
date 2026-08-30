@@ -27,7 +27,7 @@ import type {
   ProviderHttpMethod,
   ProviderParsedBody,
   ProviderRequestContext,
-  ProviderTransport,
+  ProviderHttpTransport,
   ProviderTransportResponse,
   ProviderTransportResult,
 } from './types.ts';
@@ -54,7 +54,7 @@ export type FetchProviderTransportOptions = {
 
 const SUPPORTED_METHODS = new Set<ProviderHttpMethod>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']);
 
-export class FetchProviderTransport implements ProviderTransport {
+export class FetchProviderTransport implements ProviderHttpTransport {
   readonly transportId = 'provider-sdk.fetch-http';
   private readonly config: ProviderTransportConfig;
   private readonly authResolver: ProviderAuthResolver;
