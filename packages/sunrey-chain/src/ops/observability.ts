@@ -137,6 +137,20 @@ export const PROVIDER_RUNTIME_METRICS = [
   'provider_circuit_open',
   'provider_schema_drift',
   'provider_revalidation_required',
+  'provider_requests_total',
+  'provider_request_duration_seconds',
+  'provider_errors_total',
+  'provider_retries_total',
+  'provider_rate_limit_events_total',
+  'provider_timeout_total',
+  'provider_circuit_open_total',
+  'provider_cache_hits_total',
+  'provider_cache_misses_total',
+  'provider_cache_stale_served_total',
+  'provider_refresh_success_total',
+  'provider_refresh_failure_total',
+  'provider_data_invalid_total',
+  'provider_data_stale_total',
 ] as const;
 
 export const PAYMENT_METRICS = [

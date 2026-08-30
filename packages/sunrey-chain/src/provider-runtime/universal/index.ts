@@ -13,4 +13,5 @@ export * from './runtime.ts';
 export * from './sandbox.ts';
 export * from './harness.ts';
 export * from './ops.ts';
+export * from './observability/index.ts';
 export * from './data-delivery/index.ts';
