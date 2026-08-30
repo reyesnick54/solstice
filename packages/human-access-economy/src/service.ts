@@ -31,6 +31,7 @@ import {
   projectAccessResource,
   type AccessCapabilityView,
 } from './projections.ts';
+import { projectConsumerSolvencyPosture } from './consumer-solvency.ts';
 import { HumanAccessEconomyStore } from './store.ts';
 import {
   ACCESS_CATEGORIES,
@@ -253,6 +254,8 @@ export class HumanAccessEconomyProduct {
       readonly capacityKnown: false;
       readonly earliestKnown: string | null;
       readonly intentId: string | null;
+      readonly consumerPosture: import('./consumer-solvency.ts').ConsumerSolvencyPosture;
+      readonly consumerPostureMessage: string;
     },
     AccessFailure
   > {
@@ -272,6 +275,12 @@ export class HumanAccessEconomyProduct {
       category,
       summary: input.summary,
       location: input.location,
+    });
+    const solvencyPosture = projectConsumerSolvencyPosture({
+      poolSolvent: mustang,
+      allocatableUnits: mustang ? 10n : 0n,
+      publishedUnits: mustang ? 10n : 100n,
+      providerAvailable: mustang,
     });
     const state = mustang ? 'AVAILABLE_SIMULATION' : category === 'EXPERIENCES' ? 'CHECK_REQUIRED' : 'LIMITED';
     const reason = mustang
@@ -293,6 +302,8 @@ export class HumanAccessEconomyProduct {
         capacityKnown: false as const,
         earliestKnown: mustang ? '2026-08-29T10:00:00.000Z' : null,
         intentId: input.intentId ?? null,
+        consumerPosture: solvencyPosture.posture,
+        consumerPostureMessage: solvencyPosture.message,
       }),
     );
   }

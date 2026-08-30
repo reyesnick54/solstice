@@ -77,3 +77,4 @@ export type {
   AccessAllocationPreviewInput,
 } from './allocation.ts';
 export { AccessProviderNetworkService, createAccessProviderNetworkService } from './provider-network.ts';
+export { projectConsumerSolvencyPosture, type ConsumerSolvencyPosture } from './consumer-solvency.ts';
