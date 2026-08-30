@@ -101,7 +101,8 @@ export function createInternalProviderOpsRoutes(
       requiresIdempotency: true,
       handler: async ({ headers, body }) => {
         guard(headers);
-        const providerId = typeof body.providerId === 'string' ? body.providerId : null;
+        const payload = body as Record<string, unknown>;
+        const providerId = typeof payload.providerId === 'string' ? payload.providerId : null;
         if (!providerId) {
           throw new PlatformApiError({
             code: 'VALIDATION_FAILED',
@@ -111,7 +112,7 @@ export function createInternalProviderOpsRoutes(
             httpStatus: 400,
           });
         }
-        const cacheKey = typeof body.cacheKey === 'string' ? body.cacheKey : undefined;
+        const cacheKey = typeof payload.cacheKey === 'string' ? payload.cacheKey : undefined;
         plane.invalidateProviderCache(providerId, cacheKey);
         return {
           status: 200,
