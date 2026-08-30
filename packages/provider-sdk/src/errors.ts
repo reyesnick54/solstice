@@ -126,4 +126,242 @@ export function shouldRetryOperation(input: {
     return input.idempotent === true;
   }
   return false;
+ * Normalized provider transport errors.
+ *
+ * Messages are safe for logs and adapter surfaces. Secrets are never included.
+ */
+
+export const PROVIDER_TRANSPORT_ERROR_KINDS = [
+  'ProviderNetworkError',
+  'ProviderTimeoutError',
+  'ProviderAuthenticationError',
+  'ProviderRateLimitError',
+  'ProviderClientError',
+  'ProviderServerError',
+  'ProviderInvalidResponseError',
+  'ProviderSecurityError',
+] as const;
+
+export type ProviderTransportErrorKind = (typeof PROVIDER_TRANSPORT_ERROR_KINDS)[number];
+
+export type ProviderTransportErrorFields = {
+  readonly kind: ProviderTransportErrorKind;
+  readonly providerId: string;
+  readonly requestId: string;
+  readonly httpStatus: number | null;
+  readonly retryable: boolean;
+  readonly message: string;
+};
+
+export class ProviderTransportError extends Error {
+  readonly kind: ProviderTransportErrorKind;
+  readonly providerId: string;
+  readonly requestId: string;
+  readonly httpStatus: number | null;
+  readonly retryable: boolean;
+
+  constructor(fields: ProviderTransportErrorFields) {
+    super(fields.message);
+    this.name = fields.kind;
+    this.kind = fields.kind;
+    this.providerId = fields.providerId;
+    this.requestId = fields.requestId;
+    this.httpStatus = fields.httpStatus;
+    this.retryable = fields.retryable;
+    Object.freeze(this);
+  }
+
+  toJSON(): ProviderTransportErrorFields {
+    return Object.freeze({
+      kind: this.kind,
+      providerId: this.providerId,
+      requestId: this.requestId,
+      httpStatus: this.httpStatus,
+      retryable: this.retryable,
+      message: this.message,
+    });
+  }
+}
+
+export function networkError(
+  providerId: string,
+  requestId: string,
+  message: string,
+  retryable = true,
+): ProviderTransportError {
+  return new ProviderTransportError({
+    kind: 'ProviderNetworkError',
+    providerId,
+    requestId,
+    httpStatus: null,
+    retryable,
+    message,
+  });
+}
+
+export function timeoutError(providerId: string, requestId: string): ProviderTransportError {
+  return new ProviderTransportError({
+    kind: 'ProviderTimeoutError',
+    providerId,
+    requestId,
+    httpStatus: null,
+    retryable: true,
+    message: 'provider request exceeded timeout',
+  });
+}
+
+export function authenticationError(
+  providerId: string,
+  requestId: string,
+  httpStatus: number,
+): ProviderTransportError {
+  return new ProviderTransportError({
+    kind: 'ProviderAuthenticationError',
+    providerId,
+    requestId,
+    httpStatus,
+    retryable: false,
+    message: 'provider rejected authentication',
+  });
+}
+
+export function rateLimitError(
+  providerId: string,
+  requestId: string,
+  httpStatus: number,
+): ProviderTransportError {
+  return new ProviderTransportError({
+    kind: 'ProviderRateLimitError',
+    providerId,
+    requestId,
+    httpStatus,
+    retryable: true,
+    message: 'provider rate limit exceeded',
+  });
+}
+
+export function clientError(
+  providerId: string,
+  requestId: string,
+  httpStatus: number,
+  message: string,
+): ProviderTransportError {
+  return new ProviderTransportError({
+    kind: 'ProviderClientError',
+    providerId,
+    requestId,
+    httpStatus,
+    retryable: false,
+    message,
+  });
+}
+
+export function serverError(
+  providerId: string,
+  requestId: string,
+  httpStatus: number,
+): ProviderTransportError {
+  return new ProviderTransportError({
+    kind: 'ProviderServerError',
+    providerId,
+    requestId,
+    httpStatus,
+    retryable: true,
+    message: 'provider server error',
+  });
+}
+
+export function invalidResponseError(
+  providerId: string,
+  requestId: string,
+  message: string,
+  httpStatus: number | null = null,
+): ProviderTransportError {
+  return new ProviderTransportError({
+    kind: 'ProviderInvalidResponseError',
+    providerId,
+    requestId,
+    httpStatus,
+    retryable: false,
+    message,
+  });
+}
+
+export function securityError(
+  providerId: string,
+  requestId: string,
+  message: string,
+): ProviderTransportError {
+  return new ProviderTransportError({
+    kind: 'ProviderSecurityError',
+    providerId,
+    requestId,
+    httpStatus: null,
+    retryable: false,
+    message,
+  });
+}
+
+export function mapHttpStatusToError(
+  providerId: string,
+  requestId: string,
+  status: number,
+): ProviderTransportError {
+  if (status === 401 || status === 403) {
+    return authenticationError(providerId, requestId, status);
+  }
+  if (status === 429) {
+    return rateLimitError(providerId, requestId, status);
+  }
+  if (status >= 500) {
+    return serverError(providerId, requestId, status);
+  }
+  return clientError(providerId, requestId, status, `provider returned HTTP ${status}`);
+export const PROVIDER_SDK_ERROR_CODES = [
+  'PROVIDER_NOT_FOUND',
+  'PROVIDER_ALREADY_REGISTERED',
+  'PROVIDER_NOT_IN_CATALOG',
+  'PROVIDER_BLOCKED',
+  'PROVIDER_METADATA_INVALID',
+  'PROVIDER_ACTIVATION_DENIED',
+  'PROVIDER_LIFECYCLE_ERROR',
+  'PROVIDER_SECRET_EXPOSURE_FORBIDDEN',
+] as const;
+
+export type ProviderSdkErrorCode = (typeof PROVIDER_SDK_ERROR_CODES)[number];
+
+export type ProviderSdkError = {
+  readonly code: ProviderSdkErrorCode;
+  readonly message: string;
+  readonly providerId?: string;
+};
+
+export function providerSdkError(
+  code: ProviderSdkErrorCode,
+  message: string,
+  providerId?: string,
+): ProviderSdkError {
+  return Object.freeze({
+    code,
+    message,
+    ...(providerId ? { providerId } : {}),
+  });
+}
+
+export class ProviderSdkException extends Error {
+  readonly code: ProviderSdkErrorCode;
+  readonly providerId?: string;
+
+  constructor(error: ProviderSdkError) {
+    super(error.message);
+    this.name = 'ProviderSdkException';
+    this.code = error.code;
+    if (error.providerId) {
+      this.providerId = error.providerId;
+    }
+  }
+}
+
+export function throwProviderSdk(error: ProviderSdkError): never {
+  throw new ProviderSdkException(error);
 }
