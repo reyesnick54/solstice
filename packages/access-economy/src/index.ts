@@ -303,6 +303,8 @@ export { AccessFabric } from './service.ts';
 export * from './providers/index.ts';
 export * from './participation/index.ts';
 export * from './hin-access/index.ts';
+export * from './solvency/index.ts';
+export * from './dual-token-allocation/index.ts';
 export type {
   AccessBound,
   AccessFabricFailure,

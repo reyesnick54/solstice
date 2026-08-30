@@ -3,14 +3,17 @@
  */
 
 import {
-  AccessProviderGateway,
-  InMemoryFundingIntentPort,
-  ProviderEconomicMetrics,
-  RedemptionWorkflow,
   createAccessProviderGateway,
+  ProviderEconomicMetrics,
 } from '../../access-economy/src/providers/index.ts';
 import type { AccessProviderId } from '../../access-economy/src/providers/types.ts';
 import type { RedemptionRecord, RedemptionRequest } from '../../access-economy/src/providers/redemption/types.ts';
+import {
+  CanonicalAccessRedemptionOrchestrator,
+  createCanonicalAccessRedemptionOrchestrator,
+  type CanonicalRedemptionTrace,
+} from './canonical-redemption-orchestrator.ts';
+import { createCanonicalRedemptionSimulationWorld } from './canonical-redemption-world.ts';
 
 export type ProviderNetworkSearchInput = {
   readonly query: string;
@@ -43,14 +46,14 @@ export type ProviderNetworkRedemptionPreviewInput = {
 };
 
 export class AccessProviderNetworkService {
-  readonly gateway: AccessProviderGateway;
-  readonly workflow: RedemptionWorkflow;
+  readonly gateway: ReturnType<typeof createAccessProviderGateway>;
+  readonly orchestrator: CanonicalAccessRedemptionOrchestrator;
   readonly metrics: ProviderEconomicMetrics;
   private readonly quotes = new Map<string, import('../../access-economy/src/providers/types.ts').ProviderQuote>();
 
-  constructor(gateway: AccessProviderGateway = createAccessProviderGateway()) {
-    this.gateway = gateway;
-    this.workflow = new RedemptionWorkflow(gateway, { funding: new InMemoryFundingIntentPort() });
+  constructor(orchestrator: CanonicalAccessRedemptionOrchestrator = createCanonicalAccessRedemptionOrchestrator()) {
+    this.orchestrator = orchestrator;
+    this.gateway = orchestrator.gateway;
     this.metrics = new ProviderEconomicMetrics();
   }
 
@@ -111,7 +114,7 @@ export class AccessProviderNetworkService {
       return Object.freeze({ ok: false as const, code: 'NOT_FOUND', message: 'provider quote not found' });
     }
     const request = this.toRedemptionRequest(input, quote);
-    return Object.freeze({ ok: true as const, value: this.workflow.preview(request).decision });
+    return Object.freeze({ ok: true as const, value: this.orchestrator.preview(request).decision });
   }
 
   startRedemption(input: ProviderNetworkRedemptionPreviewInput, idempotencyKey: string) {
@@ -120,26 +123,41 @@ export class AccessProviderNetworkService {
       return Object.freeze({ ok: false as const, code: 'NOT_FOUND', message: 'provider quote not found' });
     }
     const request = this.toRedemptionRequest(input, quote);
-    return this.workflow.start(request, idempotencyKey);
+    return this.orchestrator.start(request, idempotencyKey);
   }
 
   confirmRedemption(redemptionId: string, input?: { readonly userApproved?: boolean; readonly userFiatMinorUnits?: string }) {
-    return this.workflow.confirm(redemptionId, {
+    return this.orchestrator.confirm(redemptionId, {
       ...(input?.userApproved !== undefined ? { userApproved: input.userApproved } : {}),
       ...(input?.userFiatMinorUnits ? { userFiatMinorUnits: BigInt(input.userFiatMinorUnits) } : {}),
+      idempotencyKey: `confirm_${redemptionId}`,
     });
   }
 
   cancelRedemption(redemptionId: string) {
-    return this.workflow.cancel(redemptionId);
+    return this.orchestrator.cancel(redemptionId);
   }
 
   getRedemption(redemptionId: string): RedemptionRecord | null {
-    return this.workflow.get(redemptionId);
+    return this.orchestrator.get(redemptionId);
+  }
+
+  traceFor(redemptionId: string): CanonicalRedemptionTrace | null {
+    return this.orchestrator.traceFor(redemptionId);
   }
 
   seedEntitlement(entitlementId: string, customerId: string, availableUnits: number): void {
-    this.workflow.entitlements.seed(entitlementId, customerId, BigInt(availableUnits));
+    this.orchestrator.entitlements.seed(entitlementId, customerId, BigInt(availableUnits));
+  }
+
+  orchestrateBundle(
+    input: Parameters<CanonicalAccessRedemptionOrchestrator['orchestrateBundle']>[0],
+  ) {
+    return this.orchestrator.orchestrateBundle(input);
+  }
+
+  confirmBundle(input: Parameters<CanonicalAccessRedemptionOrchestrator['confirmBundle']>[0]) {
+    return this.orchestrator.confirmBundle(input);
   }
 
   private toRedemptionRequest(
@@ -174,3 +192,5 @@ export class AccessProviderNetworkService {
 export function createAccessProviderNetworkService(): AccessProviderNetworkService {
   return new AccessProviderNetworkService();
 }
+
+export { createCanonicalRedemptionSimulationWorld };

@@ -14,7 +14,12 @@ type DispatchRequest = {
   readonly method: string;
   readonly path: string;
   readonly body: unknown;
+  readonly query?: Readonly<Record<string, string | undefined>>;
 };
+
+function epochIdFromQuery(query: Readonly<Record<string, string | undefined>> | undefined): string | undefined {
+  return str(query?.epochId);
+}
 
 type DispatchResponse = {
   readonly status: number;
@@ -110,9 +115,41 @@ export function dispatchAccess(
   const rec = request.body && typeof request.body === 'object' ? (request.body as Record<string, unknown>) : {};
   const actor = actorFrom(principal);
   const idempotencyKey = str(rec.idempotencyKey) ?? `${method}:${path}:${principal.actorId}`;
+  const pathWithoutQuery = path.split('?')[0] ?? path;
+  const queryEpoch = epochIdFromQuery(request.query);
 
   if (path === '/api/v1/access/overview' && method === 'GET') {
     return result(mapAccessOutcome(product.overview(actor), requestId), headers);
+  }
+  if (pathWithoutQuery === '/api/v1/access/epoch' && method === 'GET') {
+    return result(mapAccessOutcome(product.accessEpoch(actor, queryEpoch), requestId), headers);
+  }
+  if (pathWithoutQuery === '/api/v1/access/participation' && method === 'GET') {
+    return result(mapAccessOutcome(product.accessParticipation(actor, queryEpoch), requestId), headers);
+  }
+  if (pathWithoutQuery === '/api/v1/access/allocation/categories' && method === 'GET') {
+    return result(mapAccessOutcome(product.accessAllocationCategories(queryEpoch), requestId), headers);
+  }
+  if (pathWithoutQuery === '/api/v1/access/allocation/history' && method === 'GET') {
+    return result(mapAccessOutcome(product.accessAllocationHistory(actor), requestId), headers);
+  }
+  if (pathWithoutQuery === '/api/v1/access/allocation/preview' && method === 'POST') {
+    const categories = Array.isArray(rec.categories)
+      ? rec.categories.filter((value): value is string => typeof value === 'string')
+      : undefined;
+    return result(
+      mapAccessOutcome(
+        product.accessAllocationPreview(actor, {
+          ...(str(rec.epochId) ? { epochId: str(rec.epochId) } : {}),
+          ...(categories ? { categories } : {}),
+        }),
+        requestId,
+      ),
+      headers,
+    );
+  }
+  if (pathWithoutQuery === '/api/v1/access/allocation' && method === 'GET') {
+    return result(mapAccessOutcome(product.accessAllocation(actor, queryEpoch), requestId), headers);
   }
   if (path === '/api/v1/access/categories' && method === 'GET') {
     return result(mapAccessOutcome(product.categories(), requestId), headers);
