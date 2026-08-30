@@ -30,6 +30,14 @@ function capability(
   return Object.freeze({ capabilityId, supported, integrationState, notes });
 }
 
+function sandboxCapabilities(): readonly ProviderCapability[] {
+  return Object.freeze(
+    PROVIDER_CAPABILITY_IDS.map((capabilityId) =>
+      capability(capabilityId, true, 'SANDBOX_AVAILABLE', 'Expedia Rapid sandbox via injected transport'),
+    ),
+  );
+}
+
 function simulatedCapabilities(): readonly ProviderCapability[] {
   return Object.freeze(
     PROVIDER_CAPABILITY_IDS.map((capabilityId) =>
@@ -57,9 +65,9 @@ function partnerGatedCapabilities(
 export const PROVIDER_CAPABILITY_REGISTRY: Readonly<Record<AccessProviderId, ProviderRegistration>> = Object.freeze({
   expedia: Object.freeze({
     providerId: 'expedia',
-    displayName: 'Expedia (travel candidate)',
-    integrationState: 'SIMULATED',
-    capabilities: simulatedCapabilities(),
+    displayName: 'Expedia Rapid (lodging sandbox)',
+    integrationState: 'SANDBOX_AVAILABLE',
+    capabilities: sandboxCapabilities(),
     categories: ['HOUSING_ROOM_NIGHTS', 'TRAVEL', 'VEHICLE_HOURS'],
   }),
   turo: Object.freeze({
@@ -119,7 +127,10 @@ export class ProviderCapabilityRegistry {
       return false;
     }
     const row = registration.capabilities.find((candidate) => candidate.capabilityId === capabilityId);
-    return row?.supported === true && row.integrationState === 'SIMULATED';
+    if (!row?.supported) {
+      return false;
+    }
+    return row.integrationState === 'SIMULATED' || row.integrationState === 'SANDBOX_AVAILABLE';
   }
 
   isLiveEnabled(providerId: AccessProviderId): boolean {

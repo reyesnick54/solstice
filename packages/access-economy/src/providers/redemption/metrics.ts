@@ -10,12 +10,22 @@ export type ProviderMetricSnapshot = {
   readonly availabilitySuccesses: number;
   readonly quoteAttempts: number;
   readonly quoteSuccesses: number;
+  readonly quoteFailures: number;
   readonly bookingAttempts: number;
   readonly bookingSuccesses: number;
+  readonly bookingFailures: number;
   readonly cancellations: number;
   readonly fulfillmentEvents: number;
   readonly failures: number;
   readonly refunds: number;
+  readonly webhookFailures: number;
+  readonly timeouts: number;
+  readonly rateLimitEvents: number;
+  readonly circuitBreakerState: 'CLOSED' | 'OPEN' | 'HALF_OPEN';
+  readonly latencyMsTotal: number;
+  readonly latencySamples: number;
+  readonly refundLatencyMsTotal: number;
+  readonly refundLatencySamples: number;
   readonly totalProviderPriceMinorUnits: bigint;
   readonly totalCoverageMinorUnits: bigint;
   readonly totalUserContributionMinorUnits: bigint;
@@ -34,12 +44,22 @@ export class ProviderEconomicMetrics {
         availabilitySuccesses: 0,
         quoteAttempts: 0,
         quoteSuccesses: 0,
+        quoteFailures: 0,
         bookingAttempts: 0,
         bookingSuccesses: 0,
+        bookingFailures: 0,
         cancellations: 0,
         fulfillmentEvents: 0,
         failures: 0,
         refunds: 0,
+        webhookFailures: 0,
+        timeouts: 0,
+        rateLimitEvents: 0,
+        circuitBreakerState: 'CLOSED',
+        latencyMsTotal: 0,
+        latencySamples: 0,
+        refundLatencyMsTotal: 0,
+        refundLatencySamples: 0,
         totalProviderPriceMinorUnits: 0n,
         totalCoverageMinorUnits: 0n,
         totalUserContributionMinorUnits: 0n,
@@ -67,6 +87,7 @@ export class ProviderEconomicMetrics {
       ...current,
       quoteAttempts: current.quoteAttempts + 1,
       quoteSuccesses: current.quoteSuccesses + (success ? 1 : 0),
+      quoteFailures: current.quoteFailures + (success ? 0 : 1),
       totalProviderPriceMinorUnits: current.totalProviderPriceMinorUnits + (success ? providerPriceMinorUnits : 0n),
     });
   }
@@ -77,6 +98,7 @@ export class ProviderEconomicMetrics {
       ...current,
       bookingAttempts: current.bookingAttempts + 1,
       bookingSuccesses: current.bookingSuccesses + (success ? 1 : 0),
+      bookingFailures: current.bookingFailures + (success ? 0 : 1),
       failures: current.failures + (success ? 0 : 1),
     });
   }
@@ -105,9 +127,43 @@ export class ProviderEconomicMetrics {
     this.set(providerId, { ...current, fulfillmentEvents: current.fulfillmentEvents + 1 });
   }
 
-  recordRefund(providerId: string): void {
+  recordRefund(providerId: string, latencyMs = 0): void {
     const current = this.row(providerId);
-    this.set(providerId, { ...current, refunds: current.refunds + 1 });
+    this.set(providerId, {
+      ...current,
+      refunds: current.refunds + 1,
+      refundLatencyMsTotal: current.refundLatencyMsTotal + latencyMs,
+      refundLatencySamples: current.refundLatencySamples + (latencyMs > 0 ? 1 : 0),
+    });
+  }
+
+  recordWebhookFailure(providerId: string): void {
+    const current = this.row(providerId);
+    this.set(providerId, { ...current, webhookFailures: current.webhookFailures + 1 });
+  }
+
+  recordTimeout(providerId: string): void {
+    const current = this.row(providerId);
+    this.set(providerId, { ...current, timeouts: current.timeouts + 1 });
+  }
+
+  recordRateLimit(providerId: string): void {
+    const current = this.row(providerId);
+    this.set(providerId, { ...current, rateLimitEvents: current.rateLimitEvents + 1 });
+  }
+
+  recordLatency(providerId: string, latencyMs: number): void {
+    const current = this.row(providerId);
+    this.set(providerId, {
+      ...current,
+      latencyMsTotal: current.latencyMsTotal + latencyMs,
+      latencySamples: current.latencySamples + 1,
+    });
+  }
+
+  recordCircuitBreakerState(providerId: string, state: ProviderMetricSnapshot['circuitBreakerState']): void {
+    const current = this.row(providerId);
+    this.set(providerId, { ...current, circuitBreakerState: state });
   }
 
   snapshot(providerId: string): ProviderMetricSnapshot {

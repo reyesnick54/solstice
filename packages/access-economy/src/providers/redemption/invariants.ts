@@ -20,6 +20,12 @@ export const ACCESS_PROVIDER_INVARIANT_IDS = [
   'NO_LIVE_PROVIDER_WITHOUT_CAPABILITY_GATE',
   'NO_PROVIDER_SECRET_IN_SOURCE',
   'PROVIDER_WEBHOOK_REPLAY_IS_IDEMPOTENT',
+  'NO_UNOFFICIAL_PROVIDER_API',
+  'NO_REAL_MONEY_IN_SANDBOX',
+  'NO_PROVIDER_RESPONSE_BECOMES_FINANCIAL_TRUTH_WITHOUT_CANONICAL_POSTING',
+  'NO_HARDCODED_FX',
+  'WEBHOOK_SIGNATURE_REQUIRED_WHERE_SUPPORTED',
+  'NO_LIVE_PROVIDER_WITHOUT_COMMERCIAL_GATE',
 ] as const;
 
 export type AccessProviderInvariantId = (typeof ACCESS_PROVIDER_INVARIANT_IDS)[number];
@@ -44,6 +50,14 @@ export const ACCESS_PROVIDER_INVARIANT_STATEMENTS: Readonly<Record<AccessProvide
   NO_LIVE_PROVIDER_WITHOUT_CAPABILITY_GATE: 'Live provider connectivity requires explicit capability gate approval.',
   NO_PROVIDER_SECRET_IN_SOURCE: 'Provider secrets never appear in source code.',
   PROVIDER_WEBHOOK_REPLAY_IS_IDEMPOTENT: 'Duplicate provider webhook deliveries are idempotent.',
+  NO_UNOFFICIAL_PROVIDER_API: 'Only official provider APIs documented by the provider may be used.',
+  NO_REAL_MONEY_IN_SANDBOX: 'Sandbox flows must not move real customer funds.',
+  NO_PROVIDER_RESPONSE_BECOMES_FINANCIAL_TRUTH_WITHOUT_CANONICAL_POSTING:
+    'Provider quotes and receipts do not become ledger truth without canonical posting.',
+  NO_HARDCODED_FX: 'Currency conversion must use the canonical FX quotation path.',
+  WEBHOOK_SIGNATURE_REQUIRED_WHERE_SUPPORTED: 'Provider webhooks require signature verification when supported.',
+  NO_LIVE_PROVIDER_WITHOUT_COMMERCIAL_GATE:
+    'Credentials alone cannot enable live provider connectivity; commercial gates are required.',
 });
 
 export type InvariantCheckResult = {

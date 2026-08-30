@@ -15,12 +15,17 @@ export function fail(code: string, message: string): AccessProviderOutcome<never
   return Object.freeze({ ok: false, code, message });
 }
 
-export function settlementTerms(providerReceivesMinorUnits: bigint, currency = 'USD'): ProviderSettlementTerms {
+export function settlementTerms(
+  providerReceivesMinorUnits: bigint,
+  currency = 'USD',
+  connectivity: 'SIMULATION' | 'SANDBOX' = 'SIMULATION',
+): ProviderSettlementTerms {
   return Object.freeze({
     currency,
     settlementRail: 'FIAT_PAYMENTS',
     providerReceivesMinorUnits,
-    simulationOnly: true,
+    simulationOnly: connectivity === 'SIMULATION',
+    ...(connectivity === 'SANDBOX' ? { sandboxOnly: true as const } : {}),
   });
 }
 
@@ -48,7 +53,10 @@ export function buildQuote(input: {
   readonly quantity: bigint;
   readonly providerPriceMinorUnits: bigint;
   readonly currency?: string;
+  readonly connectivity?: 'SIMULATION' | 'SANDBOX';
+  readonly providerRateToken?: string | null;
 }): ProviderQuote {
+  const connectivity = input.connectivity ?? 'SIMULATION';
   return Object.freeze({
     quoteId: input.quoteId,
     providerId: input.providerId,
@@ -58,7 +66,9 @@ export function buildQuote(input: {
     providerPriceMinorUnits: input.providerPriceMinorUnits,
     currency: input.currency ?? 'USD',
     expiresAt: SIMULATION_EXPIRES,
-    settlementTerms: settlementTerms(input.providerPriceMinorUnits, input.currency ?? 'USD'),
-    simulationOnly: true,
+    settlementTerms: settlementTerms(input.providerPriceMinorUnits, input.currency ?? 'USD', connectivity),
+    simulationOnly: connectivity === 'SIMULATION',
+    ...(connectivity === 'SANDBOX' ? { sandboxOnly: true as const } : {}),
+    providerRateToken: input.providerRateToken ?? null,
   });
 }
