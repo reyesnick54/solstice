@@ -18,6 +18,8 @@ export * from './adapters/airbnb/simulation.ts';
 export * from './redemption/types.ts';
 export * from './redemption/engine.ts';
 export * from './redemption/workflow.ts';
+export * from './redemption/orchestrator.ts';
+export * from './redemption/simulation-world.ts';
 export * from './redemption/entitlement-store.ts';
 export * from './redemption/metrics.ts';
 export * from './redemption/invariants.ts';
