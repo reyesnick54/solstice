@@ -1,0 +1,19 @@
+{
+  "results": [
+    {
+      "aggregated_amount": 689000000000,
+      "time_period": { "fiscal_year": 2025, "fiscal_quarter": 3 },
+      "category": "National Defense"
+    },
+    {
+      "aggregated_amount": 1250000000000,
+      "time_period": { "fiscal_year": 2025, "fiscal_quarter": 3 },
+      "category": "Health"
+    }
+  ],
+  "page_metadata": {
+    "page": 1,
+    "hasNext": false,
+    "total": 2
+  }
+}

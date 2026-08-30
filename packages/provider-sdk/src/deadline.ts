@@ -3,7 +3,7 @@
  */
 
 import { assertDeadlineRemaining, effectiveTimeoutMs, remainingBudgetMs } from './timeout.ts';
-import type { DeadlineContext } from './types.ts';
+import type { DeadlineContext } from './reliability-types.ts';
 
 export function resolveDeadline(input: {
   readonly deadline?: DeadlineContext;
