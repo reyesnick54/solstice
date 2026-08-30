@@ -52,6 +52,7 @@
     "demo:wallet": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/cards/src/demo-wallet.ts",
     "demo:acceptance": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/cards/src/demo-acceptance.ts",
     "demo:growth": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/platform/src/demo.ts",
+    "demo:personal-economy": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/platform/src/personal-economy/demo.ts",
     "demo:sunrey-access-fabric": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-access-fabric/src/demo.ts",
     "demo:peve": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/platform/src/value/demo.ts",
     "demo:treasury": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/treasury/src/demo.ts",
