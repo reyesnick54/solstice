@@ -68,4 +68,13 @@ export {
   seedSandboxAccessFixtures,
 } from './fixtures.ts';
 export { HumanAccessEconomyProduct, createSandboxAccessEconomy } from './service.ts';
+export { AccessAllocationProjection, ACCESS_15_BFF_CATEGORIES, ACCESS_15_CAPACITY_UNITS } from './allocation.ts';
+export type {
+  AccessEpochView,
+  AccessParticipationView,
+  AccessAllocationCategoryView,
+  AccessAllocationView,
+  AccessAllocationPreviewInput,
+} from './allocation.ts';
 export { AccessProviderNetworkService, createAccessProviderNetworkService } from './provider-network.ts';
+export { projectConsumerSolvencyPosture, type ConsumerSolvencyPosture } from './consumer-solvency.ts';
