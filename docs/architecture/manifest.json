@@ -513,6 +513,22 @@
       "notes": "Canonical Growth Orchestrator and mandate compiler. Does not execute money movement or issue Execution Authority."
     },
     {
+      "id": "packages/provider-sdk",
+      "npmName": "@solstice/provider-sdk",
+      "path": "packages/provider-sdk",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Wave 1 shared provider reliability control plane — timeouts, retries, rate limits, bulkheads, circuit breakers. Simulation only. Not a second provider runtime, ledger, or Execution Authority."
+    },
+    {
       "id": "packages/treasury",
       "npmName": "@solstice/treasury",
       "path": "packages/treasury",
