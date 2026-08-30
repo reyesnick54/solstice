@@ -19,6 +19,7 @@ export const PROVIDER_CONTENT_TYPES = [
 export type ProviderContentType = (typeof PROVIDER_CONTENT_TYPES)[number] | '*';
 
 export type ProviderHttpRequestContext = {
+export type HttpProviderRequestContext = {
   readonly providerId: string;
   readonly requestId: string;
   readonly traceId?: string | undefined;
@@ -33,6 +34,7 @@ export type ProviderHttpRequestContext = {
 };
 
 export type ProviderHttpResponseMetadata = {
+export type HttpProviderResponseMetadata = {
   readonly providerId: string;
   readonly requestId: string;
   readonly traceId: string;
@@ -51,6 +53,8 @@ export type ProviderParsedBody =
 
 export type ProviderHttpTransportResponse<T = unknown> = {
   readonly metadata: ProviderHttpResponseMetadata;
+export type HttpProviderTransportResponse<T = unknown> = {
+  readonly metadata: HttpProviderResponseMetadata;
   readonly body: ProviderParsedBody;
   readonly parsed: T | undefined;
 };
@@ -61,6 +65,12 @@ export type ProviderHttpTransportSuccess<T> = {
 };
 
 export type ProviderHttpTransportFailure = {
+export type HttpProviderTransportSuccess<T> = {
+  readonly ok: true;
+  readonly value: HttpProviderTransportResponse<T>;
+};
+
+export type HttpProviderTransportFailure = {
   readonly ok: false;
   readonly error: ProviderTransportError;
 };
@@ -88,3 +98,12 @@ export type ProviderTransportSuccess<T> = ProviderHttpTransportSuccess<T>;
 export type ProviderTransportFailure = ProviderHttpTransportFailure;
 /** @deprecated Use ProviderHttpTransport */
 export type ProviderTransport = ProviderHttpTransport;
+export type HttpProviderTransportResult<T = unknown> =
+  | HttpProviderTransportSuccess<T>
+  | HttpProviderTransportFailure;
+
+/** Governed outbound HTTP transport used by external provider adapters. */
+export type HttpProviderTransport = {
+  readonly transportId: string;
+  request<T = unknown>(context: HttpProviderRequestContext): Promise<HttpProviderTransportResult<T>>;
+};

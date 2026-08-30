@@ -31,12 +31,16 @@ import { decideRetryDelay, waitForRetry } from './retry.ts';
 import { ProviderTimeoutError, withTimeout } from './timeout.ts';
 import {
   defaultClock,
+  type CircuitState,
   type DeadlineContext,
+  type FallbackContext,
+  type FallbackDecision,
   type FallbackHook,
   type ProviderError,
   type ReliabilityClock,
   type ReliabilityOutcome,
   type ReliabilityProviderTransport,
+  type ReliabilityTransport,
   type ReliabilityTransportRequest,
   type ReliabilityTransportResponse,
 } from './reliability-types.ts';
@@ -96,6 +100,7 @@ export class ProviderReliabilityControlPlane {
 
   async execute<T = ReliabilityTransportResponse>(
     transport: ReliabilityProviderTransport,
+    transport: ReliabilityTransport,
     request: ReliabilityTransportRequest,
     input: {
       readonly deadline?: DeadlineContext;

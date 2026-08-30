@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "description": "SunRey universal external-data provider SDK — lifecycle, registry, transport, reliability, provenance",
+  "description": "SunRey universal external-data provider SDK — lifecycle, registry, catalog integration, and adapter contracts",
+  "description": "SunRey universal external-data provider SDK — lifecycle, registry, catalog integration, transport, and adapter contracts",
   "exports": {
     ".": "./src/index.ts"
   },
@@ -12,6 +14,9 @@
   ],
   "scripts": {
     "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec src/**/*.test.ts"
+  },
+  "dependencies": {
+    "yaml": "^2.9.0"
   },
   "engines": {
     "node": ">=22"

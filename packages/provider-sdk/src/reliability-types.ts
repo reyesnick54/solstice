@@ -1,5 +1,8 @@
 /**
  * Wave 1 Prompt 4 — provider reliability control plane types.
+ * Wave 1 Prompt 4 — reliability-layer transport types.
+ *
+ * Distinct from HTTP transport types in http-transport-types.ts.
  */
 
 export const HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE'] as const;
@@ -34,6 +37,8 @@ export type ReliabilityTransportResponse = {
 };
 
 export type ReliabilityProviderTransport = {
+/** Injectable transport wrapped by the reliability control plane. */
+export type ReliabilityTransport = {
   readonly providerId: string;
   execute(
     request: ReliabilityTransportRequest,

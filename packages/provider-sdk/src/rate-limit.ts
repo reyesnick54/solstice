@@ -3,7 +3,7 @@
  */
 
 import type { ProviderRateLimitPolicy } from './policy.ts';
-import type { Clock } from './types.ts';
+import type { ReliabilityClock } from './reliability-types.ts';
 
 export type RateLimitResult =
   | { readonly allowed: true }
@@ -24,9 +24,9 @@ type WindowState = {
 export class ProviderRateLimiter {
   private readonly windows: readonly WindowConfig[];
   private readonly states = new Map<string, Map<string, WindowState>>();
-  private readonly clock: Clock;
+  private readonly clock: ReliabilityClock;
 
-  constructor(policy: ProviderRateLimitPolicy, clock: Clock) {
+  constructor(policy: ProviderRateLimitPolicy, clock: ReliabilityClock) {
     this.clock = clock;
     this.windows = Object.freeze([
       ...(policy.requestsPerSecond ? [{ name: 'second', limit: policy.requestsPerSecond, windowMs: 1_000 }] : []),

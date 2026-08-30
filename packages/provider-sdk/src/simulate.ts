@@ -4,6 +4,7 @@
 
 import type {
   ReliabilityProviderTransport,
+  ReliabilityTransport,
   ReliabilityTransportRequest,
   ReliabilityTransportResponse,
 } from './reliability-types.ts';
@@ -15,6 +16,7 @@ export type SimulatedResponse =
   | (() => ReliabilityTransportResponse | Promise<ReliabilityTransportResponse>);
 
 export class SimulatedProviderTransport implements ReliabilityProviderTransport {
+export class SimulatedProviderTransport implements ReliabilityTransport {
   readonly providerId: string;
   readonly calls: ReliabilityTransportRequest[] = [];
   private readonly script: SimulatedResponse[];

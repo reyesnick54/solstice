@@ -139,6 +139,7 @@ export {
   type CircuitState,
   type FailureClassification,
   type ReliabilityProviderTransport,
+  type ReliabilityTransport,
   type ReliabilityTransportRequest,
   type ReliabilityTransportResponse,
   type ProviderError,
@@ -149,6 +150,7 @@ export {
   type FallbackHook,
   type ReliabilityClock,
 } from './types.ts';
+} from './reliability-types.ts';
 
 export {
   DEFAULT_PROVIDER_RELIABILITY_POLICY,
@@ -224,6 +226,10 @@ export {
   type SimulatedResponse,
 } from './simulate.ts';
 
+/**
+ * Wave 1 Prompt 3 — universal provider HTTP transport and authentication layer.
+ */
+
 export {
   PROVIDER_HTTP_METHODS,
   PROVIDER_CONTENT_TYPES,
@@ -238,6 +244,15 @@ export {
   type ProviderHttpTransportFailure,
   type ProviderHttpTransport,
 } from './types.ts';
+  type HttpProviderRequestContext,
+  type HttpProviderResponseMetadata,
+  type ProviderParsedBody,
+  type HttpProviderTransportResponse,
+  type HttpProviderTransportResult,
+  type HttpProviderTransportSuccess,
+  type HttpProviderTransportFailure,
+  type HttpProviderTransport,
+} from './http-transport-types.ts';
 
 export {
   PROVIDER_TRANSPORT_ERROR_KINDS,
@@ -307,7 +322,7 @@ export {
   systemClock,
   type FetchProviderTransportOptions,
   type FetchLike,
-  type Clock,
+  type TransportClock,
 } from './transport.ts';
 
 export {
@@ -343,10 +358,12 @@ export {
   type ProviderRegistration,
 } from './registry-types.ts';
 
+export * from './types.ts';
 export * from './contract.ts';
 export * from './adapter.ts';
 export * from './activation-policy.ts';
 export * from './registry.ts';
+export { createProviderRegistry } from './registry.ts';
 export * from './factory.ts';
 export * from './catalog/types.ts';
 export * from './catalog/loader.ts';
