@@ -3,7 +3,7 @@
  */
 
 import type { ProviderReliabilityPolicy } from './policy.ts';
-import type { Clock } from './types.ts';
+import type { ReliabilityClock } from './reliability-types.ts';
 
 export type RetryDecision = {
   readonly retry: boolean;
@@ -47,7 +47,7 @@ export function decideRetryDelay(input: {
   });
 }
 
-export async function waitForRetry(clock: Clock, delayMs: number): Promise<void> {
+export async function waitForRetry(clock: ReliabilityClock, delayMs: number): Promise<void> {
   if (delayMs <= 0) {
     return;
   }

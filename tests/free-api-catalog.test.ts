@@ -116,6 +116,7 @@ describe('free API provider catalog', () => {
     assert.equal(catalog.population_status, 'partial');
     assert.equal(result.stats.total, 8);
     assert.equal(result.stats.byCategory.foreign_exchange, 8);
+    assert.ok(result.stats.total >= 9);
   });
 
   it('requires unique provider_id values', () => {

@@ -1,0 +1,18 @@
+{
+  "seriess": [
+    {
+      "id": "CPIAUCSL",
+      "title": "Consumer Price Index for All Urban Consumers: All Items in U.S. City Average",
+      "units": "Index 1982-1984=100",
+      "frequency": "Monthly",
+      "seasonal_adjustment": "Seasonally Adjusted",
+      "last_updated": "2026-08-15",
+      "observation_start": "1947-01-01",
+      "observation_end": "2026-07-01"
+    }
+  ],
+  "observations": [
+    { "date": "2026-06-01", "value": "313.131" },
+    { "date": "2026-07-01", "value": "313.548" }
+  ]
+}

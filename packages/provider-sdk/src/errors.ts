@@ -6,8 +6,8 @@ import type {
   FailureClassification,
   HttpMethod,
   ProviderError,
-  ProviderTransportResponse,
-} from './types.ts';
+  ReliabilityTransportResponse,
+} from './reliability-types.ts';
 
 const RETRYABLE_STATUSES = new Set([408, 429, 500, 502, 503, 504]);
 const NON_RETRYABLE_STATUSES = new Set([400, 401, 403, 404, 405, 409, 422]);
@@ -54,7 +54,7 @@ export function parseRetryAfterMs(headers: Readonly<Record<string, string>>, now
 
 export function normalizeTransportError(input: {
   readonly providerId: string;
-  readonly response?: ProviderTransportResponse;
+  readonly response?: ReliabilityTransportResponse;
   readonly networkError?: boolean;
   readonly timeout?: boolean;
   readonly nowMs?: number;

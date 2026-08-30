@@ -220,10 +220,12 @@ describe('ProviderFactory', () => {
 });
 
 describe('catalog integration', () => {
-  it('repository catalog loads and may be empty during Wave 0', () => {
+  it('repository catalog loads with Wave 2 macro partial population', () => {
     const index = loadCatalogFromYaml();
-    assert.equal(index.catalog.population_status, 'awaiting_master_list');
-    assert.equal(index.catalog.providers.length, 0);
+    assert.equal(index.catalog.population_status, 'partial');
+    assert.ok(index.catalog.providers.length >= 9);
+    assert.ok(index.byId.has('fred'));
+    assert.ok(index.byId.has('world-bank'));
   });
 
   it('provider IDs in fixtures are consistent with catalog index', () => {

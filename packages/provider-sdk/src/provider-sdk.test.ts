@@ -38,7 +38,7 @@ const RAW_PAYLOAD = JSON.stringify({ price: 100, currency: 'USD' });
 function sampleObservationInput(overrides: Record<string, unknown> = {}) {
   return {
     providerId: 'fixture.market-data',
-    providerCategory: 'market_data' as const,
+    providerCategory: 'markets' as const,
     capability: 'spot_price',
     data: { priceMinor: 10000n, currency: 'USD' },
     source: {
@@ -295,7 +295,7 @@ describe('provider-sdk external observation framework', () => {
         assemble({ raw, domainData, rawPayloadHash }) {
           return buildExternalObservation({
             providerId: raw.providerId,
-            providerCategory: 'market_data',
+            providerCategory: 'markets',
             capability: raw.capability,
             data: domainData,
             source: {

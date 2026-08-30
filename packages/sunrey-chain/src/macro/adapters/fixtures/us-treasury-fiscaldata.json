@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "record_date": "2026-08-01",
+      "security_desc": "10-Year Treasury Note",
+      "avg_interest_rate_amt": "4.25",
+      "security_type_desc": "Marketable"
+    },
+    {
+      "record_date": "2026-07-01",
+      "security_desc": "10-Year Treasury Note",
+      "avg_interest_rate_amt": "4.18",
+      "security_type_desc": "Marketable"
+    }
+  ],
+  "meta": {
+    "count": 2,
+    "labels": {},
+    "dataTypes": {},
+    "dataFormats": {},
+    "total-count": 2,
+    "total-pages": 1
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "data": [
+    {
+      "Year": 2024,
+      "Total Population": 336806231,
+      "Geography": "01000US",
+      "Geography Type": "nation"
+    }
+  ],
+  "source": [
+    {
+      "measures": ["Total Population"],
+      "name": "acs_yg_total_population_1",
+      "annotations": { "table_id": "B01003", "topic": "Population" }
+    }
+  ]
+}
