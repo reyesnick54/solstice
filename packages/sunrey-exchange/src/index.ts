@@ -187,6 +187,7 @@ export type {
 export { UniversalExchangeEngine, moonreyPrice } from './universal.ts';
 export { exchangeUsage, runExchangeCommand } from './cli.ts';
 export * as marketData from './market-data/index.ts';
+export * as marketReference from './market-reference/index.ts';
 export * from './regulated/index.ts';
 export {
   MarketOperationsEngine,
