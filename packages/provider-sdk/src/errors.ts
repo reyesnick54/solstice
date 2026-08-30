@@ -126,6 +126,9 @@ export function shouldRetryOperation(input: {
     return input.idempotent === true;
   }
   return false;
+}
+
+/**
  * Normalized provider transport errors.
  *
  * Messages are safe for logs and adapter surfaces. Secrets are never included.
@@ -317,6 +320,8 @@ export function mapHttpStatusToError(
     return serverError(providerId, requestId, status);
   }
   return clientError(providerId, requestId, status, `provider returned HTTP ${status}`);
+}
+
 export const PROVIDER_SDK_ERROR_CODES = [
   'PROVIDER_NOT_FOUND',
   'PROVIDER_ALREADY_REGISTERED',

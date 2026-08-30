@@ -28,6 +28,9 @@ export const PROVIDER_CATEGORIES = [
   'oracle',
   'economic_data',
   'regulatory',
+] as const;
+
+/**
  * Wave 1 — shared provider SDK types.
  *
  * Simulation only. No live provider connectivity.
@@ -136,6 +139,9 @@ export const defaultClock = (): Clock => ({
 
 export function isSafeReadMethod(method: HttpMethod): boolean {
   return method === 'GET' || method === 'HEAD';
+}
+
+/**
  * Wave 1 Prompt 3 — universal provider HTTP transport contract.
  *
  * Vendor-neutral outbound transport for external provider adapters.
@@ -215,6 +221,8 @@ export type ProviderTransport = {
   readonly transportId: string;
   request<T = unknown>(context: ProviderRequestContext): Promise<ProviderTransportResult<T>>;
 };
+
+/**
  * Canonical SunRey external-data provider types.
  *
  * Provider IDs map to `provider_id` in config/providers/free-api-catalog.yaml.
@@ -262,6 +270,14 @@ export const PROVIDER_CATEGORIES = [
 export type ProviderCategory = (typeof PROVIDER_CATEGORIES)[number];
 
 export const AUTHORITY_CLASSES = [
+  'authoritative_official',
+  'regulated_provider',
+  'reference_data',
+  'research_data',
+  'community_data',
+  'derived_data',
+] as const;
+
 export const PROVIDER_CAPABILITIES = [
   'macroeconomic_indicators',
   'interest_rates',
