@@ -21,6 +21,10 @@ import {
   newAccessRedemptionId,
 } from './ids.ts';
 import {
+  AccessAllocationProjection,
+  type AccessAllocationPreviewInput,
+} from './allocation.ts';
+import {
   projectAccessCategories,
   projectAccessList,
   projectAccessOverview,
@@ -111,6 +115,7 @@ export class HumanAccessEconomyProduct {
   private readonly store: HumanAccessEconomyStore;
   private readonly canonical = createCanonicalAccessRuntime();
   private readonly providerNetwork: AccessProviderNetworkService;
+  private readonly allocationProjection = new AccessAllocationProjection();
 
   constructor(
     store: HumanAccessEconomyStore = new HumanAccessEconomyStore(),
@@ -831,6 +836,30 @@ export class HumanAccessEconomyProduct {
       userContributionMinorUnits: record.decision.userContributionMinorUnits.toString(),
       coverageMinorUnits: record.decision.coverage?.appliedCoverageMinorUnits.toString() ?? null,
     });
+  }
+
+  accessEpoch(actor: AccessActor, epochId?: string) {
+    return this.allocationProjection.epoch(actor, epochId);
+  }
+
+  accessParticipation(actor: AccessActor, epochId?: string) {
+    return this.allocationProjection.participation(actor, epochId);
+  }
+
+  accessAllocation(actor: AccessActor, epochId?: string) {
+    return this.allocationProjection.allocation(actor, epochId);
+  }
+
+  accessAllocationCategories(epochId?: string) {
+    return this.allocationProjection.allocationCategories(epochId);
+  }
+
+  accessAllocationHistory(actor: AccessActor) {
+    return this.allocationProjection.allocationHistory(actor);
+  }
+
+  accessAllocationPreview(actor: AccessActor, input: AccessAllocationPreviewInput = {}) {
+    return this.allocationProjection.allocationPreview(actor, input);
   }
 }
 
