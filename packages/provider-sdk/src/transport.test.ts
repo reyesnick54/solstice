@@ -13,7 +13,7 @@ import {
   redactUrlForLog,
   type FetchLike,
   type ProviderAuthStrategy,
-  type ProviderRequestContext,
+  type HttpProviderRequestContext,
 } from './index.ts';
 
 const PROVIDER_ID = 'fixture.provider';
@@ -63,7 +63,7 @@ function transport(
   });
 }
 
-function request(overrides?: Partial<ProviderRequestContext>): ProviderRequestContext {
+function request(overrides?: Partial<HttpProviderRequestContext>): HttpProviderRequestContext {
   return {
     providerId: PROVIDER_ID,
     requestId: 'req-001',

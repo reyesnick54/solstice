@@ -1,0 +1,20 @@
+{
+  "count": 2,
+  "total_pages": 1,
+  "results": [
+    {
+      "document_number": "2026-15234",
+      "title": "Notice of Proposed Rulemaking on Interest Rate Policy",
+      "publication_date": "2026-08-15",
+      "type": "Notice",
+      "agencies": [{ "name": "Department of the Treasury", "raw_name": "TREASURY" }]
+    },
+    {
+      "document_number": "2026-14890",
+      "title": "Economic Policy Statement on Federal Spending Caps",
+      "publication_date": "2026-08-10",
+      "type": "Presidential Document",
+      "agencies": [{ "name": "Executive Office of the President", "raw_name": "EOP" }]
+    }
+  ]
+}

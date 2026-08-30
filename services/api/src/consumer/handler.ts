@@ -69,6 +69,7 @@ import type { NativeEconomySurface } from './native-economy-adapter.ts';
 import { DATA_SOURCE_STATUSES, RIGHTS_REQUEST_KINDS, RIGHTS_REQUEST_STATES, dispatchPhaseH } from './phase-h/index.ts';
 import type { PhaseHProductSurface } from './phase-h/index.ts';
 import type { ProductiveEconomySurface } from './productive-economy-adapter.ts';
+import type { WorldEconomySurface } from './world-economy-adapter.ts';
 import type { HinContributionSurface } from './hin-adapter.ts';
 import {
   HIN_PRODUCT_CATEGORIES,
@@ -118,6 +119,7 @@ export type ConsumerBffRuntime = {
   readonly hinContributions?: HinContributionSurface;
   readonly nativeEconomy?: NativeEconomySurface;
   readonly productiveEconomy?: ProductiveEconomySurface;
+  readonly worldEconomy?: WorldEconomySurface;
   readonly exchange?: ExchangeLifecycleSurface | ExchangeProductSurface;
   readonly phaseH?: PhaseHProductSurface;
   readonly dataRights?: ConsentDataRightsEngine;
@@ -343,6 +345,27 @@ function dispatchAuthenticated(
   }
   if (path === '/api/v1/fx/currencies' && method === 'GET') {
     return json(200, runtime.bff.listFxCurrencies(), headers);
+  }
+  if (path === '/api/v1/fx/reference' && method === 'GET') {
+    if (query.base && query.quote) {
+      return json(200, runtime.bff.fxReferenceRate(String(query.base), String(query.quote)), headers);
+    }
+    if (query.base && query.quotes) {
+      const quotes = String(query.quotes).split(',').map((part) => part.trim()).filter(Boolean);
+      return json(200, runtime.bff.fxReferenceRates(String(query.base), quotes), headers);
+    }
+    return json(200, runtime.bff.listFxReferenceProviders(), headers);
+  }
+  const referencePairMatch = /^\/api\/v1\/fx\/reference\/([^/]+)\/([^/]+)$/.exec(path);
+  if (referencePairMatch && method === 'GET') {
+    const [, base, quote] = referencePairMatch;
+    return json(200, runtime.bff.fxReferenceRate(base!, quote!), headers);
+  }
+  const referenceHistoryMatch = /^\/api\/v1\/fx\/reference\/([^/]+)\/([^/]+)\/history$/.exec(path);
+  if (referenceHistoryMatch && method === 'GET') {
+    const [, base, quote] = referenceHistoryMatch;
+    const date = String(query.date ?? query.on ?? '2026-08-30');
+    return json(200, runtime.bff.fxReferenceHistory(base!, quote!, date), headers);
   }
   if (path === '/api/v1/fx/valuation' && method === 'GET') {
     return json(200, runtime.bff.valuation(principal, query.targetCurrency ?? query.target ?? 'USD'), headers);
@@ -729,6 +752,36 @@ function dispatchAuthenticated(
     const resource = path.slice('/api/v1/world/resources/'.length);
     const body = marketReference.worldResource(principal, resource, requestId);
     return json(isBffError(body) ? statusForError(body) : 200, body, headers);
+  if (path === '/api/v1/world/economy' && method === 'GET') {
+    const surface = runtime.worldEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('world', principal), headers);
+    }
+    return json(200, surface.overview(), headers);
+  }
+  if (path === '/api/v1/world/economy/indicators' && method === 'GET') {
+    const surface = runtime.worldEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('world', principal), headers);
+    }
+    return json(200, surface.indicators(), headers);
+  }
+  if (path.startsWith('/api/v1/world/economy/countries/') && method === 'GET') {
+    const surface = runtime.worldEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('world', principal), headers);
+    }
+    const country = path.slice('/api/v1/world/economy/countries/'.length);
+    return json(200, surface.country(country), headers);
+  }
+  if (path.startsWith('/api/v1/world/economy/series/') && method === 'GET') {
+    const surface = runtime.worldEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('world', principal), headers);
+    }
+    const indicatorId = path.slice('/api/v1/world/economy/series/'.length);
+    const country = request.query?.country;
+    return json(200, surface.series(indicatorId, country), headers);
   }
 
   if (path === '/api/v1/hin/contributions' && method === 'GET') {

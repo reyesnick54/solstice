@@ -128,11 +128,6 @@ export {
   type ExternalObservationEvidenceRef,
   type AgentEvidenceBundle,
 } from './agent-evidence.ts';
-/**
- * @solstice/provider-sdk — shared provider reliability control plane.
- *
- * Wave 1 Prompt 4. Simulation only. No live provider integration.
- */
 
 export {
   HTTP_METHODS,
@@ -143,17 +138,17 @@ export {
   type HttpMethod,
   type CircuitState,
   type FailureClassification,
-  type ProviderTransport,
-  type ProviderTransportRequest,
-  type ProviderTransportResponse,
+  type ReliabilityTransport,
+  type ReliabilityTransportRequest,
+  type ReliabilityTransportResponse,
   type ProviderError,
   type ReliabilityOutcome,
   type DeadlineContext,
   type FallbackContext,
   type FallbackDecision,
   type FallbackHook,
-  type Clock,
-} from './types.ts';
+  type ReliabilityClock,
+} from './reliability-types.ts';
 
 export {
   DEFAULT_PROVIDER_RELIABILITY_POLICY,
@@ -228,6 +223,8 @@ export {
   errorResponse,
   type SimulatedResponse,
 } from './simulate.ts';
+
+/**
  * Wave 1 Prompt 3 — universal provider HTTP transport and authentication layer.
  */
 
@@ -236,15 +233,15 @@ export {
   PROVIDER_CONTENT_TYPES,
   type ProviderHttpMethod,
   type ProviderContentType,
-  type ProviderRequestContext,
-  type ProviderResponseMetadata,
+  type HttpProviderRequestContext,
+  type HttpProviderResponseMetadata,
   type ProviderParsedBody,
-  type ProviderTransportResponse,
-  type ProviderTransportResult,
-  type ProviderTransportSuccess,
-  type ProviderTransportFailure,
-  type ProviderTransport,
-} from './types.ts';
+  type HttpProviderTransportResponse,
+  type HttpProviderTransportResult,
+  type HttpProviderTransportSuccess,
+  type HttpProviderTransportFailure,
+  type HttpProviderTransport,
+} from './http-transport-types.ts';
 
 export {
   PROVIDER_TRANSPORT_ERROR_KINDS,
@@ -314,14 +311,15 @@ export {
   systemClock,
   type FetchProviderTransportOptions,
   type FetchLike,
-  type Clock,
+  type TransportClock,
 } from './transport.ts';
+
 export * from './types.ts';
 export * from './contract.ts';
 export * from './adapter.ts';
-export * from './errors.ts';
 export * from './activation-policy.ts';
 export * from './registry.ts';
+export { createProviderRegistry } from './registry.ts';
 export * from './factory.ts';
 export * from './catalog/types.ts';
 export * from './catalog/loader.ts';

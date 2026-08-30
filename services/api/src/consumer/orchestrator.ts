@@ -23,6 +23,7 @@ import type {
   SecurityPort,
 } from './ports.ts';
 import type { FxCommandPort } from './fx-adapter.ts';
+import type { FxReferenceBffPort } from './fx-reference-adapter.ts';
 import type { PresentationValuation } from '../../../../packages/payments/src/fx-valuation.ts';
 import type { SupportedCurrency } from '../../../../packages/payments/src/fx-currency.ts';
 import { EMPTY_PREFERENCES } from './ports.ts';
@@ -200,6 +201,7 @@ export type ConsumerBffDeps = {
   readonly vault?: OptionalDomainPort;
   readonly fx?: OptionalDomainPort;
   readonly fxEngine?: FxCommandPort;
+  readonly fxReference?: FxReferenceBffPort;
   readonly providerDown?: Readonly<Record<string, boolean>>;
   readonly providerRuntime?: UniversalProviderRuntime;
 };
@@ -642,6 +644,45 @@ export class ConsumerBff {
     return Object.freeze({
       items: this.deps.fxEngine?.listCurrencies() ?? [],
       liveEnabled: false,
+    });
+  }
+
+  listFxReferenceProviders() {
+    if (!this.deps.fxReference) {
+      return Object.freeze({ authority: 'FX_REFERENCE_ONLY_NOT_EXECUTION', items: Object.freeze([]) });
+    }
+    return this.deps.fxReference.listReferenceProviders();
+  }
+
+  fxReferenceRate(base: string, quote: string) {
+    return this.deps.fxReference?.getReferenceRate(base, quote) ?? Object.freeze({
+      ok: false,
+      code: 'FEATURE_UNAVAILABLE',
+      message: 'FX reference service is not attached to this BFF',
+    });
+  }
+
+  fxReferenceRates(base: string, quotes: readonly string[]) {
+    return this.deps.fxReference?.getReferenceRates(base, quotes) ?? Object.freeze({
+      ok: false,
+      code: 'FEATURE_UNAVAILABLE',
+      message: 'FX reference service is not attached to this BFF',
+    });
+  }
+
+  fxReferenceHistory(base: string, quote: string, date: string) {
+    return this.deps.fxReference?.getReferenceHistory(base, quote, date) ?? Object.freeze({
+      ok: false,
+      code: 'FEATURE_UNAVAILABLE',
+      message: 'FX reference service is not attached to this BFF',
+    });
+  }
+
+  fxReferenceCurrencies() {
+    return this.deps.fxReference?.getReferenceCurrencies() ?? Object.freeze({
+      ok: false,
+      code: 'FEATURE_UNAVAILABLE',
+      message: 'FX reference service is not attached to this BFF',
     });
   }
 

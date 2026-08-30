@@ -3,20 +3,20 @@
  */
 
 import type {
-  ProviderTransport,
-  ProviderTransportRequest,
-  ProviderTransportResponse,
-} from './types.ts';
+  ReliabilityTransport,
+  ReliabilityTransportRequest,
+  ReliabilityTransportResponse,
+} from './reliability-types.ts';
 
 export type SimulatedResponse =
-  | ProviderTransportResponse
+  | ReliabilityTransportResponse
   | { readonly status: number; readonly headers?: Readonly<Record<string, string>>; readonly body?: unknown }
   | { readonly error: 'timeout' | 'network' }
-  | (() => ProviderTransportResponse | Promise<ProviderTransportResponse>);
+  | (() => ReliabilityTransportResponse | Promise<ReliabilityTransportResponse>);
 
-export class SimulatedProviderTransport implements ProviderTransport {
+export class SimulatedProviderTransport implements ReliabilityTransport {
   readonly providerId: string;
-  readonly calls: ProviderTransportRequest[] = [];
+  readonly calls: ReliabilityTransportRequest[] = [];
   private readonly script: SimulatedResponse[];
   private index = 0;
   private readonly delayMs: number;
@@ -28,9 +28,9 @@ export class SimulatedProviderTransport implements ProviderTransport {
   }
 
   async execute(
-    request: ProviderTransportRequest,
+    request: ReliabilityTransportRequest,
     options?: { readonly signal?: AbortSignal; readonly deadlineMs?: number },
-  ): Promise<ProviderTransportResponse> {
+  ): Promise<ReliabilityTransportResponse> {
     this.calls.push(request);
     if (options?.signal?.aborted) {
       throw new Error('aborted');

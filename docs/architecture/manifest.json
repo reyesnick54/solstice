@@ -522,7 +522,12 @@
       "financialStateMutation": false,
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
-      "allowedDependencies": [],
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/config",
+        "packages/security",
+        "packages/events"
+      ],
       "codeowners": [
         "@reyesnick54"
       ],
@@ -924,7 +929,8 @@
         "packages/events",
         "packages/money",
         "packages/economic-asset-registry",
-        "packages/human-economic-contribution"
+        "packages/human-economic-contribution",
+        "packages/provider-sdk"
       ],
       "codeowners": [
         "@reyesnick54"

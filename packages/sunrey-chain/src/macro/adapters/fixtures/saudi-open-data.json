@@ -1,0 +1,16 @@
+{
+  "result": {
+    "records": [
+      {
+        "indicator_name_en": "Gross Domestic Product at Current Prices",
+        "indicator_name_ar": "الناتج المحلي الإجمالي بالأسعار الجارية",
+        "value": 1065834,
+        "unit": "Million SAR",
+        "year": 2024,
+        "country": "Saudi Arabia"
+      }
+    ],
+    "total": 1
+  },
+  "success": true
+}
