@@ -27,6 +27,7 @@ import type { ComplianceEvidenceService, BusinessIdentityService, DigitalRiskSer
 import { createDefaultWave4AdapterStates } from './wave4/adapters.ts';
 import { buildWave4CoverageReport } from './wave4/coverage.ts';
 import { WAVE4_IMPLEMENTED_PROVIDER_IDS } from './wave4/catalog-entries.ts';
+import { createExternalDataTrustPlane, type ExternalDataTrustPlane } from './trust-engine/index.ts';
 import {
   buildWave6KnowledgeBundle,
   createWave6Services,
@@ -62,6 +63,7 @@ export class ExternalDataPlane {
   readonly endpointSecurity: EndpointSecurityService;
   readonly serviceOutage: ServiceOutageService;
   readonly providerRisk: ProviderRiskService;
+  readonly trust: ExternalDataTrustPlane;
   readonly wave6: Wave6Services;
   readonly #wave6Ctx;
   readonly #ctx: Wave2AdapterContext;
@@ -103,6 +105,7 @@ export class ExternalDataPlane {
     this.endpointSecurity = wave4.endpointSecurity;
     this.serviceOutage = wave4.serviceOutage;
     this.providerRisk = wave4.providerRisk;
+    this.trust = createExternalDataTrustPlane({ nowUtc: () => nowUtc });
     const wave6States = createDefaultWave6AdapterStates();
     for (const [id, state] of wave2States) {
       wave6States.set(id, state);

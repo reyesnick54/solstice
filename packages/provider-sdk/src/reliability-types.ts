@@ -1,6 +1,5 @@
 /**
  * Wave 1 Prompt 4 — provider reliability control plane types.
- * Wave 1 Prompt 4 — reliability-layer transport types.
  *
  * Distinct from HTTP transport types in http-transport-types.ts.
  */
