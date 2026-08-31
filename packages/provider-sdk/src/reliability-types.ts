@@ -36,7 +36,8 @@ export type ReliabilityTransportResponse = {
   readonly body: unknown;
 };
 
-export type ReliabilityProviderTransport = {
+export type ReliabilityProviderTransport = ReliabilityTransport;
+
 /** Injectable transport wrapped by the reliability control plane. */
 export type ReliabilityTransport = {
   readonly providerId: string;

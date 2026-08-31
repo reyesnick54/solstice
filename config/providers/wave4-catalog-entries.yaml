@@ -1,0 +1,260 @@
+# Wave 4 catalog entries — compliance, KYB, fraud, cybersecurity
+# Synced from packages/external-data/src/wave4/catalog-entries.ts
+# Run: node --experimental-strip-types scripts/sync-wave4-catalog.mjs
+
+providers:
+  - provider_id: open-sanctions
+    name: OpenSanctions
+    short_name: OpenSanctions
+    description: Open-source sanctions, PEP, and watchlist data aggregated from official sources worldwide.
+    primary_category: compliance
+    capabilities:
+      - sanctions
+      - pep_screening
+      - watchlists
+      - adverse_media
+    endpoints:
+      base_url: https://api.opensanctions.org
+      api_version: v1
+      documentation_url: https://www.opensanctions.org/docs/api/
+      status_url: https://www.opensanctions.org/
+    authentication:
+      type: api_key
+      required: false
+      registration_required: false
+      environment_variable: OPENSANCTIONS_API_KEY
+      notes: Optional API key for higher rate limits.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - compliance
+        - world
+        - financial_agent
+      canonical_provider_interface: ComplianceEvidenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-30"
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+
+  - provider_id: nvd
+    name: National Vulnerability Database
+    short_name: NVD
+    description: NIST National Vulnerability Database CVE feed.
+    primary_category: cybersecurity
+    capabilities:
+      - vulnerability_intelligence
+      - cve_lookup
+    endpoints:
+      base_url: https://services.nvd.nist.gov
+      api_version: v2.0
+      documentation_url: https://nvd.nist.gov/developers/vulnerabilities
+      status_url: null
+    authentication:
+      type: api_key
+      required: false
+      registration_required: true
+      environment_variable: NVD_API_KEY
+      notes: Optional API key for higher rate limits.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: CVE feed updated continuously.
+    sunrey:
+      domain:
+        - cybersecurity
+        - infrastructure
+      canonical_provider_interface: VulnerabilityIntelligenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-30"
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+
+  - provider_id: urlhaus
+    name: URLhaus
+    short_name: URLhaus
+    description: abuse.ch URLhaus malicious URL database.
+    primary_category: cybersecurity
+    capabilities:
+      - malicious_url
+      - malware
+      - threat_intelligence
+    endpoints:
+      base_url: https://urlhaus-api.abuse.ch
+      api_version: v1
+      documentation_url: https://urlhaus-api.abuse.ch/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - cybersecurity
+        - compliance
+      canonical_provider_interface: ThreatIntelligenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-30"
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+
+  - provider_id: world-check-refinitiv
+    name: World-Check (Refinitiv)
+    short_name: World-Check
+    description: Commercial PEP and sanctions screening. Paid subscription required.
+    primary_category: compliance
+    capabilities:
+      - sanctions
+      - pep_screening
+      - adverse_media
+    endpoints:
+      base_url: null
+      api_version: null
+      documentation_url: null
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: null
+      notes: Commercial only.
+    access:
+      status: no_longer_free
+      free_tier_verified: false
+      registration_required: true
+      notes: Commercial only.
+    commercial_use:
+      status: requires_legal_review
+      notes: Paid commercial service.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - compliance
+      canonical_provider_interface: ComplianceEvidenceProvider
+      priority: low
+      launch_tier: blocked_pending_review
+      authority_class: regulated_provider
+      integration_state: catalog_only
+      existing_adapter: null
+    verification:
+      status: unverified
+      verified_against_official_docs: false
+      last_verified: null
+      notes: Blocked — commercial only, no free tier.
