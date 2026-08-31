@@ -150,7 +150,6 @@ export {
   type FallbackHook,
   type ReliabilityClock,
 } from './reliability-types.ts';
-} from './types.ts';
 
 export {
   DEFAULT_PROVIDER_RELIABILITY_POLICY,

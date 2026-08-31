@@ -77,6 +77,7 @@ import {
 } from '../../../../packages/human-economic-contribution/src/hin-value/index.ts';
 import { dispatchBlockchain } from './blockchain.ts';
 import { dispatchTravel } from './travel.ts';
+import { dispatchHealthReference, HEALTH_REFERENCE_BFF_ROUTES } from './health-reference.ts';
 import { dispatchEnvironmental } from './environmental.ts';
 import type { EnvironmentalOracleBff } from './environmental-adapter.ts';
 import { dispatchDataRights } from './data-rights.ts';
@@ -433,6 +434,13 @@ function dispatchAuthenticated(
   const travel = dispatchTravel(request, requestId, headers);
   if (travel) {
     return travel;
+  }
+
+  const healthReference = dispatchHealthReference(request, requestId, headers);
+  if (healthReference) {
+    return healthReference;
+  }
+
   const environmental = dispatchEnvironmental(request, requestId, headers, runtime.environmental);
   if (environmental) {
     return environmental;
@@ -1915,6 +1923,7 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/environmental/separation-proof',
   'GET /api/v1/environmental/agent-evidence',
   'GET /api/v1/environmental/travel-context',
+  ...HEALTH_REFERENCE_BFF_ROUTES,
   'GET /api/v1/hin/contributions',
   'GET /api/v1/hin/contributions/{id}',
   'GET /api/v1/hin/metrics',
