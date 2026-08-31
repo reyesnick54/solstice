@@ -27,7 +27,11 @@ export type {
 
 export { ACCESS_RECONCILIATION_ISSUE_TYPES, RECONCILIATION_SEVERITIES, RECONCILIATION_RESOLUTION_STATUSES } from './types.ts';
 
-export { AccessCoverageEngine, type CoverageEngineInput, type CoverageEngineResult } from './coverage-engine.ts';
+export {
+  AccessTransactionCoverageEngine,
+  type CoverageEngineInput,
+  type CoverageEngineResult,
+} from './coverage-engine.ts';
 export { resolveFulfillmentPolicy, type AccessFulfillmentPolicy, type FulfillmentConsumptionPoint } from './fulfillment-policy.ts';
 export {
   resolveEntitlementRestorationPolicy,

@@ -2,6 +2,10 @@ export {
   ACCESS_SETTLEMENT_RAIL_SCHEMA_VERSION,
   ACCESS_SETTLEMENT_RAIL_TAXONOMY_ID,
   ACCESS_SETTLEMENT_RAIL_TAXONOMY_VERSION,
+  ACCESS_SETTLEMENT_ORCHESTRATION_SCHEMA,
+  ACCESS_SETTLEMENT_ORCHESTRATION_CHUNK,
+  ACCESS_SETTLEMENT_ORCHESTRATION_STATUSES,
+  ACCESS_PAYMENT_RAIL_KINDS,
   ACCESS_PAYMENT_RAIL_CAPABILITIES,
   ACCESS_PAYMENT_RAIL_STATUSES,
   ACCESS_VIRTUAL_CARD_STATUSES,
@@ -9,7 +13,16 @@ export {
   ACCESS_CARD_CONTROL_KINDS,
   ACCESS_SETTLEMENT_RAIL_FAILURE_CODES,
   ACCESS_VIRTUAL_CARD_PURPOSES,
+  ACCESS_SETTLEMENT_STRATEGIES,
+  ACCESS_PAYMENT_REMOTE_STATUSES,
+  ACCESS_SETTLEMENT_OPERATIONS,
+  LAUNCH_TOKEN_CONVERSION_CONTRIBUTION,
   RESTRICTED_CARD_RAIL_ID,
+  isAccessSettlementOrchestrationStatus,
+  isAccessPaymentRailKind,
+  railSupportsCapability,
+  type AccessSettlementOrchestrationStatus,
+  type AccessPaymentRailKind,
   type AccessPaymentRailCapability,
   type AccessPaymentRailStatus,
   type AccessVirtualCardStatus,
@@ -17,6 +30,9 @@ export {
   type AccessCardControlKind,
   type AccessSettlementRailFailureCode,
   type AccessVirtualCardPurpose,
+  type AccessSettlementStrategy,
+  type AccessPaymentRemoteStatus,
+  type AccessSettlementOperation,
 } from './taxonomy.ts';
 
 export {
@@ -81,6 +97,13 @@ export {
   type RailFactoryMode,
 } from './orchestrator.ts';
 
+export {
+  FiatAccessSettlementOrchestrator,
+  createFiatAccessSettlementOrchestrator,
+  type FiatAccessSettlementOrchestratorDeps,
+  type SettlementOperationResult,
+} from './fiat-settlement-orchestrator.ts';
+
 export { MockRestrictedCardIssuer } from './adapters/mock-restricted-card-issuer.ts';
 export {
   ProductionRestrictedCardIssuerShell,
@@ -89,68 +112,6 @@ export {
   type ProductionCardIssuerRequirement,
   type ProductionCardIssuerChecklist,
 } from './adapters/production-restricted-card-issuer.ts';
-
-export type {
-  AccessVirtualCardRequest,
-  AccessCardControls,
-  AccessVirtualCardRecord,
-  AccessCardAuthorizationRecord,
-  AccessCardCaptureRecord,
-  AccessCardLifecycleEventRecord,
-  AccessSettlementReconciliation,
-  VirtualCardCreationResult,
-  AuthorizationValidationResult,
-  CaptureResult,
-  RefundResult,
-  VoidResult,
-  DisableCardResult,
-  AccessPaymentRail,
-  FundingReservationVerifier,
-} from './types.ts';
-/**
- * ACCESS Wave 3 Prompt 35 — Fiat settlement orchestration exports.
- */
-
-export {
-  ACCESS_SETTLEMENT_ORCHESTRATION_SCHEMA,
-  ACCESS_SETTLEMENT_ORCHESTRATION_CHUNK,
-  ACCESS_SETTLEMENT_ORCHESTRATION_STATUSES,
-  ACCESS_PAYMENT_RAIL_KINDS,
-  ACCESS_PAYMENT_RAIL_CAPABILITIES,
-  ACCESS_SETTLEMENT_STRATEGIES,
-  ACCESS_PAYMENT_REMOTE_STATUSES,
-  ACCESS_SETTLEMENT_OPERATIONS,
-  LAUNCH_TOKEN_CONVERSION_CONTRIBUTION,
-  isAccessSettlementOrchestrationStatus,
-  isAccessPaymentRailKind,
-  railSupportsCapability,
-  type AccessSettlementOrchestrationStatus,
-  type AccessPaymentRailKind,
-  type AccessPaymentRailCapability,
-  type AccessSettlementStrategy,
-  type AccessPaymentRemoteStatus,
-  type AccessSettlementOperation,
-} from './taxonomy.ts';
-
-export type {
-  AccessCheckoutQuote,
-  AccessSettlementPlan,
-  AccessSettlementSourceOfFunds,
-  AccessRefundAllocation,
-  AccessSettlementEvidenceTrail,
-  AccessSettlementRecord,
-  AccessSettlementFailureCode,
-  AccessSettlementFailure,
-  AccessPaymentRailDescriptor,
-  AccessPaymentAuthorizationResult,
-  AccessPaymentCaptureResult,
-  AccessPaymentVoidResult,
-  AccessPaymentRefundResult,
-  AccessPaymentStatusResult,
-  AccessPaymentReconcileResult,
-  ProviderPaymentMethodRef,
-  UserFundingSourceRef,
-} from './types.ts';
 
 export {
   settlementFailure,
@@ -171,7 +132,7 @@ export type {
 } from './ports.ts';
 
 export type {
-  AccessPaymentRail,
+  AccessPaymentRail as FiatAccessPaymentRail,
   AccessPaymentRailAuthorizeInput,
   AccessPaymentRailCaptureInput,
   AccessPaymentRailVoidInput,
@@ -182,13 +143,6 @@ export type {
 export { assertRailCapability } from './payment-rail.ts';
 
 export {
-  AccessSettlementOrchestrator,
-  createAccessSettlementOrchestrator,
-  type AccessSettlementOrchestratorDeps,
-  type SettlementOperationResult,
-} from './orchestrator.ts';
-
-export {
   SimulatedAccessPaymentRail,
   SimulatedUserFundingPort,
   SimulatedComplianceGatePort,
@@ -196,3 +150,38 @@ export {
   SimulatedSettlementEvidencePort,
   type SimulatedPaymentRailOptions,
 } from './rails/simulated.ts';
+
+export type {
+  AccessVirtualCardRequest,
+  AccessCardControls,
+  AccessVirtualCardRecord,
+  AccessCardAuthorizationRecord,
+  AccessCardCaptureRecord,
+  AccessCardLifecycleEventRecord,
+  AccessSettlementReconciliation,
+  VirtualCardCreationResult,
+  AuthorizationValidationResult,
+  CaptureResult,
+  RefundResult,
+  VoidResult,
+  DisableCardResult,
+  AccessPaymentRail,
+  FundingReservationVerifier,
+  AccessCheckoutQuote,
+  AccessSettlementPlan,
+  AccessSettlementSourceOfFunds,
+  AccessRefundAllocation,
+  AccessSettlementEvidenceTrail,
+  AccessSettlementRecord,
+  AccessSettlementFailureCode,
+  AccessSettlementFailure,
+  AccessPaymentRailDescriptor,
+  AccessPaymentAuthorizationResult,
+  AccessPaymentCaptureResult,
+  AccessPaymentVoidResult,
+  AccessPaymentRefundResult,
+  AccessPaymentStatusResult,
+  AccessPaymentReconcileResult,
+  ProviderPaymentMethodRef,
+  UserFundingSourceRef,
+} from './types.ts';

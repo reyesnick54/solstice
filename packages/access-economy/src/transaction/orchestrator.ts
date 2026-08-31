@@ -21,7 +21,7 @@ import type { AccessSolvencyService } from '../funding-solvency/solvency-service
 import { providerRefFor, subjectRefFor } from '../ids.ts';
 import type { AccessProviderGateway } from '../providers/gateway.ts';
 import type { AccessProviderId, ProviderQuote } from '../providers/types.ts';
-import { AccessCoverageEngine } from './coverage-engine.ts';
+import { AccessTransactionCoverageEngine } from './coverage-engine.ts';
 import { resolveEntitlementRestorationPolicy } from './entitlement-restoration-policy.ts';
 import { resolveFulfillmentPolicy } from './fulfillment-policy.ts';
 import { allocateRefund } from './refund-policy.ts';
@@ -53,7 +53,7 @@ export class AccessTransactionOrchestrator {
   private readonly paymentRail: AccessPaymentRail;
   private readonly simulationProvider?: ConfigurableSimulationProvider;
   readonly store: AccessTransactionStore;
-  readonly coverageEngine: AccessCoverageEngine;
+  readonly coverageEngine: AccessTransactionCoverageEngine;
   readonly settlementOrchestrator: AccessSettlementOrchestrator;
   private readonly startIdempotency = new Map<string, string>();
 
@@ -63,7 +63,7 @@ export class AccessTransactionOrchestrator {
     this.paymentRail = deps.paymentRail;
     this.simulationProvider = deps.simulationProvider;
     this.store = new AccessTransactionStore();
-    this.coverageEngine = new AccessCoverageEngine(deps.solvency);
+    this.coverageEngine = new AccessTransactionCoverageEngine(deps.solvency);
     this.settlementOrchestrator = new AccessSettlementOrchestrator(deps.paymentRail);
   }
 
@@ -205,6 +205,9 @@ export class AccessTransactionOrchestrator {
     }
     if (context.quote.userContributionMinorUnits > 0n && input.userApproved !== true) {
       return { ok: false, code: 'USER_APPROVAL_REQUIRED', message: 'user must approve co-pay amount' };
+    }
+    if (context.quote.expiresAt <= input.now) {
+      return { ok: false, code: 'QUOTE_EXPIRED', message: 'checkout quote expired; re-quote required' };
     }
 
     if (context.status === 'QUOTED') {
@@ -356,6 +359,15 @@ export class AccessTransactionOrchestrator {
     const context = this.store.get(input.transactionId);
     if (!context?.quote || !context.providerReservationReference) {
       return { ok: false, code: 'RESERVE_REQUIRED', message: 'reservation required before booking' };
+    }
+    if (context.quote.expiresAt <= input.now) {
+      await compensateTransaction(context, {
+        solvency: this.solvency,
+        paymentRail: this.paymentRail,
+        now: input.now,
+        evidencePrefix: 'quote-expired',
+      });
+      return { ok: false, code: 'QUOTE_EXPIRED', message: 'checkout quote expired; re-quote required' };
     }
     if (input.idempotencyKey in context.idempotencyKeys && context.providerBookingReference) {
       return { ok: true, value: context, idempotent: true };

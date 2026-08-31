@@ -21,8 +21,8 @@ import {
   type AccessCheckoutQuote,
 } from './index.ts';
 import {
-  AccessSettlementOrchestrator,
-  createAccessSettlementOrchestrator,
+  FiatAccessSettlementOrchestrator,
+  createFiatAccessSettlementOrchestrator,
   LAUNCH_TOKEN_CONVERSION_CONTRIBUTION,
   SimulatedAccessPaymentRail,
   SimulatedCanonicalFiatLedgerPort,
@@ -122,7 +122,7 @@ function createOrchestrator(
   railOptions?: ConstructorParameters<typeof SimulatedAccessPaymentRail>[0],
 ) {
   const rail = new SimulatedAccessPaymentRail(railOptions);
-  return createAccessSettlementOrchestrator({
+  return createFiatAccessSettlementOrchestrator({
     solvency: service,
     paymentRail: rail,
     userFunding: new SimulatedUserFundingPort(rail),
@@ -343,7 +343,7 @@ describe('ACCESS-35 settlement orchestrator', () => {
     seedSolvency(service);
     const fiatLedger = new SimulatedCanonicalFiatLedgerPort();
     const rail = new SimulatedAccessPaymentRail();
-    const orchestrator = createAccessSettlementOrchestrator({
+    const orchestrator = createFiatAccessSettlementOrchestrator({
       solvency: service,
       paymentRail: rail,
       userFunding: new SimulatedUserFundingPort(rail),
@@ -398,7 +398,7 @@ describe('ACCESS-35 settlement orchestrator', () => {
     const service = createAccessSolvencyService();
     seedSolvency(service);
     const providerRail = new SimulatedAccessPaymentRail({ failAuthorize: true });
-    const orchestrator = createAccessSettlementOrchestrator({
+    const orchestrator = createFiatAccessSettlementOrchestrator({
       solvency: service,
       paymentRail: providerRail,
       userFunding: new SimulatedUserFundingPort(new SimulatedAccessPaymentRail()),
@@ -427,7 +427,7 @@ describe('ACCESS-35 settlement orchestrator', () => {
     const service = createAccessSolvencyService();
     seedSolvency(service);
     const providerRail = new SimulatedAccessPaymentRail({ timeoutOnAuthorize: true });
-    const orchestrator = createAccessSettlementOrchestrator({
+    const orchestrator = createFiatAccessSettlementOrchestrator({
       solvency: service,
       paymentRail: providerRail,
       userFunding: new SimulatedUserFundingPort(new SimulatedAccessPaymentRail()),
@@ -455,7 +455,7 @@ describe('ACCESS-35 settlement orchestrator', () => {
     const service = createAccessSolvencyService();
     seedSolvency(service);
     const providerRail = new SimulatedAccessPaymentRail({ timeoutOnAuthorize: true });
-    const orchestrator = createAccessSettlementOrchestrator({
+    const orchestrator = createFiatAccessSettlementOrchestrator({
       solvency: service,
       paymentRail: providerRail,
       userFunding: new SimulatedUserFundingPort(new SimulatedAccessPaymentRail()),
@@ -504,7 +504,7 @@ describe('ACCESS-35 settlement orchestrator', () => {
     seedSolvency(service);
     const fiatLedger = new SimulatedCanonicalFiatLedgerPort();
     const rail = new SimulatedAccessPaymentRail();
-    const orchestrator = createAccessSettlementOrchestrator({
+    const orchestrator = createFiatAccessSettlementOrchestrator({
       solvency: service,
       paymentRail: rail,
       userFunding: new SimulatedUserFundingPort(rail),
@@ -587,7 +587,7 @@ describe('ACCESS-35 settlement orchestrator', () => {
     seedSolvency(service);
     const compliance = new SimulatedComplianceGatePort(true);
     const rail = new SimulatedAccessPaymentRail();
-    const orchestrator = createAccessSettlementOrchestrator({
+    const orchestrator = createFiatAccessSettlementOrchestrator({
       solvency: service,
       paymentRail: rail,
       userFunding: new SimulatedUserFundingPort(rail),
@@ -611,7 +611,7 @@ describe('ACCESS-35 settlement orchestrator', () => {
     seedSolvency(service);
     const fiatLedger = new SimulatedCanonicalFiatLedgerPort();
     const rail = new SimulatedAccessPaymentRail();
-    const orchestrator = createAccessSettlementOrchestrator({
+    const orchestrator = createFiatAccessSettlementOrchestrator({
       solvency: service,
       paymentRail: rail,
       userFunding: new SimulatedUserFundingPort(rail),
@@ -697,7 +697,7 @@ describe('ACCESS-35 compliance refusal', () => {
     seedSolvency(service);
     const compliance = new SimulatedComplianceGatePort(false);
     const rail = new SimulatedAccessPaymentRail();
-    const orchestrator = createAccessSettlementOrchestrator({
+    const orchestrator = createFiatAccessSettlementOrchestrator({
       solvency: service,
       paymentRail: rail,
       userFunding: new SimulatedUserFundingPort(rail),

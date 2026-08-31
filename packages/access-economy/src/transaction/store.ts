@@ -30,6 +30,10 @@ export class AccessTransactionStore {
     return this.contexts.get(transactionId) ?? null;
   }
 
+  listAll(): readonly AccessTransactionContext[] {
+    return Object.freeze([...this.contexts.values()]);
+  }
+
   async save(
     context: AccessTransactionContext,
     expectedVersion?: number,

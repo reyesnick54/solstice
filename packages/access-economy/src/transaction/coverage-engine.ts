@@ -1,5 +1,5 @@
 /**
- * ACCESS Wave 3 / Prompt 34+ — AccessCoverageEngine.
+ * ACCESS Wave 3 / Prompt 34+ — AccessTransactionCoverageEngine.
  *
  * Combines entitlement capacity, funding pool solvency, and coverage policy
  * to produce deterministic checkout quotes. Users cannot override splits.
@@ -35,7 +35,7 @@ export type CoverageEngineResult =
   | { readonly ok: true; readonly checkoutQuote: AccessCheckoutQuote }
   | { readonly ok: false; readonly code: string; readonly message: string };
 
-export class AccessCoverageEngine {
+export class AccessTransactionCoverageEngine {
   private readonly solvency: AccessSolvencyService;
 
   constructor(solvency: AccessSolvencyService) {
