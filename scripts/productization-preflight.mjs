@@ -12,6 +12,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const STEPS = [
   { group: 'INTEGRITY', command: ['node', 'scripts/check-json-integrity.mjs'] },
+  { group: 'INTEGRITY', command: ['node', 'scripts/validate-json.mjs'] },
   { group: 'INTEGRITY', command: ['node', 'scripts/check-merge-integrity.mjs'] },
   { group: 'INTEGRITY', command: ['node', 'scripts/check-yaml-integrity.mjs'] },
   { group: 'INTEGRITY', command: ['node', 'scripts/check-lockfiles.mjs'] },
