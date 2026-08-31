@@ -302,6 +302,7 @@ export {
 export { AccessFabric } from './service.ts';
 export * from './productive-access-bridge/index.ts';
 export * from './providers/index.ts';
+export * from './discovery/index.ts';
 export * from './participation/index.ts';
 export * from './hin-access/index.ts';
 export * from './solvency/index.ts';
