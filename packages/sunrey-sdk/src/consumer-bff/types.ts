@@ -1204,6 +1204,137 @@ export type AccessExperienceQuoteInput = {
   readonly idempotencyKey?: string;
 };
 
+export type AccessHomeSummary = AccessPosture & {
+  readonly schema: 'sunrey.consumer.access.home-summary.v1';
+  readonly title: string;
+  readonly categories: readonly {
+    readonly category: AccessCategory;
+    readonly label: string;
+    readonly availableUnits: number;
+    readonly unitLabel: string;
+    readonly dataState: 'SIMULATED' | 'LIVE' | 'UNAVAILABLE';
+  }[];
+  readonly nextExpiration: {
+    readonly category: AccessCategory;
+    readonly label: string;
+    readonly expiresAt: string;
+    readonly remainingUnits: number;
+  } | null;
+  readonly primaryCta: string;
+  readonly capability: AccessCapability;
+  readonly terminology: {
+    readonly access: string;
+    readonly availableAccess: string;
+    readonly accessCovers: string;
+    readonly youPay: string;
+    readonly accessUsed: string;
+    readonly remainingAccess: string;
+  };
+};
+
+export type AccessLanding = AccessPosture & {
+  readonly schema: 'sunrey.consumer.access.landing.v1';
+  readonly sections: readonly { readonly key: string; readonly label: string; readonly enabled: boolean }[];
+  readonly categoryCards: readonly {
+    readonly category: AccessCategory;
+    readonly label: string;
+    readonly enabled: boolean;
+    readonly dataState: 'SIMULATED' | 'UNAVAILABLE';
+  }[];
+  readonly yourAccess: AccessHomeSummary['categories'];
+  readonly capability: AccessCapability;
+};
+
+export type AccessReceipt = {
+  readonly schema: 'sunrey.consumer.access.receipt.v1';
+  readonly receiptId: string;
+  readonly receiptType: 'BOOKING_CONFIRMATION' | 'SETTLEMENT' | 'REFUND';
+  readonly accessTransactionId: string;
+  readonly providerDisplayName: string;
+  readonly serviceName: string;
+  readonly financial: {
+    readonly providerTotal: string;
+    readonly accessCoverage: string;
+    readonly userContribution: string;
+    readonly currency: string;
+    readonly depositAmount: string | null;
+  };
+  readonly access: {
+    readonly unit: string;
+    readonly unitsUsed: string;
+    readonly entitlementBefore: string | null;
+    readonly entitlementAfter: string | null;
+  };
+  readonly booking: { readonly confirmationReference: string | null; readonly bookingStatus: string };
+};
+
+export type AccessCheckout = {
+  readonly schema: 'sunrey.consumer.access.checkout.v1';
+  readonly transactionId: string;
+  readonly providerPrice: string;
+  readonly accessCoverage: string;
+  readonly userContribution: string;
+  readonly deposit: string | null;
+  readonly depositWarning: string | null;
+  readonly status: string;
+  readonly statusLabel: string;
+  readonly requiredActions: readonly string[];
+  readonly fundingAvailable: boolean;
+export type AccessDashboard = AccessPosture & {
+  readonly schema: 'sunrey.consumer.access.dashboard.v1';
+  readonly user: {
+    readonly accessEnabled: boolean;
+    readonly allocationPeriod: string;
+    readonly nextAllocationDate: string | null;
+  };
+  readonly summary: {
+    readonly totalActiveEntitlements: number;
+    readonly expiringSoonCount: number;
+    readonly activeBookingsCount: number;
+    readonly pendingActionsCount: number;
+  };
+  readonly categories: readonly {
+    readonly category: AccessCategory;
+    readonly displayName: string;
+    readonly status: string;
+    readonly availableUnits: number;
+    readonly fundedAvailabilityStatus: string;
+    readonly discoveryAvailabilityStatus: string;
+  }[];
+  readonly overallStatus: string;
+  readonly updatedAt: string;
+};
+
+export type AccessCheckoutQuote = AccessPosture & {
+  readonly schema: 'sunrey.consumer.access.checkout-quote.v1';
+  readonly checkoutQuoteId: string;
+  readonly opportunityId: string;
+  readonly priceKind: 'FIRM';
+  readonly currency: string;
+  readonly breakdown: {
+    readonly accessCoverageAmountMinorUnits: string;
+    readonly userContributionMinorUnits: string;
+    readonly totalProviderAmountMinorUnits: string;
+    readonly securityDepositMinorUnits: string;
+  };
+  readonly depositWarning: {
+    readonly required: boolean;
+    readonly message: string;
+    readonly accessCovered: false;
+  } | null;
+  readonly expiresAt: string;
+  readonly simulationOnly: true;
+};
+
+export type AccessTransaction = AccessPosture & {
+  readonly schema: 'sunrey.consumer.access.transaction.v1';
+  readonly transactionId: string;
+  readonly status: string;
+  readonly consumerStatusMessage: string;
+  readonly bookingId: string | null;
+  readonly simulationOnly: true;
+};
+
 export type ActionCenterList = {
   readonly schema: 'sunrey.consumer.action-center.v1';
   readonly view: string;

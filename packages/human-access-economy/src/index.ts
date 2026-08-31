@@ -77,5 +77,35 @@ export type {
   AccessAllocationPreviewInput,
 } from './allocation.ts';
 export { AccessProviderNetworkService, createAccessProviderNetworkService } from './provider-network.ts';
+export { createAccessDiscoveryBridge, createAccessDiscoveryPorts } from './discovery-bridge.ts';
 export { projectConsumerSolvencyPosture, type ConsumerSolvencyPosture } from './consumer-solvency.ts';
 export { projectCheckoutRegulatoryView, type AccessCheckoutRegulatoryView } from './consumer-regulatory.ts';
+export {
+  ACCESS_PRODUCT_EVENT_TYPES,
+  ACCESS_PRODUCT_TRANSACTION_STATUSES,
+  ACCESS_USER_ACTION_TYPES,
+  ACCESS_PRODUCT_TERMINOLOGY,
+} from './product/taxonomy.ts';
+export type {
+  AccessProductEvent,
+  AccessProductEventType,
+  AccessEventPriority,
+} from './product/events.ts';
+export type { AccessReceipt, AccessRefundReceipt } from './product/receipts.ts';
+export type { AccessActivityItem, AccessHistoryFilter } from './product/activity.ts';
+export type {
+  AccessProductTransaction,
+  AccessPriceChangeView,
+  AccessQuoteExpiredView,
+} from './product/transactions.ts';
+export {
+  AccessTransactionOrchestrator,
+  AccessTransactionStateMachine,
+} from './product/orchestrator.ts';
+export type {
+  AccessHomeSummaryView,
+  AccessLandingView,
+  AccessUpcomingItem,
+  AccessCheckoutView,
+  AccessHistoryView,
+} from './product/projections.ts';

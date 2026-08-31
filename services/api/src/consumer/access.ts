@@ -7,8 +7,30 @@
 import type { HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
 import type { AccessActor } from '../../../../packages/human-access-economy/src/access.ts';
 import type { AccessCategory } from '../../../../packages/human-access-economy/src/taxonomy.ts';
+import {
+  createAccessConsumerBffSurface,
+  type AccessConsumerBffSurface,
+} from '../../../../packages/human-access-economy/src/consumer-bff/index.ts';
 import { bffError, isBffError, type BffErrorEnvelope } from './errors.ts';
+import { pageSizeOf } from './pagination.ts';
 import type { BffPrincipal } from './ports.ts';
+
+const consumerSurfaces = new WeakMap<HumanAccessEconomyProduct, AccessConsumerBffSurface>();
+
+function consumerSurface(product: HumanAccessEconomyProduct): AccessConsumerBffSurface {
+  let surface = consumerSurfaces.get(product);
+  if (!surface) {
+    surface = createAccessConsumerBffSurface(product);
+    consumerSurfaces.set(product, surface);
+  }
+  return surface;
+}
+
+function bool(value: unknown): boolean | undefined {
+  if (value === true || value === 'true') return true;
+  if (value === false || value === 'false') return false;
+  return undefined;
+}
 
 type DispatchRequest = {
   readonly method: string;
@@ -77,9 +99,11 @@ export function mapAccessOutcome<T>(
         ? 'NOT_FOUND'
         : outcome.error.code === 'FEATURE_DISABLED'
           ? 'FEATURE_UNAVAILABLE'
-          : outcome.error.code === 'PROVIDER_UNAVAILABLE' || outcome.error.code === 'REDEMPTION_BLOCKED'
+          : outcome.error.code === 'QUOTE_EXPIRED'
             ? 'VALIDATION'
-            : 'VALIDATION';
+            : outcome.error.code === 'PROVIDER_UNAVAILABLE' || outcome.error.code === 'REDEMPTION_BLOCKED'
+              ? 'VALIDATION'
+              : 'VALIDATION';
   return bffError({
     errorCode,
     category:
@@ -117,6 +141,113 @@ export function dispatchAccess(
   const idempotencyKey = str(rec.idempotencyKey) ?? `${method}:${path}:${principal.actorId}`;
   const pathWithoutQuery = path.split('?')[0] ?? path;
   const queryEpoch = epochIdFromQuery(request.query);
+  const query = request.query ?? {};
+  const consumer = consumerSurface(product);
+
+  if ((pathWithoutQuery === '/api/v1/access' || path === '/api/v1/access') && method === 'GET') {
+    return result(mapAccessOutcome(consumer.dashboard(actor), requestId), headers);
+  }
+  if (pathWithoutQuery === '/api/v1/access/home-summary' && method === 'GET') {
+    return result(mapAccessOutcome(consumer.homeSummary(actor), requestId), headers);
+  }
+  if (pathWithoutQuery === '/api/v1/access/allocation/explanation' && method === 'GET') {
+    return result(mapAccessOutcome(consumer.allocationExplanation(actor), requestId), headers);
+  }
+  if (pathWithoutQuery === '/api/v1/access/history' && method === 'GET') {
+    return result(
+      mapAccessOutcome(
+        consumer.history(actor, {
+          ...(categoryOf(query.category ?? '') ? { category: categoryOf(query.category)! } : {}),
+          ...(str(query.status) ? { status: str(query.status) } : {}),
+          ...(str(query.fromDate) ? { fromDate: str(query.fromDate) } : {}),
+          ...(str(query.toDate) ? { toDate: str(query.toDate) } : {}),
+          ...(str(query.cursor) ? { cursor: str(query.cursor) } : {}),
+          pageSize: pageSizeOf(query.pageSize ?? query.page_size),
+        }),
+        requestId,
+      ),
+      headers,
+    );
+  }
+  if (pathWithoutQuery.startsWith('/api/v1/access/entitlements/') && method === 'GET') {
+    const entitlementId = decodeURIComponent(pathWithoutQuery.slice('/api/v1/access/entitlements/'.length));
+    return result(mapAccessOutcome(consumer.entitlementDetail(actor, entitlementId), requestId), headers);
+  }
+  if (pathWithoutQuery.startsWith('/api/v1/access/categories/') && method === 'GET') {
+    const category = decodeURIComponent(pathWithoutQuery.slice('/api/v1/access/categories/'.length));
+    return result(mapAccessOutcome(consumer.categoryDetail(actor, category), requestId), headers);
+  }
+  if (pathWithoutQuery.startsWith('/api/v1/access/opportunities/') && method === 'GET') {
+    const opportunityId = decodeURIComponent(pathWithoutQuery.slice('/api/v1/access/opportunities/'.length));
+    return result(mapAccessOutcome(consumer.opportunityDetail(actor, opportunityId), requestId), headers);
+  }
+  if (pathWithoutQuery.startsWith('/api/v1/access/transactions/') && pathWithoutQuery.endsWith('/confirm') && method === 'POST') {
+    const transactionId = decodeURIComponent(
+      pathWithoutQuery.slice('/api/v1/access/transactions/'.length, -'/confirm'.length),
+    );
+    return result(
+      mapAccessOutcome(
+        consumer.confirmTransaction(actor, transactionId, {
+          ...(rec.userApproved === true ? { userApproved: true } : {}),
+          ...(str(rec.paymentMethodId) ? { paymentMethodId: str(rec.paymentMethodId) } : {}),
+          idempotencyKey,
+        }),
+        requestId,
+      ),
+      headers,
+    );
+  }
+  if (pathWithoutQuery.startsWith('/api/v1/access/transactions/') && pathWithoutQuery.endsWith('/cancel') && method === 'POST') {
+    const transactionId = decodeURIComponent(
+      pathWithoutQuery.slice('/api/v1/access/transactions/'.length, -'/cancel'.length),
+    );
+    return result(mapAccessOutcome(consumer.cancelTransaction(actor, transactionId, idempotencyKey), requestId), headers);
+  }
+  if (pathWithoutQuery.startsWith('/api/v1/access/transactions/') && method === 'GET') {
+    const transactionId = decodeURIComponent(pathWithoutQuery.slice('/api/v1/access/transactions/'.length));
+    if (!transactionId.includes('/')) {
+      return result(mapAccessOutcome(consumer.getTransaction(actor, transactionId), requestId), headers);
+    }
+  }
+  if (pathWithoutQuery.startsWith('/api/v1/access/bookings/') && method === 'GET') {
+    const bookingId = decodeURIComponent(pathWithoutQuery.slice('/api/v1/access/bookings/'.length));
+    return result(mapAccessOutcome(consumer.getBooking(actor, bookingId), requestId), headers);
+  }
+  if ((pathWithoutQuery === '/api/v1/access/quote' || pathWithoutQuery === '/api/v1/access/quotes') && method === 'POST') {
+    if (str(rec.opportunityId)) {
+      return result(
+        mapAccessOutcome(
+          consumer.createCheckoutQuote(actor, {
+            opportunityId: str(rec.opportunityId)!,
+            requestedUnits: num(rec.requestedUnits) ?? num(rec.quantity) ?? 1,
+            ...(str(rec.start) || str(rec.startsAt) ? { start: str(rec.start) ?? str(rec.startsAt) } : {}),
+            ...(str(rec.end) || str(rec.endsAt) ? { end: str(rec.end) ?? str(rec.endsAt) } : {}),
+            ...(rec.selectedOptions && typeof rec.selectedOptions === 'object'
+              ? { selectedOptions: rec.selectedOptions as Record<string, string> }
+              : {}),
+            idempotencyKey,
+          }),
+          requestId,
+        ),
+        headers,
+        201,
+      );
+    }
+  }
+  if ((pathWithoutQuery === '/api/v1/access/reserve' || pathWithoutQuery === '/api/v1/access/checkout') && method === 'POST') {
+    return result(
+      mapAccessOutcome(
+        consumer.reserve(actor, {
+          checkoutQuoteId: str(rec.checkoutQuoteId) ?? '',
+          ...(str(rec.paymentMethodId) ? { paymentMethodId: str(rec.paymentMethodId) } : {}),
+          idempotencyKey,
+        }),
+        requestId,
+      ),
+      headers,
+      201,
+    );
+  }
 
   if (path === '/api/v1/access/overview' && method === 'GET') {
     return result(mapAccessOutcome(product.overview(actor), requestId), headers);
@@ -154,7 +285,21 @@ export function dispatchAccess(
   if (path === '/api/v1/access/categories' && method === 'GET') {
     return result(mapAccessOutcome(product.categories(), requestId), headers);
   }
-  if (path === '/api/v1/access/entitlements' && method === 'GET') {
+  if (pathWithoutQuery === '/api/v1/access/entitlements' && method === 'GET') {
+  if (Object.keys(query).length > 0) {
+      return result(
+        mapAccessOutcome(
+          consumer.listEntitlements(actor, {
+            ...(categoryOf(query.category ?? '') ? { category: categoryOf(query.category)! } : {}),
+            ...(str(query.status) ? { status: str(query.status) } : {}),
+            ...(str(query.period) ? { period: str(query.period) } : {}),
+            ...(bool(query.expiringSoon) !== undefined ? { expiringSoon: bool(query.expiringSoon) } : {}),
+          }),
+          requestId,
+        ),
+        headers,
+      );
+    }
     return result(mapAccessOutcome(product.entitlements(actor), requestId), headers);
   }
   if (path === '/api/v1/access/reservations' && method === 'GET') {
@@ -162,6 +307,72 @@ export function dispatchAccess(
   }
   if (path === '/api/v1/access/activity' && method === 'GET') {
     return result(mapAccessOutcome(product.activity(actor), requestId), headers);
+  }
+  if (path === '/api/v1/access/home-summary' && method === 'GET') {
+    return result(mapAccessOutcome(product.homeSummary(actor), requestId), headers);
+  }
+  if (path === '/api/v1/access/landing' && method === 'GET') {
+    return result(mapAccessOutcome(product.landing(actor), requestId), headers);
+  }
+  if (pathWithoutQuery === '/api/v1/access/history' && method === 'GET') {
+    const filter = (request.query?.filter ?? 'ALL') as import('../../../../packages/human-access-economy/src/product/taxonomy.ts').AccessHistoryFilter;
+    const category = categoryOf(request.query?.category);
+    const fromDate = str(request.query?.from);
+    const toDate = str(request.query?.to);
+    return result(
+      mapAccessOutcome(product.accessHistory(actor, filter, category, fromDate, toDate), requestId),
+      headers,
+    );
+  }
+  if (path === '/api/v1/access/upcoming' && method === 'GET') {
+    return result(mapAccessOutcome(product.upcoming(actor), requestId), headers);
+  }
+  if (pathWithoutQuery === '/api/v1/access/receipts' && method === 'GET') {
+    return result(mapAccessOutcome(product.listReceipts(actor), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/access/receipts/') && method === 'GET') {
+    const id = path.slice('/api/v1/access/receipts/'.length);
+    return result(mapAccessOutcome(product.getReceipt(actor, decodeURIComponent(id)), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/access/refund-receipts/') && method === 'GET') {
+    const id = path.slice('/api/v1/access/refund-receipts/'.length);
+    return result(mapAccessOutcome(product.getRefundReceipt(actor, decodeURIComponent(id)), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/access/transactions/') && path.endsWith('/checkout') && method === 'GET') {
+    const id = path.slice('/api/v1/access/transactions/'.length, -'/checkout'.length);
+    return result(mapAccessOutcome(product.getCheckout(actor, decodeURIComponent(id)), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/access/transactions/') && path.endsWith('/checkout') && method === 'POST') {
+    const id = path.slice('/api/v1/access/transactions/'.length, -'/checkout'.length);
+    return result(mapAccessOutcome(product.startCheckout(actor, decodeURIComponent(id)), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/access/transactions/') && path.endsWith('/confirm') && method === 'POST') {
+    const id = path.slice('/api/v1/access/transactions/'.length, -'/confirm'.length);
+    const processing = rec.processing === true;
+    return result(mapAccessOutcome(product.confirmBooking(actor, decodeURIComponent(id), processing), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/access/transactions/') && path.endsWith('/cancel') && method === 'POST') {
+    const id = path.slice('/api/v1/access/transactions/'.length, -'/cancel'.length);
+    return result(
+      mapAccessOutcome(
+        product.cancelTransaction(actor, decodeURIComponent(id), {
+          ...(str(rec.penaltyMinorUnits) ? { penaltyMinorUnits: str(rec.penaltyMinorUnits) } : {}),
+          ...(str(rec.providerRefundMinorUnits) ? { providerRefundMinorUnits: str(rec.providerRefundMinorUnits) } : {}),
+        }),
+        requestId,
+      ),
+      headers,
+    );
+  }
+  if (path.startsWith('/api/v1/access/transactions/') && path.endsWith('/support-context') && method === 'GET') {
+    const id = path.slice('/api/v1/access/transactions/'.length, -'/support-context'.length);
+    return result(mapAccessOutcome(product.getSupportContext(actor, decodeURIComponent(id)), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/access/transactions/') && method === 'GET') {
+    const id = path.slice('/api/v1/access/transactions/'.length);
+    if (!id.includes('/')) {
+      return result(mapAccessOutcome(product.getTransaction(actor, decodeURIComponent(id)), requestId), headers);
+    }
   }
   if (path === '/api/v1/access/intents' && method === 'POST') {
     return result(
@@ -196,14 +407,21 @@ export function dispatchAccess(
   if (path === '/api/v1/access/providers' && method === 'GET') {
     return result(mapAccessOutcome(product.providers(actor), requestId), headers);
   }
-  if (path === '/api/v1/access/search' && method === 'POST') {
+  if (pathWithoutQuery === '/api/v1/access/search' && method === 'POST') {
     return result(
       mapAccessOutcome(
-        product.searchProviders(actor, {
+        consumer.search(actor, {
           category: categoryOf(rec.category) ?? 'MOBILITY',
           query: str(rec.query) ?? str(rec.summary) ?? '',
           ...(str(rec.location) ? { location: str(rec.location) } : {}),
-          ...(str(rec.providerId) ? { providerId: str(rec.providerId) } : {}),
+          ...(str(rec.startDate) || str(rec.start) ? { startDate: str(rec.startDate) ?? str(rec.start) } : {}),
+          ...(str(rec.endDate) || str(rec.end) ? { endDate: str(rec.endDate) ?? str(rec.end) } : {}),
+          ...(num(rec.units) !== undefined ? { units: num(rec.units) } : {}),
+          ...(str(rec.unit) ? { unit: str(rec.unit) } : {}),
+          ...(str(rec.cursor) ? { cursor: str(rec.cursor) } : {}),
+          pageSize: pageSizeOf(str(rec.pageSize) ?? str(rec.page_size)),
+          ...(rec.filters && typeof rec.filters === 'object' ? { filters: rec.filters as Record<string, string> } : {}),
+          ...(str(rec.sort) ? { sort: str(rec.sort) } : {}),
         }),
         requestId,
       ),
