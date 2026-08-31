@@ -23,6 +23,7 @@
     "check:authority-map": "node scripts/check-authority-map.mjs",
     "check:architecture-freeze": "node scripts/check-architecture-freeze.mjs",
     "check:production-safety": "node scripts/check-production-safety.mjs",
+    "check:build-status": "node scripts/check-build-status.mjs",
     "check:api": "node scripts/check-api-specs.mjs",
     "check:migrations": "node scripts/check-migration-quality.mjs",
     "productization:preflight": "node scripts/productization-preflight.mjs",

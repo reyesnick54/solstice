@@ -19,7 +19,7 @@ Instruction on the task: start from latest clean `main`. Before
 coding, verify that:
 
 1. Chunk 12 is genuinely `IMPLEMENTED`
-2. `docs/build-status.md` no longer says Chunk 12 is stopped
+2. `docs/BUILD_STATUS.md` no longer says Chunk 12 is stopped
 3. current `main` CI is green
 
 If any of those fail, **stop**. Do not begin the treasury bounded
@@ -168,7 +168,7 @@ Repairs:
    `PLANNED`.
 3. `chunk-dependencies.md` no longer lists `cards` as both
    `PLANNED` and `IMPLEMENTED`.
-4. `docs/build-status.md` no longer claims the cards owner is
+4. `docs/BUILD_STATUS.md` no longer claims the cards owner is
    absent. It still records that wallet / SoftPOS were not built,
    and that Chunk 13 stopped on the process gate.
 5. A Chunk 13 declaration is recorded so later agents can see the
@@ -252,7 +252,7 @@ Agent work until all three gates are true on clean `main`:
    Cards module; Tap-to-Pay / SoftPOS as a separate acceptance
    module. Reuse Identity, Kernel, ledger, payments settlement,
    events, and evidence. Do not create a second cards domain.
-2. Update `docs/build-status.md` so it no longer describes
+2. Update `docs/BUILD_STATUS.md` so it no longer describes
    Chunk 12 as stopped. List the implemented wallet / SoftPOS
    inventory instead.
 3. Confirm the latest `main` CI run is green (both the unit-test

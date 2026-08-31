@@ -51,6 +51,9 @@ jobs:
       - name: "[ARCHITECTURE] Architecture freeze"
         run: node scripts/check-architecture-freeze.mjs
 
+      - name: "[ARCHITECTURE] Build status governance"
+        run: node scripts/check-build-status.mjs
+
       - name: "[PRODUCTION SAFETY] Deployment posture"
         run: python3 scripts/check-deployment-posture.py
 

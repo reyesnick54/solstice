@@ -1,0 +1,390 @@
+{
+  "schemaVersion": 1,
+  "canonicalDocument": "docs/BUILD_STATUS.md",
+  "lastVerified": {
+    "commit": "8f4683320e0a0957c8d623ce881634577ac0bff6",
+    "dateUtc": "2026-08-31"
+  },
+  "repositoryPosture": {
+    "environment": "simulation",
+    "simulationMode": true,
+    "liveFlagsAllFalse": true,
+    "productionHsmKmsConfigured": false,
+    "mainnetEnabled": false,
+    "productionAuthorized": false
+  },
+  "vocabulary": {
+    "implementation": [
+      "NOT_IMPLEMENTED",
+      "PARTIAL",
+      "IMPLEMENTED",
+      "SIMULATED",
+      "CONFIGURED",
+      "INTEGRATION_READY",
+      "LIVE_REACHABLE",
+      "LIVE_VALIDATED",
+      "PRODUCTION_QUALIFIED",
+      "BLOCKED",
+      "EXTERNAL_DEPENDENCY",
+      "REGULATORY_GATED"
+    ],
+    "tests": ["PASSING", "PARTIAL", "ABSENT"],
+    "integration": [
+      "NOT_IMPLEMENTED",
+      "SIMULATED",
+      "CONFIGURED",
+      "INTEGRATION_READY",
+      "LIVE_REACHABLE",
+      "LIVE_VALIDATED"
+    ],
+    "security": [
+      "NOT_ASSESSED",
+      "ENGINEERING_VERIFIED",
+      "INDEPENDENT_AUDIT_PENDING",
+      "PRODUCTION_QUALIFIED"
+    ],
+    "regulatory": [
+      "NOT_APPLICABLE",
+      "RESEARCH_REQUIRED",
+      "REGULATORY_GATED",
+      "EXTERNAL_DEPENDENCY",
+      "CONFIRMED_BY_COUNSEL"
+    ],
+    "production": [
+      "NOT_PRODUCTION_QUALIFIED",
+      "ENGINEERING_QUALIFIED",
+      "PRODUCTION_CANDIDATE",
+      "PRODUCTION_ACTIVE"
+    ]
+  },
+  "systems": [
+    {
+      "id": "authorization-spine",
+      "name": "Compliance Kernel authorization spine",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": [
+        "packages/kernel/src/kernel.ts",
+        "packages/permissions/src/execution-authority.ts",
+        "packages/ledger/src/journal.ts",
+        "packages/evidence/src/vault.ts",
+        "services/accounts",
+        "tests/phase-1-exit-criterion.test.ts"
+      ]
+    },
+    {
+      "id": "banking-accounts",
+      "name": "Banking accounts and class-segregated balances",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": ["services/accounts", "packages/domain", "packages/money"]
+    },
+    {
+      "id": "persistence",
+      "name": "PostgreSQL persistence fabric",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "EXTERNAL_DEPENDENCY",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": ["packages/persistence", "db/", "tests/persistence"]
+    },
+    {
+      "id": "identity-auth",
+      "name": "Identity and authentication",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": ["packages/identity", "services/identity"]
+    },
+    {
+      "id": "compliance-screening",
+      "name": "Compliance screening fabric",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": ["packages/kernel/src/compliance"]
+    },
+    {
+      "id": "payments-fx-cards-treasury",
+      "name": "Payments, FX, cards, treasury",
+      "implementation": "PARTIAL",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": ["packages/payments", "packages/cards", "packages/treasury"]
+    },
+    {
+      "id": "investments-risk-strategy",
+      "name": "Investments, risk engine, strategy lab",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": [
+        "packages/investments",
+        "packages/risk",
+        "packages/strategy-lab",
+        "packages/model-registry"
+      ]
+    },
+    {
+      "id": "peg-agent-growth",
+      "name": "PEG, personal agent, growth orchestrator",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": [
+        "packages/personal-economic-graph",
+        "packages/agent",
+        "packages/platform",
+        "packages/sunrey-agent"
+      ]
+    },
+    {
+      "id": "sunrey-chain",
+      "name": "SunRey Chain simulation trust layer",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": ["packages/sunrey-chain/src"]
+    },
+    {
+      "id": "rust-blockchain-node",
+      "name": "Rust blockchain workspace and dev BFT node",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": [
+        "packages/sunrey-chain/rust",
+        "packages/sunrey-chain/node"
+      ]
+    },
+    {
+      "id": "sunrey-coin-app",
+      "name": "SunRey Coin application ledger",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": ["packages/sunrey-coin"]
+    },
+    {
+      "id": "native-assets",
+      "name": "Chain-native SunRey Coin and MoonRey Coin",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": [
+        "packages/sunrey-chain/rust/crates/native-assets",
+        "packages/sunrey-chain/src/economics"
+      ]
+    },
+    {
+      "id": "moonrey-issuance",
+      "name": "MoonRey productive issuance engine",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": ["packages/sunrey-chain/src/productive"]
+    },
+    {
+      "id": "access-economy",
+      "name": "Access Economy and Access Fabric",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": [
+        "packages/access-economy",
+        "packages/access-fabric",
+        "packages/sunrey-access",
+        "packages/sunrey-access-fabric",
+        "packages/sunrey-chain/src/access",
+        "docs/architecture/ACCESS_FABRIC_STATUS.md"
+      ]
+    },
+    {
+      "id": "access-ledger",
+      "name": "Access Ledger parallel package",
+      "implementation": "NOT_IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": [
+        "docs/architecture/constitution.md",
+        "tools/architectural-linter/src/access-08-constitution.test.ts"
+      ],
+      "notes": "Forbidden parallel owner; clearing uses Exchange and canonical Ledger."
+    },
+    {
+      "id": "sunrey-exchange",
+      "name": "SunRey Exchange",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": ["packages/sunrey-exchange"]
+    },
+    {
+      "id": "hin",
+      "name": "Human Information Network",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": ["packages/information-market"]
+    },
+    {
+      "id": "external-data",
+      "name": "External-data framework",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "EXTERNAL_DEPENDENCY",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": ["packages/external-data", "packages/provider-sdk"]
+    },
+    {
+      "id": "provider-runtime",
+      "name": "Provider catalogs and executable runtime",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "EXTERNAL_DEPENDENCY",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": ["packages/sunrey-chain/src/provider-runtime"]
+    },
+    {
+      "id": "s3m-ai",
+      "name": "S3M AI provider",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "EXTERNAL_DEPENDENCY",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": ["packages/ai-runtime/src/providers/s3m"]
+    },
+    {
+      "id": "grok-xai",
+      "name": "Grok / xAI inference adapter",
+      "implementation": "PARTIAL",
+      "tests": "PASSING",
+      "integration": "CONFIGURED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "EXTERNAL_DEPENDENCY",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": ["packages/ai-runtime/src/providers/xai-grok"],
+      "notes": "Adapter implemented; default offline fixtures. Preview transport optional via env. Not production inference certified."
+    },
+    {
+      "id": "security-pqc",
+      "name": "Security, CryptoSuite, PQC agility",
+      "implementation": "PARTIAL",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "EXTERNAL_DEPENDENCY",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": ["packages/security", "packages/sunrey-chain/src/pqc"]
+    },
+    {
+      "id": "interop-relayer",
+      "name": "Interop and relayer",
+      "implementation": "PARTIAL",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": ["packages/sunrey-chain/src/interop"]
+    },
+    {
+      "id": "mobile-backend",
+      "name": "Mobile wallet sync and consumer API",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": [
+        "packages/sunrey-chain/src/wallet/mobile-sync",
+        "services/api"
+      ]
+    },
+    {
+      "id": "production-deployment",
+      "name": "Production deployment and mainnet rehearsal paths",
+      "implementation": "IMPLEMENTED",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": [
+        "packages/sunrey-chain/src/release-candidate/mainnet",
+        "packages/sunrey-chain/src/infra",
+        "packages/config/src/flags.ts"
+      ]
+    }
+  ],
+  "phase1ExitCriterion": {
+    "status": "PASSING",
+    "evidence": ["tests/phase-1-exit-criterion.test.ts", "npm run demo"]
+  },
+  "forbiddenLiveStatusClaims": [
+    "Grok is live and production ready",
+    "S3M production deployed",
+    "Access Economy production active",
+    "Blockchain mainnet enabled",
+    "External provider production eligible by documentation alone"
+  ]
+}

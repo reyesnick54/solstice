@@ -33,7 +33,7 @@
       "lineText": "Solstice inventory, and migration guardrails at"
     },
     {
-      "path": "docs/build-status.md",
+      "path": "docs/BUILD_STATUS.md",
       "token": "Solstice",
       "lineText": "- Solstice Identity (`packages/identity`, `services/identity`): person/business"
     },

@@ -5,7 +5,7 @@ consolidated tree on `main`. It describes what the repository actually
 contains, which package owns each protected component, and which
 dependency directions are legal.
 
-Implementation inventory lives in [`docs/build-status.md`](../build-status.md).
+Implementation inventory lives in [`docs/BUILD_STATUS.md`](../BUILD_STATUS.md).
 Productization audit (what exists vs what is canonical) lives in
 [`docs/productization/SUNREY_CANONICAL_IMPLEMENTATION_INVENTORY.md`](../productization/SUNREY_CANONICAL_IMPLEMENTATION_INVENTORY.md).
 Machine-enforceable ownership, dependencies, and reservations live in
