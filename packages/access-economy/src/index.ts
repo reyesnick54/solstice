@@ -308,6 +308,7 @@ export * from './solvency/index.ts';
 export * from './dual-token-allocation/index.ts';
 export * from './funding-solvency/index.ts';
 export * from './allocation-engine/index.ts';
+export * from './checkout/index.ts';
 export * as AccessDomain from './domain/index.ts';
 export type {
   AccessBound,
