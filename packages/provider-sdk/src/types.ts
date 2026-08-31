@@ -192,67 +192,19 @@ export type ProviderTransportFailure = {
 };
 
 export type ProviderTransportResult<T = unknown> = ProviderTransportSuccess<T> | ProviderTransportFailure;
-export type {
-  ExternalObservation,
-  ObservationSource,
-  ObservationTime,
-  ObservationQuality,
-  ObservationAuthority,
-  ObservationProvenance,
-  ObservationLicensing,
-  ConfidenceScore,
-} from './observation-types.ts';
 export {
-  EXTERNAL_OBSERVATION_SCHEMA,
-  NORMALIZATION_SCHEMA_VERSION,
-  FRESHNESS_STATUSES,
   VALIDATION_STATUSES,
   COMMERCIAL_USE_STATUSES,
   REDISTRIBUTION_STATUSES,
   CONFIDENCE_BASIS,
 } from './observation-types.ts';
 export type {
-  FreshnessStatus,
   ValidationStatus,
   CommercialUseStatus,
   RedistributionStatus,
   ConfidenceBasis,
 } from './observation-types.ts';
 export * from './registry-types.ts';
-export {
-  PROVIDER_HTTP_METHODS,
-  PROVIDER_CONTENT_TYPES,
-  type ProviderHttpMethod,
-  type ProviderContentType,
-  type HttpProviderRequestContext,
-  type HttpProviderResponseMetadata,
-  type ProviderParsedBody,
-  type HttpProviderTransportResponse,
-  type HttpProviderTransportSuccess,
-  type HttpProviderTransportFailure,
-  type HttpProviderTransportResult,
-  type HttpProviderTransport,
-} from './http-transport-types.ts';
-export {
-  HTTP_METHODS,
-  CIRCUIT_STATES,
-  FAILURE_CLASSIFICATIONS,
-  defaultClock,
-  isSafeReadMethod,
-  type HttpMethod,
-  type CircuitState,
-  type FailureClassification,
-  type ReliabilityTransportRequest,
-  type ReliabilityTransportResponse,
-  type ReliabilityProviderTransport,
-  type ProviderError,
-  type ReliabilityOutcome,
-  type DeadlineContext,
-  type FallbackContext,
-  type FallbackDecision,
-  type FallbackHook,
-  type ReliabilityClock,
-} from './reliability-types.ts';
 
 /**
  * Shared outbound HTTP transport used by all SunRey provider adapters.
@@ -309,15 +261,6 @@ export const PROVIDER_CATEGORIES = [
 ] as const;
 export type ProviderCategory = (typeof PROVIDER_CATEGORIES)[number];
 
-export const AUTHORITY_CLASSES = [
-  'authoritative_official',
-  'regulated_provider',
-  'reference_data',
-  'research_data',
-  'community_data',
-  'derived_data',
-] as const;
-
 export const PROVIDER_CAPABILITIES = [
   'macroeconomic_indicators',
   'interest_rates',
@@ -370,8 +313,6 @@ export const PROVIDER_STATUSES = [
   'shutdown',
 ] as const;
 export type ProviderStatus = (typeof PROVIDER_STATUSES)[number];
-
-export type AuthorityClass = (typeof AUTHORITY_CLASSES)[number];
 
 export const FRESHNESS_STATUSES = ['fresh', 'aging', 'stale', 'expired', 'unknown'] as const;
 export type FreshnessStatus = (typeof FRESHNESS_STATUSES)[number];
@@ -481,55 +422,6 @@ export type ExternalObservation<T> = {
 export type ProviderResult<T> =
   | { readonly ok: true; readonly value: T }
   | { readonly ok: false; readonly code: string; readonly message: string };
-export type ProviderAuthorityClass = (typeof AUTHORITY_CLASSES)[number];
-
-export const PROVIDER_LAUNCH_TIERS = [
-  'production_candidate',
-  'secondary_source',
-  'fallback_source',
-  'research_only',
-  'blocked_pending_review',
-] as const;
-export type ProviderLaunchTier = (typeof PROVIDER_LAUNCH_TIERS)[number];
-
-export const PROVIDER_PRIORITIES = ['critical', 'high', 'medium', 'low'] as const;
-export type ProviderPriority = (typeof PROVIDER_PRIORITIES)[number];
-
-export const PROVIDER_ACTIVATION_MODES = [
-  'enabled',
-  'disabled',
-  'preview_only',
-  'production_enabled',
-  'blocked',
-] as const;
-export type ProviderActivationMode = (typeof PROVIDER_ACTIVATION_MODES)[number];
-
-export const SUNREY_CONSUMER_DOMAINS = [
-  'world',
-  'grow',
-  'financial_agent',
-  'exchange',
-  'blockchain_intelligence',
-  'moonrey',
-  'hin',
-  'vault',
-  'travel',
-  'compliance',
-  'cybersecurity',
-  'economic_graph',
-  'action_center',
-  'research',
-  'infrastructure',
-] as const;
-export type SunReyConsumerDomain = (typeof SUNREY_CONSUMER_DOMAINS)[number];
-
-export const PROVIDER_HEALTH_STATES = [
-  'healthy',
-  'degraded',
-  'unhealthy',
-  'unknown',
-] as const;
-export type ProviderHealthState = (typeof PROVIDER_HEALTH_STATES)[number];
 
 export type SecretReferenceName = {
   readonly environmentVariable: string;
@@ -614,6 +506,3 @@ export function isKnownProviderCapability(value: string): value is ProviderCapab
 export function isSunReyConsumerDomain(value: string): value is SunReyConsumerDomain {
   return (SUNREY_CONSUMER_DOMAINS as readonly string[]).includes(value);
 }
-/** Observation category alias used by normalization pipeline. */
-export { OBSERVATION_PROVIDER_CATEGORIES as PROVIDER_CATEGORIES } from './observation-types.ts';
-export type { ObservationProviderCategory as ProviderCategory } from './observation-types.ts';

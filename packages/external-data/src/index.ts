@@ -6,3 +6,4 @@ export * from './plane.ts';
 export * from './coverage.ts';
 export * from './events.ts';
 export * from './bridges.ts';
+export * from './productive-economy.ts';

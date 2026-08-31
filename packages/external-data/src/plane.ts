@@ -11,6 +11,7 @@ import {
 } from './adapters.ts';
 import { buildWave2CoverageReport } from './coverage.ts';
 import type { ExternalDataHealth, SearchableEntity } from './models.ts';
+import { createWave5ExternalData, wave5CoverageReport, type Wave5ExternalData } from './productive-economy.ts';
 import { createWave2Services, type CompanyIntelligenceService, type FxReferenceService, type MacroDataService, type MarketReferenceService } from './services.ts';
 import { FIXTURE_FILINGS } from './fixtures.ts';
 
@@ -24,6 +25,7 @@ export class ExternalDataPlane {
   readonly fx: FxReferenceService;
   readonly markets: MarketReferenceService;
   readonly company: CompanyIntelligenceService;
+  readonly productiveEconomy: Wave5ExternalData;
   readonly #ctx: Wave2AdapterContext;
   readonly #delivery;
 
@@ -38,6 +40,7 @@ export class ExternalDataPlane {
     this.fx = services.fx;
     this.markets = services.markets;
     this.company = services.company;
+    this.productiveEconomy = createWave5ExternalData({ nowUtc: () => nowUtc });
     this.#delivery = createDataDelivery(Date.parse(nowUtc));
   }
 
@@ -67,6 +70,17 @@ export class ExternalDataPlane {
     return bundleObservationEvidence(observations);
   }
 
+  async agentEvidenceBundleWithProductiveEconomy() {
+    const base = this.agentEvidenceBundle();
+    const productive = await this.productiveEconomy.getProductiveEconomicObservations();
+    return Object.freeze({
+      ...base,
+      productiveEconomyEvidenceCount: productive.length,
+      grantsExecutionAuthority: false as const,
+      treatedAsTradeInstruction: false as const,
+    });
+  }
+
   health(): readonly ExternalDataHealth[] {
     return Object.freeze(
       [...this.#ctx.states.entries()].map(([providerId, state]) =>
@@ -85,7 +99,10 @@ export class ExternalDataPlane {
   }
 
   coverageReport() {
-    return buildWave2CoverageReport();
+    return Object.freeze({
+      wave2: buildWave2CoverageReport(),
+      wave5: wave5CoverageReport(),
+    });
   }
 
   searchIndex(): readonly SearchableEntity[] {

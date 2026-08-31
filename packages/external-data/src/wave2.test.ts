@@ -112,7 +112,15 @@ describe('Wave 2 external data plane', () => {
     assert.equal(report.summary.DEPRECATED + report.summary.UNAVAILABLE, 1);
     assert.doesNotThrow(() => assertWave2CoverageComplete());
     const unexplained = report.providers.filter(
-      (p) => p.status === 'NOT_WAVE_2' && p.category !== 'other' && p.category !== 'cryptocurrency' && p.category !== 'blockchain',
+      (p) =>
+        p.status === 'NOT_WAVE_2' &&
+        p.category !== 'other' &&
+        p.category !== 'cryptocurrency' &&
+        p.category !== 'blockchain' &&
+        p.category !== 'energy' &&
+        p.category !== 'environmental' &&
+        p.category !== 'food_nutrition' &&
+        p.category !== 'natural_resources',
     );
     assert.equal(unexplained.length, 0);
   });

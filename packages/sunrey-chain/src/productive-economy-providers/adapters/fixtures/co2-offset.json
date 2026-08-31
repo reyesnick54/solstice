@@ -1,0 +1,17 @@
+{
+  "projects": [
+    {
+      "id": "proj-001",
+      "name": "Reforestation Amazon Basin",
+      "country": "BR",
+      "offsetTonnes": 15000,
+      "unit": "tCO2",
+      "verifiedAt": "2026-08-30T00:00:00Z"
+    }
+  ],
+  "emissionFactor": {
+    "value": 0.42,
+    "unit": "tCO2/MWh",
+    "source": "grid_average"
+  }
+}
