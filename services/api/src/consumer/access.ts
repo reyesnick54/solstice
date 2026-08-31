@@ -7,8 +7,30 @@
 import type { HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
 import type { AccessActor } from '../../../../packages/human-access-economy/src/access.ts';
 import type { AccessCategory } from '../../../../packages/human-access-economy/src/taxonomy.ts';
+import {
+  createAccessConsumerBffSurface,
+  type AccessConsumerBffSurface,
+} from '../../../../packages/human-access-economy/src/consumer-bff/index.ts';
 import { bffError, isBffError, type BffErrorEnvelope } from './errors.ts';
+import { pageSizeOf } from './pagination.ts';
 import type { BffPrincipal } from './ports.ts';
+
+const consumerSurfaces = new WeakMap<HumanAccessEconomyProduct, AccessConsumerBffSurface>();
+
+function consumerSurface(product: HumanAccessEconomyProduct): AccessConsumerBffSurface {
+  let surface = consumerSurfaces.get(product);
+  if (!surface) {
+    surface = createAccessConsumerBffSurface(product);
+    consumerSurfaces.set(product, surface);
+  }
+  return surface;
+}
+
+function bool(value: unknown): boolean | undefined {
+  if (value === true || value === 'true') return true;
+  if (value === false || value === 'false') return false;
+  return undefined;
+}
 
 type DispatchRequest = {
   readonly method: string;
@@ -77,9 +99,11 @@ export function mapAccessOutcome<T>(
         ? 'NOT_FOUND'
         : outcome.error.code === 'FEATURE_DISABLED'
           ? 'FEATURE_UNAVAILABLE'
-          : outcome.error.code === 'PROVIDER_UNAVAILABLE' || outcome.error.code === 'REDEMPTION_BLOCKED'
+          : outcome.error.code === 'QUOTE_EXPIRED'
             ? 'VALIDATION'
-            : 'VALIDATION';
+            : outcome.error.code === 'PROVIDER_UNAVAILABLE' || outcome.error.code === 'REDEMPTION_BLOCKED'
+              ? 'VALIDATION'
+              : 'VALIDATION';
   return bffError({
     errorCode,
     category:
@@ -117,6 +141,113 @@ export function dispatchAccess(
   const idempotencyKey = str(rec.idempotencyKey) ?? `${method}:${path}:${principal.actorId}`;
   const pathWithoutQuery = path.split('?')[0] ?? path;
   const queryEpoch = epochIdFromQuery(request.query);
+  const query = request.query ?? {};
+  const consumer = consumerSurface(product);
+
+  if ((pathWithoutQuery === '/api/v1/access' || path === '/api/v1/access') && method === 'GET') {
+    return result(mapAccessOutcome(consumer.dashboard(actor), requestId), headers);
+  }
+  if (pathWithoutQuery === '/api/v1/access/home-summary' && method === 'GET') {
+    return result(mapAccessOutcome(consumer.homeSummary(actor), requestId), headers);
+  }
+  if (pathWithoutQuery === '/api/v1/access/allocation/explanation' && method === 'GET') {
+    return result(mapAccessOutcome(consumer.allocationExplanation(actor), requestId), headers);
+  }
+  if (pathWithoutQuery === '/api/v1/access/history' && method === 'GET') {
+    return result(
+      mapAccessOutcome(
+        consumer.history(actor, {
+          ...(categoryOf(query.category ?? '') ? { category: categoryOf(query.category)! } : {}),
+          ...(str(query.status) ? { status: str(query.status) } : {}),
+          ...(str(query.fromDate) ? { fromDate: str(query.fromDate) } : {}),
+          ...(str(query.toDate) ? { toDate: str(query.toDate) } : {}),
+          ...(str(query.cursor) ? { cursor: str(query.cursor) } : {}),
+          pageSize: pageSizeOf(query.pageSize ?? query.page_size),
+        }),
+        requestId,
+      ),
+      headers,
+    );
+  }
+  if (pathWithoutQuery.startsWith('/api/v1/access/entitlements/') && method === 'GET') {
+    const entitlementId = decodeURIComponent(pathWithoutQuery.slice('/api/v1/access/entitlements/'.length));
+    return result(mapAccessOutcome(consumer.entitlementDetail(actor, entitlementId), requestId), headers);
+  }
+  if (pathWithoutQuery.startsWith('/api/v1/access/categories/') && method === 'GET') {
+    const category = decodeURIComponent(pathWithoutQuery.slice('/api/v1/access/categories/'.length));
+    return result(mapAccessOutcome(consumer.categoryDetail(actor, category), requestId), headers);
+  }
+  if (pathWithoutQuery.startsWith('/api/v1/access/opportunities/') && method === 'GET') {
+    const opportunityId = decodeURIComponent(pathWithoutQuery.slice('/api/v1/access/opportunities/'.length));
+    return result(mapAccessOutcome(consumer.opportunityDetail(actor, opportunityId), requestId), headers);
+  }
+  if (pathWithoutQuery.startsWith('/api/v1/access/transactions/') && pathWithoutQuery.endsWith('/confirm') && method === 'POST') {
+    const transactionId = decodeURIComponent(
+      pathWithoutQuery.slice('/api/v1/access/transactions/'.length, -'/confirm'.length),
+    );
+    return result(
+      mapAccessOutcome(
+        consumer.confirmTransaction(actor, transactionId, {
+          ...(rec.userApproved === true ? { userApproved: true } : {}),
+          ...(str(rec.paymentMethodId) ? { paymentMethodId: str(rec.paymentMethodId) } : {}),
+          idempotencyKey,
+        }),
+        requestId,
+      ),
+      headers,
+    );
+  }
+  if (pathWithoutQuery.startsWith('/api/v1/access/transactions/') && pathWithoutQuery.endsWith('/cancel') && method === 'POST') {
+    const transactionId = decodeURIComponent(
+      pathWithoutQuery.slice('/api/v1/access/transactions/'.length, -'/cancel'.length),
+    );
+    return result(mapAccessOutcome(consumer.cancelTransaction(actor, transactionId, idempotencyKey), requestId), headers);
+  }
+  if (pathWithoutQuery.startsWith('/api/v1/access/transactions/') && method === 'GET') {
+    const transactionId = decodeURIComponent(pathWithoutQuery.slice('/api/v1/access/transactions/'.length));
+    if (!transactionId.includes('/')) {
+      return result(mapAccessOutcome(consumer.getTransaction(actor, transactionId), requestId), headers);
+    }
+  }
+  if (pathWithoutQuery.startsWith('/api/v1/access/bookings/') && method === 'GET') {
+    const bookingId = decodeURIComponent(pathWithoutQuery.slice('/api/v1/access/bookings/'.length));
+    return result(mapAccessOutcome(consumer.getBooking(actor, bookingId), requestId), headers);
+  }
+  if ((pathWithoutQuery === '/api/v1/access/quote' || pathWithoutQuery === '/api/v1/access/quotes') && method === 'POST') {
+    if (str(rec.opportunityId)) {
+      return result(
+        mapAccessOutcome(
+          consumer.createCheckoutQuote(actor, {
+            opportunityId: str(rec.opportunityId)!,
+            requestedUnits: num(rec.requestedUnits) ?? num(rec.quantity) ?? 1,
+            ...(str(rec.start) || str(rec.startsAt) ? { start: str(rec.start) ?? str(rec.startsAt) } : {}),
+            ...(str(rec.end) || str(rec.endsAt) ? { end: str(rec.end) ?? str(rec.endsAt) } : {}),
+            ...(rec.selectedOptions && typeof rec.selectedOptions === 'object'
+              ? { selectedOptions: rec.selectedOptions as Record<string, string> }
+              : {}),
+            idempotencyKey,
+          }),
+          requestId,
+        ),
+        headers,
+        201,
+      );
+    }
+  }
+  if ((pathWithoutQuery === '/api/v1/access/reserve' || pathWithoutQuery === '/api/v1/access/checkout') && method === 'POST') {
+    return result(
+      mapAccessOutcome(
+        consumer.reserve(actor, {
+          checkoutQuoteId: str(rec.checkoutQuoteId) ?? '',
+          ...(str(rec.paymentMethodId) ? { paymentMethodId: str(rec.paymentMethodId) } : {}),
+          idempotencyKey,
+        }),
+        requestId,
+      ),
+      headers,
+      201,
+    );
+  }
 
   if (path === '/api/v1/access/overview' && method === 'GET') {
     return result(mapAccessOutcome(product.overview(actor), requestId), headers);
@@ -154,7 +285,21 @@ export function dispatchAccess(
   if (path === '/api/v1/access/categories' && method === 'GET') {
     return result(mapAccessOutcome(product.categories(), requestId), headers);
   }
-  if (path === '/api/v1/access/entitlements' && method === 'GET') {
+  if (pathWithoutQuery === '/api/v1/access/entitlements' && method === 'GET') {
+  if (Object.keys(query).length > 0) {
+      return result(
+        mapAccessOutcome(
+          consumer.listEntitlements(actor, {
+            ...(categoryOf(query.category ?? '') ? { category: categoryOf(query.category)! } : {}),
+            ...(str(query.status) ? { status: str(query.status) } : {}),
+            ...(str(query.period) ? { period: str(query.period) } : {}),
+            ...(bool(query.expiringSoon) !== undefined ? { expiringSoon: bool(query.expiringSoon) } : {}),
+          }),
+          requestId,
+        ),
+        headers,
+      );
+    }
     return result(mapAccessOutcome(product.entitlements(actor), requestId), headers);
   }
   if (path === '/api/v1/access/reservations' && method === 'GET') {
@@ -262,14 +407,21 @@ export function dispatchAccess(
   if (path === '/api/v1/access/providers' && method === 'GET') {
     return result(mapAccessOutcome(product.providers(actor), requestId), headers);
   }
-  if (path === '/api/v1/access/search' && method === 'POST') {
+  if (pathWithoutQuery === '/api/v1/access/search' && method === 'POST') {
     return result(
       mapAccessOutcome(
-        product.searchProviders(actor, {
+        consumer.search(actor, {
           category: categoryOf(rec.category) ?? 'MOBILITY',
           query: str(rec.query) ?? str(rec.summary) ?? '',
           ...(str(rec.location) ? { location: str(rec.location) } : {}),
-          ...(str(rec.providerId) ? { providerId: str(rec.providerId) } : {}),
+          ...(str(rec.startDate) || str(rec.start) ? { startDate: str(rec.startDate) ?? str(rec.start) } : {}),
+          ...(str(rec.endDate) || str(rec.end) ? { endDate: str(rec.endDate) ?? str(rec.end) } : {}),
+          ...(num(rec.units) !== undefined ? { units: num(rec.units) } : {}),
+          ...(str(rec.unit) ? { unit: str(rec.unit) } : {}),
+          ...(str(rec.cursor) ? { cursor: str(rec.cursor) } : {}),
+          pageSize: pageSizeOf(str(rec.pageSize) ?? str(rec.page_size)),
+          ...(rec.filters && typeof rec.filters === 'object' ? { filters: rec.filters as Record<string, string> } : {}),
+          ...(str(rec.sort) ? { sort: str(rec.sort) } : {}),
         }),
         requestId,
       ),

@@ -88,6 +88,8 @@ import type { ConsentDataRightsEngine } from '../../../../packages/consent/src/p
 import type { PersonalDataVaultProduct } from '../../../../packages/personal-data-vault/src/product/index.ts';
 import { dispatchVault } from './vault.ts';
 import { dispatchAccess } from './access.ts';
+import { createAccessConsumerBffSurface } from '../../../../packages/human-access-economy/src/consumer-bff/index.ts';
+import { resourceField } from './types.ts';
 import { dispatchPersonalEconomy, type PersonalEconomyBffSurface } from './personal-economy.ts';
 import type { HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
 import type { MarketReferenceBffSurface } from './market-reference.ts';
@@ -312,7 +314,39 @@ function dispatchAuthenticated(
     return result(runtime.bff.patchProfile(principal, rec, requestId), headers);
   }
   if (path === '/api/v1/me/home' && method === 'GET') {
-    return result(runtime.bff.home(principal, requestId, query.valuationCurrency ?? query.valuation_currency ?? 'USD'), headers);
+    const home = runtime.bff.home(principal, requestId, query.valuationCurrency ?? query.valuation_currency ?? 'USD');
+    if (!isBffError(home) && runtime.access) {
+      const actor = Object.freeze({
+        actorId: principal.actorId,
+        customerId: principal.customerId,
+        verified: principal.verification === 'VERIFIED' && principal.customerStatus !== 'PENDING_VERIFICATION',
+        restricted: principal.restricted || principal.customerStatus === 'SUSPENDED',
+      });
+      const accessSummary = createAccessConsumerBffSurface(runtime.access).homeSummary(actor);
+      if (accessSummary.ok) {
+        const summary = accessSummary.value;
+        return result(
+          Object.freeze({
+            ...home,
+            access: resourceField({
+              state: summary.accessEnabled ? 'SIMULATION_ONLY' : 'FEATURE_DISABLED',
+              availability: summary.accessEnabled ? 'AVAILABLE_SIMULATION' : 'NOT_YET_PRODUCTIZED',
+              reason: summary.actionRequiredMessage,
+              value: Object.freeze({
+                accessEnabled: summary.accessEnabled,
+                overallStatus: summary.overallStatus,
+                categoryHighlights: summary.categoryHighlights,
+                nextExpiration: summary.nextExpiration,
+                activeBooking: summary.activeBooking,
+                actionRequired: summary.actionRequired,
+              }),
+            }),
+          }),
+          headers,
+        );
+      }
+    }
+    return result(home, headers);
   }
   if (path === '/api/v1/me/bootstrap' && method === 'GET') {
     return json(200, runtime.bff.bootstrap(principal), headers);
@@ -2157,6 +2191,7 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/data/vault/export',
   'GET /api/v1/data/vault/export/status',
   'GET /api/v1/data/vault/export/{id}',
+  'GET /api/v1/access',
   'GET /api/v1/access/overview',
   'GET /api/v1/access/home-summary',
   'GET /api/v1/access/landing',
@@ -2172,13 +2207,29 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/access/transactions/{id}/cancel',
   'GET /api/v1/access/transactions/{id}/support-context',
   'GET /api/v1/access/categories',
+  'GET /api/v1/access/categories/{category}',
   'GET /api/v1/access/entitlements',
+  'GET /api/v1/access/entitlements/{id}',
   'GET /api/v1/access/reservations',
   'GET /api/v1/access/activity',
+  'GET /api/v1/access/history',
+  'GET /api/v1/access/allocation/explanation',
+  'GET /api/v1/access/opportunities/{id}',
+  'GET /api/v1/access/transactions/{id}',
+  'GET /api/v1/access/bookings/{id}',
   'POST /api/v1/access/intents',
   'POST /api/v1/access/availability',
+  'POST /api/v1/access/search',
+  'POST /api/v1/access/quote',
   'POST /api/v1/access/quotes',
+  'POST /api/v1/access/reserve',
+  'POST /api/v1/access/checkout',
   'POST /api/v1/access/reservations',
+  'GET /api/v1/access/providers',
+  'POST /api/v1/access/redemptions/preview',
+  'POST /api/v1/access/redemptions',
+  'POST /api/v1/access/transactions/{id}/confirm',
+  'POST /api/v1/access/transactions/{id}/cancel',
   'POST /api/v1/access/reservations/{id}/confirm',
   'POST /api/v1/access/reservations/{id}/cancel',
   'POST /api/v1/access/experiences/quote',

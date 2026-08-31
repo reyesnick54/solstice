@@ -121,6 +121,12 @@ export function createTravelBff(input: {
           transit: null,
           charging: null,
           note: 'Transit and charging reference routes via /api/v1/access',
+          availableWithAccess: Object.freeze({
+            enabled: true,
+            searchPath: '/api/v1/access/search',
+            quotePath: '/api/v1/access/quote',
+            categories: Object.freeze(['MOBILITY', 'TRAVEL', 'STAY_HOUSING', 'EXPERIENCES']),
+          }),
         }),
       });
 

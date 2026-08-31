@@ -153,6 +153,14 @@ export type HomeResource = {
     readonly lines: PresentationValuation['lines'];
   }>;
   readonly access: ResourceField<import('../../../../packages/human-access-economy/src/product/projections.ts').AccessHomeSummaryView>;
+  readonly access?: ResourceField<{
+    readonly accessEnabled: boolean;
+    readonly overallStatus: string;
+    readonly categoryHighlights: readonly { readonly category: string; readonly label: string; readonly remainingUnits: number; readonly unit: string }[];
+    readonly nextExpiration: string | null;
+    readonly activeBooking: { readonly bookingId: string; readonly summary: string; readonly status: string } | null;
+    readonly actionRequired: boolean;
+  }>;
 };
 
 export type BootstrapResource = {
