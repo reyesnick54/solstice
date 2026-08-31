@@ -13,6 +13,9 @@
   "scripts": {
     "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec src/**/*.test.ts"
   },
+  "dependencies": {
+    "yaml": "^2.9.0"
+  },
   "engines": {
     "node": ">=22"
   }

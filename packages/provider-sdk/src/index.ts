@@ -128,11 +128,6 @@ export {
   type ExternalObservationEvidenceRef,
   type AgentEvidenceBundle,
 } from './agent-evidence.ts';
-/**
- * @solstice/provider-sdk — shared provider reliability control plane.
- *
- * Wave 1 Prompt 4. Simulation only. No live provider integration.
- */
 
 export {
   HTTP_METHODS,
@@ -143,17 +138,19 @@ export {
   type HttpMethod,
   type CircuitState,
   type FailureClassification,
-  type ProviderTransport,
-  type ProviderTransportRequest,
-  type ProviderTransportResponse,
+  type ReliabilityProviderTransport,
+  type ReliabilityTransport,
+  type ReliabilityTransportRequest,
+  type ReliabilityTransportResponse,
   type ProviderError,
   type ReliabilityOutcome,
   type DeadlineContext,
   type FallbackContext,
   type FallbackDecision,
   type FallbackHook,
-  type Clock,
+  type ReliabilityClock,
 } from './types.ts';
+} from './reliability-types.ts';
 
 export {
   DEFAULT_PROVIDER_RELIABILITY_POLICY,
@@ -238,15 +235,31 @@ export {
   PROVIDER_CONTENT_TYPES,
   type ProviderHttpMethod,
   type ProviderContentType,
+  type HttpProviderRequestContext,
+  type HttpProviderResponseMetadata,
+  type ProviderParsedBody,
+  type HttpProviderTransportResponse,
+  type HttpProviderTransportResult,
+  type HttpProviderTransportSuccess,
+  type HttpProviderTransportFailure,
+  type HttpProviderTransport,
+  type ProviderHttpRequestContext,
+  type ProviderHttpResponseMetadata,
+  type ProviderHttpTransportResponse,
+  type ProviderHttpTransportResult,
+  type ProviderHttpTransportSuccess,
+  type ProviderHttpTransportFailure,
+  type ProviderHttpTransport,
   type ProviderRequestContext,
   type ProviderResponseMetadata,
-  type ProviderParsedBody,
   type ProviderTransportResponse,
   type ProviderTransportResult,
   type ProviderTransportSuccess,
   type ProviderTransportFailure,
   type ProviderHttpTransport,
 } from './types.ts';
+  type ProviderTransport,
+} from './http-transport-types.ts';
 
 export {
   PROVIDER_TRANSPORT_ERROR_KINDS,
@@ -316,14 +329,48 @@ export {
   systemClock,
   type FetchProviderTransportOptions,
   type FetchLike,
-  type Clock,
+  type TransportClock,
 } from './transport.ts';
+
+export {
+  PROVIDER_ID_PATTERN,
+  PROVIDER_CAPABILITIES,
+  PROVIDER_STATUSES,
+  PROVIDER_AUTHORITY_CLASSES,
+  PROVIDER_LAUNCH_TIERS,
+  PROVIDER_PRIORITIES,
+  PROVIDER_ACTIVATION_MODES,
+  SUNREY_CONSUMER_DOMAINS,
+  PROVIDER_HEALTH_STATES,
+  isProviderId,
+  isProviderCategory,
+  isKnownProviderCapability,
+  isSunReyConsumerDomain,
+  type ProviderId,
+  type ProviderCapability,
+  type ProviderStatus,
+  type ProviderAuthorityClass,
+  type ProviderLaunchTier,
+  type ProviderPriority,
+  type ProviderActivationMode,
+  type SunReyConsumerDomain,
+  type ProviderHealthState,
+  type SecretReferenceName,
+  type ProviderConfiguration,
+  type ProviderDescriptor,
+  type ProviderRuntimeContext,
+  type ProviderRequestContext,
+  type ProviderResponseMetadata,
+  type ProviderHealthStatus,
+  type ProviderRegistration,
+} from './registry-types.ts';
+
 export * from './types.ts';
 export * from './contract.ts';
 export * from './adapter.ts';
-export * from './errors.ts';
 export * from './activation-policy.ts';
 export * from './registry.ts';
+export { createProviderRegistry } from './registry.ts';
 export * from './factory.ts';
 export * from './catalog/types.ts';
 export * from './catalog/loader.ts';

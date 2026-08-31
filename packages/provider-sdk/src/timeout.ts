@@ -3,7 +3,7 @@
  */
 
 import { clampTimeoutMs } from './policy.ts';
-import type { Clock } from './types.ts';
+import type { ReliabilityClock } from './reliability-types.ts';
 
 export class ProviderTimeoutError extends Error {
   readonly code = 'PROVIDER_TIMEOUT' as const;
@@ -34,7 +34,7 @@ const MIN_REMAINING_MS = 1;
 export async function withTimeout<T>(
   operation: (signal: AbortSignal) => Promise<T>,
   timeoutMs: number,
-  clock: Clock,
+  clock: ReliabilityClock,
 ): Promise<T> {
   const budget = clampTimeoutMs(timeoutMs);
   const controller = new AbortController();

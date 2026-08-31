@@ -1,0 +1,415 @@
+providers:
+  - provider_id: coingecko
+    name: CoinGecko
+    short_name: CoinGecko
+    description: CoinGecko public API providing aggregated cryptocurrency prices, capitalization metrics, volume, and historical data.
+    primary_category: cryptocurrency
+    capabilities:
+      - crypto_prices
+      - crypto_market_data
+      - crypto_market_cap
+      - crypto_market_history
+      - crypto_metadata
+    endpoints:
+      base_url: https://api.coingecko.com
+      api_version: v1
+      documentation_url: https://www.coingecko.com/en/api/documentation
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 30
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: delayed
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - exchange
+        - world
+        - grow
+        - financial_agent
+        - blockchain_intelligence
+        - moonrey
+      canonical_provider_interface: CryptoMarketReferenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-exchange/src/crypto-market/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-30"
+      notes: Wave 3 Prompt 12 fixture-backed adapter.
+
+  - provider_id: coincap
+    name: CoinCap
+    short_name: CoinCap
+    description: CoinCap public API providing real-time cryptocurrency prices and market data.
+    primary_category: cryptocurrency
+    capabilities:
+      - crypto_prices
+      - crypto_market_data
+      - crypto_market_cap
+      - crypto_market_history
+    endpoints:
+      base_url: https://api.coincap.io
+      api_version: v1
+      documentation_url: https://docs.coincap.io/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 200
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - exchange
+        - world
+        - grow
+        - financial_agent
+        - blockchain_intelligence
+        - moonrey
+      canonical_provider_interface: CryptoMarketReferenceProvider
+      priority: high
+      launch_tier: secondary_source
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-exchange/src/crypto-market/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-30"
+      notes: Wave 3 Prompt 12 fixture-backed adapter.
+
+  - provider_id: coinpaprika
+    name: CoinPaprika
+    short_name: Paprika
+    description: CoinPaprika public API providing cryptocurrency market data, tickers, and historical OHLCV.
+    primary_category: cryptocurrency
+    capabilities:
+      - crypto_prices
+      - crypto_market_data
+      - crypto_market_cap
+      - crypto_market_history
+      - crypto_metadata
+    endpoints:
+      base_url: https://api.coinpaprika.com
+      api_version: v1
+      documentation_url: https://api.coinpaprika.com/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 25000
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: delayed
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - exchange
+        - world
+        - grow
+        - financial_agent
+        - blockchain_intelligence
+        - moonrey
+      canonical_provider_interface: CryptoMarketReferenceProvider
+      priority: medium
+      launch_tier: secondary_source
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-exchange/src/crypto-market/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-30"
+      notes: Wave 3 Prompt 12 fixture-backed adapter.
+
+  - provider_id: coinlore
+    name: CoinLore
+    short_name: CoinLore
+    description: CoinLore public API providing cryptocurrency prices, capitalization metrics, and global market statistics.
+    primary_category: cryptocurrency
+    capabilities:
+      - crypto_prices
+      - crypto_market_data
+      - crypto_market_cap
+    endpoints:
+      base_url: https://api.coinlore.net
+      api_version: v1
+      documentation_url: https://www.coinlore.com/cryptocurrency-data-api
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: delayed
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - exchange
+        - world
+        - grow
+        - financial_agent
+        - blockchain_intelligence
+        - moonrey
+      canonical_provider_interface: CryptoMarketReferenceProvider
+      priority: low
+      launch_tier: fallback_source
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-exchange/src/crypto-market/adapters/index.ts
+    verification:
+      status: partially_verified
+      verified_against_official_docs: false
+      last_verified: "2026-08-30"
+      notes: Wave 3 Prompt 12 fixture-backed adapter.
+
+  - provider_id: cryptocompare
+    name: CryptoCompare
+    short_name: CryptoCompare
+    description: CryptoCompare public API providing cryptocurrency prices, historical data, and exchange-specific quotes.
+    primary_category: cryptocurrency
+    capabilities:
+      - crypto_prices
+      - crypto_market_data
+      - crypto_market_history
+      - crypto_exchange_reference
+    endpoints:
+      base_url: https://min-api.cryptocompare.com
+      api_version: v1
+      documentation_url: https://min-api.cryptocompare.com/documentation
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: CRYPTOCOMPARE_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: null
+    commercial_use:
+      status: restricted
+      notes: null
+    redistribution:
+      status: restricted
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 100000
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - exchange
+        - world
+        - grow
+        - financial_agent
+        - blockchain_intelligence
+        - moonrey
+      canonical_provider_interface: CryptoMarketReferenceProvider
+      priority: medium
+      launch_tier: secondary_source
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-exchange/src/crypto-market/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-30"
+      notes: Wave 3 Prompt 12 fixture-backed adapter.
+
+  - provider_id: coinmarketcap
+    name: CoinMarketCap
+    short_name: CMC
+    description: CoinMarketCap API providing cryptocurrency quotes, capitalization metrics, and metadata. Requires API key.
+    primary_category: cryptocurrency
+    capabilities:
+      - crypto_prices
+      - crypto_market_data
+      - crypto_market_cap
+      - crypto_metadata
+    endpoints:
+      base_url: https://pro-api.coinmarketcap.com
+      api_version: v1
+      documentation_url: https://coinmarketcap.com/api/documentation/v1/
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: COINMARKETCAP_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: null
+    commercial_use:
+      status: restricted
+      notes: null
+    redistribution:
+      status: prohibited
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 10000
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: delayed
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - exchange
+        - world
+        - grow
+        - financial_agent
+        - blockchain_intelligence
+        - moonrey
+      canonical_provider_interface: CryptoMarketReferenceProvider
+      priority: medium
+      launch_tier: blocked_pending_review
+      authority_class: reference_data
+      integration_state: catalog_only
+      existing_adapter: null
+    verification:
+      status: partially_verified
+      verified_against_official_docs: false
+      last_verified: "2026-08-30"
+      notes: Blocked pending credential and commercial review.

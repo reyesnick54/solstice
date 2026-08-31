@@ -1,0 +1,15 @@
+{
+  "results": [
+    {
+      "series": "US.CPI",
+      "country": "US",
+      "frequency": "M",
+      "unit": "index",
+      "name": "Consumer Price Index",
+      "values": [
+        { "date": "2026-06-01", "value": 313.1 },
+        { "date": "2026-07-01", "value": 313.5 }
+      ]
+    }
+  ]
+}

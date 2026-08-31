@@ -2,7 +2,7 @@
  * Generic fallback hooks — no hard-coded provider relationships.
  */
 
-import type { FallbackContext, FallbackDecision, FallbackHook } from './types.ts';
+import type { FallbackContext, FallbackDecision, FallbackHook } from './reliability-types.ts';
 
 export const noFallback: FallbackHook = () => Object.freeze({ action: 'none' });
 

@@ -127,6 +127,7 @@ export type CatalogProviderEntry = {
       | 'simulated'
       | 'sandbox'
       | 'production_candidate'
+      | 'implemented'
       | null;
     readonly existing_adapter?: string | null;
   };

@@ -1,0 +1,13 @@
+{
+  "id": "0000000000000000000123456789abcdef0123456789abcdef0123456789abcd",
+  "height": 850000,
+  "version": 536870912,
+  "timestamp": 1725000000,
+  "tx_count": 2847,
+  "size": 1543210,
+  "weight": 3998456,
+  "difficulty": 88913528925798.77,
+  "previousblockhash": "0000000000000000000abc123def456789abc123def456789abc123def456789",
+  "merkle_root": "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
+  "fee_total": 123456789
+}

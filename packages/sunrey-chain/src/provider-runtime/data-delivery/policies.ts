@@ -79,6 +79,42 @@ const POLICY_BY_CAPABILITY_PREFIX: Readonly<Record<string, Partial<CachePolicy>>
     maxHistoryEntries: 48,
     maxRawPayloadBytes: 16_384,
   },
+  'market.reference.quote': {
+    freshTtlMs: 30_000,
+    staleWindowMs: 120_000,
+    hardExpireMs: 600_000,
+    persistNormalized: true,
+    rawPayloadRetention: 'short_term',
+    maxHistoryEntries: 64,
+    maxRawPayloadBytes: 8_192,
+  },
+  'market.reference.history.daily': {
+    freshTtlMs: 3_600_000,
+    staleWindowMs: 86_400_000,
+    hardExpireMs: 604_800_000,
+    persistNormalized: true,
+    rawPayloadRetention: 'short_term',
+    maxHistoryEntries: 365,
+    maxRawPayloadBytes: 32_768,
+  },
+  'market.reference.commodity.daily': {
+    freshTtlMs: 3_600_000,
+    staleWindowMs: 86_400_000,
+    hardExpireMs: 604_800_000,
+    persistNormalized: true,
+    rawPayloadRetention: 'short_term',
+    maxHistoryEntries: 120,
+    maxRawPayloadBytes: 16_384,
+  },
+  'market.reference.asset_metadata': {
+    freshTtlMs: 86_400_000,
+    staleWindowMs: 604_800_000,
+    hardExpireMs: 2_592_000_000,
+    persistNormalized: true,
+    rawPayloadRetention: 'none',
+    maxHistoryEntries: 32,
+    maxRawPayloadBytes: 16_384,
+  },
 });
 
 export function resolveCachePolicy(capability: string): CachePolicy {

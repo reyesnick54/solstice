@@ -1,0 +1,10 @@
+{
+  "hash": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456",
+  "block_height": 850000,
+  "block_index": 1542,
+  "time": 1725000000,
+  "size": 512,
+  "fee": 12500,
+  "inputs": [{ "prev_out": { "addr": "bc1qexample" } }],
+  "outputs": [{ "addr": "bc1qrecipient", "value": 50000000 }]
+}
