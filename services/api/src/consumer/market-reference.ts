@@ -155,6 +155,25 @@ export function createMarketReferenceBffSurface(): MarketReferenceBffSurface {
 
     worldResource(principal: BffPrincipal, resource: string, requestId: string) {
       void principal;
+      const normalized = resource.toLowerCase();
+      const unavailableResources = new Set(['lithium', 'water', 'hydrogen', 'energy']);
+      if (unavailableResources.has(normalized)) {
+        return {
+          schema: 'sunrey.bff.world.resource.v1',
+          requestId,
+          referenceOnly: true,
+          commodity: normalized,
+          dataState: 'UNAVAILABLE',
+          priceMinorUnits: null,
+          currency: null,
+          unit: null,
+          normalizedUnit: null,
+          marketReference: null,
+          observationId: null,
+          issuanceAuthority: false,
+          reason: 'no eligible live source for this resource',
+        };
+      }
       if (!(COMMODITY_CODES as readonly string[]).includes(resource)) {
         return bffError({
           errorCode: 'NOT_FOUND',

@@ -114,6 +114,7 @@ describe('free API provider catalog', () => {
     const result = validateCatalog(catalog);
     assert.equal(result.ok, true, result.errors.join('\n'));
     assert.equal(catalog.population_status, 'partial');
+    assert.equal(result.stats.total, 73);
     assert.equal(result.stats.total, 36);
     assert.equal(result.stats.byCategory.foreign_exchange, 8);
     assert.equal(result.stats.byCategory.cryptocurrency, 6);

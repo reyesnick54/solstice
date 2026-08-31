@@ -234,38 +234,20 @@ export {
   PROVIDER_CONTENT_TYPES,
   type ProviderHttpMethod,
   type ProviderContentType,
-  type ProviderRequestContext,
-  type ProviderResponseMetadata,
-  type ProviderParsedBody,
-  type ProviderTransportResponse,
-  type ProviderTransportResult,
-  type ProviderTransportSuccess,
-  type ProviderTransportFailure,
   type ProviderHttpRequestContext,
   type ProviderHttpResponseMetadata,
-  type ProviderParsedBody,
   type ProviderHttpTransportResponse,
-  type ProviderHttpTransportResult,
   type ProviderHttpTransportSuccess,
   type ProviderHttpTransportFailure,
+  type ProviderHttpTransportResult,
   type ProviderHttpTransport,
-} from './types.ts';
-
-export {
   type HttpProviderRequestContext,
   type HttpProviderResponseMetadata,
   type HttpProviderTransportResponse,
-  type HttpProviderTransportResult,
   type HttpProviderTransportSuccess,
   type HttpProviderTransportFailure,
+  type HttpProviderTransportResult,
   type HttpProviderTransport,
-  type ProviderHttpRequestContext,
-  type ProviderHttpResponseMetadata,
-  type ProviderHttpTransportResponse,
-  type ProviderHttpTransportResult,
-  type ProviderHttpTransportSuccess,
-  type ProviderHttpTransportFailure,
-  type ProviderHttpTransport,
   type ProviderRequestContext,
   type ProviderResponseMetadata,
   type ProviderTransportResponse,
@@ -380,7 +362,6 @@ export {
   type ProviderRegistration,
 } from './registry-types.ts';
 
-export * from './types.ts';
 export * from './contract.ts';
 export * from './adapter.ts';
 export * from './activation-policy.ts';
@@ -390,3 +371,4 @@ export * from './factory.ts';
 export * from './catalog/types.ts';
 export * from './catalog/loader.ts';
 export * from './mocks/index.ts';
+export * from './trust/index.ts';

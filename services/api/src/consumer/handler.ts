@@ -140,6 +140,8 @@ export type ConsumerBffRuntime = {
   readonly marketReference?: MarketReferenceBffSurface;
   readonly cryptoMarket?: CryptoMarketBffSurface;
   readonly environmental?: EnvironmentalOracleBff;
+  readonly travel?: import('./travel-adapter.ts').TravelBff;
+  readonly agentExternalEvidence?: import('./agent-evidence-adapter.ts').AgentExternalEvidenceBff;
   readonly opportunity?: OpportunityIntelligenceBff;
   readonly previewDiagnostics?: () => Readonly<Record<string, unknown>>;
 };
@@ -161,7 +163,7 @@ const STUB_GROUPS = [
   'notifications',
 ] as const;
 
-export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffRequest): BffResponse {
+export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffRequest): BffResponse | Promise<BffResponse> {
   const requestId = request.requestId ?? `req_${randomUUID()}`;
   const headers = {
     'cache-control': cachePolicyForPath(request.path).cacheControl,
@@ -803,6 +805,23 @@ function dispatchAuthenticated(
     }
     return json(200, world.regulatory(), headers);
   }
+  if (path === '/api/v1/world/snapshot' && method === 'GET') {
+    return handleWorldSnapshotRoute(runtime, requestId, headers);
+  }
+  if (path === '/api/v1/grow/context' && method === 'GET') {
+    return handleGrowContextRoute(runtime, requestId, headers);
+  }
+  if (path === '/api/v1/agent/external-evidence' && method === 'GET') {
+    return handleAgentExternalEvidenceRoute(runtime, requestId, headers);
+  }
+  if (path === '/api/v1/agent/external-events' && method === 'GET') {
+    return handleAgentExternalEventsRoute(runtime, requestId, headers);
+  }
+  if (path === '/api/v1/travel/overview' && method === 'GET') {
+    return handleTravelOverviewRoute(runtime, request, requestId, headers);
+  }
+  if (path === '/api/v1/economy/productive/snapshot' && method === 'GET') {
+    return handleProductiveEconomySnapshotRoute(runtime, requestId, headers);
   if (path === '/api/v1/world/physical-economy' && method === 'GET') {
     const world = runtime.worldExternalData;
     if (!world) {
@@ -908,13 +927,6 @@ function dispatchAuthenticated(
     const resource = path.slice('/api/v1/world/resources/'.length);
     const body = marketReference.worldResource(principal, resource, requestId);
     return json(isBffError(body) ? statusForError(body) : 200, body, headers);
-  }
-  if (path === '/api/v1/world/economy' && method === 'GET') {
-    const surface = runtime.worldEconomy;
-    if (!surface) {
-      return json(200, runtime.bff.featureStub('world', principal), headers);
-    }
-    return json(200, surface.overview(), headers);
   }
   if (path === '/api/v1/world/economy/indicators' && method === 'GET') {
     const surface = runtime.worldEconomy;
@@ -1319,6 +1331,91 @@ function dispatchPayments(
     return result(mapPaymentOutcome(platform.getPayment(principal.customerId, id), requestId), headers);
   }
   return null;
+}
+
+async function handleWorldSnapshotRoute(
+  runtime: ConsumerBffRuntime,
+  requestId: string,
+  headers: Record<string, string>,
+): Promise<BffResponse> {
+  const world = runtime.worldExternalData;
+  if (!world) {
+    return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'World snapshot unavailable', requestId }), headers);
+  }
+  return json(200, await world.worldSnapshot(), headers);
+}
+
+async function handleGrowContextRoute(
+  runtime: ConsumerBffRuntime,
+  requestId: string,
+  headers: Record<string, string>,
+): Promise<BffResponse> {
+  const world = runtime.worldExternalData;
+  if (!world) {
+    return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Grow external context unavailable', requestId }), headers);
+  }
+  return json(200, await world.growContextAsync(), headers);
+}
+
+async function handleAgentExternalEvidenceRoute(
+  runtime: ConsumerBffRuntime,
+  requestId: string,
+  headers: Record<string, string>,
+): Promise<BffResponse> {
+  const evidence = runtime.agentExternalEvidence;
+  if (!evidence) {
+    return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Agent external evidence unavailable', requestId }), headers);
+  }
+  return json(200, await evidence.evidenceCatalog(), headers);
+}
+
+function handleAgentExternalEventsRoute(
+  runtime: ConsumerBffRuntime,
+  requestId: string,
+  headers: Record<string, string>,
+): BffResponse {
+  const evidence = runtime.agentExternalEvidence;
+  if (!evidence) {
+    return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'External action events unavailable', requestId }), headers);
+  }
+  return json(200, Object.freeze({
+    schema: 'sunrey.bff.action-center.external-events.v1',
+    events: evidence.externalEvents(),
+    autoNotify: false,
+  }), headers);
+}
+
+async function handleTravelOverviewRoute(
+  runtime: ConsumerBffRuntime,
+  request: BffRequest,
+  requestId: string,
+  headers: Record<string, string>,
+): Promise<BffResponse> {
+  const travel = runtime.travel;
+  if (!travel) {
+    return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Travel overview unavailable', requestId }), headers);
+  }
+  const q = request.query ?? {};
+  const body = await travel.overview({
+    originLat: q.originLat != null ? Number(q.originLat) : null,
+    originLon: q.originLon != null ? Number(q.originLon) : null,
+    destLat: q.destLat != null ? Number(q.destLat) : undefined,
+    destLon: q.destLon != null ? Number(q.destLon) : undefined,
+    destinationLabel: q.destinationLabel,
+  });
+  return json(200, body, headers);
+}
+
+async function handleProductiveEconomySnapshotRoute(
+  runtime: ConsumerBffRuntime,
+  requestId: string,
+  headers: Record<string, string>,
+): Promise<BffResponse> {
+  const world = runtime.worldExternalData;
+  if (!world) {
+    return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Productive economy snapshot unavailable', requestId }), headers);
+  }
+  return json(200, await world.productiveEconomySnapshot(), headers);
 }
 
 function hinContributionSurface(runtime: ConsumerBffRuntime): HinContributionSurface | undefined {
@@ -1923,6 +2020,12 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/markets/crypto/{assetId}/history',
   'GET /api/v1/world/resources',
   'GET /api/v1/world/resources/{resource}',
+  'GET /api/v1/world/snapshot',
+  'GET /api/v1/grow/context',
+  'GET /api/v1/travel/overview',
+  'GET /api/v1/agent/external-evidence',
+  'GET /api/v1/agent/external-events',
+  'GET /api/v1/economy/productive/snapshot',
   'GET /api/v1/world/environmental',
   'GET /api/v1/world/environmental/weather',
   'GET /api/v1/world/environmental/forecast',
