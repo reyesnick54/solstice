@@ -92,7 +92,7 @@ function observe<T>(
   ctx: Wave4AdapterContext,
   input: {
     readonly providerId: string;
-    readonly category: 'sanctions' | 'kyb' | 'fraud' | 'other';
+    readonly category: 'compliance' | 'kyb_identity' | 'fraud_risk' | 'cybersecurity';
     readonly capability: string;
     readonly dataset: string;
     readonly data: T;
@@ -149,7 +149,7 @@ export function fetchComplianceEvidence(
     if (providerId === 'open-sanctions' || providerId === 'un-sanctions' || providerId === 'eu-sanctions') {
       const obs = observe(ctx, {
         providerId,
-        category: 'sanctions',
+        category: 'compliance',
         capability: evidence.screeningType === 'PEP' ? 'pep_screening' : 'sanctions',
         dataset: 'screening',
         data: evidence,
@@ -175,7 +175,7 @@ export function fetchBusinessIdentityEvidence(
     }
     const obs = observe(ctx, {
       providerId: evidence.providerId,
-      category: 'kyb',
+      category: 'kyb_identity',
       capability: 'kyb',
       dataset: 'company-profile',
       data: evidence,
@@ -200,7 +200,7 @@ export function fetchDigitalRiskEvidence(
     }
     const obs = observe(ctx, {
       providerId: evidence.providerId,
-      category: 'fraud',
+      category: 'fraud_risk',
       capability: 'ip_risk',
       dataset: 'risk-check',
       data: evidence,
@@ -224,7 +224,7 @@ export function fetchVulnerabilityObservations(
   for (const vuln of FIXTURE_VULNERABILITIES) {
     const obs = observe(ctx, {
       providerId: 'nvd',
-      category: 'other',
+      category: 'cybersecurity',
       capability: 'vulnerability_intelligence',
       dataset: 'cve-feed',
       data: vuln,
@@ -249,7 +249,7 @@ export function fetchThreatIndicators(
     };
     const obs = observe(ctx, {
       providerId: indicator.providerId,
-      category: 'other',
+      category: 'cybersecurity',
       capability: indicator.indicatorType === 'PHISHING_URL' ? 'phishing' : 'malicious_url',
       dataset: 'threat-feed',
       data: sanitized,
@@ -269,7 +269,7 @@ export function fetchEndpointSecurityObservations(
   for (const scan of FIXTURE_ENDPOINT_SECURITY) {
     const obs = observe(ctx, {
       providerId: scan.providerId,
-      category: 'other',
+      category: 'cybersecurity',
       capability: scan.scanType === 'TLS' ? 'tls_security' : 'http_security',
       dataset: 'endpoint-scan',
       data: scan,
@@ -290,7 +290,7 @@ export function fetchServiceIncidentObservations(
     const providerId = incident.source;
     const obs = observe(ctx, {
       providerId,
-      category: 'other',
+      category: 'cybersecurity',
       capability: 'outage_monitoring',
       dataset: 'service-status',
       data: incident,

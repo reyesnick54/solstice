@@ -33,8 +33,10 @@ jobs:
       - name: "[INTEGRITY] Lockfile enforcement"
         run: node scripts/check-lockfiles.mjs
 
-      - name: "[INTEGRITY] YAML validation"
-        run: node scripts/check-yaml-integrity.mjs
+      - name: "[INTEGRITY] YAML and provider catalog validation"
+        run: |
+          node scripts/check-yaml-integrity.mjs
+          node scripts/validate-free-api-catalog.mjs
 
       - name: "[ARCHITECTURE] Architectural invariants"
         run: |
@@ -468,8 +470,10 @@ jobs:
           node scripts/check-json-integrity.mjs
           node scripts/check-merge-integrity.mjs
 
-      - name: "[INTEGRITY] YAML validation"
-        run: node scripts/check-yaml-integrity.mjs
+      - name: "[INTEGRITY] YAML and provider catalog validation"
+        run: |
+          node scripts/check-yaml-integrity.mjs
+          node scripts/validate-free-api-catalog.mjs
 
       - name: "[API] OpenAPI and contract specs"
         run: node scripts/check-api-specs.mjs
