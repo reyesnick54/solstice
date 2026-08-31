@@ -9,6 +9,11 @@ source_list:
   verified_at: 2026-08-31
 notes: Partial population including Wave 2 economics/markets providers, Wave 3 crypto/blockchain intelligence, and Wave
   5 energy/resource/productive-economy providers. Full 126-provider master list remains pending.
+    wave3-crypto-catalog-entries.yaml + packages/kernel compliance-intelligence
+  version: wave-4-prompt-15
+  verified_at: 2026-08-30
+notes: Partial population including Wave 2 economics/markets, Wave 3 crypto, and Wave 4 compliance intelligence
+  providers. Full 126-provider master list remains pending.
 providers:
   - provider_id: fred
     name: FRED API
@@ -2039,6 +2044,13 @@ providers:
     primary_category: environmental
     secondary_categories:
       - natural_resources
+      last_verified: 2026-08-30
+      notes: Wave 3 Prompt 12 fixture-backed adapter.
+  - provider_id: coinmarketcap
+    name: CoinMarketCap
+    short_name: CMC
+    description: CoinMarketCap API providing cryptocurrency quotes, capitalization metrics, and metadata. Requires API key.
+    primary_category: cryptocurrency
     capabilities:
       - carbon_intensity
       - resource_data
@@ -2075,6 +2087,7 @@ providers:
       notes: Documented free-tier rate limit.
     data_characteristics:
       freshness: daily
+      freshness: delayed
       geographic_scope:
         - global
       historical_data: true
@@ -2148,6 +2161,7 @@ providers:
       notes: Per-URL carbon estimates; not grid telemetry.
     sunrey:
       domain:
+        - exchange
         - world
         - research
       canonical_provider_interface: ResourceDataProvider
@@ -2298,3 +2312,140 @@ providers:
       verified_against_official_docs: false
       last_verified: 2026-08-31
       notes: Blocked pending legal review of free-tier commercial terms.
+      last_verified: 2026-08-30
+      notes: Blocked pending credential and commercial review.
+  - primary_category: compliance
+    secondary_categories: []
+    capabilities:
+      - sanctions
+      - pep_screening
+      - watchlists
+      - adverse_regulatory_data
+      - entity_resolution
+    endpoints:
+      base_url: https://api.opensanctions.org
+      api_version: v1
+      documentation_url: https://www.opensanctions.org/docs/api/
+      status_url: https://www.opensanctions.org/
+    authentication:
+      type: api_key
+      required: false
+      registration_required: false
+      environment_variable: OPENSANCTIONS_API_KEY
+      notes: Optional API key for higher limits; bulk non-commercial use does not require a key.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Free for non-commercial use; API trial keys available for evaluation.
+    commercial_use:
+      status: restricted
+      notes: CC BY-NC 4.0 for bulk data. Commercial compliance screening requires paid license. Production activation blocked
+        pending legal review.
+    redistribution:
+      status: attribution_required
+      notes: OpenSanctions attribution required per dataset terms.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Simulation uses fixtures only; respect provider quotas in production.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - compliance
+        - world
+        - exchange
+        - financial_agent
+      canonical_provider_interface: ComplianceIntelligenceProvider
+      priority: critical
+      launch_tier: blocked_pending_review
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/kernel/src/compliance-intelligence/adapters/open-sanctions.ts
+    verification:
+      status: partially_verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Commercial use restricted; adapter is preview_only until counsel confirms license.
+    provider_id: open-sanctions
+    name: OpenSanctions
+    short_name: OpenSanctions
+    description: Open database of sanctions, PEPs, and watchlists aggregating OFAC, UN, EU, UK, and national lists. Bulk
+      data is CC BY-NC 4.0; commercial screening requires a paid license.
+  - primary_category: compliance
+    secondary_categories: []
+    capabilities:
+      - wanted_persons
+      - watchlists
+      - public_enforcement_data
+    endpoints:
+      base_url: https://ws-public.interpol.int
+      api_version: v1
+      documentation_url: https://interpol.api.bund.dev/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public unauthenticated API.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Public API; no authentication required.
+    commercial_use:
+      status: verified_allowed
+      notes: Public law-enforcement notices API; use for screening evidence only.
+    redistribution:
+      status: attribution_required
+      notes: INTERPOL data usage subject to INTERPOL terms; evidence references only in SunRey.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Simulation uses fixtures only; respect provider quotas in production.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - compliance
+        - world
+      canonical_provider_interface: ComplianceIntelligenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: adapter_implemented
+      existing_adapter: packages/kernel/src/compliance-intelligence/adapters/interpol-red-notices.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Public Red Notices API; wanted-person classification separate from sanctions.
+    provider_id: interpol-red-notices
+    name: INTERPOL Red Notices
+    short_name: INTERPOL
+    description: Public INTERPOL Red Notices API for wanted-person lookups. Distinct from sanctions lists; wanted status is
+      a separate evidence classification.

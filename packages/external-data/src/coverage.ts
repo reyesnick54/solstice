@@ -31,8 +31,17 @@ const BLOCKED_IDS = new Set(['yahoo-finance-unofficial', 'quandl-nasdaq-data-lin
 const DEPRECATED_IDS = new Set(['treasury-direct-legacy-xml']);
 
 export function loadCatalogProviders(): readonly Record<string, unknown>[] {
-  const catalog = parseYaml(readFileSync(CATALOG_PATH, 'utf8')) as { providers: Record<string, unknown>[] };
-  return Object.freeze(catalog.providers ?? []);
+  try {
+    const catalog = parseYaml(readFileSync(CATALOG_PATH, 'utf8')) as { providers: Record<string, unknown>[] };
+    if (catalog.providers?.length) {
+      return Object.freeze(catalog.providers);
+    }
+  } catch {
+    // fall through to wave2 entries
+  }
+  const wave2Path = join(ROOT, 'config/providers/wave2-catalog-entries.yaml');
+  const wave2 = parseYaml(readFileSync(wave2Path, 'utf8')) as { providers: Record<string, unknown>[] };
+  return Object.freeze(wave2.providers ?? []);
 }
 
 export function classifyWave2Provider(provider: Record<string, unknown>): Wave2ProviderCoverage {

@@ -14,6 +14,11 @@ import type { ExternalDataHealth, SearchableEntity } from './models.ts';
 import { createWave5ExternalData, wave5CoverageReport, type Wave5ExternalData } from './productive-economy.ts';
 import { createWave2Services, type CompanyIntelligenceService, type FxReferenceService, type MacroDataService, type MarketReferenceService } from './services.ts';
 import { FIXTURE_FILINGS } from './fixtures.ts';
+import { createWave4Services, type ProviderRiskService } from './wave4/services.ts';
+import type { ComplianceEvidenceService, BusinessIdentityService, DigitalRiskService, VulnerabilityIntelligenceService, ThreatIntelligenceService, EndpointSecurityService, ServiceOutageService } from './wave4/services.ts';
+import { createDefaultWave4AdapterStates } from './wave4/adapters.ts';
+import { buildWave4CoverageReport } from './wave4/coverage.ts';
+import { WAVE4_IMPLEMENTED_PROVIDER_IDS } from './wave4/catalog-entries.ts';
 
 export type ExternalDataPlaneOptions = {
   readonly nowUtc?: string;
@@ -26,21 +31,42 @@ export class ExternalDataPlane {
   readonly markets: MarketReferenceService;
   readonly company: CompanyIntelligenceService;
   readonly productiveEconomy: Wave5ExternalData;
+  readonly compliance: ComplianceEvidenceService;
+  readonly businessIdentity: BusinessIdentityService;
+  readonly digitalRisk: DigitalRiskService;
+  readonly vulnerability: VulnerabilityIntelligenceService;
+  readonly threatIntel: ThreatIntelligenceService;
+  readonly endpointSecurity: EndpointSecurityService;
+  readonly serviceOutage: ServiceOutageService;
+  readonly providerRisk: ProviderRiskService;
   readonly #ctx: Wave2AdapterContext;
+  readonly #wave4Ctx;
   readonly #delivery;
 
   constructor(options: ExternalDataPlaneOptions = {}) {
     const nowUtc = options.nowUtc ?? new Date().toISOString();
-    this.#ctx = {
-      nowUtc,
-      states: options.states ?? createDefaultAdapterStates(),
-    };
+    const wave2States = options.states ?? createDefaultAdapterStates();
+    const wave4States = createDefaultWave4AdapterStates();
+    for (const [id, state] of wave2States) {
+      wave4States.set(id, state);
+    }
+    this.#ctx = { nowUtc, states: wave2States };
+    this.#wave4Ctx = { nowUtc, states: wave4States };
     const services = createWave2Services(this.#ctx);
     this.macro = services.macro;
     this.fx = services.fx;
     this.markets = services.markets;
     this.company = services.company;
     this.productiveEconomy = createWave5ExternalData({ nowUtc: () => nowUtc });
+    const wave4 = createWave4Services(this.#wave4Ctx);
+    this.compliance = wave4.compliance;
+    this.businessIdentity = wave4.businessIdentity;
+    this.digitalRisk = wave4.digitalRisk;
+    this.vulnerability = wave4.vulnerability;
+    this.threatIntel = wave4.threatIntel;
+    this.endpointSecurity = wave4.endpointSecurity;
+    this.serviceOutage = wave4.serviceOutage;
+    this.providerRisk = wave4.providerRisk;
     this.#delivery = createDataDelivery(Date.parse(nowUtc));
   }
 
@@ -49,11 +75,17 @@ export class ExternalDataPlane {
   }
 
   setProviderState(providerId: string, patch: Partial<ProviderAdapterState>): void {
-    const current = this.#ctx.states.get(providerId);
+    const current = this.#ctx.states.get(providerId) ?? this.#wave4Ctx.states.get(providerId);
     if (!current) {
       return;
     }
-    this.#ctx.states.set(providerId, { ...current, ...patch });
+    const updated = { ...current, ...patch };
+    if (this.#ctx.states.has(providerId)) {
+      this.#ctx.states.set(providerId, updated);
+    }
+    if (this.#wave4Ctx.states.has(providerId)) {
+      this.#wave4Ctx.states.set(providerId, updated);
+    }
   }
 
   async cachedFetch(providerId: string, capability: string, resourceId: string) {
@@ -103,6 +135,14 @@ export class ExternalDataPlane {
       wave2: buildWave2CoverageReport(),
       wave5: wave5CoverageReport(),
     });
+  }
+
+  wave4CoverageReport() {
+    return buildWave4CoverageReport();
+  }
+
+  wave4ProviderIds(): readonly string[] {
+    return WAVE4_IMPLEMENTED_PROVIDER_IDS;
   }
 
   searchIndex(): readonly SearchableEntity[] {
