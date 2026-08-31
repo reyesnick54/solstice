@@ -1,0 +1,14 @@
+{
+  "temperature": 28.0,
+  "feels_like": 30.0,
+  "relative_humidity": 72,
+  "pressure": 1010,
+  "wind_speed": 5.0,
+  "wind_direction": 220,
+  "precipitation": 0.5,
+  "cloud_cover": 60,
+  "visibility": 8,
+  "weather_code": "showers",
+  "time": "2026-08-31T12:00:00.000Z",
+  "age_ms": 180000
+}
