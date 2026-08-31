@@ -1,0 +1,89 @@
+{
+  "suite": "providers",
+  "status": "TARGET_MET",
+  "durationMs": 5,
+  "cases": [
+    {
+      "name": "four-domain-parallel",
+      "status": "BENCHMARKED",
+      "latency": {
+        "count": 50,
+        "minMs": 0.03931499999816879,
+        "maxMs": 0.982865000001766,
+        "meanMs": 0.07495611999991525,
+        "medianMs": 0.04603099999803817,
+        "p50Ms": 0.04603099999803817,
+        "p95Ms": 0.09007500000006985,
+        "p99Ms": 0.982865000001766,
+        "stddevMs": 0.13492781270235074
+      },
+      "domains": [
+        "macro",
+        "fx",
+        "markets",
+        "filings"
+      ]
+    },
+    {
+      "name": "timeout-provider",
+      "status": "TARGET_MET",
+      "latency": {
+        "count": 20,
+        "minMs": 0.0013519999993150122,
+        "maxMs": 0.12348600000041188,
+        "meanMs": 0.010759549999602314,
+        "medianMs": 0.0020939999994880054,
+        "p50Ms": 0.0020939999994880054,
+        "p95Ms": 0.045680999999603955,
+        "p99Ms": 0.12348600000041188,
+        "stddevMs": 0.02754067610020756
+      },
+      "failuresObserved": 20,
+      "target": {
+        "class": "ENGINEERING_QUALIFICATION_TARGET",
+        "minRequestsPerSec": null,
+        "maxErrorRate": 0.05,
+        "source": "wave6-prompt16"
+      }
+    },
+    {
+      "name": "partial-provider-success",
+      "status": "TARGET_MET",
+      "latency": {
+        "count": 30,
+        "minMs": 0.0013639999997394625,
+        "maxMs": 0.011699999999109423,
+        "meanMs": 0.001954199999939495,
+        "medianMs": 0.0015260000000125729,
+        "p50Ms": 0.0015260000000125729,
+        "p95Ms": 0.002276999999594409,
+        "p99Ms": 0.011699999999109423,
+        "stddevMs": 0.0018252259839757067
+      }
+    }
+  ],
+  "environment": {
+    "resultClass": "ENGINEERING_MEASUREMENT",
+    "label": "ENGINEERING_QUALIFICATION_TARGET",
+    "sourceCommit": "8f4683320e0a0957c8d623ce881634577ac0bff6",
+    "recordedAtUtc": "2026-08-31T16:28:07.082Z",
+    "nodeVersion": "v22.14.0",
+    "platform": "linux",
+    "arch": "x64",
+    "cpuCount": 4,
+    "cpuModel": "Intel(R) Xeon(R) Processor",
+    "totalMemoryGiB": 15.64,
+    "freeMemoryGiB": 14.67,
+    "container": false,
+    "environment": "simulation",
+    "databaseMode": "in-process",
+    "networkMode": "in-process",
+    "cryptoMode": "HYBRID_SIMULATION",
+    "validatorCount": null,
+    "benchmarkTool": "external-data-plane",
+    "benchmarkToolVersion": "wave6-prompt16"
+  },
+  "notes": [
+    "Fixture adapters only — no live network calls"
+  ]
+}

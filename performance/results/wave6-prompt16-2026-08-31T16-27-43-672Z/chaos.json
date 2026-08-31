@@ -1,0 +1,57 @@
+{
+  "suite": "chaos",
+  "status": "ENVIRONMENT_LIMITED",
+  "durationMs": 69,
+  "cases": [
+    {
+      "name": "baseline-healthy",
+      "status": "TARGET_MET",
+      "latencyMs": 3.4969860000019253
+    },
+    {
+      "name": "provider-down-degrades",
+      "status": "BENCHMARKED",
+      "httpStatus": 401,
+      "note": "Partial degradation expected — must not return ambiguous ledger state"
+    },
+    {
+      "name": "provider-down-grow",
+      "status": "BENCHMARKED",
+      "httpStatus": 401
+    },
+    {
+      "name": "database-unavailable",
+      "status": "ENVIRONMENT_LIMITED",
+      "note": "Full DB chaos requires npm run qualify:backend-db with controlled PostgreSQL stop"
+    },
+    {
+      "name": "validator-unavailable",
+      "status": "ENVIRONMENT_LIMITED",
+      "note": "Use sunrey-bench four-validator profile with modeled latency for validator chaos"
+    }
+  ],
+  "environment": {
+    "resultClass": "ENGINEERING_MEASUREMENT",
+    "label": "ENGINEERING_QUALIFICATION_TARGET",
+    "sourceCommit": "8f4683320e0a0957c8d623ce881634577ac0bff6",
+    "recordedAtUtc": "2026-08-31T16:28:07.186Z",
+    "nodeVersion": "v22.14.0",
+    "platform": "linux",
+    "arch": "x64",
+    "cpuCount": 4,
+    "cpuModel": "Intel(R) Xeon(R) Processor",
+    "totalMemoryGiB": 15.64,
+    "freeMemoryGiB": 14.67,
+    "container": false,
+    "environment": "simulation",
+    "databaseMode": "in-process",
+    "networkMode": "localhost",
+    "cryptoMode": "HYBRID_SIMULATION",
+    "validatorCount": null,
+    "benchmarkTool": "sunrey-qualify-performance",
+    "benchmarkToolVersion": "wave6-prompt16"
+  },
+  "notes": [
+    "Financial/ledger writes must not become ambiguous under degradation"
+  ]
+}

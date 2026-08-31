@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "wave": "wave6-prompt16",
+  "label": "ENGINEERING_QUALIFICATION_TARGET",
+  "note": "Conservative CI regression envelopes — not contractual SLAs",
+  "suites": {
+    "api": {
+      "authenticatedReadP99Ms": 2000,
+      "healthNotRepresentative": true
+    },
+    "database": {
+      "ledgerPostingMedianMs": 50,
+      "ledgerLookupMedianMs": 20
+    },
+    "access": {
+      "overviewP99Ms": 5,
+      "allocationP99Ms": 100
+    },
+    "grow": {
+      "proposalCreationP99Ms": 5000
+    },
+    "exchange": {
+      "orderIngressP99Ms": 100
+    }
+  }
+}
