@@ -23,6 +23,20 @@ const WAVE2_CATEGORIES = new Set([
   'government_open_data',
 ]);
 
+const WAVE5_CATEGORIES = new Set([
+  'energy',
+  'natural_resources',
+  'environmental',
+  'weather',
+  'water',
+  'transportation',
+  'aviation',
+  'maritime',
+  'travel',
+  'geospatial',
+  'logistics',
+]);
+
 const WAVE3_CATEGORIES = new Set(['cryptocurrency', 'blockchain']);
 
 const BLOCKED_IDS = new Set(['yahoo-finance-unofficial', 'quandl-nasdaq-data-link', 'currencyapi-com']);
@@ -43,10 +57,12 @@ export function classifyWave2Provider(provider: Record<string, unknown>): Wave2P
     return Object.freeze({
       providerId,
       category,
-      status: WAVE3_CATEGORIES.has(category) ? 'NOT_WAVE_2' : 'NOT_WAVE_2',
+      status: WAVE3_CATEGORIES.has(category) || WAVE5_CATEGORIES.has(category) ? 'NOT_WAVE_2' : 'NOT_WAVE_2',
       notes: WAVE3_CATEGORIES.has(category)
         ? 'Wave 3 crypto/blockchain scope; accounted outside Wave 2 coverage.'
-        : 'Outside Wave 2 economics/markets scope.',
+        : WAVE5_CATEGORIES.has(category)
+          ? 'Wave 5 physical-economy scope; accounted outside Wave 2 coverage.'
+          : 'Outside Wave 2 economics/markets scope.',
     });
   }
 

@@ -35,11 +35,6 @@ import type {
   ProviderTransportResponse,
   ProviderTransportResult,
 } from './types.ts';
-  ProviderHttpRequestContext,
-  ProviderHttpTransport,
-  ProviderHttpTransportResponse,
-  ProviderHttpTransportResult,
-} from './http-transport-types.ts';
 
 export type FetchLike = (input: string | URL, init?: RequestInit) => Promise<Response>;
 
@@ -64,7 +59,6 @@ export type FetchProviderTransportOptions = {
 const SUPPORTED_METHODS = new Set<ProviderHttpMethod>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']);
 
 export class FetchProviderTransport implements ProviderHttpTransport {
-export class FetchProviderTransport implements HttpProviderTransport {
   readonly transportId = 'provider-sdk.fetch-http';
   private readonly config: ProviderTransportConfig;
   private readonly authResolver: ProviderAuthResolver;

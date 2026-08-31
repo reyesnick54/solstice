@@ -1,0 +1,1393 @@
+providers:
+  # ── Energy (Prompt 18) ──────────────────────────────────────────────────────
+  - provider_id: eia
+    name: U.S. Energy Information Administration Open Data
+    short_name: EIA
+    description: >
+      EIA Open Data API providing U.S. energy production, consumption, prices, and
+      inventory statistics including petroleum, natural gas, and electricity metrics.
+    primary_category: energy
+    capabilities:
+      - energy_prices
+      - energy_production
+      - energy_consumption
+      - petroleum_stocks
+    endpoints:
+      base_url: https://api.eia.gov
+      api_version: v2
+      documentation_url: https://www.eia.gov/opendata/documentation.php
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: EIA_API_KEY
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Free API key registration at eia.gov/opendata.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: EIA attribution required per terms of use.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: 5
+      notes: Concurrent request limit per API key.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - moonrey
+        - economic_graph
+      canonical_provider_interface: EnergyDataProvider
+      priority: critical
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Wave 5 Prompt 18 fixture-backed adapter.
+
+  - provider_id: uk-carbon-intensity
+    name: UK Carbon Intensity API
+    short_name: Carbon Intensity
+    description: >
+      UK National Grid carbon intensity API providing regional electricity carbon
+      intensity forecasts and historical data for Great Britain.
+    primary_category: energy
+    capabilities:
+      - carbon_intensity
+      - energy_grid_status
+    endpoints:
+      base_url: https://api.carbonintensity.org.uk
+      api_version: v1
+      documentation_url: https://carbon-intensity.github.io/api-definitions/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Open public API.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: allowed
+      notes: null
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: hourly
+      geographic_scope:
+        - GB
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - moonrey
+      canonical_provider_interface: EnergyDataProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Wave 5 Prompt 18 fixture-backed adapter.
+
+  - provider_id: entsoe
+    name: ENTSO-E Transparency Platform
+    short_name: ENTSO-E
+    description: >
+      European Network of Transmission System Operators transparency platform
+      providing European electricity generation, load, and cross-border flow data.
+    primary_category: energy
+    capabilities:
+      - energy_production
+      - energy_grid_status
+      - cross_border_flows
+    endpoints:
+      base_url: https://web-api.tp.entsoe.eu
+      api_version: v1
+      documentation_url: https://transparency.entsoe.eu/content/static_content/Static%20content/web%20api/Guide.html
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: ENTSOE_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Registration required; terms restrict commercial redistribution.
+    commercial_use:
+      status: unclear
+      notes: Pending legal review for commercial use.
+    redistribution:
+      status: restricted
+      notes: ENTSO-E terms restrict redistribution.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 400
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Daily request limit per security token.
+    data_characteristics:
+      freshness: hourly
+      geographic_scope:
+        - EU
+      historical_data: true
+      realtime: false
+      data_format: xml
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - moonrey
+      canonical_provider_interface: EnergyDataProvider
+      priority: high
+      launch_tier: preview
+      authority_class: authoritative_official
+      integration_state: catalog_only
+      existing_adapter: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Blocked pending legal/commercial review.
+
+  # ── Natural Resources (Prompt 18) ───────────────────────────────────────────
+  - provider_id: usgs-minerals
+    name: USGS Mineral Resources Data
+    short_name: USGS Minerals
+    description: >
+      U.S. Geological Survey mineral resources data providing commodity production,
+      reserves, and resource estimates for minerals and metals.
+    primary_category: natural_resources
+    capabilities:
+      - mineral_production
+      - resource_estimates
+      - commodity_reserves
+    endpoints:
+      base_url: https://mrdata.usgs.gov
+      api_version: v1
+      documentation_url: https://www.usgs.gov/programs/mineral-resources-program
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Public government data.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: allowed
+      notes: USGS public domain data.
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: annual
+      geographic_scope:
+        - US
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - moonrey
+        - economic_graph
+      canonical_provider_interface: ResourceDataProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Wave 5 Prompt 18 fixture-backed adapter.
+
+  # ── Weather (Prompt 19) ───────────────────────────────────────────────────
+  - provider_id: openweathermap
+    name: OpenWeatherMap
+    short_name: OpenWeather
+    description: >
+      OpenWeatherMap API providing current weather conditions, forecasts, and
+      historical weather data for locations worldwide.
+    primary_category: weather
+    capabilities:
+      - current_weather
+      - weather_forecast
+      - weather_history
+    endpoints:
+      base_url: https://api.openweathermap.org
+      api_version: v2.5
+      documentation_url: https://openweathermap.org/api
+      status_url: https://status.openweathermap.org
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: OPENWEATHERMAP_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Free tier with rate limits.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: OpenWeatherMap attribution required.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 60
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: 60 calls/minute on free tier.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - travel
+        - economic_graph
+      canonical_provider_interface: WeatherProvider
+      priority: critical
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Wave 5 Prompt 19 fixture-backed adapter.
+
+  - provider_id: open-meteo
+    name: Open-Meteo
+    short_name: Open-Meteo
+    description: >
+      Open-Meteo free weather API providing high-resolution weather forecasts and
+      historical data without API key requirement for non-commercial use.
+    primary_category: weather
+    capabilities:
+      - current_weather
+      - weather_forecast
+      - weather_history
+    endpoints:
+      base_url: https://api.open-meteo.com
+      api_version: v1
+      documentation_url: https://open-meteo.com/en/docs
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Free for non-commercial use; commercial license required for production.
+    commercial_use:
+      status: unclear
+      notes: Commercial use requires paid license.
+    redistribution:
+      status: attribution_required
+      notes: Attribution required.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 10000
+      monthly_quota: null
+      concurrency_limit: null
+      notes: 10,000 requests/day for free tier.
+    data_characteristics:
+      freshness: hourly
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - travel
+      canonical_provider_interface: WeatherProvider
+      priority: high
+      launch_tier: preview
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Preview-only; commercial license required for production.
+
+  # ── Water / Environment (Prompt 19) ─────────────────────────────────────────
+  - provider_id: usgs-water
+    name: USGS Water Services
+    short_name: USGS Water
+    description: >
+      U.S. Geological Survey Water Services providing streamflow, groundwater levels,
+      water quality, and site information for U.S. hydrologic monitoring stations.
+    primary_category: water
+    capabilities:
+      - streamflow
+      - groundwater_levels
+      - water_quality
+    endpoints:
+      base_url: https://waterservices.usgs.gov
+      api_version: v1
+      documentation_url: https://waterservices.usgs.gov/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Public government data.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: allowed
+      notes: USGS public domain data.
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: hourly
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - moonrey
+        - economic_graph
+      canonical_provider_interface: EnvironmentalOracleProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Wave 5 Prompt 19 fixture-backed adapter.
+
+  - provider_id: openaq
+    name: OpenAQ
+    short_name: OpenAQ
+    description: >
+      OpenAQ global air quality data platform providing open air quality measurements
+      from government monitoring stations worldwide.
+    primary_category: environmental
+    capabilities:
+      - air_quality
+      - pollution_measurements
+    endpoints:
+      base_url: https://api.openaq.org
+      api_version: v3
+      documentation_url: https://docs.openaq.org
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: OPENAQ_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Free API key with rate limits.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: allowed
+      notes: Open data license.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Rate limits per API key tier.
+    data_characteristics:
+      freshness: hourly
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - travel
+        - economic_graph
+      canonical_provider_interface: EnvironmentalOracleProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Wave 5 Prompt 19 fixture-backed adapter.
+
+  # ── Aviation (Prompt 20) ────────────────────────────────────────────────────
+  - provider_id: opensky
+    name: OpenSky Network
+    short_name: OpenSky
+    description: >
+      OpenSky Network ADS-B flight tracking data providing real-time aircraft
+      positions, velocity, and identification for research and non-commercial use.
+    primary_category: aviation
+    capabilities:
+      - flight_positions
+      - aircraft_tracking
+    endpoints:
+      base_url: https://opensky-network.org/api
+      api_version: v1
+      documentation_url: https://openskynetwork.github.io/opensky-api/
+      status_url: null
+    authentication:
+      type: oauth
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Anonymous access with lower rate limits; account for higher limits.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Free for non-commercial research use.
+    commercial_use:
+      status: restricted
+      notes: Commercial use requires separate agreement.
+    redistribution:
+      status: restricted
+      notes: OpenSky terms restrict redistribution.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Anonymous 10s between requests; authenticated higher limits.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - travel
+      canonical_provider_interface: AviationDataProvider
+      priority: high
+      launch_tier: preview
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Preview-only; non-commercial research use.
+
+  - provider_id: aviationstack
+    name: Aviationstack
+    short_name: Aviationstack
+    description: >
+      Aviationstack API providing real-time flight status, schedules, and airport
+      data for commercial aviation tracking.
+    primary_category: aviation
+    capabilities:
+      - flight_status
+      - flight_schedules
+      - airport_data
+    endpoints:
+      base_url: https://api.aviationstack.com
+      api_version: v1
+      documentation_url: https://aviationstack.com/documentation
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: AVIATIONSTACK_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Free tier with 100 requests/month.
+    commercial_use:
+      status: unclear
+      notes: Pending commercial terms review.
+    redistribution:
+      status: restricted
+      notes: Provider terms restrict redistribution.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: 100
+      concurrency_limit: null
+      notes: 100 requests/month on free tier.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - travel
+      canonical_provider_interface: AviationDataProvider
+      priority: medium
+      launch_tier: preview
+      authority_class: derived_data
+      integration_state: catalog_only
+      existing_adapter: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Blocked pending commercial terms review; free tier insufficient.
+
+  # ── Transportation / Transit (Prompt 20) ──────────────────────────────────
+  - provider_id: transitland
+    name: Transitland
+    short_name: Transitland
+    description: >
+      Transitland open transit data aggregator providing GTFS feeds, routes, stops,
+      and schedules for public transit agencies worldwide.
+    primary_category: transportation
+    capabilities:
+      - transit_routes
+      - transit_schedules
+      - transit_stops
+    endpoints:
+      base_url: https://transit.land/api
+      api_version: v2
+      documentation_url: https://www.transit.land/documentation
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: TRANSITLAND_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Free API key with rate limits.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: Attribution required per Transitland terms.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Rate limits per API key tier.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelIntelligenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Wave 5 Prompt 20 fixture-backed adapter.
+
+  # ── Geospatial / Geocoding (Prompt 21) ────────────────────────────────────
+  - provider_id: nominatim
+    name: Nominatim (OpenStreetMap)
+    short_name: Nominatim
+    description: >
+      OpenStreetMap Nominatim geocoding service providing forward and reverse
+      geocoding, address lookup, and place search. Public instance rate-limited.
+    primary_category: geospatial
+    capabilities:
+      - geocoding
+      - reverse_geocoding
+      - place_search
+    endpoints:
+      base_url: https://nominatim.openstreetmap.org
+      api_version: v1
+      documentation_url: https://nominatim.org/release-docs/latest/api/Overview/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: User-Agent identification required per usage policy.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Public instance; 1 request/second max; no bulk geocoding.
+    commercial_use:
+      status: restricted
+      notes: Public instance not for production commercial use; self-host or use provider.
+    redistribution:
+      status: attribution_required
+      notes: OpenStreetMap ODbL attribution required.
+    rate_limits:
+      documented: true
+      requests_per_second: 1
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: 1
+      notes: Maximum 1 request per second on public instance.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - travel
+        - economic_graph
+      canonical_provider_interface: GeospatialProvider
+      priority: critical
+      launch_tier: preview
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Preview/fallback only on public instance; conservative rate limits enforced.
+
+  - provider_id: openstreetmap
+    name: OpenStreetMap
+    short_name: OSM
+    description: >
+      OpenStreetMap collaborative mapping project providing geographic features,
+      boundaries, and infrastructure data via Overpass API and planet extracts.
+    primary_category: geospatial
+    capabilities:
+      - map_features
+      - boundaries
+      - infrastructure
+    endpoints:
+      base_url: https://api.openstreetmap.org
+      api_version: v0.6
+      documentation_url: https://wiki.openstreetmap.org/wiki/API
+      status_url: null
+    authentication:
+      type: oauth
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Community-maintained open data.
+    commercial_use:
+      status: verified_allowed
+      notes: ODbL license applies.
+    redistribution:
+      status: attribution_required
+      notes: OpenStreetMap ODbL attribution required.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Fair use policy; no bulk downloads via API.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: false
+      data_format: xml
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - travel
+        - economic_graph
+      canonical_provider_interface: GeospatialProvider
+      priority: high
+      launch_tier: preview
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Reference data only; no live Overpass queries in simulation.
+
+  - provider_id: geojs
+    name: GeoJS
+    short_name: GeoJS
+    description: >
+      GeoJS IP geolocation API providing approximate country, region, city, and
+      coordinates from IP addresses without API key requirement.
+    primary_category: geospatial
+    capabilities:
+      - ip_geolocation
+    endpoints:
+      base_url: https://get.geojs.io
+      api_version: v1
+      documentation_url: https://www.geojs.io/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Free public API.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: allowed
+      notes: null
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: IP geolocation is approximate only.
+    sunrey:
+      domain:
+        - world
+      canonical_provider_interface: GeospatialProvider
+      priority: medium
+      launch_tier: preview
+      authority_class: derived_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Approximate IP geolocation only; not proof of residency.
+
+  - provider_id: ipapi
+    name: ipapi.co
+    short_name: ipapi
+    description: >
+      ipapi.co IP geolocation API providing country, region, city, timezone, and
+      approximate coordinates from IP addresses.
+    primary_category: geospatial
+    capabilities:
+      - ip_geolocation
+    endpoints:
+      base_url: https://ipapi.co
+      api_version: v1
+      documentation_url: https://ipapi.co/api/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: API key optional for higher limits.
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: false
+      notes: 1,000 requests/day without API key.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: restricted
+      notes: Provider terms restrict raw redistribution.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 1000
+      monthly_quota: null
+      concurrency_limit: null
+      notes: 1,000 requests/day without API key.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: IP geolocation is approximate only.
+    sunrey:
+      domain:
+        - world
+      canonical_provider_interface: GeospatialProvider
+      priority: medium
+      launch_tier: preview
+      authority_class: derived_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Approximate IP geolocation only.
+
+  - provider_id: ipwhois
+    name: ipwhois.app
+    short_name: ipwhois
+    description: >
+      ipwhois.app IP geolocation API providing country, region, city, ISP, ASN, and
+      approximate coordinates from IP addresses.
+    primary_category: geospatial
+    capabilities:
+      - ip_geolocation
+    endpoints:
+      base_url: https://ipwho.is
+      api_version: v1
+      documentation_url: https://ipwhois.io/documentation
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Free public API with rate limits.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: restricted
+      notes: Provider terms restrict redistribution.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: 10000
+      concurrency_limit: null
+      notes: 10,000 requests/month on free tier.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: IP geolocation is approximate only.
+    sunrey:
+      domain:
+        - world
+      canonical_provider_interface: GeospatialProvider
+      priority: medium
+      launch_tier: preview
+      authority_class: derived_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Approximate IP geolocation only.
+
+  - provider_id: rest-countries
+    name: REST Countries
+    short_name: REST Countries
+    description: >
+      REST Countries API providing country metadata including ISO codes, currencies,
+      languages, capitals, regions, borders, and population.
+    primary_category: geospatial
+    capabilities:
+      - country_metadata
+      - iso_codes
+      - currency_reference
+    endpoints:
+      base_url: https://restcountries.com
+      api_version: v3.1
+      documentation_url: https://restcountries.com/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Free public API.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: allowed
+      notes: Open data.
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: monthly
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: Country metadata changes infrequently.
+    sunrey:
+      domain:
+        - world
+        - travel
+        - economic_graph
+      canonical_provider_interface: GeospatialProvider
+      priority: critical
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Wave 5 Prompt 21 fixture-backed adapter.
+
+  - provider_id: open-topo-data
+    name: Open Topo Data
+    short_name: Open Topo Data
+    description: >
+      Open Topo Data elevation API providing ground elevation and depth data from
+      multiple open elevation datasets for coordinates worldwide.
+    primary_category: geospatial
+    capabilities:
+      - elevation
+      - depth
+      - land_water_classification
+    endpoints:
+      base_url: https://api.opentopodata.org
+      api_version: v1
+      documentation_url: https://www.opentopodata.org/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Free public API; 1 request/second; 100 points per request.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: Attribution to underlying elevation datasets required.
+    rate_limits:
+      documented: true
+      requests_per_second: 1
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: 1
+      notes: 1 request/second; max 100 locations per request.
+    data_characteristics:
+      freshness: static
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: Elevation data is relatively static.
+    sunrey:
+      domain:
+        - world
+        - travel
+        - economic_graph
+      canonical_provider_interface: GeospatialProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Wave 5 Prompt 21 fixture-backed adapter.
+
+  # ── Maritime (Prompt 21) ──────────────────────────────────────────────────
+  - provider_id: onwater
+    name: OnWater
+    short_name: OnWater
+    description: >
+      OnWater API providing land/water classification and water body identification
+      for coordinates, useful for maritime and environmental context.
+    primary_category: maritime
+    capabilities:
+      - land_water_classification
+      - water_body_identification
+    endpoints:
+      base_url: https://api.onwater.io
+      api_version: v1
+      documentation_url: https://onwater.io/
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: ONWATER_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Free tier with limited requests.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: restricted
+      notes: Provider terms restrict redistribution.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Rate limits per API key tier.
+    data_characteristics:
+      freshness: static
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - moonrey
+      canonical_provider_interface: MaritimeDataProvider
+      priority: medium
+      launch_tier: preview
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Preview-only; fixture-backed adapter.
+
+  - provider_id: hormuz-ship-monitor
+    name: Strait of Hormuz Ship Monitor
+    short_name: Hormuz Monitor
+    description: >
+      Community shipping flow intelligence for the Strait of Hormuz corridor
+      providing vessel counts, cargo type estimates, and directional flow data.
+    primary_category: maritime
+    capabilities:
+      - shipping_flow
+      - corridor_intelligence
+      - vessel_counts
+    endpoints:
+      base_url: https://api.marinetraffic.com
+      api_version: v1
+      documentation_url: null
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: MARINETRAFFIC_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: false
+      registration_required: true
+      notes: Commercial API; free tier very limited.
+    commercial_use:
+      status: unclear
+      notes: Commercial terms required.
+    redistribution:
+      status: restricted
+      notes: Provider terms restrict redistribution.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Commercial rate limits apply.
+    data_characteristics:
+      freshness: hourly
+      geographic_scope:
+        - ME
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: Fixture simulation only; no live AIS data in simulation.
+    sunrey:
+      domain:
+        - world
+        - moonrey
+      canonical_provider_interface: MaritimeDataProvider
+      priority: medium
+      launch_tier: preview
+      authority_class: derived_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: partially_verified
+      verified_against_official_docs: false
+      last_verified: "2026-08-31"
+      notes: Fixture simulation of corridor intelligence; no live AIS.
+
+  # ── Logistics (Prompt 21) ─────────────────────────────────────────────────
+  - provider_id: openvan
+    name: OpenVan
+    short_name: OpenVan
+    description: >
+      OpenVan open logistics API providing parcel tracking, delivery status, and
+      transport network information for European logistics providers.
+    primary_category: logistics
+    capabilities:
+      - parcel_tracking
+      - delivery_status
+      - transport_network_status
+    endpoints:
+      base_url: https://api.openvan.io
+      api_version: v1
+      documentation_url: https://openvan.io/docs
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: OPENVAN_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Free tier with limited tracking requests.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: restricted
+      notes: Provider terms restrict redistribution.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Rate limits per API key tier.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - EU
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - travel
+        - moonrey
+      canonical_provider_interface: LogisticsDataProvider
+      priority: medium
+      launch_tier: preview
+      authority_class: derived_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave5-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Wave 5 Prompt 21 fixture-backed adapter.

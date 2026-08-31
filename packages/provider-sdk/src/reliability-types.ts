@@ -37,7 +37,6 @@ export type ReliabilityTransportResponse = {
 };
 
 /** Injectable transport wrapped by the reliability control plane. */
-export type ReliabilityTransport = {
 export type ReliabilityProviderTransport = {
   readonly providerId: string;
   execute(
@@ -46,7 +45,7 @@ export type ReliabilityProviderTransport = {
   ): Promise<ReliabilityTransportResponse>;
 };
 
-/** Injectable transport wrapped by the reliability control plane. */
+/** Alias for ReliabilityProviderTransport. */
 export type ReliabilityTransport = ReliabilityProviderTransport;
 
 export type ProviderError = {
