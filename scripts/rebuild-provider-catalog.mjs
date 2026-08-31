@@ -15,6 +15,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CATALOG_PATH = join(ROOT, 'config/providers/free-api-catalog.yaml');
 const WAVE2_PATH = join(ROOT, 'config/providers/wave2-catalog-entries.yaml');
 const WAVE3_PATH = join(ROOT, 'config/providers/wave3-crypto-catalog-entries.yaml');
+const WAVE5_PATH = join(ROOT, 'config/providers/wave5-physical-economy-catalog-entries.yaml');
 const WAVE5_PATH = join(ROOT, 'config/providers/wave5-travel-catalog-entries.yaml');
 const WAVE5_PATH = join(ROOT, 'config/providers/wave5-energy-resource-catalog-entries.yaml');
 
@@ -85,6 +86,12 @@ const catalog = {
   population_status: 'partial',
   source_list: {
     document:
+      'config/providers/wave2-catalog-entries.yaml + packages/payments/src/fx-reference/catalog-entries.ts + wave3-crypto-catalog-entries.yaml + wave5-physical-economy-catalog-entries.yaml',
+    version: 'wave-5-prompt-21',
+    verified_at: '2026-08-31',
+  },
+  notes:
+    'Partial population including Wave 2 economics/markets, Wave 3 crypto, and Wave 5 physical-economy providers. ' +
       'config/providers/wave2-catalog-entries.yaml + packages/payments/src/fx-reference/catalog-entries.ts + wave3-crypto-catalog-entries.yaml + wave5-travel-catalog-entries.yaml',
     version: 'wave-5-prompt-20',
     verified_at: '2026-08-31',
