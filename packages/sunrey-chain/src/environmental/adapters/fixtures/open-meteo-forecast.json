@@ -1,0 +1,27 @@
+{
+  "generated_at": "2026-08-31T06:00:00.000Z",
+  "valid_from": "2026-08-31T06:00:00.000Z",
+  "valid_to": "2026-09-02T06:00:00.000Z",
+  "horizon_hours": 48,
+  "model_source": "open-meteo",
+  "hourly": [
+    {
+      "time": "2026-08-31T12:00:00.000Z",
+      "time_end": "2026-08-31T13:00:00.000Z",
+      "temperature": 24,
+      "condition": "clear",
+      "model": null,
+      "model_run": null,
+      "confidence": null
+    },
+    {
+      "time": "2026-08-31T13:00:00.000Z",
+      "time_end": "2026-08-31T14:00:00.000Z",
+      "temperature": 25,
+      "condition": "clear",
+      "model": null,
+      "model_run": null,
+      "confidence": null
+    }
+  ]
+}

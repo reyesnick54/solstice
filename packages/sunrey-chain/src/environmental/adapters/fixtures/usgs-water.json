@@ -1,0 +1,8 @@
+{
+  "measurement_type": "streamflow",
+  "value": 1250,
+  "unit": "cfs",
+  "station_id": "01646500",
+  "water_body": "Potomac River",
+  "effective_at": "2026-08-31T11:00:00.000Z"
+}

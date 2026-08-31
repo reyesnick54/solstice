@@ -81,6 +81,7 @@ import { createHinContributionSurface, type HinContributionSurface } from './hin
 import { createProductiveEconomySurface, type ProductiveEconomySurface } from './productive-economy-adapter.ts';
 import { createExternalDataPlane } from '../../../../packages/external-data/src/index.ts';
 import { createWorldExternalDataBff, type WorldExternalDataBff } from './world-external-data-adapter.ts';
+import { createEnvironmentalOracleBff, type EnvironmentalOracleBff } from './environmental-adapter.ts';
 import { createSandboxAccessEconomy, type HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
 import {
   PersonalEconomyBffSurface,
@@ -165,6 +166,7 @@ export type SandboxWorld = {
   readonly personalEconomy: PersonalEconomyBffSurface;
   readonly hinAccess: HumanInformationAccessBridge;
   readonly worldExternalData: WorldExternalDataBff;
+  readonly environmental: EnvironmentalOracleBff;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -733,6 +735,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   } satisfies PersonalEconomyBffDeps);
 
   const worldExternalData = createWorldExternalDataBff(createExternalDataPlane({ nowUtc: NOW }));
+  const environmental = createEnvironmentalOracleBff();
 
   return Object.freeze({
     label: SANDBOX_LABEL,
@@ -759,6 +762,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     personalEconomy,
     hinAccess,
     worldExternalData,
+    environmental,
   });
 }
 

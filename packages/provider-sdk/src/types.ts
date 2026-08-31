@@ -194,6 +194,7 @@ export type ProviderTransportFailure = {
 
 export type ProviderTransportResult<T = unknown> = ProviderTransportSuccess<T> | ProviderTransportFailure;
 export {
+  FRESHNESS_STATUSES,
   VALIDATION_STATUSES,
   COMMERCIAL_USE_STATUSES,
   REDISTRIBUTION_STATUSES,

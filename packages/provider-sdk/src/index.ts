@@ -266,6 +266,15 @@ export {
   type ProviderHttpTransportResult,
   type ProviderHttpTransportSuccess,
   type ProviderHttpTransportFailure,
+  type ProviderHttpTransport,
+  type ProviderRequestContext,
+  type ProviderResponseMetadata,
+  type ProviderTransportResponse,
+  type ProviderTransportResult,
+  type ProviderTransportSuccess,
+  type ProviderTransportFailure,
+  type ProviderHttpTransport,
+} from './types.ts';
   type ProviderTransport,
 } from './http-transport-types.ts';
 

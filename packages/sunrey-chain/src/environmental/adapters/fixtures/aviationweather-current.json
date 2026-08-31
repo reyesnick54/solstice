@@ -1,0 +1,8 @@
+{
+  "temperature": 15.0,
+  "wind_speed": 8.0,
+  "wind_direction": 270,
+  "weather_code": "metar_clear",
+  "time": "2026-08-31T12:00:00.000Z",
+  "age_ms": 90000
+}
