@@ -149,6 +149,7 @@ export {
   type FallbackDecision,
   type FallbackHook,
   type ReliabilityClock,
+} from './reliability-types.ts';
 } from './types.ts';
 
 export {

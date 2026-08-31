@@ -63,6 +63,7 @@ export type FetchProviderTransportOptions = {
 
 const SUPPORTED_METHODS = new Set<ProviderHttpMethod>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']);
 
+export class FetchProviderTransport implements ProviderHttpTransport {
 export class FetchProviderTransport implements HttpProviderTransport {
   readonly transportId = 'provider-sdk.fetch-http';
   private readonly config: ProviderTransportConfig;
@@ -94,6 +95,7 @@ export class FetchProviderTransport implements HttpProviderTransport {
     Object.freeze(this);
   }
 
+  async request<T = unknown>(context: ProviderHttpRequestContext): Promise<ProviderHttpTransportResult<T>> {
   async request<T = unknown>(context: HttpProviderRequestContext): Promise<HttpProviderTransportResult<T>> {
     const startedAtMs = this.clock.nowMs();
     const startedAtUtc = this.clock.nowIsoUtc();
@@ -226,6 +228,7 @@ export class FetchProviderTransport implements HttpProviderTransport {
         finalUrl: safeLogUrl,
       });
 
+      const value: ProviderHttpTransportResponse<T> = Object.freeze({
       const value: HttpProviderTransportResponse<T> = Object.freeze({
         metadata,
         body: parsedBody.body,

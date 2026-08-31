@@ -254,6 +254,7 @@ export {
   type ReliabilityTransportRequest,
   type ReliabilityTransportResponse,
   type ReliabilityProviderTransport,
+  type ReliabilityTransport,
   type ProviderError,
   type ReliabilityOutcome,
   type DeadlineContext,
