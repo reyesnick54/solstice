@@ -36,10 +36,7 @@ export type ReliabilityTransportResponse = {
   readonly body: unknown;
 };
 
-export type ReliabilityProviderTransport = ReliabilityTransport;
-
 /** Injectable transport wrapped by the reliability control plane. */
-export type ReliabilityProviderTransport = {
 export type ReliabilityTransport = {
   readonly providerId: string;
   execute(
@@ -48,10 +45,7 @@ export type ReliabilityTransport = {
   ): Promise<ReliabilityTransportResponse>;
 };
 
-/** @deprecated Use ReliabilityTransport */
 export type ReliabilityProviderTransport = ReliabilityTransport;
-/** Injectable transport wrapped by the reliability control plane. */
-export type ReliabilityTransport = ReliabilityProviderTransport;
 
 export type ProviderError = {
   readonly classification: FailureClassification;
@@ -114,8 +108,6 @@ export const defaultClock = (): ReliabilityClock => ({
 export function isSafeReadMethod(method: HttpMethod): boolean {
   return method === 'GET' || method === 'HEAD';
 }
-
-export type ReliabilityProviderTransport = ReliabilityTransport;
 
 /** @deprecated Use ReliabilityTransportRequest */
 export type ProviderTransportRequest = ReliabilityTransportRequest;

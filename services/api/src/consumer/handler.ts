@@ -76,6 +76,8 @@ import {
   HIN_VERIFICATION_STATES,
 } from '../../../../packages/human-economic-contribution/src/hin-value/index.ts';
 import { dispatchBlockchain } from './blockchain.ts';
+import { dispatchTravel } from './travel.ts';
+import { dispatchHealthReference, HEALTH_REFERENCE_BFF_ROUTES } from './health-reference.ts';
 import { dispatchEnvironmental } from './environmental.ts';
 import type { EnvironmentalOracleBff } from './environmental-adapter.ts';
 import { dispatchOpportunity } from './opportunity.ts';
@@ -431,6 +433,17 @@ function dispatchAuthenticated(
   if (blockchain) {
     return blockchain;
   }
+
+  const travel = dispatchTravel(request, requestId, headers);
+  if (travel) {
+    return travel;
+  }
+
+  const healthReference = dispatchHealthReference(request, requestId, headers);
+  if (healthReference) {
+    return healthReference;
+  }
+
   const environmental = dispatchEnvironmental(request, requestId, headers, runtime.environmental);
   if (environmental) {
     return environmental;
@@ -789,6 +802,76 @@ function dispatchAuthenticated(
       return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Regulatory publications unavailable', requestId }), headers);
     }
     return json(200, world.regulatory(), headers);
+  }
+  if (path === '/api/v1/world/physical-economy' && method === 'GET') {
+    const world = runtime.worldExternalData;
+    if (!world) {
+      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Physical economy data unavailable', requestId }), headers);
+    }
+    return json(200, world.physicalEconomy(), headers);
+  }
+  if (path === '/api/v1/world/energy' && method === 'GET') {
+    const world = runtime.worldExternalData;
+    if (!world) {
+      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Energy data unavailable', requestId }), headers);
+    }
+    return json(200, world.energy(), headers);
+  }
+  if (path === '/api/v1/world/weather' && method === 'GET') {
+    const world = runtime.worldExternalData;
+    if (!world) {
+      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Weather data unavailable', requestId }), headers);
+    }
+    return json(200, world.weather(), headers);
+  }
+  if (path === '/api/v1/world/geospatial' && method === 'GET') {
+    const world = runtime.worldExternalData;
+    if (!world) {
+      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Geospatial data unavailable', requestId }), headers);
+    }
+    return json(200, world.geospatial(), headers);
+  }
+  if (path === '/api/v1/world/maritime' && method === 'GET') {
+    const world = runtime.worldExternalData;
+    if (!world) {
+      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Maritime data unavailable', requestId }), headers);
+    }
+    return json(200, world.maritime(), headers);
+  }
+  if (path === '/api/v1/world/logistics' && method === 'GET') {
+    const world = runtime.worldExternalData;
+    if (!world) {
+      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Logistics data unavailable', requestId }), headers);
+    }
+    return json(200, world.logistics(), headers);
+  }
+  if (path === '/api/v1/world/productive-graph' && method === 'GET') {
+    const world = runtime.worldExternalData;
+    if (!world) {
+      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Productive economic graph unavailable', requestId }), headers);
+    }
+    return json(200, world.productiveEconomicGraph(), headers);
+  }
+  if (path === '/api/v1/travel/context' && method === 'GET') {
+    const world = runtime.worldExternalData;
+    if (!world) {
+      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Travel context unavailable', requestId }), headers);
+    }
+    return json(200, world.travelContext(), headers);
+  }
+  if (path === '/api/v1/world/provider-risk' && method === 'GET') {
+    const world = runtime.worldExternalData;
+    if (!world) {
+      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Provider risk monitor unavailable', requestId }), headers);
+    }
+    return json(200, world.providerRisk(), headers);
+  }
+  if (path === '/api/v1/world/wave5-coverage' && method === 'GET') {
+    const world = runtime.worldExternalData;
+    if (!world) {
+      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Wave 5 coverage unavailable', requestId }), headers);
+    }
+    return json(200, world.wave5Coverage(), headers);
   }
   const marketReference = runtime.marketReference ?? createMarketReferenceBffSurface();
   const cryptoMarket = runtime.cryptoMarket ?? createCryptoMarketBffSurface();
@@ -1854,6 +1937,7 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/opportunities/intelligence',
   'GET /api/v1/opportunities/coverage',
   'GET /api/v1/world/opportunities',
+  ...HEALTH_REFERENCE_BFF_ROUTES,
   'GET /api/v1/hin/contributions',
   'GET /api/v1/hin/contributions/{id}',
   'GET /api/v1/hin/metrics',

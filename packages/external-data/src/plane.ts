@@ -14,6 +14,14 @@ import type { ExternalDataHealth, SearchableEntity } from './models.ts';
 import { createWave5ExternalData, wave5CoverageReport, type Wave5ExternalData } from './productive-economy.ts';
 import { createWave2Services, type CompanyIntelligenceService, type FxReferenceService, type MacroDataService, type MarketReferenceService } from './services.ts';
 import { FIXTURE_FILINGS } from './fixtures.ts';
+import {
+  createDefaultWave5AdapterStates,
+  createWave5DataDelivery,
+  WAVE5_IMPLEMENTED_PROVIDER_IDS,
+} from './wave5-adapters.ts';
+import { buildWave5CoverageReport } from './wave5-coverage.ts';
+import { createWave5Services, type Wave5Services } from './wave5-services.ts';
+import { ProviderRiskMonitor } from './wave5-provider-risk.ts';
 import { createWave4Services, type ProviderRiskService } from './wave4/services.ts';
 import type { ComplianceEvidenceService, BusinessIdentityService, DigitalRiskService, VulnerabilityIntelligenceService, ThreatIntelligenceService, EndpointSecurityService, ServiceOutageService } from './wave4/services.ts';
 import { createDefaultWave4AdapterStates } from './wave4/adapters.ts';
@@ -23,6 +31,7 @@ import { WAVE4_IMPLEMENTED_PROVIDER_IDS } from './wave4/catalog-entries.ts';
 export type ExternalDataPlaneOptions = {
   readonly nowUtc?: string;
   readonly states?: Map<string, ProviderAdapterState>;
+  readonly wave5States?: Map<string, ProviderAdapterState>;
 };
 
 export class ExternalDataPlane {
@@ -30,6 +39,10 @@ export class ExternalDataPlane {
   readonly fx: FxReferenceService;
   readonly markets: MarketReferenceService;
   readonly company: CompanyIntelligenceService;
+  readonly wave5: Wave5Services;
+  readonly providerRisk: ProviderRiskMonitor;
+  readonly #ctx: Wave2AdapterContext;
+  readonly #wave5Ctx;
   readonly productiveEconomy: Wave5ExternalData;
   readonly compliance: ComplianceEvidenceService;
   readonly businessIdentity: BusinessIdentityService;
@@ -42,9 +55,18 @@ export class ExternalDataPlane {
   readonly #ctx: Wave2AdapterContext;
   readonly #wave4Ctx;
   readonly #delivery;
+  readonly #wave5Delivery;
 
   constructor(options: ExternalDataPlaneOptions = {}) {
     const nowUtc = options.nowUtc ?? new Date().toISOString();
+    this.#ctx = {
+      nowUtc,
+      states: options.states ?? createDefaultAdapterStates(),
+    };
+    this.#wave5Ctx = {
+      nowUtc,
+      states: options.wave5States ?? createDefaultWave5AdapterStates(),
+    };
     const wave2States = options.states ?? createDefaultAdapterStates();
     const wave4States = createDefaultWave4AdapterStates();
     for (const [id, state] of wave2States) {
@@ -57,6 +79,8 @@ export class ExternalDataPlane {
     this.fx = services.fx;
     this.markets = services.markets;
     this.company = services.company;
+    this.wave5 = createWave5Services(this.#wave5Ctx);
+    this.providerRisk = new ProviderRiskMonitor(this.#wave5Ctx);
     this.productiveEconomy = createWave5ExternalData({ nowUtc: () => nowUtc });
     const wave4 = createWave4Services(this.#wave4Ctx);
     this.compliance = wave4.compliance;
@@ -68,6 +92,7 @@ export class ExternalDataPlane {
     this.serviceOutage = wave4.serviceOutage;
     this.providerRisk = wave4.providerRisk;
     this.#delivery = createDataDelivery(Date.parse(nowUtc));
+    this.#wave5Delivery = createWave5DataDelivery(Date.parse(nowUtc));
   }
 
   adapterContext(): Wave2AdapterContext {
@@ -75,6 +100,20 @@ export class ExternalDataPlane {
   }
 
   setProviderState(providerId: string, patch: Partial<ProviderAdapterState>): void {
+    const current = this.#ctx.states.get(providerId) ?? this.#wave5Ctx.states.get(providerId);
+    if (!current) {
+      return;
+    }
+    if (this.#ctx.states.has(providerId)) {
+      this.#ctx.states.set(providerId, { ...current, ...patch });
+    }
+    if (this.#wave5Ctx.states.has(providerId)) {
+      this.#wave5Ctx.states.set(providerId, { ...current, ...patch });
+    }
+  }
+
+  wave5AdapterContext() {
+    return this.#wave5Ctx;
     const current = this.#ctx.states.get(providerId) ?? this.#wave4Ctx.states.get(providerId);
     if (!current) {
       return;
@@ -89,6 +128,9 @@ export class ExternalDataPlane {
   }
 
   async cachedFetch(providerId: string, capability: string, resourceId: string) {
+    if (WAVE5_IMPLEMENTED_PROVIDER_IDS.includes(providerId)) {
+      return this.#wave5Delivery.get({ providerId, capability, resourceId });
+    }
     return this.#delivery.get({ providerId, capability, resourceId });
   }
 
@@ -114,20 +156,31 @@ export class ExternalDataPlane {
   }
 
   health(): readonly ExternalDataHealth[] {
-    return Object.freeze(
-      [...this.#ctx.states.entries()].map(([providerId, state]) =>
-        Object.freeze({
-          providerId,
-          enabled: state.enabled,
-          health: state.down || state.malformed ? 'unhealthy' : state.rateLimited ? 'degraded' : state.lastError ? 'degraded' : 'healthy',
-          lastSuccess: state.lastSuccess,
-          lastError: state.lastError,
-          cacheFreshness: state.lastSuccess ? 'fresh' : 'none',
-          circuitState: state.circuitState,
-          credentialReady: !providerId.includes('alpha') && !providerId.includes('bls'),
-        }),
-      ),
+    const wave2 = [...this.#ctx.states.entries()].map(([providerId, state]) =>
+      Object.freeze({
+        providerId,
+        enabled: state.enabled,
+        health: state.down || state.malformed ? 'unhealthy' : state.rateLimited ? 'degraded' : state.lastError ? 'degraded' : 'healthy',
+        lastSuccess: state.lastSuccess,
+        lastError: state.lastError,
+        cacheFreshness: state.lastSuccess ? 'fresh' : 'none',
+        circuitState: state.circuitState,
+        credentialReady: !providerId.includes('alpha') && !providerId.includes('bls'),
+      }),
     );
+    const wave5 = [...this.#wave5Ctx.states.entries()].map(([providerId, state]) =>
+      Object.freeze({
+        providerId,
+        enabled: state.enabled,
+        health: state.down || state.malformed ? 'unhealthy' : state.rateLimited ? 'degraded' : state.lastError ? 'degraded' : 'healthy',
+        lastSuccess: state.lastSuccess,
+        lastError: state.lastError,
+        cacheFreshness: state.lastSuccess ? 'fresh' : 'none',
+        circuitState: state.circuitState,
+        credentialReady: !providerId.includes('eia') && !providerId.includes('openaq'),
+      }),
+    );
+    return Object.freeze([...wave2, ...wave5]);
   }
 
   coverageReport() {
@@ -143,6 +196,10 @@ export class ExternalDataPlane {
 
   wave4ProviderIds(): readonly string[] {
     return WAVE4_IMPLEMENTED_PROVIDER_IDS;
+  }
+
+  wave5CoverageReport() {
+    return buildWave5CoverageReport();
   }
 
   searchIndex(): readonly SearchableEntity[] {
