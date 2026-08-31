@@ -19,7 +19,6 @@ export const PROVIDER_CONTENT_TYPES = [
 export type ProviderContentType = (typeof PROVIDER_CONTENT_TYPES)[number] | '*';
 
 export type ProviderHttpRequestContext = {
-export type HttpProviderRequestContext = {
   readonly providerId: string;
   readonly requestId: string;
   readonly traceId?: string | undefined;
@@ -34,7 +33,6 @@ export type HttpProviderRequestContext = {
 };
 
 export type ProviderHttpResponseMetadata = {
-export type HttpProviderResponseMetadata = {
   readonly providerId: string;
   readonly requestId: string;
   readonly traceId: string;
@@ -53,8 +51,6 @@ export type ProviderParsedBody =
 
 export type ProviderHttpTransportResponse<T = unknown> = {
   readonly metadata: ProviderHttpResponseMetadata;
-export type HttpProviderTransportResponse<T = unknown> = {
-  readonly metadata: HttpProviderResponseMetadata;
   readonly body: ProviderParsedBody;
   readonly parsed: T | undefined;
 };
@@ -65,12 +61,6 @@ export type ProviderHttpTransportSuccess<T> = {
 };
 
 export type ProviderHttpTransportFailure = {
-export type HttpProviderTransportSuccess<T> = {
-  readonly ok: true;
-  readonly value: HttpProviderTransportResponse<T>;
-};
-
-export type HttpProviderTransportFailure = {
   readonly ok: false;
   readonly error: ProviderTransportError;
 };
@@ -84,19 +74,13 @@ export type ProviderHttpTransport = {
   request<T = unknown>(context: ProviderHttpRequestContext): Promise<ProviderHttpTransportResult<T>>;
 };
 
-/** @deprecated Use ProviderHttpRequestContext */
+/** Governed outbound HTTP transport used by external provider adapters. */
 export type HttpProviderRequestContext = ProviderHttpRequestContext;
-/** @deprecated Use ProviderHttpResponseMetadata */
 export type HttpProviderResponseMetadata = ProviderHttpResponseMetadata;
-/** @deprecated Use ProviderHttpTransportResponse */
 export type HttpProviderTransportResponse<T = unknown> = ProviderHttpTransportResponse<T>;
-/** @deprecated Use ProviderHttpTransportSuccess */
 export type HttpProviderTransportSuccess<T> = ProviderHttpTransportSuccess<T>;
-/** @deprecated Use ProviderHttpTransportFailure */
 export type HttpProviderTransportFailure = ProviderHttpTransportFailure;
-/** @deprecated Use ProviderHttpTransportResult */
 export type HttpProviderTransportResult<T = unknown> = ProviderHttpTransportResult<T>;
-/** @deprecated Use ProviderHttpTransport */
 export type HttpProviderTransport = ProviderHttpTransport;
 
 /** @deprecated Use ProviderHttpRequestContext */

@@ -21,4 +21,5 @@ export * from './productive-economy-snapshot.ts';
 export * from './agent-evidence-catalog.ts';
 export * from './simulation-inventory.ts';
 export * from './wave4/index.ts';
+export * from './wave7/index.ts';
 export * from './wave6/index.ts';
