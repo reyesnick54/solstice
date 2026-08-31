@@ -1,0 +1,23 @@
+{
+  "total": 1,
+  "_embedded": {
+    "notices": [
+      {
+        "entity_id": "2024/12345",
+        "forename": "WANTED",
+        "name": "PERSON",
+        "date_of_birth": "1985-03-20",
+        "nationalities": ["US"],
+        "arrest_warrants": [
+          {
+            "charge": "Fraud",
+            "issuing_country_id": "US"
+          }
+        ],
+        "_links": {
+          "self": { "href": "https://ws-public.interpol.int/notices/v1/red/2024/12345" }
+        }
+      }
+    ]
+  }
+}

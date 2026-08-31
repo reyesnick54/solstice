@@ -1,0 +1,19 @@
+{
+  "name": "@solstice/risk-evidence",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Wave 4 canonical SunRey Risk Evidence layer — KYB, corporate identity, digital-risk intelligence",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec src/**/*.test.ts"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -258,3 +258,46 @@ providers:
       verified_against_official_docs: false
       last_verified: null
       notes: Blocked — commercial only, no free tier.
+# Wave 4 Prompt 16 — KYB and fraud intelligence catalog entries
+#
+# Authoritative Wave 0 catalog status: zero providers in kyb_identity,
+# fraud_risk, or cybersecurity categories. sec-edgar (corporate_filings) is
+# the sole eligible free/public provider for public corporate identity.
+#
+# Chunk 152 fixtures (fixture-identity, fixture-aml) provide simulation
+# adapters only — they are NOT Wave 0 free API catalog entries.
+
+schema_version: 1.0.0
+catalog_id: sunrey-wave4-catalog-entries
+population_status: partial
+source_list:
+  document: config/providers/wave4-catalog-entries.yaml
+  version: wave4-prompt-16
+  verified_at: 2026-08-31
+notes: >
+  Wave 4 Prompt 16 partial catalog. No new free/public API providers were
+  invented. sec-edgar is already present in wave2-catalog-entries.yaml.
+  KYB/fraud/digital-risk free API providers await authoritative 126-master-list.
+eligible_wave0_providers:
+  - provider_id: sec-edgar
+    primary_category: corporate_filings
+    wave4_role: public_corporate_identity
+    capabilities:
+      - company_search
+      - corporate_filings
+      - business_identity_evidence
+    jurisdiction_scope:
+      - US
+    integration_state: implemented
+    notes: US SEC EDGAR — authoritative public company registry for US issuers
+missing_catalog_categories:
+  - kyb_identity
+  - fraud_risk
+  - cybersecurity
+fixture_simulation_providers:
+  - provider_id: fixture-identity
+    role: kyb_simulation
+    productionAuthorized: false
+  - provider_id: fixture-aml
+    role: digital_risk_simulation
+    productionAuthorized: false

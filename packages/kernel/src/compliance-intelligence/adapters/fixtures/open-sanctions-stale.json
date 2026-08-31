@@ -1,0 +1,17 @@
+{
+  "results": [
+    {
+      "id": "os-entity-stale-001",
+      "caption": "STALE SANCTIONED PERSON",
+      "schema": "Person",
+      "properties": {
+        "name": ["STALE SANCTIONED PERSON"]
+      },
+      "datasets": ["un_sc_sanctions"],
+      "referents": ["un-111"],
+      "first_seen": "2015-01-01T00:00:00",
+      "last_change": "2018-06-01T00:00:00"
+    }
+  ],
+  "total": { "value": 1, "relation": "eq" }
+}
