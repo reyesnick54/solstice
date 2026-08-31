@@ -1,0 +1,205 @@
+providers:
+  - provider_id: gbfs
+    name: GBFS Shared Mobility Feeds
+    short_name: GBFS
+    description: General Bikeshare Feed Specification feeds for station inventory, vehicle availability, and pricing plans.
+    primary_category: mobility
+    secondary_categories:
+      - transportation
+    capabilities:
+      - gbfs_system_information
+      - gbfs_station_information
+      - gbfs_station_status
+      - gbfs_vehicle_types
+      - gbfs_pricing_plans
+    endpoints:
+      base_url: https://github.com/MobilityData/gbfs
+      api_version: v2.3
+      documentation_url: https://github.com/MobilityData/gbfs/blob/master/gbfs.md
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public feed URLs per operator; no global API key.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Operator-published open feeds.
+    commercial_use:
+      status: attribution_required
+      notes: Follow each feed publisher license.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Per-feed publisher limits apply.
+    data_characteristics:
+      freshness: near_realtime
+      geographic_scope:
+        - city_feeds
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: Discovery/availability only — not booking execution.
+    sunrey:
+      domain:
+        - access
+        - travel
+        - mobility
+      canonical_provider_interface: AccessDiscoveryProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: open_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/access-discovery/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: ACCESS Wave 2 Prompt 31 fixture adapter.
+  - provider_id: national-park-service
+    name: U.S. National Park Service Developer API
+    short_name: NPS
+    description: Public U.S. National Park Service data for parks, alerts, events, campgrounds, and visitor information.
+    primary_category: experiences
+    secondary_categories:
+      - travel
+    capabilities:
+      - nps_parks
+      - nps_events
+      - nps_campgrounds
+      - nps_alerts
+      - nps_visitor_information
+    endpoints:
+      base_url: https://developer.nps.gov/api/v1
+      api_version: v1
+      documentation_url: https://www.nps.gov/subjects/developer/api-documentation.htm
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: NPS_API_KEY
+      notes: Free developer API key; simulation uses fixtures only.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Public federal open data.
+    commercial_use:
+      status: permitted
+      notes: Follow NPS data policy.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: 1000
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Official hourly limit per API key.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - US_national_parks
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Discovery/reference only — no ticket purchase through SunRey.
+    sunrey:
+      domain:
+        - access
+        - travel
+        - experiences
+      canonical_provider_interface: AccessDiscoveryProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: official_public
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/access-discovery/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: ACCESS Wave 2 Prompt 31 fixture adapter.
+  - provider_id: recreation-gov-ridb
+    name: Recreation.gov RIDB
+    short_name: RIDB
+    description: Recreation Information Database inventory for campgrounds, facilities, tours, and permit metadata.
+    primary_category: experiences
+    secondary_categories:
+      - travel
+    capabilities:
+      - ridb_campgrounds
+      - ridb_facilities
+      - ridb_tours
+      - ridb_activities
+      - ridb_permit_metadata
+    endpoints:
+      base_url: https://ridb.recreation.gov/api/v1
+      api_version: v1
+      documentation_url: https://ridb.recreation.gov/docs
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: RIDB_API_KEY
+      notes: Free API key; simulation uses fixtures only.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Federal recreation inventory reference data.
+    commercial_use:
+      status: permitted
+      notes: Follow Recreation.gov terms.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Bounded queries required in SunRey integration.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - US_federal_recreation
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Discovery/reference only unless future booking APIs are explicitly authorized.
+    sunrey:
+      domain:
+        - access
+        - travel
+        - experiences
+      canonical_provider_interface: AccessDiscoveryProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: official_public
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/access-discovery/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: ACCESS Wave 2 Prompt 31 fixture adapter.
