@@ -46,6 +46,8 @@ export type ReliabilityProviderTransport = {
   ): Promise<ReliabilityTransportResponse>;
 };
 
+/** @deprecated Use ReliabilityTransport */
+export type ReliabilityProviderTransport = ReliabilityTransport;
 /** Injectable transport wrapped by the reliability control plane. */
 export type ReliabilityTransport = ReliabilityProviderTransport;
 

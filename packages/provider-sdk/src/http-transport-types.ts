@@ -87,6 +87,8 @@ export type ProviderHttpRequestContext = HttpProviderRequestContext;
 export type ProviderHttpResponseMetadata = HttpProviderResponseMetadata;
 /** @deprecated Use HttpProviderTransportResponse */
 export type ProviderHttpTransportResponse<T = unknown> = HttpProviderTransportResponse<T>;
+/** @deprecated Use HttpProviderTransportResult */
+export type ProviderHttpTransportResult<T = unknown> = HttpProviderTransportResult<T>;
 /** @deprecated Use HttpProviderTransportSuccess */
 export type ProviderHttpTransportSuccess<T> = HttpProviderTransportSuccess<T>;
 /** @deprecated Use HttpProviderTransportFailure */

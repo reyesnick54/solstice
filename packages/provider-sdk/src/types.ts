@@ -5,6 +5,7 @@
  * to avoid merge collisions between Wave 1 prompts.
  */
 
+export * from './observation-types.ts';
 import type { UtcInstant } from '../../domain/src/time.ts';
 
 export const EXTERNAL_OBSERVATION_SCHEMA = 'sunrey.external-observation.v1' as const;
@@ -224,6 +225,14 @@ export {
   PROVIDER_CONTENT_TYPES,
   type ProviderHttpMethod,
   type ProviderContentType,
+  type ProviderHttpRequestContext,
+  type ProviderHttpResponseMetadata,
+  type ProviderParsedBody,
+  type ProviderHttpTransportResponse,
+  type ProviderHttpTransportSuccess,
+  type ProviderHttpTransportFailure,
+  type ProviderHttpTransportResult,
+  type ProviderHttpTransport,
   type HttpProviderRequestContext,
   type HttpProviderResponseMetadata,
   type ProviderParsedBody,

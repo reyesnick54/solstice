@@ -63,7 +63,6 @@ export type FetchProviderTransportOptions = {
 
 const SUPPORTED_METHODS = new Set<ProviderHttpMethod>(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']);
 
-export class FetchProviderTransport implements ProviderHttpTransport {
 export class FetchProviderTransport implements HttpProviderTransport {
   readonly transportId = 'provider-sdk.fetch-http';
   private readonly config: ProviderTransportConfig;
