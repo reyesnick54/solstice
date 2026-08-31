@@ -243,6 +243,7 @@
     "check:extraction": "python3 scripts/extraction-dryrun.py",
     "check:posture": "python3 scripts/check-deployment-posture.py",
     "scan:secrets": "python3 scripts/secret-scan.py && python3 scripts/secret-scan.py --self-test",
+    "security:test": "node scripts/security-assurance.mjs",
     "gate": "node scripts/check-kernel-gating.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "ci": "bash scripts/ci.sh"

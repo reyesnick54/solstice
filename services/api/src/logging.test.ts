@@ -26,6 +26,23 @@ describe('structured logging redaction', () => {
     assert.equal((redacted.kycPayload as { ssn: string }).ssn, '[REDACTED]');
   });
 
+  it('redacts HIN, health, and account identifiers', () => {
+    const redacted = redactRecord({
+      hinData: { recordId: 'hin_123', symptom: 'fatigue' },
+      healthData: { diagnosis: 'example' },
+      accountNumber: '1234567890',
+      iban: 'GB00BARC20000012345678',
+      aiPromptContext: 'private user context',
+      route: '/api/v1/consumer/home',
+    });
+    assert.equal((redacted.hinData as unknown), '[REDACTED]');
+    assert.equal((redacted.healthData as unknown), '[REDACTED]');
+    assert.equal(redacted.accountNumber, '[REDACTED]');
+    assert.equal(redacted.iban, '[REDACTED]');
+    assert.equal(redacted.aiPromptContext, '[REDACTED]');
+    assert.equal(redacted.route, '/api/v1/consumer/home');
+  });
+
   it('emits machine-readable JSON with request fields', () => {
     const lines: string[] = [];
     const logger = createLogger(validatePlatformApiConfig({}), (line) => lines.push(line));
