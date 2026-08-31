@@ -143,8 +143,32 @@ const GOODS_STANDARD_POLICY: AccessCoveragePolicy = Object.freeze({
   },
 });
 
+const MOBILITY_WAVE3_POLICY: AccessCoveragePolicy = Object.freeze({
+  policyId: 'MOBILITY_WAVE3',
+  version: 'v1',
+  evaluate(context: CoveragePolicyContext): CoverageDecision {
+    const perUnitCap = 300_00n;
+    const maxCoverage = perUnitCap * context.quantity;
+    const applied = context.providerPriceMinorUnits < maxCoverage ? context.providerPriceMinorUnits : maxCoverage;
+    return Object.freeze({
+      policyVersion: 'v1',
+      maxCoverageMinorUnits: maxCoverage,
+      appliedCoverageMinorUnits: applied,
+      entitlementUnitsConsumed: context.quantity,
+      explanation: Object.freeze([
+        Object.freeze({
+          code: 'MOBILITY_WAVE3_PER_UNIT_CAP',
+          message: 'MOBILITY_WAVE3 allows up to 300 USD equivalent per qualifying vehicle-day',
+          amountMinorUnits: perUnitCap,
+        }),
+      ]),
+    });
+  },
+});
+
 const POLICY_REGISTRY: Readonly<Record<string, AccessCoveragePolicy>> = Object.freeze({
   MOBILITY_STANDARD: MOBILITY_STANDARD_POLICY,
+  MOBILITY_WAVE3: MOBILITY_WAVE3_POLICY,
   STAY_STANDARD: STAY_STANDARD_POLICY,
   FOOD_STANDARD: FOOD_STANDARD_POLICY,
   GOODS_STANDARD: GOODS_STANDARD_POLICY,
