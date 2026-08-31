@@ -190,6 +190,7 @@ export type ProviderTransportFailure = {
 };
 
 export type ProviderTransportResult<T = unknown> = ProviderTransportSuccess<T> | ProviderTransportFailure;
+
 export * from './registry-types.ts';
 
 /**
@@ -276,17 +277,7 @@ export const PROVIDER_CAPABILITIES = [
 ] as const;
 export type ProviderCapability = (typeof PROVIDER_CAPABILITIES)[number] | string;
 
-export const PROVIDER_AUTHORITY_CLASSES = [
-  'authoritative_official',
-  'regulated_provider',
-  'reference_data',
-  'research_data',
-  'community_data',
-  'derived_data',
-] as const;
-export type ProviderAuthorityClass = (typeof PROVIDER_AUTHORITY_CLASSES)[number];
-
-export const AUTHORITY_CLASSES = PROVIDER_AUTHORITY_CLASSES;
+export type ProviderAuthorityClass = (typeof AUTHORITY_CLASSES)[number];
 export type AuthorityClass = ProviderAuthorityClass;
 
 export const PROVIDER_STATUSES = [
@@ -347,61 +338,6 @@ export const PROVIDER_HEALTH_STATES = [
   'unknown',
 ] as const;
 export type ProviderHealthState = (typeof PROVIDER_HEALTH_STATES)[number];
-
-export type ObservationSource = {
-  readonly provider: string;
-  readonly dataset: string;
-  readonly sourceUrl: string | null;
-};
-
-export type ObservationTime = {
-  readonly retrievedAt: UtcInstant;
-  readonly sourceTimestamp: UtcInstant | null;
-  readonly effectiveAt: UtcInstant | null;
-  readonly expiresAt: UtcInstant | null;
-  readonly staleAfter: UtcInstant | null;
-};
-
-export type ObservationConfidence = {
-  readonly score: number | null;
-  readonly basis: readonly ConfidenceBasis[];
-};
-
-export type ObservationQuality = {
-  readonly confidence: ObservationConfidence;
-  readonly freshnessStatus: FreshnessStatus;
-  readonly validationStatus: ValidationStatus;
-};
-
-export type ObservationProvenance = {
-  readonly requestId: string | null;
-  readonly rawPayloadHash: string;
-  readonly providerSchemaVersion: string;
-  readonly normalizationVersion: string;
-  readonly canonicalModelVersion: string | null;
-};
-
-export type ObservationLicensing = {
-  readonly commercialUseStatus: CommercialUseStatus;
-  readonly redistributionStatus: RedistributionStatus;
-};
-
-export type ExternalObservation<T> = {
-  readonly observationId: string;
-  readonly providerId: string;
-  readonly providerCategory: ProviderCategory;
-  readonly capability: string;
-  readonly data: T;
-  readonly source: ObservationSource;
-  readonly time: ObservationTime;
-  readonly quality: ObservationQuality;
-  readonly authority: {
-    readonly authorityClass: AuthorityClass;
-  };
-  readonly provenance: ObservationProvenance;
-  readonly licensing: ObservationLicensing;
-  readonly schemaVersion: typeof EXTERNAL_OBSERVATION_SCHEMA;
-};
 
 export type ProviderResult<T> =
   | { readonly ok: true; readonly value: T }

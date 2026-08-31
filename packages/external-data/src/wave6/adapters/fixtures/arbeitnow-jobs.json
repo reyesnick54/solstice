@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "slug": "senior-backend-engineer-berlin",
+      "title": "Senior Backend Engineer",
+      "company_name": "TechFlow GmbH",
+      "location": "Berlin, Germany",
+      "remote": false,
+      "job_types": ["full-time"],
+      "description": "Build scalable backend systems with Go and PostgreSQL.",
+      "tags": ["Go", "PostgreSQL", "Kubernetes"],
+      "created_at": "2026-08-28T10:00:00.000Z",
+      "url": "https://www.arbeitnow.com/jobs/senior-backend-engineer-berlin"
+    },
+    {
+      "slug": "remote-ml-engineer",
+      "title": "Remote ML Engineer",
+      "company_name": "DataMind AI",
+      "location": "Remote",
+      "remote": true,
+      "job_types": ["full-time"],
+      "description": "Design and deploy machine learning pipelines.",
+      "tags": ["Python", "Machine Learning", "TensorFlow"],
+      "created_at": "2026-08-29T14:30:00.000Z",
+      "url": "https://www.arbeitnow.com/jobs/remote-ml-engineer"
+    }
+  ]
+}

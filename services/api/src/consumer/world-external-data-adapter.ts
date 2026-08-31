@@ -15,6 +15,15 @@ import {
   worldEconomySnapshot,
   worldEconomySnapshotAsync,
 } from '../../../../packages/external-data/src/bridges.ts';
+import {
+  agentPhysicalEvidenceSnapshot,
+  growPhysicalContextSnapshot,
+  moonReyProductiveEconomySnapshot,
+  realEstateContextSnapshot,
+  travelContextSnapshot,
+  worldPhysicalEconomySnapshot,
+} from '../../../../packages/external-data/src/wave5-bridges.ts';
+import { buildProductiveEconomicGraph } from '../../../../packages/external-data/src/wave5-peg.ts';
 
 export type WorldExternalDataBff = {
   readonly economy: () => ReturnType<typeof worldEconomySnapshot>;
@@ -73,6 +82,39 @@ export type WorldExternalDataBff = {
   }>;
   readonly providerHealth: () => ReturnType<ExternalDataPlane['health']>;
   readonly coverage: () => ReturnType<ExternalDataPlane['coverageReport']>;
+  readonly physicalEconomy: () => ReturnType<typeof worldPhysicalEconomySnapshot>;
+  readonly travelContext: () => ReturnType<typeof travelContextSnapshot>;
+  readonly moonReyProductiveEconomy: () => ReturnType<typeof moonReyProductiveEconomySnapshot>;
+  readonly realEstateContext: () => ReturnType<typeof realEstateContextSnapshot>;
+  readonly productiveEconomicGraph: () => ReturnType<typeof buildProductiveEconomicGraph>;
+  readonly providerRisk: () => ReturnType<ExternalDataPlane['providerRisk']['snapshot']>;
+  readonly wave5Coverage: () => ReturnType<ExternalDataPlane['wave5CoverageReport']>;
+  readonly geospatial: () => {
+    readonly schema: 'sunrey.bff.geospatial.v1';
+    readonly countries: readonly { readonly countryCode: string; readonly name: string }[];
+    readonly geocoded: readonly { readonly locationId: string; readonly displayName: string }[];
+    readonly availability: 'AVAILABLE_SIMULATION';
+  };
+  readonly energy: () => {
+    readonly schema: 'sunrey.bff.energy.v1';
+    readonly metrics: readonly { readonly metricId: string; readonly value: number; readonly unit: string }[];
+    readonly availability: 'AVAILABLE_SIMULATION' | 'DEGRADED';
+  };
+  readonly weather: () => {
+    readonly schema: 'sunrey.bff.weather.v1';
+    readonly observations: readonly { readonly locationId: string; readonly condition: string; readonly temperatureCelsius: number | null }[];
+    readonly availability: 'AVAILABLE_SIMULATION' | 'DEGRADED';
+  };
+  readonly maritime: () => {
+    readonly schema: 'sunrey.bff.maritime.v1';
+    readonly shippingFlow: readonly { readonly corridor: string; readonly vesselCount: number | null }[];
+    readonly availability: 'AVAILABLE_SIMULATION' | 'DEGRADED';
+  };
+  readonly logistics: () => {
+    readonly schema: 'sunrey.bff.logistics.v1';
+    readonly observations: readonly { readonly observationType: string; readonly status: string }[];
+    readonly availability: 'AVAILABLE_SIMULATION' | 'DEGRADED';
+  };
 };
 
 export function createWorldExternalDataBff(plane: ExternalDataPlane): WorldExternalDataBff {
@@ -171,5 +213,86 @@ export function createWorldExternalDataBff(plane: ExternalDataPlane): WorldExter
     },
     providerHealth: () => plane.health(),
     coverage: () => plane.coverageReport(),
+    physicalEconomy: () => worldPhysicalEconomySnapshot(plane),
+    travelContext: () => travelContextSnapshot(plane),
+    moonReyProductiveEconomy: () => moonReyProductiveEconomySnapshot(plane),
+    realEstateContext: () => realEstateContextSnapshot(plane),
+    productiveEconomicGraph: () => buildProductiveEconomicGraph(plane),
+    providerRisk: () => plane.providerRisk.snapshot(),
+    wave5Coverage: () => plane.wave5CoverageReport(),
+    geospatial: () => {
+      const countries = plane.wave5.geospatial.getCountries();
+      const geocoded = plane.wave5.geospatial.geocode('London');
+      return Object.freeze({
+        schema: 'sunrey.bff.geospatial.v1',
+        countries: Object.freeze(
+          countries.observations.map((o) => ({
+            countryCode: o.data.countryCode,
+            name: o.data.name,
+          })),
+        ),
+        geocoded: Object.freeze(
+          geocoded.observations.map((o) => ({
+            locationId: o.data.locationId,
+            displayName: o.data.displayName,
+          })),
+        ),
+        availability: 'AVAILABLE_SIMULATION',
+      });
+    },
+    energy: () => {
+      const result = plane.wave5.energy.getObservations();
+      return Object.freeze({
+        schema: 'sunrey.bff.energy.v1',
+        metrics: Object.freeze(
+          result.observations.map((o) => ({
+            metricId: o.data.metricId,
+            value: o.data.value,
+            unit: o.data.unit,
+          })),
+        ),
+        availability: result.degraded ? 'DEGRADED' : 'AVAILABLE_SIMULATION',
+      });
+    },
+    weather: () => {
+      const result = plane.wave5.weather.getCurrentWeather();
+      return Object.freeze({
+        schema: 'sunrey.bff.weather.v1',
+        observations: Object.freeze(
+          result.observations.map((o) => ({
+            locationId: o.data.locationId,
+            condition: o.data.condition,
+            temperatureCelsius: o.data.temperatureCelsius,
+          })),
+        ),
+        availability: result.degraded ? 'DEGRADED' : 'AVAILABLE_SIMULATION',
+      });
+    },
+    maritime: () => {
+      const result = plane.wave5.maritime.getShippingFlow();
+      return Object.freeze({
+        schema: 'sunrey.bff.maritime.v1',
+        shippingFlow: Object.freeze(
+          result.observations.map((o) => ({
+            corridor: o.data.corridor,
+            vesselCount: o.data.vesselCount,
+          })),
+        ),
+        availability: result.degraded ? 'DEGRADED' : 'AVAILABLE_SIMULATION',
+      });
+    },
+    logistics: () => {
+      const result = plane.wave5.logistics.getObservations();
+      return Object.freeze({
+        schema: 'sunrey.bff.logistics.v1',
+        observations: Object.freeze(
+          result.observations.map((o) => ({
+            observationType: o.data.observationType,
+            status: o.data.status,
+          })),
+        ),
+        availability: result.degraded ? 'DEGRADED' : 'AVAILABLE_SIMULATION',
+      });
+    },
   });
 }

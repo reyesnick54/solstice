@@ -1,0 +1,16 @@
+{
+  "jobs": [
+    {
+      "id": "gql-101",
+      "title": "GraphQL API Developer",
+      "companyName": "SchemaTech",
+      "location": "Remote",
+      "remoteOk": true,
+      "type": "FULL_TIME",
+      "description": "Build GraphQL APIs for enterprise clients.",
+      "tags": ["GraphQL", "TypeScript", "Node.js"],
+      "postedAt": "2026-08-25T16:00:00.000Z",
+      "url": "https://graphql.jobs/jobs/gql-101"
+    }
+  ]
+}

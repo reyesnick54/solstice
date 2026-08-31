@@ -1,0 +1,28 @@
+{
+  "skills": [
+    {
+      "id": "os-js",
+      "name": "JavaScript",
+      "aliases": ["JS", "ECMAScript"],
+      "category": "Programming Languages",
+      "description": "High-level programming language for web development.",
+      "related_occupations": ["Software Engineer", "Frontend Developer"]
+    },
+    {
+      "id": "os-python",
+      "name": "Python",
+      "aliases": ["py"],
+      "category": "Programming Languages",
+      "description": "General-purpose programming language popular in data science and AI.",
+      "related_occupations": ["Data Scientist", "Machine Learning Engineer"]
+    },
+    {
+      "id": "os-graphql",
+      "name": "GraphQL",
+      "aliases": [],
+      "category": "API Technologies",
+      "description": "Query language for APIs.",
+      "related_occupations": ["Backend Developer", "Full Stack Developer"]
+    }
+  ]
+}

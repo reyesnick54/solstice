@@ -105,6 +105,7 @@ function setup(overrides: Parameters<typeof createFixtureToolPorts>[0] = {}, man
       'productiveEconomy',
       'hin',
       'access',
+      'travel',
     ],
     approvedToolVersions: {},
     modelText: 'help me with my finances',
@@ -203,6 +204,7 @@ describe('tool contract matrix', () => {
       getHinValuationMethodologies: {},
       proposeAccessIntent: { sourceText: 'I want a Mustang convertible in Miami for two weeks.' },
       confirmAccessReservation: { reservationId: 'res_1' },
+      getTravelPlanningContext: { destination: 'SA', nationality: 'US' },
     };
     for (const tool of CANONICAL_AGENT_TOOLS) {
       const result = runtime.invoke({ ...session, turnId: `valid_${tool.toolId}` }, { toolId: tool.toolId, input: samples[tool.toolId] ?? {} });
