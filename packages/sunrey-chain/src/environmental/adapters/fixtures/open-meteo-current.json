@@ -1,0 +1,15 @@
+{
+  "temperature": 22.5,
+  "feels_like": 21.0,
+  "relative_humidity": 65,
+  "pressure": 1013,
+  "wind_speed": 3.5,
+  "wind_direction": 180,
+  "precipitation": 0,
+  "cloud_cover": 25,
+  "visibility": 10,
+  "weather_code": "partly_cloudy",
+  "uv_index": 5,
+  "time": "2026-08-31T12:00:00.000Z",
+  "age_ms": 120000
+}

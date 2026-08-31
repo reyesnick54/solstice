@@ -1,0 +1,8 @@
+{
+  "station_id": "PA-SF-12345",
+  "observed_at": "2026-08-31T11:45:00.000Z",
+  "metrics": [
+    { "pollutant": "PM2.5", "value": 8.5, "unit": "µg/m³", "aqi_standard": "US_EPA" },
+    { "pollutant": "PM10", "value": 14.0, "unit": "µg/m³", "aqi_standard": "US_EPA" }
+  ]
+}

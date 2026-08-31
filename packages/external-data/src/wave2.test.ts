@@ -120,6 +120,10 @@ describe('Wave 2 external data plane', () => {
         p.category !== 'aviation' &&
         p.category !== 'travel' &&
         p.category !== 'transportation',
+        p.category !== 'energy' &&
+        p.category !== 'environmental' &&
+        p.category !== 'food_nutrition' &&
+        p.category !== 'natural_resources',
     );
     assert.equal(unexplained.length, 0);
   });

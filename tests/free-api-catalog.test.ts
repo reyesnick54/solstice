@@ -120,6 +120,10 @@ describe('free API provider catalog', () => {
     assert.equal(result.stats.byCategory.aviation, 3);
     assert.equal(result.stats.byCategory.travel, 1);
     assert.equal(result.stats.byCategory.transportation, 5);
+    assert.equal(result.stats.total, 34);
+    assert.equal(result.stats.byCategory.foreign_exchange, 8);
+    assert.equal(result.stats.byCategory.cryptocurrency, 6);
+    assert.equal(result.stats.byCategory.energy, 3);
     assert.ok(result.stats.total >= 9);
   });
 

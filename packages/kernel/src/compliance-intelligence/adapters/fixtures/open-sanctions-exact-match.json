@@ -1,0 +1,21 @@
+{
+  "results": [
+    {
+      "id": "os-entity-exact-001",
+      "caption": "SANCTIONED EXACT PERSON",
+      "schema": "Person",
+      "properties": {
+        "name": ["SANCTIONED EXACT PERSON"],
+        "alias": ["S. EXACT"],
+        "birthDate": ["1980-01-15"],
+        "nationality": ["us"],
+        "country": ["us"]
+      },
+      "datasets": ["us_ofac_sdn"],
+      "referents": ["ofac-12345"],
+      "first_seen": "2020-01-01T00:00:00",
+      "last_change": "2026-01-15T12:00:00"
+    }
+  ],
+  "total": { "value": 1, "relation": "eq" }
+}

@@ -1,0 +1,20 @@
+{
+  "results": [
+    {
+      "id": "os-entity-org-001",
+      "caption": "SANCTIONED ORG LIMITED",
+      "schema": "Organization",
+      "properties": {
+        "name": ["SANCTIONED ORG LIMITED"],
+        "alias": ["Sanctioned Org"],
+        "country": ["ru"],
+        "registrationNumber": ["RU-12345678"]
+      },
+      "datasets": ["eu_fsf"],
+      "referents": ["eu-fsf-555"],
+      "first_seen": "2021-03-10T00:00:00",
+      "last_change": "2026-02-01T00:00:00"
+    }
+  ],
+  "total": { "value": 1, "relation": "eq" }
+}

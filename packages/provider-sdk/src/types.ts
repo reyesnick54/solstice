@@ -5,6 +5,7 @@
  * to avoid merge collisions between Wave 1 prompts.
  */
 
+export * from './observation-types.ts';
 import type { UtcInstant } from '../../domain/src/time.ts';
 
 export const EXTERNAL_OBSERVATION_SCHEMA = 'sunrey.external-observation.v1' as const;
@@ -194,6 +195,63 @@ export type ProviderTransportFailure = {
 export type ProviderTransportResult<T = unknown> = ProviderTransportSuccess<T> | ProviderTransportFailure;
 
 export * from './registry-types.ts';
+export {
+  FRESHNESS_STATUSES,
+  VALIDATION_STATUSES,
+  COMMERCIAL_USE_STATUSES,
+  REDISTRIBUTION_STATUSES,
+  CONFIDENCE_BASIS,
+} from './observation-types.ts';
+export type {
+  ValidationStatus,
+  CommercialUseStatus,
+  RedistributionStatus,
+  ConfidenceBasis,
+} from './observation-types.ts';
+export * from './registry-types.ts';
+export {
+  PROVIDER_HTTP_METHODS,
+  PROVIDER_CONTENT_TYPES,
+  type ProviderHttpMethod,
+  type ProviderContentType,
+  type ProviderHttpRequestContext,
+  type ProviderHttpResponseMetadata,
+  type ProviderParsedBody,
+  type ProviderHttpTransportResponse,
+  type ProviderHttpTransportSuccess,
+  type ProviderHttpTransportFailure,
+  type ProviderHttpTransportResult,
+  type ProviderHttpTransport,
+  type HttpProviderRequestContext,
+  type HttpProviderResponseMetadata,
+  type ProviderParsedBody,
+  type HttpProviderTransportResponse,
+  type HttpProviderTransportSuccess,
+  type HttpProviderTransportFailure,
+  type HttpProviderTransportResult,
+  type HttpProviderTransport,
+} from './http-transport-types.ts';
+export {
+  HTTP_METHODS,
+  CIRCUIT_STATES,
+  FAILURE_CLASSIFICATIONS,
+  defaultClock,
+  isSafeReadMethod,
+  type HttpMethod,
+  type CircuitState,
+  type FailureClassification,
+  type ReliabilityTransportRequest,
+  type ReliabilityTransportResponse,
+  type ReliabilityProviderTransport,
+  type ReliabilityTransport,
+  type ProviderError,
+  type ReliabilityOutcome,
+  type DeadlineContext,
+  type FallbackContext,
+  type FallbackDecision,
+  type FallbackHook,
+  type ReliabilityClock,
+} from './reliability-types.ts';
 
 /**
  * Shared outbound HTTP transport used by all SunRey provider adapters.
@@ -249,15 +307,6 @@ export const PROVIDER_CATEGORIES = [
   'other',
 ] as const;
 export type ProviderCategory = (typeof PROVIDER_CATEGORIES)[number];
-
-export const AUTHORITY_CLASSES = [
-  'authoritative_official',
-  'regulated_provider',
-  'reference_data',
-  'research_data',
-  'community_data',
-  'derived_data',
-] as const;
 
 export const PROVIDER_CAPABILITIES = [
   'macroeconomic_indicators',

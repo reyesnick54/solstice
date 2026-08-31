@@ -8,6 +8,15 @@ source_list:
   version: wave-5-prompt-20
   verified_at: 2026-08-31
 notes: Partial population including Wave 2 economics/markets, Wave 3 crypto/blockchain, and Wave 5 travel/mobility
+    wave3-crypto-catalog-entries.yaml + wave5-energy-resource-catalog-entries.yaml
+  version: wave-5-prompt-18
+  verified_at: 2026-08-31
+notes: Partial population including Wave 2 economics/markets providers, Wave 3 crypto/blockchain intelligence, and Wave
+  5 energy/resource/productive-economy providers. Full 126-provider master list remains pending.
+    wave3-crypto-catalog-entries.yaml + packages/kernel compliance-intelligence
+  version: wave-4-prompt-15
+  verified_at: 2026-08-30
+notes: Partial population including Wave 2 economics/markets, Wave 3 crypto, and Wave 4 compliance intelligence
   providers. Full 126-provider master list remains pending.
 providers:
   - provider_id: fred
@@ -1857,6 +1866,46 @@ providers:
       documented: true
       requests_per_second: null
       requests_per_minute: 60
+  - provider_id: national-grid-eso
+    name: National Grid ESO Data Portal
+    short_name: NG ESO
+    description: >
+      UK National Grid Electricity System Operator open data including electricity generation, demand, interconnector
+      flows, and balancing metrics for Great Britain.
+    primary_category: energy
+    secondary_categories:
+      - government_open_data
+    capabilities:
+      - electricity_generation
+      - electricity_demand
+      - energy_mix
+      - grid_load
+    endpoints:
+      base_url: https://data.nationalgrideso.com
+      api_version: null
+      documentation_url: https://data.nationalgrideso.com/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public open-data portal; no API key required.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Open Government Licence; fair-use rate limits apply.
+    commercial_use:
+      status: attribution_required
+      notes: Open Government Licence v3.0.
+    redistribution:
+      status: attribution_required
+      notes: Attribution to National Grid ESO required.
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
       requests_per_hour: null
       requests_per_day: null
       monthly_quota: null
@@ -1880,6 +1929,28 @@ providers:
       authority_class: community_data
       integration_state: simulated
       existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+      notes: Enforce SunRey bulkheads and caching; no published hard limits.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GB
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: Half-hourly and daily settlement periods.
+    sunrey:
+      domain:
+        - world
+        - economic_graph
+        - moonrey
+        - grow
+        - financial_agent
+      canonical_provider_interface: EnergyDataProvider
+      priority: critical
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: packages/sunrey-chain/src/productive-economy-providers/adapters/national-grid-eso.ts
     verification:
       status: verified
       verified_against_official_docs: true
@@ -1898,6 +1969,24 @@ providers:
       base_url: https://registry.faa.gov
       api_version: null
       documentation_url: https://www.faa.gov/licenses_certificates/aircraft_certification/aircraft_registry
+      notes: Official NG ESO data portal reviewed.
+  - provider_id: uk-carbon-intensity
+    name: UK Carbon Intensity API
+    short_name: UK Carbon
+    description: >
+      Carbon intensity of electricity generation in Great Britain published by National Grid ESO and the Environmental
+      Defense Fund Europe.
+    primary_category: energy
+    secondary_categories:
+      - environmental
+    capabilities:
+      - carbon_intensity
+      - energy_mix
+      - electricity_generation
+    endpoints:
+      base_url: https://api.carbonintensity.org.uk
+      api_version: null
+      documentation_url: https://carbonintensity.org.uk/
       status_url: null
     authentication:
       type: none
@@ -1905,6 +1994,7 @@ providers:
       registration_required: false
       environment_variable: null
       notes: null
+      notes: Public REST API.
     access:
       status: verified_free
       free_tier_verified: true
@@ -1915,6 +2005,12 @@ providers:
       notes: U.S. government open data.
     redistribution:
       status: allowed
+      notes: No registration required.
+    commercial_use:
+      status: attribution_required
+      notes: Attribution to carbonintensity.org.uk required.
+    redistribution:
+      status: attribution_required
       notes: null
     rate_limits:
       documented: false
@@ -1943,6 +2039,27 @@ providers:
       authority_class: authoritative_official
       integration_state: simulated
       existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+      notes: Enforce SunRey rate limits.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GB
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: 30-minute carbon intensity forecasts and actuals.
+    sunrey:
+      domain:
+        - world
+        - economic_graph
+        - moonrey
+        - grow
+      canonical_provider_interface: EnergyDataProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: packages/sunrey-chain/src/productive-economy-providers/adapters/uk-carbon-intensity.ts
     verification:
       status: verified
       verified_against_official_docs: true
@@ -2006,6 +2123,71 @@ providers:
       authority_class: reference_data
       integration_state: simulated
       existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+      notes: Official carbonintensity.org.uk API documentation reviewed.
+  - provider_id: energi-data-service
+    name: Danish Energi Data Service
+    short_name: Energi Data
+    description: >
+      Danish national energy data including electricity production, consumption, prices, and generation mix from
+      Energinet and Danish Energy Agency sources.
+    primary_category: energy
+    secondary_categories:
+      - government_open_data
+    capabilities:
+      - electricity_generation
+      - electricity_demand
+      - energy_mix
+      - energy_prices
+    endpoints:
+      base_url: https://api.energidataservice.dk
+      api_version: null
+      documentation_url: https://www.energidataservice.dk/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public REST API.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Open Danish government energy data.
+    commercial_use:
+      status: verified_allowed
+      notes: Danish open data terms.
+    redistribution:
+      status: allowed
+      notes: null
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Enforce SunRey caching for hourly/daily datasets.
+    data_characteristics:
+      freshness: delayed
+      geographic_scope:
+        - DK
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Hourly and daily Danish electricity statistics.
+    sunrey:
+      domain:
+        - world
+        - economic_graph
+        - moonrey
+      canonical_provider_interface: EnergyDataProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: packages/sunrey-chain/src/productive-economy-providers/adapters/energi-data-service.ts
     verification:
       status: verified
       verified_against_official_docs: true
@@ -2046,6 +2228,52 @@ providers:
       documented: false
       requests_per_second: null
       requests_per_minute: null
+      notes: Official energidataservice.dk API reviewed.
+  - provider_id: co2-offset
+    name: CO2 Offset API
+    short_name: CO2 Offset
+    description: >
+      Community carbon-offset project registry and emission-factor reference data for voluntary offset verification and
+      sustainability research.
+    primary_category: environmental
+    secondary_categories:
+      - natural_resources
+      last_verified: 2026-08-30
+      notes: Wave 3 Prompt 12 fixture-backed adapter.
+  - provider_id: coinmarketcap
+    name: CoinMarketCap
+    short_name: CMC
+    description: CoinMarketCap API providing cryptocurrency quotes, capitalization metrics, and metadata. Requires API key.
+    primary_category: cryptocurrency
+    capabilities:
+      - carbon_intensity
+      - resource_data
+    endpoints:
+      base_url: https://www.co2offset.io
+      api_version: null
+      documentation_url: https://www.co2offset.io/api
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: CO2_OFFSET_API_KEY
+      notes: Free tier with registration.
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Free tier available with API key.
+    commercial_use:
+      status: unclear
+      notes: Terms require review for production redistribution.
+    redistribution:
+      status: unclear
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 60
       requests_per_hour: null
       requests_per_day: null
       monthly_quota: null
@@ -2088,6 +2316,46 @@ providers:
       base_url: https://transport.rest
       api_version: v1
       documentation_url: https://transport.rest
+      notes: Documented free-tier rate limit.
+    data_characteristics:
+      freshness: daily
+      freshness: delayed
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Offset project metadata and emission factors.
+    sunrey:
+      domain:
+        - world
+        - research
+        - grow
+      canonical_provider_interface: ResourceDataProvider
+      priority: low
+      launch_tier: research_only
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/sunrey-chain/src/productive-economy-providers/adapters/co2-offset.ts
+    verification:
+      status: partially_verified
+      verified_against_official_docs: false
+      last_verified: 2026-08-31
+      notes: Preview-only; commercial terms not fully verified.
+  - provider_id: website-carbon
+    name: Website Carbon API
+    short_name: Website Carbon
+    description: >
+      Estimated carbon footprint of web pages based on data transfer, hosting location, and grid carbon intensity.
+      Research and sustainability context only.
+    primary_category: environmental
+    capabilities:
+      - carbon_intensity
+      - resource_data
+    endpoints:
+      base_url: https://api.websitecarbon.com
+      api_version: null
+      documentation_url: https://api.websitecarbon.com/docs
       status_url: null
     authentication:
       type: none
@@ -2095,6 +2363,7 @@ providers:
       registration_required: false
       environment_variable: null
       notes: null
+      notes: Public API with fair-use limits.
     access:
       status: verified_free
       free_tier_verified: true
@@ -2103,6 +2372,10 @@ providers:
     commercial_use:
       status: attribution_required
       notes: OpenTransportData attribution.
+      notes: No registration for basic queries.
+    commercial_use:
+      status: attribution_required
+      notes: Attribution to websitecarbon.com required.
     redistribution:
       status: attribution_required
       notes: null
@@ -2152,6 +2425,49 @@ providers:
       base_url: https://transit.land/api/v2
       api_version: v2
       documentation_url: https://www.transit.land/documentation
+      notes: Fair-use; enforce SunRey throttling.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: Per-URL carbon estimates; not grid telemetry.
+    sunrey:
+      domain:
+        - exchange
+        - world
+        - research
+      canonical_provider_interface: ResourceDataProvider
+      priority: low
+      launch_tier: research_only
+      authority_class: derived_data
+      integration_state: implemented
+      existing_adapter: packages/sunrey-chain/src/productive-economy-providers/adapters/website-carbon.ts
+    verification:
+      status: partially_verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Preview-only; estimates not authoritative grid data.
+  - provider_id: indian-mandi-prices
+    name: Indian Mandi Prices (data.gov.in)
+    short_name: Mandi Prices
+    description: >
+      Indian agricultural commodity wholesale market (mandi) prices from the Government of India open data portal.
+      Covers grains, pulses, oilseeds, and horticulture commodities.
+    primary_category: food_nutrition
+    secondary_categories:
+      - natural_resources
+      - government_open_data
+    capabilities:
+      - agriculture_prices
+      - commodity_supply
+      - resource_data
+    endpoints:
+      base_url: https://api.data.gov.in
+      api_version: null
+      documentation_url: https://data.gov.in/
       status_url: null
     authentication:
       type: api_key
@@ -2198,6 +2514,48 @@ providers:
       authority_class: community_data
       integration_state: simulated
       existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+      environment_variable: DATA_GOV_IN_API_KEY
+      notes: Free API key from data.gov.in.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Free government open data API key.
+    commercial_use:
+      status: verified_allowed
+      notes: National Data Sharing and Accessibility Policy.
+    redistribution:
+      status: attribution_required
+      notes: Government of India attribution required.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 1000
+      monthly_quota: null
+      concurrency_limit: null
+      notes: 1000 requests per day per API key.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - IN
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Daily mandi arrival and modal prices by state and commodity.
+    sunrey:
+      domain:
+        - world
+        - economic_graph
+        - moonrey
+        - grow
+      canonical_provider_interface: ResourceDataProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: packages/sunrey-chain/src/productive-economy-providers/adapters/indian-mandi-prices.ts
     verification:
       status: verified
       verified_against_official_docs: true
@@ -2216,6 +2574,23 @@ providers:
       base_url: https://api.openchargemap.io/v3
       api_version: v3
       documentation_url: https://openchargemap.org/site/develop/api
+      notes: Official data.gov.in API reviewed.
+  - provider_id: tilth
+    name: Tilth API
+    short_name: Tilth
+    description: >
+      Agricultural soil health, crop rotation, and farm productivity data for US farmland. Registration required;
+      commercial terms under review.
+    primary_category: food_nutrition
+    secondary_categories:
+      - natural_resources
+    capabilities:
+      - agriculture_prices
+      - resource_data
+    endpoints:
+      base_url: https://api.tilth.co
+      api_version: v1
+      documentation_url: https://tilth.co/developers
       status_url: null
     authentication:
       type: api_key
@@ -2287,6 +2662,73 @@ providers:
       registration_required: false
       environment_variable: null
       notes: null
+      environment_variable: TILTH_API_KEY
+      notes: Developer registration required.
+    access:
+      status: free_tier
+      free_tier_verified: false
+      registration_required: true
+      notes: Free tier limits not fully verified.
+    commercial_use:
+      status: requires_legal_review
+      notes: Commercial redistribution requires legal review.
+    redistribution:
+      status: unclear
+      notes: null
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: weekly
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Farm-level soil and productivity metrics.
+    sunrey:
+      domain:
+        - world
+        - economic_graph
+        - research
+      canonical_provider_interface: ResourceDataProvider
+      priority: medium
+      launch_tier: blocked_pending_review
+      authority_class: research_data
+      integration_state: catalog_only
+      existing_adapter: null
+    verification:
+      status: unverified
+      verified_against_official_docs: false
+      last_verified: 2026-08-31
+      notes: Blocked pending legal review of free-tier commercial terms.
+      last_verified: 2026-08-30
+      notes: Blocked pending credential and commercial review.
+  - primary_category: compliance
+    secondary_categories: []
+    capabilities:
+      - sanctions
+      - pep_screening
+      - watchlists
+      - adverse_regulatory_data
+      - entity_resolution
+    endpoints:
+      base_url: https://api.opensanctions.org
+      api_version: v1
+      documentation_url: https://www.opensanctions.org/docs/api/
+      status_url: https://www.opensanctions.org/
+    authentication:
+      type: api_key
+      required: false
+      registration_required: false
+      environment_variable: OPENSANCTIONS_API_KEY
+      notes: Optional API key for higher limits; bulk non-commercial use does not require a key.
     access:
       status: verified_free
       free_tier_verified: true
@@ -2300,6 +2742,16 @@ providers:
       notes: null
     rate_limits:
       documented: false
+      notes: Free for non-commercial use; API trial keys available for evaluation.
+    commercial_use:
+      status: restricted
+      notes: CC BY-NC 4.0 for bulk data. Commercial compliance screening requires paid license. Production activation blocked
+        pending legal review.
+    redistribution:
+      status: attribution_required
+      notes: OpenSanctions attribution required per dataset terms.
+    rate_limits:
+      documented: true
       requests_per_second: null
       requests_per_minute: null
       requests_per_hour: null
@@ -2367,6 +2819,69 @@ providers:
       documented: true
       requests_per_second: null
       requests_per_minute: 60
+      notes: Simulation uses fixtures only; respect provider quotas in production.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - compliance
+        - world
+        - exchange
+        - financial_agent
+      canonical_provider_interface: ComplianceIntelligenceProvider
+      priority: critical
+      launch_tier: blocked_pending_review
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/kernel/src/compliance-intelligence/adapters/open-sanctions.ts
+    verification:
+      status: partially_verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Commercial use restricted; adapter is preview_only until counsel confirms license.
+    provider_id: open-sanctions
+    name: OpenSanctions
+    short_name: OpenSanctions
+    description: Open database of sanctions, PEPs, and watchlists aggregating OFAC, UN, EU, UK, and national lists. Bulk
+      data is CC BY-NC 4.0; commercial screening requires a paid license.
+  - primary_category: compliance
+    secondary_categories: []
+    capabilities:
+      - wanted_persons
+      - watchlists
+      - public_enforcement_data
+    endpoints:
+      base_url: https://ws-public.interpol.int
+      api_version: v1
+      documentation_url: https://interpol.api.bund.dev/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public unauthenticated API.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Public API; no authentication required.
+    commercial_use:
+      status: verified_allowed
+      notes: Public law-enforcement notices API; use for screening evidence only.
+    redistribution:
+      status: attribution_required
+      notes: INTERPOL data usage subject to INTERPOL terms; evidence references only in SunRey.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
       requests_per_hour: null
       requests_per_day: null
       monthly_quota: null
@@ -2378,6 +2893,13 @@ providers:
         - NO
       historical_data: false
       realtime: true
+      notes: Simulation uses fixtures only; respect provider quotas in production.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
       data_format: json
       notes: null
     sunrey:
@@ -2396,3 +2918,21 @@ providers:
       verified_against_official_docs: true
       last_verified: 2026-08-31
       notes: Wave 5 Prompt 20 fixture adapter.
+        - compliance
+        - world
+      canonical_provider_interface: ComplianceIntelligenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: adapter_implemented
+      existing_adapter: packages/kernel/src/compliance-intelligence/adapters/interpol-red-notices.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Public Red Notices API; wanted-person classification separate from sanctions.
+    provider_id: interpol-red-notices
+    name: INTERPOL Red Notices
+    short_name: INTERPOL
+    description: Public INTERPOL Red Notices API for wanted-person lookups. Distinct from sanctions lists; wanted status is
+      a separate evidence classification.
