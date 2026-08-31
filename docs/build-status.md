@@ -464,6 +464,20 @@ This document describes only what is implemented and tested in this tree.
   prevention, resilience/capacity/goal-progress views, and read-only
   agent/Growth access. Not a human-worth score, credit score, or
   execution authority. No money movement.
+- Subscription intelligence and bill-savings workflow (Wave 5 Prompt 13,
+  `packages/platform/src/subscription-intelligence`,
+  `services/api/src/consumer/subscriptions.ts`): deterministic
+  recurring-payment detection with merchant normalization, subscription
+  classification, price-change detection, duplicate/overlap evidence,
+  usage-aware savings opportunities, user-authorized action lifecycle,
+  idempotent cancellation requests, provider-result verification, and
+  estimated-vs-verified savings attribution with audit events.
+  Subscription detection: `IMPLEMENTED`. Savings recommendations:
+  `IMPLEMENTED`. Automated cancellation: `PARTIAL` / provider-dependent
+  (simulation provider for certified rehearsal only; live providers
+  not connected). Bill negotiation: `PARTIAL` / provider-dependent
+  (`ACTION_NOT_AVAILABLE` unless a certified provider is registered).
+  AI may propose and explain only; it cannot execute actions.
 - Simulated mobile wallet provisioning and merchant SoftPOS / Tap-to-Pay
   (Chunk 12, still inside `packages/cards`): provider-neutral wallet
   port with Apple-style and Google-style simulation adapters,
