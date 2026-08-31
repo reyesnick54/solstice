@@ -1,0 +1,19 @@
+{
+  "jobs": [
+    {
+      "id": "aidj-001",
+      "title": "AI Research Engineer",
+      "company": "Neural Labs",
+      "location": "San Francisco, CA",
+      "remote": true,
+      "type": "full-time",
+      "salary_min": 150000,
+      "salary_max": 200000,
+      "salary_currency": "USD",
+      "salary_period": "annual",
+      "skills": ["Python", "PyTorch", "LLM"],
+      "posted_at": "2026-08-27T08:00:00.000Z",
+      "apply_url": "https://ai.devjobs.app/jobs/aidj-001"
+    }
+  ]
+}

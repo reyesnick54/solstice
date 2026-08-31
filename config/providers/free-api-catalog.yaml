@@ -3,17 +3,24 @@ catalog_id: sunrey-free-api-catalog
 expected_provider_count: 126
 population_status: partial
 source_list:
-  document: config/providers/wave2-catalog-entries.yaml + packages/payments/src/fx-reference/catalog-entries.ts +
-    wave3-crypto-catalog-entries.yaml + wave5-energy-resource-catalog-entries.yaml
-  version: wave-5-prompt-18
+  document: wave2 + wave3 + wave4 + wave5 YAML + FX + crypto + chain-intelligence + compliance + environmental +
+    productive-economy catalog entries
+  version: wave-7-prompt-27
   verified_at: 2026-08-31
-notes: Partial population including Wave 2 economics/markets providers, Wave 3 crypto/blockchain intelligence, and Wave
-  5 energy/resource/productive-economy providers. Full 126-provider master list remains pending.
-    wave3-crypto-catalog-entries.yaml + packages/kernel compliance-intelligence
-  version: wave-4-prompt-15
-  verified_at: 2026-08-30
-notes: Partial population including Wave 2 economics/markets, Wave 3 crypto, and Wave 4 compliance intelligence
-  providers. Full 126-provider master list remains pending.
+notes: "Wave 7 catalog rebuild: 73 unique providers merged from Waves 2–5 implementations. Authoritative 126-provider
+  master list remains partially populated; remaining slots are documented in wave7 coverage as MISSING_IMPLEMENTATION."
+  document: config/providers/wave2-catalog-entries.yaml + packages/payments/src/fx-reference/catalog-entries.ts +
+    wave3-crypto-catalog-entries.yaml + wave5-energy-resource-catalog-entries.yaml +
+    wave6-opportunity-skills-catalog-entries.yaml + packages/kernel compliance-intelligence
+  version: wave-6-prompt-23
+  verified_at: 2026-08-31
+notes: Partial population including Wave 2 economics/markets, Wave 3 crypto, Wave 4 compliance intelligence, Wave 5
+  energy/resource, and Wave 6 opportunity/skills providers. Full 126-provider master list remains pending.
+  document: wave2 + fx + wave3 + wave5-energy + wave5-travel + wave6-health-hin + compliance
+  version: wave-6-prompt-22
+  verified_at: 2026-08-31
+notes: Partial population including Wave 2 economics/markets, Wave 3 crypto, Wave 4 compliance, Wave 5 energy/travel,
+  and Wave 6 health/HIN reference providers. Full 126-provider master list remains pending.
 providers:
   - provider_id: fred
     name: FRED API
@@ -762,14 +769,12 @@ providers:
   - provider_id: fred-commodity
     name: FRED Commodity Prices
     short_name: FRED Commodities
-    description: >
-      Secondary commodity price source using FRED API commodity-related economic series including energy, metals,
-      agriculture, and PPI commodity indexes from the St. Louis Fed.
+    description: FRED commodity and energy price series (Wave 2 extension).
     primary_category: commodities
+    secondary_categories: []
     capabilities:
       - commodity_prices
       - energy_prices
-      - metals_prices
       - agriculture_prices
     endpoints:
       base_url: https://api.stlouisfed.org/fred
@@ -781,18 +786,18 @@ providers:
       required: true
       registration_required: true
       environment_variable: FRED_API_KEY
-      notes: Shares FRED_API_KEY credential with primary fred provider.
+      notes: null
     access:
       status: verified_free
       free_tier_verified: true
       registration_required: true
-      notes: Uses same FRED API key as primary fred provider.
+      notes: null
     commercial_use:
       status: verified_allowed
       notes: null
     redistribution:
       status: attribution_required
-      notes: FRED data attribution required per St. Louis Fed terms.
+      notes: null
     rate_limits:
       documented: true
       requests_per_second: null
@@ -801,7 +806,7 @@ providers:
       requests_per_day: null
       monthly_quota: null
       concurrency_limit: null
-      notes: 120 requests per minute per API key; shared with primary fred provider.
+      notes: null
     data_characteristics:
       freshness: daily
       geographic_scope:
@@ -810,7 +815,7 @@ providers:
       historical_data: true
       realtime: false
       data_format: json
-      notes: Commodity series subset of FRED macroeconomic data.
+      notes: null
     sunrey:
       domain:
         - world
@@ -825,8 +830,8 @@ providers:
     verification:
       status: verified
       verified_against_official_docs: true
-      last_verified: 2026-08-30
-      notes: Commodity series catalog verified against FRED API documentation.
+      last_verified: 2026-08-31
+      notes: Wave 2 commodity adapter extended for energy/resource normalization.
   - provider_id: yahoo-finance-unofficial
     name: Yahoo Finance Unofficial
     short_name: Yahoo Finance
@@ -1655,7 +1660,7 @@ providers:
       status: attribution_required
       notes: null
     rate_limits:
-      documented: false
+      documented: true
       requests_per_second: null
       requests_per_minute: null
       requests_per_hour: null
@@ -1667,7 +1672,7 @@ providers:
       freshness: delayed
       geographic_scope:
         - global
-      historical_data: false
+      historical_data: true
       realtime: false
       data_format: json
       notes: null
@@ -1826,6 +1831,3361 @@ providers:
       verified_against_official_docs: false
       last_verified: 2026-08-30
       notes: Blocked pending credential and commercial review.
+  - primary_category: blockchain
+    secondary_categories:
+      - cryptocurrency
+    capabilities:
+      - blockchain_intelligence
+      - bitcoin_network
+      - mempool
+      - block_explorer
+      - network_statistics
+      - onchain_reference
+    endpoints:
+      base_url: https://mempool.space/api
+      api_version: v1
+      documentation_url: https://mempool.space/docs/api/rest
+      status_url: https://mempool.space/status
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Respect free-tier quotas; simulation uses fixtures only.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - blockchain_intelligence
+        - world
+        - exchange
+        - financial_agent
+      canonical_provider_interface: BlockchainIntelligenceProvider
+      priority: critical
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-chain/src/chain-intelligence/adapters/mempool-space.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 3 Prompt 13 blockchain network intelligence subset.
+    provider_id: mempool-space
+    name: Mempool.space
+    short_name: Mempool
+    description: Open-source Bitcoin block explorer and mempool API providing blocks, transactions, fees, hashrate, and
+      network statistics.
+  - primary_category: blockchain
+    secondary_categories:
+      - cryptocurrency
+    capabilities:
+      - blockchain_intelligence
+      - bitcoin_network
+      - block_explorer
+      - network_statistics
+      - onchain_reference
+    endpoints:
+      base_url: https://blockchain.info
+      api_version: v1
+      documentation_url: https://www.blockchain.com/explorer/api
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Respect free-tier quotas; simulation uses fixtures only.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - blockchain_intelligence
+        - world
+        - exchange
+        - financial_agent
+      canonical_provider_interface: BlockchainIntelligenceProvider
+      priority: high
+      launch_tier: secondary_source
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-chain/src/chain-intelligence/adapters/blockchain-com.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 3 Prompt 13 blockchain network intelligence subset.
+    provider_id: blockchain-com
+    name: Blockchain.com Explorer API
+    short_name: Blockchain.com
+    description: Public Bitcoin blockchain data API for blocks, transactions, charts, and network statistics.
+  - primary_category: blockchain
+    secondary_categories:
+      - cryptocurrency
+    capabilities:
+      - blockchain_intelligence
+      - block_explorer
+      - chain_intelligence
+      - onchain_reference
+    endpoints:
+      base_url: https://eth.blockscout.com/api
+      api_version: v2
+      documentation_url: https://docs.blockscout.com/for-users/api
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Respect free-tier quotas; simulation uses fixtures only.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - blockchain_intelligence
+        - world
+        - financial_agent
+      canonical_provider_interface: BlockchainIntelligenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-chain/src/chain-intelligence/adapters/blockscout.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 3 Prompt 13 blockchain network intelligence subset.
+    provider_id: blockscout
+    name: Blockscout
+    short_name: Blockscout
+    description: Open-source multi-chain block explorer API for Ethereum and EVM networks with blocks, transactions, and
+      address lookups.
+  - primary_category: blockchain
+    secondary_categories:
+      - cryptocurrency
+      last_verified: 2026-08-31
+      notes: Official energidataservice.dk API reviewed.
+  - provider_id: co2-offset
+    name: CO2 Offset API
+    short_name: CO2 Offset
+    description: >
+      Community carbon-offset project registry and emission-factor reference data for voluntary offset verification and
+      sustainability research.
+    primary_category: environmental
+    secondary_categories:
+      - natural_resources
+    capabilities:
+      - blockchain_intelligence
+      - bitcoin_network
+      - network_statistics
+      - mempool
+    endpoints:
+      base_url: https://api.btcglobe.com
+      api_version: v1
+      documentation_url: https://btcglobe.com/api
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Respect free-tier quotas; simulation uses fixtures only.
+    data_characteristics:
+      freshness: realtime
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - blockchain_intelligence
+        - world
+      canonical_provider_interface: BlockchainIntelligenceProvider
+      priority: medium
+      launch_tier: fallback_source
+      authority_class: derived_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-chain/src/chain-intelligence/adapters/btcglobe.ts
+    verification:
+      status: partially_verified
+      verified_against_official_docs: false
+      last_verified: 2026-08-30
+      notes: Fallback network statistics source; fixture-backed in simulation.
+    provider_id: btcglobe
+    name: BTCGlobe
+    short_name: BTCGlobe
+    description: Bitcoin network statistics and reference data including hashrate, difficulty, and mempool conditions.
+  - primary_category: compliance
+    secondary_categories: []
+    capabilities:
+      - sanctions
+      - pep_screening
+      - watchlists
+      - adverse_regulatory_data
+      - entity_resolution
+    endpoints:
+      base_url: https://api.opensanctions.org
+      api_version: v1
+      documentation_url: https://www.opensanctions.org/docs/api/
+      status_url: https://www.opensanctions.org/
+    authentication:
+      type: api_key
+      required: false
+      registration_required: false
+      environment_variable: OPENSANCTIONS_API_KEY
+      notes: Optional API key for higher limits; bulk non-commercial use does not require a key.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Free for non-commercial use; API trial keys available for evaluation.
+    commercial_use:
+      status: restricted
+      notes: CC BY-NC 4.0 for bulk data. Commercial compliance screening requires paid license. Production activation blocked
+        pending legal review.
+    redistribution:
+      status: attribution_required
+      notes: OpenSanctions attribution required per dataset terms.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Simulation uses fixtures only; respect provider quotas in production.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - compliance
+        - world
+        - exchange
+        - financial_agent
+      canonical_provider_interface: ComplianceIntelligenceProvider
+      priority: critical
+      launch_tier: blocked_pending_review
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/kernel/src/compliance-intelligence/adapters/open-sanctions.ts
+    verification:
+      status: partially_verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Commercial use restricted; adapter is preview_only until counsel confirms license.
+    provider_id: open-sanctions
+    name: OpenSanctions
+    short_name: OpenSanctions
+    description: Open database of sanctions, PEPs, and watchlists aggregating OFAC, UN, EU, UK, and national lists. Bulk
+      data is CC BY-NC 4.0; commercial screening requires a paid license.
+  - provider_id: nvd
+    name: National Vulnerability Database
+    short_name: NVD
+    description: NIST National Vulnerability Database CVE feed.
+    primary_category: cybersecurity
+    capabilities:
+      - vulnerability_intelligence
+      - cve_lookup
+    endpoints:
+      base_url: https://services.nvd.nist.gov
+      api_version: v2.0
+      documentation_url: https://nvd.nist.gov/developers/vulnerabilities
+      status_url: null
+    authentication:
+      type: api_key
+      required: false
+      registration_required: true
+      environment_variable: NVD_API_KEY
+      notes: Optional API key for higher rate limits.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: CVE feed updated continuously.
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+    sunrey:
+      domain:
+        - cybersecurity
+        - infrastructure
+      canonical_provider_interface: VulnerabilityIntelligenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+  - provider_id: urlhaus
+    name: URLhaus
+    short_name: URLhaus
+    description: abuse.ch URLhaus malicious URL database.
+    primary_category: cybersecurity
+    capabilities:
+      - malicious_url
+      - malware
+      - threat_intelligence
+    endpoints:
+      base_url: https://urlhaus-api.abuse.ch
+      api_version: v1
+      documentation_url: https://urlhaus-api.abuse.ch/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+    sunrey:
+      domain:
+        - cybersecurity
+        - compliance
+      canonical_provider_interface: ThreatIntelligenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+  - provider_id: world-check-refinitiv
+    name: World-Check (Refinitiv)
+    short_name: World-Check
+    description: Commercial PEP and sanctions screening. Paid subscription required; not eligible for free tier.
+    primary_category: compliance
+      status: unverified
+      verified_against_official_docs: false
+      last_verified: 2026-08-31
+      notes: Blocked pending legal review of free-tier commercial terms.
+  - provider_id: arbeitnow
+    name: Arbeitnow Job Board API
+    short_name: Arbeitnow
+    description: >
+      Free public job board API with remote and visa-sponsorship filters covering technology and general roles across
+      Europe and globally.
+    primary_category: jobs_skills
+    secondary_categories:
+      - career_opportunities
+    capabilities:
+      - job_search
+      - employment_market
+      - career_opportunities
+    endpoints:
+      base_url: https://www.arbeitnow.com/api
+      api_version: v1
+      documentation_url: https://www.arbeitnow.com/api
+  - provider_id: opensky
+    name: OpenSky Network
+    short_name: OpenSky
+    description: Community ADS-B aircraft state vectors and flight tracking reference data.
+    primary_category: aviation
+    secondary_categories: []
+    capabilities:
+      - aviation_positions
+      - aircraft_position
+      - flight_reference
+    endpoints:
+      base_url: https://opensky-network.org/api
+      api_version: v1
+      documentation_url: https://openskynetwork.github.io/opensky-api/
+      status_url: null
+    authentication:
+      type: basic_auth
+      required: true
+      registration_required: true
+      environment_variable: OPENSKY_USERNAME
+      notes: Free research account; credentials via OPENSKY_USERNAME/OPENSKY_PASSWORD.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Free non-commercial research tier.
+    commercial_use:
+      status: attribution_required
+      notes: OpenSky Network attribution required.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 60
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Anonymous 10 req/s; authenticated 60 req/min per official docs.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: State vectors; bounded queries required.
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter. Information only — not booking.
+  - provider_id: faa-registry
+    name: FAA Aircraft Registry
+    short_name: FAA Registry
+    description: U.S. FAA N-Number aircraft registration reference lookups.
+    primary_category: aviation
+    secondary_categories: []
+    capabilities:
+      - aircraft_registry
+      - flight_reference
+    endpoints:
+      base_url: https://registry.faa.gov
+      api_version: null
+      documentation_url: https://www.faa.gov/licenses_certificates/aircraft_certification/aircraft_registry
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public REST API; no API key required.
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Free public job listings API.
+    commercial_use:
+      status: verified_allowed
+      notes: Attribution to Arbeitnow required.
+    redistribution:
+      status: attribution_required
+      notes: Job listing attribution required.
+      notes: Public U.S. government registry.
+    commercial_use:
+      status: verified_allowed
+      notes: U.S. government open data.
+    redistribution:
+      status: allowed
+      notes: null
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Enforce SunRey bulkheads and caching.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - EU
+        - GLOBAL
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: Job listings expire quickly; short cache TTL.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+        - action_center
+      canonical_provider_interface: OpportunityProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
+      notes: Public registry; rate limits not formally documented.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: aviationapi
+    name: AviationAPI
+    short_name: AviationAPI
+    description: Aviation reference data including airports and flight information.
+    primary_category: aviation
+    secondary_categories: []
+    capabilities:
+      - airport_information
+      - flight_reference
+    endpoints:
+      base_url: https://api.aviationapi.com
+      api_version: v1
+      documentation_url: https://docs.aviationapi.com
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: AVIATIONAPI_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Free tier with daily limits.
+    commercial_use:
+      status: unknown
+      notes: Review provider terms before commercial use.
+    redistribution:
+      status: unknown
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 100
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Free tier daily quota per provider documentation.
+    data_characteristics:
+      freshness: delayed
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: Reference data only.
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Official Arbeitnow API documentation reviewed.
+  - provider_id: ai-dev-jobs
+    name: AI Dev Jobs API
+    short_name: AI Dev Jobs
+    description: >
+      Free public API listing AI and machine-learning developer job opportunities from multiple sources aggregated for
+      the AI/ML engineering community.
+    primary_category: jobs_skills
+    capabilities:
+      - job_search
+      - career_opportunities
+    endpoints:
+      base_url: https://ai.devjobs.app/api
+      api_version: v1
+      documentation_url: https://ai.devjobs.app/
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: can-i-enter
+    name: Can I Enter
+    short_name: Can I Enter
+    description: Visa and entry requirement reference information by nationality and destination.
+    primary_category: travel
+    secondary_categories: []
+    capabilities:
+      - entry_requirements
+      - visa_entry
+    endpoints:
+      base_url: https://canienter.com/api
+      api_version: v1
+      documentation_url: https://canienter.com/api-docs
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public REST API.
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Free public job listings.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+      notes: Public reference API.
+    commercial_use:
+      status: unknown
+      notes: Reference only — not legal advice or admissibility guarantee.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      notes: Enforce SunRey caching.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: AI/ML engineering roles.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+      canonical_provider_interface: OpportunityProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: Rules change frequently; freshness must be exposed.
+    sunrey:
+      domain:
+        - travel
+        - action_center
+      canonical_provider_interface: TravelProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
+  - provider_id: artificial-intelligence-jobs
+    name: Artificial Intelligence Jobs
+    short_name: AI Jobs
+    description: >
+      Free public job board API focused on artificial intelligence, data science, and machine learning career
+      opportunities.
+    primary_category: jobs_skills
+    capabilities:
+      - job_search
+      - career_opportunities
+    endpoints:
+      base_url: https://artificialintelligencejobs.co.uk/api
+      api_version: v1
+      documentation_url: https://artificialintelligencejobs.co.uk/
+      notes: Reference information only — not admissibility guarantee.
+  - provider_id: transport-rest
+    name: Transport.rest
+    short_name: Transport.rest
+    description: Swiss public transport connections, departures, and station reference.
+    primary_category: transportation
+    secondary_categories: []
+    capabilities:
+      - public_transit
+      - transit_route
+      - transit_departure
+    endpoints:
+      base_url: https://transport.rest
+      api_version: v1
+      documentation_url: https://transport.rest
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public REST API.
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+      notes: Open Swiss transport API.
+    commercial_use:
+      status: attribution_required
+      notes: OpenTransportData attribution.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      notes: Enforce SunRey caching.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GB
+        - EU
+        - GLOBAL
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: AI/ML focused roles.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+      canonical_provider_interface: OpportunityProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - CH
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: transitland
+    name: TransitLand
+    short_name: TransitLand
+    description: Global public transit feeds, routes, stops, and departure schedules.
+    primary_category: transportation
+    secondary_categories: []
+    capabilities:
+      - public_transit
+      - transit_route
+      - transit_departure
+    endpoints:
+      base_url: https://transit.land/api/v2
+      api_version: v2
+      documentation_url: https://www.transit.land/documentation
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: TRANSITLAND_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Free developer tier.
+    commercial_use:
+      status: attribution_required
+      notes: Transitland attribution required.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 60
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Free tier rate limits per Transitland documentation.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - travel
+        - world
+        - economic_graph
+      canonical_provider_interface: TravelProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: open-charge-map
+    name: Open Charge Map
+    short_name: OCM
+    description: Global EV charging location reference and connector metadata.
+    primary_category: transportation
+    secondary_categories: []
+    capabilities:
+      - ev_charging
+      - mobility_status
+    endpoints:
+      base_url: https://api.openchargemap.io/v3
+      api_version: v3
+      documentation_url: https://openchargemap.org/site/develop/api
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: OPENCHARGEMAP_API_KEY
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Free API key registration.
+    commercial_use:
+      status: attribution_required
+      notes: Open Charge Map attribution required.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 1000
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Daily quota per provider documentation.
+    data_characteristics:
+      freshness: delayed
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: Availability not guaranteed real-time unless provider supplies it.
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
+  - provider_id: freehire
+    name: Freehire Job API
+    short_name: Freehire
+    description: |
+      Free public job listings API providing technology and startup job opportunities with remote and location filters.
+    primary_category: jobs_skills
+    capabilities:
+      - job_search
+      - employment_market
+      - career_opportunities
+    endpoints:
+      base_url: https://freehire.app/api
+      api_version: v1
+      documentation_url: https://freehire.app/
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: bc-ferries
+    name: BC Ferries
+    short_name: BC Ferries
+    description: British Columbia ferry schedules, routes, and terminal reference.
+    primary_category: transportation
+    secondary_categories: []
+    capabilities:
+      - public_transit
+      - transit_route
+      - transit_departure
+    endpoints:
+      base_url: https://www.bcferries.com/api
+      api_version: v1
+      documentation_url: https://www.bcferries.com
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public REST API.
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: Public schedule API.
+    commercial_use:
+      status: unknown
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      notes: Enforce SunRey caching.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: Startup and tech roles.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+        - action_center
+      canonical_provider_interface: OpportunityProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - CA
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: Ferry mode transit.
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: low
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
+  - provider_id: graphql-jobs
+    name: GraphQL Jobs API
+    short_name: GraphQL Jobs
+    description: >
+      Free public job board API listing GraphQL, TypeScript, and full-stack developer opportunities from the GraphQL
+      community.
+    primary_category: jobs_skills
+    capabilities:
+      - job_search
+      - career_opportunities
+    endpoints:
+      base_url: https://graphql.jobs/api
+      api_version: v1
+      documentation_url: https://graphql.jobs/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public REST API.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: entur
+    name: Entur
+    short_name: Entur
+    description: Norway national public transport journey planning, routes, and departures.
+    primary_category: transportation
+    secondary_categories: []
+    capabilities:
+      - public_transit
+      - transit_route
+      - transit_departure
+      - mobility_status
+    endpoints:
+      base_url: https://api.entur.io
+      api_version: v1
+      documentation_url: https://developer.entur.org
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: ENTUR_CLIENT_ID
+      notes: OAuth client credentials.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Free developer registration.
+    commercial_use:
+      status: attribution_required
+      notes: Entur attribution required.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      notes: Enforce SunRey caching.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: GraphQL and TypeScript roles.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+      canonical_provider_interface: OpportunityProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 60
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Developer tier limits per Entur documentation.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - NO
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - travel
+        - world
+        - economic_graph
+      canonical_provider_interface: TravelProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
+  - provider_id: techrole-index
+    name: TechRole Index
+    short_name: TechRole Index
+    description: >
+      Free public technology role and skill demand index providing occupation titles, skill requirements, and market
+      demand signals for tech careers.
+    primary_category: jobs_skills
+    secondary_categories:
+      - occupations
+    capabilities:
+      - occupations
+      - skills
+      - employment_market
+      - salaries
+    endpoints:
+      base_url: https://techroleindex.com/api
+      api_version: v1
+      documentation_url: https://techroleindex.com/
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: open-food-facts
+    name: Open Food Facts
+    short_name: OFF
+    description: Community-maintained open database of food products with ingredients, allergens, and nutrition facts.
+    primary_category: food_nutrition
+    secondary_categories: []
+    capabilities:
+      - food_product
+      - nutrition
+      - food_reference
+    endpoints:
+      base_url: https://world.openfoodfacts.org
+      api_version: v2
+      documentation_url: https://openfoodfacts.github.io/openfoodfacts-server/api/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public REST API.
+      notes: Public read API.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      notes: Long cache TTL for taxonomy data.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - US
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Occupation and skill demand reference.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+      canonical_provider_interface: OpportunityProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: derived_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
+      notes: Open Database Licence (ODbL).
+    commercial_use:
+      status: attribution_required
+      notes: ODbL share-alike; attribution to Open Food Facts required.
+    redistribution:
+      status: attribution_required
+      notes: Community-contributed data; verify product accuracy.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 100
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Fair-use limits; enforce SunRey caching.
+    data_characteristics:
+      freshness: delayed
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: User-contributed product records.
+    sunrey:
+      domain:
+        - hin
+        - world
+        - vault
+      canonical_provider_interface: HealthReferenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/health-reference/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
+  - provider_id: open-skills
+    name: Open Skills API
+    short_name: Open Skills
+    description: >
+      Free open skills taxonomy API providing canonical skill names, aliases, categories, and related occupation
+      mappings from open labor-market data.
+    primary_category: jobs_skills
+    capabilities:
+      - skills
+      - occupations
+    endpoints:
+      base_url: https://api.openskills.network
+      api_version: v1
+      documentation_url: https://openskills.network/
+      notes: Wave 6 Prompt 22 fixture adapter. Reference only — not medical advice.
+  - provider_id: usda-fooddata-central
+    name: USDA FoodData Central
+    short_name: USDA FDC
+    description: U.S. Department of Agriculture authoritative food composition and nutrient reference database.
+    primary_category: food_nutrition
+    secondary_categories: []
+    capabilities:
+      - food_product
+      - nutrition
+      - food_reference
+    endpoints:
+      base_url: https://api.nal.usda.gov/fdc
+      api_version: v1
+      documentation_url: https://fdc.nal.usda.gov/api-guide.html
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: USDA_FDC_API_KEY
+      notes: Free API key from data.gov.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Free government API key.
+    commercial_use:
+      status: verified_allowed
+      notes: U.S. government open data.
+    redistribution:
+      status: allowed
+      notes: Public domain U.S. government data.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: 3600
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: 3600 requests per hour per API key.
+    data_characteristics:
+      freshness: monthly
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Authoritative government nutrition reference.
+    sunrey:
+      domain:
+        - hin
+        - world
+        - grow
+      canonical_provider_interface: HealthReferenceProvider
+      priority: critical
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/health-reference/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 6 Prompt 22 fixture adapter.
+  - provider_id: medlineplus-genetics
+    name: MedlinePlus Genetics
+    short_name: MedlinePlus
+    description: NIH MedlinePlus educational genetics reference for genes, conditions, and inheritance patterns.
+    primary_category: health
+    secondary_categories: []
+    capabilities:
+      - genetics_reference
+      - health_reference
+    endpoints:
+      base_url: https://medlineplus.gov
+      api_version: null
+      documentation_url: https://medlineplus.gov/about/developers/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public REST API.
+      notes: Public educational content feeds.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      notes: Long cache TTL for taxonomy.
+    data_characteristics:
+      freshness: weekly
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Skills taxonomy and occupation mappings.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+      canonical_provider_interface: OpportunityProvider
+      priority: critical
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
+      notes: NIH public educational resource.
+    commercial_use:
+      status: verified_allowed
+      notes: U.S. government public domain educational content.
+    redistribution:
+      status: allowed
+      notes: NIH attribution recommended.
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Enforce SunRey caching for educational content.
+    data_characteristics:
+      freshness: monthly
+      geographic_scope:
+        - US
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Educational genetics reference only — not personalized interpretation.
+    sunrey:
+      domain:
+        - hin
+        - world
+        - research
+      canonical_provider_interface: HealthReferenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/health-reference/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
+  - provider_id: noozra
+    name: Noozra News API
+    short_name: Noozra
+    description: >
+      Free public news aggregation API providing job-market, technology, and economic opportunity context from curated
+      news sources.
+    primary_category: jobs_skills
+    secondary_categories:
+      - research
+    capabilities:
+      - public_opportunity_data
+      - employment_market
+    endpoints:
+      base_url: https://api.noozra.com
+      api_version: v1
+      documentation_url: https://noozra.com/
+      status_url: null
+    authentication:
+      type: api_key
+      required: false
+      registration_required: false
+      environment_variable: NOOZRA_API_KEY
+      notes: Optional API key for higher rate limits.
+      notes: Educational reference only. Must not attach to user DNA without explicit consent.
+  - provider_id: openfda
+    name: openFDA
+    short_name: openFDA
+    description: U.S. FDA open API for drug labels, adverse events, recalls, and medical device reference data.
+    primary_category: health
+    secondary_categories: []
+    capabilities:
+      - drug_reference
+      - medical_device_reference
+      - health_reference
+    endpoints:
+      base_url: https://api.fda.gov
+      api_version: null
+      documentation_url: https://open.fda.gov/apis/
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: OPENFDA_API_KEY
+      notes: Free API key registration.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Free FDA open data API key.
+    commercial_use:
+      status: verified_allowed
+      notes: U.S. government open data.
+    redistribution:
+      status: allowed
+      notes: Public domain FDA data.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: 240
+      requests_per_day: 120000
+      monthly_quota: null
+      concurrency_limit: null
+      notes: 240 requests per minute; 120,000 per day with API key.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Drug/device reference and enforcement — not prescribing advice.
+    sunrey:
+      domain:
+        - hin
+        - world
+        - research
+        - financial_agent
+      canonical_provider_interface: HealthReferenceProvider
+      priority: critical
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/health-reference/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Reference metadata only. Adverse events are not user diagnoses.
+  - provider_id: nppes
+    name: NPPES NPI Registry
+    short_name: NPPES
+    description: U.S. CMS National Plan and Provider Enumeration System healthcare provider directory.
+    primary_category: health
+    secondary_categories: []
+    capabilities:
+      - healthcare_provider_reference
+      - health_reference
+    endpoints:
+      base_url: https://npiregistry.cms.hhs.gov/api
+      api_version: v2.1
+      documentation_url: https://npiregistry.cms.hhs.gov/api-page
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public provider lookup API.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      notes: Short cache TTL for news.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: Job-market and economic news; not verified fact.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - world
+        - action_center
+      canonical_provider_interface: OpportunityProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: derived_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
+      notes: Public CMS API.
+    commercial_use:
+      status: verified_allowed
+      notes: U.S. government open data.
+    redistribution:
+      status: allowed
+      notes: Directory inclusion is not quality endorsement.
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Enforce SunRey caching for directory lookups.
+    data_characteristics:
+      freshness: weekly
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Provider directory — not licensure verification beyond source scope.
+    sunrey:
+      domain:
+        - hin
+        - world
+      canonical_provider_interface: HealthReferenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/health-reference/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
+  - provider_id: datacube-ai
+    name: DataCube AI Intelligence
+    short_name: DataCube AI
+    description: >
+      Free public market intelligence API providing technology trends, hiring signals, and economic opportunity context
+      from aggregated open data.
+    primary_category: jobs_skills
+    secondary_categories:
+      - research
+    capabilities:
+      - public_opportunity_data
+      - employment_market
+    endpoints:
+      base_url: https://api.datacube.ai
+      api_version: v1
+      documentation_url: https://datacube.ai/
+      notes: Directory semantics preserved. Not insurance eligibility.
+  - provider_id: clinicaltrials-gov
+    name: ClinicalTrials.gov
+    short_name: ClinicalTrials
+    description: U.S. National Library of Medicine clinical trial registry and results database.
+    primary_category: health
+    secondary_categories: []
+    capabilities:
+      - clinical_trials
+      - health_reference
+    endpoints:
+      base_url: https://clinicaltrials.gov/api/v2
+      api_version: v2
+      documentation_url: https://clinicaltrials.gov/data-api/api
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public REST API.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      notes: Short cache TTL.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Derived intelligence; not verified fact.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - world
+      canonical_provider_interface: OpportunityProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: derived_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
+      notes: NLM public API.
+    commercial_use:
+      status: verified_allowed
+      notes: U.S. government open data.
+    redistribution:
+      status: allowed
+      notes: Informational trial data only.
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Enforce SunRey caching.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - US
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Trial status informational — not user eligibility determination.
+    sunrey:
+      domain:
+        - hin
+        - world
+        - research
+        - grow
+        - financial_agent
+      canonical_provider_interface: HealthReferenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/health-reference/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
+  - provider_id: hackernews
+    name: Hacker News API
+    short_name: HackerNews
+    description: >
+      Free public Hacker News API (Algolia) providing technology hiring signals, startup opportunities, and community
+      job-market context from Who is Hiring threads.
+    primary_category: jobs_skills
+    secondary_categories:
+      - research
+    capabilities:
+      - public_opportunity_data
+      - employment_market
+      - career_opportunities
+    endpoints:
+      base_url: https://hn.algolia.com/api
+      api_version: v1
+      documentation_url: https://hn.algolia.com/api
+      notes: Advisory discovery only. No automated eligibility.
+  - provider_id: nhs-scotland-open-data
+    name: Open Data NHS Scotland
+    short_name: NHS Scotland
+    description: Scottish NHS open health statistics and public health datasets.
+    primary_category: health
+    secondary_categories: []
+    capabilities:
+      - public_health
+      - health_reference
+    endpoints:
+      base_url: https://www.opendata.nhs.scot
+      api_version: null
+      documentation_url: https://www.opendata.nhs.scot/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public Algolia HN API.
+      notes: CKAN open data portal.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: 10
+      notes: Algolia HN API rate limits.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: Community content; not verified fact.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - world
+        - action_center
+      canonical_provider_interface: OpportunityProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
+      notes: Open Government Licence Scotland.
+    commercial_use:
+      status: attribution_required
+      notes: Open Government Licence v3.0.
+    redistribution:
+      status: attribution_required
+      notes: NHS Scotland attribution required.
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Enforce SunRey caching.
+    data_characteristics:
+      freshness: monthly
+      geographic_scope:
+        - GB
+        - Scotland
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Aggregate public health statistics.
+    sunrey:
+      domain:
+        - hin
+        - world
+      canonical_provider_interface: HealthReferenceProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/health-reference/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Official Algolia HN API documentation reviewed.
+  - provider_id: bluesky-public
+    name: Bluesky Public Feeds
+    short_name: Bluesky
+    description: >
+      Free public Bluesky AT Protocol feeds providing technology career signals, hiring announcements, and economic
+      opportunity context from public posts.
+    primary_category: jobs_skills
+    secondary_categories:
+      - research
+    capabilities:
+      - public_opportunity_data
+      - employment_market
+    endpoints:
+      base_url: https://public.api.bsky.app
+      api_version: v1
+      documentation_url: https://docs.bsky.app/
+      notes: Aggregate public health data only.
+  - provider_id: hdx-health
+    name: Humanitarian Data Exchange (Health)
+    short_name: HDX Health
+    description: OCHA HDX humanitarian health datasets including disease outbreaks and health facility references.
+    primary_category: health
+    secondary_categories: []
+    capabilities:
+      - public_health
+      - health_reference
+    endpoints:
+      base_url: https://data.humdata.org/api/3
+      api_version: v3
+      documentation_url: https://data.humdata.org/faq
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public AT Protocol API; no authentication for read-only public feeds.
+      notes: Public CKAN API; optional API key for higher limits.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: unclear
+      notes: Review Bluesky terms for commercial redistribution.
+    redistribution:
+      status: attribution_required
+      notes: Social content attribution required.
+    rate_limits:
+      documented: true
+      requests_per_second: 3
+      notes: Bluesky public API rate limits.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: Social content; not verified fact; authority_class community_data.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - world
+      canonical_provider_interface: OpportunityProvider
+      priority: low
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
+      notes: Humanitarian open data.
+    commercial_use:
+      status: attribution_required
+      notes: Dataset-specific licenses apply.
+    redistribution:
+      status: attribution_required
+      notes: Per-dataset terms; verify before redistribution.
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Enforce SunRey caching.
+    data_characteristics:
+      freshness: weekly
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Health-relevant humanitarian datasets only.
+    sunrey:
+      domain:
+        - hin
+        - world
+        - research
+      canonical_provider_interface: HealthReferenceProvider
+      priority: medium
+      launch_tier: secondary_source
+      authority_class: research_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/health-reference/adapters/fixture-adapters.ts
+    verification:
+      status: partially_verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Dataset-level license review required for production activation.
+  - provider_id: longevity-world-cup
+    name: Longevity World Cup
+    short_name: LWC
+    description: Open longevity and wellness research reference data including biomarker benchmarks and healthspan metrics.
+    primary_category: health
+    secondary_categories: []
+    capabilities:
+      - wellness_reference
+      - health_reference
+    endpoints:
+      base_url: https://api.longevityworldcup.com
+      api_version: v1
+      documentation_url: https://longevityworldcup.com/api
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public reference endpoints.
+    access:
+      status: free_tier
+      free_tier_verified: false
+      registration_required: false
+      notes: Free tier availability partially verified.
+    commercial_use:
+      status: unclear
+      notes: Commercial redistribution terms require review.
+    redistribution:
+      status: unclear
+      notes: Terms not fully verified.
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: monthly
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Wellness research reference — not medical advice.
+    sunrey:
+      domain:
+        - hin
+        - world
+        - research
+      canonical_provider_interface: HealthReferenceProvider
+      priority: low
+      launch_tier: research_only
+      authority_class: research_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/health-reference/adapters/fixture-adapters.ts
+    verification:
+      status: partially_verified
+      verified_against_official_docs: false
+      last_verified: 2026-08-31
+      notes: Preview only. Production activation blocked pending terms review.
+  - primary_category: compliance
+    secondary_categories: []
+    capabilities:
+      - sanctions
+      - pep_screening
+      - adverse_media
+    endpoints:
+      base_url: null
+      api_version: null
+      documentation_url: null
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: no_longer_free
+      free_tier_verified: false
+      registration_required: true
+      notes: Commercial only.
+    commercial_use:
+      status: requires_legal_review
+      notes: Paid commercial service.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: unverified
+      verified_against_official_docs: false
+      last_verified: null
+      notes: Blocked — commercial only, no free tier.
+    sunrey:
+      domain:
+        - compliance
+      canonical_provider_interface: ComplianceEvidenceProvider
+      priority: low
+      launch_tier: blocked_pending_review
+      authority_class: regulated_provider
+      integration_state: catalog_only
+      existing_adapter: null
+  - provider_id: un-sanctions
+    name: UN Security Council Sanctions
+    short_name: UN Sanctions
+    description: United Nations Security Council consolidated sanctions list.
+    primary_category: compliance
+    capabilities:
+      - sanctions
+      - watchlists
+    endpoints:
+      base_url: https://scsanctions.un.org
+      api_version: null
+      documentation_url: https://www.un.org/securitycouncil/sanctions/information
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+    authority_class: authoritative_official
+    sunrey:
+      domain:
+        - compliance
+      canonical_provider_interface: ComplianceEvidenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+  - provider_id: eu-sanctions
+    name: EU Consolidated Sanctions List
+    short_name: EU Sanctions
+    description: European Union consolidated financial sanctions list.
+    primary_category: compliance
+    capabilities:
+      - sanctions
+      - watchlists
+    endpoints:
+      base_url: https://webgate.ec.europa.eu
+      api_version: null
+      documentation_url: https://finance.ec.europa.eu/eu-and-world/sanctions-restrictive-measures_en
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+    sunrey:
+      domain:
+        - compliance
+      canonical_provider_interface: ComplianceEvidenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+  - provider_id: gleif-lei
+    name: GLEIF LEI Registry
+    short_name: GLEIF
+    description: Global Legal Entity Identifier Foundation open LEI data.
+    primary_category: kyb_identity
+    capabilities:
+      - kyb
+      - corporate_identity
+      - lei_lookup
+    endpoints:
+      base_url: https://api.gleif.org
+      api_version: v1
+      documentation_url: https://www.gleif.org/en/lei-data/gleif-api
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+    sunrey:
+      domain:
+        - compliance
+        - world
+      canonical_provider_interface: BusinessIdentityEvidenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+  - provider_id: companies-house-uk
+    name: UK Companies House API
+    short_name: Companies House
+    description: UK company registration and officer data from Companies House.
+    primary_category: kyb_identity
+    capabilities:
+      - kyb
+      - corporate_identity
+      - officer_lookup
+    endpoints:
+      base_url: https://api.company-information.service.gov.uk
+      api_version: v1
+      documentation_url: https://developer.company-information.service.gov.uk/
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: COMPANIES_HOUSE_API_KEY
+      notes: Free API key from Companies House developer portal.
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: 600 requests per 5 minutes on free tier.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+    sunrey:
+      domain:
+        - compliance
+        - world
+      canonical_provider_interface: BusinessIdentityEvidenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+  - provider_id: opencorporates
+    name: OpenCorporates
+    short_name: OpenCorporates
+    description: Open database of company data from official registries worldwide.
+    primary_category: kyb_identity
+    capabilities:
+      - kyb
+      - corporate_identity
+    endpoints:
+      base_url: https://api.opencorporates.com
+      api_version: v0.4
+      documentation_url: https://api.opencorporates.com/documentation/API-Reference
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: OPENCORPORATES_API_KEY
+      notes: Free tier with rate limits.
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Limited free tier.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+    sunrey:
+      domain:
+        - compliance
+        - world
+      canonical_provider_interface: BusinessIdentityEvidenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+  - provider_id: abuseipdb
+    name: AbuseIPDB
+    short_name: AbuseIPDB
+    description: Community-driven IP address abuse reporting and reputation database.
+    primary_category: fraud_risk
+    capabilities:
+      - ip_risk
+      - network_risk
+      - fraud_detection
+    endpoints:
+      base_url: https://api.abuseipdb.com
+      api_version: v2
+      documentation_url: https://docs.abuseipdb.com/
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: ABUSEIPDB_API_KEY
+      notes: Free tier with daily check limits.
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: 1000 checks/day on free tier.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+    sunrey:
+      domain:
+        - compliance
+        - cybersecurity
+      canonical_provider_interface: DigitalRiskEvidenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+  - provider_id: ip-api
+    name: IP-API
+    short_name: IP-API
+    description: IP geolocation and network information service.
+    primary_category: fraud_risk
+    capabilities:
+      - ip_risk
+      - network_risk
+      - geolocation
+    endpoints:
+      base_url: http://ip-api.com
+      api_version: null
+      documentation_url: http://ip-api.com/docs
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 45
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: 45 requests per minute from single IP on free tier.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+    sunrey:
+      domain:
+        - compliance
+        - cybersecurity
+      canonical_provider_interface: DigitalRiskEvidenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+  - provider_id: mozilla-http-observatory
+    name: Mozilla HTTP Observatory
+    short_name: HTTP Observatory
+    description: Mozilla HTTP security header and configuration scanner.
+    primary_category: cybersecurity
+    capabilities:
+      - http_security
+      - endpoint_security
+    endpoints:
+      base_url: https://http-observatory.security.mozilla.org
+      api_version: v2
+      documentation_url: https://github.com/mozilla/http-observatory/blob/master/httpobs/docs/api.md
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+    sunrey:
+      domain:
+        - cybersecurity
+        - infrastructure
+      canonical_provider_interface: EndpointSecurityProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+  - provider_id: mozilla-tls-observatory
+    name: Mozilla TLS Observatory
+    short_name: TLS Observatory
+    description: Mozilla TLS configuration and certificate analysis.
+    primary_category: cybersecurity
+    capabilities:
+      - tls_security
+      - endpoint_security
+    endpoints:
+      base_url: https://tls-observatory.services.mozilla.com
+      api_version: v1
+      documentation_url: https://github.com/mozilla/tls-observatory
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+    sunrey:
+      domain:
+        - cybersecurity
+        - infrastructure
+      canonical_provider_interface: EndpointSecurityProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+  - provider_id: phishstats
+    name: PhishStats
+    short_name: PhishStats
+    description: Phishing URL intelligence feed.
+    primary_category: cybersecurity
+    capabilities:
+      - phishing
+      - threat_intelligence
+      - malicious_url
+    endpoints:
+      base_url: https://phishstats.info
+      api_version: v1
+      documentation_url: https://phishstats.info/api
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+    sunrey:
+      domain:
+        - cybersecurity
+        - compliance
+      canonical_provider_interface: ThreatIntelligenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+  - provider_id: virushee
+    name: Virushee
+    short_name: Virushee
+    description: Community malware hash and URL intelligence.
+    primary_category: cybersecurity
+    capabilities:
+      - malware
+      - threat_intelligence
+    endpoints:
+      base_url: https://virushee.com
+      api_version: v1
+      documentation_url: https://virushee.com/api
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: partially_verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Community threat feed; terms partially verified.
+    sunrey:
+      domain:
+        - cybersecurity
+      canonical_provider_interface: ThreatIntelligenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+  - provider_id: cloudflare-trace
+    name: Cloudflare Trace
+    short_name: CF Trace
+    description: Cloudflare diagnostic trace for network path analysis.
+    primary_category: cybersecurity
+    capabilities:
+      - domain_security
+      - network_diagnostics
+    endpoints:
+      base_url: https://1.1.1.1
+      api_version: null
+      documentation_url: https://developers.cloudflare.com/1.1.1.1/
+      status_url: https://www.cloudflarestatus.com/
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+    sunrey:
+      domain:
+        - cybersecurity
+        - infrastructure
+      canonical_provider_interface: EndpointSecurityProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+  - provider_id: outagedeck
+    name: OutageDeck
+    short_name: OutageDeck
+    description: Third-party service outage aggregation and status monitoring.
+    primary_category: cybersecurity
+    capabilities:
+      - outage_monitoring
+      - service_status
+    endpoints:
+      base_url: https://outagedeck.com
+      api_version: null
+      documentation_url: https://outagedeck.com/api
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+    sunrey:
+      domain:
+        - cybersecurity
+        - infrastructure
+        - action_center
+      canonical_provider_interface: ServiceOutageProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+  - provider_id: downstatus
+    name: DownStatus
+    short_name: DownStatus
+    description: Service availability and outage status aggregator.
+    primary_category: cybersecurity
+    capabilities:
+      - outage_monitoring
+      - service_status
+    endpoints:
+      base_url: https://downstatus.com
+      api_version: null
+      documentation_url: https://downstatus.com/api
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 4 Prompt 17 fixture-backed adapter.
+    sunrey:
+      domain:
+        - cybersecurity
+        - infrastructure
+        - action_center
+      canonical_provider_interface: ServiceOutageProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave4/adapters.ts
+  - provider_id: dow-jones-risk
+    name: Dow Jones Risk & Compliance
+    short_name: Dow Jones
+    description: Commercial risk and compliance data. Paid subscription required.
+    primary_category: compliance
+    capabilities:
+      - sanctions
+      - pep_screening
+      - adverse_media
+    endpoints:
+      base_url: null
+      api_version: null
+      documentation_url: null
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: no_longer_free
+      free_tier_verified: false
+      registration_required: true
+      notes: Commercial only.
+    commercial_use:
+      status: requires_legal_review
+      notes: Paid commercial service.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: unverified
+      verified_against_official_docs: false
+      last_verified: null
+      notes: Blocked — commercial only.
+    sunrey:
+      domain:
+        - compliance
+      canonical_provider_interface: ComplianceEvidenceProvider
+      priority: low
+      launch_tier: blocked_pending_review
+      authority_class: regulated_provider
+      integration_state: catalog_only
+      existing_adapter: null
+  - provider_id: lexisnexis-bridger
+    name: LexisNexis Bridger
+    short_name: Bridger
+    description: Commercial AML/sanctions screening platform. No free tier.
+    primary_category: compliance
+    capabilities:
+      - sanctions
+      - pep_screening
+      - aml
+    endpoints:
+      base_url: null
+      api_version: null
+      documentation_url: null
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: no_longer_free
+      free_tier_verified: false
+      registration_required: true
+      notes: Commercial only.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: unverified
+      verified_against_official_docs: false
+      last_verified: null
+      notes: Blocked — commercial only.
+    sunrey:
+      domain:
+        - compliance
+      canonical_provider_interface: ComplianceEvidenceProvider
+      priority: low
+      launch_tier: blocked_pending_review
+      authority_class: regulated_provider
+      integration_state: catalog_only
+      existing_adapter: null
+  - provider_id: pep-wikidata-legacy
+    name: Wikidata PEP (Legacy)
+    short_name: Wikidata PEP
+    description: Legacy community PEP dataset. Deprecated in favor of OpenSanctions.
+    primary_category: compliance
+    capabilities:
+      - pep_screening
+    endpoints:
+      base_url: null
+      api_version: null
+      documentation_url: null
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    verification:
+      status: deprecated
+      verified_against_official_docs: false
+      last_verified: 2024-01-01
+      notes: Deprecated — use OpenSanctions instead.
+    sunrey:
+      domain:
+        - compliance
+        - research
+      canonical_provider_interface: ComplianceEvidenceProvider
+      priority: low
+      launch_tier: research_only
+      authority_class: community_data
+      integration_state: catalog_only
+      existing_adapter: null
+  - primary_category: compliance
+    secondary_categories: []
+    capabilities:
+      - wanted_persons
+      - watchlists
+      - public_enforcement_data
+    endpoints:
+      base_url: https://ws-public.interpol.int
+      api_version: v1
+      documentation_url: https://interpol.api.bund.dev/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public unauthenticated API.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Public API; no authentication required.
+    commercial_use:
+      status: verified_allowed
+      notes: Public law-enforcement notices API; use for screening evidence only.
+    redistribution:
+      status: attribution_required
+      notes: INTERPOL data usage subject to INTERPOL terms; evidence references only in SunRey.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Simulation uses fixtures only; respect provider quotas in production.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - compliance
+        - world
+      canonical_provider_interface: ComplianceIntelligenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: adapter_implemented
+      existing_adapter: packages/kernel/src/compliance-intelligence/adapters/interpol-red-notices.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Public Red Notices API; wanted-person classification separate from sanctions.
+    provider_id: interpol-red-notices
+    name: INTERPOL Red Notices
+    short_name: INTERPOL
+    description: Public INTERPOL Red Notices API for wanted-person lookups. Distinct from sanctions lists; wanted status is
+      a separate evidence classification.
   - provider_id: national-grid-eso
     name: National Grid ESO Data Portal
     short_name: NG ESO
@@ -2044,13 +5404,6 @@ providers:
     primary_category: environmental
     secondary_categories:
       - natural_resources
-      last_verified: 2026-08-30
-      notes: Wave 3 Prompt 12 fixture-backed adapter.
-  - provider_id: coinmarketcap
-    name: CoinMarketCap
-    short_name: CMC
-    description: CoinMarketCap API providing cryptocurrency quotes, capitalization metrics, and metadata. Requires API key.
-    primary_category: cryptocurrency
     capabilities:
       - carbon_intensity
       - resource_data
@@ -2087,7 +5440,6 @@ providers:
       notes: Documented free-tier rate limit.
     data_characteristics:
       freshness: daily
-      freshness: delayed
       geographic_scope:
         - global
       historical_data: true
@@ -2161,7 +5513,6 @@ providers:
       notes: Per-URL carbon estimates; not grid telemetry.
     sunrey:
       domain:
-        - exchange
         - world
         - research
       canonical_provider_interface: ResourceDataProvider
@@ -2312,106 +5663,29 @@ providers:
       verified_against_official_docs: false
       last_verified: 2026-08-31
       notes: Blocked pending legal review of free-tier commercial terms.
-      last_verified: 2026-08-30
-      notes: Blocked pending credential and commercial review.
-  - primary_category: compliance
-    secondary_categories: []
-    capabilities:
-      - sanctions
-      - pep_screening
-      - watchlists
-      - adverse_regulatory_data
-      - entity_resolution
+  - secondary_categories: []
     endpoints:
-      base_url: https://api.opensanctions.org
+      base_url: https://api.open-meteo.com
       api_version: v1
-      documentation_url: https://www.opensanctions.org/docs/api/
-      status_url: https://www.opensanctions.org/
-    authentication:
-      type: api_key
-      required: false
-      registration_required: false
-      environment_variable: OPENSANCTIONS_API_KEY
-      notes: Optional API key for higher limits; bulk non-commercial use does not require a key.
-    access:
-      status: verified_free
-      free_tier_verified: true
-      registration_required: false
-      notes: Free for non-commercial use; API trial keys available for evaluation.
-    commercial_use:
-      status: restricted
-      notes: CC BY-NC 4.0 for bulk data. Commercial compliance screening requires paid license. Production activation blocked
-        pending legal review.
-    redistribution:
-      status: attribution_required
-      notes: OpenSanctions attribution required per dataset terms.
-    rate_limits:
-      documented: true
-      requests_per_second: null
-      requests_per_minute: null
-      requests_per_hour: null
-      requests_per_day: null
-      monthly_quota: null
-      concurrency_limit: null
-      notes: Simulation uses fixtures only; respect provider quotas in production.
-    data_characteristics:
-      freshness: daily
-      geographic_scope:
-        - GLOBAL
-      historical_data: true
-      realtime: false
-      data_format: json
-      notes: null
-    sunrey:
-      domain:
-        - compliance
-        - world
-        - exchange
-        - financial_agent
-      canonical_provider_interface: ComplianceIntelligenceProvider
-      priority: critical
-      launch_tier: blocked_pending_review
-      authority_class: reference_data
-      integration_state: adapter_implemented
-      existing_adapter: packages/kernel/src/compliance-intelligence/adapters/open-sanctions.ts
-    verification:
-      status: partially_verified
-      verified_against_official_docs: true
-      last_verified: 2026-08-30
-      notes: Commercial use restricted; adapter is preview_only until counsel confirms license.
-    provider_id: open-sanctions
-    name: OpenSanctions
-    short_name: OpenSanctions
-    description: Open database of sanctions, PEPs, and watchlists aggregating OFAC, UN, EU, UK, and national lists. Bulk
-      data is CC BY-NC 4.0; commercial screening requires a paid license.
-  - primary_category: compliance
-    secondary_categories: []
-    capabilities:
-      - wanted_persons
-      - watchlists
-      - public_enforcement_data
-    endpoints:
-      base_url: https://ws-public.interpol.int
-      api_version: v1
-      documentation_url: https://interpol.api.bund.dev/
+      documentation_url: https://open-meteo.com/en/docs
       status_url: null
     authentication:
       type: none
       required: false
       registration_required: false
       environment_variable: null
-      notes: Public unauthenticated API.
+      notes: null
     access:
       status: verified_free
       free_tier_verified: true
       registration_required: false
-      notes: Public API; no authentication required.
+      notes: null
     commercial_use:
       status: verified_allowed
-      notes: Public law-enforcement notices API; use for screening evidence only.
+      notes: null
     redistribution:
       status: attribution_required
-      notes: INTERPOL data usage subject to INTERPOL terms; evidence references only in SunRey.
+      notes: null
     rate_limits:
       documented: true
       requests_per_second: null
@@ -2420,32 +5694,837 @@ providers:
       requests_per_day: null
       monthly_quota: null
       concurrency_limit: null
-      notes: Simulation uses fixtures only; respect provider quotas in production.
+      notes: Respect provider quotas; simulation uses fixtures only.
     data_characteristics:
-      freshness: daily
+      freshness: realtime
       geographic_scope:
         - GLOBAL
       historical_data: true
-      realtime: false
+      realtime: true
       data_format: json
       notes: null
     sunrey:
       domain:
-        - compliance
         - world
-      canonical_provider_interface: ComplianceIntelligenceProvider
+        - grow
+        - financial_agent
+        - research
+        - moonrey
+        - travel
+      canonical_provider_interface: EnvironmentalOracleProvider
+      priority: critical
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-chain/src/environmental/adapters/open-meteo.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 19 environmental oracle subset.
+    provider_id: open-meteo
+    name: Open-Meteo
+    short_name: Open-Meteo
+    description: Free open-source weather API with global coverage and no API key required.
+    primary_category: weather
+    capabilities:
+      - weather
+      - precipitation
+      - environmental
+  - secondary_categories: []
+    endpoints:
+      base_url: https://ensemble-api.open-meteo.com
+      api_version: v1
+      documentation_url: https://open-meteo.com/en/docs/ensemble-api
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Respect provider quotas; simulation uses fixtures only.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: Ensemble model runs retain individual model identity.
+    sunrey:
+      domain:
+        - world
+        - grow
+        - financial_agent
+        - research
+        - moonrey
+        - travel
+        - infrastructure
+      canonical_provider_interface: EnvironmentalOracleProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-chain/src/environmental/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 19 environmental oracle subset.
+    provider_id: open-meteo-ensemble
+    name: Open-Meteo Ensemble
+    short_name: Open-Meteo Ensemble
+    description: Ensemble weather model forecasts from Open-Meteo with per-model identity preserved.
+    primary_category: weather
+    capabilities:
+      - weather
+      - precipitation
+      - environmental
+      - climate
+  - secondary_categories: []
+    endpoints:
+      base_url: https://api.weather.gov
+      api_version: null
+      documentation_url: https://www.weather.gov/documentation/services-web-api
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Respect provider quotas; simulation uses fixtures only.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: United States coverage only.
+    sunrey:
+      domain:
+        - world
+        - travel
+        - financial_agent
+        - research
+      canonical_provider_interface: EnvironmentalOracleProvider
+      priority: critical
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-chain/src/environmental/adapters/nws.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 19 environmental oracle subset.
+    provider_id: nws
+    name: U.S. National Weather Service
+    short_name: NWS
+    description: Official U.S. National Weather Service forecasts, observations, and alerts.
+    primary_category: weather
+    capabilities:
+      - weather
+      - environmental
+      - environmental_risk
+      - wildfire
+  - secondary_categories: []
+    endpoints:
+      base_url: https://aviationweather.gov
+      api_version: v4
+      documentation_url: https://aviationweather.gov/data/api/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Respect provider quotas; simulation uses fixtures only.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: Aviation-focused weather; global airport coverage.
+    sunrey:
+      domain:
+        - travel
+        - world
+        - financial_agent
+      canonical_provider_interface: EnvironmentalOracleProvider
       priority: high
       launch_tier: production_candidate
       authority_class: authoritative_official
       integration_state: adapter_implemented
-      existing_adapter: packages/kernel/src/compliance-intelligence/adapters/interpol-red-notices.ts
+      existing_adapter: packages/sunrey-chain/src/environmental/adapters/aviationweather-noaa.ts
     verification:
       status: verified
       verified_against_official_docs: true
-      last_verified: 2026-08-30
-      notes: Public Red Notices API; wanted-person classification separate from sanctions.
-    provider_id: interpol-red-notices
-    name: INTERPOL Red Notices
-    short_name: INTERPOL
-    description: Public INTERPOL Red Notices API for wanted-person lookups. Distinct from sanctions lists; wanted status is
-      a separate evidence classification.
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 19 environmental oracle subset.
+    provider_id: aviationweather-noaa
+    name: AviationWeather.gov (NOAA)
+    short_name: AviationWeather
+    description: NOAA Aviation Weather Center METARs, TAFs, and aviation hazard data.
+    primary_category: aviation
+    capabilities:
+      - weather
+      - environmental
+      - environmental_risk
+  - secondary_categories: []
+    endpoints:
+      base_url: https://api.pirateweather.net
+      api_version: v1
+      documentation_url: https://pirateweather.net/en/latest/API.html
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: PIRATE_WEATHER_API_KEY
+      notes: Free tier requires registration.
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Free tier for personal/non-commercial use.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Respect provider quotas; simulation uses fixtures only.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - grow
+        - financial_agent
+        - research
+        - moonrey
+        - travel
+        - infrastructure
+      canonical_provider_interface: EnvironmentalOracleProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-chain/src/environmental/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 19 environmental oracle subset.
+    provider_id: pirate-weather
+    name: Pirate Weather
+    short_name: Pirate Weather
+    description: Dark Sky-compatible weather API with free tier for personal use.
+    primary_category: weather
+    capabilities:
+      - weather
+      - precipitation
+  - secondary_categories: []
+    endpoints:
+      base_url: https://api.met.no
+      api_version: v2
+      documentation_url: https://api.met.no/weatherapi/documentation
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Respect provider quotas; simulation uses fixtures only.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: Global forecast; Norwegian official authority.
+    sunrey:
+      domain:
+        - world
+        - travel
+        - research
+      canonical_provider_interface: EnvironmentalOracleProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-chain/src/environmental/adapters/met-norway.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 19 environmental oracle subset.
+    provider_id: met-norway
+    name: MET Norway
+    short_name: MET Norway
+    description: Norwegian Meteorological Institute Locationforecast API.
+    primary_category: weather
+    capabilities:
+      - weather
+      - precipitation
+      - environmental
+  - secondary_categories: []
+    endpoints:
+      base_url: https://api.meltemi.org
+      api_version: v1
+      documentation_url: https://meltemi.org/docs
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Respect provider quotas; simulation uses fixtures only.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - grow
+        - financial_agent
+        - research
+        - moonrey
+        - travel
+        - infrastructure
+      canonical_provider_interface: EnvironmentalOracleProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-chain/src/environmental/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 19 environmental oracle subset.
+    provider_id: meltema
+    name: Meltemi
+    short_name: Meltemi
+    description: Open weather data API with global coverage.
+    primary_category: weather
+    capabilities:
+      - weather
+      - precipitation
+  - secondary_categories: []
+    endpoints:
+      base_url: https://waterservices.usgs.gov
+      api_version: null
+      documentation_url: https://waterservices.usgs.gov/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Respect provider quotas; simulation uses fixtures only.
+    data_characteristics:
+      freshness: hourly
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: United States water gauge coverage only.
+    sunrey:
+      domain:
+        - world
+        - moonrey
+        - research
+        - infrastructure
+      canonical_provider_interface: EnvironmentalOracleProvider
+      priority: critical
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-chain/src/environmental/adapters/usgs-water.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 19 environmental oracle subset.
+    provider_id: usgs-water
+    name: USGS Water Services
+    short_name: USGS Water
+    description: U.S. Geological Survey instantaneous values and daily statistics for streamgages and wells.
+    primary_category: water
+    capabilities:
+      - water_data
+      - environmental
+  - secondary_categories: []
+    endpoints:
+      base_url: https://aqs.epa.gov
+      api_version: null
+      documentation_url: https://aqs.epa.gov/aqsweb/documents/data_api.html
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Respect provider quotas; simulation uses fixtures only.
+    data_characteristics:
+      freshness: hourly
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: United States air quality monitoring network.
+    sunrey:
+      domain:
+        - world
+        - research
+        - financial_agent
+      canonical_provider_interface: EnvironmentalOracleProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-chain/src/environmental/adapters/epa.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 19 environmental oracle subset.
+    provider_id: epa
+    name: U.S. EPA Air Quality System
+    short_name: EPA AQS
+    description: U.S. Environmental Protection Agency Air Quality System monitoring data.
+    primary_category: environmental
+    capabilities:
+      - air_quality
+      - environmental
+  - secondary_categories: []
+    endpoints:
+      base_url: https://api.kanari.cc
+      api_version: v1
+      documentation_url: https://kanari.cc/docs
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Respect provider quotas; simulation uses fixtures only.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - grow
+        - financial_agent
+        - research
+        - moonrey
+        - travel
+        - infrastructure
+      canonical_provider_interface: EnvironmentalOracleProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-chain/src/environmental/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 19 environmental oracle subset.
+    provider_id: kanari
+    name: Kanari
+    short_name: Kanari
+    description: Air quality monitoring API with global sensor network.
+    primary_category: environmental
+    capabilities:
+      - air_quality
+      - environmental
+  - secondary_categories: []
+    endpoints:
+      base_url: https://earthquake.usgs.gov
+      api_version: null
+      documentation_url: https://earthquake.usgs.gov/fdsnws/event/1/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Respect provider quotas; simulation uses fixtures only.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: Global seismic event observations; not predictions.
+    sunrey:
+      domain:
+        - world
+        - research
+        - financial_agent
+        - infrastructure
+      canonical_provider_interface: EnvironmentalOracleProvider
+      priority: critical
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-chain/src/environmental/adapters/usgs-earthquake.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 19 environmental oracle subset.
+    provider_id: usgs-earthquake
+    name: USGS Earthquake Hazards Program
+    short_name: USGS Earthquake
+    description: U.S. Geological Survey real-time earthquake event feed.
+    primary_category: environmental
+    capabilities:
+      - earthquake
+      - environmental
+      - environmental_risk
+  - secondary_categories: []
+    endpoints:
+      base_url: https://api.openaq.org
+      api_version: v3
+      documentation_url: https://docs.openaq.org/
+      status_url: https://status.openaq.org/
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Respect provider quotas; simulation uses fixtures only.
+    data_characteristics:
+      freshness: hourly
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: AQI standards preserved per source; no cross-standard comparison without metadata.
+    sunrey:
+      domain:
+        - world
+        - grow
+        - financial_agent
+        - research
+        - moonrey
+        - travel
+        - infrastructure
+      canonical_provider_interface: EnvironmentalOracleProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-chain/src/environmental/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 19 environmental oracle subset.
+    provider_id: openaq
+    name: OpenAQ
+    short_name: OpenAQ
+    description: Global open air quality data platform aggregating government monitoring stations.
+    primary_category: environmental
+    capabilities:
+      - air_quality
+      - environmental
+  - secondary_categories: []
+    endpoints:
+      base_url: https://api.purpleair.com
+      api_version: v1
+      documentation_url: https://api.purpleair.com/
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: PURPLEAIR_API_KEY
+      notes: Free read API key required.
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Community sensor data.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Respect provider quotas; simulation uses fixtures only.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - research
+      canonical_provider_interface: EnvironmentalOracleProvider
+      priority: secondary
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-chain/src/environmental/adapters/purpleair.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 19 environmental oracle subset.
+    provider_id: purpleair
+    name: PurpleAir
+    short_name: PurpleAir
+    description: Community air quality sensor network with PM2.5 and PM10 readings.
+    primary_category: environmental
+    capabilities:
+      - air_quality
+      - environmental

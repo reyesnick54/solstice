@@ -1,5 +1,7 @@
 /**
  * Wave 1 Prompt 4 — provider reliability control plane types.
+ *
+ * Distinct from HTTP transport types in http-transport-types.ts.
  */
 
 export const HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE'] as const;

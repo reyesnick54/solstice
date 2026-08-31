@@ -1,16 +1,19 @@
 /**
- * Unified provider-sdk type surface.
- *
- * Split across observation, registry, HTTP transport, and reliability modules
- * to avoid merge collisions between Wave 1 prompts.
+ * Unified provider-sdk type surface — re-exports split modules without duplication.
  */
 
 export * from './observation-types.ts';
 import type { FreshnessStatus, ValidationStatus } from './observation-types.ts';
 import type { UtcInstant } from '../../domain/src/time.ts';
+export * from './registry-types.ts';
+export * from './http-transport-types.ts';
+export * from './reliability-types.ts';
 
-export const EXTERNAL_OBSERVATION_SCHEMA = 'sunrey.external-observation.v1' as const;
-export const NORMALIZATION_SCHEMA_VERSION = 1 as const;
+import { PROVIDER_AUTHORITY_CLASSES } from './registry-types.ts';
+
+export const AUTHORITY_CLASSES = PROVIDER_AUTHORITY_CLASSES;
+import type { FreshnessStatus } from './observation-types.ts';
+import type { UtcInstant } from '../../domain/src/time.ts';
 
 /**
  * Wave 1 Prompt 3 — universal provider HTTP transport contract.
@@ -19,50 +22,87 @@ export const NORMALIZATION_SCHEMA_VERSION = 1 as const;
  * Not a second provider runtime, ledger, Kernel, or Execution Authority.
  */
 
+import type { ProviderTransportError } from './errors.ts';
+
+export const PROVIDER_HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
+export type ProviderHttpMethod = (typeof PROVIDER_HTTP_METHODS)[number];
+
+export const PROVIDER_CONTENT_TYPES = [
+  'application/json',
+  'text/json',
+  'text/plain',
+  'text/csv',
+  'application/xml',
+  'text/xml',
+  'application/x-www-form-urlencoded',
+] as const;
+export type ProviderContentType = (typeof PROVIDER_CONTENT_TYPES)[number] | '*';
+
+export type ProviderRequestContext = {
+  readonly providerId: string;
+  readonly requestId: string;
+  readonly traceId?: string | undefined;
+  readonly method: ProviderHttpMethod;
+  /** Path relative to the configured provider base URL. Must start with /. */
+  readonly path: string;
+  readonly query?: Readonly<Record<string, string | number | boolean>> | undefined;
+  readonly headers?: Readonly<Record<string, string>> | undefined;
+  readonly body?: string | undefined;
+  readonly timeoutMs?: number | undefined;
+  readonly expectedContentType?: ProviderContentType | undefined;
+  readonly maximumResponseBytes?: number | undefined;
+};
+
+export type ProviderResponseMetadata = {
+  readonly providerId: string;
+  readonly requestId: string;
+  readonly traceId: string;
+  readonly httpStatus: number;
+  readonly durationMs: number;
+  readonly contentType: string | null;
+  readonly providerRequestId: string | null;
+  readonly startedAtUtc: string;
+  readonly finalUrl: string;
+};
+
+export type ProviderParsedBody =
+  | { readonly format: 'json'; readonly value: unknown }
+  | { readonly format: 'text'; readonly value: string }
+  | { readonly format: 'raw'; readonly value: string };
+
+export type ProviderTransportResponse<T = unknown> = {
+  readonly metadata: ProviderResponseMetadata;
+  readonly body: ProviderParsedBody;
+  readonly parsed: T | undefined;
+};
+
+export type ProviderTransportSuccess<T> = {
+  readonly ok: true;
+  readonly value: ProviderTransportResponse<T>;
+};
+
+export type ProviderTransportFailure = {
+  readonly ok: false;
+  readonly error: ProviderTransportError;
+};
+
+export type ProviderTransportResult<T = unknown> = ProviderTransportSuccess<T> | ProviderTransportFailure;
+export {
+  FRESHNESS_STATUSES,
+  VALIDATION_STATUSES,
+  COMMERCIAL_USE_STATUSES,
+  REDISTRIBUTION_STATUSES,
+  CONFIDENCE_BASIS,
+} from './observation-types.ts';
+export type {
+  ValidationStatus,
+  CommercialUseStatus,
+  RedistributionStatus,
+  ConfidenceBasis,
+  FreshnessStatus,
+} from './observation-types.ts';
+
 export * from './registry-types.ts';
-export {
-  PROVIDER_HTTP_METHODS,
-  PROVIDER_CONTENT_TYPES,
-  type ProviderHttpMethod,
-  type ProviderContentType,
-  type ProviderHttpRequestContext,
-  type ProviderHttpResponseMetadata,
-  type ProviderParsedBody,
-  type ProviderHttpTransportResponse,
-  type ProviderHttpTransportSuccess,
-  type ProviderHttpTransportFailure,
-  type ProviderHttpTransportResult,
-  type ProviderHttpTransport,
-  type HttpProviderRequestContext,
-  type HttpProviderResponseMetadata,
-  type ProviderParsedBody,
-  type HttpProviderTransportResponse,
-  type HttpProviderTransportSuccess,
-  type HttpProviderTransportFailure,
-  type HttpProviderTransportResult,
-  type HttpProviderTransport,
-} from './http-transport-types.ts';
-export {
-  HTTP_METHODS,
-  CIRCUIT_STATES,
-  FAILURE_CLASSIFICATIONS,
-  defaultClock,
-  isSafeReadMethod,
-  type HttpMethod,
-  type CircuitState,
-  type FailureClassification,
-  type ReliabilityTransportRequest,
-  type ReliabilityTransportResponse,
-  type ReliabilityProviderTransport,
-  type ReliabilityTransport,
-  type ProviderError,
-  type ReliabilityOutcome,
-  type DeadlineContext,
-  type FallbackContext,
-  type FallbackDecision,
-  type FallbackHook,
-  type ReliabilityClock,
-} from './reliability-types.ts';
 
 /**
  * Canonical SunRey external-data provider types.
@@ -140,17 +180,7 @@ export const PROVIDER_CAPABILITIES = [
 ] as const;
 export type ProviderCapability = (typeof PROVIDER_CAPABILITIES)[number] | string;
 
-export const PROVIDER_AUTHORITY_CLASSES = [
-  'authoritative_official',
-  'regulated_provider',
-  'reference_data',
-  'research_data',
-  'community_data',
-  'derived_data',
-] as const;
-export type ProviderAuthorityClass = (typeof PROVIDER_AUTHORITY_CLASSES)[number];
-
-export const AUTHORITY_CLASSES = PROVIDER_AUTHORITY_CLASSES;
+export type ProviderAuthorityClass = (typeof AUTHORITY_CLASSES)[number];
 export type AuthorityClass = ProviderAuthorityClass;
 
 export const PROVIDER_STATUSES = [
@@ -211,61 +241,6 @@ export const PROVIDER_HEALTH_STATES = [
   'unknown',
 ] as const;
 export type ProviderHealthState = (typeof PROVIDER_HEALTH_STATES)[number];
-
-export type ObservationSource = {
-  readonly provider: string;
-  readonly dataset: string;
-  readonly sourceUrl: string | null;
-};
-
-export type ObservationTime = {
-  readonly retrievedAt: UtcInstant;
-  readonly sourceTimestamp: UtcInstant | null;
-  readonly effectiveAt: UtcInstant | null;
-  readonly expiresAt: UtcInstant | null;
-  readonly staleAfter: UtcInstant | null;
-};
-
-export type ObservationConfidence = {
-  readonly score: number | null;
-  readonly basis: readonly ConfidenceBasis[];
-};
-
-export type ObservationQuality = {
-  readonly confidence: ObservationConfidence;
-  readonly freshnessStatus: FreshnessStatus;
-  readonly validationStatus: ValidationStatus;
-};
-
-export type ObservationProvenance = {
-  readonly requestId: string | null;
-  readonly rawPayloadHash: string;
-  readonly providerSchemaVersion: string;
-  readonly normalizationVersion: string;
-  readonly canonicalModelVersion: string | null;
-};
-
-export type ObservationLicensing = {
-  readonly commercialUseStatus: CommercialUseStatus;
-  readonly redistributionStatus: RedistributionStatus;
-};
-
-export type ExternalObservation<T> = {
-  readonly observationId: string;
-  readonly providerId: string;
-  readonly providerCategory: ProviderCategory;
-  readonly capability: string;
-  readonly data: T;
-  readonly source: ObservationSource;
-  readonly time: ObservationTime;
-  readonly quality: ObservationQuality;
-  readonly authority: {
-    readonly authorityClass: AuthorityClass;
-  };
-  readonly provenance: ObservationProvenance;
-  readonly licensing: ObservationLicensing;
-  readonly schemaVersion: typeof EXTERNAL_OBSERVATION_SCHEMA;
-};
 
 export type ProviderResult<T> =
   | { readonly ok: true; readonly value: T }
