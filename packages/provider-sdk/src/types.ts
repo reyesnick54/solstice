@@ -192,63 +192,6 @@ export type ProviderTransportFailure = {
 export type ProviderTransportResult<T = unknown> = ProviderTransportSuccess<T> | ProviderTransportFailure;
 
 export * from './registry-types.ts';
-export {
-  FRESHNESS_STATUSES,
-  VALIDATION_STATUSES,
-  COMMERCIAL_USE_STATUSES,
-  REDISTRIBUTION_STATUSES,
-  CONFIDENCE_BASIS,
-} from './observation-types.ts';
-export type {
-  ValidationStatus,
-  CommercialUseStatus,
-  RedistributionStatus,
-  ConfidenceBasis,
-} from './observation-types.ts';
-export * from './registry-types.ts';
-export {
-  PROVIDER_HTTP_METHODS,
-  PROVIDER_CONTENT_TYPES,
-  type ProviderHttpMethod,
-  type ProviderContentType,
-  type ProviderHttpRequestContext,
-  type ProviderHttpResponseMetadata,
-  type ProviderParsedBody,
-  type ProviderHttpTransportResponse,
-  type ProviderHttpTransportSuccess,
-  type ProviderHttpTransportFailure,
-  type ProviderHttpTransportResult,
-  type ProviderHttpTransport,
-  type HttpProviderRequestContext,
-  type HttpProviderResponseMetadata,
-  type ProviderParsedBody,
-  type HttpProviderTransportResponse,
-  type HttpProviderTransportSuccess,
-  type HttpProviderTransportFailure,
-  type HttpProviderTransportResult,
-  type HttpProviderTransport,
-} from './http-transport-types.ts';
-export {
-  HTTP_METHODS,
-  CIRCUIT_STATES,
-  FAILURE_CLASSIFICATIONS,
-  defaultClock,
-  isSafeReadMethod,
-  type HttpMethod,
-  type CircuitState,
-  type FailureClassification,
-  type ReliabilityTransportRequest,
-  type ReliabilityTransportResponse,
-  type ReliabilityProviderTransport,
-  type ReliabilityTransport,
-  type ProviderError,
-  type ReliabilityOutcome,
-  type DeadlineContext,
-  type FallbackContext,
-  type FallbackDecision,
-  type FallbackHook,
-  type ReliabilityClock,
-} from './reliability-types.ts';
 
 /**
  * Shared outbound HTTP transport used by all SunRey provider adapters.
@@ -347,44 +290,6 @@ export const PROVIDER_STATUSES = [
   'shutdown',
 ] as const;
 export type ProviderStatus = (typeof PROVIDER_STATUSES)[number];
-
-export const FRESHNESS_STATUSES = ['fresh', 'aging', 'stale', 'expired', 'unknown'] as const;
-export type FreshnessStatus = (typeof FRESHNESS_STATUSES)[number];
-
-export const VALIDATION_STATUSES = [
-  'valid',
-  'schema_invalid',
-  'bounds_invalid',
-  'timestamp_invalid',
-  'rejected_untrusted',
-  'unknown',
-] as const;
-export type ValidationStatus = (typeof VALIDATION_STATUSES)[number];
-
-export const COMMERCIAL_USE_STATUSES = [
-  'permitted',
-  'restricted',
-  'prohibited',
-  'unknown',
-] as const;
-export type CommercialUseStatus = (typeof COMMERCIAL_USE_STATUSES)[number];
-
-export const REDISTRIBUTION_STATUSES = [
-  'permitted',
-  'restricted',
-  'prohibited',
-  'unknown',
-] as const;
-export type RedistributionStatus = (typeof REDISTRIBUTION_STATUSES)[number];
-
-export const CONFIDENCE_BASIS = [
-  'provider_authority',
-  'cross_source_agreement',
-  'historical_consistency',
-  'schema_validation',
-  'manual_review',
-] as const;
-export type ConfidenceBasis = (typeof CONFIDENCE_BASIS)[number];
 
 export const PROVIDER_LAUNCH_TIERS = [
   'production_candidate',

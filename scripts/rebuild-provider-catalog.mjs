@@ -1,10 +1,6 @@
 #!/usr/bin/env node
 /**
- * Rebuild config/providers/free-api-catalog.yaml from authoritative partial sources:
- * - Wave 2 YAML entries (macro, markets, filings, commodities, gov data)
- * - FX reference catalog entries (packages/payments)
- * - Crypto market catalog entries (packages/sunrey-exchange)
- * - Compliance intelligence catalog entries (packages/kernel)
+ * Rebuild config/providers/free-api-catalog.yaml from authoritative partial sources.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -15,13 +11,15 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CATALOG_PATH = join(ROOT, 'config/providers/free-api-catalog.yaml');
 const WAVE2_PATH = join(ROOT, 'config/providers/wave2-catalog-entries.yaml');
 const WAVE3_PATH = join(ROOT, 'config/providers/wave3-crypto-catalog-entries.yaml');
-const WAVE5_PATH = join(ROOT, 'config/providers/wave5-physical-economy-catalog-entries.yaml');
-const WAVE5_PATH = join(ROOT, 'config/providers/wave5-travel-catalog-entries.yaml');
-const WAVE5_PATH = join(ROOT, 'config/providers/wave5-energy-resource-catalog-entries.yaml');
+const WAVE5_ENERGY_PATH = join(ROOT, 'config/providers/wave5-energy-resource-catalog-entries.yaml');
+const WAVE5_TRAVEL_PATH = join(ROOT, 'config/providers/wave5-travel-catalog-entries.yaml');
+const WAVE6_PATH = join(ROOT, 'config/providers/wave6-health-hin-catalog-entries.yaml');
 
 const wave2 = parseYaml(readFileSync(WAVE2_PATH, 'utf8'));
 const wave3 = parseYaml(readFileSync(WAVE3_PATH, 'utf8'));
-const wave5 = parseYaml(readFileSync(WAVE5_PATH, 'utf8'));
+const wave5Energy = parseYaml(readFileSync(WAVE5_ENERGY_PATH, 'utf8'));
+const wave5Travel = parseYaml(readFileSync(WAVE5_TRAVEL_PATH, 'utf8'));
+const wave6 = parseYaml(readFileSync(WAVE6_PATH, 'utf8'));
 
 const { FX_REFERENCE_CATALOG_ENTRIES, FX_REFERENCE_BLOCKED_CATALOG_ENTRY } = await import(
   `../packages/payments/src/fx-reference/catalog-entries.ts?fx=${Date.now()}`
@@ -71,12 +69,13 @@ function addEntries(entries) {
   }
 }
 
-// Wave 2 base entries first; FX and crypto entries override/extend by provider_id.
 addEntries(wave2.providers);
 addEntries(FX_REFERENCE_CATALOG_ENTRIES);
 addEntries([FX_REFERENCE_BLOCKED_CATALOG_ENTRY]);
 addEntries(wave3.providers);
-addEntries(wave5.providers);
+addEntries(wave5Energy.providers);
+addEntries(wave5Travel.providers);
+addEntries(wave6.providers);
 addEntries(COMPLIANCE_INTELLIGENCE_CATALOG_ENTRIES);
 
 const catalog = {
@@ -86,31 +85,13 @@ const catalog = {
   population_status: 'partial',
   source_list: {
     document:
-      'config/providers/wave2-catalog-entries.yaml + packages/payments/src/fx-reference/catalog-entries.ts + wave3-crypto-catalog-entries.yaml + wave5-physical-economy-catalog-entries.yaml',
-    version: 'wave-5-prompt-21',
+      'wave2 + fx + wave3 + wave5-energy + wave5-travel + wave6-health-hin + compliance',
+    version: 'wave-6-prompt-22',
     verified_at: '2026-08-31',
   },
   notes:
-    'Partial population including Wave 2 economics/markets, Wave 3 crypto, and Wave 5 physical-economy providers. ' +
-      'config/providers/wave2-catalog-entries.yaml + packages/payments/src/fx-reference/catalog-entries.ts + wave3-crypto-catalog-entries.yaml + wave5-travel-catalog-entries.yaml',
-    version: 'wave-5-prompt-20',
-    verified_at: '2026-08-31',
-  },
-  notes:
-    'Partial population including Wave 2 economics/markets, Wave 3 crypto/blockchain, and Wave 5 travel/mobility providers. ' +
-      'config/providers/wave2-catalog-entries.yaml + packages/payments/src/fx-reference/catalog-entries.ts + wave3-crypto-catalog-entries.yaml + wave5-energy-resource-catalog-entries.yaml',
-    version: 'wave-5-prompt-18',
-    verified_at: '2026-08-31',
-  },
-  notes:
-    'Partial population including Wave 2 economics/markets providers, Wave 3 crypto/blockchain intelligence, and Wave 5 energy/resource/productive-economy providers. ' +
-      'config/providers/wave2-catalog-entries.yaml + packages/payments/src/fx-reference/catalog-entries.ts + wave3-crypto-catalog-entries.yaml + packages/kernel compliance-intelligence',
-    version: 'wave-4-prompt-15',
-    verified_at: '2026-08-30',
-  },
-  notes:
-    'Partial population including Wave 2 economics/markets, Wave 3 crypto, and Wave 4 compliance intelligence providers. ' +
-    'Full 126-provider master list remains pending.',
+    'Partial population including Wave 2 economics/markets, Wave 3 crypto, Wave 4 compliance, ' +
+    'Wave 5 energy/travel, and Wave 6 health/HIN reference providers. Full 126-provider master list remains pending.',
   providers: [...byId.values()],
 };
 
