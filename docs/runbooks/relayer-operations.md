@@ -2,6 +2,10 @@
 
 Relayers are isolated processes. They are not SunRey validators.
 
+Watcher processes are separate from relayers. See
+`docs/security/INTEROPERABILITY_SECURITY.md` and
+`config/sunrey-chain/interop-network-policy.yaml`.
+
 ## Role
 
 - Observe one chain
@@ -16,6 +20,15 @@ Relayers are isolated processes. They are not SunRey validators.
 ```
 sunrey-relayer run --data-dir /tmp/sunrey-interop-dev
 ```
+
+## Running the development watcher
+
+```
+sunrey-watcher run
+```
+
+Watchers observe external chains only. They cannot submit packets or reach
+admin / validator RPC methods.
 
 Two independent relayers may submit the same update. The second
 submission is harmless if the first already verified.

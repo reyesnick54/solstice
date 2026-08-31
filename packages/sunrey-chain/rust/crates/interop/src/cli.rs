@@ -4,8 +4,9 @@ use crate::encoding::hex_hash;
 use crate::engine::InteropEngine;
 use crate::error::InteropError;
 use crate::foreign::ExternalDevChain;
-use crate::registry::EXTERNAL_DEV_CHAIN_ID;
+use crate::registry::{EXTERNAL_DEV_CHAIN_ID};
 use crate::relayer::IsolatedRelayer;
+use crate::watcher::{self, IsolatedWatcher};
 
 pub fn run_interop_command(args: &[String]) -> Result<String, InteropError> {
     if args.is_empty() {
@@ -60,6 +61,27 @@ pub fn run_relayer_command(args: &[String]) -> Result<String, InteropError> {
     }
     let data_dir = data_dir_from(args);
     run_demo(&data_dir)
+}
+
+pub fn run_watcher_command(args: &[String]) -> Result<String, InteropError> {
+    if args.first().map(String::as_str) != Some("run")
+        && args.first().map(String::as_str) != Some("observe")
+    {
+        return Ok("usage: sunrey-watcher run|observe".into());
+    }
+    let watcher = IsolatedWatcher::new(
+        "watcher-dev-1",
+        EXTERNAL_DEV_CHAIN_ID,
+    );
+    watcher.cannot_submit()?;
+    Ok(serde_json::json!({
+        "service": "sunrey-watcher",
+        "watcher_id": watcher.watcher_id,
+        "source_chain_id": watcher.source_chain_id,
+        "security_model": watcher::watcher_security_model(1),
+        "note": "isolated observation only; production interop is not enabled",
+    })
+    .to_string())
 }
 
 fn data_dir_from(args: &[String]) -> PathBuf {
