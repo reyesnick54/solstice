@@ -57,6 +57,8 @@ export function createSunReyPreviewRuntime(
     hinAccess: world.hinAccess,
     worldExternalData: world.worldExternalData,
     environmental: world.environmental,
+    travel: world.travel,
+    agentExternalEvidence: world.agentExternalEvidence,
   });
 }
 

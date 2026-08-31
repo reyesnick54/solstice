@@ -81,6 +81,8 @@ import { createHinContributionSurface, type HinContributionSurface } from './hin
 import { createProductiveEconomySurface, type ProductiveEconomySurface } from './productive-economy-adapter.ts';
 import { createExternalDataPlane } from '../../../../packages/external-data/src/index.ts';
 import { createWorldExternalDataBff, type WorldExternalDataBff } from './world-external-data-adapter.ts';
+import { createTravelBff, type TravelBff } from './travel-adapter.ts';
+import { createAgentExternalEvidenceBff, type AgentExternalEvidenceBff } from './agent-evidence-adapter.ts';
 import { createEnvironmentalOracleBff, type EnvironmentalOracleBff } from './environmental-adapter.ts';
 import { createOpportunityIntelligenceBff, type OpportunityIntelligenceBff } from './opportunity-adapter.ts';
 import { createSandboxAccessEconomy, type HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
@@ -168,6 +170,8 @@ export type SandboxWorld = {
   readonly hinAccess: HumanInformationAccessBridge;
   readonly worldExternalData: WorldExternalDataBff;
   readonly environmental: EnvironmentalOracleBff;
+  readonly travel: TravelBff;
+  readonly agentExternalEvidence: AgentExternalEvidenceBff;
   readonly opportunity: OpportunityIntelligenceBff;
 };
 
@@ -738,6 +742,8 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
 
   const worldExternalData = createWorldExternalDataBff(createExternalDataPlane({ nowUtc: NOW }));
   const environmental = createEnvironmentalOracleBff();
+  const travel = createTravelBff({ environmental, world: worldExternalData, nowUtc: NOW });
+  const agentExternalEvidence = createAgentExternalEvidenceBff(createExternalDataPlane({ nowUtc: NOW }));
   const opportunity = createOpportunityIntelligenceBff();
 
   return Object.freeze({
@@ -766,6 +772,8 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     hinAccess,
     worldExternalData,
     environmental,
+    travel,
+    agentExternalEvidence,
     opportunity,
   });
 }

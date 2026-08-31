@@ -1,0 +1,73 @@
+export {
+  ACCESS_ALLOCATION_ENGINE_VERSION,
+  ENGINEERING_SIMULATION_PARAMETERS,
+  ALLOCATION_SNAPSHOT_STATUSES,
+  DIMINISHING_RETURN_FUNCTIONS,
+  ROLLOVER_POLICIES,
+  UNIT_ROUNDING_MODES,
+  ALLOCATION_MODES,
+  type AccessAllocationSnapshotStatus,
+  type DiminishingReturnFunction,
+  type RolloverPolicy,
+  type UnitRoundingMode,
+  type AllocationMode,
+  type MinimumEligibility,
+  type AccessAllocationPolicy,
+  type AccessAllocationSnapshot,
+  type ParticipantAllocationEvidence,
+  type ParticipantAllocationInput,
+  type ParticipantWeightResult,
+  type CategoryAllocationResult,
+  type AllocationSnapshotResult,
+  type UserAllocationPreview,
+  type EligibilityPort,
+  type TokenBalanceReaderPort,
+  type FinalizeSnapshotInput,
+  type GenerateSnapshotInput,
+} from './types.ts';
+export {
+  DEFAULT_TWAB_WINDOW_DAYS,
+  DEFAULT_SR_REFERENCE_BALANCE,
+  DEFAULT_MR_REFERENCE_BALANCE,
+  DEFAULT_SR_COEFFICIENT,
+  DEFAULT_MR_COEFFICIENT,
+  DEFAULT_DUAL_COEFFICIENT,
+  DEFAULT_ACCESS_ALLOCATION_POLICY,
+  CATEGORY_ALLOCATION_POLICIES,
+  validatePolicyCoefficients,
+  resolvePolicyForCategory,
+  policyToCoefficientsBps,
+  ACCESS_ALLOCATION_ACTIVE_POLICY_VERSION,
+} from './policy.ts';
+export {
+  MILLI_UNIT_SCALE,
+  unitScaleForMode,
+  toScaledUnits,
+  fromScaledUnits,
+  floorProportionalShare,
+  applyParticipantCap,
+  residualCapacity,
+} from './rounding.ts';
+export {
+  checkParticipantEligibility,
+  defaultEligibilityPort,
+  filterEligibleWeights,
+  eligibleForCategory,
+} from './eligibility.ts';
+export {
+  computeTimeWeightedBalance,
+  resolveCheckpoints,
+  epochFromWindow,
+  checkpointAtInstant,
+  windowEndFromStart,
+  type TimeWeightedBalance,
+} from './twab-service.ts';
+export { AccessAllocationStore, type FinalizeRecord } from './store.ts';
+export {
+  AccessAllocationEngine,
+  supplyFromPolicy,
+  CATEGORY_CAPACITY_UNITS,
+  PARTICIPATION_SCALE,
+  COEFF_BPS_SCALE,
+  type AccessAllocationEngineOptions,
+} from './engine.ts';

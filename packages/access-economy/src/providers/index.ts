@@ -33,3 +33,4 @@ export * from './redemption/entitlement-store.ts';
 export * from './redemption/metrics.ts';
 export * from './redemption/invariants.ts';
 export * from './sdk/index.ts';
+export * from './commercial/index.ts';

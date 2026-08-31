@@ -15,6 +15,8 @@ export {
   PRODUCTION_HSM_KMS_CONFIGURED,
 } from './flags.ts';
 
+export { DATA_MODE, DATA_MODES, resolveDataMode, type DataMode } from './data-mode.ts';
+
 export { addMs, FrozenClock, isExpired, systemClock, utcNowFromDate, type Clock } from './clock.ts';
 
 export {
