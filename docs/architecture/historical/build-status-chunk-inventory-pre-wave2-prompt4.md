@@ -4,6 +4,17 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- Wave 4 Prompt 11 external opportunity live integrations
+  (`packages/external-data/src/wave6`, `packages/external-data/src/certification`):
+  governed HTTP adapters for Arbeitnow, RemoteOK, Remotive, Jobicy, Himalayas,
+  and Hacker News with fixture simulation fallback, execution provenance
+  (`simulated` / `liveNetworkCallObserved`), in-memory cache, and live
+  certification via `npm run provider:live-certify` when
+  `SUNREY_LIVE_CERTIFICATION=1`. Frankfurter FX and World Bank macro probes
+  live at `packages/external-data/src/wave2/live-economic.ts`. Blocked:
+  `graphql-jobs`, `artificial-intelligence-jobs`. `ENVIRONMENT` remains
+  `simulation`; `productionAuthorized` stays `false` on all adapters.
+
 - Deterministic Human Contribution Valuation Engine (Chunk 111,
   `packages/human-economic-contribution/src/valuation`): evaluates a
   VERIFIED contribution under an active versioned valuation policy.

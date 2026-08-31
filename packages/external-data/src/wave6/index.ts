@@ -26,4 +26,6 @@ export * from './adapters/index.ts';
 export { buildWorldOpportunitySnapshot, type WorldOpportunitySnapshot } from './integrations/world.ts';
 export { buildGrowOpportunityContext, type GrowOpportunityContext } from './integrations/grow.ts';
 export { buildAgentOpportunityEvidence, type AgentOpportunityEvidence } from './integrations/agent.ts';
-export { buildPegOpportunityContext, type PegOpportunityContext, type PegOpportunityLink } from './integrations/peg.ts';
+export * from './integrations/peg.ts';
+export * from './opportunity-coverage.ts';
+export * from '../certification/index.ts';

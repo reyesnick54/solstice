@@ -4,9 +4,18 @@
 
 import { OPPORTUNITY_ADAPTER_IDS } from './adapters/index.ts';
 import { OPPORTUNITY_CATALOG_ENTRIES } from './opportunity-catalog-entries.ts';
+import {
+  DEGRADED_OPPORTUNITY_PROVIDER_IDS,
+  LIVE_OPPORTUNITY_JOB_PROVIDER_IDS,
+  UNAVAILABLE_OPPORTUNITY_PROVIDER_IDS,
+} from './http/endpoints.ts';
 
 const JOB_PROVIDER_IDS = Object.freeze([
   'arbeitnow',
+  'remoteok',
+  'remotive',
+  'jobicy',
+  'himalayas',
   'ai-dev-jobs',
   'artificial-intelligence-jobs',
   'freehire',
@@ -23,6 +32,9 @@ export type OpportunityCoverageReport = {
   readonly jobProviders: number;
   readonly skillsProviders: number;
   readonly intelligenceProviders: number;
+  readonly liveValidatedJobProviders: number;
+  readonly blocked: number;
+  readonly degraded: number;
   readonly geographicCoverage: readonly string[];
   readonly jobCoverageNote: string;
   readonly limitations: string;
@@ -43,10 +55,13 @@ export function buildOpportunityCoverageReport(): OpportunityCoverageReport {
     jobProviders: JOB_PROVIDER_IDS.length,
     skillsProviders: SKILLS_PROVIDER_IDS.length,
     intelligenceProviders: INTELLIGENCE_PROVIDER_IDS.length,
+    liveValidatedJobProviders: LIVE_OPPORTUNITY_JOB_PROVIDER_IDS.length,
+    blocked: UNAVAILABLE_OPPORTUNITY_PROVIDER_IDS.length,
+    degraded: DEGRADED_OPPORTUNITY_PROVIDER_IDS.length,
     geographicCoverage: Object.freeze([...geographicCoverage]),
     jobCoverageNote:
-      'Simulation fixtures from 11 free public opportunity providers; partial labor-market coverage only.',
+      'Remote and technology roles from Arbeitnow, RemoteOK, Remotive, Jobicy, Himalayas, and fixture-backed catalogs.',
     limitations:
-      'Community and derived sources only. Not verified hiring facts. No auto-apply. Production remains simulation.',
+      'Simulation remains default via SUNREY_DATA_MODE. Unavailable catalog endpoints are blocked, not fabricated.',
   });
 }

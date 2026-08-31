@@ -38,14 +38,14 @@ const NOW = defaultOpportunityNow();
 describe('Wave 6 Prompt 23 — opportunity intelligence', () => {
   it('1. all selected provider adapters register from catalog', () => {
     const index = buildCatalogIndex(createFixtureCatalog([...OPPORTUNITY_CATALOG_ENTRIES] as never[]));
-    assert.equal(OPPORTUNITY_CATALOG_PROVIDER_IDS.length, 11);
+    assert.equal(OPPORTUNITY_CATALOG_PROVIDER_IDS.length, 15);
     const adapters = createAllOpportunityAdapters();
-    assert.equal(adapters.length, 11);
-    assert.ok(index.byId.size >= 11);
+    assert.equal(adapters.length, 15);
+    assert.ok(index.byId.size >= 15);
   });
 
   it('2. every job provider adapter returns normalized jobs', async () => {
-    const jobProviders = ['arbeitnow', 'ai-dev-jobs', 'artificial-intelligence-jobs', 'freehire', 'graphql-jobs'] as const;
+    const jobProviders = ['arbeitnow', 'remoteok', 'remotive', 'jobicy', 'himalayas', 'ai-dev-jobs', 'freehire'] as const;
     for (const id of jobProviders) {
       const adapter = createOpportunityAdapter(id);
       const result = await adapter.searchJobs({}, NOW);
@@ -274,7 +274,7 @@ describe('Wave 6 Prompt 23 — opportunity intelligence', () => {
   it('23. BFF exposes no provider secrets', () => {
     const bff = createOpportunityIntelligenceBff();
     const coverage = bff.coverage();
-    assert.equal(coverage.totalProviders, 11);
+    assert.equal(coverage.totalProviders, 15);
     assert.equal(coverage.productionEnabled, 0);
     const serialized = JSON.stringify(bff);
     assert.ok(!serialized.includes('API_KEY'));
@@ -322,9 +322,10 @@ describe('Wave 6 Prompt 23 — opportunity intelligence', () => {
 
   it('28. coverage report counts providers', () => {
     const report = buildOpportunityCoverageReport();
-    assert.equal(report.totalProviders, 11);
-    assert.equal(report.jobProviders, 5);
+    assert.equal(report.totalProviders, 15);
+    assert.equal(report.jobProviders, 9);
     assert.equal(report.skillsProviders, 2);
     assert.equal(report.intelligenceProviders, 4);
+    assert.equal(report.liveValidatedJobProviders, 5);
   });
 });
