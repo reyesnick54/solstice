@@ -36,8 +36,11 @@ export type ReliabilityTransportResponse = {
   readonly body: unknown;
 };
 
+export type ReliabilityProviderTransport = ReliabilityTransport;
+
 /** Injectable transport wrapped by the reliability control plane. */
 export type ReliabilityProviderTransport = {
+export type ReliabilityTransport = {
   readonly providerId: string;
   execute(
     request: ReliabilityTransportRequest,
@@ -46,6 +49,9 @@ export type ReliabilityProviderTransport = {
 };
 
 /** Alias for ReliabilityProviderTransport. */
+/** @deprecated Use ReliabilityTransport */
+export type ReliabilityProviderTransport = ReliabilityTransport;
+/** Injectable transport wrapped by the reliability control plane. */
 export type ReliabilityTransport = ReliabilityProviderTransport;
 
 export type ProviderError = {

@@ -76,6 +76,9 @@ import {
   HIN_VERIFICATION_STATES,
 } from '../../../../packages/human-economic-contribution/src/hin-value/index.ts';
 import { dispatchBlockchain } from './blockchain.ts';
+import { dispatchTravel } from './travel.ts';
+import { dispatchEnvironmental } from './environmental.ts';
+import type { EnvironmentalOracleBff } from './environmental-adapter.ts';
 import { dispatchDataRights } from './data-rights.ts';
 import { dispatchHinAccess } from './hin-access.ts';
 import type { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
@@ -133,6 +136,7 @@ export type ConsumerBffRuntime = {
   readonly worldExternalData?: import('./world-external-data-adapter.ts').WorldExternalDataBff;
   readonly marketReference?: MarketReferenceBffSurface;
   readonly cryptoMarket?: CryptoMarketBffSurface;
+  readonly environmental?: EnvironmentalOracleBff;
   readonly previewDiagnostics?: () => Readonly<Record<string, unknown>>;
 };
 
@@ -424,6 +428,14 @@ function dispatchAuthenticated(
   const blockchain = dispatchBlockchain(request, requestId, headers);
   if (blockchain) {
     return blockchain;
+  }
+
+  const travel = dispatchTravel(request, requestId, headers);
+  if (travel) {
+    return travel;
+  const environmental = dispatchEnvironmental(request, requestId, headers, runtime.environmental);
+  if (environmental) {
+    return environmental;
   }
   if (runtime.hin && isRightsMarketplace(runtime.hin)) {
     const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);
@@ -1895,6 +1907,14 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/markets/crypto/{assetId}/history',
   'GET /api/v1/world/resources',
   'GET /api/v1/world/resources/{resource}',
+  'GET /api/v1/world/environmental',
+  'GET /api/v1/world/environmental/weather',
+  'GET /api/v1/world/environmental/forecast',
+  'GET /api/v1/world/environmental/air-quality',
+  'GET /api/v1/world/environmental/water',
+  'GET /api/v1/environmental/separation-proof',
+  'GET /api/v1/environmental/agent-evidence',
+  'GET /api/v1/environmental/travel-context',
   'GET /api/v1/hin/contributions',
   'GET /api/v1/hin/contributions/{id}',
   'GET /api/v1/hin/metrics',

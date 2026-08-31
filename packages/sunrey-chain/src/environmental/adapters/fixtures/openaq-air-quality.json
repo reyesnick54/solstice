@@ -1,0 +1,9 @@
+{
+  "station_id": "OpenAQ-SF-1",
+  "observed_at": "2026-08-31T11:00:00.000Z",
+  "metrics": [
+    { "pollutant": "PM2.5", "value": 15.0, "unit": "µg/m³", "aqi_standard": "US_EPA" },
+    { "pollutant": "PM10", "value": 28.0, "unit": "µg/m³", "aqi_standard": "US_EPA" },
+    { "pollutant": "NO2", "value": 22.0, "unit": "µg/m³", "aqi_standard": "US_EPA" }
+  ]
+}

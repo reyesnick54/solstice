@@ -1,0 +1,11 @@
+{
+  "id": "us7000abcd",
+  "magnitude": 4.2,
+  "mag_type": "mb",
+  "depth": 12.5,
+  "latitude": 37.7749,
+  "longitude": -122.4194,
+  "place": "10km NE of San Francisco, CA",
+  "time": "2026-08-31T08:15:00.000Z",
+  "updated": "2026-08-31T08:20:00.000Z"
+}

@@ -1,0 +1,21 @@
+{
+  "results": [
+    {
+      "id": "os-entity-fuzzy-001",
+      "caption": "SANCTIONED FUZZY PERSON",
+      "schema": "Person",
+      "properties": {
+        "name": ["Sanctioned Fuzzy Person"],
+        "alias": ["S Fuzzy"],
+        "birthDate": ["1975-06-20"],
+        "nationality": ["gb"]
+      },
+      "datasets": ["gb_hmt_sanctions"],
+      "referents": ["hmt-98765"],
+      "first_seen": "2019-05-01T00:00:00",
+      "last_change": "2025-12-01T08:00:00",
+      "score": 0.82
+    }
+  ],
+  "total": { "value": 1, "relation": "eq" }
+}

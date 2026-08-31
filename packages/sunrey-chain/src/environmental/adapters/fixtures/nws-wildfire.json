@@ -1,0 +1,8 @@
+{
+  "id": "fire-2026-001",
+  "detection_time": "2026-08-30T18:00:00.000Z",
+  "status": "active",
+  "confidence": 0.9,
+  "affected_area": 1500,
+  "satellite": "GOES-18"
+}

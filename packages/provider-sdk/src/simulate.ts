@@ -3,7 +3,6 @@
  */
 
 import type {
-  ReliabilityProviderTransport,
   ReliabilityTransport,
   ReliabilityTransportRequest,
   ReliabilityTransportResponse,

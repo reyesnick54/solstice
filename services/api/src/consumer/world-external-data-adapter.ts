@@ -9,8 +9,11 @@ import {
   agentEvidenceSnapshot,
   exchangeReferenceSnapshot,
   growContextSnapshot,
+  growContextSnapshotAsync,
   moonReyResourceContext,
+  moonReyResourceContextAsync,
   worldEconomySnapshot,
+  worldEconomySnapshotAsync,
 } from '../../../../packages/external-data/src/bridges.ts';
 import {
   agentPhysicalEvidenceSnapshot,
@@ -54,6 +57,29 @@ export type WorldExternalDataBff = {
   readonly agentEvidence: () => ReturnType<typeof agentEvidenceSnapshot>;
   readonly exchangeReference: () => ReturnType<typeof exchangeReferenceSnapshot>;
   readonly moonReyContext: () => ReturnType<typeof moonReyResourceContext>;
+  readonly energy: () => Promise<{
+    readonly schema: 'sunrey.bff.energy-observations.v1';
+    readonly observations: readonly {
+      readonly providerId: string;
+      readonly measurementKind: string;
+      readonly value: number;
+      readonly unit: string;
+      readonly geography: string;
+    }[];
+    readonly availability: 'AVAILABLE_SIMULATION';
+  }>;
+  readonly resources: () => Promise<{
+    readonly schema: 'sunrey.bff.resource-observations.v1';
+    readonly observations: readonly {
+      readonly resourceType: string;
+      readonly measurementType: string;
+      readonly value: number;
+      readonly unit: string;
+      readonly geography: string;
+      readonly status: 'AVAILABLE' | 'UNAVAILABLE' | 'NO_ELIGIBLE_LIVE_SOURCE';
+    }[];
+    readonly availability: 'AVAILABLE_SIMULATION';
+  }>;
   readonly providerHealth: () => ReturnType<ExternalDataPlane['health']>;
   readonly coverage: () => ReturnType<ExternalDataPlane['coverageReport']>;
   readonly physicalEconomy: () => ReturnType<typeof worldPhysicalEconomySnapshot>;
@@ -162,6 +188,29 @@ export function createWorldExternalDataBff(plane: ExternalDataPlane): WorldExter
     agentEvidence: () => agentEvidenceSnapshot(plane),
     exchangeReference: () => exchangeReferenceSnapshot(plane),
     moonReyContext: () => moonReyResourceContext(plane),
+    energy: async () => {
+      const world = await worldEconomySnapshotAsync(plane);
+      return Object.freeze({
+        schema: 'sunrey.bff.energy-observations.v1',
+        observations: world.energy,
+        availability: 'AVAILABLE_SIMULATION',
+      });
+    },
+    resources: async () => {
+      const world = await worldEconomySnapshotAsync(plane);
+      const availability = plane.productiveEconomy.runtime.index.resources.resourceAvailability();
+      return Object.freeze({
+        schema: 'sunrey.bff.resource-observations.v1',
+        observations: Object.freeze(
+          world.resources.map((o) => ({
+            ...o,
+            status: 'AVAILABLE' as const,
+          })),
+        ),
+        availability: 'AVAILABLE_SIMULATION',
+        catalogAvailability: availability,
+      });
+    },
     providerHealth: () => plane.health(),
     coverage: () => plane.coverageReport(),
     physicalEconomy: () => worldPhysicalEconomySnapshot(plane),

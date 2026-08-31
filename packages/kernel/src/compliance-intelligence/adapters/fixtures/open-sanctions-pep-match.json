@@ -1,0 +1,20 @@
+{
+  "results": [
+    {
+      "id": "os-entity-pep-001",
+      "caption": "CURRENT PEP OFFICIAL",
+      "schema": "Person",
+      "properties": {
+        "name": ["CURRENT PEP OFFICIAL"],
+        "alias": ["C. PEP"],
+        "country": ["de"],
+        "position": ["Minister of Finance"]
+      },
+      "datasets": ["wd_peps"],
+      "referents": ["pep-de-001"],
+      "first_seen": "2022-01-01T00:00:00",
+      "last_change": "2026-03-01T00:00:00"
+    }
+  ],
+  "total": { "value": 1, "relation": "eq" }
+}

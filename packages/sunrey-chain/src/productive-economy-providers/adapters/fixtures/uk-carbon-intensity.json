@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "from": "2026-08-31T12:00:00.000Z",
+      "to": "2026-08-31T12:30:00.000Z",
+      "intensity": {
+        "forecast": 142,
+        "actual": 138,
+        "index": "moderate"
+      },
+      "generationmix": [
+        { "fuel": "gas", "perc": 38.2 },
+        { "fuel": "wind", "perc": 28.5 },
+        { "fuel": "nuclear", "perc": 15.1 },
+        { "fuel": "solar", "perc": 12.4 },
+        { "fuel": "biomass", "perc": 3.8 },
+        { "fuel": "hydro", "perc": 1.2 },
+        { "fuel": "imports", "perc": 0.8 }
+      ]
+    }
+  ]
+}

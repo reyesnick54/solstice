@@ -11,6 +11,7 @@ import {
 } from './adapters.ts';
 import { buildWave2CoverageReport } from './coverage.ts';
 import type { ExternalDataHealth, SearchableEntity } from './models.ts';
+import { createWave5ExternalData, wave5CoverageReport, type Wave5ExternalData } from './productive-economy.ts';
 import { createWave2Services, type CompanyIntelligenceService, type FxReferenceService, type MacroDataService, type MarketReferenceService } from './services.ts';
 import { FIXTURE_FILINGS } from './fixtures.ts';
 import {
@@ -21,6 +22,11 @@ import {
 import { buildWave5CoverageReport } from './wave5-coverage.ts';
 import { createWave5Services, type Wave5Services } from './wave5-services.ts';
 import { ProviderRiskMonitor } from './wave5-provider-risk.ts';
+import { createWave4Services, type ProviderRiskService } from './wave4/services.ts';
+import type { ComplianceEvidenceService, BusinessIdentityService, DigitalRiskService, VulnerabilityIntelligenceService, ThreatIntelligenceService, EndpointSecurityService, ServiceOutageService } from './wave4/services.ts';
+import { createDefaultWave4AdapterStates } from './wave4/adapters.ts';
+import { buildWave4CoverageReport } from './wave4/coverage.ts';
+import { WAVE4_IMPLEMENTED_PROVIDER_IDS } from './wave4/catalog-entries.ts';
 
 export type ExternalDataPlaneOptions = {
   readonly nowUtc?: string;
@@ -37,6 +43,17 @@ export class ExternalDataPlane {
   readonly providerRisk: ProviderRiskMonitor;
   readonly #ctx: Wave2AdapterContext;
   readonly #wave5Ctx;
+  readonly productiveEconomy: Wave5ExternalData;
+  readonly compliance: ComplianceEvidenceService;
+  readonly businessIdentity: BusinessIdentityService;
+  readonly digitalRisk: DigitalRiskService;
+  readonly vulnerability: VulnerabilityIntelligenceService;
+  readonly threatIntel: ThreatIntelligenceService;
+  readonly endpointSecurity: EndpointSecurityService;
+  readonly serviceOutage: ServiceOutageService;
+  readonly providerRisk: ProviderRiskService;
+  readonly #ctx: Wave2AdapterContext;
+  readonly #wave4Ctx;
   readonly #delivery;
   readonly #wave5Delivery;
 
@@ -50,6 +67,13 @@ export class ExternalDataPlane {
       nowUtc,
       states: options.wave5States ?? createDefaultWave5AdapterStates(),
     };
+    const wave2States = options.states ?? createDefaultAdapterStates();
+    const wave4States = createDefaultWave4AdapterStates();
+    for (const [id, state] of wave2States) {
+      wave4States.set(id, state);
+    }
+    this.#ctx = { nowUtc, states: wave2States };
+    this.#wave4Ctx = { nowUtc, states: wave4States };
     const services = createWave2Services(this.#ctx);
     this.macro = services.macro;
     this.fx = services.fx;
@@ -57,6 +81,16 @@ export class ExternalDataPlane {
     this.company = services.company;
     this.wave5 = createWave5Services(this.#wave5Ctx);
     this.providerRisk = new ProviderRiskMonitor(this.#wave5Ctx);
+    this.productiveEconomy = createWave5ExternalData({ nowUtc: () => nowUtc });
+    const wave4 = createWave4Services(this.#wave4Ctx);
+    this.compliance = wave4.compliance;
+    this.businessIdentity = wave4.businessIdentity;
+    this.digitalRisk = wave4.digitalRisk;
+    this.vulnerability = wave4.vulnerability;
+    this.threatIntel = wave4.threatIntel;
+    this.endpointSecurity = wave4.endpointSecurity;
+    this.serviceOutage = wave4.serviceOutage;
+    this.providerRisk = wave4.providerRisk;
     this.#delivery = createDataDelivery(Date.parse(nowUtc));
     this.#wave5Delivery = createWave5DataDelivery(Date.parse(nowUtc));
   }
@@ -80,6 +114,17 @@ export class ExternalDataPlane {
 
   wave5AdapterContext() {
     return this.#wave5Ctx;
+    const current = this.#ctx.states.get(providerId) ?? this.#wave4Ctx.states.get(providerId);
+    if (!current) {
+      return;
+    }
+    const updated = { ...current, ...patch };
+    if (this.#ctx.states.has(providerId)) {
+      this.#ctx.states.set(providerId, updated);
+    }
+    if (this.#wave4Ctx.states.has(providerId)) {
+      this.#wave4Ctx.states.set(providerId, updated);
+    }
   }
 
   async cachedFetch(providerId: string, capability: string, resourceId: string) {
@@ -97,6 +142,17 @@ export class ExternalDataPlane {
       ...this.company.getLatestFilings().observations,
     ];
     return bundleObservationEvidence(observations);
+  }
+
+  async agentEvidenceBundleWithProductiveEconomy() {
+    const base = this.agentEvidenceBundle();
+    const productive = await this.productiveEconomy.getProductiveEconomicObservations();
+    return Object.freeze({
+      ...base,
+      productiveEconomyEvidenceCount: productive.length,
+      grantsExecutionAuthority: false as const,
+      treatedAsTradeInstruction: false as const,
+    });
   }
 
   health(): readonly ExternalDataHealth[] {
@@ -128,7 +184,18 @@ export class ExternalDataPlane {
   }
 
   coverageReport() {
-    return buildWave2CoverageReport();
+    return Object.freeze({
+      wave2: buildWave2CoverageReport(),
+      wave5: wave5CoverageReport(),
+    });
+  }
+
+  wave4CoverageReport() {
+    return buildWave4CoverageReport();
+  }
+
+  wave4ProviderIds(): readonly string[] {
+    return WAVE4_IMPLEMENTED_PROVIDER_IDS;
   }
 
   wave5CoverageReport() {

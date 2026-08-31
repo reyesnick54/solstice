@@ -39,12 +39,23 @@ const WAVE5_CATEGORIES = new Set([
 
 const WAVE3_CATEGORIES = new Set(['cryptocurrency', 'blockchain']);
 
+const WAVE5_CATEGORIES = new Set(['energy', 'environmental', 'food_nutrition', 'natural_resources', 'water']);
+
 const BLOCKED_IDS = new Set(['yahoo-finance-unofficial', 'quandl-nasdaq-data-link', 'currencyapi-com']);
 const DEPRECATED_IDS = new Set(['treasury-direct-legacy-xml']);
 
 export function loadCatalogProviders(): readonly Record<string, unknown>[] {
-  const catalog = parseYaml(readFileSync(CATALOG_PATH, 'utf8')) as { providers: Record<string, unknown>[] };
-  return Object.freeze(catalog.providers ?? []);
+  try {
+    const catalog = parseYaml(readFileSync(CATALOG_PATH, 'utf8')) as { providers: Record<string, unknown>[] };
+    if (catalog.providers?.length) {
+      return Object.freeze(catalog.providers);
+    }
+  } catch {
+    // fall through to wave2 entries
+  }
+  const wave2Path = join(ROOT, 'config/providers/wave2-catalog-entries.yaml');
+  const wave2 = parseYaml(readFileSync(wave2Path, 'utf8')) as { providers: Record<string, unknown>[] };
+  return Object.freeze(wave2.providers ?? []);
 }
 
 export function classifyWave2Provider(provider: Record<string, unknown>): Wave2ProviderCoverage {
@@ -54,6 +65,11 @@ export function classifyWave2Provider(provider: Record<string, unknown>): Wave2P
   const integration = (provider.sunrey as { integration_state?: string })?.integration_state ?? 'catalog_only';
 
   if (!WAVE2_CATEGORIES.has(category)) {
+    const scopeNote = WAVE3_CATEGORIES.has(category)
+      ? 'Wave 3 crypto/blockchain scope; accounted outside Wave 2 coverage.'
+      : WAVE5_CATEGORIES.has(category)
+        ? 'Wave 5 energy/resource scope; accounted outside Wave 2 coverage.'
+        : 'Outside Wave 2 economics/markets scope.';
     return Object.freeze({
       providerId,
       category,
@@ -63,6 +79,8 @@ export function classifyWave2Provider(provider: Record<string, unknown>): Wave2P
         : WAVE5_CATEGORIES.has(category)
           ? 'Wave 5 physical-economy scope; accounted outside Wave 2 coverage.'
           : 'Outside Wave 2 economics/markets scope.',
+      status: 'NOT_WAVE_2',
+      notes: scopeNote,
     });
   }
 

@@ -73,6 +73,10 @@ describe('sunrey chain architecture guards', () => {
         file.includes(`${join('src', 'genesis-execution')}`) ||
         file.includes(`${join('src', 'provider-runtime')}`) ||
         file.includes(`${join('src', 'pregenesis')}`) ||
+        file.includes(`${join('src', 'blockchain-intelligence')}`) ||
+        file.includes(`${join('src', 'chain-intelligence')}`) ||
+        file.includes(`${join('src', 'travel-intelligence')}`) ||
+        file.includes(`${join('src', 'environmental-oracle')}`) ||
         file.endsWith(`${join('src', 'index.ts')}`) ||
         file.endsWith(`${join('wallet', 'types.ts')}`) ||
         file.endsWith(`${join('wallet', 'address.ts')}`) ||

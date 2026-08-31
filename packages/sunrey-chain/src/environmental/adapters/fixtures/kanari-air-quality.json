@@ -1,0 +1,8 @@
+{
+  "station_id": "KAN-42",
+  "observed_at": "2026-08-31T11:30:00.000Z",
+  "metrics": [
+    { "pollutant": "PM2.5", "value": 18.0, "unit": "µg/m³", "aqi_standard": "WHO" },
+    { "pollutant": "AQI", "value": 55, "unit": "index", "aqi_standard": "WHO" }
+  ]
+}
