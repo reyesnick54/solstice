@@ -31,6 +31,8 @@ import {
 } from './projections.ts';
 import { projectConsumerSolvencyPosture } from './consumer-solvency.ts';
 import { HumanAccessEconomyStore } from './store.ts';
+import { AccessTransactionOrchestrator } from './product/orchestrator.ts';
+import type { AccessHistoryFilter } from './product/taxonomy.ts';
 import {
   ACCESS_CATEGORIES,
   ACCESS_POSTURE,
@@ -44,6 +46,7 @@ import type {
   AccessIntent,
   AccessQuote,
   AccessReservation,
+  AccessEntitlement,
   CheckAccessAvailabilityInput,
   CreateAccessIntentInput,
   CreateAccessQuoteInput,
@@ -110,10 +113,20 @@ function mustangMatch(input: { readonly summary?: string; readonly location?: st
   return haystack.includes('mustang') && haystack.includes('miami');
 }
 
+function entitlementAfterRemaining(
+  store: HumanAccessEconomyStore,
+  customerId: string,
+  category: AccessCategory,
+): string | null {
+  const ent = store.listEntitlements(customerId).find((row) => row.category === category);
+  return ent?.remainingUses !== null && ent?.remainingUses !== undefined ? String(ent.remainingUses) : null;
+}
+
 export class HumanAccessEconomyProduct {
   private readonly store: HumanAccessEconomyStore;
   private readonly canonical = createCanonicalAccessRuntime();
   private readonly providerNetwork: AccessProviderNetworkService;
+  private readonly product: AccessTransactionOrchestrator;
   private readonly providerQuoteByAccessQuote = new Map<string, string>();
   private readonly redemptionByReservation = new Map<string, string>();
   private readonly bundleByExperience = new Map<string, string>();
@@ -125,6 +138,7 @@ export class HumanAccessEconomyProduct {
   ) {
     this.store = store;
     this.providerNetwork = providerNetwork;
+    this.product = new AccessTransactionOrchestrator(store, () => NOW);
   }
 
   seedCustomer(customerId: string): void {
@@ -134,6 +148,7 @@ export class HumanAccessEconomyProduct {
         this.providerNetwork.seedEntitlement(entitlement.entitlementId, customerId, entitlement.remainingUses);
       }
     }
+    this.product.seedAllocationEvents(customerId);
   }
 
   overview(actor: AccessActor) {
@@ -390,7 +405,56 @@ export class HumanAccessEconomyProduct {
       summary: stored.summary,
       referenceId: stored.quoteId,
     });
+    this.ensureProductTransaction(actor, stored, providerQuote.value);
     return ok(projectAccessResource('sunrey.consumer.access.quote.v1', stored));
+  }
+
+  private ensureProductTransaction(
+    actor: AccessActor,
+    quote: AccessQuote,
+    providerQuote: import('../../access-economy/src/providers/types.ts').ProviderQuote,
+    entitlement?: AccessEntitlement,
+  ): void {
+    const existingTxnId = this.store.transactionByQuote.get(quote.quoteId);
+    if (existingTxnId) {
+      return;
+    }
+    const ent =
+      entitlement ??
+      this.store.listEntitlements(actor.customerId).find((row) => row.category === quote.category);
+    const preview = ent
+      ? this.providerNetwork.previewRedemption({
+          redemptionId: newAccessRedemptionId(),
+          customerId: actor.customerId,
+          category: quote.category,
+          providerId: 'turo',
+          quoteId: providerQuote.quoteId,
+          entitlementId: ent.entitlementId,
+          entitlementClass: 'MOBILITY_STANDARD',
+          requestedQuantity: 1,
+          maxUserContributionMinorUnits: '100000',
+        })
+      : null;
+    const providerTotal = providerQuote.providerPriceMinorUnits.toString();
+    const coverage = preview?.ok
+      ? (preview.value.coverage?.appliedCoverageMinorUnits.toString() ?? '0')
+      : '0';
+    const userContribution = preview?.ok
+      ? preview.value.userContributionMinorUnits.toString()
+      : providerTotal;
+    const txn = this.product.createFromQuote(actor, quote, {
+      providerDisplayName: 'Example Car Rental',
+      providerTotalMinorUnits: providerTotal,
+      accessCoverageMinorUnits: coverage,
+      userContributionMinorUnits: userContribution,
+      depositMinorUnits: '50000',
+      unitsUsed: '1',
+      entitlementBefore: ent?.remainingUses !== null ? String(ent.remainingUses) : null,
+      providerId: 'turo',
+      location: quote.summary.includes('Miami') ? 'Miami, FL' : null,
+      fundingAvailable: true,
+    });
+    this.store.transactionByQuote.set(quote.quoteId, txn.transactionId);
   }
 
   createReservation(
@@ -427,6 +491,7 @@ export class HumanAccessEconomyProduct {
     if (!entitlement) {
       return err({ code: 'NOT_FOUND', message: 'mobility entitlement not found' });
     }
+    const txnId = this.store.transactionByQuote.get(quote.quoteId);
     const redemptionId = newAccessRedemptionId();
     const started = this.providerNetwork.startRedemption(
       {
@@ -462,6 +527,10 @@ export class HumanAccessEconomyProduct {
     this.redemptionByReservation.set(reservation.reservationId, redemptionId);
     this.store.reservations.set(reservation.reservationId, reservation);
     this.store.idempotency.set(`reservation:${input.idempotencyKey}`, reservation.reservationId);
+    if (txnId) {
+      this.product.linkReservation(txnId, reservation);
+      this.product.startCheckout(actor, txnId);
+    }
     recordActivity(this.store, {
       customerId: actor.customerId,
       kind: 'RESERVATION_CREATED',
@@ -505,6 +574,16 @@ export class HumanAccessEconomyProduct {
       status: 'CONFIRMED',
     });
     this.store.reservations.set(reservationId, confirmed);
+    const txnId = reservation.quoteId ? this.store.transactionByQuote.get(reservation.quoteId) : null;
+    if (txnId) {
+      this.product.confirmBooking(actor, txnId, {
+        reservationId: confirmed.reservationId,
+        redemptionId: redemptionId ?? undefined,
+        confirmationReference: redemptionId ? `bk_${redemptionId}` : null,
+        serviceDate: confirmed.startsAt,
+        entitlementAfter: entitlementAfterRemaining(this.store, actor.customerId, 'MOBILITY'),
+      });
+    }
     recordActivity(this.store, {
       customerId: actor.customerId,
       kind: 'RESERVATION_CONFIRMED',
@@ -1019,6 +1098,192 @@ export class HumanAccessEconomyProduct {
   accessAllocationPreview(actor: AccessActor, input: AccessAllocationPreviewInput = {}) {
     return this.allocationProjection.allocationPreview(actor, input);
   }
+
+  homeSummary(actor: AccessActor) {
+    const capability = capabilityOf(actor);
+    return ok(this.product.homeSummary(capability, actor.customerId));
+  }
+
+  landing(actor: AccessActor) {
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    this.product.funnel.record({
+      eventType: 'ACCESS_VIEWED',
+      occurredAt: NOW,
+      customerId: actor.customerId,
+    });
+    return ok(this.product.landing(capability, actor.customerId));
+  }
+
+  accessHistory(
+    actor: AccessActor,
+    filter: AccessHistoryFilter = 'ALL',
+    category?: AccessCategory,
+    fromDate?: string,
+    toDate?: string,
+  ) {
+    const auth = authorizeAccessView(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    return ok(this.product.history(actor.customerId, filter, category, fromDate, toDate));
+  }
+
+  upcoming(actor: AccessActor) {
+    const auth = authorizeAccessView(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    return ok(this.product.upcoming(actor.customerId));
+  }
+
+  getTransaction(actor: AccessActor, transactionId: string) {
+    const auth = authorizeAccessView(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    const outcome = this.product.getTransaction(actor, transactionId);
+    if (!outcome.ok) {
+      return outcome;
+    }
+    return ok(
+      Object.freeze({
+        schema: 'sunrey.consumer.access.transaction.v1',
+        ...ACCESS_POSTURE,
+        ...outcome.value,
+      }),
+    );
+  }
+
+  getCheckout(actor: AccessActor, transactionId: string) {
+    const auth = authorizeAccessView(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    return this.product.getCheckout(actor, transactionId);
+  }
+
+  startCheckout(actor: AccessActor, transactionId: string) {
+    const auth = authorizeAccessMutate(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    return this.product.startCheckout(actor, transactionId);
+  }
+
+  confirmBooking(actor: AccessActor, transactionId: string, processing = false) {
+    const auth = authorizeAccessMutate(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    return this.product.confirmBooking(actor, transactionId, { processing });
+  }
+
+  cancelTransaction(
+    actor: AccessActor,
+    transactionId: string,
+    input: { readonly penaltyMinorUnits?: string; readonly providerRefundMinorUnits?: string } = {},
+  ) {
+    const auth = authorizeAccessMutate(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    return this.product.cancel(actor, transactionId, input);
+  }
+
+  getReceipt(actor: AccessActor, receiptId: string) {
+    const auth = authorizeAccessView(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    return this.product.getReceipt(actor, receiptId);
+  }
+
+  listReceipts(actor: AccessActor) {
+    const auth = authorizeAccessView(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    return ok(
+      Object.freeze({
+        schema: 'sunrey.consumer.access.receipts.v1',
+        ...ACCESS_POSTURE,
+        items: this.product.listReceipts(actor),
+      }),
+    );
+  }
+
+  getRefundReceipt(actor: AccessActor, refundReceiptId: string) {
+    const auth = authorizeAccessView(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    return this.product.getRefundReceipt(actor, refundReceiptId);
+  }
+
+  getSupportContext(actor: AccessActor, transactionId: string) {
+    const auth = authorizeAccessView(actor, actor.customerId);
+    if (!auth.ok) {
+      return err(auth.error);
+    }
+    const capability = capabilityOf(actor);
+    if (!capability.enabled) {
+      return err({ code: 'FEATURE_DISABLED', message: capability.reason });
+    }
+    return this.product.getSupportContext(actor, transactionId);
+  }
+
+  actionCenterEvents(customerId: string) {
+    return this.product.actionCenterEvents(customerId);
+  }
+
+  runExpirationScan(customerId: string) {
+    return this.product.runExpirationScan(customerId);
+  }
+
+  readonly productOrchestrator = () => this.product;
 }
 
 export function createSandboxAccessEconomy(customerId: string): HumanAccessEconomyProduct {

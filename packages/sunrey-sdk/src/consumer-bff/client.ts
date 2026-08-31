@@ -59,6 +59,10 @@ import type {
   WithdrawalQuoteInput,
   WithdrawalResource,
   AccessOverview,
+  AccessHomeSummary,
+  AccessLanding,
+  AccessReceipt,
+  AccessCheckout,
   AccessCategories,
   AccessEntitlement,
   AccessIntent,
@@ -929,6 +933,43 @@ export class SunReyConsumerBffClient {
 
   async getAccessOverview(options?: BffRequestOptions): Promise<AccessOverview> {
     return this.request('GET', '/api/v1/access/overview', undefined, options);
+  }
+
+  async getAccessHomeSummary(options?: BffRequestOptions): Promise<AccessHomeSummary> {
+    return this.request('GET', '/api/v1/access/home-summary', undefined, options);
+  }
+
+  async getAccessLanding(options?: BffRequestOptions): Promise<AccessLanding> {
+    return this.request('GET', '/api/v1/access/landing', undefined, options);
+  }
+
+  async getAccessHistory(
+    query?: { readonly filter?: string; readonly category?: string; readonly from?: string; readonly to?: string },
+    options?: BffRequestOptions,
+  ): Promise<{ readonly items: readonly unknown[] }> {
+    const params = new URLSearchParams();
+    if (query?.filter) params.set('filter', query.filter);
+    if (query?.category) params.set('category', query.category);
+    if (query?.from) params.set('from', query.from);
+    if (query?.to) params.set('to', query.to);
+    const suffix = params.size > 0 ? `?${params.toString()}` : '';
+    return this.request('GET', `/api/v1/access/history${suffix}`, undefined, options);
+  }
+
+  async getAccessUpcoming(options?: BffRequestOptions): Promise<{ readonly items: readonly unknown[] }> {
+    return this.request('GET', '/api/v1/access/upcoming', undefined, options);
+  }
+
+  async listAccessReceipts(options?: BffRequestOptions): Promise<{ readonly items: readonly AccessReceipt[] }> {
+    return this.request('GET', '/api/v1/access/receipts', undefined, options);
+  }
+
+  async getAccessReceipt(receiptId: string, options?: BffRequestOptions): Promise<AccessReceipt> {
+    return this.request('GET', `/api/v1/access/receipts/${encodeURIComponent(receiptId)}`, undefined, options);
+  }
+
+  async getAccessCheckout(transactionId: string, options?: BffRequestOptions): Promise<AccessCheckout> {
+    return this.request('GET', `/api/v1/access/transactions/${encodeURIComponent(transactionId)}/checkout`, undefined, options);
   }
 
   async listAccessCategories(options?: BffRequestOptions): Promise<AccessCategories> {

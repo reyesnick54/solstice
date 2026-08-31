@@ -849,13 +849,14 @@ function dispatchAuthenticated(
     return handleAgentExternalEvidenceRoute(runtime, requestId, headers);
   }
   if (path === '/api/v1/agent/external-events' && method === 'GET') {
-    return handleAgentExternalEventsRoute(runtime, requestId, headers);
+    return handleAgentExternalEventsRoute(runtime, requestId, headers, principal);
   }
   if (path === '/api/v1/travel/overview' && method === 'GET') {
     return handleTravelOverviewRoute(runtime, request, requestId, headers);
   }
   if (path === '/api/v1/economy/productive/snapshot' && method === 'GET') {
     return handleProductiveEconomySnapshotRoute(runtime, requestId, headers);
+  }
   if (path === '/api/v1/world/physical-economy' && method === 'GET') {
     const world = runtime.worldExternalData;
     if (!world) {
@@ -1407,14 +1408,20 @@ function handleAgentExternalEventsRoute(
   runtime: ConsumerBffRuntime,
   requestId: string,
   headers: Record<string, string>,
+  principal?: BffPrincipal,
 ): BffResponse {
   const evidence = runtime.agentExternalEvidence;
   if (!evidence) {
     return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'External action events unavailable', requestId }), headers);
   }
+  const baseEvents = evidence.externalEvents();
+  const accessEvents =
+    runtime.access && principal
+      ? runtime.access.actionCenterEvents(principal.customerId)
+      : Object.freeze([]);
   return json(200, Object.freeze({
     schema: 'sunrey.bff.action-center.external-events.v1',
-    events: evidence.externalEvents(),
+    events: Object.freeze([...baseEvents, ...accessEvents]),
     autoNotify: false,
   }), headers);
 }
@@ -2187,6 +2194,18 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/access',
   'GET /api/v1/access/overview',
   'GET /api/v1/access/home-summary',
+  'GET /api/v1/access/landing',
+  'GET /api/v1/access/history',
+  'GET /api/v1/access/upcoming',
+  'GET /api/v1/access/receipts',
+  'GET /api/v1/access/receipts/{id}',
+  'GET /api/v1/access/refund-receipts/{id}',
+  'GET /api/v1/access/transactions/{id}',
+  'GET /api/v1/access/transactions/{id}/checkout',
+  'POST /api/v1/access/transactions/{id}/checkout',
+  'POST /api/v1/access/transactions/{id}/confirm',
+  'POST /api/v1/access/transactions/{id}/cancel',
+  'GET /api/v1/access/transactions/{id}/support-context',
   'GET /api/v1/access/categories',
   'GET /api/v1/access/categories/{category}',
   'GET /api/v1/access/entitlements',
