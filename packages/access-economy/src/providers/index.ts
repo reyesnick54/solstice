@@ -32,3 +32,4 @@ export * from './redemption/workflow.ts';
 export * from './redemption/entitlement-store.ts';
 export * from './redemption/metrics.ts';
 export * from './redemption/invariants.ts';
+export * from './commercial/index.ts';
