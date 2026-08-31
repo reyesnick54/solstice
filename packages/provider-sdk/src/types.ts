@@ -5,6 +5,193 @@
  * to avoid merge collisions between Wave 1 prompts.
  */
 
+import type { UtcInstant } from '../../domain/src/time.ts';
+
+export const EXTERNAL_OBSERVATION_SCHEMA = 'sunrey.external-observation.v1' as const;
+export const NORMALIZATION_SCHEMA_VERSION = 1 as const;
+
+/**
+ * Wave 1 — shared provider SDK types (reliability plane).
+ * Simulation only. No live provider connectivity.
+ */
+
+export const HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PATCH', 'PUT', 'DELETE'] as const;
+export type HttpMethod = (typeof HTTP_METHODS)[number];
+
+export const CIRCUIT_STATES = ['CLOSED', 'OPEN', 'HALF_OPEN'] as const;
+export type CircuitState = (typeof CIRCUIT_STATES)[number];
+
+export const FAILURE_CLASSIFICATIONS = [
+  'retryable',
+  'non_retryable',
+  'rate_limited',
+  'authentication_failure',
+  'provider_unavailable',
+  'invalid_payload',
+  'security_failure',
+] as const;
+export type FailureClassification = (typeof FAILURE_CLASSIFICATIONS)[number];
+
+export type ProviderTransportRequest = {
+  readonly method: HttpMethod;
+  readonly path: string;
+  readonly headers?: Readonly<Record<string, string>>;
+  readonly body?: unknown;
+  /** When true, mutation retries are permitted under policy. */
+  readonly idempotent?: boolean;
+};
+
+export type ProviderTransportResponse = {
+  readonly status: number;
+  readonly headers: Readonly<Record<string, string>>;
+  readonly body: unknown;
+};
+
+/**
+ * Injectable transport from Prompt 3. Reliability middleware wraps this.
+ */
+export type ProviderTransport = {
+  readonly providerId: string;
+  execute(
+    request: ProviderTransportRequest,
+    options?: { readonly signal?: AbortSignal; readonly deadlineMs?: number },
+  ): Promise<ProviderTransportResponse>;
+};
+
+export type ProviderError = {
+  readonly classification: FailureClassification;
+  readonly code: string;
+  readonly message: string;
+  readonly status?: number;
+  readonly retryAfterMs?: number;
+  readonly providerId: string;
+};
+
+export type ReliabilityOutcome<T> =
+  | {
+      readonly ok: true;
+      readonly value: T;
+      readonly attempts: number;
+      readonly durationMs: number;
+      readonly circuitState: CircuitState;
+      readonly fallbackEligible: boolean;
+    }
+  | {
+      readonly ok: false;
+      readonly error: ProviderError;
+      readonly attempts: number;
+      readonly durationMs: number;
+      readonly circuitState: CircuitState;
+      readonly fallbackEligible: boolean;
+      readonly cooldownUntilMs?: number;
+    };
+
+export type DeadlineContext = {
+  readonly deadlineMs: number;
+  readonly nowMs?: () => number;
+};
+
+export type FallbackContext = {
+  readonly providerId: string;
+  readonly error: ProviderError;
+  readonly attempts: number;
+  readonly staleFallbackAllowed: boolean;
+  readonly circuitState: CircuitState;
+};
+
+export type FallbackDecision =
+  | { readonly action: 'none' }
+  | { readonly action: 'try_alternate'; readonly reason: string }
+  | { readonly action: 'use_stale_cache'; readonly reason: string };
+
+export type FallbackHook = (context: FallbackContext) => FallbackDecision;
+
+export type Clock = {
+  readonly nowMs: () => number;
+  readonly sleep: (ms: number) => Promise<void>;
+};
+
+export const defaultClock = (): Clock => ({
+  nowMs: () => Date.now(),
+  sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+});
+
+export function isSafeReadMethod(method: HttpMethod): boolean {
+  return method === 'GET' || method === 'HEAD';
+}
+
+/**
+ * Wave 1 Prompt 3 — universal provider HTTP transport contract.
+ *
+ * Vendor-neutral outbound transport for external provider adapters.
+ * Not a second provider runtime, ledger, Kernel, or Execution Authority.
+ */
+
+import type { ProviderTransportError } from './errors.ts';
+
+export const PROVIDER_HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
+export type ProviderHttpMethod = (typeof PROVIDER_HTTP_METHODS)[number];
+
+export const PROVIDER_CONTENT_TYPES = [
+  'application/json',
+  'text/json',
+  'text/plain',
+  'text/csv',
+  'application/xml',
+  'text/xml',
+  'application/x-www-form-urlencoded',
+] as const;
+export type ProviderContentType = (typeof PROVIDER_CONTENT_TYPES)[number] | '*';
+
+export type ProviderRequestContext = {
+  readonly providerId: string;
+  readonly requestId: string;
+  readonly traceId?: string | undefined;
+  readonly method: ProviderHttpMethod;
+  /** Path relative to the configured provider base URL. Must start with /. */
+  readonly path: string;
+  readonly query?: Readonly<Record<string, string | number | boolean>> | undefined;
+  readonly headers?: Readonly<Record<string, string>> | undefined;
+  readonly body?: string | undefined;
+  readonly timeoutMs?: number | undefined;
+  readonly expectedContentType?: ProviderContentType | undefined;
+  readonly maximumResponseBytes?: number | undefined;
+};
+
+export type ProviderResponseMetadata = {
+  readonly providerId: string;
+  readonly requestId: string;
+  readonly traceId: string;
+  readonly httpStatus: number;
+  readonly durationMs: number;
+  readonly contentType: string | null;
+  readonly providerRequestId: string | null;
+  readonly startedAtUtc: string;
+  readonly finalUrl: string;
+};
+
+export type ProviderParsedBody =
+  | { readonly format: 'json'; readonly value: unknown }
+  | { readonly format: 'text'; readonly value: string }
+  | { readonly format: 'raw'; readonly value: string };
+
+export type ProviderTransportResponse<T = unknown> = {
+  readonly metadata: ProviderResponseMetadata;
+  readonly body: ProviderParsedBody;
+  readonly parsed: T | undefined;
+};
+
+export type ProviderTransportSuccess<T> = {
+  readonly ok: true;
+  readonly value: ProviderTransportResponse<T>;
+};
+
+export type ProviderTransportFailure = {
+  readonly ok: false;
+  readonly error: ProviderTransportError;
+};
+
+export type ProviderTransportResult<T = unknown> = ProviderTransportSuccess<T> | ProviderTransportFailure;
 export type {
   ExternalObservation,
   ObservationSource,
@@ -70,7 +257,7 @@ export {
 /**
  * Shared outbound HTTP transport used by all SunRey provider adapters.
  */
-export type ProviderTransport = {
+export type ProviderHttpTransport = {
   readonly transportId: string;
   request<T = unknown>(context: ProviderRequestContext): Promise<ProviderTransportResult<T>>;
 };
@@ -121,6 +308,15 @@ export const PROVIDER_CATEGORIES = [
   'other',
 ] as const;
 export type ProviderCategory = (typeof PROVIDER_CATEGORIES)[number];
+
+export const AUTHORITY_CLASSES = [
+  'authoritative_official',
+  'regulated_provider',
+  'reference_data',
+  'research_data',
+  'community_data',
+  'derived_data',
+] as const;
 
 export const PROVIDER_CAPABILITIES = [
   'macroeconomic_indicators',
@@ -175,6 +371,10 @@ export const PROVIDER_STATUSES = [
 ] as const;
 export type ProviderStatus = (typeof PROVIDER_STATUSES)[number];
 
+export type AuthorityClass = (typeof AUTHORITY_CLASSES)[number];
+
+export const FRESHNESS_STATUSES = ['fresh', 'aging', 'stale', 'expired', 'unknown'] as const;
+export type FreshnessStatus = (typeof FRESHNESS_STATUSES)[number];
 export const PROVIDER_LAUNCH_TIERS = [
   'production_candidate',
   'secondary_source',
@@ -281,6 +481,55 @@ export type ExternalObservation<T> = {
 export type ProviderResult<T> =
   | { readonly ok: true; readonly value: T }
   | { readonly ok: false; readonly code: string; readonly message: string };
+export type ProviderAuthorityClass = (typeof AUTHORITY_CLASSES)[number];
+
+export const PROVIDER_LAUNCH_TIERS = [
+  'production_candidate',
+  'secondary_source',
+  'fallback_source',
+  'research_only',
+  'blocked_pending_review',
+] as const;
+export type ProviderLaunchTier = (typeof PROVIDER_LAUNCH_TIERS)[number];
+
+export const PROVIDER_PRIORITIES = ['critical', 'high', 'medium', 'low'] as const;
+export type ProviderPriority = (typeof PROVIDER_PRIORITIES)[number];
+
+export const PROVIDER_ACTIVATION_MODES = [
+  'enabled',
+  'disabled',
+  'preview_only',
+  'production_enabled',
+  'blocked',
+] as const;
+export type ProviderActivationMode = (typeof PROVIDER_ACTIVATION_MODES)[number];
+
+export const SUNREY_CONSUMER_DOMAINS = [
+  'world',
+  'grow',
+  'financial_agent',
+  'exchange',
+  'blockchain_intelligence',
+  'moonrey',
+  'hin',
+  'vault',
+  'travel',
+  'compliance',
+  'cybersecurity',
+  'economic_graph',
+  'action_center',
+  'research',
+  'infrastructure',
+] as const;
+export type SunReyConsumerDomain = (typeof SUNREY_CONSUMER_DOMAINS)[number];
+
+export const PROVIDER_HEALTH_STATES = [
+  'healthy',
+  'degraded',
+  'unhealthy',
+  'unknown',
+] as const;
+export type ProviderHealthState = (typeof PROVIDER_HEALTH_STATES)[number];
 
 export type SecretReferenceName = {
   readonly environmentVariable: string;
@@ -318,14 +567,14 @@ export type ProviderRuntimeContext = {
   readonly catalogId: string;
 };
 
-export type ProviderRequestContext = {
+export type ProviderAdapterRequestContext = {
   readonly requestId: string;
   readonly correlationId: string;
   readonly consumerDomain: SunReyConsumerDomain;
   readonly nowUtc: string;
 };
 
-export type ProviderResponseMetadata = {
+export type ProviderAdapterResponseMetadata = {
   readonly providerId: ProviderId;
   readonly requestId: string;
   readonly correlationId: string;

@@ -75,6 +75,7 @@ import {
   HIN_PRODUCT_CATEGORIES,
   HIN_VERIFICATION_STATES,
 } from '../../../../packages/human-economic-contribution/src/hin-value/index.ts';
+import { dispatchBlockchain } from './blockchain.ts';
 import { dispatchDataRights } from './data-rights.ts';
 import { dispatchHinAccess } from './hin-access.ts';
 import type { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
@@ -419,6 +420,10 @@ function dispatchAuthenticated(
     if (wallets) {
       return wallets;
     }
+  }
+  const blockchain = dispatchBlockchain(request, requestId, headers);
+  if (blockchain) {
+    return blockchain;
   }
   if (runtime.hin && isRightsMarketplace(runtime.hin)) {
     const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);
@@ -1780,6 +1785,12 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/exchange/orders',
   'GET /api/v1/exchange/fills',
   'GET /api/v1/exchange/stream',
+  'GET /api/v1/blockchain/networks',
+  'GET /api/v1/blockchain/networks/{network}',
+  'GET /api/v1/blockchain/networks/{network}/status',
+  'GET /api/v1/blockchain/networks/{network}/fees',
+  'GET /api/v1/blockchain/transactions/{network}/{hash}',
+  'GET /api/v1/blockchain/market-quotes',
   'GET /api/v1/wallets',
   'GET /api/v1/wallets/deposit-address',
   'POST /api/v1/wallets/deposits/simulate',

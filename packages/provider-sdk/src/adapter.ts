@@ -6,18 +6,19 @@
  * storage, caching, or business authority — those belong to shared infra.
  */
 
+import type { ProviderId, ProviderAdapterRequestContext, ProviderAdapterResponseMetadata } from './types.ts';
 import type { ProviderId, ProviderRequestContext, ProviderResponseMetadata } from './registry-types.ts';
 
 export type AdapterRequest<TParams = unknown> = {
   readonly providerId: ProviderId;
   readonly operation: string;
   readonly params: TParams;
-  readonly context: ProviderRequestContext;
+  readonly context: ProviderAdapterRequestContext;
 };
 
 export type AdapterResponse<TData = unknown> = {
   readonly data: TData;
-  readonly metadata: ProviderResponseMetadata;
+  readonly metadata: ProviderAdapterResponseMetadata;
 };
 
 export type ProviderAdapter<TParams = unknown, TData = unknown> = {
@@ -26,7 +27,7 @@ export type ProviderAdapter<TParams = unknown, TData = unknown> = {
 
   translateRequest(request: AdapterRequest<TParams>): unknown;
   validateResponse(raw: unknown): void;
-  normalize(raw: unknown, context: ProviderRequestContext): AdapterResponse<TData>;
+  normalize(raw: unknown, context: ProviderAdapterRequestContext): AdapterResponse<TData>;
 };
 
 export function createAdapterContract<TParams, TData>(

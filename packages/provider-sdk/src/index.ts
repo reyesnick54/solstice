@@ -256,6 +256,8 @@ export {
   type ProviderTransportResult,
   type ProviderTransportSuccess,
   type ProviderTransportFailure,
+  type ProviderHttpTransport,
+} from './types.ts';
   type ProviderTransport,
 } from './http-transport-types.ts';
 
