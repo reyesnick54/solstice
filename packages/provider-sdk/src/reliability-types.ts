@@ -36,6 +36,8 @@ export type ReliabilityTransportResponse = {
   readonly body: unknown;
 };
 
+/** Injectable transport wrapped by the reliability control plane. */
+export type ReliabilityTransport = {
 export type ReliabilityProviderTransport = {
   readonly providerId: string;
   execute(
@@ -108,6 +110,8 @@ export const defaultClock = (): ReliabilityClock => ({
 export function isSafeReadMethod(method: HttpMethod): boolean {
   return method === 'GET' || method === 'HEAD';
 }
+
+export type ReliabilityProviderTransport = ReliabilityTransport;
 
 /** @deprecated Use ReliabilityTransportRequest */
 export type ProviderTransportRequest = ReliabilityTransportRequest;
