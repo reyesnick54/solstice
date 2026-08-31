@@ -1,0 +1,93 @@
+/**
+ * ACCESS Wave 3 / Prompt 36 — Restricted virtual-card settlement rail taxonomy.
+ */
+
+export const ACCESS_SETTLEMENT_RAIL_SCHEMA_VERSION = 1 as const;
+export const ACCESS_SETTLEMENT_RAIL_TAXONOMY_ID = 'sunrey-access-virtual-card-rail' as const;
+export const ACCESS_SETTLEMENT_RAIL_TAXONOMY_VERSION = '1' as const;
+
+export const ACCESS_PAYMENT_RAIL_CAPABILITIES = [
+  'AUTHORIZE',
+  'CAPTURE',
+  'VOID',
+  'REFUND',
+  'STATUS',
+  'RECONCILE',
+  'RESTRICTED_CARD',
+] as const;
+export type AccessPaymentRailCapability = (typeof ACCESS_PAYMENT_RAIL_CAPABILITIES)[number];
+
+export const ACCESS_PAYMENT_RAIL_STATUSES = [
+  'READY',
+  'SANDBOX',
+  'BLOCKED_PENDING_PROVIDER',
+] as const;
+export type AccessPaymentRailStatus = (typeof ACCESS_PAYMENT_RAIL_STATUSES)[number];
+
+export const ACCESS_VIRTUAL_CARD_STATUSES = [
+  'PENDING_FUNDING',
+  'PENDING_ISSUANCE',
+  'ACTIVE',
+  'AUTHORIZED',
+  'CAPTURED',
+  'DISABLED',
+  'CLOSED',
+  'FAILED',
+] as const;
+export type AccessVirtualCardStatus = (typeof ACCESS_VIRTUAL_CARD_STATUSES)[number];
+
+export const ACCESS_CARD_LIFECYCLE_EVENTS = [
+  'CARD_CREATED',
+  'AUTHORIZATION_PENDING',
+  'AUTHORIZATION_APPROVED',
+  'AUTHORIZATION_DECLINED',
+  'CAPTURED',
+  'REVERSED',
+  'REFUNDED',
+  'CARD_DISABLED',
+] as const;
+export type AccessCardLifecycleEvent = (typeof ACCESS_CARD_LIFECYCLE_EVENTS)[number];
+
+export const ACCESS_CARD_CONTROL_KINDS = [
+  'MAXIMUM_AMOUNT',
+  'SINGLE_TRANSACTION',
+  'SINGLE_USE',
+  'EXPIRATION',
+  'MERCHANT_ID',
+  'MERCHANT_CATEGORY',
+  'COUNTRY',
+  'CURRENCY',
+  'ALLOWED_MERCHANT',
+  'BLOCKED_MERCHANT_CATEGORIES',
+] as const;
+export type AccessCardControlKind = (typeof ACCESS_CARD_CONTROL_KINDS)[number];
+
+export const ACCESS_SETTLEMENT_RAIL_FAILURE_CODES = [
+  'FUNDING_NOT_RESERVED',
+  'CARD_ISSUANCE_FAILED',
+  'PROVIDER_BLOCKED',
+  'UNSUPPORTED_ACCESS_PAYMENT_CONFIGURATION',
+  'AMOUNT_EXCEEDS_LIMIT',
+  'MERCHANT_NOT_ALLOWED',
+  'MCC_NOT_ALLOWED',
+  'COUNTRY_NOT_ALLOWED',
+  'CARD_DISABLED',
+  'CARD_EXPIRED',
+  'CARD_SINGLE_USE_EXHAUSTED',
+  'INCREMENTAL_AUTH_EXCEEDS_MAX',
+  'SECURITY_DEPOSIT_NOT_FUNDED',
+  'ISSUER_TIMEOUT',
+  'WEBHOOK_SIGNATURE_INVALID',
+  'DUPLICATE_WEBHOOK',
+  'PCI_BOUNDARY_VIOLATION',
+  'TOKEN_FUNDING_FORBIDDEN',
+] as const;
+export type AccessSettlementRailFailureCode = (typeof ACCESS_SETTLEMENT_RAIL_FAILURE_CODES)[number];
+
+export const ACCESS_VIRTUAL_CARD_PURPOSES = [
+  'PROVIDER_SETTLEMENT',
+  'MERCHANT_CHECKOUT',
+] as const;
+export type AccessVirtualCardPurpose = (typeof ACCESS_VIRTUAL_CARD_PURPOSES)[number];
+
+export const RESTRICTED_CARD_RAIL_ID = 'RESTRICTED_VIRTUAL_CARD' as const;
