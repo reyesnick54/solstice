@@ -150,7 +150,6 @@ export {
   type FallbackHook,
   type ReliabilityClock,
 } from './types.ts';
-} from './reliability-types.ts';
 
 export {
   DEFAULT_PROVIDER_RELIABILITY_POLICY,
@@ -244,6 +243,8 @@ export {
   type ProviderHttpTransportFailure,
   type ProviderHttpTransport,
 } from './types.ts';
+
+export {
   type HttpProviderRequestContext,
   type HttpProviderResponseMetadata,
   type ProviderParsedBody,

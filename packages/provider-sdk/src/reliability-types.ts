@@ -36,7 +36,6 @@ export type ReliabilityTransportResponse = {
   readonly body: unknown;
 };
 
-export type ReliabilityProviderTransport = {
 /** Injectable transport wrapped by the reliability control plane. */
 export type ReliabilityTransport = {
   readonly providerId: string;
@@ -45,6 +44,9 @@ export type ReliabilityTransport = {
     options?: { readonly signal?: AbortSignal; readonly deadlineMs?: number },
   ): Promise<ReliabilityTransportResponse>;
 };
+
+/** @deprecated Use ReliabilityTransport */
+export type ReliabilityProviderTransport = ReliabilityTransport;
 
 export type ProviderError = {
   readonly classification: FailureClassification;
