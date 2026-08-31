@@ -19,6 +19,7 @@ import type { ComplianceEvidenceService, BusinessIdentityService, DigitalRiskSer
 import { createDefaultWave4AdapterStates } from './wave4/adapters.ts';
 import { buildWave4CoverageReport } from './wave4/coverage.ts';
 import { WAVE4_IMPLEMENTED_PROVIDER_IDS } from './wave4/catalog-entries.ts';
+import { createExternalDataTrustPlane, type ExternalDataTrustPlane } from './trust-engine/index.ts';
 
 export type ExternalDataPlaneOptions = {
   readonly nowUtc?: string;
@@ -39,6 +40,7 @@ export class ExternalDataPlane {
   readonly endpointSecurity: EndpointSecurityService;
   readonly serviceOutage: ServiceOutageService;
   readonly providerRisk: ProviderRiskService;
+  readonly trust: ExternalDataTrustPlane;
   readonly #ctx: Wave2AdapterContext;
   readonly #wave4Ctx;
   readonly #delivery;
@@ -67,6 +69,7 @@ export class ExternalDataPlane {
     this.endpointSecurity = wave4.endpointSecurity;
     this.serviceOutage = wave4.serviceOutage;
     this.providerRisk = wave4.providerRisk;
+    this.trust = createExternalDataTrustPlane({ nowUtc: () => nowUtc });
     this.#delivery = createDataDelivery(Date.parse(nowUtc));
   }
 

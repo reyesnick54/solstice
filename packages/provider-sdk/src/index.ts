@@ -150,7 +150,6 @@ export {
   type FallbackHook,
   type ReliabilityClock,
 } from './reliability-types.ts';
-} from './types.ts';
 
 export {
   DEFAULT_PROVIDER_RELIABILITY_POLICY,
@@ -274,7 +273,6 @@ export {
   type ProviderTransportSuccess,
   type ProviderTransportFailure,
   type ProviderHttpTransport,
-} from './types.ts';
   type ProviderTransport,
 } from './http-transport-types.ts';
 
@@ -392,3 +390,4 @@ export * from './factory.ts';
 export * from './catalog/types.ts';
 export * from './catalog/loader.ts';
 export * from './mocks/index.ts';
+export * from './trust/index.ts';

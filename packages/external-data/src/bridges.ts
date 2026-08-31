@@ -25,6 +25,18 @@ export type WorldEconomySnapshot = {
     readonly geography: string;
   }[];
   readonly availability: 'AVAILABLE_SIMULATION';
+  readonly fxQuality?: {
+    readonly status: string;
+    readonly quality: string;
+    readonly sources: number;
+    readonly updatedAt: string;
+  };
+  readonly marketQuality?: {
+    readonly status: string;
+    readonly quality: string;
+    readonly sources: number;
+    readonly updatedAt: string;
+  };
 };
 
 export type GrowContextSnapshot = {
@@ -41,6 +53,8 @@ export type AgentEvidenceSnapshot = {
   readonly schema: 'sunrey.agent.external-evidence.v1';
   readonly evidenceCount: number;
   readonly grantsExecutionAuthority: false;
+  readonly trustPolicyVersions?: readonly string[];
+  readonly trustMetadataAvailable?: boolean;
 };
 
 export type ExchangeReferenceSnapshot = {
@@ -101,6 +115,9 @@ export async function worldEconomySnapshotAsync(plane: ExternalDataPlane): Promi
     plane.productiveEconomy.getEnergyObservations(),
     plane.productiveEconomy.getResourceObservations(),
   ]);
+  const fxQuality = plane.trust.worldQualityForFx(plane, 'USD', 'EUR');
+  const marketTrust = plane.trust.assessMarketFromPlane(plane, 'AAPL');
+  const marketQuality = plane.trust.engine().toEvidenceMetadata(marketTrust);
   return Object.freeze({
     ...base,
     energy: Object.freeze(
@@ -121,6 +138,18 @@ export async function worldEconomySnapshotAsync(plane: ExternalDataPlane): Promi
         geography: o.data.geography.country,
       })),
     ),
+    fxQuality: Object.freeze({
+      status: fxQuality.status,
+      quality: fxQuality.quality,
+      sources: fxQuality.sources,
+      updatedAt: fxQuality.updatedAt,
+    }),
+    marketQuality: Object.freeze({
+      status: marketTrust.status === 'TRUSTED' || marketTrust.status === 'SUPPORTED' ? 'LIVE' : 'DEGRADED',
+      quality: marketQuality.confidenceBand,
+      sources: marketQuality.corroborationCount,
+      updatedAt: marketTrust.generatedAt,
+    }),
   });
 }
 
@@ -178,11 +207,13 @@ export async function growContextSnapshotAsync(plane: ExternalDataPlane): Promis
 }
 
 export function agentEvidenceSnapshot(plane: ExternalDataPlane): AgentEvidenceSnapshot {
-  const bundle = plane.agentEvidenceBundle();
+  const bundle = plane.trust.agentEvidenceWithTrust(plane);
   return Object.freeze({
     schema: 'sunrey.agent.external-evidence.v1',
     evidenceCount: bundle.refs.length,
     grantsExecutionAuthority: false,
+    trustPolicyVersions: bundle.trustPolicyVersions,
+    trustMetadataAvailable: bundle.refs.some((ref) => ref.trustMetadata !== null),
   });
 }
 

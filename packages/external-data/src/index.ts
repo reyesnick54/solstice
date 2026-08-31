@@ -8,3 +8,4 @@ export * from './events.ts';
 export * from './bridges.ts';
 export * from './productive-economy.ts';
 export * from './wave4/index.ts';
+export * from './trust-engine/index.ts';
