@@ -80,6 +80,8 @@ import { dispatchTravel } from './travel.ts';
 import { dispatchHealthReference, HEALTH_REFERENCE_BFF_ROUTES } from './health-reference.ts';
 import { dispatchEnvironmental } from './environmental.ts';
 import type { EnvironmentalOracleBff } from './environmental-adapter.ts';
+import { dispatchOpportunity } from './opportunity.ts';
+import type { OpportunityIntelligenceBff } from './opportunity-adapter.ts';
 import { dispatchDataRights } from './data-rights.ts';
 import { dispatchHinAccess } from './hin-access.ts';
 import type { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
@@ -138,6 +140,7 @@ export type ConsumerBffRuntime = {
   readonly marketReference?: MarketReferenceBffSurface;
   readonly cryptoMarket?: CryptoMarketBffSurface;
   readonly environmental?: EnvironmentalOracleBff;
+  readonly opportunity?: OpportunityIntelligenceBff;
   readonly previewDiagnostics?: () => Readonly<Record<string, unknown>>;
 };
 
@@ -444,6 +447,11 @@ function dispatchAuthenticated(
   const environmental = dispatchEnvironmental(request, requestId, headers, runtime.environmental);
   if (environmental) {
     return environmental;
+  }
+
+  const opportunity = dispatchOpportunity(request, requestId, headers, runtime.opportunity);
+  if (opportunity) {
+    return opportunity;
   }
   if (runtime.hin && isRightsMarketplace(runtime.hin)) {
     const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);
@@ -1923,6 +1931,12 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/environmental/separation-proof',
   'GET /api/v1/environmental/agent-evidence',
   'GET /api/v1/environmental/travel-context',
+  'GET /api/v1/opportunities/jobs',
+  'GET /api/v1/opportunities/skills',
+  'GET /api/v1/opportunities/occupations',
+  'GET /api/v1/opportunities/intelligence',
+  'GET /api/v1/opportunities/coverage',
+  'GET /api/v1/world/opportunities',
   ...HEALTH_REFERENCE_BFF_ROUTES,
   'GET /api/v1/hin/contributions',
   'GET /api/v1/hin/contributions/{id}',

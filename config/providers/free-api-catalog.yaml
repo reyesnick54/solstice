@@ -3,6 +3,13 @@ catalog_id: sunrey-free-api-catalog
 expected_provider_count: 126
 population_status: partial
 source_list:
+  document: config/providers/wave2-catalog-entries.yaml + packages/payments/src/fx-reference/catalog-entries.ts +
+    wave3-crypto-catalog-entries.yaml + wave5-energy-resource-catalog-entries.yaml +
+    wave6-opportunity-skills-catalog-entries.yaml + packages/kernel compliance-intelligence
+  version: wave-6-prompt-23
+  verified_at: 2026-08-31
+notes: Partial population including Wave 2 economics/markets, Wave 3 crypto, Wave 4 compliance intelligence, Wave 5
+  energy/resource, and Wave 6 opportunity/skills providers. Full 126-provider master list remains pending.
   document: wave2 + fx + wave3 + wave5-energy + wave5-travel + wave6-health-hin + compliance
   version: wave-6-prompt-22
   verified_at: 2026-08-31
@@ -2297,6 +2304,23 @@ providers:
       verified_against_official_docs: false
       last_verified: 2026-08-31
       notes: Blocked pending legal review of free-tier commercial terms.
+  - provider_id: arbeitnow
+    name: Arbeitnow Job Board API
+    short_name: Arbeitnow
+    description: >
+      Free public job board API with remote and visa-sponsorship filters covering technology and general roles across
+      Europe and globally.
+    primary_category: jobs_skills
+    secondary_categories:
+      - career_opportunities
+    capabilities:
+      - job_search
+      - employment_market
+      - career_opportunities
+    endpoints:
+      base_url: https://www.arbeitnow.com/api
+      api_version: v1
+      documentation_url: https://www.arbeitnow.com/api
   - provider_id: opensky
     name: OpenSky Network
     short_name: OpenSky
@@ -2380,11 +2404,19 @@ providers:
       required: false
       registration_required: false
       environment_variable: null
+      notes: Public REST API; no API key required.
       notes: null
     access:
       status: verified_free
       free_tier_verified: true
       registration_required: false
+      notes: Free public job listings API.
+    commercial_use:
+      status: verified_allowed
+      notes: Attribution to Arbeitnow required.
+    redistribution:
+      status: attribution_required
+      notes: Job listing attribution required.
       notes: Public U.S. government registry.
     commercial_use:
       status: verified_allowed
@@ -2400,6 +2432,29 @@ providers:
       requests_per_day: null
       monthly_quota: null
       concurrency_limit: null
+      notes: Enforce SunRey bulkheads and caching.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - EU
+        - GLOBAL
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: Job listings expire quickly; short cache TTL.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+        - action_center
+      canonical_provider_interface: OpportunityProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
       notes: Public registry; rate limits not formally documented.
     data_characteristics:
       freshness: daily
@@ -2486,6 +2541,21 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-31
+      notes: Official Arbeitnow API documentation reviewed.
+  - provider_id: ai-dev-jobs
+    name: AI Dev Jobs API
+    short_name: AI Dev Jobs
+    description: >
+      Free public API listing AI and machine-learning developer job opportunities from multiple sources aggregated for
+      the AI/ML engineering community.
+    primary_category: jobs_skills
+    capabilities:
+      - job_search
+      - career_opportunities
+    endpoints:
+      base_url: https://ai.devjobs.app/api
+      api_version: v1
+      documentation_url: https://ai.devjobs.app/
       notes: Wave 5 Prompt 20 fixture adapter.
   - provider_id: can-i-enter
     name: Can I Enter
@@ -2506,11 +2576,16 @@ providers:
       required: false
       registration_required: false
       environment_variable: null
+      notes: Public REST API.
       notes: null
     access:
       status: verified_free
       free_tier_verified: true
       registration_required: false
+      notes: Free public job listings.
+    commercial_use:
+      status: verified_allowed
+      notes: null
       notes: Public reference API.
     commercial_use:
       status: unknown
@@ -2520,6 +2595,27 @@ providers:
       notes: null
     rate_limits:
       documented: false
+      notes: Enforce SunRey caching.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: AI/ML engineering roles.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+      canonical_provider_interface: OpportunityProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
       requests_per_second: null
       requests_per_minute: null
       requests_per_hour: null
@@ -2549,6 +2645,21 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
+  - provider_id: artificial-intelligence-jobs
+    name: Artificial Intelligence Jobs
+    short_name: AI Jobs
+    description: >
+      Free public job board API focused on artificial intelligence, data science, and machine learning career
+      opportunities.
+    primary_category: jobs_skills
+    capabilities:
+      - job_search
+      - career_opportunities
+    endpoints:
+      base_url: https://artificialintelligencejobs.co.uk/api
+      api_version: v1
+      documentation_url: https://artificialintelligencejobs.co.uk/
       notes: Reference information only — not admissibility guarantee.
   - provider_id: transport-rest
     name: Transport.rest
@@ -2570,11 +2681,16 @@ providers:
       required: false
       registration_required: false
       environment_variable: null
+      notes: Public REST API.
       notes: null
     access:
       status: verified_free
       free_tier_verified: true
       registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
       notes: Open Swiss transport API.
     commercial_use:
       status: attribution_required
@@ -2584,6 +2700,29 @@ providers:
       notes: null
     rate_limits:
       documented: false
+      notes: Enforce SunRey caching.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GB
+        - EU
+        - GLOBAL
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: AI/ML focused roles.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+      canonical_provider_interface: OpportunityProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
       requests_per_second: null
       requests_per_minute: null
       requests_per_hour: null
@@ -2741,6 +2880,21 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
+  - provider_id: freehire
+    name: Freehire Job API
+    short_name: Freehire
+    description: |
+      Free public job listings API providing technology and startup job opportunities with remote and location filters.
+    primary_category: jobs_skills
+    capabilities:
+      - job_search
+      - employment_market
+      - career_opportunities
+    endpoints:
+      base_url: https://freehire.app/api
+      api_version: v1
+      documentation_url: https://freehire.app/
       notes: Wave 5 Prompt 20 fixture adapter.
   - provider_id: bc-ferries
     name: BC Ferries
@@ -2762,11 +2916,15 @@ providers:
       required: false
       registration_required: false
       environment_variable: null
+      notes: Public REST API.
       notes: null
     access:
       status: verified_free
       free_tier_verified: true
       registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
       notes: Public schedule API.
     commercial_use:
       status: unknown
@@ -2776,6 +2934,28 @@ providers:
       notes: null
     rate_limits:
       documented: false
+      notes: Enforce SunRey caching.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: Startup and tech roles.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+        - action_center
+      canonical_provider_interface: OpportunityProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
       requests_per_second: null
       requests_per_minute: null
       requests_per_hour: null
@@ -2805,6 +2985,36 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
+  - provider_id: graphql-jobs
+    name: GraphQL Jobs API
+    short_name: GraphQL Jobs
+    description: >
+      Free public job board API listing GraphQL, TypeScript, and full-stack developer opportunities from the GraphQL
+      community.
+    primary_category: jobs_skills
+    capabilities:
+      - job_search
+      - career_opportunities
+    endpoints:
+      base_url: https://graphql.jobs/api
+      api_version: v1
+      documentation_url: https://graphql.jobs/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public REST API.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
       notes: Wave 5 Prompt 20 fixture adapter.
   - provider_id: entur
     name: Entur
@@ -2840,6 +3050,28 @@ providers:
       status: attribution_required
       notes: null
     rate_limits:
+      documented: false
+      notes: Enforce SunRey caching.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: GraphQL and TypeScript roles.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+      canonical_provider_interface: OpportunityProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
       documented: true
       requests_per_second: null
       requests_per_minute: 60
@@ -2871,6 +3103,25 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
+  - provider_id: techrole-index
+    name: TechRole Index
+    short_name: TechRole Index
+    description: >
+      Free public technology role and skill demand index providing occupation titles, skill requirements, and market
+      demand signals for tech careers.
+    primary_category: jobs_skills
+    secondary_categories:
+      - occupations
+    capabilities:
+      - occupations
+      - skills
+      - employment_market
+      - salaries
+    endpoints:
+      base_url: https://techroleindex.com/api
+      api_version: v1
+      documentation_url: https://techroleindex.com/
       notes: Wave 5 Prompt 20 fixture adapter.
   - provider_id: open-food-facts
     name: Open Food Facts
@@ -2892,11 +3143,43 @@ providers:
       required: false
       registration_required: false
       environment_variable: null
+      notes: Public REST API.
       notes: Public read API.
     access:
       status: verified_free
       free_tier_verified: true
       registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      notes: Long cache TTL for taxonomy data.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - US
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Occupation and skill demand reference.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+      canonical_provider_interface: OpportunityProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: derived_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
       notes: Open Database Licence (ODbL).
     commercial_use:
       status: attribution_required
@@ -2936,6 +3219,21 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
+  - provider_id: open-skills
+    name: Open Skills API
+    short_name: Open Skills
+    description: >
+      Free open skills taxonomy API providing canonical skill names, aliases, categories, and related occupation
+      mappings from open labor-market data.
+    primary_category: jobs_skills
+    capabilities:
+      - skills
+      - occupations
+    endpoints:
+      base_url: https://api.openskills.network
+      api_version: v1
+      documentation_url: https://openskills.network/
       notes: Wave 6 Prompt 22 fixture adapter. Reference only — not medical advice.
   - provider_id: usda-fooddata-central
     name: USDA FoodData Central
@@ -3021,11 +3319,42 @@ providers:
       required: false
       registration_required: false
       environment_variable: null
+      notes: Public REST API.
       notes: Public educational content feeds.
     access:
       status: verified_free
       free_tier_verified: true
       registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      notes: Long cache TTL for taxonomy.
+    data_characteristics:
+      freshness: weekly
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Skills taxonomy and occupation mappings.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+      canonical_provider_interface: OpportunityProvider
+      priority: critical
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
       notes: NIH public educational resource.
     commercial_use:
       status: verified_allowed
@@ -3066,6 +3395,30 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
+  - provider_id: noozra
+    name: Noozra News API
+    short_name: Noozra
+    description: >
+      Free public news aggregation API providing job-market, technology, and economic opportunity context from curated
+      news sources.
+    primary_category: jobs_skills
+    secondary_categories:
+      - research
+    capabilities:
+      - public_opportunity_data
+      - employment_market
+    endpoints:
+      base_url: https://api.noozra.com
+      api_version: v1
+      documentation_url: https://noozra.com/
+      status_url: null
+    authentication:
+      type: api_key
+      required: false
+      registration_required: false
+      environment_variable: NOOZRA_API_KEY
+      notes: Optional API key for higher rate limits.
       notes: Educational reference only. Must not attach to user DNA without explicit consent.
   - provider_id: openfda
     name: openFDA
@@ -3157,6 +3510,36 @@ providers:
       status: verified_free
       free_tier_verified: true
       registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      notes: Short cache TTL for news.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: Job-market and economic news; not verified fact.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - world
+        - action_center
+      canonical_provider_interface: OpportunityProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: derived_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
       notes: Public CMS API.
     commercial_use:
       status: verified_allowed
@@ -3195,6 +3578,23 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
+  - provider_id: datacube-ai
+    name: DataCube AI Intelligence
+    short_name: DataCube AI
+    description: >
+      Free public market intelligence API providing technology trends, hiring signals, and economic opportunity context
+      from aggregated open data.
+    primary_category: jobs_skills
+    secondary_categories:
+      - research
+    capabilities:
+      - public_opportunity_data
+      - employment_market
+    endpoints:
+      base_url: https://api.datacube.ai
+      api_version: v1
+      documentation_url: https://datacube.ai/
       notes: Directory semantics preserved. Not insurance eligibility.
   - provider_id: clinicaltrials-gov
     name: ClinicalTrials.gov
@@ -3220,6 +3620,35 @@ providers:
       status: verified_free
       free_tier_verified: true
       registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      notes: Short cache TTL.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: Derived intelligence; not verified fact.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - world
+      canonical_provider_interface: OpportunityProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: derived_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
       notes: NLM public API.
     commercial_use:
       status: verified_allowed
@@ -3262,6 +3691,24 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
+  - provider_id: hackernews
+    name: Hacker News API
+    short_name: HackerNews
+    description: >
+      Free public Hacker News API (Algolia) providing technology hiring signals, startup opportunities, and community
+      job-market context from Who is Hiring threads.
+    primary_category: jobs_skills
+    secondary_categories:
+      - research
+    capabilities:
+      - public_opportunity_data
+      - employment_market
+      - career_opportunities
+    endpoints:
+      base_url: https://hn.algolia.com/api
+      api_version: v1
+      documentation_url: https://hn.algolia.com/api
       notes: Advisory discovery only. No automated eligibility.
   - provider_id: nhs-scotland-open-data
     name: Open Data NHS Scotland
@@ -3282,11 +3729,43 @@ providers:
       required: false
       registration_required: false
       environment_variable: null
+      notes: Public Algolia HN API.
       notes: CKAN open data portal.
     access:
       status: verified_free
       free_tier_verified: true
       registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: 10
+      notes: Algolia HN API rate limits.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: Community content; not verified fact.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - world
+        - action_center
+      canonical_provider_interface: OpportunityProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
       notes: Open Government Licence Scotland.
     commercial_use:
       status: attribution_required
@@ -3326,6 +3805,23 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-31
+      notes: Official Algolia HN API documentation reviewed.
+  - provider_id: bluesky-public
+    name: Bluesky Public Feeds
+    short_name: Bluesky
+    description: >
+      Free public Bluesky AT Protocol feeds providing technology career signals, hiring announcements, and economic
+      opportunity context from public posts.
+    primary_category: jobs_skills
+    secondary_categories:
+      - research
+    capabilities:
+      - public_opportunity_data
+      - employment_market
+    endpoints:
+      base_url: https://public.api.bsky.app
+      api_version: v1
+      documentation_url: https://docs.bsky.app/
       notes: Aggregate public health data only.
   - provider_id: hdx-health
     name: Humanitarian Data Exchange (Health)
@@ -3346,11 +3842,47 @@ providers:
       required: false
       registration_required: false
       environment_variable: null
+      notes: Public AT Protocol API; no authentication for read-only public feeds.
       notes: Public CKAN API; optional API key for higher limits.
     access:
       status: verified_free
       free_tier_verified: true
       registration_required: false
+      notes: null
+    commercial_use:
+      status: unclear
+      notes: Review Bluesky terms for commercial redistribution.
+    redistribution:
+      status: attribution_required
+      notes: Social content attribution required.
+    rate_limits:
+      documented: true
+      requests_per_second: 3
+      notes: Bluesky public API rate limits.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: Social content; not verified fact; authority_class community_data.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - world
+      canonical_provider_interface: OpportunityProvider
+      priority: low
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: implemented
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 6 Prompt 23 fixture-backed adapter.
       notes: Humanitarian open data.
     commercial_use:
       status: attribution_required

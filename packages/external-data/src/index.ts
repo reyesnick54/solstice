@@ -16,3 +16,4 @@ export * from './wave5-peg.ts';
 export * from './wave5-provider-risk.ts';
 export * from './productive-economy.ts';
 export * from './wave4/index.ts';
+export * from './wave6/index.ts';

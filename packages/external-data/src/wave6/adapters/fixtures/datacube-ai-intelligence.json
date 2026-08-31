@@ -1,0 +1,12 @@
+{
+  "signals": [
+    {
+      "id": "dc-001",
+      "title": "Cloud Infrastructure Skills in High Demand",
+      "description": "Kubernetes and AWS skills show 25% increase in job postings.",
+      "category": "hiring_signal",
+      "source_url": "https://datacube.ai/signals/dc-001",
+      "timestamp": "2026-08-29T12:00:00.000Z"
+    }
+  ]
+}

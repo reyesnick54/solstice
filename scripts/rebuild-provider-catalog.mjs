@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 /**
+ * Rebuild config/providers/free-api-catalog.yaml from authoritative partial sources:
+ * - Wave 2 YAML entries (macro, markets, filings, commodities, gov data)
+ * - FX reference catalog entries (packages/payments)
+ * - Crypto market catalog entries (packages/sunrey-exchange)
+ * - Compliance intelligence catalog entries (packages/kernel)
+ * - Wave 6 opportunity/skills catalog entries
  * Rebuild config/providers/free-api-catalog.yaml from authoritative partial sources.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -11,6 +17,12 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CATALOG_PATH = join(ROOT, 'config/providers/free-api-catalog.yaml');
 const WAVE2_PATH = join(ROOT, 'config/providers/wave2-catalog-entries.yaml');
 const WAVE3_PATH = join(ROOT, 'config/providers/wave3-crypto-catalog-entries.yaml');
+const WAVE5_PATH = join(ROOT, 'config/providers/wave5-energy-resource-catalog-entries.yaml');
+const WAVE6_PATH = join(ROOT, 'config/providers/wave6-opportunity-skills-catalog-entries.yaml');
+
+const wave2 = parseYaml(readFileSync(WAVE2_PATH, 'utf8'));
+const wave3 = parseYaml(readFileSync(WAVE3_PATH, 'utf8'));
+const wave5 = parseYaml(readFileSync(WAVE5_PATH, 'utf8'));
 const WAVE5_ENERGY_PATH = join(ROOT, 'config/providers/wave5-energy-resource-catalog-entries.yaml');
 const WAVE5_TRAVEL_PATH = join(ROOT, 'config/providers/wave5-travel-catalog-entries.yaml');
 const WAVE6_PATH = join(ROOT, 'config/providers/wave6-health-hin-catalog-entries.yaml');
@@ -73,6 +85,7 @@ addEntries(wave2.providers);
 addEntries(FX_REFERENCE_CATALOG_ENTRIES);
 addEntries([FX_REFERENCE_BLOCKED_CATALOG_ENTRY]);
 addEntries(wave3.providers);
+addEntries(wave5.providers);
 addEntries(wave5Energy.providers);
 addEntries(wave5Travel.providers);
 addEntries(wave6.providers);
@@ -85,6 +98,12 @@ const catalog = {
   population_status: 'partial',
   source_list: {
     document:
+      'config/providers/wave2-catalog-entries.yaml + packages/payments/src/fx-reference/catalog-entries.ts + wave3-crypto-catalog-entries.yaml + wave5-energy-resource-catalog-entries.yaml + wave6-opportunity-skills-catalog-entries.yaml + packages/kernel compliance-intelligence',
+    version: 'wave-6-prompt-23',
+    verified_at: '2026-08-31',
+  },
+  notes:
+    'Partial population including Wave 2 economics/markets, Wave 3 crypto, Wave 4 compliance intelligence, Wave 5 energy/resource, and Wave 6 opportunity/skills providers. Full 126-provider master list remains pending.',
       'wave2 + fx + wave3 + wave5-energy + wave5-travel + wave6-health-hin + compliance',
     version: 'wave-6-prompt-22',
     verified_at: '2026-08-31',
