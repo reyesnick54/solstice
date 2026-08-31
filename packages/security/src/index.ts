@@ -313,6 +313,29 @@ export { RFC8032_ED25519_TEST1, RFC8032_ED25519_TEST3, RFC8032_ED25519_VECTORS }
 
 export { runCryptoBenchmarks, type BenchmarkRow } from './crypto-benchmark.ts';
 
+export {
+  SIGNATURE_DOMAINS,
+  SIGNATURE_DOMAIN_VALUES,
+  consensusDomainForMessageType,
+  encodeSignatureDomainCommit,
+  isSignatureDomain,
+  type SignatureDomain,
+} from './signature-domains.ts';
+
+export {
+  BLOCKCHAIN_KEY_BACKEND_KINDS,
+  DevelopmentSoftwareBlockchainKeyProvider,
+  UnavailableBlockchainKeyProvider,
+  createBlockchainKeyProvider,
+  type BlockchainKeyBackendKind,
+  type BlockchainKeyHandle,
+  type BlockchainKeyProvider,
+  type BlockchainKeyProviderFactoryInput,
+  type BlockchainKeyRotationEvent,
+  type BlockchainSignRequest,
+  type DevelopmentSoftwareKeyEntry,
+} from './blockchain-key-provider.ts';
+
 export { signWithSuite, verifyWithSuite, type SuiteSignRequest } from './suite-signer.ts';
 
 export {
