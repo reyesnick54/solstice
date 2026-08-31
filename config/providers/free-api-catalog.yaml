@@ -3,33 +3,12 @@ catalog_id: sunrey-free-api-catalog
 expected_provider_count: 126
 population_status: partial
 source_list:
-  document: scripts/lib/wave3-catalog-providers.mjs
-  version: wave3-prompt-14
-  verified_at: 2026-08-30
-notes: Partial Wave 3 population (crypto/blockchain intelligence). Full
-  126-provider master list still pending.
-providers:
-  - provider_id: coingecko
-    name: CoinGecko
-    short_name: CoinGecko
-    description: Public cryptocurrency market reference prices and metadata.
-    primary_category: cryptocurrency
-    secondary_categories: []
-    capabilities:
-      - crypto_prices
-      - chain_market_reference
-      - token_metadata
-    endpoints:
-      base_url: https://api.coingecko.com
-      api_version: v3
-      documentation_url: https://docs.coingecko.com
-      status_url: https://status.coingecko.com
   document: config/providers/wave2-catalog-entries.yaml + packages/payments/src/fx-reference/catalog-entries.ts +
-    wave3-crypto-catalog-entries.yaml
-  version: wave-3-prompt-12
-  verified_at: 2026-08-30
-notes: Partial population including Wave 2 economics/markets providers and Wave 3 crypto market reference providers.
-  Full 126-provider master list remains pending.
+    wave3-crypto-catalog-entries.yaml + wave5-travel-catalog-entries.yaml
+  version: wave-5-prompt-20
+  verified_at: 2026-08-31
+notes: Partial population including Wave 2 economics/markets, Wave 3 crypto/blockchain, and Wave 5 travel/mobility
+  providers. Full 126-provider master list remains pending.
 providers:
   - provider_id: fred
     name: FRED API
@@ -128,17 +107,6 @@ providers:
       status: verified_free
       free_tier_verified: true
       registration_required: false
-      notes: Demo API rate limits apply.
-    commercial_use:
-      status: attribution_required
-      notes: Attribution required per CoinGecko terms.
-    redistribution:
-      status: attribution_required
-      notes: null
-    rate_limits:
-      documented: true
-      requests_per_second: null
-      requests_per_minute: 30
       notes: Open public API with no authentication required.
     commercial_use:
       status: verified_allowed
@@ -154,13 +122,6 @@ providers:
       requests_per_day: null
       monthly_quota: null
       concurrency_limit: null
-      notes: Public demo tier; production limits require paid plan.
-    data_characteristics:
-      freshness: delayed
-      geographic_scope:
-        - global
-      historical_data: true
-      realtime: true
       notes: No published rate limits in official documentation.
     data_characteristics:
       freshness: monthly
@@ -172,16 +133,6 @@ providers:
       notes: null
     sunrey:
       domain:
-        - exchange
-        - world
-        - grow
-        - blockchain_intelligence
-      canonical_provider_interface: CryptoMarketReferenceProvider
-      priority: high
-      launch_tier: production_candidate
-      authority_class: reference_data
-      integration_state: simulated
-      existing_adapter: packages/sunrey-chain/src/blockchain-intelligence/adapters/coingecko.ts
         - world
         - economic_graph
         - grow
@@ -195,20 +146,6 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
-      notes: Wave 3 Prompt 14 fixture adapter.
-  - provider_id: coinmarketcap
-    name: CoinMarketCap
-    short_name: CMC
-    description: Cryptocurrency market capitalization and quote reference data.
-    primary_category: cryptocurrency
-    secondary_categories: []
-    capabilities:
-      - crypto_prices
-      - chain_market_reference
-    endpoints:
-      base_url: https://pro-api.coinmarketcap.com
-      api_version: v1
-      documentation_url: https://coinmarketcap.com/api/documentation
       notes: Official World Bank API documentation reviewed.
   - provider_id: bls
     name: BLS Public Data API
@@ -232,19 +169,6 @@ providers:
       type: api_key
       required: true
       registration_required: true
-      environment_variable: COINMARKETCAP_API_KEY
-      notes: null
-    access:
-      status: free_tier
-      free_tier_verified: false
-      registration_required: true
-      notes: Free tier heavily limited.
-    commercial_use:
-      status: requires_legal_review
-      notes: Commercial redistribution unclear for free tier.
-    redistribution:
-      status: unclear
-      notes: null
       environment_variable: BLS_API_KEY
       notes: Optional registration increases daily query limits.
     access:
@@ -263,16 +187,6 @@ providers:
       requests_per_second: null
       requests_per_minute: null
       requests_per_hour: null
-      requests_per_day: 333
-      monthly_quota: 10000
-      concurrency_limit: null
-      notes: Basic plan limits as documented.
-    data_characteristics:
-      freshness: delayed
-      geographic_scope:
-        - global
-      historical_data: true
-      realtime: true
       requests_per_day: 500
       monthly_quota: null
       concurrency_limit: null
@@ -287,34 +201,6 @@ providers:
       notes: null
     sunrey:
       domain:
-        - exchange
-        - blockchain_intelligence
-      canonical_provider_interface: CryptoMarketReferenceProvider
-      priority: medium
-      launch_tier: blocked_pending_review
-      authority_class: reference_data
-      integration_state: catalog_only
-      existing_adapter: null
-    verification:
-      status: partially_verified
-      verified_against_official_docs: false
-      last_verified: 2026-08-30
-      notes: Blocked pending legal review of free-tier commercial terms.
-  - provider_id: mempool-space
-    name: Mempool.space
-    short_name: Mempool
-    description: Bitcoin network statistics, blocks, fees, and transaction reference data.
-    primary_category: blockchain
-    secondary_categories:
-      - cryptocurrency
-    capabilities:
-      - blockchain_intelligence
-      - chain_network_status
-      - fee_estimate
-    endpoints:
-      base_url: https://mempool.space
-      api_version: v1
-      documentation_url: https://mempool.space/docs/api
         - world
         - economic_graph
         - grow
@@ -356,13 +242,6 @@ providers:
       status: verified_free
       free_tier_verified: true
       registration_required: false
-      notes: Public REST API.
-    commercial_use:
-      status: unknown
-      notes: null
-    redistribution:
-      status: unknown
-      notes: null
       notes: Public API endpoints require no authentication.
     commercial_use:
       status: verified_allowed
@@ -378,26 +257,6 @@ providers:
       requests_per_day: null
       monthly_quota: null
       concurrency_limit: null
-      notes: Fair-use public API; enforce SunRey rate limits.
-    data_characteristics:
-      freshness: realtime
-      geographic_scope:
-        - global
-      historical_data: true
-      realtime: true
-      data_format: json
-      notes: Bitcoin mainnet focus.
-    sunrey:
-      domain:
-        - world
-        - blockchain_intelligence
-        - exchange
-      canonical_provider_interface: ExternalChainIntelligenceProvider
-      priority: high
-      launch_tier: production_candidate
-      authority_class: community_data
-      integration_state: simulated
-      existing_adapter: packages/sunrey-chain/src/blockchain-intelligence/adapters/mempool-space.ts
       notes: No published rate limits in official documentation.
     data_characteristics:
       freshness: monthly
@@ -422,20 +281,6 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
-      notes: Wave 3 Bitcoin network intelligence.
-  - provider_id: cloudflare-eth-rpc
-    name: Cloudflare Ethereum Gateway
-    short_name: CF Eth RPC
-    description: Public read-only Ethereum JSON-RPC gateway.
-    primary_category: blockchain
-    secondary_categories: []
-    capabilities:
-      - chain_rpc
-      - smart_contract_read
-    endpoints:
-      base_url: https://cloudflare-eth.com
-      api_version: null
-      documentation_url: https://developers.cloudflare.com/web3/ethereum-gateway/
       notes: Official IMF data portal documentation reviewed.
   - provider_id: frankfurter
     name: Frankfurter
@@ -463,39 +308,6 @@ providers:
       status: verified_free
       free_tier_verified: true
       registration_required: false
-      notes: Public gateway.
-    commercial_use:
-      status: unknown
-      notes: null
-    redistribution:
-      status: unknown
-      notes: null
-    rate_limits:
-      documented: false
-      requests_per_second: null
-      requests_per_minute: null
-      requests_per_hour: null
-      requests_per_day: null
-      monthly_quota: null
-      concurrency_limit: null
-      notes: Enforce SunRey bulkheads and caching.
-    data_characteristics:
-      freshness: realtime
-      geographic_scope:
-        - global
-      historical_data: true
-      realtime: true
-      data_format: json-rpc
-      notes: Ethereum mainnet.
-    sunrey:
-      domain:
-        - blockchain_intelligence
-      canonical_provider_interface: ExternalChainRpcProvider
-      priority: high
-      launch_tier: production_candidate
-      authority_class: community_data
-      integration_state: simulated
-      existing_adapter: packages/sunrey-chain/src/blockchain-intelligence/adapters/cloudflare-eth-rpc.ts
       notes: null
     commercial_use:
       status: verified_allowed
@@ -537,37 +349,6 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
-      notes: Primary Ethereum RPC fixture.
-  - provider_id: infura-ethereum
-    name: Infura Ethereum
-    short_name: Infura
-    description: Ethereum JSON-RPC and network metadata via Infura.
-    primary_category: blockchain
-    secondary_categories: []
-    capabilities:
-      - chain_rpc
-      - smart_contract_read
-    endpoints:
-      base_url: https://mainnet.infura.io
-      api_version: v3
-      documentation_url: https://docs.infura.io
-      status_url: https://status.infura.io
-    authentication:
-      type: api_key
-      required: true
-      registration_required: true
-      environment_variable: INFURA_API_KEY
-      notes: null
-    access:
-      status: free_tier
-      free_tier_verified: true
-      registration_required: true
-      notes: Free tier with daily caps.
-    commercial_use:
-      status: unknown
-      notes: null
-    redistribution:
-      status: unknown
       notes: Wave 2 Prompt 9 fixture-backed adapter.
   - provider_id: exchangerate-host
     name: ExchangeRate.host
@@ -605,28 +386,6 @@ providers:
       documented: true
       requests_per_second: null
       requests_per_minute: null
-      requests_per_hour: null
-      requests_per_day: 100000
-      monthly_quota: null
-      concurrency_limit: null
-      notes: Free tier daily request cap.
-    data_characteristics:
-      freshness: realtime
-      geographic_scope:
-        - global
-      historical_data: true
-      realtime: true
-      data_format: json-rpc
-      notes: null
-    sunrey:
-      domain:
-        - blockchain_intelligence
-      canonical_provider_interface: ExternalChainRpcProvider
-      priority: medium
-      launch_tier: secondary_source
-      authority_class: derived_data
-      integration_state: simulated
-      existing_adapter: packages/sunrey-chain/src/blockchain-intelligence/adapters/infura-ethereum.ts
       requests_per_hour: 100
       requests_per_day: null
       monthly_quota: null
@@ -656,22 +415,6 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
-      notes: Secondary Ethereum RPC; credential required at runtime.
-  - provider_id: alchemy-ethereum
-    name: Alchemy Ethereum
-    short_name: Alchemy
-    description: Ethereum JSON-RPC and enhanced APIs.
-    primary_category: blockchain
-    secondary_categories: []
-    capabilities:
-      - chain_rpc
-      - smart_contract_read
-      - chain_indexing
-    endpoints:
-      base_url: https://eth-mainnet.g.alchemy.com
-      api_version: v2
-      documentation_url: https://docs.alchemy.com
-      status_url: https://status.alchemy.com
       notes: Wave 2 Prompt 9 fixture-backed adapter.
   - provider_id: alpha-vantage
     name: Alpha Vantage
@@ -694,46 +437,12 @@ providers:
       type: api_key
       required: true
       registration_required: true
-      environment_variable: ALCHEMY_API_KEY
       environment_variable: ALPHAVANTAGE_API_KEY
       notes: null
     access:
       status: free_tier
       free_tier_verified: true
       registration_required: true
-      notes: Free tier with compute units.
-    commercial_use:
-      status: unknown
-      notes: null
-    redistribution:
-      status: unknown
-      notes: null
-    rate_limits:
-      documented: true
-      requests_per_second: null
-      requests_per_minute: null
-      requests_per_hour: null
-      requests_per_day: null
-      monthly_quota: null
-      concurrency_limit: null
-      notes: Compute-unit based limits.
-    data_characteristics:
-      freshness: realtime
-      geographic_scope:
-        - global
-      historical_data: true
-      realtime: true
-      data_format: json-rpc
-      notes: null
-    sunrey:
-      domain:
-        - blockchain_intelligence
-      canonical_provider_interface: ExternalChainRpcProvider
-      priority: medium
-      launch_tier: fallback_source
-      authority_class: derived_data
-      integration_state: simulated
-      existing_adapter: packages/sunrey-chain/src/blockchain-intelligence/adapters/alchemy-ethereum.ts
       notes: Free tier with daily and per-minute limits; paid tiers available.
     commercial_use:
       status: restricted
@@ -773,21 +482,6 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
-      notes: Fallback Ethereum RPC fixture.
-  - provider_id: etherscan
-    name: Etherscan
-    short_name: Etherscan
-    description: Ethereum block explorer and indexed transaction data.
-    primary_category: blockchain
-    secondary_categories: []
-    capabilities:
-      - block_explorer
-      - chain_indexing
-      - token_metadata
-    endpoints:
-      base_url: https://api.etherscan.io
-      api_version: v2
-      documentation_url: https://docs.etherscan.io
       notes: Official Alpha Vantage documentation reviewed.
   - provider_id: finnhub
     name: Finnhub
@@ -810,24 +504,12 @@ providers:
       type: api_key
       required: true
       registration_required: true
-      environment_variable: ETHERSCAN_API_KEY
       environment_variable: FINNHUB_API_KEY
       notes: null
     access:
       status: free_tier
       free_tier_verified: true
       registration_required: true
-      notes: Free tier rate limits.
-    commercial_use:
-      status: unknown
-      notes: null
-    redistribution:
-      status: unknown
-      notes: null
-    rate_limits:
-      documented: true
-      requests_per_second: 5
-      requests_per_minute: null
       notes: Free tier with per-minute limits; paid tiers available.
     commercial_use:
       status: restricted
@@ -843,25 +525,6 @@ providers:
       requests_per_day: null
       monthly_quota: null
       concurrency_limit: null
-      notes: 5 calls/sec free tier.
-    data_characteristics:
-      freshness: delayed
-      geographic_scope:
-        - global
-      historical_data: true
-      realtime: false
-      data_format: json
-      notes: null
-    sunrey:
-      domain:
-        - blockchain_intelligence
-        - exchange
-      canonical_provider_interface: ExternalChainIndexerProvider
-      priority: high
-      launch_tier: production_candidate
-      authority_class: derived_data
-      integration_state: simulated
-      existing_adapter: packages/sunrey-chain/src/blockchain-intelligence/adapters/etherscan.ts
       notes: 60 API calls per minute on free tier.
     data_characteristics:
       freshness: realtime
@@ -886,21 +549,6 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
-      notes: Explorer/indexer fixture.
-  - provider_id: blockscout
-    name: Blockscout
-    short_name: Blockscout
-    description: Open-source multi-chain block explorer API.
-    primary_category: blockchain
-    secondary_categories: []
-    capabilities:
-      - block_explorer
-      - chain_indexing
-      - token_metadata
-    endpoints:
-      base_url: https://eth.blockscout.com
-      api_version: null
-      documentation_url: https://docs.blockscout.com/devs/apis
       notes: Official Finnhub API documentation reviewed.
   - provider_id: sec-edgar
     name: SEC EDGAR
@@ -924,22 +572,11 @@ providers:
       required: false
       registration_required: false
       environment_variable: null
-      notes: null
       notes: User-Agent header with contact information required per SEC policy.
     access:
       status: verified_free
       free_tier_verified: true
       registration_required: false
-      notes: Public instance rate limits apply.
-    commercial_use:
-      status: unknown
-      notes: null
-    redistribution:
-      status: unknown
-      notes: null
-    rate_limits:
-      documented: false
-      requests_per_second: null
       notes: Public API; User-Agent header required per SEC fair access policy.
     commercial_use:
       status: verified_allowed
@@ -955,11 +592,6 @@ providers:
       requests_per_day: null
       monthly_quota: null
       concurrency_limit: null
-      notes: null
-    data_characteristics:
-      freshness: delayed
-      geographic_scope:
-        - global
       notes: 10 requests per second per SEC fair access guidelines.
     data_characteristics:
       freshness: daily
@@ -971,13 +603,6 @@ providers:
       notes: null
     sunrey:
       domain:
-        - blockchain_intelligence
-      canonical_provider_interface: ExternalChainIndexerProvider
-      priority: medium
-      launch_tier: secondary_source
-      authority_class: community_data
-      integration_state: simulated
-      existing_adapter: packages/sunrey-chain/src/blockchain-intelligence/adapters/blockscout.ts
         - financial_agent
         - world
         - research
@@ -991,20 +616,6 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
-      notes: Secondary explorer fixture.
-  - provider_id: solana-public-rpc
-    name: Solana Public RPC
-    short_name: Solana RPC
-    description: Public Solana JSON-RPC cluster endpoints.
-    primary_category: blockchain
-    secondary_categories: []
-    capabilities:
-      - chain_rpc
-      - smart_contract_read
-    endpoints:
-      base_url: https://api.mainnet-beta.solana.com
-      api_version: null
-      documentation_url: https://docs.solana.com/api/http
       notes: Official SEC EDGAR API documentation reviewed.
   - provider_id: us-treasury-fiscal
     name: US Treasury Fiscal Data
@@ -1034,15 +645,6 @@ providers:
       status: verified_free
       free_tier_verified: true
       registration_required: false
-      notes: Public cluster; strict rate limits.
-    commercial_use:
-      status: unknown
-      notes: null
-    redistribution:
-      status: unknown
-      notes: null
-    rate_limits:
-      documented: false
       notes: Open public API with no authentication required.
     commercial_use:
       status: verified_allowed
@@ -1058,24 +660,6 @@ providers:
       requests_per_day: null
       monthly_quota: null
       concurrency_limit: null
-      notes: Enforce aggressive SunRey throttling.
-    data_characteristics:
-      freshness: realtime
-      geographic_scope:
-        - global
-      historical_data: true
-      realtime: true
-      data_format: json-rpc
-      notes: Solana mainnet-beta.
-    sunrey:
-      domain:
-        - blockchain_intelligence
-      canonical_provider_interface: ExternalChainRpcProvider
-      priority: high
-      launch_tier: production_candidate
-      authority_class: community_data
-      integration_state: simulated
-      existing_adapter: packages/sunrey-chain/src/blockchain-intelligence/adapters/solana-public-rpc.ts
       notes: Pagination-based access; no hard rate limit published.
     data_characteristics:
       freshness: daily
@@ -1100,21 +684,6 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
-      notes: Solana read-only RPC fixture.
-  - provider_id: chainlink-feeds
-    name: Chainlink Data Feeds
-    short_name: Chainlink
-    description: On-chain oracle reference price feeds (read-only observation).
-    primary_category: blockchain
-    secondary_categories:
-      - cryptocurrency
-    capabilities:
-      - oracle_reference
-      - smart_contract_read
-    endpoints:
-      base_url: https://data.chain.link
-      api_version: null
-      documentation_url: https://docs.chain.link/data-feeds
       notes: Official Treasury Fiscal Data API documentation reviewed.
   - provider_id: federal-register
     name: Federal Register API
@@ -1864,23 +1433,11 @@ providers:
       required: false
       registration_required: false
       environment_variable: null
-      notes: Read via RPC eth_call.
       notes: null
     access:
       status: verified_free
       free_tier_verified: true
       registration_required: false
-      notes: Public feed registry; on-chain reads via RPC.
-    commercial_use:
-      status: unknown
-      notes: null
-    redistribution:
-      status: unknown
-      notes: null
-    rate_limits:
-      documented: false
-      requests_per_second: null
-      requests_per_minute: null
       notes: null
     commercial_use:
       status: verified_allowed
@@ -1902,20 +1459,6 @@ providers:
       geographic_scope:
         - global
       historical_data: true
-      realtime: true
-      data_format: json
-      notes: Not SunRey consensus input.
-    sunrey:
-      domain:
-        - blockchain_intelligence
-        - exchange
-        - world
-      canonical_provider_interface: OracleReferenceProvider
-      priority: high
-      launch_tier: production_candidate
-      authority_class: reference_data
-      integration_state: simulated
-      existing_adapter: packages/sunrey-chain/src/blockchain-intelligence/adapters/chainlink-feeds.ts
       realtime: false
       data_format: json
       notes: null
@@ -1937,20 +1480,6 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
-      notes: Reference observations only; not issuance authority.
-  - provider_id: the-graph
-    name: The Graph
-    short_name: The Graph
-    description: Indexed subgraph queries for on-chain events and token data.
-    primary_category: blockchain
-    secondary_categories: []
-    capabilities:
-      - chain_indexing
-      - external_chain_data
-    endpoints:
-      base_url: https://api.thegraph.com
-      api_version: null
-      documentation_url: https://thegraph.com/docs
       notes: Wave 3 Prompt 12 fixture-backed adapter.
   - provider_id: coincap
     name: CoinCap
@@ -1972,22 +1501,6 @@ providers:
       required: false
       registration_required: false
       environment_variable: null
-      notes: Hosted service deprecation in progress.
-    access:
-      status: free_tier
-      free_tier_verified: false
-      registration_required: false
-      notes: Hosted service limits vary.
-    commercial_use:
-      status: unknown
-      notes: null
-    redistribution:
-      status: unknown
-      notes: null
-    rate_limits:
-      documented: false
-      requests_per_second: null
-      requests_per_minute: null
       notes: null
     access:
       status: verified_free
@@ -2010,58 +1523,6 @@ providers:
       concurrency_limit: null
       notes: null
     data_characteristics:
-      freshness: delayed
-      geographic_scope:
-        - global
-      historical_data: true
-      realtime: false
-      data_format: json
-      notes: Bounded subgraph queries only.
-    sunrey:
-      domain:
-        - blockchain_intelligence
-      canonical_provider_interface: ExternalChainIndexerProvider
-      priority: medium
-      launch_tier: secondary_source
-      authority_class: derived_data
-      integration_state: simulated
-      existing_adapter: packages/sunrey-chain/src/blockchain-intelligence/adapters/the-graph.ts
-    verification:
-      status: partially_verified
-      verified_against_official_docs: false
-      last_verified: 2026-08-30
-      notes: Fixture indexer; hosted service migration ongoing industry-wide.
-  - provider_id: covalent
-    name: Covalent
-    short_name: Covalent
-    description: Multi-chain indexed balances, transfers, and token metadata.
-    primary_category: blockchain
-    secondary_categories: []
-    capabilities:
-      - chain_indexing
-      - token_metadata
-      - external_chain_data
-    endpoints:
-      base_url: https://api.covalenthq.com
-      api_version: v1
-      documentation_url: https://www.covalenthq.com/docs/api
-      status_url: null
-    authentication:
-      type: api_key
-      required: true
-      registration_required: true
-      environment_variable: COVALENT_API_KEY
-      notes: null
-    access:
-      status: free_tier
-      free_tier_verified: true
-      registration_required: true
-      notes: Developer free tier.
-    commercial_use:
-      status: unknown
-      notes: null
-    redistribution:
-      status: unknown
       freshness: realtime
       geographic_scope:
         - global
@@ -2126,10 +1587,6 @@ providers:
       requests_per_second: null
       requests_per_minute: null
       requests_per_hour: null
-      requests_per_day: null
-      monthly_quota: null
-      concurrency_limit: null
-      notes: Credit-based free tier.
       requests_per_day: 25000
       monthly_quota: null
       concurrency_limit: null
@@ -2144,13 +1601,6 @@ providers:
       notes: null
     sunrey:
       domain:
-        - blockchain_intelligence
-      canonical_provider_interface: ExternalChainIndexerProvider
-      priority: medium
-      launch_tier: secondary_source
-      authority_class: derived_data
-      integration_state: simulated
-      existing_adapter: packages/sunrey-chain/src/blockchain-intelligence/adapters/covalent.ts
         - exchange
         - world
         - grow
@@ -2167,40 +1617,6 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
-      notes: Fixture indexer; credential required at runtime.
-  - provider_id: bitquery
-    name: Bitquery
-    short_name: Bitquery
-    description: Blockchain GraphQL indexing and analytics.
-    primary_category: blockchain
-    secondary_categories: []
-    capabilities:
-      - chain_indexing
-      - external_chain_data
-    endpoints:
-      base_url: https://graphql.bitquery.io
-      api_version: null
-      documentation_url: https://docs.bitquery.io
-      status_url: null
-    authentication:
-      type: api_key
-      required: true
-      registration_required: true
-      environment_variable: BITQUERY_API_KEY
-      notes: null
-    access:
-      status: unclear
-      free_tier_verified: false
-      registration_required: true
-      notes: Free tier commercial terms unclear.
-    commercial_use:
-      status: requires_legal_review
-      notes: Commercial use requires review.
-    redistribution:
-      status: unclear
-      notes: null
-    rate_limits:
-      documented: true
       notes: Wave 3 Prompt 12 fixture-backed adapter.
   - provider_id: coinlore
     name: CoinLore
@@ -2246,39 +1662,12 @@ providers:
       freshness: delayed
       geographic_scope:
         - global
-      historical_data: true
       historical_data: false
       realtime: false
       data_format: json
       notes: null
     sunrey:
       domain:
-        - blockchain_intelligence
-      canonical_provider_interface: ExternalChainIndexerProvider
-      priority: low
-      launch_tier: blocked_pending_review
-      authority_class: derived_data
-      integration_state: catalog_only
-      existing_adapter: null
-    verification:
-      status: unverified
-      verified_against_official_docs: false
-      last_verified: 2026-08-30
-      notes: Blocked — free/commercial terms not verified for Wave 3.
-  - provider_id: ethplorer
-    name: Ethplorer
-    short_name: Ethplorer
-    description: Ethereum token metadata and address analytics.
-    primary_category: blockchain
-    secondary_categories:
-      - cryptocurrency
-    capabilities:
-      - token_metadata
-      - block_explorer
-    endpoints:
-      base_url: https://api.ethplorer.io
-      api_version: null
-      documentation_url: https://github.com/EverexIO/Ethplorer/wiki
         - exchange
         - world
         - grow
@@ -2315,48 +1704,12 @@ providers:
       type: api_key
       required: true
       registration_required: true
-      environment_variable: ETHPLORER_API_KEY
-      notes: FreeKey tier available.
       environment_variable: CRYPTOCOMPARE_API_KEY
       notes: null
     access:
       status: free_tier
       free_tier_verified: true
       registration_required: true
-      notes: FreeKey with limits.
-    commercial_use:
-      status: unknown
-      notes: null
-    redistribution:
-      status: unknown
-      notes: null
-    rate_limits:
-      documented: true
-      requests_per_second: 2
-      requests_per_minute: null
-      requests_per_hour: null
-      requests_per_day: null
-      monthly_quota: null
-      concurrency_limit: null
-      notes: 2 req/sec free tier.
-    data_characteristics:
-      freshness: delayed
-      geographic_scope:
-        - global
-      historical_data: true
-      realtime: false
-      data_format: json
-      notes: Ethereum mainnet tokens.
-    sunrey:
-      domain:
-        - blockchain_intelligence
-        - exchange
-      canonical_provider_interface: ExternalChainIndexerProvider
-      priority: medium
-      launch_tier: secondary_source
-      authority_class: derived_data
-      integration_state: simulated
-      existing_adapter: packages/sunrey-chain/src/blockchain-intelligence/adapters/ethplorer.ts
       notes: null
     commercial_use:
       status: restricted
@@ -2399,45 +1752,6 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
-      notes: Token metadata fixture.
-  - provider_id: blockchain-info
-    name: Blockchain.com API
-    short_name: Blockchain.info
-    description: Legacy Bitcoin blockchain API.
-    primary_category: blockchain
-    secondary_categories:
-      - cryptocurrency
-    capabilities:
-      - blockchain_intelligence
-      - chain_network_status
-    endpoints:
-      base_url: https://blockchain.info
-      api_version: null
-      documentation_url: https://www.blockchain.com/api
-      status_url: null
-    authentication:
-      type: none
-      required: false
-      registration_required: false
-      environment_variable: null
-      notes: null
-    access:
-      status: no_longer_free
-      free_tier_verified: false
-      registration_required: false
-      notes: Legacy endpoints deprecated or unreliable.
-    commercial_use:
-      status: unknown
-      notes: null
-    redistribution:
-      status: unknown
-      notes: null
-    rate_limits:
-      documented: false
-      requests_per_second: null
-      requests_per_minute: null
-      requests_per_hour: null
-      requests_per_day: null
       notes: Wave 3 Prompt 12 fixture-backed adapter.
   - provider_id: coinmarketcap
     name: CoinMarketCap
@@ -2481,7 +1795,6 @@ providers:
       concurrency_limit: null
       notes: null
     data_characteristics:
-      freshness: null
       freshness: delayed
       geographic_scope:
         - global
@@ -2491,18 +1804,6 @@ providers:
       notes: null
     sunrey:
       domain:
-        - blockchain_intelligence
-      canonical_provider_interface: ExternalChainIntelligenceProvider
-      priority: low
-      launch_tier: research_only
-      authority_class: community_data
-      integration_state: not_integrated
-      existing_adapter: null
-    verification:
-      status: deprecated
-      verified_against_official_docs: false
-      last_verified: 2026-08-30
-      notes: Deprecated — use mempool-space for Bitcoin network intelligence.
         - exchange
         - world
         - grow
@@ -2520,3 +1821,578 @@ providers:
       verified_against_official_docs: false
       last_verified: 2026-08-30
       notes: Blocked pending credential and commercial review.
+  - provider_id: opensky
+    name: OpenSky Network
+    short_name: OpenSky
+    description: Community ADS-B aircraft state vectors and flight tracking reference data.
+    primary_category: aviation
+    secondary_categories: []
+    capabilities:
+      - aviation_positions
+      - aircraft_position
+      - flight_reference
+    endpoints:
+      base_url: https://opensky-network.org/api
+      api_version: v1
+      documentation_url: https://openskynetwork.github.io/opensky-api/
+      status_url: null
+    authentication:
+      type: basic_auth
+      required: true
+      registration_required: true
+      environment_variable: OPENSKY_USERNAME
+      notes: Free research account; credentials via OPENSKY_USERNAME/OPENSKY_PASSWORD.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Free non-commercial research tier.
+    commercial_use:
+      status: attribution_required
+      notes: OpenSky Network attribution required.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 60
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Anonymous 10 req/s; authenticated 60 req/min per official docs.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: State vectors; bounded queries required.
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter. Information only — not booking.
+  - provider_id: faa-registry
+    name: FAA Aircraft Registry
+    short_name: FAA Registry
+    description: U.S. FAA N-Number aircraft registration reference lookups.
+    primary_category: aviation
+    secondary_categories: []
+    capabilities:
+      - aircraft_registry
+      - flight_reference
+    endpoints:
+      base_url: https://registry.faa.gov
+      api_version: null
+      documentation_url: https://www.faa.gov/licenses_certificates/aircraft_certification/aircraft_registry
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Public U.S. government registry.
+    commercial_use:
+      status: verified_allowed
+      notes: U.S. government open data.
+    redistribution:
+      status: allowed
+      notes: null
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Public registry; rate limits not formally documented.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: aviationapi
+    name: AviationAPI
+    short_name: AviationAPI
+    description: Aviation reference data including airports and flight information.
+    primary_category: aviation
+    secondary_categories: []
+    capabilities:
+      - airport_information
+      - flight_reference
+    endpoints:
+      base_url: https://api.aviationapi.com
+      api_version: v1
+      documentation_url: https://docs.aviationapi.com
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: AVIATIONAPI_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Free tier with daily limits.
+    commercial_use:
+      status: unknown
+      notes: Review provider terms before commercial use.
+    redistribution:
+      status: unknown
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 100
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Free tier daily quota per provider documentation.
+    data_characteristics:
+      freshness: delayed
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: Reference data only.
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: can-i-enter
+    name: Can I Enter
+    short_name: Can I Enter
+    description: Visa and entry requirement reference information by nationality and destination.
+    primary_category: travel
+    secondary_categories: []
+    capabilities:
+      - entry_requirements
+      - visa_entry
+    endpoints:
+      base_url: https://canienter.com/api
+      api_version: v1
+      documentation_url: https://canienter.com/api-docs
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Public reference API.
+    commercial_use:
+      status: unknown
+      notes: Reference only — not legal advice or admissibility guarantee.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: Rules change frequently; freshness must be exposed.
+    sunrey:
+      domain:
+        - travel
+        - action_center
+      canonical_provider_interface: TravelProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Reference information only — not admissibility guarantee.
+  - provider_id: transport-rest
+    name: Transport.rest
+    short_name: Transport.rest
+    description: Swiss public transport connections, departures, and station reference.
+    primary_category: transportation
+    secondary_categories: []
+    capabilities:
+      - public_transit
+      - transit_route
+      - transit_departure
+    endpoints:
+      base_url: https://transport.rest
+      api_version: v1
+      documentation_url: https://transport.rest
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Open Swiss transport API.
+    commercial_use:
+      status: attribution_required
+      notes: OpenTransportData attribution.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - CH
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: transitland
+    name: TransitLand
+    short_name: TransitLand
+    description: Global public transit feeds, routes, stops, and departure schedules.
+    primary_category: transportation
+    secondary_categories: []
+    capabilities:
+      - public_transit
+      - transit_route
+      - transit_departure
+    endpoints:
+      base_url: https://transit.land/api/v2
+      api_version: v2
+      documentation_url: https://www.transit.land/documentation
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: TRANSITLAND_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Free developer tier.
+    commercial_use:
+      status: attribution_required
+      notes: Transitland attribution required.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 60
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Free tier rate limits per Transitland documentation.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - travel
+        - world
+        - economic_graph
+      canonical_provider_interface: TravelProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: open-charge-map
+    name: Open Charge Map
+    short_name: OCM
+    description: Global EV charging location reference and connector metadata.
+    primary_category: transportation
+    secondary_categories: []
+    capabilities:
+      - ev_charging
+      - mobility_status
+    endpoints:
+      base_url: https://api.openchargemap.io/v3
+      api_version: v3
+      documentation_url: https://openchargemap.org/site/develop/api
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: OPENCHARGEMAP_API_KEY
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Free API key registration.
+    commercial_use:
+      status: attribution_required
+      notes: Open Charge Map attribution required.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 1000
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Daily quota per provider documentation.
+    data_characteristics:
+      freshness: delayed
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: Availability not guaranteed real-time unless provider supplies it.
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: bc-ferries
+    name: BC Ferries
+    short_name: BC Ferries
+    description: British Columbia ferry schedules, routes, and terminal reference.
+    primary_category: transportation
+    secondary_categories: []
+    capabilities:
+      - public_transit
+      - transit_route
+      - transit_departure
+    endpoints:
+      base_url: https://www.bcferries.com/api
+      api_version: v1
+      documentation_url: https://www.bcferries.com
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Public schedule API.
+    commercial_use:
+      status: unknown
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - CA
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: Ferry mode transit.
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: low
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: entur
+    name: Entur
+    short_name: Entur
+    description: Norway national public transport journey planning, routes, and departures.
+    primary_category: transportation
+    secondary_categories: []
+    capabilities:
+      - public_transit
+      - transit_route
+      - transit_departure
+      - mobility_status
+    endpoints:
+      base_url: https://api.entur.io
+      api_version: v1
+      documentation_url: https://developer.entur.org
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: ENTUR_CLIENT_ID
+      notes: OAuth client credentials.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Free developer registration.
+    commercial_use:
+      status: attribution_required
+      notes: Entur attribution required.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 60
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Developer tier limits per Entur documentation.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - NO
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - travel
+        - world
+        - economic_graph
+      canonical_provider_interface: TravelProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter.

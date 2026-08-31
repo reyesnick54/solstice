@@ -76,6 +76,7 @@ import {
   HIN_VERIFICATION_STATES,
 } from '../../../../packages/human-economic-contribution/src/hin-value/index.ts';
 import { dispatchBlockchain } from './blockchain.ts';
+import { dispatchTravel } from './travel.ts';
 import { dispatchDataRights } from './data-rights.ts';
 import { dispatchHinAccess } from './hin-access.ts';
 import type { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
@@ -424,6 +425,11 @@ function dispatchAuthenticated(
   const blockchain = dispatchBlockchain(request, requestId, headers);
   if (blockchain) {
     return blockchain;
+  }
+
+  const travel = dispatchTravel(request, requestId, headers);
+  if (travel) {
+    return travel;
   }
   if (runtime.hin && isRightsMarketplace(runtime.hin)) {
     const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);

@@ -14,9 +14,11 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CATALOG_PATH = join(ROOT, 'config/providers/free-api-catalog.yaml');
 const WAVE2_PATH = join(ROOT, 'config/providers/wave2-catalog-entries.yaml');
 const WAVE3_PATH = join(ROOT, 'config/providers/wave3-crypto-catalog-entries.yaml');
+const WAVE5_PATH = join(ROOT, 'config/providers/wave5-travel-catalog-entries.yaml');
 
 const wave2 = parseYaml(readFileSync(WAVE2_PATH, 'utf8'));
 const wave3 = parseYaml(readFileSync(WAVE3_PATH, 'utf8'));
+const wave5 = parseYaml(readFileSync(WAVE5_PATH, 'utf8'));
 
 const { FX_REFERENCE_CATALOG_ENTRIES, FX_REFERENCE_BLOCKED_CATALOG_ENTRY } = await import(
   `../packages/payments/src/fx-reference/catalog-entries.ts?fx=${Date.now()}`
@@ -51,6 +53,7 @@ addEntries(wave2.providers);
 addEntries(FX_REFERENCE_CATALOG_ENTRIES);
 addEntries([FX_REFERENCE_BLOCKED_CATALOG_ENTRY]);
 addEntries(wave3.providers);
+addEntries(wave5.providers);
 
 const catalog = {
   schema_version: '1.0.0',
@@ -59,12 +62,12 @@ const catalog = {
   population_status: 'partial',
   source_list: {
     document:
-      'config/providers/wave2-catalog-entries.yaml + packages/payments/src/fx-reference/catalog-entries.ts + wave3-crypto-catalog-entries.yaml',
-    version: 'wave-3-prompt-12',
-    verified_at: '2026-08-30',
+      'config/providers/wave2-catalog-entries.yaml + packages/payments/src/fx-reference/catalog-entries.ts + wave3-crypto-catalog-entries.yaml + wave5-travel-catalog-entries.yaml',
+    version: 'wave-5-prompt-20',
+    verified_at: '2026-08-31',
   },
   notes:
-    'Partial population including Wave 2 economics/markets providers and Wave 3 crypto market reference providers. ' +
+    'Partial population including Wave 2 economics/markets, Wave 3 crypto/blockchain, and Wave 5 travel/mobility providers. ' +
     'Full 126-provider master list remains pending.',
   providers: [...byId.values()],
 };
