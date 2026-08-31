@@ -652,6 +652,25 @@ This document describes only what is implemented and tested in this tree.
   contribution-review metadata without marketplace or tokens.
   Not GDPR/CCPA/PDPL/HIPAA compliance. Consent Ledger is Chunk 24.
 
+- Grow My Money end-to-end agentic financial lifecycle (Wave 5 Prompt 15,
+  `packages/platform/src/grow/lifecycle`): canonical `FinancialOpportunity`,
+  `CanonicalFinancialProposal`, structured `FinancialRiskProfile`, data
+  freshness (`SourcedFact`), compliance checkpoint, execution adapter
+  contract (`prepareExecution` … `reconcile`), outcome attribution
+  (projected vs realized), reassessment cooldown, audit event kinds, AI
+  credential isolation guards, and machine-readable agent capability matrix
+  (`docs/productization/grow-agent-capability-matrix.json`). Composes with
+  existing Phase E Grow orchestrator (`packages/platform/src/grow`),
+  opportunity engine (`packages/platform/src/growth/opportunity`), Consumer
+  BFF (`services/api/src/consumer/grow.ts`), Kernel-gated sandbox investment
+  execution (`packages/investments/src/grow-adapter.ts`), and agent tool
+  boundaries (`packages/sunrey-agent/src/grow-tools.ts`). Capability
+  `sunrey-grow-lifecycle` is `IMPLEMENTED` for discovery, analysis, proposal,
+  authorization, monitoring, and audit in simulation. Investment live
+  execution is `PROVIDER_GATED`. Debt optimization agent is `PARTIAL`.
+  `ENVIRONMENT` remains `simulation`. See
+  `docs/productization/WAVE_5_PROMPT_15_GROW_LIFECYCLE.md`.
+
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
 - Production BFT consensus, public SunRey network, mainnet, or
