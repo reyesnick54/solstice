@@ -70,8 +70,53 @@ export class AccessReconciliationService {
     }
 
     if (context.fundingReservationId) {
-      const poolRegistry = this.solvency.getPoolRegistry();
-      void poolRegistry;
+      const fundRes = this.solvency.getFundingReservations().getReservation(context.fundingReservationId);
+      if (fundRes?.status === 'CONSUMED' && context.status === 'CANCELLED') {
+        issues.push(
+          this.issue('FUNDING_MISMATCH', 'HIGH', context, 'funding released', 'funding consumed but cancelled', now),
+        );
+      }
+      if (fundRes?.status === 'RESERVED' && context.status === 'SETTLED') {
+        const poolBalance = this.solvency.getFundingPoolBalance(
+          context.fundingPoolId!,
+          context.quote?.currency ?? 'USD',
+          now,
+        );
+        if (poolBalance.capturedSettlement < (context.quote?.accessPoolContributionMinorUnits ?? 0n)) {
+          issues.push(
+            this.issue('FUNDING_MISMATCH', 'MEDIUM', context, 'funding captured', 'settled without funding capture', now),
+          );
+        }
+      }
+    }
+
+    if (context.refundedAmountMinorUnits > context.capturedAmountMinorUnits) {
+      issues.push(
+        this.issue('REFUND_MISMATCH', 'CRITICAL', context, 'refund <= capture', 'refund exceeds capture', now),
+      );
+    }
+
+    if (context.providerBookingReference) {
+      const dupBookings = [...this.store.listAll()].filter(
+        (row) =>
+          row.transactionId !== context.transactionId &&
+          row.providerBookingReference === context.providerBookingReference,
+      );
+      if (dupBookings.length > 0) {
+        issues.push(
+          this.issue('DUPLICATE_BOOKING', 'CRITICAL', context, 'unique booking', 'duplicate provider booking id', now),
+        );
+      }
+    }
+
+    if (settlement?.status === 'CAPTURED' && context.capturedAmountMinorUnits === 0n) {
+      issues.push(this.issue('DUPLICATE_PAYMENT', 'HIGH', context, 'single capture', 'capture without amount', now));
+    }
+
+    if (context.status === 'BOOKED' && !booked && context.providerReservationReference) {
+      issues.push(
+        this.issue('STALE_BOOKING_STATE', 'MEDIUM', context, 'confirmed booking', 'stale booking state', now),
+      );
     }
 
     if (context.status === 'RECONCILIATION_REQUIRED' && this.provider && context.providerReservationReference) {

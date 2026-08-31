@@ -88,12 +88,20 @@ export function seedMobilityFundingPool(
 }
 
 export function mustangProviderQuote(idempotencyKey = 'mustang-quote'): ProviderQuote {
-  return buildQuote({
-    quoteId: `pq_mustang_${idempotencyKey}`,
-    providerId: 'turo',
-    catalogItemId: 'turo_mustang_gt_miami',
-    canonicalUnit: 'VEHICLE_DAY',
-    quantity: 1n,
-    providerPriceMinorUnits: 340_00n,
-  });
+  return withFutureQuoteExpiry(
+    buildQuote({
+      quoteId: `pq_mustang_${idempotencyKey}`,
+      providerId: 'turo',
+      catalogItemId: 'turo_mustang_gt_miami',
+      canonicalUnit: 'VEHICLE_DAY',
+      quantity: 1n,
+      providerPriceMinorUnits: 340_00n,
+    }),
+  );
+}
+
+const WAVE3_QUOTE_EXPIRES = asUtcInstant('2026-09-01T12:00:00.000Z');
+
+export function withFutureQuoteExpiry(quote: ProviderQuote): ProviderQuote {
+  return Object.freeze({ ...quote, expiresAt: WAVE3_QUOTE_EXPIRES });
 }

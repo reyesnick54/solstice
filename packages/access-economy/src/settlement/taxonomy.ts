@@ -6,6 +6,7 @@ export const ACCESS_SETTLEMENT_RAIL_SCHEMA_VERSION = 1 as const;
 export const ACCESS_SETTLEMENT_RAIL_TAXONOMY_ID = 'sunrey-access-virtual-card-rail' as const;
 export const ACCESS_SETTLEMENT_RAIL_TAXONOMY_VERSION = '1' as const;
 
+/**
  * ACCESS Wave 3 Prompt 35 — Fiat settlement orchestration taxonomy.
  *
  * Payment rails, capabilities, strategies, and normalized settlement statuses.
@@ -134,13 +135,6 @@ export const ACCESS_VIRTUAL_CARD_PURPOSES = [
 export type AccessVirtualCardPurpose = (typeof ACCESS_VIRTUAL_CARD_PURPOSES)[number];
 
 export const RESTRICTED_CARD_RAIL_ID = 'RESTRICTED_VIRTUAL_CARD' as const;
-  'PARTIAL_REFUND',
-  'STATUS',
-  'RECONCILE',
-  'RESTRICTED_CARD',
-  'PAYOUT',
-] as const;
-export type AccessPaymentRailCapability = (typeof ACCESS_PAYMENT_RAIL_CAPABILITIES)[number];
 
 /** Provider/rail-specific settlement ordering strategies. */
 export const ACCESS_SETTLEMENT_STRATEGIES = [

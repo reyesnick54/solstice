@@ -47,6 +47,34 @@ export class AccessFundingPoolRegistry {
     return this.pools.get(fundingPoolId);
   }
 
+  suspendPool(fundingPoolId: string, now: UtcInstant): AccessFundingPool | null {
+    const current = this.pools.get(fundingPoolId);
+    if (!current) {
+      return null;
+    }
+    const next: AccessFundingPool = Object.freeze({
+      ...current,
+      status: 'SUSPENDED',
+      updatedAt: now,
+    });
+    this.pools.set(fundingPoolId, next);
+    return next;
+  }
+
+  resumePool(fundingPoolId: string, now: UtcInstant): AccessFundingPool | null {
+    const current = this.pools.get(fundingPoolId);
+    if (!current || current.status === 'CLOSED') {
+      return null;
+    }
+    const next: AccessFundingPool = Object.freeze({
+      ...current,
+      status: 'ACTIVE',
+      updatedAt: now,
+    });
+    this.pools.set(fundingPoolId, next);
+    return next;
+  }
+
   listPools(): readonly AccessFundingPool[] {
     return Object.freeze([...this.pools.values()]);
   }

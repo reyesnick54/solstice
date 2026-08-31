@@ -176,6 +176,10 @@ export class AccessSolvencyService {
     return this.entitlementReservations;
   }
 
+  getFundingReservations(): AccessFundingReservationStore {
+    return this.fundingReservations;
+  }
+
   expireFundingReservations(now: UtcInstant): void {
     this.fundingReservations.expireReservations(now);
   }
