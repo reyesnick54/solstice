@@ -11,6 +11,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { checkJsonIntegrity, countPackageTestKeys, parseJsonStrict } from './check-json-integrity.mjs';
+import { REPOSITORY_TEST_GLOBS } from './run-repository-tests.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -224,14 +225,28 @@ function liveFlagsChanged(root, manifest) {
   return false;
 }
 
+export function resolveRepositoryTestCoverage(testCommand) {
+  if (typeof testCommand !== 'string' || testCommand.length === 0) {
+    return '';
+  }
+  if (
+    testCommand === 'node scripts/run-repository-tests.mjs' ||
+    testCommand.startsWith('node scripts/run-repository-tests.mjs ')
+  ) {
+    return REPOSITORY_TEST_GLOBS.join(' ');
+  }
+  return testCommand;
+}
+
 export function checkCanonicalTestCommand(testCommand) {
   const findings = [];
   if (typeof testCommand !== 'string' || testCommand.length === 0) {
     findings.push('package.json scripts.test is missing');
     return findings;
   }
+  const coverage = resolveRepositoryTestCoverage(testCommand);
   for (const family of REQUIRED_TEST_FAMILIES) {
-    if (!testCommand.includes(family.needle)) {
+    if (!coverage.includes(family.needle)) {
       findings.push(`canonical test command missing ${family.id} coverage (${family.needle})`);
     }
   }

@@ -22,7 +22,15 @@ const {
   countPackageTestKeys: (text: string) => number;
   parseJsonStrict: (text: string, label: string) => unknown;
 };
-const { REQUIRED_TEST_FAMILIES, checkMergeIntegrity, detectConflictMarkers } = require('../scripts/check-merge-integrity.mjs') as {
+const { REPOSITORY_TEST_GLOBS } = require('../scripts/run-repository-tests.mjs') as {
+  REPOSITORY_TEST_GLOBS: string[];
+};
+const {
+  REQUIRED_TEST_FAMILIES,
+  checkMergeIntegrity,
+  detectConflictMarkers,
+  resolveRepositoryTestCoverage,
+} = require('../scripts/check-merge-integrity.mjs') as {
   REQUIRED_TEST_FAMILIES: readonly { id: string; needle: string }[];
   checkMergeIntegrity: (root: string) => {
     findings: string[];
@@ -43,6 +51,7 @@ const { REQUIRED_TEST_FAMILIES, checkMergeIntegrity, detectConflictMarkers } = r
     };
   };
   detectConflictMarkers: (text: string) => { line: number; text: string }[];
+  resolveRepositoryTestCoverage: (testCommand: string) => string;
 };
 
 const ROOT = join(import.meta.dirname, '..');
@@ -91,26 +100,35 @@ describe('CHUNK-159 repository integrity', () => {
   });
 
   it('canonical test command includes regulated security tests', () => {
-    const command = String(checkJsonIntegrity(ROOT).packageJson?.scripts?.test);
+    const command = resolveRepositoryTestCoverage(String(checkJsonIntegrity(ROOT).packageJson?.scripts?.test));
     assert.ok(command.includes('packages/security/src/regulated/'));
   });
 
   it('canonical test command includes nested payments tests', () => {
-    const command = String(checkJsonIntegrity(ROOT).packageJson?.scripts?.test);
+    const command = resolveRepositoryTestCoverage(String(checkJsonIntegrity(ROOT).packageJson?.scripts?.test));
     assert.ok(command.includes('packages/payments/src/**/*.test.ts'));
   });
 
   it('canonical test command includes persistence tests', () => {
-    const command = String(checkJsonIntegrity(ROOT).packageJson?.scripts?.test);
+    const command = resolveRepositoryTestCoverage(String(checkJsonIntegrity(ROOT).packageJson?.scripts?.test));
     assert.ok(command.includes('packages/persistence/src/**/*.test.ts'));
   });
 
   it('canonical test command includes economic RC tests', () => {
-    const command = String(checkJsonIntegrity(ROOT).packageJson?.scripts?.test);
+    const command = resolveRepositoryTestCoverage(String(checkJsonIntegrity(ROOT).packageJson?.scripts?.test));
     assert.ok(command.includes('packages/sunrey-chain/src/release-candidate/economic/'));
     for (const family of REQUIRED_TEST_FAMILIES) {
       assert.ok(command.includes(family.needle), family.id);
     }
+  });
+
+  it('repository test runner preserves the merge-variant suites', () => {
+    const coverage = REPOSITORY_TEST_GLOBS.join(' ');
+    assert.ok(coverage.includes('packages/external-data/src/**/*.test.ts'));
+    assert.ok(coverage.includes('packages/risk-evidence/src/**/*.test.ts'));
+    assert.ok(coverage.includes('packages/sunrey-chain/src/blockchain-intelligence/*.test.ts'));
+    assert.ok(coverage.includes('tests/wave-2-prompt-8-macro-providers.test.ts'));
+    assert.ok(coverage.includes('tests/wave-4-prompt-16-kyb-fraud-intelligence.test.ts'));
   });
 
   it('duplicate JSON key fixture fails', () => {

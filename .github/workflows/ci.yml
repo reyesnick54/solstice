@@ -25,6 +25,7 @@ jobs:
       - name: "[INTEGRITY] JSON / repository integrity preflight"
         run: |
           node scripts/check-json-integrity.mjs
+          node scripts/validate-json.mjs
           node scripts/check-merge-integrity.mjs
 
       - name: "[TYPECHECK] Install from lockfile"
@@ -426,6 +427,7 @@ jobs:
       - name: "[INTEGRITY] JSON / repository integrity preflight"
         run: |
           node scripts/check-json-integrity.mjs
+          node scripts/validate-json.mjs
           node scripts/check-merge-integrity.mjs
 
       - name: "[TYPECHECK] Install from lockfile"
@@ -466,6 +468,7 @@ jobs:
       - name: "[INTEGRITY] JSON / repository integrity preflight"
         run: |
           node scripts/check-json-integrity.mjs
+          node scripts/validate-json.mjs
           node scripts/check-merge-integrity.mjs
 
       - name: "[INTEGRITY] YAML validation"
@@ -491,6 +494,7 @@ jobs:
       - name: "[INTEGRITY] JSON / repository integrity preflight"
         run: |
           node scripts/check-json-integrity.mjs
+          node scripts/validate-json.mjs
           node scripts/check-merge-integrity.mjs
 
       - name: "[PRODUCTION SAFETY] Production-off defaults"
@@ -516,6 +520,7 @@ jobs:
       - name: "[INTEGRITY] JSON / repository integrity preflight"
         run: |
           node scripts/check-json-integrity.mjs
+          node scripts/validate-json.mjs
           node scripts/check-merge-integrity.mjs
 
       - name: "[TYPECHECK] Install from lockfile"
