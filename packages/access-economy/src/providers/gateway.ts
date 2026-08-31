@@ -50,6 +50,10 @@ export class AccessProviderGateway {
     return this.registry.list();
   }
 
+  getProvider(providerId: AccessProviderId): AccessProvider | null {
+    return this.providers[providerId] ?? null;
+  }
+
   health(providerId: AccessProviderId): ProviderHealth {
     return this.providers[providerId].health();
   }

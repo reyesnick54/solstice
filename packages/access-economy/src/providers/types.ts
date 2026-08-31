@@ -38,13 +38,26 @@ export const PROVIDER_INTEGRATION_STATES = [
 ] as const;
 export type ProviderIntegrationState = (typeof PROVIDER_INTEGRATION_STATES)[number];
 
-export const PROVIDER_IDS = [
+export const COMMERCIAL_PROVIDER_IDS = [
   'expedia',
   'turo',
   'doordash',
   'amazon',
   'airbnb',
 ] as const;
+export type CommercialAccessProviderId = (typeof COMMERCIAL_PROVIDER_IDS)[number];
+
+export const DISCOVERY_PROVIDER_IDS = [
+  'gbfs_mobility',
+  'travel_discovery',
+  'experiences_discovery',
+  'hotels_discovery',
+  'transportation_discovery',
+  'compute_discovery',
+] as const;
+export type DiscoveryAccessProviderId = (typeof DISCOVERY_PROVIDER_IDS)[number];
+
+export const PROVIDER_IDS = [...COMMERCIAL_PROVIDER_IDS, ...DISCOVERY_PROVIDER_IDS] as const;
 export type AccessProviderId = (typeof PROVIDER_IDS)[number];
 
 export const CANONICAL_CAPACITY_UNITS = [
