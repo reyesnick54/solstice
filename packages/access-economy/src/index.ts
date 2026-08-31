@@ -313,6 +313,7 @@ export * from './transaction/index.ts';
 export * from './settlement/index.ts';
 export * from './checkout/index.ts';
 export * as AccessDomain from './domain/index.ts';
+export * from './regulatory-controls/index.ts';
 export * as AccessSettlement from './settlement/index.ts';
 export type {
   AccessBound,

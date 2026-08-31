@@ -79,6 +79,7 @@ export type {
 export { AccessProviderNetworkService, createAccessProviderNetworkService } from './provider-network.ts';
 export { createAccessDiscoveryBridge, createAccessDiscoveryPorts } from './discovery-bridge.ts';
 export { projectConsumerSolvencyPosture, type ConsumerSolvencyPosture } from './consumer-solvency.ts';
+export { projectCheckoutRegulatoryView, type AccessCheckoutRegulatoryView } from './consumer-regulatory.ts';
 export {
   ACCESS_PRODUCT_EVENT_TYPES,
   ACCESS_PRODUCT_TRANSACTION_STATUSES,
