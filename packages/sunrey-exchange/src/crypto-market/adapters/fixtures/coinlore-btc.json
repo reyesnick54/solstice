@@ -1,0 +1,14 @@
+{
+  "data": [
+    {
+      "id": 90,
+      "symbol": "BTC",
+      "name": "Bitcoin",
+      "price_usd": "67234.56",
+      "market_cap_usd": "1324567890123",
+      "percent_change_24h": "2.34",
+      "percent_change_7d": "-1.12",
+      "volume24": 28456789012
+    }
+  ]
+}

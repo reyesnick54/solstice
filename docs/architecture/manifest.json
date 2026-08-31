@@ -534,6 +534,29 @@
       "notes": "Wave 1 shared provider reliability control plane — timeouts, retries, rate limits, bulkheads, circuit breakers. Simulation only. Not a second provider runtime, ledger, or Execution Authority."
     },
     {
+      "id": "packages/external-data",
+      "npmName": "@solstice/external-data",
+      "path": "packages/external-data",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": false,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/config",
+        "packages/provider-sdk",
+        "packages/sunrey-chain",
+        "packages/sunrey-exchange",
+        "packages/payments"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Wave 2 external reference data plane facade — macro, FX, markets, commodities, filings. Orchestration only. Not a second ledger or provider runtime."
+    },
+    {
       "id": "packages/treasury",
       "npmName": "@solstice/treasury",
       "path": "packages/treasury",
@@ -978,7 +1001,9 @@
         "packages/sunrey-coin",
         "packages/ledger",
         "packages/custody",
-        "packages/market-surveillance"
+        "packages/market-surveillance",
+        "packages/provider-sdk",
+        "packages/sunrey-chain"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -1377,6 +1402,7 @@
         "packages/consent",
         "packages/personal-data-vault",
         "packages/sunrey-exchange",
+        "packages/external-data",
         "services/investments",
         "services/economic-graph"
       ],

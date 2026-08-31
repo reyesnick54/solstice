@@ -75,6 +75,12 @@ export type HttpProviderTransport = {
   request<T = unknown>(context: HttpProviderRequestContext): Promise<HttpProviderTransportResult<T>>;
 };
 
+export type ProviderHttpRequestContext = HttpProviderRequestContext;
+export type ProviderHttpResponseMetadata = HttpProviderResponseMetadata;
+export type ProviderHttpTransportResponse<T = unknown> = HttpProviderTransportResponse<T>;
+export type ProviderHttpTransportSuccess<T> = HttpProviderTransportSuccess<T>;
+export type ProviderHttpTransportFailure = HttpProviderTransportFailure;
+export type ProviderHttpTransportResult<T = unknown> = HttpProviderTransportResult<T>;
 /** @deprecated Use HttpProviderRequestContext */
 export type ProviderHttpRequestContext = HttpProviderRequestContext;
 /** @deprecated Use HttpProviderResponseMetadata */
@@ -87,6 +93,8 @@ export type ProviderHttpTransportResult<T = unknown> = HttpProviderTransportResu
 export type ProviderHttpTransportSuccess<T> = HttpProviderTransportSuccess<T>;
 /** @deprecated Use HttpProviderTransportFailure */
 export type ProviderHttpTransportFailure = HttpProviderTransportFailure;
+/** @deprecated Use HttpProviderTransportResult */
+export type ProviderHttpTransportResult<T = unknown> = HttpProviderTransportResult<T>;
 /** @deprecated Use HttpProviderTransport */
 export type ProviderHttpTransport = HttpProviderTransport;
 

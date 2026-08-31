@@ -1,0 +1,14 @@
+{
+  "data": {
+    "id": "bitcoin",
+    "symbol": "BTC",
+    "name": "Bitcoin",
+    "priceUsd": "67234.56",
+    "marketCapUsd": "1324567890123",
+    "volumeUsd24Hr": "28456789012",
+    "changePercent24Hr": "2.34",
+    "supply": "19876543",
+    "maxSupply": "21000000"
+  },
+  "timestamp": 1724230740000
+}

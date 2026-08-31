@@ -3,19 +3,19 @@ catalog_id: sunrey-free-api-catalog
 expected_provider_count: 126
 population_status: partial
 source_list:
-  document: config/providers/wave2-catalog-entries.yaml
-  version: wave2-prompt-11
+  document: config/providers/wave2-catalog-entries.yaml + packages/payments/src/fx-reference/catalog-entries.ts +
+    wave3-crypto-catalog-entries.yaml + packages/kernel compliance-intelligence
+  version: wave-4-prompt-15
   verified_at: 2026-08-30
-notes: Wave 2 partial catalog. Remaining 126-master-list providers await
-  authoritative source.
+notes: Partial population including Wave 2 economics/markets, Wave 3 crypto, and Wave 4 compliance intelligence
+  providers. Full 126-provider master list remains pending.
 providers:
   - provider_id: fred
     name: FRED API
     short_name: FRED
     description: >
-      Federal Reserve Economic Data (FRED) API from the St. Louis Fed providing
-      authoritative U.S. and international macroeconomic time series including
-      interest rates, inflation, employment, and GDP indicators.
+      Federal Reserve Economic Data (FRED) API from the St. Louis Fed providing authoritative U.S. and international
+      macroeconomic time series including interest rates, inflation, employment, and GDP indicators.
     primary_category: macroeconomics
     capabilities:
       - macroeconomic_indicators
@@ -24,58 +24,11 @@ providers:
       - employment
       - gdp
       - monetary_policy
-  document: packages/payments/src/fx-reference/catalog-entries.ts
-  version: wave-2-prompt-9
-  verified_at: 2026-08-30
-notes: Partial FX reference provider population for Wave 2 Prompt 9. Full 126-provider master list still pending.
-providers:
-  - provider_id: bank-of-russia
-    name: Bank of Russia FX Reference
-    short_name: CBR FX
-    description: Official daily foreign-exchange reference rates published by the Central Bank of Russia.
-    primary_category: foreign_exchange
-    secondary_categories:
-      - macroeconomics
-    capabilities:
-      - fx_rates
-      - central_bank_fx
-      - currency_conversion
-    endpoints:
-      base_url: https://www.cbr-xml-daily.ru
-      api_version: v1
-      documentation_url: https://www.cbr.ru/development/SXML/
-      status_url: null
-    authentication:
-      type: none
-      required: false
-      registration_required: false
-      environment_variable: null
-      notes: null
-  document: packages/sunrey-chain/src/macro/catalog-entries.ts
-  version: wave-2-prompt-8
-  verified_at: 2026-08-30
-notes: "Partial population: Wave 2 Prompt 8 macroeconomic and government-economic-data provider subset. Full
-  126-provider master list remains pending. Macro entries sourced from official provider documentation."
-providers:
-  - provider_id: fred
-    name: Federal Reserve Economic Data (FRED)
-    short_name: FRED
-    description: Official U.S. macroeconomic time series from the Federal Reserve Bank of St. Louis including GDP, CPI,
-      unemployment, and interest rates.
-    primary_category: macroeconomics
-    capabilities:
-      - macroeconomic_indicators
-      - economic_indicators
-      - inflation
-      - employment
-      - interest_rates
-      - gdp
     endpoints:
       base_url: https://api.stlouisfed.org/fred
       api_version: v1
       documentation_url: https://fred.stlouisfed.org/docs/api/fred/
       status_url: null
-      status_url: https://fred.stlouisfed.org/
     authentication:
       type: api_key
       required: true
@@ -102,50 +55,6 @@ providers:
       monthly_quota: null
       concurrency_limit: null
       notes: 120 requests per minute per API key per official documentation.
-      notes: Free API key from FRED account registration.
-    access:
-      status: verified_free
-      free_tier_verified: true
-      registration_required: false
-      notes: null
-    commercial_use:
-      status: verified_allowed
-      notes: Open reference FX feed for simulation integration.
-    redistribution:
-      status: attribution_required
-      notes: null
-    redistribution:
-      status: allowed
-      notes: null
-    rate_limits:
-      documented: true
-      requests_per_second: null
-      requests_per_minute: null
-      requests_per_hour: null
-      requests_per_day: 1000
-      monthly_quota: null
-      concurrency_limit: null
-      notes: null
-    data_characteristics:
-      freshness: daily
-      geographic_scope:
-        - RU
-        - GLOBAL
-      historical_data: true
-      realtime: false
-      data_format: json
-      notes: null
-    sunrey:
-      domain:
-        - world
-        - exchange
-        - financial_agent
-        - grow
-      canonical_provider_interface: FxReferenceProvider
-      requests_per_day: null
-      monthly_quota: null
-      concurrency_limit: null
-      notes: Documented rate limits apply per FRED API key.
     data_characteristics:
       freshness: daily
       geographic_scope:
@@ -160,25 +69,12 @@ providers:
         - world
         - economic_graph
         - grow
-      historical_data: true
-      realtime: false
-      data_format: json
-      notes: Series update frequency varies by indicator.
-    sunrey:
-      domain:
-        - world
-        - grow
-        - financial_agent
-        - economic_graph
       canonical_provider_interface: MacroDataProvider
       priority: critical
       launch_tier: production_candidate
       authority_class: authoritative_official
       integration_state: implemented
       existing_adapter: null
-      integration_state: adapter_implemented
-      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
-      existing_adapter: packages/sunrey-chain/src/macro/adapters/fred.ts
     verification:
       status: verified
       verified_against_official_docs: true
@@ -188,49 +84,19 @@ providers:
     name: World Bank Open Data
     short_name: World Bank
     description: >
-      World Bank Open Data API providing global development and macroeconomic
-      indicators including poverty, education, health, and national accounts
-      statistics for countries worldwide.
+      World Bank Open Data API providing global development and macroeconomic indicators including poverty, education,
+      health, and national accounts statistics for countries worldwide.
     primary_category: macroeconomics
     capabilities:
       - macroeconomic_indicators
       - development_indicators
       - national_accounts
       - poverty_metrics
-      notes: Wave 2 Prompt 9 fixture-backed adapter.
-  - provider_id: national-bank-poland
-    name: National Bank of Poland FX Tables
-    short_name: NBP FX
-    description: Official NBP table A foreign exchange reference rates.
-    primary_category: foreign_exchange
-    secondary_categories:
-      - macroeconomics
-    capabilities:
-      - fx_rates
-      - central_bank_fx
-    endpoints:
-      base_url: https://api.nbp.pl
-      api_version: v1
-      documentation_url: https://api.nbp.pl/en.html
-      status_url: null
-      notes: Wave 2 Prompt 8 macro subset.
-  - provider_id: world-bank
-    name: World Bank Open Data API
-    short_name: World Bank
-    description: Global development indicators including GDP, population, employment, and fiscal statistics across countries.
-    primary_category: macroeconomics
-    capabilities:
-      - macroeconomic_indicators
-      - economic_indicators
-      - gdp
-      - employment
-      - government_statistics
     endpoints:
       base_url: https://api.worldbank.org
       api_version: v2
       documentation_url: https://datahelpdesk.worldbank.org/knowledgebase/articles/889392
       status_url: null
-      status_url: https://data.worldbank.org/
     authentication:
       type: none
       required: false
@@ -248,22 +114,6 @@ providers:
     redistribution:
       status: allowed
       notes: World Bank open data license permits redistribution with attribution.
-      notes: null
-    commercial_use:
-      status: verified_allowed
-      notes: Open reference FX feed for simulation integration.
-    redistribution:
-      status: attribution_required
-      notes: null
-    rate_limits:
-      documented: true
-      requests_per_second: null
-      requests_per_minute: null
-      requests_per_hour: 120
-      notes: null
-    redistribution:
-      status: allowed
-      notes: null
     rate_limits:
       documented: false
       requests_per_second: null
@@ -277,12 +127,6 @@ providers:
       freshness: monthly
       geographic_scope:
         - global
-      notes: null
-    data_characteristics:
-      freshness: daily
-      geographic_scope:
-        - PL
-        - EU
       historical_data: true
       realtime: false
       data_format: json
@@ -298,33 +142,6 @@ providers:
       authority_class: authoritative_official
       integration_state: implemented
       existing_adapter: null
-        - exchange
-        - financial_agent
-        - grow
-      canonical_provider_interface: FxReferenceProvider
-      priority: high
-      launch_tier: production_candidate
-      authority_class: authoritative_official
-      integration_state: adapter_implemented
-      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
-      freshness: historical
-      geographic_scope:
-        - GLOBAL
-      historical_data: true
-      realtime: false
-      data_format: json
-      notes: Most indicators are annual or quarterly.
-    sunrey:
-      domain:
-        - world
-        - grow
-        - financial_agent
-      canonical_provider_interface: MacroDataProvider
-      priority: critical
-      launch_tier: production_candidate
-      authority_class: authoritative_official
-      integration_state: adapter_implemented
-      existing_adapter: packages/sunrey-chain/src/macro/adapters/world-bank.ts
     verification:
       status: verified
       verified_against_official_docs: true
@@ -334,8 +151,8 @@ providers:
     name: BLS Public Data API
     short_name: BLS
     description: >
-      U.S. Bureau of Labor Statistics Public Data API providing employment,
-      unemployment, inflation (CPI/PPI), productivity, and wage statistics.
+      U.S. Bureau of Labor Statistics Public Data API providing employment, unemployment, inflation (CPI/PPI),
+      productivity, and wage statistics.
     primary_category: macroeconomics
     capabilities:
       - employment
@@ -347,39 +164,6 @@ providers:
       base_url: https://api.bls.gov/publicAPI/v2
       api_version: v2
       documentation_url: https://www.bls.gov/developers/
-      notes: Wave 2 Prompt 9 fixture-backed adapter.
-  - provider_id: frankfurter
-    name: Frankfurter
-    short_name: Frankfurter
-    description: Free ECB-backed foreign exchange reference rates without API keys.
-    primary_category: foreign_exchange
-    secondary_categories:
-      - macroeconomics
-    capabilities:
-      - fx_rates
-      - foreign_exchange
-      - currency_conversion
-    endpoints:
-      base_url: https://api.frankfurter.app
-      api_version: v1
-      documentation_url: https://www.frankfurter.app/docs/
-      status_url: null
-    authentication:
-      notes: Wave 2 Prompt 8 macro subset.
-  - provider_id: econdb
-    name: Econdb
-    short_name: Econdb
-    description: Aggregated macroeconomic indicators from multiple official sources.
-    primary_category: macroeconomics
-    capabilities:
-      - macroeconomic_indicators
-      - economic_indicators
-      - inflation
-      - gdp
-    endpoints:
-      base_url: https://www.econdb.com/api
-      api_version: v1
-      documentation_url: https://www.econdb.com/api/docs/
       status_url: null
     authentication:
       type: api_key
@@ -435,9 +219,8 @@ providers:
     name: IMF Data API
     short_name: IMF
     description: >
-      International Monetary Fund Data API providing global macroeconomic
-      indicators, exchange rates, financial statistics, and country economic
-      outlook data through SDMX and DataMapper endpoints.
+      International Monetary Fund Data API providing global macroeconomic indicators, exchange rates, financial
+      statistics, and country economic outlook data through SDMX and DataMapper endpoints.
     primary_category: macroeconomics
     capabilities:
       - macroeconomic_indicators
@@ -449,66 +232,6 @@ providers:
       api_version: v1
       documentation_url: https://data.imf.org/
       status_url: null
-      environment_variable: ECONDB_API_KEY
-      notes: API key required for most endpoints.
-    access:
-      status: verified_free
-      free_tier_verified: true
-      registration_required: false
-      notes: null
-    commercial_use:
-      status: unclear
-      notes: Commercial terms require review before production activation.
-    redistribution:
-      status: allowed
-      notes: null
-    rate_limits:
-      documented: false
-      requests_per_second: null
-      requests_per_minute: null
-      requests_per_hour: null
-      requests_per_day: null
-      monthly_quota: null
-      concurrency_limit: null
-      notes: null
-    data_characteristics:
-      freshness: daily
-      geographic_scope:
-        - GLOBAL
-      historical_data: true
-      realtime: false
-      data_format: json
-      notes: Aggregator; authority class is derived_data.
-    sunrey:
-      domain:
-        - world
-        - grow
-      canonical_provider_interface: MacroDataProvider
-      priority: medium
-      launch_tier: secondary_source
-      authority_class: derived_data
-      integration_state: adapter_implemented
-      existing_adapter: packages/sunrey-chain/src/macro/adapters/econdb.ts
-    verification:
-      status: partially_verified
-      verified_against_official_docs: false
-      last_verified: 2026-08-30
-      notes: Commercial use unclear; production activation blocked pending review.
-  - provider_id: us-treasury-fiscaldata
-    name: U.S. Treasury FiscalData
-    short_name: Treasury FiscalData
-    description: U.S. Treasury fiscal data including debt, interest rates, and government spending.
-    primary_category: macroeconomics
-    capabilities:
-      - macroeconomic_indicators
-      - interest_rates
-      - treasury_data
-      - fiscal_data
-    endpoints:
-      base_url: https://api.fiscaldata.treasury.gov
-      api_version: v1
-      documentation_url: https://fiscaldata.treasury.gov/api-documentation/
-      status_url: https://fiscaldata.treasury.gov/
     authentication:
       type: none
       required: false
@@ -526,22 +249,6 @@ providers:
     redistribution:
       status: attribution_required
       notes: IMF data redistribution requires attribution per IMF terms.
-      notes: null
-    commercial_use:
-      status: verified_allowed
-      notes: Open reference FX feed for simulation integration.
-    redistribution:
-      status: attribution_required
-      notes: null
-    rate_limits:
-      documented: true
-      requests_per_second: null
-      requests_per_minute: null
-      requests_per_hour: 1000
-      notes: null
-    redistribution:
-      status: allowed
-      notes: null
     rate_limits:
       documented: false
       requests_per_second: null
@@ -555,6 +262,67 @@ providers:
       freshness: monthly
       geographic_scope:
         - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - economic_graph
+        - grow
+      canonical_provider_interface: MacroDataProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: implemented
+      existing_adapter: null
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Official IMF data portal documentation reviewed.
+  - provider_id: frankfurter
+    name: Frankfurter
+    short_name: Frankfurter
+    description: Free ECB-backed foreign exchange reference rates without API keys.
+    primary_category: foreign_exchange
+    secondary_categories:
+      - macroeconomics
+    capabilities:
+      - fx_rates
+      - foreign_exchange
+      - currency_conversion
+    endpoints:
+      base_url: https://api.frankfurter.app
+      api_version: v1
+      documentation_url: https://www.frankfurter.app/docs/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: Open reference FX feed for simulation integration.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: 1000
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
       notes: null
     data_characteristics:
       freshness: daily
@@ -568,8 +336,6 @@ providers:
     sunrey:
       domain:
         - world
-        - economic_graph
-        - grow
         - exchange
         - financial_agent
         - grow
@@ -579,49 +345,15 @@ providers:
       authority_class: reference_data
       integration_state: adapter_implemented
       existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
-        - US
-      historical_data: true
-      realtime: false
-      data_format: json
-      notes: Treasury yield and debt series update daily.
-    sunrey:
-      domain:
-        - world
-        - grow
-        - financial_agent
-      canonical_provider_interface: MacroDataProvider
-      priority: high
-      launch_tier: production_candidate
-      authority_class: authoritative_official
-      integration_state: implemented
-      existing_adapter: null
-      integration_state: adapter_implemented
-      existing_adapter: packages/sunrey-chain/src/macro/adapters/us-treasury-fiscaldata.ts
     verification:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
-      notes: Official IMF data portal documentation reviewed.
-  - provider_id: frankfurter
-    name: Frankfurter ECB Rates
-    short_name: Frankfurter
-    description: >
-      Frankfurter API providing foreign exchange reference rates sourced from
-      the European Central Bank for major currency pairs with historical data.
-    primary_category: foreign_exchange
-    capabilities:
-      - fx_rates
-      - historical_fx_rates
-      - currency_conversion
-    endpoints:
-      base_url: https://api.frankfurter.app
-      api_version: null
-      documentation_url: https://www.frankfurter.app/docs/
       notes: Wave 2 Prompt 9 fixture-backed adapter.
-  - provider_id: currency-api
-    name: Currency API
-    short_name: CurrencyAPI
-    description: Free-tier currency conversion and FX reference feed.
+  - provider_id: exchangerate-host
+    name: ExchangeRate.host
+    short_name: ExchangeRate.host
+    description: Free FX conversion and reference rates with fallback usage.
     primary_category: foreign_exchange
     secondary_categories:
       - macroeconomics
@@ -629,46 +361,9 @@ providers:
       - fx_rates
       - currency_conversion
     endpoints:
-      base_url: https://api.currencyapi.com
+      base_url: https://api.exchangerate.host
       api_version: v1
-      documentation_url: https://currencyapi.com/docs
-      status_url: null
-    authentication:
-      type: api_key
-      required: true
-      registration_required: true
-      environment_variable: CURRENCY_API_KEY
-      notes: null
-    access:
-      status: free_tier
-      free_tier_verified: true
-      registration_required: true
-      notes: null
-    commercial_use:
-      status: verified_allowed
-      notes: Open reference FX feed for simulation integration.
-    redistribution:
-      status: attribution_required
-      notes: null
-    rate_limits:
-      documented: true
-      requests_per_second: null
-      requests_per_minute: null
-      requests_per_hour: 300
-      notes: Wave 2 Prompt 8 macro subset.
-  - provider_id: data-usa
-    name: Data USA
-    short_name: Data USA
-    description: U.S. government open data aggregator for demographics and economic indicators.
-    primary_category: government_open_data
-    capabilities:
-      - macroeconomic_indicators
-      - economic_indicators
-      - government_statistics
-    endpoints:
-      base_url: https://datausa.io/api
-      api_version: null
-      documentation_url: https://datausa.io/about/api/
+      documentation_url: https://exchangerate.host/documentation
       status_url: null
     authentication:
       type: none
@@ -680,81 +375,21 @@ providers:
       status: verified_free
       free_tier_verified: true
       registration_required: false
-      notes: Open public API with no authentication required.
       notes: null
     commercial_use:
       status: verified_allowed
-      notes: null
+      notes: Open reference FX feed for simulation integration.
     redistribution:
-      status: allowed
-      notes: Open source project; ECB reference data attribution recommended.
+      status: attribution_required
       notes: null
     rate_limits:
-      documented: false
+      documented: true
       requests_per_second: null
       requests_per_minute: null
-      requests_per_hour: null
+      requests_per_hour: 100
       requests_per_day: null
       monthly_quota: null
       concurrency_limit: null
-      notes: No published rate limits; fair-use expected.
-    data_characteristics:
-      freshness: daily
-      geographic_scope:
-        - global
-      historical_data: true
-      realtime: false
-      data_format: json
-      notes: ECB reference rates updated on business days.
-    sunrey:
-      domain:
-        - exchange
-        - world
-      canonical_provider_interface: FxRateProvider
-      priority: high
-      launch_tier: production_candidate
-      authority_class: reference_data
-      integration_state: implemented
-      existing_adapter: null
-    verification:
-      status: verified
-      verified_against_official_docs: true
-      last_verified: 2026-08-30
-      notes: Official Frankfurter API documentation reviewed.
-  - provider_id: exchangerate-host
-    name: ExchangeRate.host
-    short_name: ExchangeRate.host
-    description: >
-      ExchangeRate.host API providing foreign exchange rates and currency
-      conversion for major and minor currency pairs with optional API key for
-      higher limits.
-    primary_category: foreign_exchange
-    capabilities:
-      - fx_rates
-      - historical_fx_rates
-      - currency_conversion
-    endpoints:
-      base_url: https://api.exchangerate.host
-      api_version: null
-      documentation_url: https://exchangerate.host/#docs
-      status_url: null
-    authentication:
-      type: api_key
-      required: false
-      registration_required: false
-      environment_variable: EXCHANGERATE_HOST_API_KEY
-      notes: API key optional; increases rate limits when provided.
-    access:
-      status: free_tier
-      free_tier_verified: true
-      registration_required: false
-      notes: Free tier available without registration; optional key for higher limits.
-    commercial_use:
-      status: unclear
-      notes: Commercial use terms not fully verified against official documentation.
-    redistribution:
-      status: unclear
-      notes: Redistribution terms not fully verified.
       notes: null
     data_characteristics:
       freshness: realtime
@@ -762,11 +397,6 @@ providers:
         - GLOBAL
       historical_data: true
       realtime: true
-      freshness: historical
-      geographic_scope:
-        - US
-      historical_data: true
-      realtime: false
       data_format: json
       notes: null
     sunrey:
@@ -776,121 +406,22 @@ providers:
         - financial_agent
         - grow
       canonical_provider_interface: FxReferenceProvider
-      priority: medium
-      launch_tier: secondary_source
+      priority: low
+      launch_tier: fallback_source
       authority_class: reference_data
       integration_state: adapter_implemented
       existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
     verification:
-      status: partially_verified
-      verified_against_official_docs: false
-      last_verified: 2026-08-30
-      notes: Wave 2 Prompt 9 fixture-backed adapter.
-  - provider_id: exchangerate-dev
-    name: ExchangeRate.dev
-    short_name: ExchangeRate.dev
-    description: Free foreign exchange rates API with historical support.
-    primary_category: foreign_exchange
-    secondary_categories:
-      - macroeconomics
-    capabilities:
-      - fx_rates
-      - foreign_exchange
-    endpoints:
-      base_url: https://api.exchangerate.dev
-      api_version: v1
-      documentation_url: https://exchangerate.dev/docs
-      status_url: null
-    authentication:
-      type: none
-      required: false
-      registration_required: false
-      environment_variable: null
-      notes: null
-    access:
-      status: free_tier
-        - grow
-      canonical_provider_interface: MacroDataProvider
-      priority: medium
-      launch_tier: secondary_source
-      authority_class: derived_data
-      integration_state: adapter_implemented
-      existing_adapter: packages/sunrey-chain/src/macro/adapters/data-usa.ts
-    verification:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
-      notes: Wave 2 Prompt 8 macro subset.
-  - provider_id: census-gov
-    name: U.S. Census Bureau API
-    short_name: Census
-    description: U.S. Census demographic and economic statistics including population and household data.
-    primary_category: government_open_data
-    capabilities:
-      - macroeconomic_indicators
-      - government_statistics
-      - economic_indicators
-    endpoints:
-      base_url: https://api.census.gov/data
-      api_version: null
-      documentation_url: https://www.census.gov/data/developers/data-sets.html
-      status_url: null
-    authentication:
-      type: api_key
-      required: true
-      registration_required: true
-      environment_variable: CENSUS_API_KEY
-      notes: Free API key from Census developer registration.
-    access:
-      status: verified_free
-      free_tier_verified: true
-      registration_required: false
-      notes: null
-    commercial_use:
-      status: verified_allowed
-      notes: Open reference FX feed for simulation integration.
-    redistribution:
-      status: attribution_required
-      notes: null
-    rate_limits:
-      documented: true
-      requests_per_second: null
-      requests_per_minute: null
-      requests_per_hour: null
-      requests_per_day: null
-      monthly_quota: null
-      concurrency_limit: null
-      notes: Rate limits vary by authentication tier; exact quotas require
-        verification.
-    data_characteristics:
-      freshness: daily
-      geographic_scope:
-        - global
-      historical_data: true
-      realtime: false
-      data_format: json
-      notes: null
-    sunrey:
-      domain:
-        - exchange
-        - world
-      canonical_provider_interface: FxRateProvider
-      priority: medium
-      launch_tier: secondary_source
-      authority_class: reference_data
-      integration_state: implemented
-      existing_adapter: null
-    verification:
-      status: partially_verified
-      verified_against_official_docs: false
-      last_verified: 2026-08-30
-      notes: Base URL and optional auth confirmed; commercial terms pending review.
+      notes: Wave 2 Prompt 9 fixture-backed adapter.
   - provider_id: alpha-vantage
     name: Alpha Vantage
     short_name: Alpha Vantage
     description: >
-      Alpha Vantage API providing stock quotes, forex rates, cryptocurrency
-      prices, and technical indicators for global equity and currency markets.
+      Alpha Vantage API providing stock quotes, forex rates, cryptocurrency prices, and technical indicators for global
+      equity and currency markets.
     primary_category: markets
     capabilities:
       - equity_quotes
@@ -956,8 +487,8 @@ providers:
     name: Finnhub
     short_name: Finnhub
     description: >
-      Finnhub API providing real-time and historical stock market data, company
-      fundamentals, earnings, and news for global equity markets.
+      Finnhub API providing real-time and historical stock market data, company fundamentals, earnings, and news for
+      global equity markets.
     primary_category: markets
     capabilities:
       - equity_quotes
@@ -1014,77 +545,6 @@ providers:
       authority_class: reference_data
       integration_state: implemented
       existing_adapter: null
-      requests_per_hour: 250
-      notes: null
-    redistribution:
-      status: allowed
-      notes: null
-    rate_limits:
-      documented: false
-      requests_per_second: null
-      requests_per_minute: null
-      requests_per_hour: null
-      requests_per_day: null
-      monthly_quota: null
-      concurrency_limit: null
-      notes: null
-    data_characteristics:
-      freshness: realtime
-      geographic_scope:
-        - GLOBAL
-      historical_data: true
-      realtime: true
-      data_format: json
-      notes: null
-    sunrey:
-      domain:
-        - world
-        - exchange
-        - financial_agent
-        - grow
-      canonical_provider_interface: FxReferenceProvider
-      priority: medium
-      launch_tier: secondary_source
-      authority_class: reference_data
-      integration_state: adapter_implemented
-      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
-    verification:
-      status: partially_verified
-      verified_against_official_docs: false
-      last_verified: 2026-08-30
-      notes: Wave 2 Prompt 9 fixture-backed adapter.
-  - provider_id: exchangerate-host
-    name: ExchangeRate.host
-    short_name: ExchangeRate.host
-    description: Free FX conversion and reference rates with fallback usage.
-    primary_category: foreign_exchange
-    secondary_categories:
-      - macroeconomics
-    capabilities:
-      - fx_rates
-      - currency_conversion
-    endpoints:
-      base_url: https://api.exchangerate.host
-      api_version: v1
-      documentation_url: https://exchangerate.host/documentation
-      freshness: historical
-      geographic_scope:
-        - US
-      historical_data: true
-      realtime: false
-      data_format: json
-      notes: Population and demographic series.
-    sunrey:
-      domain:
-        - world
-        - grow
-        - economic_graph
-      canonical_provider_interface: MacroDataProvider
-      priority: high
-      launch_tier: production_candidate
-      authority_class: authoritative_official
-      integration_state: adapter_implemented
-      existing_adapter: packages/sunrey-chain/src/macro/adapters/census-gov.ts
     verification:
       status: verified
       verified_against_official_docs: true
@@ -1094,9 +554,8 @@ providers:
     name: SEC EDGAR
     short_name: SEC EDGAR
     description: >
-      U.S. Securities and Exchange Commission EDGAR full-text search and company
-      filing API providing corporate filings, 10-K/10-Q reports, and registrant
-      metadata from data.sec.gov.
+      U.S. Securities and Exchange Commission EDGAR full-text search and company filing API providing corporate filings,
+      10-K/10-Q reports, and registrant metadata from data.sec.gov.
     primary_category: corporate_filings
     capabilities:
       - corporate_filings
@@ -1107,20 +566,6 @@ providers:
       base_url: https://data.sec.gov
       api_version: null
       documentation_url: https://www.sec.gov/edgar/sec-api-documentation
-      notes: Wave 2 Prompt 8 macro subset.
-  - provider_id: saudi-open-data
-    name: Saudi Open Data Portal
-    short_name: Saudi Open Data
-    description: Saudi Arabia government open datasets including economic and demographic indicators.
-    primary_category: government_open_data
-    capabilities:
-      - macroeconomic_indicators
-      - government_statistics
-      - economic_indicators
-    endpoints:
-      base_url: https://data.gov.sa
-      api_version: null
-      documentation_url: https://data.gov.sa/en/About
       status_url: null
     authentication:
       type: none
@@ -1128,7 +573,6 @@ providers:
       registration_required: false
       environment_variable: null
       notes: User-Agent header with contact information required per SEC policy.
-      notes: null
     access:
       status: verified_free
       free_tier_verified: true
@@ -1143,25 +587,6 @@ providers:
     rate_limits:
       documented: true
       requests_per_second: 10
-      notes: null
-    commercial_use:
-      status: verified_allowed
-      notes: Open reference FX feed for simulation integration.
-    redistribution:
-      status: attribution_required
-      notes: null
-    rate_limits:
-      documented: true
-      requests_per_second: null
-      requests_per_minute: null
-      requests_per_hour: 100
-      notes: null
-    redistribution:
-      status: allowed
-      notes: null
-    rate_limits:
-      documented: false
-      requests_per_second: null
       requests_per_minute: null
       requests_per_hour: null
       requests_per_day: null
@@ -1174,13 +599,6 @@ providers:
         - US
       historical_data: true
       realtime: false
-      notes: null
-    data_characteristics:
-      freshness: realtime
-      geographic_scope:
-        - GLOBAL
-      historical_data: true
-      realtime: true
       data_format: json
       notes: null
     sunrey:
@@ -1194,16 +612,6 @@ providers:
       authority_class: authoritative_official
       integration_state: implemented
       existing_adapter: null
-        - world
-        - exchange
-        - financial_agent
-        - grow
-      canonical_provider_interface: FxReferenceProvider
-      priority: low
-      launch_tier: fallback_source
-      authority_class: reference_data
-      integration_state: adapter_implemented
-      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
     verification:
       status: verified
       verified_against_official_docs: true
@@ -1213,9 +621,8 @@ providers:
     name: US Treasury Fiscal Data
     short_name: US Treasury
     description: >
-      U.S. Department of the Treasury Fiscal Data API providing federal debt,
-      revenue, spending, interest rates, and fiscal operations data from
-      fiscaldata.treasury.gov.
+      U.S. Department of the Treasury Fiscal Data API providing federal debt, revenue, spending, interest rates, and
+      fiscal operations data from fiscaldata.treasury.gov.
     primary_category: government_open_data
     capabilities:
       - federal_debt
@@ -1282,9 +689,8 @@ providers:
     name: Federal Register API
     short_name: Federal Register
     description: >
-      Federal Register API providing U.S. government regulatory documents,
-      presidential documents, proposed rules, and final rules from the National
-      Archives and Records Administration.
+      Federal Register API providing U.S. government regulatory documents, presidential documents, proposed rules, and
+      final rules from the National Archives and Records Administration.
     primary_category: government_open_data
     secondary_categories:
       - research
@@ -1298,58 +704,6 @@ providers:
       api_version: v1
       documentation_url: https://www.federalregister.gov/reader-aids/developer-resources
       status_url: null
-      notes: Wave 2 Prompt 9 fixture-backed adapter.
-  - provider_id: economia-awesome
-    name: Economia.AwesomeAPI
-    short_name: Economia
-    description: Brazilian open economics API including foreign exchange reference quotes.
-    primary_category: foreign_exchange
-    secondary_categories:
-      - macroeconomics
-    capabilities:
-      - fx_rates
-      - foreign_exchange
-    endpoints:
-      base_url: https://economia.awesomeapi.com.br
-      api_version: v1
-      documentation_url: https://docs.awesomeapi.com.br/api-de-moedas
-      status_url: null
-      freshness: historical
-      geographic_scope:
-        - SA
-      historical_data: true
-      realtime: false
-      data_format: json
-      notes: "Saudi Arabia ISO 3166-1 alpha-2: SA."
-    sunrey:
-      domain:
-        - world
-        - grow
-      canonical_provider_interface: MacroDataProvider
-      priority: medium
-      launch_tier: secondary_source
-      authority_class: authoritative_official
-      integration_state: adapter_implemented
-      existing_adapter: packages/sunrey-chain/src/macro/adapters/saudi-open-data.ts
-    verification:
-      status: partially_verified
-      verified_against_official_docs: false
-      last_verified: 2026-08-30
-      notes: API surface partially verified; some datasets may require portal registration.
-  - provider_id: usaspending
-    name: USAspending.gov
-    short_name: USAspending
-    description: U.S. federal spending, awards, and fiscal transparency data.
-    primary_category: government_open_data
-    capabilities:
-      - fiscal_data
-      - public_spending
-      - government_statistics
-    endpoints:
-      base_url: https://api.usaspending.gov
-      api_version: null
-      documentation_url: https://api.usaspending.gov/docs/
-      status_url: https://www.usaspending.gov/
     authentication:
       type: none
       required: false
@@ -1367,22 +721,6 @@ providers:
     redistribution:
       status: allowed
       notes: U.S. government open data; attribution recommended.
-      notes: null
-    commercial_use:
-      status: verified_allowed
-      notes: Open reference FX feed for simulation integration.
-    redistribution:
-      status: attribution_required
-      notes: null
-    rate_limits:
-      documented: true
-      requests_per_second: null
-      requests_per_minute: null
-      requests_per_hour: 100
-      notes: null
-    redistribution:
-      status: allowed
-      notes: null
     rate_limits:
       documented: false
       requests_per_second: null
@@ -1393,28 +731,6 @@ providers:
       concurrency_limit: null
       notes: No published rate limits in official documentation.
     data_characteristics:
-      notes: null
-    data_characteristics:
-      freshness: realtime
-      geographic_scope:
-        - BR
-        - GLOBAL
-      historical_data: true
-      realtime: true
-      data_format: json
-      notes: null
-    sunrey:
-      domain:
-        - world
-        - exchange
-        - financial_agent
-        - grow
-      canonical_provider_interface: FxReferenceProvider
-      priority: medium
-      launch_tier: secondary_source
-      authority_class: reference_data
-      integration_state: adapter_implemented
-      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
       freshness: daily
       geographic_scope:
         - US
@@ -1433,18 +749,6 @@ providers:
       authority_class: authoritative_official
       integration_state: implemented
       existing_adapter: null
-      notes: Federal spending and obligation data.
-    sunrey:
-      domain:
-        - world
-        - grow
-        - research
-      canonical_provider_interface: MacroDataProvider
-      priority: medium
-      launch_tier: production_candidate
-      authority_class: authoritative_official
-      integration_state: adapter_implemented
-      existing_adapter: packages/sunrey-chain/src/macro/adapters/usaspending.ts
     verification:
       status: verified
       verified_against_official_docs: true
@@ -1454,9 +758,8 @@ providers:
     name: FRED Commodity Prices
     short_name: FRED Commodities
     description: >
-      Secondary commodity price source using FRED API commodity-related economic
-      series including energy, metals, agriculture, and PPI commodity indexes
-      from the St. Louis Fed.
+      Secondary commodity price source using FRED API commodity-related economic series including energy, metals,
+      agriculture, and PPI commodity indexes from the St. Louis Fed.
     primary_category: commodities
     capabilities:
       - commodity_prices
@@ -1467,20 +770,6 @@ providers:
       base_url: https://api.stlouisfed.org/fred
       api_version: v1
       documentation_url: https://fred.stlouisfed.org/docs/api/fred/
-      notes: Wave 2 Prompt 9 fixture-backed adapter.
-  - provider_id: currencyapi-com
-    name: CurrencyAPI.com (blocked)
-    short_name: CurrencyAPI.com
-    description: Blocked pending commercial and legal review. Not activated.
-    primary_category: foreign_exchange
-    secondary_categories:
-      - macroeconomics
-    capabilities:
-      - fx_rates
-    endpoints:
-      base_url: https://api.currencyapi.com
-      api_version: v1
-      documentation_url: https://currencyapi.com/docs
       status_url: null
     authentication:
       type: api_key
@@ -1537,9 +826,8 @@ providers:
     name: Yahoo Finance Unofficial
     short_name: Yahoo Finance
     description: >
-      Unofficial Yahoo Finance data endpoints used by community scrapers and
-      third-party wrappers. Not an official API; terms, stability, and legal
-      status are unverified. Blocked pending legal and compliance review.
+      Unofficial Yahoo Finance data endpoints used by community scrapers and third-party wrappers. Not an official API;
+      terms, stability, and legal status are unverified. Blocked pending legal and compliance review.
     primary_category: markets
     capabilities:
       - equity_quotes
@@ -1548,34 +836,6 @@ providers:
       base_url: null
       api_version: null
       documentation_url: null
-      environment_variable: CURRENCYAPI_COM_KEY
-      notes: null
-    access:
-      status: free_tier
-      free_tier_verified: true
-      registration_required: true
-      notes: null
-    commercial_use:
-      status: verified_allowed
-      notes: Open reference FX feed for simulation integration.
-    redistribution:
-      status: attribution_required
-      notes: null
-    rate_limits:
-      documented: true
-      notes: Wave 2 Prompt 8 macro subset.
-  - provider_id: federal-register
-    name: Federal Register API
-    short_name: Federal Register
-    description: U.S. federal regulatory documents including economic policy notices and rules.
-    primary_category: government_open_data
-    capabilities:
-      - government_statistics
-      - fiscal_data
-    endpoints:
-      base_url: https://www.federalregister.gov/api/v1
-      api_version: v1
-      documentation_url: https://www.federalregister.gov/reader-aids/developer-resources/rest-api
       status_url: null
     authentication:
       type: none
@@ -1628,9 +888,8 @@ providers:
     name: Quandl Nasdaq Data Link
     short_name: Nasdaq Data Link
     description: >
-      Nasdaq Data Link (formerly Quandl) financial and economic data platform.
-      Former free API tiers have been restricted; access terms and pricing
-      require review. Blocked pending compliance and licensing review.
+      Nasdaq Data Link (formerly Quandl) financial and economic data platform. Former free API tiers have been
+      restricted; access terms and pricing require review. Blocked pending compliance and licensing review.
     primary_category: markets
     capabilities:
       - market_data
@@ -1658,18 +917,6 @@ providers:
     redistribution:
       status: prohibited
       notes: Redistribution prohibited under standard data licenses.
-      notes: null
-    access:
-      status: verified_free
-      free_tier_verified: true
-      registration_required: false
-      notes: null
-    commercial_use:
-      status: verified_allowed
-      notes: null
-    redistribution:
-      status: allowed
-      notes: null
     rate_limits:
       documented: false
       requests_per_second: null
@@ -1706,9 +953,8 @@ providers:
     name: Treasury Direct Legacy XML
     short_name: Treasury Direct XML
     description: >
-      Legacy U.S. Treasury Direct XML feeds for auction results and debt
-      statistics. Service deprecated and unavailable; superseded by US Treasury
-      Fiscal Data API (us-treasury-fiscal provider).
+      Legacy U.S. Treasury Direct XML feeds for auction results and debt statistics. Service deprecated and unavailable;
+      superseded by US Treasury Fiscal Data API (us-treasury-fiscal provider).
     primary_category: government_open_data
     capabilities:
       - treasury_auctions
@@ -1746,6 +992,399 @@ providers:
       notes: null
     data_characteristics:
       freshness: null
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: false
+      data_format: xml
+      notes: Legacy XML format; service unavailable.
+    sunrey:
+      domain:
+        - world
+      canonical_provider_interface: MacroDataProvider
+      priority: low
+      launch_tier: fallback_source
+      authority_class: authoritative_official
+      integration_state: catalog_only
+      existing_adapter: null
+    verification:
+      status: deprecated
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Deprecated; superseded by us-treasury-fiscal provider.
+  - provider_id: bank-of-russia
+    name: Bank of Russia FX Reference
+    short_name: CBR FX
+    description: Official daily foreign-exchange reference rates published by the Central Bank of Russia.
+    primary_category: foreign_exchange
+    secondary_categories:
+      - macroeconomics
+    capabilities:
+      - fx_rates
+      - central_bank_fx
+      - currency_conversion
+    endpoints:
+      base_url: https://www.cbr-xml-daily.ru
+      api_version: v1
+      documentation_url: https://www.cbr.ru/development/SXML/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: Open reference FX feed for simulation integration.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 1000
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - RU
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - exchange
+        - financial_agent
+        - grow
+      canonical_provider_interface: FxReferenceProvider
+      priority: critical
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: adapter_implemented
+      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 2 Prompt 9 fixture-backed adapter.
+  - provider_id: national-bank-poland
+    name: National Bank of Poland FX Tables
+    short_name: NBP FX
+    description: Official NBP table A foreign exchange reference rates.
+    primary_category: foreign_exchange
+    secondary_categories:
+      - macroeconomics
+    capabilities:
+      - fx_rates
+      - central_bank_fx
+    endpoints:
+      base_url: https://api.nbp.pl
+      api_version: v1
+      documentation_url: https://api.nbp.pl/en.html
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: Open reference FX feed for simulation integration.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: 120
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - PL
+        - EU
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - exchange
+        - financial_agent
+        - grow
+      canonical_provider_interface: FxReferenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: adapter_implemented
+      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 2 Prompt 9 fixture-backed adapter.
+  - provider_id: currency-api
+    name: Currency API
+    short_name: CurrencyAPI
+    description: Free-tier currency conversion and FX reference feed.
+    primary_category: foreign_exchange
+    secondary_categories:
+      - macroeconomics
+    capabilities:
+      - fx_rates
+      - currency_conversion
+    endpoints:
+      base_url: https://api.currencyapi.com
+      api_version: v1
+      documentation_url: https://currencyapi.com/docs
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: CURRENCY_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: Open reference FX feed for simulation integration.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: 300
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - exchange
+        - financial_agent
+        - grow
+      canonical_provider_interface: FxReferenceProvider
+      priority: medium
+      launch_tier: secondary_source
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
+    verification:
+      status: partially_verified
+      verified_against_official_docs: false
+      last_verified: 2026-08-30
+      notes: Wave 2 Prompt 9 fixture-backed adapter.
+  - provider_id: exchangerate-dev
+    name: ExchangeRate.dev
+    short_name: ExchangeRate.dev
+    description: Free foreign exchange rates API with historical support.
+    primary_category: foreign_exchange
+    secondary_categories:
+      - macroeconomics
+    capabilities:
+      - fx_rates
+      - foreign_exchange
+    endpoints:
+      base_url: https://api.exchangerate.dev
+      api_version: v1
+      documentation_url: https://exchangerate.dev/docs
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: Open reference FX feed for simulation integration.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: 250
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - exchange
+        - financial_agent
+        - grow
+      canonical_provider_interface: FxReferenceProvider
+      priority: medium
+      launch_tier: secondary_source
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
+    verification:
+      status: partially_verified
+      verified_against_official_docs: false
+      last_verified: 2026-08-30
+      notes: Wave 2 Prompt 9 fixture-backed adapter.
+  - provider_id: economia-awesome
+    name: Economia.AwesomeAPI
+    short_name: Economia
+    description: Brazilian open economics API including foreign exchange reference quotes.
+    primary_category: foreign_exchange
+    secondary_categories:
+      - macroeconomics
+    capabilities:
+      - fx_rates
+      - foreign_exchange
+    endpoints:
+      base_url: https://economia.awesomeapi.com.br
+      api_version: v1
+      documentation_url: https://docs.awesomeapi.com.br/api-de-moedas
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: Open reference FX feed for simulation integration.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: 100
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - BR
+        - GLOBAL
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - world
+        - exchange
+        - financial_agent
+        - grow
+      canonical_provider_interface: FxReferenceProvider
+      priority: medium
+      launch_tier: secondary_source
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/payments/src/fx-reference/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 2 Prompt 9 fixture-backed adapter.
+  - provider_id: currencyapi-com
+    name: CurrencyAPI.com (blocked)
+    short_name: CurrencyAPI.com
+    description: Blocked pending commercial and legal review. Not activated.
+    primary_category: foreign_exchange
+    secondary_categories:
+      - macroeconomics
+    capabilities:
+      - fx_rates
+    endpoints:
+      base_url: https://api.currencyapi.com
+      api_version: v1
+      documentation_url: https://currencyapi.com/docs
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: CURRENCYAPI_COM_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: Open reference FX feed for simulation integration.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
       notes: null
     data_characteristics:
       freshness: realtime
@@ -1772,38 +1411,548 @@ providers:
       verified_against_official_docs: false
       last_verified: 2026-08-30
       notes: Wave 2 Prompt 9 fixture-backed adapter.
-      freshness: daily
+  - provider_id: coingecko
+    name: CoinGecko
+    short_name: CoinGecko
+    description: CoinGecko public API providing aggregated cryptocurrency prices, capitalization metrics, volume, and
+      historical data.
+    primary_category: cryptocurrency
+    capabilities:
+      - crypto_prices
+      - crypto_market_data
+      - crypto_market_cap
+      - crypto_market_history
+      - crypto_metadata
+    endpoints:
+      base_url: https://api.coingecko.com
+      api_version: v1
+      documentation_url: https://www.coingecko.com/en/api/documentation
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 30
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: delayed
       geographic_scope:
-        - US
+        - global
       historical_data: true
       realtime: false
-      data_format: xml
-      notes: Legacy XML format; service unavailable.
-    sunrey:
-      domain:
-        - world
       data_format: json
-      notes: Regulatory documents; economically relevant policy notices.
+      notes: null
     sunrey:
       domain:
+        - exchange
         - world
-        - research
+        - grow
         - financial_agent
-      canonical_provider_interface: MacroDataProvider
-      priority: low
-      launch_tier: fallback_source
-      authority_class: authoritative_official
-      integration_state: catalog_only
-      existing_adapter: null
-    verification:
-      status: deprecated
-      verified_against_official_docs: true
-      last_verified: 2026-08-30
-      notes: Deprecated; superseded by us-treasury-fiscal provider.
+        - blockchain_intelligence
+        - moonrey
+      canonical_provider_interface: CryptoMarketReferenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
       integration_state: adapter_implemented
-      existing_adapter: packages/sunrey-chain/src/macro/adapters/federal-register.ts
+      existing_adapter: packages/sunrey-exchange/src/crypto-market/adapters/index.ts
     verification:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-30
-      notes: Wave 2 Prompt 8 macro subset.
+      notes: Wave 3 Prompt 12 fixture-backed adapter.
+  - provider_id: coincap
+    name: CoinCap
+    short_name: CoinCap
+    description: CoinCap public API providing real-time cryptocurrency prices and market data.
+    primary_category: cryptocurrency
+    capabilities:
+      - crypto_prices
+      - crypto_market_data
+      - crypto_market_cap
+      - crypto_market_history
+    endpoints:
+      base_url: https://api.coincap.io
+      api_version: v1
+      documentation_url: https://docs.coincap.io/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 200
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - exchange
+        - world
+        - grow
+        - financial_agent
+        - blockchain_intelligence
+        - moonrey
+      canonical_provider_interface: CryptoMarketReferenceProvider
+      priority: high
+      launch_tier: secondary_source
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-exchange/src/crypto-market/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 3 Prompt 12 fixture-backed adapter.
+  - provider_id: coinpaprika
+    name: CoinPaprika
+    short_name: Paprika
+    description: CoinPaprika public API providing cryptocurrency market data, tickers, and historical OHLCV.
+    primary_category: cryptocurrency
+    capabilities:
+      - crypto_prices
+      - crypto_market_data
+      - crypto_market_cap
+      - crypto_market_history
+      - crypto_metadata
+    endpoints:
+      base_url: https://api.coinpaprika.com
+      api_version: v1
+      documentation_url: https://api.coinpaprika.com/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 25000
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: delayed
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - exchange
+        - world
+        - grow
+        - financial_agent
+        - blockchain_intelligence
+        - moonrey
+      canonical_provider_interface: CryptoMarketReferenceProvider
+      priority: medium
+      launch_tier: secondary_source
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-exchange/src/crypto-market/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 3 Prompt 12 fixture-backed adapter.
+  - provider_id: coinlore
+    name: CoinLore
+    short_name: CoinLore
+    description: CoinLore public API providing cryptocurrency prices, capitalization metrics, and global market statistics.
+    primary_category: cryptocurrency
+    capabilities:
+      - crypto_prices
+      - crypto_market_data
+      - crypto_market_cap
+    endpoints:
+      base_url: https://api.coinlore.net
+      api_version: v1
+      documentation_url: https://www.coinlore.com/cryptocurrency-data-api
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: null
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: delayed
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - exchange
+        - world
+        - grow
+        - financial_agent
+        - blockchain_intelligence
+        - moonrey
+      canonical_provider_interface: CryptoMarketReferenceProvider
+      priority: low
+      launch_tier: fallback_source
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-exchange/src/crypto-market/adapters/index.ts
+    verification:
+      status: partially_verified
+      verified_against_official_docs: false
+      last_verified: 2026-08-30
+      notes: Wave 3 Prompt 12 fixture-backed adapter.
+  - provider_id: cryptocompare
+    name: CryptoCompare
+    short_name: CryptoCompare
+    description: CryptoCompare public API providing cryptocurrency prices, historical data, and exchange-specific quotes.
+    primary_category: cryptocurrency
+    capabilities:
+      - crypto_prices
+      - crypto_market_data
+      - crypto_market_history
+      - crypto_exchange_reference
+    endpoints:
+      base_url: https://min-api.cryptocompare.com
+      api_version: v1
+      documentation_url: https://min-api.cryptocompare.com/documentation
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: CRYPTOCOMPARE_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: null
+    commercial_use:
+      status: restricted
+      notes: null
+    redistribution:
+      status: restricted
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 100000
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - exchange
+        - world
+        - grow
+        - financial_agent
+        - blockchain_intelligence
+        - moonrey
+      canonical_provider_interface: CryptoMarketReferenceProvider
+      priority: medium
+      launch_tier: secondary_source
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/sunrey-exchange/src/crypto-market/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Wave 3 Prompt 12 fixture-backed adapter.
+  - provider_id: coinmarketcap
+    name: CoinMarketCap
+    short_name: CMC
+    description: CoinMarketCap API providing cryptocurrency quotes, capitalization metrics, and metadata. Requires API key.
+    primary_category: cryptocurrency
+    capabilities:
+      - crypto_prices
+      - crypto_market_data
+      - crypto_market_cap
+      - crypto_metadata
+    endpoints:
+      base_url: https://pro-api.coinmarketcap.com
+      api_version: v1
+      documentation_url: https://coinmarketcap.com/api/documentation/v1/
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: COINMARKETCAP_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: null
+    commercial_use:
+      status: restricted
+      notes: null
+    redistribution:
+      status: prohibited
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 10000
+      monthly_quota: null
+      concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: delayed
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - exchange
+        - world
+        - grow
+        - financial_agent
+        - blockchain_intelligence
+        - moonrey
+      canonical_provider_interface: CryptoMarketReferenceProvider
+      priority: medium
+      launch_tier: blocked_pending_review
+      authority_class: reference_data
+      integration_state: catalog_only
+      existing_adapter: null
+    verification:
+      status: partially_verified
+      verified_against_official_docs: false
+      last_verified: 2026-08-30
+      notes: Blocked pending credential and commercial review.
+  - primary_category: compliance
+    secondary_categories: []
+    capabilities:
+      - sanctions
+      - pep_screening
+      - watchlists
+      - adverse_regulatory_data
+      - entity_resolution
+    endpoints:
+      base_url: https://api.opensanctions.org
+      api_version: v1
+      documentation_url: https://www.opensanctions.org/docs/api/
+      status_url: https://www.opensanctions.org/
+    authentication:
+      type: api_key
+      required: false
+      registration_required: false
+      environment_variable: OPENSANCTIONS_API_KEY
+      notes: Optional API key for higher limits; bulk non-commercial use does not require a key.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Free for non-commercial use; API trial keys available for evaluation.
+    commercial_use:
+      status: restricted
+      notes: CC BY-NC 4.0 for bulk data. Commercial compliance screening requires paid license. Production activation blocked
+        pending legal review.
+    redistribution:
+      status: attribution_required
+      notes: OpenSanctions attribution required per dataset terms.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Simulation uses fixtures only; respect provider quotas in production.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - compliance
+        - world
+        - exchange
+        - financial_agent
+      canonical_provider_interface: ComplianceIntelligenceProvider
+      priority: critical
+      launch_tier: blocked_pending_review
+      authority_class: reference_data
+      integration_state: adapter_implemented
+      existing_adapter: packages/kernel/src/compliance-intelligence/adapters/open-sanctions.ts
+    verification:
+      status: partially_verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Commercial use restricted; adapter is preview_only until counsel confirms license.
+    provider_id: open-sanctions
+    name: OpenSanctions
+    short_name: OpenSanctions
+    description: Open database of sanctions, PEPs, and watchlists aggregating OFAC, UN, EU, UK, and national lists. Bulk
+      data is CC BY-NC 4.0; commercial screening requires a paid license.
+  - primary_category: compliance
+    secondary_categories: []
+    capabilities:
+      - wanted_persons
+      - watchlists
+      - public_enforcement_data
+    endpoints:
+      base_url: https://ws-public.interpol.int
+      api_version: v1
+      documentation_url: https://interpol.api.bund.dev/
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public unauthenticated API.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Public API; no authentication required.
+    commercial_use:
+      status: verified_allowed
+      notes: Public law-enforcement notices API; use for screening evidence only.
+    redistribution:
+      status: attribution_required
+      notes: INTERPOL data usage subject to INTERPOL terms; evidence references only in SunRey.
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Simulation uses fixtures only; respect provider quotas in production.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - GLOBAL
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - compliance
+        - world
+      canonical_provider_interface: ComplianceIntelligenceProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: adapter_implemented
+      existing_adapter: packages/kernel/src/compliance-intelligence/adapters/interpol-red-notices.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-30
+      notes: Public Red Notices API; wanted-person classification separate from sanctions.
+    provider_id: interpol-red-notices
+    name: INTERPOL Red Notices
+    short_name: INTERPOL
+    description: Public INTERPOL Red Notices API for wanted-person lookups. Distinct from sanctions lists; wanted status is
+      a separate evidence classification.

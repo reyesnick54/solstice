@@ -30,6 +30,11 @@ import type {
   HttpProviderTransportResult,
   ProviderHttpMethod,
   ProviderParsedBody,
+  ProviderRequestContext,
+  ProviderHttpTransport,
+  ProviderTransportResponse,
+  ProviderTransportResult,
+} from './types.ts';
   ProviderHttpRequestContext,
   ProviderHttpTransport,
   ProviderHttpTransportResponse,

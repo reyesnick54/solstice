@@ -23,7 +23,9 @@ const WAVE2_CATEGORIES = new Set([
   'government_open_data',
 ]);
 
-const BLOCKED_IDS = new Set(['yahoo-finance-unofficial', 'quandl-nasdaq-data-link']);
+const WAVE3_CATEGORIES = new Set(['cryptocurrency', 'blockchain']);
+
+const BLOCKED_IDS = new Set(['yahoo-finance-unofficial', 'quandl-nasdaq-data-link', 'currencyapi-com']);
 const DEPRECATED_IDS = new Set(['treasury-direct-legacy-xml']);
 
 export function loadCatalogProviders(): readonly Record<string, unknown>[] {
@@ -41,8 +43,10 @@ export function classifyWave2Provider(provider: Record<string, unknown>): Wave2P
     return Object.freeze({
       providerId,
       category,
-      status: 'NOT_WAVE_2',
-      notes: 'Outside Wave 2 economics/markets scope.',
+      status: WAVE3_CATEGORIES.has(category) ? 'NOT_WAVE_2' : 'NOT_WAVE_2',
+      notes: WAVE3_CATEGORIES.has(category)
+        ? 'Wave 3 crypto/blockchain scope; accounted outside Wave 2 coverage.'
+        : 'Outside Wave 2 economics/markets scope.',
     });
   }
 
@@ -64,7 +68,7 @@ export function classifyWave2Provider(provider: Record<string, unknown>): Wave2P
     });
   }
 
-  if (WAVE2_IMPLEMENTED_PROVIDER_IDS.includes(providerId) || integration === 'implemented') {
+  if (WAVE2_IMPLEMENTED_PROVIDER_IDS.includes(providerId) || integration === 'implemented' || integration === 'adapter_implemented') {
     return Object.freeze({
       providerId,
       category,

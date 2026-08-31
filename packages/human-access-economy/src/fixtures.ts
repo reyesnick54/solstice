@@ -14,7 +14,7 @@ const NOW = asUtcInstant('2026-08-23T12:00:00.000Z');
 
 export const FIXTURE_MUSTANG_DAILY_USD = Object.freeze({
   currency: 'USD',
-  minorUnits: '24900',
+  minorUnits: '36400',
   source: 'SIMULATION_FIXTURE' as const,
 });
 
