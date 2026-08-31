@@ -7,6 +7,7 @@ echo "==> [INTEGRITY] architectural invariants"
 node scripts/check-json-integrity.mjs
 node scripts/check-merge-integrity.mjs
 node scripts/check-yaml-integrity.mjs
+node scripts/check-case-collisions.mjs
 python3 scripts/lint-architectural-invariants.py
 python3 scripts/extraction-dryrun.py
 npm run lint:architecture
@@ -32,9 +33,11 @@ node scripts/check-migration-quality.mjs
 echo "==> [INTEGRITY] lockfile enforcement"
 node scripts/check-lockfiles.mjs
 
-echo "==> [RUST] sunrey local node"
+echo "==> [RUST] sunrey local node (repository-pinned toolchain)"
 (
   cd packages/sunrey-chain/rust
+  rustc --version
+  cargo check --workspace --locked
   cargo fmt --check
   cargo clippy --all-targets --locked -- -D warnings
   cargo test --workspace --locked
