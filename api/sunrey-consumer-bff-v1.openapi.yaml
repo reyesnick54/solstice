@@ -2284,6 +2284,15 @@ paths:
       responses:
         "200":
           description: Proposal only. No supply change.
+  /api/v1/access:
+    get:
+      operationId: getAccessDashboard
+      summary: Canonical Access dashboard snapshot (Prompt 38)
+      responses:
+        "200":
+          description: Access dashboard with category summaries, recent activity, and simulation posture
+        "401":
+          description: Authentication required
   /api/v1/access/overview:
     get:
       operationId: getAccessOverview
@@ -2380,6 +2389,66 @@ paths:
       responses:
         "200":
           description: Normalized provider catalog items from simulation adapters
+  /api/v1/access/quote:
+    post:
+      operationId: createAccessCheckoutQuote
+      summary: Firm checkout quote with Access coverage breakdown
+      responses:
+        "201":
+          description: Firm quote; server computes coverage split
+  /api/v1/access/reserve:
+    post:
+      operationId: reserveAccessCheckout
+      summary: Begin Access transaction from checkout quote
+      responses:
+        "201":
+          description: Transaction created; coverage validated server-side
+  /api/v1/access/transactions/{id}:
+    get:
+      operationId: getAccessTransaction
+      summary: Sanitized Access transaction lifecycle status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Consumer-safe transaction status
+  /api/v1/access/transactions/{id}/confirm:
+    post:
+      operationId: confirmAccessTransaction
+      summary: Idempotent transaction confirmation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Confirmed transaction
+  /api/v1/access/bookings/{id}:
+    get:
+      operationId: getAccessBooking
+      summary: Booking detail without provider credentials
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Booking detail
+  /api/v1/access/history:
+    get:
+      operationId: listAccessHistory
+      summary: Paginated Access transaction history
+      responses:
+        "200":
+          description: User-facing history without internal audit payloads
   /api/v1/access/quotes:
     post:
       operationId: createAccessQuote
