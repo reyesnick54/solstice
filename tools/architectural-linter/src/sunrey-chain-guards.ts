@@ -79,7 +79,11 @@ export function lintSunReyChainBoundary(root: string): Finding[] {
       continue;
     }
     const source = readFileSync(file, 'utf8');
-    const withoutExplicitDenials = source.replace(/createsExecutionAuthority\s*:\s*false/g, '');
+    const withoutExplicitDenials = source
+      .replace(/createsExecutionAuthority\s*:\s*false/g, '')
+      .replace(/grantsExecutionAuthority\s*:\s*false/g, '')
+      .replace(/issuesExecutionAuthority\s*:\s*false/g, '')
+      .replace(/grantsBookingAuthority\s*:\s*false/g, '');
     if (
       /postJournal\s*\(/.test(withoutExplicitDenials) ||
       /AuthorityIssuer/.test(withoutExplicitDenials) ||

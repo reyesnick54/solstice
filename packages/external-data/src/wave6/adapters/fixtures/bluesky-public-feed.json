@@ -1,0 +1,11 @@
+{
+  "feed": [
+    {
+      "uri": "at://did:plc:example/app.bsky.feed.post/abc123",
+      "record": {
+        "text": "We're hiring! Looking for a TypeScript/GraphQL developer. Remote-friendly. DM for details.",
+        "createdAt": "2026-08-28T18:00:00.000Z"
+      }
+    }
+  ]
+}

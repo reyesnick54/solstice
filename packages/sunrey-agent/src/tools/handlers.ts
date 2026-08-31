@@ -1,4 +1,6 @@
 import type { Result } from '../../../domain/src/result.ts';
+import { createTravelIntelligenceSandbox } from '../../../sunrey-chain/src/travel-intelligence/index.ts';
+import { toTravelAgentEvidence } from '../../../sunrey-chain/src/travel-intelligence/agent-evidence.ts';
 import type { CreateProposalInput, UserAgentMandateEngine } from '../engine.ts';
 import type { AgentTransactionProposal, MandateRefusal, UserAgentMandate } from '../types.ts';
 import type { AgentToolDomainPorts, PortResult } from './ports.ts';
@@ -343,6 +345,8 @@ export function handleTool(ctx: HandlerContext): Omit<AgentToolResult, 'duration
         methodologies,
         isMintFormula: false,
       }), []);
+    case 'getTravelPlanningContext':
+      return travelPlanningContext(ctx);
     case 'proposeAccessIntent':
       return accessIntentProposal(ctx);
     case 'confirmAccessReservation':
@@ -697,6 +701,40 @@ function hint(component: LovableComponentHint, authoritativeNumericPaths: readon
     modelMaySummarize: true as const,
     modelMayAlterAuthoritativeNumbers: false as const,
   });
+}
+
+function travelPlanningContext(ctx: HandlerContext): Omit<AgentToolResult, 'durationMs' | 'correlationId'> {
+  const destination = str(ctx.input.destination);
+  const nationality = typeof ctx.input.nationality === 'string' ? ctx.input.nationality : undefined;
+  const airportId = typeof ctx.input.airportId === 'string' ? ctx.input.airportId : undefined;
+
+  const service = createTravelIntelligenceSandbox();
+  const context = service.buildTravelPlanningContext({
+    destination,
+    ...(nationality !== undefined ? { travelerNationality: nationality } : {}),
+    ...(airportId !== undefined ? { airportId } : {}),
+  });
+  const evidence = toTravelAgentEvidence(context);
+
+  return {
+    status: 'SUCCESS',
+    toolId: ctx.tool.toolId,
+    version: ctx.tool.version,
+    executed: false,
+    payload: Object.freeze({
+      context,
+      evidence,
+      bookingConfirmed: false,
+      grantsBookingAuthority: false,
+      referenceOnly: true,
+      disclaimer:
+        'Travel reference information only. Entry requirements may change. No ticket or reservation has been booked.',
+    }),
+    component: 'TRAVEL_PLANNING_CARD',
+    authoritativeNumericPaths: Object.freeze([]),
+    modelMaySummarize: true as const,
+    modelMayAlterAuthoritativeNumbers: false as const,
+  };
 }
 
 function accessIntentProposal(ctx: HandlerContext): Omit<AgentToolResult, 'durationMs' | 'correlationId'> {
