@@ -5,9 +5,11 @@ cd "$(dirname "$0")/.."
 
 echo "==> [INTEGRITY] architectural invariants"
 node scripts/check-json-integrity.mjs
+node scripts/validate-json.mjs
 node scripts/check-merge-integrity.mjs
 node scripts/check-yaml-integrity.mjs
 node scripts/check-case-collisions.mjs
+node scripts/validate-free-api-catalog.mjs
 python3 scripts/lint-architectural-invariants.py
 python3 scripts/extraction-dryrun.py
 npm run lint:architecture

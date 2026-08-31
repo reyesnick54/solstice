@@ -21,7 +21,6 @@ import {
 } from './wave5-adapters.ts';
 import { buildWave5CoverageReport } from './wave5-coverage.ts';
 import { createWave5Services, type Wave5Services } from './wave5-services.ts';
-import { ProviderRiskMonitor } from './wave5-provider-risk.ts';
 import { createWave4Services, type ProviderRiskService } from './wave4/services.ts';
 import type { ComplianceEvidenceService, BusinessIdentityService, DigitalRiskService, VulnerabilityIntelligenceService, ThreatIntelligenceService, EndpointSecurityService, ServiceOutageService } from './wave4/services.ts';
 import { createDefaultWave4AdapterStates } from './wave4/adapters.ts';
@@ -51,7 +50,6 @@ export class ExternalDataPlane {
   readonly markets: MarketReferenceService;
   readonly company: CompanyIntelligenceService;
   readonly wave5: Wave5Services;
-  readonly providerRisk: ProviderRiskMonitor;
   readonly #ctx: Wave2AdapterContext;
   readonly #wave5Ctx;
   readonly productiveEconomy: Wave5ExternalData;
@@ -66,21 +64,12 @@ export class ExternalDataPlane {
   readonly trust: ExternalDataTrustPlane;
   readonly wave6: Wave6Services;
   readonly #wave6Ctx;
-  readonly #ctx: Wave2AdapterContext;
   readonly #wave4Ctx;
   readonly #delivery;
   readonly #wave5Delivery;
 
   constructor(options: ExternalDataPlaneOptions = {}) {
     const nowUtc = options.nowUtc ?? new Date().toISOString();
-    this.#ctx = {
-      nowUtc,
-      states: options.states ?? createDefaultAdapterStates(),
-    };
-    this.#wave5Ctx = {
-      nowUtc,
-      states: options.wave5States ?? createDefaultWave5AdapterStates(),
-    };
     const wave2States = options.states ?? createDefaultAdapterStates();
     const wave4States = createDefaultWave4AdapterStates();
     for (const [id, state] of wave2States) {
@@ -88,13 +77,16 @@ export class ExternalDataPlane {
     }
     this.#ctx = { nowUtc, states: wave2States };
     this.#wave4Ctx = { nowUtc, states: wave4States };
+    this.#wave5Ctx = {
+      nowUtc,
+      states: options.wave5States ?? createDefaultWave5AdapterStates(),
+    };
     const services = createWave2Services(this.#ctx);
     this.macro = services.macro;
     this.fx = services.fx;
     this.markets = services.markets;
     this.company = services.company;
     this.wave5 = createWave5Services(this.#wave5Ctx);
-    this.providerRisk = new ProviderRiskMonitor(this.#wave5Ctx);
     this.productiveEconomy = createWave5ExternalData({ nowUtc: () => nowUtc });
     const wave4 = createWave4Services(this.#wave4Ctx);
     this.compliance = wave4.compliance;
@@ -121,22 +113,11 @@ export class ExternalDataPlane {
   }
 
   setProviderState(providerId: string, patch: Partial<ProviderAdapterState>): void {
-    const current = this.#ctx.states.get(providerId) ?? this.#wave4Ctx.states.get(providerId) ?? this.#wave6Ctx.states.get(providerId);
-    const current = this.#ctx.states.get(providerId) ?? this.#wave5Ctx.states.get(providerId);
-    if (!current) {
-      return;
-    }
-    if (this.#ctx.states.has(providerId)) {
-      this.#ctx.states.set(providerId, { ...current, ...patch });
-    }
-    if (this.#wave5Ctx.states.has(providerId)) {
-      this.#wave5Ctx.states.set(providerId, { ...current, ...patch });
-    }
-  }
-
-  wave5AdapterContext() {
-    return this.#wave5Ctx;
-    const current = this.#ctx.states.get(providerId) ?? this.#wave4Ctx.states.get(providerId);
+    const current =
+      this.#ctx.states.get(providerId) ??
+      this.#wave4Ctx.states.get(providerId) ??
+      this.#wave5Ctx.states.get(providerId) ??
+      this.#wave6Ctx.states.get(providerId);
     if (!current) {
       return;
     }
@@ -147,9 +128,16 @@ export class ExternalDataPlane {
     if (this.#wave4Ctx.states.has(providerId)) {
       this.#wave4Ctx.states.set(providerId, updated);
     }
+    if (this.#wave5Ctx.states.has(providerId)) {
+      this.#wave5Ctx.states.set(providerId, updated);
+    }
     if (this.#wave6Ctx.states.has(providerId)) {
       setWave6ProviderState(this.#wave6Ctx, providerId, patch);
     }
+  }
+
+  wave5AdapterContext() {
+    return this.#wave5Ctx;
   }
 
   async cachedFetch(providerId: string, capability: string, resourceId: string) {

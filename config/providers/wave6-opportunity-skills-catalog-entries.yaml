@@ -9,7 +9,7 @@ providers:
       technology and general roles across Europe and globally.
     primary_category: jobs_skills
     secondary_categories:
-      - career_opportunities
+      - jobs_skills
     capabilities:
       - job_search
       - employment_market
@@ -329,7 +329,7 @@ providers:
       titles, skill requirements, and market demand signals for tech careers.
     primary_category: jobs_skills
     secondary_categories:
-      - occupations
+      - jobs_skills
     capabilities:
       - occupations
       - skills

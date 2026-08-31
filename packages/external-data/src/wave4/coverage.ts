@@ -82,7 +82,11 @@ export function classifyWave4Provider(provider: Record<string, unknown>): Wave4P
     });
   }
 
-  if (WAVE4_IMPLEMENTED_PROVIDER_IDS.includes(providerId) || integration === 'implemented') {
+  if (
+    WAVE4_IMPLEMENTED_PROVIDER_IDS.includes(providerId) ||
+    integration === 'implemented' ||
+    integration === 'adapter_implemented'
+  ) {
     return Object.freeze({
       providerId,
       category,
