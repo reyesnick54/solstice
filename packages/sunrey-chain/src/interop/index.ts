@@ -44,3 +44,4 @@ export {
   relayerCannotVote,
 } from './engine.ts';
 export type { IsolatedRelayer, SimulatedForeignChain, SimulatedHeader } from './engine.ts';
+export { assertInteropActivationGate } from './activation-guard.ts';

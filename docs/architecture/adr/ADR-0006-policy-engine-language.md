@@ -329,6 +329,14 @@ What exists after Chunk 6:
 - Manual-review cases that an AI/agent cannot approve. HARD_BLOCK cannot be overridden.
 - PostgreSQL persistence of packs, versions, rules, sources, capabilities, and review cases.
 
+**Production activation control (Wave 2 Prompt 6):**
+
+- `LIVE_*` flags in `packages/config/src/flags.ts` default `false`.
+- `packages/config/src/activation-gates.ts` blocks regulated activation without
+  explicit human/legal/regulatory markers.
+- Engineering implementation does **not** change ADR status from `PROPOSED`.
+- No jurisdiction pack rule is `CONFIRMED_BY_COUNSEL` in this repository.
+
 What this does **not** mean:
 
 - Solstice is not legally approved in any jurisdiction.

@@ -27,6 +27,21 @@ export const LIVE_DATA_MONETIZATION_ENABLED = false as const;
 export const LIVE_HIN_BASED_ISSUANCE_ENABLED = false as const;
 export const LIVE_MOONREY_PRODUCTIVE_ISSUANCE_ENABLED = false as const;
 
+/** ADR-0029: production bridge/interop remains disabled. Development gateway only. */
+export const LIVE_INTEROP_ENABLED = false as const;
+export const LIVE_INTEROP_RELAYERS_ENABLED = false as const;
+export const LIVE_INTEROP_WATCHERS_ENABLED = false as const;
+export const LIVE_EXTERNAL_CHAIN_INTERACTION_ENABLED = false as const;
+
+/** ADR-0007 / custody: institutional custody production remains disabled. */
+export const LIVE_CUSTODY_ENABLED = false as const;
+
+/** ADR-0007 / agent: automated financial execution by agents remains disabled. */
+export const LIVE_AGENT_FINANCIAL_EXECUTION_ENABLED = false as const;
+
+/** External connectivity to regulated providers remains disabled. */
+export const LIVE_CONNECTIVITY_ENABLED = false as const;
+
 /** External production HSM/KMS remains absent. Software ports may be complete. */
 export const PRODUCTION_HSM_KMS_CONFIGURED = false as const;
 
@@ -49,6 +64,13 @@ export const CAPABILITIES = Object.freeze({
   LIVE_DATA_MONETIZATION_ENABLED,
   LIVE_HIN_BASED_ISSUANCE_ENABLED,
   LIVE_MOONREY_PRODUCTIVE_ISSUANCE_ENABLED,
+  LIVE_INTEROP_ENABLED,
+  LIVE_INTEROP_RELAYERS_ENABLED,
+  LIVE_INTEROP_WATCHERS_ENABLED,
+  LIVE_EXTERNAL_CHAIN_INTERACTION_ENABLED,
+  LIVE_CUSTODY_ENABLED,
+  LIVE_AGENT_FINANCIAL_EXECUTION_ENABLED,
+  LIVE_CONNECTIVITY_ENABLED,
 });
 
 export function assertSimulationOnly(): void {
@@ -70,7 +92,14 @@ export function assertSimulationOnly(): void {
     LIVE_INFORMATION_RIGHTS_MARKETPLACE !== false ||
     LIVE_DATA_MONETIZATION_ENABLED !== false ||
     LIVE_HIN_BASED_ISSUANCE_ENABLED !== false ||
-    LIVE_MOONREY_PRODUCTIVE_ISSUANCE_ENABLED !== false
+    LIVE_MOONREY_PRODUCTIVE_ISSUANCE_ENABLED !== false ||
+    LIVE_INTEROP_ENABLED !== false ||
+    LIVE_INTEROP_RELAYERS_ENABLED !== false ||
+    LIVE_INTEROP_WATCHERS_ENABLED !== false ||
+    LIVE_EXTERNAL_CHAIN_INTERACTION_ENABLED !== false ||
+    LIVE_CUSTODY_ENABLED !== false ||
+    LIVE_AGENT_FINANCIAL_EXECUTION_ENABLED !== false ||
+    LIVE_CONNECTIVITY_ENABLED !== false
   ) {
     throw new Error('every LIVE_* flag must remain false; real-world movement is not authorised');
   }
