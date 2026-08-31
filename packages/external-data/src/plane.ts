@@ -19,6 +19,16 @@ import type { ComplianceEvidenceService, BusinessIdentityService, DigitalRiskSer
 import { createDefaultWave4AdapterStates } from './wave4/adapters.ts';
 import { buildWave4CoverageReport } from './wave4/coverage.ts';
 import { WAVE4_IMPLEMENTED_PROVIDER_IDS } from './wave4/catalog-entries.ts';
+import {
+  buildWave6KnowledgeBundle,
+  createWave6Services,
+  type Wave6Services,
+  wave6ProviderHealth,
+} from './wave6/services.ts';
+import { buildWave6ConsumerSnapshots } from './wave6/bridges.ts';
+import { buildWave6CoverageReport } from './wave6/coverage.ts';
+import { createDefaultWave6AdapterStates, setWave6ProviderState } from './wave6/adapters.ts';
+import { WAVE6_IMPLEMENTED_PROVIDER_IDS } from './wave6/catalog-entries.ts';
 
 export type ExternalDataPlaneOptions = {
   readonly nowUtc?: string;
@@ -39,6 +49,8 @@ export class ExternalDataPlane {
   readonly endpointSecurity: EndpointSecurityService;
   readonly serviceOutage: ServiceOutageService;
   readonly providerRisk: ProviderRiskService;
+  readonly wave6: Wave6Services;
+  readonly #wave6Ctx;
   readonly #ctx: Wave2AdapterContext;
   readonly #wave4Ctx;
   readonly #delivery;
@@ -67,6 +79,12 @@ export class ExternalDataPlane {
     this.endpointSecurity = wave4.endpointSecurity;
     this.serviceOutage = wave4.serviceOutage;
     this.providerRisk = wave4.providerRisk;
+    const wave6States = createDefaultWave6AdapterStates();
+    for (const [id, state] of wave2States) {
+      wave6States.set(id, state);
+    }
+    this.#wave6Ctx = { nowUtc, states: wave6States };
+    this.wave6 = createWave6Services(this.#wave6Ctx);
     this.#delivery = createDataDelivery(Date.parse(nowUtc));
   }
 
@@ -75,7 +93,7 @@ export class ExternalDataPlane {
   }
 
   setProviderState(providerId: string, patch: Partial<ProviderAdapterState>): void {
-    const current = this.#ctx.states.get(providerId) ?? this.#wave4Ctx.states.get(providerId);
+    const current = this.#ctx.states.get(providerId) ?? this.#wave4Ctx.states.get(providerId) ?? this.#wave6Ctx.states.get(providerId);
     if (!current) {
       return;
     }
@@ -85,6 +103,9 @@ export class ExternalDataPlane {
     }
     if (this.#wave4Ctx.states.has(providerId)) {
       this.#wave4Ctx.states.set(providerId, updated);
+    }
+    if (this.#wave6Ctx.states.has(providerId)) {
+      setWave6ProviderState(this.#wave6Ctx, providerId, patch);
     }
   }
 
@@ -105,12 +126,38 @@ export class ExternalDataPlane {
   async agentEvidenceBundleWithProductiveEconomy() {
     const base = this.agentEvidenceBundle();
     const productive = await this.productiveEconomy.getProductiveEconomicObservations();
+    const knowledge = buildWave6KnowledgeBundle(this.wave6);
     return Object.freeze({
       ...base,
       productiveEconomyEvidenceCount: productive.length,
+      knowledgeEvidenceCount:
+        knowledge.researchCount +
+        knowledge.patentCount +
+        knowledge.aiEconomicCount +
+        knowledge.opportunityCount,
       grantsExecutionAuthority: false as const,
       treatedAsTradeInstruction: false as const,
     });
+  }
+
+  wave6KnowledgeBundle() {
+    return buildWave6KnowledgeBundle(this.wave6);
+  }
+
+  wave6ConsumerSnapshots() {
+    return buildWave6ConsumerSnapshots(this.wave6);
+  }
+
+  wave6CoverageReport() {
+    return buildWave6CoverageReport();
+  }
+
+  wave6ProviderIds(): readonly string[] {
+    return WAVE6_IMPLEMENTED_PROVIDER_IDS;
+  }
+
+  wave6Health() {
+    return wave6ProviderHealth(this.#wave6Ctx.states);
   }
 
   health(): readonly ExternalDataHealth[] {
@@ -175,6 +222,18 @@ export class ExternalDataPlane {
       }
       return true;
     });
+  }
+
+  knowledgeSearch(query: { readonly q?: string; readonly topic?: string }) {
+    return this.wave6.research.searchWorks(query).observations.map((o) =>
+      Object.freeze({
+        workId: o.data.workId,
+        title: o.data.title,
+        providerId: o.providerId,
+        topics: o.data.topics,
+        provenance: o.provenance.requestId ?? o.providerId,
+      }),
+    );
   }
 }
 
