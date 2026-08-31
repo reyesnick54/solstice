@@ -81,6 +81,7 @@ export type AiGatewayResult = {
   readonly usage: AiUsageRecord | null;
   readonly model: InferenceModelRecord | null;
   readonly fallbackUsed: boolean;
+  readonly fallbackProvenance: import('./provenance.ts').FallbackProvenance | null;
   readonly financialExecuted: false;
   readonly productionActive: false;
   readonly liveConnectivityEnabled: false;
@@ -262,7 +263,13 @@ export class AiModelGateway {
     if (!second.ok) {
       return this.fail(request, second.error, started, fallback, second.runtime ?? first.runtime);
     }
-    return this.succeed(request, fallback, second.value.response, second.value.runtime, started, true, 'ACCEPTED');
+    return this.succeed(request, fallback, second.value.response, second.value.runtime, started, true, 'ACCEPTED', Object.freeze({
+      requestedProvider: prepared.value.model.provider,
+      requestedModelId: prepared.value.model.modelId,
+      actualProvider: fallback.provider,
+      actualModelId: fallback.modelId,
+      fallbackReason: first.error.code,
+    }));
   }
 
   stream(request: AiGatewayRequest): Result<AiGatewayResult, AiProviderFailure> {
@@ -467,6 +474,7 @@ export class AiModelGateway {
     started: number,
     fallbackUsed: boolean,
     validation: OutputValidationStatus,
+    fallbackProvenance: import('./provenance.ts').FallbackProvenance | null = null,
   ): Result<AiGatewayResult, AiProviderFailure> {
     const latencyMs = Math.max(0, Date.now() - started);
     const policy = this.prompts.resolve(request.purpose);
@@ -505,10 +513,12 @@ export class AiModelGateway {
           requestId: request.requestId,
           timestamp: this.clock.now(),
           outputValidationStatus: validation,
+          fallback: fallbackProvenance,
         }),
         usage,
         model,
         fallbackUsed,
+        fallbackProvenance,
         financialExecuted: false,
         productionActive: false,
         liveConnectivityEnabled: false,

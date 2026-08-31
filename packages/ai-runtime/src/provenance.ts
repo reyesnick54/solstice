@@ -6,6 +6,14 @@ export const TOOL_SCHEMA_VERSION = 'sunrey-ai-tool-intent.v1' as const;
 
 export type OutputValidationStatus = 'ACCEPTED' | 'REPAIRED' | 'REJECTED' | 'NOT_REQUIRED';
 
+export type FallbackProvenance = {
+  readonly requestedProvider: import('./taxonomy.ts').AiProviderKind;
+  readonly requestedModelId: string;
+  readonly actualProvider: import('./taxonomy.ts').AiProviderKind;
+  readonly actualModelId: string;
+  readonly fallbackReason: string;
+};
+
 export type ModelResponseProvenance = {
   readonly model: AiModelReference;
   readonly provider: AiProviderKind;
@@ -17,6 +25,7 @@ export type ModelResponseProvenance = {
   readonly toolSchemaVersion: typeof TOOL_SCHEMA_VERSION;
   readonly outputValidationStatus: OutputValidationStatus;
   readonly storedHiddenReasoning: false;
+  readonly fallback?: FallbackProvenance | null;
 };
 
 export function buildProvenance(input: {
@@ -27,6 +36,7 @@ export function buildProvenance(input: {
   readonly requestId: string;
   readonly timestamp: UtcInstant;
   readonly outputValidationStatus: OutputValidationStatus;
+  readonly fallback?: FallbackProvenance | null;
 }): ModelResponseProvenance {
   return Object.freeze({
     model: input.model,
@@ -39,5 +49,6 @@ export function buildProvenance(input: {
     toolSchemaVersion: TOOL_SCHEMA_VERSION,
     outputValidationStatus: input.outputValidationStatus,
     storedHiddenReasoning: false,
+    fallback: input.fallback ?? null,
   });
 }
