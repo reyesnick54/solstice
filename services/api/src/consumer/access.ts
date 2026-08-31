@@ -163,6 +163,72 @@ export function dispatchAccess(
   if (path === '/api/v1/access/activity' && method === 'GET') {
     return result(mapAccessOutcome(product.activity(actor), requestId), headers);
   }
+  if (path === '/api/v1/access/home-summary' && method === 'GET') {
+    return result(mapAccessOutcome(product.homeSummary(actor), requestId), headers);
+  }
+  if (path === '/api/v1/access/landing' && method === 'GET') {
+    return result(mapAccessOutcome(product.landing(actor), requestId), headers);
+  }
+  if (pathWithoutQuery === '/api/v1/access/history' && method === 'GET') {
+    const filter = (request.query?.filter ?? 'ALL') as import('../../../../packages/human-access-economy/src/product/taxonomy.ts').AccessHistoryFilter;
+    const category = categoryOf(request.query?.category);
+    const fromDate = str(request.query?.from);
+    const toDate = str(request.query?.to);
+    return result(
+      mapAccessOutcome(product.accessHistory(actor, filter, category, fromDate, toDate), requestId),
+      headers,
+    );
+  }
+  if (path === '/api/v1/access/upcoming' && method === 'GET') {
+    return result(mapAccessOutcome(product.upcoming(actor), requestId), headers);
+  }
+  if (pathWithoutQuery === '/api/v1/access/receipts' && method === 'GET') {
+    return result(mapAccessOutcome(product.listReceipts(actor), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/access/receipts/') && method === 'GET') {
+    const id = path.slice('/api/v1/access/receipts/'.length);
+    return result(mapAccessOutcome(product.getReceipt(actor, decodeURIComponent(id)), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/access/refund-receipts/') && method === 'GET') {
+    const id = path.slice('/api/v1/access/refund-receipts/'.length);
+    return result(mapAccessOutcome(product.getRefundReceipt(actor, decodeURIComponent(id)), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/access/transactions/') && path.endsWith('/checkout') && method === 'GET') {
+    const id = path.slice('/api/v1/access/transactions/'.length, -'/checkout'.length);
+    return result(mapAccessOutcome(product.getCheckout(actor, decodeURIComponent(id)), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/access/transactions/') && path.endsWith('/checkout') && method === 'POST') {
+    const id = path.slice('/api/v1/access/transactions/'.length, -'/checkout'.length);
+    return result(mapAccessOutcome(product.startCheckout(actor, decodeURIComponent(id)), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/access/transactions/') && path.endsWith('/confirm') && method === 'POST') {
+    const id = path.slice('/api/v1/access/transactions/'.length, -'/confirm'.length);
+    const processing = rec.processing === true;
+    return result(mapAccessOutcome(product.confirmBooking(actor, decodeURIComponent(id), processing), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/access/transactions/') && path.endsWith('/cancel') && method === 'POST') {
+    const id = path.slice('/api/v1/access/transactions/'.length, -'/cancel'.length);
+    return result(
+      mapAccessOutcome(
+        product.cancelTransaction(actor, decodeURIComponent(id), {
+          ...(str(rec.penaltyMinorUnits) ? { penaltyMinorUnits: str(rec.penaltyMinorUnits) } : {}),
+          ...(str(rec.providerRefundMinorUnits) ? { providerRefundMinorUnits: str(rec.providerRefundMinorUnits) } : {}),
+        }),
+        requestId,
+      ),
+      headers,
+    );
+  }
+  if (path.startsWith('/api/v1/access/transactions/') && path.endsWith('/support-context') && method === 'GET') {
+    const id = path.slice('/api/v1/access/transactions/'.length, -'/support-context'.length);
+    return result(mapAccessOutcome(product.getSupportContext(actor, decodeURIComponent(id)), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/access/transactions/') && method === 'GET') {
+    const id = path.slice('/api/v1/access/transactions/'.length);
+    if (!id.includes('/')) {
+      return result(mapAccessOutcome(product.getTransaction(actor, decodeURIComponent(id)), requestId), headers);
+    }
+  }
   if (path === '/api/v1/access/intents' && method === 'POST') {
     return result(
       mapAccessOutcome(

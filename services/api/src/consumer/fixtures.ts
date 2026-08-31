@@ -548,6 +548,8 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   });
   growOpportunityForAgent = growOpportunity;
 
+  const access = createSandboxAccessEconomy(personas.basic_verified.customerId);
+
   const bff = new ConsumerBff({
     now: () => runtime.clock.now(),
     accounts: createAccountsReadAdapter(runtime),
@@ -612,6 +614,44 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     vault: simulationPort('Personal Data Vault is subject-bound and simulated', 0),
     providerDown: options.providerDown ? { cards: true, payments: true, fx: true, custody: true } : {},
     providerRuntime,
+    access: {
+      homeSummary(principal) {
+        access.seedCustomer(principal.customerId);
+        const outcome = access.homeSummary({
+          actorId: principal.actorId,
+          customerId: principal.customerId,
+          verified: principal.verification === 'VERIFIED' && principal.customerStatus !== 'PENDING_VERIFICATION',
+          restricted: principal.restricted || principal.customerStatus === 'SUSPENDED',
+        });
+        if (outcome.ok) {
+          return outcome.value;
+        }
+        return Object.freeze({
+          schema: 'sunrey.consumer.access.home-summary.v1' as const,
+          productionReady: false as const,
+          productionActive: false as const,
+          liveConnectivityEnabled: false as const,
+          navigationLabel: 'Access' as const,
+          title: 'Your Available Access',
+          categories: Object.freeze([]),
+          nextExpiration: null,
+          primaryCta: 'Explore Access' as const,
+          capability: Object.freeze({
+            enabled: false,
+            state: 'FEATURE_DISABLED' as const,
+            reason: outcome.error.message,
+          }),
+          terminology: Object.freeze({
+            access: 'Access',
+            availableAccess: 'Available Access',
+            accessCovers: 'Access covers',
+            youPay: 'You pay',
+            accessUsed: 'Access used',
+            remainingAccess: 'Remaining Access',
+          }),
+        });
+      },
+    },
   });
 
   const wallets = attachSandboxWallets(runtime, personas, { providerDown: options.providerDown === true });
@@ -620,7 +660,6 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   const productiveEconomy = createProductiveEconomySurface();
   const vault = attachSandboxVault(runtime, personas);
   const dataRights = attachSandboxDataRights(runtime, vault);
-  const access = createSandboxAccessEconomy(personas.basic_verified.customerId);
   const hinAccess = createSandboxHinAccessBridge(runtime.clock, personas.basic_verified.identityId);
 
   const personalEconomyPeg = new EconomicGraphService({ clock: new FrozenClock(NOW), events: runtime.events });

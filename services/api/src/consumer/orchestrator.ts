@@ -152,6 +152,7 @@ export type HomeResource = {
     readonly rateTimestamp: string | null;
     readonly lines: PresentationValuation['lines'];
   }>;
+  readonly access: ResourceField<import('../../../../packages/human-access-economy/src/product/projections.ts').AccessHomeSummaryView>;
 };
 
 export type BootstrapResource = {
@@ -204,6 +205,9 @@ export type ConsumerBffDeps = {
   readonly fxReference?: FxReferenceBffPort;
   readonly providerDown?: Readonly<Record<string, boolean>>;
   readonly providerRuntime?: UniversalProviderRuntime;
+  readonly access?: {
+    readonly homeSummary: (principal: BffPrincipal) => import('../../../../packages/human-access-economy/src/product/projections.ts').AccessHomeSummaryView;
+  };
 };
 
 export class ConsumerBff {
@@ -513,6 +517,7 @@ export class ConsumerBff {
     const notifications = this.deps.notifications?.summarize(principal);
     const alerts = this.deps.security?.alerts(principal) ?? [];
     const actions = this.deps.actions?.list(principal) ?? [];
+    const accessSummary = this.deps.access?.homeSummary(principal);
 
     return Object.freeze({
       schema: 'sunrey.consumer.home.v1',
@@ -578,6 +583,18 @@ export class ConsumerBff {
       }),
       cards: this.cardsHomeField(principal),
       valuation: this.valuationField(principal, 'USD'),
+      access: resourceField({
+        state: accessSummary
+          ? accessSummary.capability.enabled
+            ? 'SIMULATION_ONLY'
+            : accessSummary.capability.state === 'PENDING_VERIFICATION'
+              ? 'PENDING_VERIFICATION'
+              : 'FEATURE_DISABLED'
+          : 'FEATURE_DISABLED',
+        availability: accessSummary ? 'AVAILABLE_SIMULATION' : 'NOT_YET_PRODUCTIZED',
+        reason: accessSummary?.capability.reason ?? 'access economy not connected to home',
+        value: accessSummary ?? null,
+      }),
     });
   }
 
