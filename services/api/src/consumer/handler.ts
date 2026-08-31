@@ -76,6 +76,7 @@ import {
   HIN_VERIFICATION_STATES,
 } from '../../../../packages/human-economic-contribution/src/hin-value/index.ts';
 import { dispatchBlockchain } from './blockchain.ts';
+import { dispatchTravel } from './travel.ts';
 import { dispatchEnvironmental } from './environmental.ts';
 import type { EnvironmentalOracleBff } from './environmental-adapter.ts';
 import { dispatchDataRights } from './data-rights.ts';
@@ -428,6 +429,10 @@ function dispatchAuthenticated(
   if (blockchain) {
     return blockchain;
   }
+
+  const travel = dispatchTravel(request, requestId, headers);
+  if (travel) {
+    return travel;
   const environmental = dispatchEnvironmental(request, requestId, headers, runtime.environmental);
   if (environmental) {
     return environmental;

@@ -193,6 +193,8 @@ export type ProviderTransportFailure = {
 };
 
 export type ProviderTransportResult<T = unknown> = ProviderTransportSuccess<T> | ProviderTransportFailure;
+
+export * from './registry-types.ts';
 export {
   FRESHNESS_STATUSES,
   VALIDATION_STATUSES,
@@ -335,17 +337,7 @@ export const PROVIDER_CAPABILITIES = [
 ] as const;
 export type ProviderCapability = (typeof PROVIDER_CAPABILITIES)[number] | string;
 
-export const PROVIDER_AUTHORITY_CLASSES = [
-  'authoritative_official',
-  'regulated_provider',
-  'reference_data',
-  'research_data',
-  'community_data',
-  'derived_data',
-] as const;
-export type ProviderAuthorityClass = (typeof PROVIDER_AUTHORITY_CLASSES)[number];
-
-export const AUTHORITY_CLASSES = PROVIDER_AUTHORITY_CLASSES;
+export type ProviderAuthorityClass = (typeof AUTHORITY_CLASSES)[number];
 export type AuthorityClass = ProviderAuthorityClass;
 
 export const PROVIDER_STATUSES = [
@@ -361,6 +353,42 @@ export type ProviderStatus = (typeof PROVIDER_STATUSES)[number];
 
 export const FRESHNESS_STATUSES = ['fresh', 'aging', 'stale', 'expired', 'unknown'] as const;
 export type FreshnessStatus = (typeof FRESHNESS_STATUSES)[number];
+
+export const VALIDATION_STATUSES = [
+  'valid',
+  'schema_invalid',
+  'bounds_invalid',
+  'timestamp_invalid',
+  'rejected_untrusted',
+  'unknown',
+] as const;
+export type ValidationStatus = (typeof VALIDATION_STATUSES)[number];
+
+export const COMMERCIAL_USE_STATUSES = [
+  'permitted',
+  'restricted',
+  'prohibited',
+  'unknown',
+] as const;
+export type CommercialUseStatus = (typeof COMMERCIAL_USE_STATUSES)[number];
+
+export const REDISTRIBUTION_STATUSES = [
+  'permitted',
+  'restricted',
+  'prohibited',
+  'unknown',
+] as const;
+export type RedistributionStatus = (typeof REDISTRIBUTION_STATUSES)[number];
+
+export const CONFIDENCE_BASIS = [
+  'provider_authority',
+  'cross_source_agreement',
+  'historical_consistency',
+  'schema_validation',
+  'manual_review',
+] as const;
+export type ConfidenceBasis = (typeof CONFIDENCE_BASIS)[number];
+
 export const PROVIDER_LAUNCH_TIERS = [
   'production_candidate',
   'secondary_source',

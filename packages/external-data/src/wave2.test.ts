@@ -117,6 +117,9 @@ describe('Wave 2 external data plane', () => {
         p.category !== 'other' &&
         p.category !== 'cryptocurrency' &&
         p.category !== 'blockchain' &&
+        p.category !== 'aviation' &&
+        p.category !== 'travel' &&
+        p.category !== 'transportation',
         p.category !== 'energy' &&
         p.category !== 'environmental' &&
         p.category !== 'food_nutrition' &&

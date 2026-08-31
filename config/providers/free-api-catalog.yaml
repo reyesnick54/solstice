@@ -4,6 +4,10 @@ expected_provider_count: 126
 population_status: partial
 source_list:
   document: config/providers/wave2-catalog-entries.yaml + packages/payments/src/fx-reference/catalog-entries.ts +
+    wave3-crypto-catalog-entries.yaml + wave5-travel-catalog-entries.yaml
+  version: wave-5-prompt-20
+  verified_at: 2026-08-31
+notes: Partial population including Wave 2 economics/markets, Wave 3 crypto/blockchain, and Wave 5 travel/mobility
     wave3-crypto-catalog-entries.yaml + wave5-energy-resource-catalog-entries.yaml
   version: wave-5-prompt-18
   verified_at: 2026-08-31
@@ -1826,6 +1830,42 @@ providers:
       verified_against_official_docs: false
       last_verified: 2026-08-30
       notes: Blocked pending credential and commercial review.
+  - provider_id: opensky
+    name: OpenSky Network
+    short_name: OpenSky
+    description: Community ADS-B aircraft state vectors and flight tracking reference data.
+    primary_category: aviation
+    secondary_categories: []
+    capabilities:
+      - aviation_positions
+      - aircraft_position
+      - flight_reference
+    endpoints:
+      base_url: https://opensky-network.org/api
+      api_version: v1
+      documentation_url: https://openskynetwork.github.io/opensky-api/
+      status_url: null
+    authentication:
+      type: basic_auth
+      required: true
+      registration_required: true
+      environment_variable: OPENSKY_USERNAME
+      notes: Free research account; credentials via OPENSKY_USERNAME/OPENSKY_PASSWORD.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Free non-commercial research tier.
+    commercial_use:
+      status: attribution_required
+      notes: OpenSky Network attribution required.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 60
   - provider_id: national-grid-eso
     name: National Grid ESO Data Portal
     short_name: NG ESO
@@ -1870,6 +1910,25 @@ providers:
       requests_per_day: null
       monthly_quota: null
       concurrency_limit: null
+      notes: Anonymous 10 req/s; authenticated 60 req/min per official docs.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: State vectors; bounded queries required.
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
       notes: Enforce SunRey bulkheads and caching; no published hard limits.
     data_characteristics:
       freshness: realtime
@@ -1896,6 +1955,20 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter. Information only — not booking.
+  - provider_id: faa-registry
+    name: FAA Aircraft Registry
+    short_name: FAA Registry
+    description: U.S. FAA N-Number aircraft registration reference lookups.
+    primary_category: aviation
+    secondary_categories: []
+    capabilities:
+      - aircraft_registry
+      - flight_reference
+    endpoints:
+      base_url: https://registry.faa.gov
+      api_version: null
+      documentation_url: https://www.faa.gov/licenses_certificates/aircraft_certification/aircraft_registry
       notes: Official NG ESO data portal reviewed.
   - provider_id: uk-carbon-intensity
     name: UK Carbon Intensity API
@@ -1920,11 +1993,18 @@ providers:
       required: false
       registration_required: false
       environment_variable: null
+      notes: null
       notes: Public REST API.
     access:
       status: verified_free
       free_tier_verified: true
       registration_required: false
+      notes: Public U.S. government registry.
+    commercial_use:
+      status: verified_allowed
+      notes: U.S. government open data.
+    redistribution:
+      status: allowed
       notes: No registration required.
     commercial_use:
       status: attribution_required
@@ -1940,6 +2020,25 @@ providers:
       requests_per_day: null
       monthly_quota: null
       concurrency_limit: null
+      notes: Public registry; rate limits not formally documented.
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - US
+      historical_data: true
+      realtime: false
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
       notes: Enforce SunRey rate limits.
     data_characteristics:
       freshness: realtime
@@ -1965,6 +2064,65 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: aviationapi
+    name: AviationAPI
+    short_name: AviationAPI
+    description: Aviation reference data including airports and flight information.
+    primary_category: aviation
+    secondary_categories: []
+    capabilities:
+      - airport_information
+      - flight_reference
+    endpoints:
+      base_url: https://api.aviationapi.com
+      api_version: v1
+      documentation_url: https://docs.aviationapi.com
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: AVIATIONAPI_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Free tier with daily limits.
+    commercial_use:
+      status: unknown
+      notes: Review provider terms before commercial use.
+    redistribution:
+      status: unknown
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 100
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Free tier daily quota per provider documentation.
+    data_characteristics:
+      freshness: delayed
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: Reference data only.
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
       notes: Official carbonintensity.org.uk API documentation reviewed.
   - provider_id: energi-data-service
     name: Danish Energi Data Service
@@ -2034,6 +2192,42 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: can-i-enter
+    name: Can I Enter
+    short_name: Can I Enter
+    description: Visa and entry requirement reference information by nationality and destination.
+    primary_category: travel
+    secondary_categories: []
+    capabilities:
+      - entry_requirements
+      - visa_entry
+    endpoints:
+      base_url: https://canienter.com/api
+      api_version: v1
+      documentation_url: https://canienter.com/api-docs
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Public reference API.
+    commercial_use:
+      status: unknown
+      notes: Reference only — not legal advice or admissibility guarantee.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      requests_per_second: null
+      requests_per_minute: null
       notes: Official energidataservice.dk API reviewed.
   - provider_id: co2-offset
     name: CO2 Offset API
@@ -2084,6 +2278,44 @@ providers:
       requests_per_day: null
       monthly_quota: null
       concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: daily
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: Rules change frequently; freshness must be exposed.
+    sunrey:
+      domain:
+        - travel
+        - action_center
+      canonical_provider_interface: TravelProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Reference information only — not admissibility guarantee.
+  - provider_id: transport-rest
+    name: Transport.rest
+    short_name: Transport.rest
+    description: Swiss public transport connections, departures, and station reference.
+    primary_category: transportation
+    secondary_categories: []
+    capabilities:
+      - public_transit
+      - transit_route
+      - transit_departure
+    endpoints:
+      base_url: https://transport.rest
+      api_version: v1
+      documentation_url: https://transport.rest
       notes: Documented free-tier rate limit.
     data_characteristics:
       freshness: daily
@@ -2130,11 +2362,16 @@ providers:
       required: false
       registration_required: false
       environment_variable: null
+      notes: null
       notes: Public API with fair-use limits.
     access:
       status: verified_free
       free_tier_verified: true
       registration_required: false
+      notes: Open Swiss transport API.
+    commercial_use:
+      status: attribution_required
+      notes: OpenTransportData attribution.
       notes: No registration for basic queries.
     commercial_use:
       status: attribution_required
@@ -2150,6 +2387,44 @@ providers:
       requests_per_day: null
       monthly_quota: null
       concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - CH
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: transitland
+    name: TransitLand
+    short_name: TransitLand
+    description: Global public transit feeds, routes, stops, and departure schedules.
+    primary_category: transportation
+    secondary_categories: []
+    capabilities:
+      - public_transit
+      - transit_route
+      - transit_departure
+    endpoints:
+      base_url: https://transit.land/api/v2
+      api_version: v2
+      documentation_url: https://www.transit.land/documentation
       notes: Fair-use; enforce SunRey throttling.
     data_characteristics:
       freshness: realtime
@@ -2198,6 +2473,47 @@ providers:
       type: api_key
       required: true
       registration_required: true
+      environment_variable: TRANSITLAND_API_KEY
+      notes: null
+    access:
+      status: free_tier
+      free_tier_verified: true
+      registration_required: true
+      notes: Free developer tier.
+    commercial_use:
+      status: attribution_required
+      notes: Transitland attribution required.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 60
+      requests_per_hour: null
+      requests_per_day: null
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Free tier rate limits per Transitland documentation.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - global
+      historical_data: true
+      realtime: true
+      data_format: json
+      notes: null
+    sunrey:
+      domain:
+        - travel
+        - world
+        - economic_graph
+      canonical_provider_interface: TravelProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
       environment_variable: DATA_GOV_IN_API_KEY
       notes: Free API key from data.gov.in.
     access:
@@ -2244,6 +2560,20 @@ providers:
       status: verified
       verified_against_official_docs: true
       last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: open-charge-map
+    name: Open Charge Map
+    short_name: OCM
+    description: Global EV charging location reference and connector metadata.
+    primary_category: transportation
+    secondary_categories: []
+    capabilities:
+      - ev_charging
+      - mobility_status
+    endpoints:
+      base_url: https://api.openchargemap.io/v3
+      api_version: v3
+      documentation_url: https://openchargemap.org/site/develop/api
       notes: Official data.gov.in API reviewed.
   - provider_id: tilth
     name: Tilth API
@@ -2266,6 +2596,72 @@ providers:
       type: api_key
       required: true
       registration_required: true
+      environment_variable: OPENCHARGEMAP_API_KEY
+      notes: null
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Free API key registration.
+    commercial_use:
+      status: attribution_required
+      notes: Open Charge Map attribution required.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: null
+      requests_per_hour: null
+      requests_per_day: 1000
+      monthly_quota: null
+      concurrency_limit: null
+      notes: Daily quota per provider documentation.
+    data_characteristics:
+      freshness: delayed
+      geographic_scope:
+        - global
+      historical_data: false
+      realtime: false
+      data_format: json
+      notes: Availability not guaranteed real-time unless provider supplies it.
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: bc-ferries
+    name: BC Ferries
+    short_name: BC Ferries
+    description: British Columbia ferry schedules, routes, and terminal reference.
+    primary_category: transportation
+    secondary_categories: []
+    capabilities:
+      - public_transit
+      - transit_route
+      - transit_departure
+    endpoints:
+      base_url: https://www.bcferries.com/api
+      api_version: v1
+      documentation_url: https://www.bcferries.com
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: null
       environment_variable: TILTH_API_KEY
       notes: Developer registration required.
     access:
@@ -2337,6 +2733,15 @@ providers:
       status: verified_free
       free_tier_verified: true
       registration_required: false
+      notes: Public schedule API.
+    commercial_use:
+      status: unknown
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
       notes: Free for non-commercial use; API trial keys available for evaluation.
     commercial_use:
       status: restricted
@@ -2353,6 +2758,67 @@ providers:
       requests_per_day: null
       monthly_quota: null
       concurrency_limit: null
+      notes: null
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - CA
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: Ferry mode transit.
+    sunrey:
+      domain:
+        - travel
+        - world
+      canonical_provider_interface: TravelProvider
+      priority: low
+      launch_tier: production_candidate
+      authority_class: reference_data
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter.
+  - provider_id: entur
+    name: Entur
+    short_name: Entur
+    description: Norway national public transport journey planning, routes, and departures.
+    primary_category: transportation
+    secondary_categories: []
+    capabilities:
+      - public_transit
+      - transit_route
+      - transit_departure
+      - mobility_status
+    endpoints:
+      base_url: https://api.entur.io
+      api_version: v1
+      documentation_url: https://developer.entur.org
+      status_url: null
+    authentication:
+      type: api_key
+      required: true
+      registration_required: true
+      environment_variable: ENTUR_CLIENT_ID
+      notes: OAuth client credentials.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: true
+      notes: Free developer registration.
+    commercial_use:
+      status: attribution_required
+      notes: Entur attribution required.
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: true
+      requests_per_second: null
+      requests_per_minute: 60
       notes: Simulation uses fixtures only; respect provider quotas in production.
     data_characteristics:
       freshness: daily
@@ -2420,6 +2886,13 @@ providers:
       requests_per_day: null
       monthly_quota: null
       concurrency_limit: null
+      notes: Developer tier limits per Entur documentation.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - NO
+      historical_data: false
+      realtime: true
       notes: Simulation uses fixtures only; respect provider quotas in production.
     data_characteristics:
       freshness: daily
@@ -2431,6 +2904,20 @@ providers:
       notes: null
     sunrey:
       domain:
+        - travel
+        - world
+        - economic_graph
+      canonical_provider_interface: TravelProvider
+      priority: medium
+      launch_tier: production_candidate
+      authority_class: authoritative_official
+      integration_state: simulated
+      existing_adapter: packages/sunrey-chain/src/travel-intelligence/adapters/fixture-adapters.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: 2026-08-31
+      notes: Wave 5 Prompt 20 fixture adapter.
         - compliance
         - world
       canonical_provider_interface: ComplianceIntelligenceProvider
