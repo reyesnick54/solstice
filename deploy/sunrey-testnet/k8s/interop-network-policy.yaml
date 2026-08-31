@@ -1,0 +1,47 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sunrey-interop-watcher
+  namespace: sunrey-testnet-1
+spec:
+  podSelector:
+    matchLabels:
+      app: sunrey-watcher
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 443
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 18432
+  # Watcher may reach approved external RPC fixtures and SunRey ingress only.
+  # Database, admin API, secret store, and validator key endpoints are denied
+  # by application policy in config/sunrey-chain/interop-network-policy.yaml.
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sunrey-interop-relayer
+  namespace: sunrey-testnet-1
+spec:
+  podSelector:
+    matchLabels:
+      app: sunrey-relayer
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: sunrey-rpc
+      ports:
+        - protocol: TCP
+          port: 18432
+  # Relayer has no validator, governance, treasury, database, or vault egress.

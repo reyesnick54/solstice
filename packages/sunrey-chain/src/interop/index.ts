@@ -44,3 +44,34 @@ export {
   relayerCannotVote,
 } from './engine.ts';
 export type { IsolatedRelayer, SimulatedForeignChain, SimulatedHeader } from './engine.ts';
+export {
+  ENVELOPE_SCHEMA_VERSION,
+  DOMAIN_ENVELOPE,
+  DEFAULT_INTEROP_NETWORK_POLICY,
+  INTEROP_SIGNING_PURPOSE,
+  InteropSecurityFailure,
+  assertInteropKeySeparation,
+  createInteropCircuitBreakers,
+  devAssetOnly,
+  envelopeDigest,
+  envelopeReplayKey,
+  failClosedActivationGate,
+  guardInteropMessage,
+  interopMayCall,
+  productionInteropRemainsDisabled,
+  requireEgress,
+  requireProductionInterop,
+  sampleEnvelope,
+  validateEnvelopeStructure,
+  watcherSecurityModel,
+} from './security.ts';
+export type {
+  InteropActivationGate,
+  InteropActivationState,
+  InteropCircuitBreakers,
+  InteropFlowDirection,
+  InteropMessageEnvelope,
+  InteropNetworkPolicy,
+  InteropServiceRole,
+  RpcMethodClass,
+} from './security.ts';

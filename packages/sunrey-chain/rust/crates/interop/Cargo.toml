@@ -20,3 +20,7 @@ thiserror.workspace = true
 [[bin]]
 name = "sunrey-relayer"
 path = "src/bin/sunrey-relayer.rs"
+
+[[bin]]
+name = "sunrey-watcher"
+path = "src/bin/sunrey-watcher.rs"
