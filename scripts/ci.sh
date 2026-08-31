@@ -5,6 +5,7 @@ cd "$(dirname "$0")/.."
 
 echo "==> [INTEGRITY] architectural invariants"
 node scripts/check-json-integrity.mjs
+node scripts/validate-json.mjs
 node scripts/check-merge-integrity.mjs
 node scripts/check-yaml-integrity.mjs
 node scripts/validate-free-api-catalog.mjs
