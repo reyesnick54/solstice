@@ -1,0 +1,28 @@
+{
+  "records": [
+    {
+      "state": "Punjab",
+      "district": "Ludhiana",
+      "market": "Ludhiana",
+      "commodity": "Wheat",
+      "variety": "FAQ",
+      "arrival_date": "2026-08-30T00:00:00.000Z",
+      "min_price": 2150,
+      "max_price": 2280,
+      "modal_price": 2215,
+      "unit": "INR/quintal"
+    },
+    {
+      "state": "Maharashtra",
+      "district": "Nashik",
+      "market": "Nashik",
+      "commodity": "Onion",
+      "variety": "Red",
+      "arrival_date": "2026-08-30T00:00:00.000Z",
+      "min_price": 1800,
+      "max_price": 2450,
+      "modal_price": 2125,
+      "unit": "INR/quintal"
+    }
+  ]
+}

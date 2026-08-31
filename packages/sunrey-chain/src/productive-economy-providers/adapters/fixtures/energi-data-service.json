@@ -1,0 +1,15 @@
+{
+  "records": [
+    {
+      "HourUTC": "2026-08-31T12:00:00.000Z",
+      "PriceArea": "DK1",
+      "SolarPower": 1240.5,
+      "WindPower": 2890.0,
+      "HydroPower": 45.0,
+      "BiomassPower": 320.0,
+      "Production": 4495.5,
+      "Consumption": 4120.0,
+      "unit": "MW"
+    }
+  ]
+}

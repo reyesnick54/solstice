@@ -1,0 +1,16 @@
+{
+  "url": "https://example.com",
+  "statistics": {
+    "co2": {
+      "grid": {
+        "grams": 0.42,
+        "litres": 0.0005
+      },
+      "renewable": 0.35,
+      "cleanerThan": 0.72
+    },
+    "bytes": 1250000,
+    "green": false
+  },
+  "timestamp": "2026-08-31T12:00:00.000Z"
+}

@@ -1,0 +1,38 @@
+{
+  "data": [
+    {
+      "startTime": "2026-08-31T12:00:00.000Z",
+      "settlementPeriod": 25,
+      "fuelType": "Wind Onshore",
+      "generation": 8234.5,
+      "unit": "MW"
+    },
+    {
+      "startTime": "2026-08-31T12:00:00.000Z",
+      "settlementPeriod": 25,
+      "fuelType": "Solar",
+      "generation": 4120.0,
+      "unit": "MW"
+    },
+    {
+      "startTime": "2026-08-31T12:00:00.000Z",
+      "settlementPeriod": 25,
+      "fuelType": "Nuclear",
+      "generation": 5890.0,
+      "unit": "MW"
+    },
+    {
+      "startTime": "2026-08-31T12:00:00.000Z",
+      "settlementPeriod": 25,
+      "fuelType": "CCGT",
+      "generation": 12450.0,
+      "unit": "MW"
+    }
+  ],
+  "demand": {
+    "startTime": "2026-08-31T12:00:00.000Z",
+    "settlementPeriod": 25,
+    "demand": 32100.0,
+    "unit": "MW"
+  }
+}
