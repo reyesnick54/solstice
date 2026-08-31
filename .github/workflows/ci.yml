@@ -27,6 +27,7 @@ jobs:
           node scripts/check-json-integrity.mjs
           node scripts/validate-json.mjs
           node scripts/check-merge-integrity.mjs
+          node scripts/check-case-collisions.mjs
 
       - name: "[TYPECHECK] Install from lockfile"
         run: npm ci --ignore-scripts
@@ -63,28 +64,32 @@ jobs:
       - name: "[ARCHITECTURE] Kernel gating"
         run: npm run gate
 
+      - name: "[ARCHITECTURE] Access economy architecture guards"
+        run: node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/access-economy/src/architecture-guards.test.ts
+
+      - name: "[INTEGRITY] Provider catalog validation"
+        run: npm run providers:validate
+
       - name: "[API] OpenAPI and contract specs"
         run: node scripts/check-api-specs.mjs
 
       - name: "[DATABASE] Migration ordering"
         run: node scripts/check-migration-quality.mjs
 
-      - name: Setup Rust 1.83
-        uses: dtolnay/rust-toolchain@1.83.0
+      - name: Setup Rust (repository-pinned toolchain)
+        uses: dtolnay/rust-toolchain@master
         with:
+          toolchain: 1.83.0
           components: rustfmt, clippy
 
-      - name: Setup Rust 1.88
-        uses: dtolnay/rust-toolchain@1.88.0
-        with:
-          components: rustfmt, clippy
-
-      - name: "[RUST] fmt / clippy / test (local node)"
+      - name: "[RUST] check / fmt / clippy / test (pinned workspace toolchain)"
         working-directory: packages/sunrey-chain/rust
         run: |
-          cargo +1.83.0 fmt --check
-          cargo +1.83.0 clippy --all-targets --locked -- -D warnings
-          cargo +1.83.0 test --workspace --locked
+          rustc --version
+          cargo check --workspace --locked
+          cargo fmt --check
+          cargo clippy --all-targets --locked -- -D warnings
+          cargo test --workspace --locked
 
       - name: "[SECURITY] Dependency audit and license inventory"
         run: node scripts/sunrey-release.mjs audit
@@ -431,6 +436,7 @@ jobs:
           node scripts/check-json-integrity.mjs
           node scripts/validate-json.mjs
           node scripts/check-merge-integrity.mjs
+          node scripts/check-case-collisions.mjs
 
       - name: "[TYPECHECK] Install from lockfile"
         run: npm ci --ignore-scripts
@@ -472,6 +478,7 @@ jobs:
           node scripts/check-json-integrity.mjs
           node scripts/validate-json.mjs
           node scripts/check-merge-integrity.mjs
+          node scripts/check-case-collisions.mjs
 
       - name: "[INTEGRITY] YAML and provider catalog validation"
         run: |
@@ -500,6 +507,7 @@ jobs:
           node scripts/check-json-integrity.mjs
           node scripts/validate-json.mjs
           node scripts/check-merge-integrity.mjs
+          node scripts/check-case-collisions.mjs
 
       - name: "[PRODUCTION SAFETY] Production-off defaults"
         run: node scripts/check-production-safety.mjs
@@ -526,6 +534,7 @@ jobs:
           node scripts/check-json-integrity.mjs
           node scripts/validate-json.mjs
           node scripts/check-merge-integrity.mjs
+          node scripts/check-case-collisions.mjs
 
       - name: "[TYPECHECK] Install from lockfile"
         run: npm ci --ignore-scripts
