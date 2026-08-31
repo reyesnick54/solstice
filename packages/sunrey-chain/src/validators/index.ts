@@ -103,3 +103,24 @@ export {
 } from './four-validator.ts';
 export { observeValidatorPlane } from './observability.ts';
 export type { ValidatorObservability } from './observability.ts';
+export {
+  VALIDATOR_SIGNATURE_ENVELOPE_VERSION,
+  assertReplayProtection,
+  deserializeValidatorSignedEnvelope,
+  freezeValidatorSignedEnvelope,
+  parseValidatorSignedEnvelope,
+  replayProtectionFields,
+  serializeValidatorSignedEnvelope,
+} from './signed-envelope.ts';
+export type { ReplayProtectionFields, ValidatorSignedEnvelope } from './signed-envelope.ts';
+export {
+  ValidatorKeyLifecycleManager,
+  validatorKeyMetadata,
+} from './key-lifecycle.ts';
+export type { ValidatorKeyLifecycleEvent, ValidatorKeyRecord } from './key-lifecycle.ts';
+export {
+  PRODUCTION_VALIDATOR_CRYPTO_DEFAULTS,
+  ValidatorSigningService,
+  nodeIdentitySeparationReport,
+} from './signing-service.ts';
+export type { NodeIdentitySeparationReport, ValidatorSigningServiceInput, ValidatorVerifyInput } from './signing-service.ts';

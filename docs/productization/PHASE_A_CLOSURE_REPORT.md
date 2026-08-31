@@ -32,7 +32,7 @@ Canonical inventory remains:
 - `docs/architecture/constitution.md`
 - `docs/architecture/manifest.json`
 - `docs/architecture/SUNREY_ENGINEERING_CLOSURE.md`
-- `docs/build-status.md`
+- `docs/BUILD_STATUS.md`
 
 ## CANONICAL ARCHITECTURE STATUS
 

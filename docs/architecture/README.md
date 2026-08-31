@@ -204,4 +204,4 @@
   — fleet, enrollment, maintenance, upgrade, signer, and incident
   control plane at `packages/sunrey-chain/src/validator-operator`.
 
-Implementation inventory: [`docs/build-status.md`](../build-status.md).
+Implementation inventory: [`docs/BUILD_STATUS.md`](../BUILD_STATUS.md).

@@ -341,7 +341,7 @@ pipeline.
   PEG / wallet merge artifacts so later Chunk 13R / Chunk 15 work
   can start from a parseable tree. Those repairs are not Treasury
   and not the agent.
-- `docs/build-status.md` still carries older stop/resume paragraphs
+- `docs/BUILD_STATUS.md` still carries older stop/resume paragraphs
   from previous chunks. This file is the Chunk 15 record.
 
 ---

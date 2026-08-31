@@ -422,12 +422,13 @@ Naming source: `docs/architecture/sunrey-naming-inventory.md` (1303 legacy-token
 | INTERNAL_SAFE_TO_KEEP | `@solstice/*`, `solstice_*` DB names, `solstice.<event>/1` schemaRefs, `le_solstice_*`, hash domains, GitHub `solstice` | Keep |
 | USER_VISIBLE_MUST_CHANGE | Inventory still lists 9 MUST_MIGRATE keys; several display strings already say SunRey (root README/package/AGENTS/constitution titles). Remaining review: persistence log prefix, SDK/explorer metadata if any Solstice string remains | Cosmetic; not this prompt |
 | API_COMPATIBILITY_DO_NOT_CHANGE_YET | `SolsticeIdentityId` alias, `SOLSTICE_PG_*` / `SOLSTICE_PERSISTENCE_TEST`, npm scope | Keep aliases |
-| DEPRECATED | Historical ADRs; `docs/BUILD-STATUS.md` pointer; open historical PRs in `historical-implementation.md` | Keep as history |
+| DEPRECATED | Historical ADRs; archived `docs/architecture/historical/BUILD-STATUS-pointer-pre-wave2-prompt4.md`; open historical PRs in `historical-implementation.md` | Keep as history |
 | MIGRATION_REQUIRED | WebAuthn RPID `simulation.solstice.local`; PDV export format `SolsticePersonalDataExportV1`; legal entity display “Solstice UK Ltd (simulation)” | Later, with alias |
 
 Obsolete-but-keep:
 
-- `docs/BUILD-STATUS.md` — historical pointer to `docs/build-status.md`
+- Archived pointer — [`docs/architecture/historical/BUILD-STATUS-pointer-pre-wave2-prompt4.md`](../architecture/historical/BUILD-STATUS-pointer-pre-wave2-prompt4.md)
+- Canonical status — [`docs/BUILD_STATUS.md`](../BUILD_STATUS.md)
 - Constitution Chunk 71 sentence “Do not create `packages/sunrey-economics`” — superseded by Chunk 75 laboratory owner. Manifest already distinguishes lab vs constitution. Left in place (not a safe silent delete).
 
 ---

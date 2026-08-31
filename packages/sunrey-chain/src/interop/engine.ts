@@ -16,6 +16,7 @@ import {
   type InteropSecurityProfile,
   type PacketLifecycle,
 } from './types.ts';
+import { assertInteropActivationGate } from './activation-guard.ts';
 
 export class InteropFailure extends Error {
   readonly code: InteropErrorCode;
@@ -175,6 +176,7 @@ export class InteropEngine {
   };
 
   registerChain(def: ExternalChainDefinition, actor: 'GOVERNANCE' | 'AI' | 'RELAYER'): void {
+    assertInteropActivationGate();
     if (actor === 'AI') {
       throw new InteropFailure('AI_CANNOT_ACTIVATE');
     }
@@ -185,6 +187,7 @@ export class InteropEngine {
   }
 
   activateChain(chainId: string, actor: 'GOVERNANCE' | 'AI' | 'RELAYER'): void {
+    assertInteropActivationGate();
     if (actor === 'AI') {
       throw new InteropFailure('AI_CANNOT_ACTIVATE');
     }

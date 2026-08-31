@@ -4,7 +4,7 @@ Owner: `packages/security`. This is the only cryptographic control plane
 on this tree. Do not add `packages/crypto`, `packages/kms`, or
 `packages/secrets`.
 
-Implementation inventory: [`docs/build-status.md`](../build-status.md).
+Implementation inventory: [`docs/BUILD_STATUS.md`](../BUILD_STATUS.md).
 
 ## Trust boundaries
 

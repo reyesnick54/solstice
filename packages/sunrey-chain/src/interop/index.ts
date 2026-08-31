@@ -75,3 +75,4 @@ export type {
   InteropServiceRole,
   RpcMethodClass,
 } from './security.ts';
+export { assertInteropActivationGate } from './activation-guard.ts';

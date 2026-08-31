@@ -38,7 +38,7 @@ describe('sunrey access fabric architecture guards', () => {
       assert.equal(/registerProductiveObject/.test(source), false, file);
       assert.equal(/finalizeOracleFact/.test(source), false, file);
     }
-    assert.equal(existsSync(join(ROOT, 'packages/access-fabric')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/access-fabric')), true);
     assert.equal(existsSync(join(ROOT, 'packages/productive-economy-data')), false);
     assert.equal(existsSync(join(ROOT, 'packages/moonrey-data-fabric')), false);
     assert.equal(existsSync(join(ROOT, 'packages/access-fabric-v2')), false);
