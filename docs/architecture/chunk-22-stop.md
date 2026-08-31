@@ -31,6 +31,6 @@ Current Strategy Lab status is in:
 - `docs/architecture/chunk-22-resume.md`
 - `docs/architecture/chunks/chunk-22-strategy-lab.json`
 - `docs/architecture/manifest.json` (`strategy-lab` capability IMPLEMENTED)
-- `docs/build-status.md`
+- `docs/BUILD_STATUS.md`
 
 Do not leave current docs saying Strategy Lab remains stopped.

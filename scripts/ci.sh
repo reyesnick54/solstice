@@ -19,6 +19,9 @@ echo "==> [ARCHITECTURE] authority map and freeze"
 node scripts/check-authority-map.mjs
 node scripts/check-architecture-freeze.mjs
 
+echo "==> [ARCHITECTURE] build status governance"
+node scripts/check-build-status.mjs
+
 echo "==> [PRODUCTION SAFETY] deployment posture"
 python3 scripts/check-deployment-posture.py
 node scripts/check-production-safety.mjs
