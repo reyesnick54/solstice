@@ -5,7 +5,8 @@
   "type": "module",
   "description": "SunRey Access Fabric — canonical Human Access Economy domain primitives",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./domain": "./src/domain/index.ts"
   },
   "files": [
     "src"
