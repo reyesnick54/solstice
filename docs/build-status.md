@@ -85,6 +85,15 @@ This document describes only what is implemented and tested in this tree.
   legal or commercial approval. `PRODUCTION_AUTHORIZED` remains gated
   on configured evidence and human authority. See
   `docs/providers/chunk-91-provider-runtime.md`.
+- Universal provider certification framework (Wave 4 Prompt 10,
+  `packages/provider-sdk/src/certification`): canonical lifecycle states
+  (`CATALOGED` through `PRODUCTION_QUALIFIED`, plus `SIMULATED`,
+  `DEGRADED`, `DISABLED`), evidence-derived `ProviderCertification`
+  results, failure taxonomy, response provenance, silent-simulation
+  rejection, and `ProviderCertificationService` integrated with Wave 7
+  coverage. Catalog presence does not imply live status.
+  `npm run providers:certify:live` runs controlled live checks only when
+  explicitly enabled. Normal CI uses fixture/simulation probes only.
 - SunRey production handoff and day-2 operations control plane
   (Chunk 90, `packages/sunrey-chain/src/production-handoff`):
   `ProductionHandoffPackage`, system inventory, responsibility matrix,
