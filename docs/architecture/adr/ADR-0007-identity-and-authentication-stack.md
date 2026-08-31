@@ -393,6 +393,22 @@ Distinguish three axes:
 
 Security-specialist review in the flagged section is still required before any production use.
 
+**Production activation control (Wave 2 Prompt 6):**
+
+| Identity plane | Implemented? | Production-ready? |
+| --- | --- | --- |
+| User identity (`Customer`, KYC metadata) | yes — `packages/identity` | no — ADR PROPOSED |
+| Authentication (passkey/session simulation) | yes — simulation adapters | no — vendor not selected |
+| Authorization (capabilities, ActorContext) | yes — Kernel consumes `IdentityFacts` | no — specialist review outstanding |
+| Wallet identity | partial — Chunk 96 wallet security | no |
+| Device identity | yes — device trust registry | no |
+| Service identity | yes — Chunk 4 foundations | engineering only |
+| Provider identity | no — Ory/Keycloak lead candidate only | `EXTERNAL_APPROVAL_REQUIRED` |
+
+`LIVE_EXTERNAL_KYC`, `LIVE_CUSTODY_ENABLED`, and
+`LIVE_AGENT_FINANCIAL_EXECUTION_ENABLED` remain `false` in
+`packages/config/src/flags.ts`.
+
 ---
 
 ## Inspection notes (for the record)

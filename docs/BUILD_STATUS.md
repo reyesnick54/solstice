@@ -20,7 +20,7 @@ Per-chunk narrative inventory (pre–Wave 2 Prompt 4) is archived at
 | --- | --- |
 | Last verified (UTC) | 2026-08-31 |
 | Git commit | `8f4683320e0a0957c8d623ce881634577ac0bff6` |
-| Branch context | `main` at Wave 2 / Prompt 4 consolidation |
+| Branch context | `main` at Wave 2 / Prompt 6 ADR governance consolidation |
 | CI posture | Seven-stage pipeline; persistence job separate |
 
 Re-verify after any change to protected financial mutators, `LIVE_*` flags,
@@ -68,6 +68,43 @@ productionAuthorized=false
 
 No PR may flip these without an explicit authorized launch process outside
 ordinary engineering.
+
+ADR governance registry: `packages/config/src/adr-governance.ts`.
+Activation gates: `packages/config/src/activation-gates.ts`.
+ADR index: `docs/architecture/adr/README.md`. Lifecycle vocabulary:
+`docs/architecture/adr/LIFECYCLE.md`.
+
+Additional fail-closed flags (Wave 2 Prompt 6, all `false`):
+
+```
+LIVE_INTEROP_ENABLED
+LIVE_INTEROP_RELAYERS_ENABLED
+LIVE_INTEROP_WATCHERS_ENABLED
+LIVE_EXTERNAL_CHAIN_INTERACTION_ENABLED
+LIVE_CUSTODY_ENABLED
+LIVE_AGENT_FINANCIAL_EXECUTION_ENABLED
+LIVE_CONNECTIVITY_ENABLED
+```
+
+## 4a. ADR-dependent systems (implementation vs production activation)
+
+**IMPLEMENTED ≠ APPROVED.** **CONFIGURED ≠ LIVE.** No ADR currently allows
+production activation at runtime.
+
+| System | Implementation | Production activation | ADR(s) | Gate flags |
+| --- | --- | --- | --- | --- |
+| Policy engine / jurisdiction packs | IMPLEMENTED (simulation) | REGULATORY_GATED | ADR-0006 | `LIVE_MONEY_*`, `LIVE_PAYMENTS_*` |
+| Identity / authentication | PARTIAL (simulation domain) | EXTERNAL_DEPENDENCY | ADR-0007 | `LIVE_EXTERNAL_KYC`, `LIVE_CUSTODY_ENABLED` |
+| Compliance screening | PARTIAL (simulation) | REGULATORY_GATED | ADR-0010 | `LIVE_EXTERNAL_KYC` |
+| Investment risk / model registry | IMPLEMENTED (simulation) | REGULATORY_GATED | ADR-0014 | `LIVE_INVESTMENT_EXECUTION` |
+| Exchange engine | IMPLEMENTED / PARTIAL | REGULATORY_GATED | ADR-0014, 0026 | `LIVE_EXCHANGE_ENABLED`, `LIVE_TRADING_ENABLED` |
+| Live regulated exchange | NOT ACTIVE | REGULATORY_GATED | ADR-0014 | `LIVE_EXCHANGE_ENABLED=false` |
+| Custody | PARTIAL (simulation) | EXTERNAL_DEPENDENCY | ADR-0007, 0009 | `LIVE_CUSTODY_ENABLED` |
+| Agent financial automation | PARTIAL (proposal-only) | EXTERNAL_DEPENDENCY | ADR-0007, 0012 | `LIVE_AGENT_FINANCIAL_EXECUTION_ENABLED` |
+| HIN / data marketplace | IMPLEMENTED (simulation) | REGULATORY_GATED | ADR-0013 | `LIVE_INFORMATION_RIGHTS_MARKETPLACE` |
+| SunRey Chain / BFT stack | IMPLEMENTED (development) | REGULATORY_GATED | ADR-0015–0033 | no `LIVE_CHAIN_ENABLED` |
+| Interop / bridge gateway | IMPLEMENTED (dev light-client) | REGULATORY_GATED | ADR-0029 | `LIVE_INTEROP_*`, `LIVE_EXTERNAL_CHAIN_INTERACTION_ENABLED` |
+| Access Fabric | PARTIAL (ACCESS-01) | EXTERNAL_DEPENDENCY | ADR-0034 | `LIVE_CONNECTIVITY_ENABLED` |
 
 ## 5. System matrix
 
@@ -179,7 +216,8 @@ The consolidated authorization spine (PR #12 lineage) satisfies them now.
 ### Interop / relayer
 
 - **Owner:** `packages/sunrey-chain/src/interop` — development engine and demo.
-- **Status:** PARTIAL / SIMULATED — audit scope marks production interoperability **not implemented** (`docs/audit/` threat catalog).
+- **Status:** PARTIAL / SIMULATED — audit scope marks production interoperability **not implemented**.
+- **Gates (Wave 2 Prompt 6):** `LIVE_INTEROP_*` and `LIVE_EXTERNAL_CHAIN_INTERACTION_ENABLED` default `false`; `activation-guard.ts` enforces simulation-only before chain registration.
 
 ### Mobile / backend integration
 
@@ -233,7 +271,9 @@ No subsystem is `LIVE_VALIDATED` or `PRODUCTION_QUALIFIED` in this repository.
 
 ## 11. Regulatory and partner dependencies
 
-- No jurisdiction pack rule is `CONFIRMED_BY_COUNSEL` (ADR-0006 / 0007 / 0008 PROPOSED).
+- ADR governance: `docs/architecture/adr/README.md`, `LIFECYCLE.md`, and
+  `packages/config/src/adr-governance.ts`. ADR-0006 / 0007 remain `PROPOSED`.
+- No jurisdiction pack rule is `CONFIRMED_BY_COUNSEL`.
 - Access corridors, treasury concentration, and monitoring thresholds remain `RESEARCH_REQUIRED` where labeled.
 - Provider activation requires human `HUMAN_ACCEPTED` / governance ceremony — not AI-marked.
 - Operating scope matrix: Chunk 161 simulation; not legal advice.
