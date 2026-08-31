@@ -81,6 +81,8 @@ import { createHinContributionSurface, type HinContributionSurface } from './hin
 import { createProductiveEconomySurface, type ProductiveEconomySurface } from './productive-economy-adapter.ts';
 import { createExternalDataPlane } from '../../../../packages/external-data/src/index.ts';
 import { createWorldExternalDataBff, type WorldExternalDataBff } from './world-external-data-adapter.ts';
+import { createTravelBff, type TravelBff } from './travel-adapter.ts';
+import { createAgentExternalEvidenceBff, type AgentExternalEvidenceBff } from './agent-evidence-adapter.ts';
 import { createEnvironmentalOracleBff, type EnvironmentalOracleBff } from './environmental-adapter.ts';
 import { createSandboxAccessEconomy, type HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
 import {
@@ -167,6 +169,8 @@ export type SandboxWorld = {
   readonly hinAccess: HumanInformationAccessBridge;
   readonly worldExternalData: WorldExternalDataBff;
   readonly environmental: EnvironmentalOracleBff;
+  readonly travel: TravelBff;
+  readonly agentExternalEvidence: AgentExternalEvidenceBff;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -736,6 +740,8 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
 
   const worldExternalData = createWorldExternalDataBff(createExternalDataPlane({ nowUtc: NOW }));
   const environmental = createEnvironmentalOracleBff();
+  const travel = createTravelBff({ environmental, world: worldExternalData, nowUtc: NOW });
+  const agentExternalEvidence = createAgentExternalEvidenceBff(createExternalDataPlane({ nowUtc: NOW }));
 
   return Object.freeze({
     label: SANDBOX_LABEL,
@@ -763,6 +769,8 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     hinAccess,
     worldExternalData,
     environmental,
+    travel,
+    agentExternalEvidence,
   });
 }
 

@@ -150,7 +150,6 @@ export {
   type FallbackHook,
   type ReliabilityClock,
 } from './reliability-types.ts';
-} from './types.ts';
 
 export {
   DEFAULT_PROVIDER_RELIABILITY_POLICY,
@@ -244,7 +243,6 @@ export {
   type ProviderTransportFailure,
   type ProviderHttpRequestContext,
   type ProviderHttpResponseMetadata,
-  type ProviderParsedBody,
   type ProviderHttpTransportResponse,
   type ProviderHttpTransportResult,
   type ProviderHttpTransportSuccess,
@@ -260,21 +258,6 @@ export {
   type HttpProviderTransportSuccess,
   type HttpProviderTransportFailure,
   type HttpProviderTransport,
-  type ProviderHttpRequestContext,
-  type ProviderHttpResponseMetadata,
-  type ProviderHttpTransportResponse,
-  type ProviderHttpTransportResult,
-  type ProviderHttpTransportSuccess,
-  type ProviderHttpTransportFailure,
-  type ProviderHttpTransport,
-  type ProviderRequestContext,
-  type ProviderResponseMetadata,
-  type ProviderTransportResponse,
-  type ProviderTransportResult,
-  type ProviderTransportSuccess,
-  type ProviderTransportFailure,
-  type ProviderHttpTransport,
-} from './types.ts';
   type ProviderTransport,
 } from './http-transport-types.ts';
 
