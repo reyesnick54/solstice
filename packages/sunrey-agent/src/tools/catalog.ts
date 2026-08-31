@@ -1124,6 +1124,28 @@ export const CANONICAL_AGENT_TOOLS: readonly AgentToolDefinition[] = Object.free
     purpose: 'Explain versioned valuation methodologies. Cannot set policy or mint.',
   }),
   def({
+    toolId: 'getTravelPlanningContext',
+    description:
+      'Read travel planning reference: destination airport, entry requirements, weather context, and transit. Reference only — does not book tickets or confirm reservations.',
+    category: 'DATA',
+    required: ['destination'],
+    properties: {
+      destination: str,
+      nationality: str,
+      airportId: str,
+    },
+    requiredMandate: 'READ_FINANCIAL_STATE',
+    requiredCapabilities: ['travel'],
+    riskClass: 'READ',
+    readOnly: true,
+    createsProposal: false,
+    requiresUserApproval: false,
+    requiredDataClasses: ['PERSONAL_SENSITIVE'],
+    timeoutMs: 3_000,
+    domainDependency: 'packages/sunrey-chain travel-intelligence',
+    purpose: 'Travel discovery and planning reference. Never claims booking or issues tickets.',
+  }),
+  def({
     toolId: 'proposeAccessIntent',
     description:
       'Translate a human access goal into a structured AccessIntent proposal. Does not reserve, purchase, or spend.',

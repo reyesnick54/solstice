@@ -1,0 +1,30 @@
+{
+  "roles": [
+    {
+      "role_id": "tri-swe",
+      "title": "Software Engineer",
+      "category": "Engineering",
+      "skills": ["JavaScript", "TypeScript", "React", "Node.js"],
+      "description": "General software engineering role across tech stack.",
+      "salary_min": 90000,
+      "salary_max": 150000,
+      "salary_currency": "USD",
+      "salary_period": "annual",
+      "demand_level": "high",
+      "geography": "US"
+    },
+    {
+      "role_id": "tri-ml",
+      "title": "Machine Learning Engineer",
+      "category": "AI/ML",
+      "skills": ["Python", "Machine Learning", "TensorFlow", "Kubernetes"],
+      "description": "ML engineering role with production deployment focus.",
+      "salary_min": 120000,
+      "salary_max": 180000,
+      "salary_currency": "USD",
+      "salary_period": "annual",
+      "demand_level": "very_high",
+      "geography": "US"
+    }
+  ]
+}

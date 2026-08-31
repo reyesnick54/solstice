@@ -45,7 +45,6 @@ export type ReliabilityTransport = {
   ): Promise<ReliabilityTransportResponse>;
 };
 
-/** @deprecated Use ReliabilityTransport */
 export type ReliabilityProviderTransport = ReliabilityTransport;
 
 export type ProviderError = {
@@ -109,8 +108,6 @@ export const defaultClock = (): ReliabilityClock => ({
 export function isSafeReadMethod(method: HttpMethod): boolean {
   return method === 'GET' || method === 'HEAD';
 }
-
-export type ReliabilityProviderTransport = ReliabilityTransport;
 
 /** @deprecated Use ReliabilityTransportRequest */
 export type ProviderTransportRequest = ReliabilityTransportRequest;

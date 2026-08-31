@@ -1,0 +1,19 @@
+{
+  "listings": [
+    {
+      "job_id": "fh-789",
+      "position": "Full Stack Developer",
+      "company": "StartupHub",
+      "city": "Austin, TX",
+      "is_remote": true,
+      "employment": "contract",
+      "compensation_min": 80,
+      "compensation_max": 120,
+      "compensation_currency": "USD",
+      "compensation_unit": "hourly",
+      "tech_stack": ["React", "Node.js", "TypeScript"],
+      "published": "2026-08-30T09:00:00.000Z",
+      "application_link": "https://freehire.app/jobs/fh-789"
+    }
+  ]
+}

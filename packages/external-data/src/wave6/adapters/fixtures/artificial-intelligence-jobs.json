@@ -1,0 +1,17 @@
+{
+  "results": [
+    {
+      "id": "aij-42",
+      "role": "Data Scientist",
+      "organisation": "Insight Analytics",
+      "city": "London",
+      "country": "UK",
+      "workplace_type": "hybrid",
+      "contract_type": "permanent",
+      "summary": "Apply ML to financial services data.",
+      "technologies": ["Python", "SQL", "scikit-learn"],
+      "date_posted": "2026-08-26T12:00:00.000Z",
+      "link": "https://artificialintelligencejobs.co.uk/jobs/aij-42"
+    }
+  ]
+}
