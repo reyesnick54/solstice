@@ -1,0 +1,10 @@
+{
+  "series": {
+    "observations": [
+      { "date": "2026-08-30T00:00:00.000Z", "value": "72.45" },
+      { "date": "2026-08-29T00:00:00.000Z", "value": "71.90" }
+    ]
+  },
+  "units": "Dollars per Barrel",
+  "title": "Crude Oil Prices: West Texas Intermediate (WTI)"
+}
