@@ -37,14 +37,15 @@ export type ReliabilityTransportResponse = {
 };
 
 export type ReliabilityProviderTransport = {
-/** Injectable transport wrapped by the reliability control plane. */
-export type ReliabilityTransport = {
   readonly providerId: string;
   execute(
     request: ReliabilityTransportRequest,
     options?: { readonly signal?: AbortSignal; readonly deadlineMs?: number },
   ): Promise<ReliabilityTransportResponse>;
 };
+
+/** Injectable transport wrapped by the reliability control plane. */
+export type ReliabilityTransport = ReliabilityProviderTransport;
 
 export type ProviderError = {
   readonly classification: FailureClassification;

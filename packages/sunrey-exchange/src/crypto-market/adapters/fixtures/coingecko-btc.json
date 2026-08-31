@@ -1,0 +1,18 @@
+{
+  "id": "bitcoin",
+  "symbol": "btc",
+  "name": "Bitcoin",
+  "market_data": {
+    "current_price": { "usd": 67234.56 },
+    "market_cap": { "usd": 1324567890123 },
+    "total_volume": { "usd": 28456789012 },
+    "price_change_percentage_24h": 2.34,
+    "price_change_percentage_7d_in_currency": { "usd": -1.12 },
+    "high_24h": { "usd": 68100.0 },
+    "low_24h": { "usd": 65800.0 },
+    "circulating_supply": 19876543.0,
+    "total_supply": 21000000.0,
+    "max_supply": 21000000.0,
+    "last_updated": "2026-08-21T08:59:00.000Z"
+  }
+}

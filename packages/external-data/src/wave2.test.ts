@@ -107,12 +107,12 @@ describe('Wave 2 external data plane', () => {
 
   it('accounts for every Wave 2 catalog provider', () => {
     const report = buildWave2CoverageReport();
-    assert.equal(report.implemented, 12);
-    assert.equal(report.summary.BLOCKED, 2);
+    assert.equal(report.implemented, 17);
+    assert.equal(report.summary.BLOCKED, 3);
     assert.equal(report.summary.DEPRECATED + report.summary.UNAVAILABLE, 1);
     assert.doesNotThrow(() => assertWave2CoverageComplete());
     const unexplained = report.providers.filter(
-      (p) => p.status === 'NOT_WAVE_2' && p.category !== 'other',
+      (p) => p.status === 'NOT_WAVE_2' && p.category !== 'other' && p.category !== 'cryptocurrency' && p.category !== 'blockchain',
     );
     assert.equal(unexplained.length, 0);
   });

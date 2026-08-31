@@ -85,6 +85,8 @@ import { dispatchPersonalEconomy, type PersonalEconomyBffSurface } from './perso
 import type { HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
 import type { MarketReferenceBffSurface } from './market-reference.ts';
 import { createMarketReferenceBffSurface } from './market-reference.ts';
+import type { CryptoMarketBffSurface } from './crypto-market.ts';
+import { createCryptoMarketBffSurface } from './crypto-market.ts';
 
 export type BffRequest = {
   readonly method: string;
@@ -129,6 +131,7 @@ export type ConsumerBffRuntime = {
   readonly personalEconomy?: PersonalEconomyBffSurface;
   readonly worldExternalData?: import('./world-external-data-adapter.ts').WorldExternalDataBff;
   readonly marketReference?: MarketReferenceBffSurface;
+  readonly cryptoMarket?: CryptoMarketBffSurface;
   readonly previewDiagnostics?: () => Readonly<Record<string, unknown>>;
 };
 
@@ -766,7 +769,9 @@ function dispatchAuthenticated(
       return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Regulatory publications unavailable', requestId }), headers);
     }
     return json(200, world.regulatory(), headers);
+  }
   const marketReference = runtime.marketReference ?? createMarketReferenceBffSurface();
+  const cryptoMarket = runtime.cryptoMarket ?? createCryptoMarketBffSurface();
   if (path === '/api/v1/markets/reference' && method === 'GET') {
     return json(200, marketReference.reference(principal, requestId), headers);
   }
@@ -780,6 +785,19 @@ function dispatchAuthenticated(
     const body = marketReference.asset(principal, assetId, requestId);
     return json(isBffError(body) ? statusForError(body) : 200, body, headers);
   }
+  if (path === '/api/v1/markets/crypto' && method === 'GET') {
+    return json(200, cryptoMarket.markets(principal, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/markets/crypto/') && path.endsWith('/history') && method === 'GET') {
+    const assetId = path.slice('/api/v1/markets/crypto/'.length, -'/history'.length);
+    const body = cryptoMarket.history(principal, decodeURIComponent(assetId), request.query, requestId);
+    return json(isBffError(body) ? statusForError(body) : 200, body, headers);
+  }
+  if (path.startsWith('/api/v1/markets/crypto/') && method === 'GET') {
+    const assetId = path.slice('/api/v1/markets/crypto/'.length);
+    const body = cryptoMarket.asset(principal, decodeURIComponent(assetId), requestId);
+    return json(isBffError(body) ? statusForError(body) : 200, body, headers);
+  }
   if (path === '/api/v1/world/resources' && method === 'GET') {
     return json(200, marketReference.worldResources(principal, requestId), headers);
   }
@@ -787,6 +805,7 @@ function dispatchAuthenticated(
     const resource = path.slice('/api/v1/world/resources/'.length);
     const body = marketReference.worldResource(principal, resource, requestId);
     return json(isBffError(body) ? statusForError(body) : 200, body, headers);
+  }
   if (path === '/api/v1/world/economy' && method === 'GET') {
     const surface = runtime.worldEconomy;
     if (!surface) {
@@ -1790,6 +1809,9 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/markets/reference',
   'GET /api/v1/markets/assets/{id}',
   'GET /api/v1/markets/assets/{id}/history',
+  'GET /api/v1/markets/crypto',
+  'GET /api/v1/markets/crypto/{assetId}',
+  'GET /api/v1/markets/crypto/{assetId}/history',
   'GET /api/v1/world/resources',
   'GET /api/v1/world/resources/{resource}',
   'GET /api/v1/hin/contributions',

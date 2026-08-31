@@ -40,9 +40,9 @@ describe('fx reference network', () => {
     const result = validateCatalog(catalog);
     assert.equal(result.ok, true, result.errors.join('\n'));
     assert.equal(catalog.population_status, 'partial');
-    assert.equal(catalog.providers.length, 8);
     const fxProviders = catalog.providers.filter((entry) => entry.primary_category === 'foreign_exchange');
     assert.equal(fxProviders.length, 8);
+    assert.ok(catalog.providers.length >= fxProviders.length);
   });
 
   it('normalizes USD/SAR and EUR/USD', () => {
@@ -181,7 +181,10 @@ describe('fx reference catalog yaml', () => {
   it('lists approved FX providers only from catalog fragment', () => {
     const text = readFileSync(join(ROOT, 'config/providers/free-api-catalog.yaml'), 'utf8');
     const catalog = parseYaml(text);
-    const active = catalog.providers.filter(
+    const fxProviders = catalog.providers.filter(
+      (entry: { primary_category: string }) => entry.primary_category === 'foreign_exchange',
+    );
+    const active = fxProviders.filter(
       (entry: { sunrey: { launch_tier: string } }) => entry.sunrey.launch_tier !== 'blocked_pending_review',
     );
     assert.equal(active.length, 7);
