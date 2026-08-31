@@ -4,6 +4,7 @@
  * - Wave 2 YAML entries (macro, markets, filings, commodities, gov data)
  * - FX reference catalog entries (packages/payments)
  * - Crypto market catalog entries (packages/sunrey-exchange)
+ * - Compliance intelligence catalog entries (packages/kernel)
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -38,6 +39,26 @@ const { FX_REFERENCE_CATALOG_ENTRIES, FX_REFERENCE_BLOCKED_CATALOG_ENTRY } = awa
   return JSON.parse(result.stdout);
 });
 
+const { COMPLIANCE_INTELLIGENCE_CATALOG_ENTRIES } = await import(
+  `../packages/kernel/src/compliance-intelligence/catalog-entries.ts?cmp=${Date.now()}`
+).catch(async () => {
+  const { spawnSync } = await import('node:child_process');
+  const result = spawnSync(
+    'node',
+    [
+      '--experimental-strip-types',
+      '--disable-warning=ExperimentalWarning',
+      '-e',
+      `import { COMPLIANCE_INTELLIGENCE_CATALOG_ENTRIES } from './packages/kernel/src/compliance-intelligence/catalog-entries.ts'; console.log(JSON.stringify({ COMPLIANCE_INTELLIGENCE_CATALOG_ENTRIES }));`,
+    ],
+    { cwd: ROOT, encoding: 'utf8' },
+  );
+  if (result.status !== 0) {
+    throw new Error(result.stderr || 'failed to load compliance catalog entries');
+  }
+  return JSON.parse(result.stdout);
+});
+
 const byId = new Map();
 
 function addEntries(entries) {
@@ -51,6 +72,7 @@ addEntries(wave2.providers);
 addEntries(FX_REFERENCE_CATALOG_ENTRIES);
 addEntries([FX_REFERENCE_BLOCKED_CATALOG_ENTRY]);
 addEntries(wave3.providers);
+addEntries(COMPLIANCE_INTELLIGENCE_CATALOG_ENTRIES);
 
 const catalog = {
   schema_version: '1.0.0',
@@ -59,12 +81,12 @@ const catalog = {
   population_status: 'partial',
   source_list: {
     document:
-      'config/providers/wave2-catalog-entries.yaml + packages/payments/src/fx-reference/catalog-entries.ts + wave3-crypto-catalog-entries.yaml',
-    version: 'wave-3-prompt-12',
+      'config/providers/wave2-catalog-entries.yaml + packages/payments/src/fx-reference/catalog-entries.ts + wave3-crypto-catalog-entries.yaml + packages/kernel compliance-intelligence',
+    version: 'wave-4-prompt-15',
     verified_at: '2026-08-30',
   },
   notes:
-    'Partial population including Wave 2 economics/markets providers and Wave 3 crypto market reference providers. ' +
+    'Partial population including Wave 2 economics/markets, Wave 3 crypto, and Wave 4 compliance intelligence providers. ' +
     'Full 126-provider master list remains pending.',
   providers: [...byId.values()],
 };
