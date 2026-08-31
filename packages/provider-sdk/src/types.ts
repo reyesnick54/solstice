@@ -37,14 +37,14 @@ export {
   PROVIDER_CONTENT_TYPES,
   type ProviderHttpMethod,
   type ProviderContentType,
-  type ProviderHttpRequestContext,
-  type ProviderHttpResponseMetadata,
+  type HttpProviderRequestContext,
+  type HttpProviderResponseMetadata,
   type ProviderParsedBody,
-  type ProviderHttpTransportResponse,
-  type ProviderHttpTransportSuccess,
-  type ProviderHttpTransportFailure,
-  type ProviderHttpTransportResult,
-  type ProviderHttpTransport,
+  type HttpProviderTransportResponse,
+  type HttpProviderTransportSuccess,
+  type HttpProviderTransportFailure,
+  type HttpProviderTransportResult,
+  type HttpProviderTransport,
 } from './http-transport-types.ts';
 export {
   HTTP_METHODS,
@@ -365,3 +365,6 @@ export function isKnownProviderCapability(value: string): value is ProviderCapab
 export function isSunReyConsumerDomain(value: string): value is SunReyConsumerDomain {
   return (SUNREY_CONSUMER_DOMAINS as readonly string[]).includes(value);
 }
+/** Observation category alias used by normalization pipeline. */
+export { OBSERVATION_PROVIDER_CATEGORIES as PROVIDER_CATEGORIES } from './observation-types.ts';
+export type { ObservationProviderCategory as ProviderCategory } from './observation-types.ts';

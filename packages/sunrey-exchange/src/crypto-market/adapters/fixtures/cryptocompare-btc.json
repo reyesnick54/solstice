@@ -1,0 +1,23 @@
+{
+  "RAW": {
+    "BTC": {
+      "USD": 67234.56
+    }
+  },
+  "DISPLAY": {
+    "BTC": {
+      "USD": 67234.56
+    }
+  },
+  "BTC": {
+    "USD": {
+      "MKTCAP": 1324567890123,
+      "SUPPLY": 19876543,
+      "TOTALVOLUME24H": 28456789012,
+      "CHANGE24HOUR": 1542.12,
+      "CHANGEPCT24HOUR": 2.34,
+      "HIGH24HOUR": 68100.0,
+      "LOW24HOUR": 65800.0
+    }
+  }
+}

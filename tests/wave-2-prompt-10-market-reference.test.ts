@@ -53,9 +53,9 @@ function fixtureCatalogProvider(overrides: Record<string, unknown> = {}) {
 }
 
 describe('Wave 2 Prompt 10 — market reference layer', () => {
-  it('1. catalog discovery returns zero providers while catalog shell is empty', () => {
+  it('1. catalog discovery includes populated market reference providers', () => {
     const matches = loadMarketReferenceCatalog();
-    assert.equal(matches.length, 0);
+    assert.ok(matches.length > 0);
   });
 
   it('2. fixture catalog provider adapter can be created for tests', async () => {
