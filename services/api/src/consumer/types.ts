@@ -141,6 +141,35 @@ export const PROVIDER_AVAILABILITIES = [
 ] as const;
 export type ProviderAvailability = (typeof PROVIDER_AVAILABILITIES)[number];
 
+/**
+ * Canonical BFF product data state for reference-data surfaces.
+ * Never represent simulation as LIVE.
+ */
+export const PRODUCT_DATA_STATES = [
+  'LIVE',
+  'STALE',
+  'PARTIAL',
+  'SIMULATED',
+  'UNAVAILABLE',
+  'DEGRADED',
+  'ESTIMATED',
+] as const;
+export type ProductDataState = (typeof PRODUCT_DATA_STATES)[number];
+
+export type SanitizedSourceMetadata = {
+  readonly displayName: string;
+  readonly authorityClass: string;
+};
+
+export type ProductDataMetadata = {
+  readonly dataState: ProductDataState;
+  readonly dataTimestamp: string | null;
+  readonly retrievedAt: string;
+  readonly freshness: string;
+  readonly source: SanitizedSourceMetadata | null;
+  readonly qualityStatus: ProductDataState;
+};
+
 export const CARD_STATUSES = [
   'REQUESTED',
   'PENDING',

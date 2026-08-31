@@ -6,6 +6,7 @@
  */
 
 export * from './observation-types.ts';
+import type { FreshnessStatus } from './observation-types.ts';
 import type { UtcInstant } from '../../domain/src/time.ts';
 
 /**
@@ -190,6 +191,20 @@ export type ProviderTransportFailure = {
 };
 
 export type ProviderTransportResult<T = unknown> = ProviderTransportSuccess<T> | ProviderTransportFailure;
+export {
+  FRESHNESS_STATUSES,
+  VALIDATION_STATUSES,
+  COMMERCIAL_USE_STATUSES,
+  REDISTRIBUTION_STATUSES,
+  CONFIDENCE_BASIS,
+} from './observation-types.ts';
+export type {
+  ValidationStatus,
+  CommercialUseStatus,
+  RedistributionStatus,
+  ConfidenceBasis,
+  FreshnessStatus,
+} from './observation-types.ts';
 
 export * from './registry-types.ts';
 

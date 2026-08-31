@@ -243,7 +243,6 @@ export {
   type ProviderTransportFailure,
   type ProviderHttpRequestContext,
   type ProviderHttpResponseMetadata,
-  type ProviderParsedBody,
   type ProviderHttpTransportResponse,
   type ProviderHttpTransportResult,
   type ProviderHttpTransportSuccess,

@@ -30,11 +30,7 @@ import type {
   HttpProviderTransportResult,
   ProviderHttpMethod,
   ProviderParsedBody,
-  ProviderRequestContext,
-  ProviderHttpTransport,
-  ProviderTransportResponse,
-  ProviderTransportResult,
-} from './types.ts';
+} from './http-transport-types.ts';
 
 export type FetchLike = (input: string | URL, init?: RequestInit) => Promise<Response>;
 
