@@ -54,7 +54,10 @@ impl InteropFlowLedger {
         self.inbound.rejected += 1;
     }
 
-    pub fn prepare_outbound(&mut self, envelope: &InteropMessageEnvelope) -> Result<(), InteropError> {
+    pub fn prepare_outbound(
+        &mut self,
+        envelope: &InteropMessageEnvelope,
+    ) -> Result<(), InteropError> {
         if envelope.direction != InteropFlowDirection::Outbound {
             return Err(InteropError::SchemaInvalid);
         }

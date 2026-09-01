@@ -474,6 +474,10 @@ async function dispatchAuthenticated(
     return blockchain;
   }
 
+  if (path === '/api/v1/travel/overview' && method === 'GET') {
+    return handleTravelOverviewRoute(runtime, request, requestId, headers);
+  }
+
   const travel = dispatchTravel(request, requestId, headers);
   if (travel) {
     return travel;
@@ -868,9 +872,6 @@ async function dispatchAuthenticated(
   }
   if (path === '/api/v1/agent/external-events' && method === 'GET') {
     return handleAgentExternalEventsRoute(runtime, requestId, headers, principal);
-  }
-  if (path === '/api/v1/travel/overview' && method === 'GET') {
-    return handleTravelOverviewRoute(runtime, request, requestId, headers);
   }
   if (path === '/api/v1/economy/productive/snapshot' && method === 'GET') {
     return handleProductiveEconomySnapshotRoute(runtime, requestId, headers);

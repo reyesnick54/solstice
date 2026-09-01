@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
+
+import { invokeConsumerBff } from './consumer-bff-invoke.ts';
 import { describe, it } from 'node:test';
 
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
 import { handleConsumerBff, type ConsumerBffRuntime } from '../services/api/src/consumer/handler.ts';
 
-function call(
+async function call(
   world: ReturnType<typeof createSandboxWorld>,
   method: string,
   path: string,
@@ -17,7 +19,7 @@ function call(
     identity: world.runtime.identity.service,
     access: world.access,
   };
-  return handleConsumerBff(runtime, {
+  return await invokeConsumerBff(runtime, {
     method,
     path,
     query: {},
@@ -28,9 +30,9 @@ function call(
 }
 
 describe('ACCESS-14 provider network BFF integration', () => {
-  it('exposes provider registry with live connectivity disabled', () => {
+  it('exposes provider registry with live connectivity disabled', async () => {
     const world = createSandboxWorld();
-    const res = call(world, 'GET', '/api/v1/access/providers', 'basic_verified');
+    const res = await call(world, 'GET', '/api/v1/access/providers', 'basic_verified');
     assert.equal(res.status, 200);
     const body = res.body as { liveProviderConnectivity: boolean; items: { providerId: string }[] };
     assert.equal(body.liveProviderConnectivity, false);
@@ -38,16 +40,16 @@ describe('ACCESS-14 provider network BFF integration', () => {
     assert.ok(body.items.some((row) => row.providerId === 'expedia'));
   });
 
-  it('runs Mustang redemption through provider gateway and redemption engine', () => {
+  it('runs Mustang redemption through provider gateway and redemption engine', async () => {
     const world = createSandboxWorld();
-    const entitlements = call(world, 'GET', '/api/v1/access/entitlements', 'basic_verified');
+    const entitlements = await call(world, 'GET', '/api/v1/access/entitlements', 'basic_verified');
     assert.equal(entitlements.status, 200);
     const mobility = (entitlements.body as { items: { entitlementId: string; category: string }[] }).items.find(
       (row) => row.category === 'MOBILITY',
     );
     assert.ok(mobility);
 
-    const search = call(world, 'POST', '/api/v1/access/search', 'basic_verified', {
+    const search = await call(world, 'POST', '/api/v1/access/search', 'basic_verified', {
       category: 'MOBILITY',
       query: 'Mustang Miami',
       location: 'Miami, FL',
@@ -57,7 +59,7 @@ describe('ACCESS-14 provider network BFF integration', () => {
     const catalogItem = (search.body as { items: { catalogItemId: string }[] }).items[0];
     assert.ok(catalogItem);
 
-    const quote = call(world, 'POST', '/api/v1/access/quotes', 'basic_verified', {
+    const quote = await call(world, 'POST', '/api/v1/access/quotes', 'basic_verified', {
       providerId: 'turo',
       catalogItemId: catalogItem.catalogItemId,
       quantity: 4,
@@ -70,7 +72,7 @@ describe('ACCESS-14 provider network BFF integration', () => {
     const quoteBody = quote.body as { quoteId: string; providerPriceMinorUnits: string };
     assert.equal(quoteBody.providerPriceMinorUnits, '36400');
 
-    const preview = call(world, 'POST', '/api/v1/access/redemptions/preview', 'basic_verified', {
+    const preview = await call(world, 'POST', '/api/v1/access/redemptions/preview', 'basic_verified', {
       category: 'MOBILITY',
       providerId: 'turo',
       quoteId: quoteBody.quoteId,
@@ -85,7 +87,7 @@ describe('ACCESS-14 provider network BFF integration', () => {
     assert.equal(previewBody.status, 'READY_FOR_APPROVAL');
     assert.equal(previewBody.userContributionMinorUnits, '0');
 
-    const started = call(world, 'POST', '/api/v1/access/redemptions', 'basic_verified', {
+    const started = await call(world, 'POST', '/api/v1/access/redemptions', 'basic_verified', {
       category: 'MOBILITY',
       providerId: 'turo',
       quoteId: quoteBody.quoteId,
@@ -98,7 +100,7 @@ describe('ACCESS-14 provider network BFF integration', () => {
     assert.equal(started.status, 201);
     const redemptionId = (started.body as { redemptionId: string }).redemptionId;
 
-    const confirmed = call(world, 'POST', `/api/v1/access/redemptions/${redemptionId}/confirm`, 'basic_verified', {});
+    const confirmed = await call(world, 'POST', `/api/v1/access/redemptions/${redemptionId}/confirm`, 'basic_verified', {});
     assert.equal(confirmed.status, 200);
     const confirmedBody = confirmed.body as { status: string; rightKind: string; accessRightRef: string | null };
     assert.equal(confirmedBody.status, 'REDEEMED');
@@ -106,9 +108,9 @@ describe('ACCESS-14 provider network BFF integration', () => {
     assert.ok(confirmedBody.accessRightRef);
   });
 
-  it('overview exposes Access product contract metadata', () => {
+  it('overview exposes Access product contract metadata', async () => {
     const world = createSandboxWorld();
-    const res = call(world, 'GET', '/api/v1/access/overview', 'basic_verified');
+    const res = await call(world, 'GET', '/api/v1/access/overview', 'basic_verified');
     assert.equal(res.status, 200);
     const body = res.body as {
       navigationLabel: string;

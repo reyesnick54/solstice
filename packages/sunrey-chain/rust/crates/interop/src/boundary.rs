@@ -8,9 +8,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::activation::InteropActivationGate;
 use crate::circuit_breaker::InteropCircuitBreakers;
-use crate::envelope::InteropMessageEnvelope;
 use crate::encoding::hex_hash;
 use crate::engine::InteropEngine;
+use crate::envelope::InteropMessageEnvelope;
 use crate::error::InteropError;
 use crate::packet::InterchainPacket;
 use crate::registry::ExternalChainDefinition;
@@ -42,7 +42,7 @@ pub struct InteropBoundary<'a> {
     pub consumed: &'a mut BTreeSet<String>,
 }
 
-impl<'a> InteropBoundary<'a> {
+impl InteropBoundary<'_> {
     pub fn observe(&self, _observation: &WatcherObservation) -> Result<(), InteropError> {
         self.activation.require_development()
     }
@@ -70,10 +70,16 @@ impl<'a> InteropBoundary<'a> {
         }
         let cap = match envelope.message_type {
             ChannelType::GenericMessage => crate::types::InteropCapability::GenericMessage,
-            ChannelType::EconomicAttestation => crate::types::InteropCapability::EconomicAttestation,
-            ChannelType::AssetTransferReserved => crate::types::InteropCapability::AssetTransferDevOnly,
+            ChannelType::EconomicAttestation => {
+                crate::types::InteropCapability::EconomicAttestation
+            }
+            ChannelType::AssetTransferReserved => {
+                crate::types::InteropCapability::AssetTransferDevOnly
+            }
             ChannelType::OracleFact => crate::types::InteropCapability::OracleFact,
-            ChannelType::IdentityAttestationReserved => crate::types::InteropCapability::IdentityAttestation,
+            ChannelType::IdentityAttestationReserved => {
+                crate::types::InteropCapability::IdentityAttestation
+            }
         };
         chain.allows(cap)?;
         self.circuits.guard_message(

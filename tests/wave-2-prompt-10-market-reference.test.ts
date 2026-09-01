@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+
+import { invokeConsumerBff } from './consumer-bff-invoke.ts';
 import { describe, it } from 'node:test';
 
 import { asUtcInstant } from '../packages/domain/src/time.ts';
@@ -53,7 +55,7 @@ function fixtureCatalogProvider(overrides: Record<string, unknown> = {}) {
 }
 
 describe('Wave 2 Prompt 10 — market reference layer', () => {
-  it('1. catalog discovery includes populated market reference providers', () => {
+  it('1. catalog discovery includes populated market reference providers', async () => {
     const matches = loadMarketReferenceCatalog();
     assert.ok(matches.length > 0);
   });
@@ -72,7 +74,7 @@ describe('Wave 2 Prompt 10 — market reference layer', () => {
     assert.equal(quote.ok, true);
   });
 
-  it('3. venue identity disambiguates ticker collisions', () => {
+  it('3. venue identity disambiguates ticker collisions', async () => {
     const simEtf = resolveMarketAssetByTickerVenue('SIMETF', 'SIM-US');
     assert.ok(simEtf);
     assert.equal(simEtf.assetId, 'SIM-ETF-1');
@@ -119,7 +121,7 @@ describe('Wave 2 Prompt 10 — market reference layer', () => {
     }
   });
 
-  it('7. unit normalization records transformation provenance', () => {
+  it('7. unit normalization records transformation provenance', async () => {
     const converted = convertMassPrice({
       priceMinorUnits: 100n,
       sourceUnit: TROY_OZ,
@@ -132,7 +134,7 @@ describe('Wave 2 Prompt 10 — market reference layer', () => {
     assert.equal(converted.value.transformation.targetUnit.unitId, 'kg');
   });
 
-  it('8. rejects invalid negative prices', () => {
+  it('8. rejects invalid negative prices', async () => {
     const result = validatePriceMinorUnits(-1n);
     assert.equal(result.ok, false);
   });
@@ -145,7 +147,7 @@ describe('Wave 2 Prompt 10 — market reference layer', () => {
     assert.equal(quote.ok, true);
   });
 
-  it('10. cache policy differs by capability', () => {
+  it('10. cache policy differs by capability', async () => {
     const quotePolicy = marketReferenceCachePolicy(MARKET_REFERENCE_CACHE_CAPABILITIES.quote);
     const metadataPolicy = marketReferenceCachePolicy(MARKET_REFERENCE_CACHE_CAPABILITIES.assetMetadata);
     assert.ok(quotePolicy.freshTtlMs < metadataPolicy.freshTtlMs);
@@ -200,7 +202,7 @@ describe('Wave 2 Prompt 10 — market reference layer', () => {
     assert.equal(quote.code, 'RATE_LIMITED');
   });
 
-  it('16. market reference remains separated from execution authority', () => {
+  it('16. market reference remains separated from execution authority', async () => {
     const service = createMarketReferenceService();
     const proof = service.executionSeparationProof();
     assert.equal(proof.referenceOnly, true);
@@ -230,9 +232,9 @@ describe('Wave 2 Prompt 10 — market reference layer', () => {
     assert.ok(evidence.items.every((item) => item.label === 'REFERENCE_NOT_EXECUTION'));
   });
 
-  it('20. BFF sanitized output hides raw provider payloads', () => {
+  it('20. BFF sanitized output hides raw provider payloads', async () => {
     const world = createSandboxWorld();
-    const response = handleConsumerBff(
+    const response = await invokeConsumerBff(
       { ...world, marketReference: undefined },
       {
         method: 'GET',
@@ -264,7 +266,7 @@ describe('Wave 2 Prompt 10 — market reference layer', () => {
     assert.equal(snapshot.resources.length, 1);
   });
 
-  it('22. registered assets reuse canonical ids without conflict', () => {
+  it('22. registered assets reuse canonical ids without conflict', async () => {
     const gold = resolveMarketAsset('COMMODITY:gold:USD:troy_oz');
     assert.ok(gold);
     assert.equal(gold.commodityCode, 'gold');

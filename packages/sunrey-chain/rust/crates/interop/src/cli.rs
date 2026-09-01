@@ -4,7 +4,7 @@ use crate::encoding::hex_hash;
 use crate::engine::InteropEngine;
 use crate::error::InteropError;
 use crate::foreign::ExternalDevChain;
-use crate::registry::{EXTERNAL_DEV_CHAIN_ID};
+use crate::registry::EXTERNAL_DEV_CHAIN_ID;
 use crate::relayer::IsolatedRelayer;
 use crate::watcher::{self, IsolatedWatcher};
 
@@ -69,10 +69,7 @@ pub fn run_watcher_command(args: &[String]) -> Result<String, InteropError> {
     {
         return Ok("usage: sunrey-watcher run|observe".into());
     }
-    let watcher = IsolatedWatcher::new(
-        "watcher-dev-1",
-        EXTERNAL_DEV_CHAIN_ID,
-    );
+    let watcher = IsolatedWatcher::new("watcher-dev-1", EXTERNAL_DEV_CHAIN_ID);
     watcher.cannot_submit()?;
     Ok(serde_json::json!({
         "service": "sunrey-watcher",
