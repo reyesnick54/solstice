@@ -133,7 +133,7 @@ async fn resolve_seeds_with_retry(
             let Some((host, _)) = item.rsplit_once(':') else {
                 return false;
             };
-            !own_hostname.is_some_and(|own| host.split('.').next() == Some(own))
+            own_hostname.is_none_or(|own| host.split('.').next() != Some(own))
         })
         .count()
         .max(1);
