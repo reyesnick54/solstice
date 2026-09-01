@@ -118,6 +118,7 @@ production activation at runtime.
 | Payments / FX / cards / treasury | PARTIAL | PASSING | SIMULATED | ENGINEERING_VERIFIED | REGULATORY_GATED | NOT_PRODUCTION_QUALIFIED |
 | Investments / risk / strategy lab | IMPLEMENTED | PASSING | SIMULATED | ENGINEERING_VERIFIED | REGULATORY_GATED | NOT_PRODUCTION_QUALIFIED |
 | Personal Economic Graph / Agent / Growth | IMPLEMENTED | PASSING | SIMULATED | ENGINEERING_VERIFIED | REGULATORY_GATED | NOT_PRODUCTION_QUALIFIED |
+| Subscription intelligence / bill savings | IMPLEMENTED (detection); PARTIAL (cancel/negotiate) | PASSING | SIMULATED | ENGINEERING_VERIFIED | REGULATORY_GATED | NOT_PRODUCTION_QUALIFIED |
 | SunRey Chain (simulation trust layer) | IMPLEMENTED | PASSING | SIMULATED | ENGINEERING_VERIFIED | REGULATORY_GATED | NOT_PRODUCTION_QUALIFIED |
 | Rust blockchain workspace / dev BFT node | IMPLEMENTED | PASSING | SIMULATED | ENGINEERING_VERIFIED | REGULATORY_GATED | NOT_PRODUCTION_QUALIFIED |
 | SunRey Coin (application ledger) | IMPLEMENTED | PASSING | SIMULATED | ENGINEERING_VERIFIED | REGULATORY_GATED | NOT_PRODUCTION_QUALIFIED |
@@ -161,6 +162,13 @@ The consolidated authorization spine (PR #12 lineage) satisfies them now.
 - **Owner:** `packages/kernel`, `packages/permissions`, `packages/ledger`, `packages/evidence`, `services/accounts`
 - **Status:** IMPLEMENTED / SIMULATED — sole path for financial mutation.
 - **Not claimed:** counsel-confirmed policy packs, live AML vendors.
+
+### Subscription intelligence (Wave 5 Prompt 13)
+
+- **Owner:** `packages/platform/src/subscription-intelligence`, `services/api/src/consumer/subscriptions.ts`
+- **Status:** IMPLEMENTED detection, classification, savings opportunities, user-authorized action lifecycle, audit.
+- **Partial:** automated cancellation (simulation provider only); bill negotiation (`ACTION_NOT_AVAILABLE` without certified provider).
+- **Not claimed:** live bill-cancel vendors, verified savings without provider evidence, AI execution.
 
 ### SunRey Blockchain / Rust workspace
 
