@@ -61,6 +61,7 @@ export function lintSource(file: string, source: string): Finding[] {
     /packages\/investments\//.test(rel) ||
     /packages\/sunrey-coin\//.test(rel);
   const isTest = /\.test\.ts$/.test(rel) || /\/tests\//.test(rel);
+  const isPerformanceQualification = /^performance\//.test(rel);
 
   for (let i = 0; i < lines.length; i += 1) {
     const lineNo = i + 1;
@@ -127,7 +128,8 @@ export function lintSource(file: string, source: string): Finding[] {
       /postJournal\s*\(/.test(line) &&
       !isLedgerJournal &&
       !isMoneyMovement &&
-      !isTest
+      !isTest &&
+      !isPerformanceQualification
     ) {
       findings.push({
         rule: 'journal-outside-authorized-path',

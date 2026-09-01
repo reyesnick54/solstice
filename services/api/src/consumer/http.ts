@@ -277,7 +277,7 @@ export async function serve(
     authorization,
     ...(idempotencyKey ? { idempotencyKey } : {}),
     ...(accept ? { accept } : {}),
-  }));
+  });
   const responseHeaders = { ...result.headers, ...cors.headers };
   if (result.eventStream) {
     res.writeHead(result.status, {

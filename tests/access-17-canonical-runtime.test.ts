@@ -355,9 +355,12 @@ describe('ACCESS-17 canonical access runtime', () => {
       providerId: 'turo',
     });
     assert.equal(search.status, 200);
+    const opportunityId = (search.body as { items: { opportunityId: string }[] }).items[0]!.opportunityId;
+    const opportunity = bffCall(world, 'GET', `/api/v1/access/opportunities/${opportunityId}`, 'basic_verified');
+    assert.equal(opportunity.status, 200);
     const quote = bffCall(world, 'POST', '/api/v1/access/quotes', 'basic_verified', {
-      providerId: 'turo',
-      catalogItemId: (search.body as { items: { catalogItemId: string }[] }).items[0]!.catalogItemId,
+      providerId: (opportunity.body as { providerId: string }).providerId,
+      catalogItemId: (opportunity.body as { catalogItemId: string }).catalogItemId,
       quantity: 4,
       startsAt: '2026-08-29T10:00:00.000Z',
       endsAt: '2026-09-02T10:00:00.000Z',
