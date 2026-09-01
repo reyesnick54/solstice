@@ -2,6 +2,7 @@ import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { NormalizedOfferView, PurchaseIntent, RankedOfferList } from './types.ts';
 import { normalizeOffers } from './normalization.ts';
 
+/** Ranking weights in basis points (10_000 = 100%). Integer only — no floats in money paths. */
 export type RankingWeights = {
   readonly price: number;
   readonly delivery: number;
@@ -11,13 +12,15 @@ export type RankingWeights = {
   readonly preferences: number;
 };
 
+export const RANKING_WEIGHT_BASIS = 10_000;
+
 export const DEFAULT_RANKING_WEIGHTS: RankingWeights = Object.freeze({
-  price: 0.30,
-  delivery: 0.20,
-  warranty: 0.15,
-  availability: 0.15,
-  sunReyBenefit: 0.10,
-  preferences: 0.10,
+  price: 3000,
+  delivery: 2000,
+  warranty: 1500,
+  availability: 1500,
+  sunReyBenefit: 1000,
+  preferences: 1000,
 });
 
 export type RankingInput = {
@@ -49,13 +52,14 @@ export function rankOffers(input: RankingInput): RankedOfferList {
 
   const scored = normalized.map((view) => {
     const priceScore = priceToScore(view.effectivePriceMinorUnits, minPrice, maxPrice);
-    const rankScore =
+    const weighted =
       priceScore * weights.price +
       view.deliveryScore * weights.delivery +
       view.warrantyScore * weights.warranty +
       view.availabilityScore * weights.availability +
       view.sunReyBenefitScore * weights.sunReyBenefit +
       view.preferenceMatchScore * weights.preferences;
+    const rankScore = Math.round(weighted / RANKING_WEIGHT_BASIS);
     return Object.freeze({ ...view, rankScore, rankPosition: 0 });
   });
 
