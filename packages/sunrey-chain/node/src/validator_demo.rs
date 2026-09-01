@@ -44,7 +44,7 @@ pub async fn run_four_validator_devnet(root: PathBuf) -> NodeResult<FourValidato
     let (d, _) = spawn_validator("D", root.join("d"), vec![seed], &fixture).await?;
     let nodes = [a, b, c, d];
 
-    wait_until(Duration::from_secs(12), || {
+    wait_until(Duration::from_secs(30), || {
         nodes[0].metrics_snapshot().peer_count >= 3
             && nodes[1].metrics_snapshot().peer_count >= 1
             && nodes[2].metrics_snapshot().peer_count >= 1
@@ -222,7 +222,7 @@ pub async fn run_native_asset_devnet(root: PathBuf) -> NodeResult<NativeAssetDev
     let (c, _) = spawn_validator("C", root.join("c"), vec![seed.clone()], &fixture).await?;
     let (d, _) = spawn_validator("D", root.join("d"), vec![seed], &fixture).await?;
     let nodes = [a, b, c, d];
-    wait_until(Duration::from_secs(12), || {
+    wait_until(Duration::from_secs(30), || {
         nodes[0].metrics_snapshot().peer_count >= 3
             && nodes[1].metrics_snapshot().peer_count >= 1
             && nodes[2].metrics_snapshot().peer_count >= 1
