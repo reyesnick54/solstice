@@ -4,7 +4,7 @@
 
 import type { EnvironmentalOracleService } from '../service.ts';
 import type { LocationInput } from '../location.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 
 export type RealEstateEnvironmentalContext = {
   readonly schema: 'sunrey.real-estate.environmental-context.v1';

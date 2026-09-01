@@ -128,6 +128,7 @@ export type CatalogProviderEntry = {
       | 'sandbox'
       | 'production_candidate'
       | 'implemented'
+      | 'adapter_implemented'
       | null;
     readonly existing_adapter?: string | null;
   };

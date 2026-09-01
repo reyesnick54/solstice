@@ -22,6 +22,18 @@ import type {
   SolvencyStatus,
 } from './taxonomy.ts';
 
+export type {
+  AccessFundingReservationStatus,
+  AccessFundingSourceType,
+  EntitlementDirection,
+  EntitlementLedgerEntryType,
+  FundedCapacityState,
+  FundingCategoryPolicy,
+  FundingDirection,
+  FundingLedgerEntryType,
+  SolvencyStatus,
+} from './taxonomy.ts';
+
 export type EvidenceRef = string;
 
 /** Geographic / program restriction envelope for funding sources and pools. */

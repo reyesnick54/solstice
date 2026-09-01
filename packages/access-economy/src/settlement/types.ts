@@ -1,16 +1,30 @@
 /**
- * ACCESS Wave 3 / Prompt 36 — Restricted virtual-card settlement types.
+ * ACCESS Wave 3 — Fiat settlement (Prompt 35) and restricted virtual-card (Prompt 36) types.
  */
 
 import type { UtcInstant } from '../../../domain/src/time.ts';
-import type { AccessCategoryId } from '../domain/taxonomy.ts';
+import type {
+  AccessDomainEntitlementId,
+  AccessDomainQuoteId,
+  AccessDomainSettlementId,
+  AccessDomainTransactionId,
+  AccessEvidenceRef,
+  AccessFundingPoolId,
+  AccessUserId,
+} from '../domain/ids.ts';
+import type { AccessCategoryId, AccessUnit } from '../domain/taxonomy.ts';
 import type { ProviderRef } from '../ids.ts';
 import type { AccessCardBufferPolicy } from './buffer-policy.ts';
+import type { IssuerControlSupport } from './issuer-port.ts';
 import type {
   AccessCardLifecycleEvent,
   AccessPaymentRailCapability,
+  AccessPaymentRailKind,
   AccessPaymentRailStatus,
+  AccessPaymentRemoteStatus,
+  AccessSettlementOrchestrationStatus,
   AccessSettlementRailFailureCode,
+  AccessSettlementStrategy,
   AccessVirtualCardPurpose,
   AccessVirtualCardStatus,
 } from './taxonomy.ts';
@@ -199,30 +213,7 @@ export type FundingReservationVerifier = {
     readonly amountMinorUnits: bigint;
     readonly currency: string;
   }): boolean;
- * ACCESS Wave 3 Prompt 35 — Fiat settlement types.
- *
- * Money is integer minor units (bigint). No raw payment credentials.
- */
-
-import type { UtcInstant } from '../../../domain/src/time.ts';
-import type { ProviderRef } from '../ids.ts';
-import type {
-  AccessDomainEntitlementId,
-  AccessDomainQuoteId,
-  AccessDomainSettlementId,
-  AccessDomainTransactionId,
-  AccessEvidenceRef,
-  AccessFundingPoolId,
-  AccessUserId,
-} from '../domain/ids.ts';
-import type { AccessUnit } from '../domain/taxonomy.ts';
-import type {
-  AccessPaymentRailCapability,
-  AccessPaymentRailKind,
-  AccessPaymentRemoteStatus,
-  AccessSettlementOrchestrationStatus,
-  AccessSettlementStrategy,
-} from './taxonomy.ts';
+};
 
 /** Prompt 34 checkout quote — input to settlement plan. */
 export type AccessCheckoutQuote = {
