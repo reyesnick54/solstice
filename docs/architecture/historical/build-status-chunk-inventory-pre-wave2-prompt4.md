@@ -833,10 +833,18 @@ This document describes only what is implemented and tested in this tree.
 - SunRey AI runtime (Chunk 101, `packages/ai-runtime`):
   provider-neutral inference plane behind the Financial Agent.
   Capability `sunrey-ai-runtime` is `IMPLEMENTED`. S3M is the
-  intended primary intelligence engine. xAI/Grok is reserved for
-  Chunk 103 and is not networked. LocalTest is deterministic and
-  offline. Providers cannot execute payments, trades, mint, or
-  sign. Tool intents enter `packages/sunrey-agent` as proposals.
+  intended primary intelligence engine. Chunk 103 xAI/Grok adapter
+  is implemented at `packages/ai-runtime/src/providers/xai-grok.ts`
+  with fixture-first CI and opt-in live preview
+  (`SUNREY_EXTERNAL_AI_PREVIEW_ENABLED`, `ai:certify:live --live`).
+  Wave 4 Prompt 12 qualification states distinguish reachability,
+  authentication, model availability, inference, structured output,
+  and evaluation. **xAI status (2026-08-31):** adapter
+  `IMPLEMENTED`; live inference requires credential + billing;
+  `PRODUCTION_QUALIFIED` not claimed without evaluation pass.
+  LocalTest is deterministic and offline. Providers cannot execute
+  payments, trades, mint, or sign. Tool intents enter
+  `packages/sunrey-agent` as proposals.
 - SunRey consumer Exchange (Chunk 99,
   `packages/sunrey-exchange/src/consumer`): consumer portfolio,
   indicative quotes, trade preview, buy/sell/convert with price

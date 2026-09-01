@@ -135,7 +135,7 @@ export class NodeHttpsInferenceTransport implements HttpsInferenceTransport {
       const bodyText = at >= 0 ? output.slice(0, at) : output;
       const parsed: unknown = JSON.parse(bodyText);
       if (!parsed || typeof parsed !== 'object') return fail('MODEL_OUTPUT_INVALID', 'provider response was not a JSON object', false, status);
-      const classified = classifyHttpsStatus(status);
+      const classified = classifyHttpsStatus(status, parsed as Readonly<Record<string, unknown>>);
       if (!classified.ok) return classified.error;
       return httpsOk(parsed as Readonly<Record<string, unknown>>, Date.now() - started, status);
     } catch (error) {
@@ -160,20 +160,58 @@ export function httpsFail(
   return fail(code, detail, retryable, status);
 }
 
-export function classifyHttpsStatus(status: number): Result<true, HttpsTransportFailure> {
+export function classifyHttpsStatus(
+  status: number,
+  body?: Readonly<Record<string, unknown>> | null,
+): Result<true, HttpsTransportFailure> {
+  if (status === 401) {
+    return err(fail('AUTHENTICATION_FAILURE', 'provider rejected credentials', false, status));
+  }
+  if (status === 402) {
+    return err(fail('BILLING_DISABLED', 'provider billing is disabled for this account', false, status));
+  }
   if (status === 429) {
-    return err(fail('MODEL_RATE_LIMITED', 'provider rate-limited the request', true, status));
+    const bodyText = extractBodyText(body);
+    const code = bodyText.includes('quota') ? 'INSUFFICIENT_QUOTA' : 'MODEL_RATE_LIMITED';
+    return err(fail(code, 'provider rate-limited or quota exhausted', true, status));
   }
   if (status === 408 || status === 504) {
     return err(fail('MODEL_TIMEOUT', 'provider timed out', true, status));
+  }
+  if (status === 404) {
+    const bodyText = extractBodyText(body);
+    const code = bodyText.includes('model') ? 'MODEL_NOT_AVAILABLE' : 'MODEL_UNAVAILABLE';
+    return err(fail(code, 'provider resource not found', false, status));
   }
   if (status >= 500) {
     return err(fail('MODEL_UNAVAILABLE', 'provider server error', true, status));
   }
   if (status >= 400) {
+    const bodyText = extractBodyText(body);
+    if (bodyText.includes('billing') || bodyText.includes('payment required')) {
+      return err(fail('BILLING_DISABLED', 'provider billing blocked the request', false, status));
+    }
+    if (bodyText.includes('model') && (bodyText.includes('not found') || bodyText.includes('unavailable'))) {
+      return err(fail('MODEL_NOT_AVAILABLE', 'configured model is not available', false, status));
+    }
     return err(fail('MODEL_PROVIDER_ERROR', 'provider rejected the request', false, status));
   }
   return ok(true);
+}
+
+function extractBodyText(body: Readonly<Record<string, unknown>> | null | undefined): string {
+  if (!body) {
+    return '';
+  }
+  const parts: string[] = [];
+  if (typeof body.error === 'string') parts.push(body.error);
+  if (body.error && typeof body.error === 'object') {
+    const error = body.error as Record<string, unknown>;
+    if (typeof error.message === 'string') parts.push(error.message);
+    if (typeof error.code === 'string') parts.push(error.code);
+  }
+  if (typeof body.message === 'string') parts.push(body.message);
+  return parts.join(' ').toLowerCase();
 }
 
 export function isIdempotentSafeRetry(failure: HttpsTransportFailure): boolean {

@@ -54,6 +54,7 @@ export {
 export { routeInferenceModel, fallbackCompatible } from './routing-policy.ts';
 export { PromptPolicyRegistry, seedCanonicalPromptPolicies } from './prompt-policy.ts';
 export { minimizeContext } from './envelope.ts';
+export { buildBoundedPromptSegments, formatSeparatedPrompt } from './prompt-boundary.ts';
 export { assertPrivacyBoundary, modelMayReceivePrivacy } from './privacy.ts';
 export {
   FixtureHttpsTransport,
@@ -133,7 +134,18 @@ export type {
   AiRoutingDecision,
   AiRuntimePolicy,
   AiStructuredOutput,
+  AiStructuredGrowthAgentProposal,
   AiStructuredMarketOpportunityResearch,
   AiToolIntent,
   AiToolResult,
 } from './types.ts';
+export {
+  AI_QUALIFICATION_STAGES,
+  deriveQualificationStage,
+  type AiQualificationSnapshot,
+  type AiQualificationStage,
+} from './certification/states.ts';
+export { classifyAiProviderFailure } from './certification/classify-failure.ts';
+export { runAiCertificationHarness } from './certification/harness.ts';
+export { runSyntheticEvaluationHarness } from './certification/evaluation-harness.ts';
+export { resolveCostControls, DEFAULT_AI_COST_CONTROLS } from './certification/cost-controls.ts';

@@ -128,6 +128,25 @@ export type AiStructuredFinancialProposal = {
   readonly guaranteedReturn: false;
 };
 
+export type AiGrowthRiskLevel = 'LOW' | 'MEDIUM' | 'HIGH';
+
+export type AiStructuredGrowthAgentProposal = {
+  readonly kind: 'GROWTH_AGENT_PROPOSAL';
+  readonly proposalType: string;
+  readonly summary: string;
+  readonly rationale: string;
+  readonly evidence: readonly string[];
+  readonly riskLevel: AiGrowthRiskLevel;
+  readonly assumptions: readonly string[];
+  readonly recommendedAmount: AiMoneyQuantity;
+  readonly currency: string;
+  readonly timeHorizon: string;
+  readonly requiredUserApproval: true;
+  readonly providerDataReferences: readonly string[];
+  readonly confidence: 'LOW' | 'MEDIUM' | 'HIGH';
+  readonly guaranteedReturn: false;
+};
+
 export type AiStructuredMarketOpportunityResearch = {
   readonly kind: 'MARKET_OPPORTUNITY_RESEARCH';
   readonly result: import('./market-research.ts').MarketOpportunityResearchResult;
@@ -136,6 +155,7 @@ export type AiStructuredMarketOpportunityResearch = {
 export type AiStructuredOutput =
   | AiStructuredExplanation
   | AiStructuredFinancialProposal
+  | AiStructuredGrowthAgentProposal
   | AiStructuredMarketOpportunityResearch;
 
 export type AiInferenceResponse = {
