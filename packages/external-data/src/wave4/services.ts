@@ -28,6 +28,10 @@ import type {
   VulnerabilityObservation,
 } from './models.ts';
 import { ProviderRiskMonitor, type ProviderRiskInput, type ProviderRiskScore } from './provider-risk-monitor.ts';
+import {
+  ProviderRiskMonitor as Wave5ProviderRiskMonitor,
+  type ProviderRiskMonitorSnapshot,
+} from '../wave5-provider-risk.ts';
 
 export type Wave4ServiceResult<T> = {
   readonly observations: readonly ExternalObservation<T>[];
@@ -171,10 +175,36 @@ export class ServiceOutageService {
 export class ProviderRiskService {
   readonly #monitor: ProviderRiskMonitor;
   readonly #getStates: () => Map<string, ProviderAdapterState>;
+  #wave5Monitor: Wave5ProviderRiskMonitor | null = null;
 
   constructor(monitor: ProviderRiskMonitor, getStates: () => Map<string, ProviderAdapterState>) {
     this.#monitor = monitor;
     this.#getStates = getStates;
+  }
+
+  bindWave5Monitor(monitor: Wave5ProviderRiskMonitor): void {
+    this.#wave5Monitor = monitor;
+  }
+
+  snapshot(): ProviderRiskMonitorSnapshot {
+    if (!this.#wave5Monitor) {
+      throw new Error('Wave 5 provider risk monitor is not configured');
+    }
+    return this.#wave5Monitor.snapshot();
+  }
+
+  disableProvider(providerId: string): boolean {
+    if (!this.#wave5Monitor) {
+      return false;
+    }
+    return this.#wave5Monitor.disableProvider(providerId);
+  }
+
+  enableProvider(providerId: string): boolean {
+    if (!this.#wave5Monitor) {
+      return false;
+    }
+    return this.#wave5Monitor.enableProvider(providerId);
   }
 
   assessProvider(providerId: string, extras?: Partial<ProviderRiskInput>): ProviderRiskScore {

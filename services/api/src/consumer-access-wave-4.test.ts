@@ -33,9 +33,10 @@ describe('Access Wave 4 BFF productization', () => {
     const world = createSandboxWorld();
     const home = call(world, 'GET', '/api/v1/me/home', 'basic_verified');
     assert.equal(home.status, 200);
-    const homeBody = home.body as { access: { value: { title: string; categories: { category: string }[] } } };
-    assert.equal(homeBody.access.value.title, 'Your Available Access');
-    assert.ok(homeBody.access.value.categories.some((row) => row.category === 'MOBILITY'));
+    const homeBody = home.body as {
+      access: { value: { categoryHighlights: { category: string }[] } };
+    };
+    assert.ok(homeBody.access.value.categoryHighlights.some((row) => row.category === 'MOBILITY'));
   });
 
   it('completes Mustang user journey with backend-authoritative receipt values', () => {

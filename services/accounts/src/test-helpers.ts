@@ -17,10 +17,22 @@ import { ACTION_TYPES, type OpenAccountIntent } from '../../../packages/permissi
 import type { AccountClass } from '../../../packages/domain/src/account-class.ts';
 import type { ProductId } from '../../../packages/domain/src/product.ts';
 import { asProductId } from '../../../packages/domain/src/product.ts';
-import type { SimulationRuntime } from './runtime.ts';
+import { FrozenClock } from '../../../packages/config/src/clock.ts';
+import {
+  createSimulationRuntime,
+  type SimulationRuntime,
+  type SimulationRuntimeOptions,
+} from './runtime.ts';
 import type { PurposeCode } from '../../../packages/permissions/src/action-intent.ts';
 
 export const NOW = asUtcInstant('2026-08-13T15:00:00.000Z');
+
+export function createTestRuntime(options: SimulationRuntimeOptions = {}): SimulationRuntime {
+  return createSimulationRuntime({
+    ...options,
+    clock: options.clock ?? new FrozenClock(NOW),
+  });
+}
 
 export function activateCustomer(
   runtime: SimulationRuntime,

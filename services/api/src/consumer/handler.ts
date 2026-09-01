@@ -470,14 +470,14 @@ function dispatchAuthenticated(
     return opportunity;
   }
 
-  if (path.startsWith('/api/v1/subscriptions')) {
+  if (runtime.subscriptions && path.startsWith('/api/v1/subscriptions')) {
     return dispatchSubscriptions(
       { method, url: path, body },
       requestId,
       headers,
       runtime.subscriptions,
       principal,
-    ).then((subscriptions) => {
+    ).then(async (subscriptions) => {
       if (!subscriptions) {
         return json(
           404,
@@ -485,7 +485,11 @@ function dispatchAuthenticated(
           headers,
         );
       }
-      return subscriptions as unknown as BffResponse;
+      return {
+        status: subscriptions.status,
+        body: await subscriptions.json(),
+        headers: Object.fromEntries(subscriptions.headers.entries()),
+      };
     });
   }
   if (runtime.hin && isRightsMarketplace(runtime.hin)) {

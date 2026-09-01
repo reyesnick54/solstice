@@ -16,11 +16,15 @@ export type Wave7ProgramGap = {
 
 /** Accepted gaps totaling 24 slots (126 expected − 102 catalog entries). */
 export const WAVE7_ACCEPTED_PROGRAM_GAPS: readonly Wave7ProgramGap[] = Object.freeze([
-  gap('hin', 5, 'Wave 6 HIN public-reference scope — private Vault data never exposed to providers.'),
-  gap('geolocation', 6, 'Wave 6 geolocation scope — minimum-necessary data policy pending catalog.'),
-  gap('logistics', 5, 'Wave 6 logistics scope — oracle family stubs only.'),
-  gap('ai_inference', 4, 'Wave 6 AI/open-model scope — S3M-primary; Grok reserved Chunk 103.'),
-  gap('open_data_misc', 4, 'Wave 6 miscellaneous open-data slots — authoritative list pending.'),
+  gap('travel', 5, 'Wave 6 travel/geo scope — master list never supplied; access-economy simulation only.'),
+  gap('jobs_skills', 0, 'Wave 6 jobs/career scope — opportunity catalog entries now in authoritative YAML.'),
+  gap('research', 5, 'Wave 6 research/open-data scope — master list never supplied.'),
+  gap('health', 4, 'Wave 6 health reference scope — distinct from HIN/Vault; legal review required.'),
+  gap('hin', 3, 'Wave 6 HIN public-reference scope — private Vault data never exposed to providers.'),
+  gap('geolocation', 3, 'Wave 6 geolocation scope — minimum-necessary data policy pending catalog.'),
+  gap('logistics', 2, 'Wave 6 logistics scope — oracle family stubs only.'),
+  gap('ai_inference', 1, 'Wave 6 AI/open-model scope — S3M-primary; Grok reserved Chunk 103.'),
+  gap('open_data_misc', 1, 'Wave 6 miscellaneous open-data slots — authoritative list pending.'),
 ]);
 
 export const WAVE7_ACCEPTED_GAP_COUNT = WAVE7_ACCEPTED_PROGRAM_GAPS.reduce((sum, g) => sum + g.slotCount, 0);

@@ -428,6 +428,8 @@ export class AccessConsumerBffSurface {
     return ok(
       Object.freeze({
         opportunityId: row.opportunityId,
+        providerId: row.providerId,
+        catalogItemId: row.catalogItemId,
         category: row.category,
         title: row.title,
         description: `${row.description} User entitlement availability: ${entitlement?.remainingUses ?? 0} ${categoryUnit(row.category)}(s). Funded coverage: ${solvency.posture}.`,

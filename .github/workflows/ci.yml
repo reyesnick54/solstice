@@ -476,6 +476,9 @@ jobs:
         with:
           node-version: "22"
 
+      - name: "[TYPECHECK] Install from lockfile"
+        run: npm ci --ignore-scripts
+
       - name: "[INTEGRITY] JSON / repository integrity preflight"
         run: |
           node scripts/check-json-integrity.mjs

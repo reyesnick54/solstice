@@ -43,6 +43,6 @@ describe('Phase F Prompt 2 agent runtime productization', () => {
     assert.match(doc, /containsConversationContent/);
     const openapi = readFileSync(join(ROOT, 'api/sunrey-consumer-bff-v1.openapi.yaml'), 'utf8');
     assert.match(openapi, /\/api\/v1\/agents/);
-    assert.match(openapi, /postAgentConversationMessage/);
+    assert.match(openapi, /postOwnedAgentMessage/);
   });
 });

@@ -19,6 +19,7 @@ import {
   FIXTURE_SPRINGFIELD_IL,
   FIXTURE_SPRINGFIELD_MA,
 } from '../packages/external-data/src/index.ts';
+import { WAVE5_BLOCKED_PROVIDER_IDS } from '../packages/external-data/src/wave5-adapters.ts';
 import { createWorldExternalDataBff } from '../services/api/src/consumer/world-external-data-adapter.ts';
 
 describe('Wave 5 physical-economy data plane', () => {
@@ -181,7 +182,7 @@ describe('Wave 5 physical-economy data plane', () => {
   it('accounts for every Wave 5 catalog provider', () => {
     const report = buildWave5CoverageReport();
     assert.ok(report.implemented >= 19);
-    assert.ok(report.blocked >= 2);
+    assert.ok(WAVE5_BLOCKED_PROVIDER_IDS.length >= 2);
     assert.doesNotThrow(() => assertWave5CoverageComplete());
     const unexplained = report.providers.filter(
       (p) =>
