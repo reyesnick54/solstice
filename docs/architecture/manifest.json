@@ -558,6 +558,25 @@
       "notes": "Wave 2 external reference data plane facade — macro, FX, markets, commodities, filings. Orchestration only. Not a second ledger or provider runtime."
     },
     {
+      "id": "packages/risk-evidence",
+      "npmName": "@solstice/risk-evidence",
+      "path": "packages/risk-evidence",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": false,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/external-data"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Wave 4 canonical SunRey Risk Evidence layer — KYB, corporate identity, and digital-risk intelligence adapters. Evidence only. Not a second Kernel, ledger, or compliance engine."
+    },
+    {
       "id": "packages/treasury",
       "npmName": "@solstice/treasury",
       "path": "packages/treasury",
@@ -702,25 +721,6 @@
         "@reyesnick54"
       ],
       "notes": "Deterministic investment/portfolio Risk Engine. Supplies facts to the existing Kernel Risk proof. Never issues Execution Authority or posts journals."
-    },
-    {
-      "id": "packages/risk-evidence",
-      "npmName": "@solstice/risk-evidence",
-      "path": "packages/risk-evidence",
-      "kind": "package",
-      "status": "IMPLEMENTED",
-      "protected": false,
-      "financialStateMutation": false,
-      "executionAuthorityRequired": false,
-      "kernelAuthorizationRequired": false,
-      "allowedDependencies": [
-        "packages/domain",
-        "packages/external-data"
-      ],
-      "codeowners": [
-        "@reyesnick54"
-      ],
-      "notes": "Wave 4 canonical SunRey Risk Evidence layer for KYB, corporate identity, and digital-risk intelligence. Simulation fixtures only. Not a second Kernel, ledger, or compliance engine."
     },
     {
       "id": "packages/model-registry",

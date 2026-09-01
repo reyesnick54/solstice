@@ -301,7 +301,7 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
   }
 }
 
-async function dispatchAuthenticated(
+function dispatchAuthenticated(
   runtime: ConsumerBffRuntime,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
@@ -503,9 +503,8 @@ async function dispatchAuthenticated(
     return opportunity;
   }
 
-  const subscriptions = await dispatchSubscriptions(request, requestId, headers, runtime.subscriptions, principal);
-  if (subscriptions) {
-    return subscriptions;
+  if (runtime.subscriptions && request.path.startsWith('/api/v1/subscriptions')) {
+    return dispatchSubscriptions(request, requestId, headers, runtime.subscriptions, principal);
   }
   if (runtime.hin && isRightsMarketplace(runtime.hin)) {
     const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);

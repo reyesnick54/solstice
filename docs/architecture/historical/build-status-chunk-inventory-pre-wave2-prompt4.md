@@ -25,8 +25,8 @@ This document describes only what is implemented and tested in this tree.
   governed HTTP adapters for Arbeitnow, RemoteOK, Remotive, Jobicy, Himalayas,
   and Hacker News with fixture simulation fallback, execution provenance
   (`simulated` / `liveNetworkCallObserved`), in-memory cache, and live
-  certification via `npm run provider:live-certify` when
-  `SUNREY_LIVE_CERTIFICATION=1`. Frankfurter FX and World Bank macro probes
+  certification via `npm run providers:certify:live` when
+  `PROVIDERS_LIVE_CERTIFY=1`. Frankfurter FX and World Bank macro probes
   live at `packages/external-data/src/wave2/live-economic.ts`. Blocked:
   `graphql-jobs`, `artificial-intelligence-jobs`. `ENVIRONMENT` remains
   `simulation`; `productionAuthorized` stays `false` on all adapters.

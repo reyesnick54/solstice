@@ -6,19 +6,25 @@ use sunrey_interop::activation::{InteropActivationGate, InteropActivationState};
 use sunrey_interop::boundary::InteropBoundary;
 use sunrey_interop::circuit_breaker::InteropCircuitBreakers;
 use sunrey_interop::engine::{development_fixture, make_packet, open_dev_path, packet_state_key};
-use sunrey_interop::envelope::{InteropFlowDirection, InteropMessageEnvelope, ENVELOPE_SCHEMA_VERSION, DOMAIN_ENVELOPE};
+use sunrey_interop::envelope::{
+    InteropFlowDirection, InteropMessageEnvelope, DOMAIN_ENVELOPE, ENVELOPE_SCHEMA_VERSION,
+};
 use sunrey_interop::error::InteropError;
-use sunrey_interop::external_rpc::{ExternalRpcEvaluator, ExternalRpcObservation, FinalityRequirement};
+use sunrey_interop::external_rpc::{
+    ExternalRpcEvaluator, ExternalRpcObservation, FinalityRequirement,
+};
 use sunrey_interop::flow::InteropFlowLedger;
 use sunrey_interop::foreign::ExternalDevChain;
 use sunrey_interop::keys::{assert_key_separation, InteropKeyBinding};
 use sunrey_interop::network::{require_egress, InteropNetworkPolicy, InteropServiceRole};
-use sunrey_interop::registry::{development_external_chain, EXTERNAL_DEV_CHAIN_ID, SUNREY_CHAIN_ID};
+use sunrey_interop::registry::{
+    development_external_chain, EXTERNAL_DEV_CHAIN_ID, SUNREY_CHAIN_ID,
+};
 use sunrey_interop::relayer::IsolatedRelayer;
 use sunrey_interop::rpc_access::interop_may_call;
 use sunrey_interop::types::{ChannelOrdering, ChannelType};
 use sunrey_interop::watcher::IsolatedWatcher;
-use sunrey_interop::{INTEROP_PROTOCOL_VERSION};
+use sunrey_interop::INTEROP_PROTOCOL_VERSION;
 
 fn setup() -> (ExternalDevChain, sunrey_interop::engine::InteropEngine, String) {
     let foreign = ExternalDevChain::genesis();
@@ -68,10 +74,7 @@ fn sample_envelope() -> InteropMessageEnvelope {
 fn production_interop_remains_disabled_by_default() {
     let gate = InteropActivationGate::fail_closed_default();
     assert_eq!(gate.state, InteropActivationState::Disabled);
-    assert_eq!(
-        gate.require_production().unwrap_err(),
-        InteropError::ProductionInteropDisabled
-    );
+    assert_eq!(gate.require_production().unwrap_err(), InteropError::ProductionInteropDisabled);
     let mut gate2 = InteropActivationGate::fail_closed_default();
     gate2.relayer_started_must_not_activate();
     gate2.url_present_must_not_activate("https://rpc.example");
@@ -121,16 +124,17 @@ fn wrong_source_chain_and_unsupported_version_rejected() {
     let mut circuits = InteropCircuitBreakers::default();
     let mut consumed = BTreeSet::new();
     let mut engine = sunrey_interop::engine::InteropEngine::new();
-    engine.register_chain(
-        active_dev_chain(),
-        &sunrey_interop::engine::gov(
-            "gov",
-            sunrey_interop::types::ActorKind::GovernanceSigner,
-            sunrey_interop::governance::InteropGovernanceAction::RegisterExternalChain,
-            EXTERNAL_DEV_CHAIN_ID,
-        ),
-    )
-    .unwrap();
+    engine
+        .register_chain(
+            active_dev_chain(),
+            &sunrey_interop::engine::gov(
+                "gov",
+                sunrey_interop::types::ActorKind::GovernanceSigner,
+                sunrey_interop::governance::InteropGovernanceAction::RegisterExternalChain,
+                EXTERNAL_DEV_CHAIN_ID,
+            ),
+        )
+        .unwrap();
     let chain = engine.chains.get(EXTERNAL_DEV_CHAIN_ID).unwrap().clone();
     let mut boundary = InteropBoundary {
         engine: &mut engine,
@@ -144,7 +148,7 @@ fn wrong_source_chain_and_unsupported_version_rejected() {
             .unwrap_err(),
         InteropError::ProductionInteropDisabled
     );
-    let mut gate_dev = InteropActivationGate {
+    let gate_dev = InteropActivationGate {
         state: InteropActivationState::DevelopmentOnly,
         environment: "simulation".into(),
         live_flags: false,
@@ -247,24 +251,18 @@ fn paused_global_and_network_and_asset() {
     );
     circuits.global_paused = false;
     circuits.pause_network("net_a", "gov-1", "suspect");
-    assert_eq!(
-        circuits.guard_message("net_a", None, 0).unwrap_err(),
-        InteropError::NetworkPaused
-    );
+    assert_eq!(circuits.guard_message("net_a", None, 0).unwrap_err(), InteropError::NetworkPaused);
     circuits.paused_networks.clear();
     circuits.pause_asset("DEV_INTEROP_TEST_ASSET", "gov-1", "limit");
     assert_eq!(
-        circuits
-            .guard_message("net_a", Some("DEV_INTEROP_TEST_ASSET"), 0)
-            .unwrap_err(),
+        circuits.guard_message("net_a", Some("DEV_INTEROP_TEST_ASSET"), 0).unwrap_err(),
         InteropError::AssetPaused
     );
 }
 
 #[test]
 fn value_and_message_limits_enforced() {
-    let mut circuits = InteropCircuitBreakers::default();
-    circuits.value_limit_minor = 100;
+    let mut circuits = InteropCircuitBreakers { value_limit_minor: 100, ..Default::default() };
     assert_eq!(
         circuits.guard_message("net_a", None, 200).unwrap_err(),
         InteropError::ValueLimitExceeded
@@ -303,7 +301,9 @@ fn watcher_cannot_submit_or_govern() {
 #[test]
 fn network_egress_denied_for_privileged_destinations() {
     let policy = InteropNetworkPolicy::default();
-    assert!(require_egress(&policy, InteropServiceRole::Watcher, "fixture://external-dev-rpc").is_ok());
+    assert!(
+        require_egress(&policy, InteropServiceRole::Watcher, "fixture://external-dev-rpc").is_ok()
+    );
     assert_eq!(
         require_egress(&policy, InteropServiceRole::Watcher, "postgres://ledger").unwrap_err(),
         InteropError::NetworkEgressDenied
@@ -383,10 +383,7 @@ fn interop_keys_cannot_reuse_validator_or_treasury_purposes() {
         may_sign_governance: false,
         may_sign_treasury: false,
     };
-    assert_eq!(
-        assert_key_separation(&[bad]).unwrap_err(),
-        InteropError::KeyPurposeForbidden
-    );
+    assert_eq!(assert_key_separation(&[bad]).unwrap_err(), InteropError::KeyPurposeForbidden);
 }
 
 #[test]
@@ -397,12 +394,9 @@ fn outbound_failure_does_not_corrupt_settlement() {
     ledger.prepare_outbound(&envelope).unwrap();
     ledger.outbound_failed().unwrap();
     assert_eq!(ledger.outbound.failed, 1);
-    assert_eq!(ledger.outbound.settlement_committed, false);
+    assert!(!ledger.outbound.settlement_committed);
     ledger.commit_outbound_settlement();
-    assert_eq!(
-        ledger.outbound_failed().unwrap_err(),
-        InteropError::OutboundSettlementCorruption
-    );
+    assert_eq!(ledger.outbound_failed().unwrap_err(), InteropError::OutboundSettlementCorruption);
 }
 
 #[test]
