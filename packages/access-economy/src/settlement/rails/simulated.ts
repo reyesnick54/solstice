@@ -6,7 +6,7 @@
 
 import { randomUUID } from 'node:crypto';
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import {
   accessDomainEntitlementIdFor,
   accessDomainQuoteIdFor,

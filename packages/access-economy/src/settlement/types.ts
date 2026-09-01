@@ -1,5 +1,9 @@
 /**
+<<<<<<< HEAD
  * ACCESS Wave 3 — Fiat settlement and restricted virtual-card settlement types.
+=======
+ * ACCESS Wave 3 — Fiat settlement (Prompt 35) and restricted virtual-card (Prompt 36) types.
+>>>>>>> b68e2af0 (Fix CI typecheck blockers: settlement types merge, BffResponse union, provider-sdk dedup)
  */
 
 import type { UtcInstant } from '../../../domain/src/time.ts';
@@ -15,6 +19,7 @@ import type {
 import type { AccessCategoryId, AccessUnit } from '../domain/taxonomy.ts';
 import type { ProviderRef } from '../ids.ts';
 import type { AccessCardBufferPolicy } from './buffer-policy.ts';
+import type { IssuerControlSupport } from './issuer-port.ts';
 import type {
   AccessCardLifecycleEvent,
   AccessPaymentRailCapability,

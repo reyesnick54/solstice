@@ -3,7 +3,7 @@
  * Simulation only — no live provider HTTP.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type {
   AccessDiscoveryAdapterId,
   AccessDiscoveryProviderHealth,

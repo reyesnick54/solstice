@@ -28,7 +28,7 @@ import {
 } from './factors.ts';
 import { detectNumericOutliers, valuesDisagreeBeyondTolerance } from './outliers.ts';
 import { getTrustPolicy } from './policies.ts';
-import { trustReason } from './reason-codes.ts';
+import { trustReason, type TrustReason } from './reason-codes.ts';
 import type {
   CanonicalTrustResult,
   ConfidenceBand,
@@ -37,7 +37,6 @@ import type {
   TrustEvidenceMetadata,
   TrustObservationContext,
   TrustPolicyProfile,
-  TrustReason,
   TrustResultRecord,
   TrustResultStatus,
 } from './types.ts';

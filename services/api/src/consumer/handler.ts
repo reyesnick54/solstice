@@ -189,7 +189,7 @@ const STUB_GROUPS = [
   'notifications',
 ] as const;
 
-export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffRequest): BffResponse | Promise<BffResponse> {
+export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffRequest): BffResponse {
   const requestId = request.requestId ?? `req_${randomUUID()}`;
   const headers = {
     'cache-control': cachePolicyForPath(request.path).cacheControl,
@@ -957,22 +957,22 @@ function dispatchAuthenticated(
     return json(200, world.regulatory(), headers);
   }
   if (path === '/api/v1/world/snapshot' && method === 'GET') {
-    return handleWorldSnapshotRoute(runtime, requestId, headers);
+    return handleWorldSnapshotRoute(runtime, requestId, headers) as unknown as BffResponse;
   }
   if (path === '/api/v1/grow/context' && method === 'GET') {
-    return handleGrowContextRoute(runtime, requestId, headers);
+    return handleGrowContextRoute(runtime, requestId, headers) as unknown as BffResponse;
   }
   if (path === '/api/v1/agent/external-evidence' && method === 'GET') {
-    return handleAgentExternalEvidenceRoute(runtime, requestId, headers);
+    return handleAgentExternalEvidenceRoute(runtime, requestId, headers) as unknown as BffResponse;
   }
   if (path === '/api/v1/agent/external-events' && method === 'GET') {
     return handleAgentExternalEventsRoute(runtime, requestId, headers, principal);
   }
   if (path === '/api/v1/travel/overview' && method === 'GET') {
-    return handleTravelOverviewRoute(runtime, request, requestId, headers);
+    return handleTravelOverviewRoute(runtime, request, requestId, headers) as unknown as BffResponse;
   }
   if (path === '/api/v1/economy/productive/snapshot' && method === 'GET') {
-    return handleProductiveEconomySnapshotRoute(runtime, requestId, headers);
+    return handleProductiveEconomySnapshotRoute(runtime, requestId, headers) as unknown as BffResponse;
   }
   if (path === '/api/v1/world/physical-economy' && method === 'GET') {
     const world = runtime.worldExternalData;

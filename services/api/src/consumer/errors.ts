@@ -50,19 +50,51 @@ export type BffErrorEnvelope = {
   readonly apiVersion: 'v1';
 };
 
+export function defaultCategoryForErrorCode(errorCode: BffErrorCode): BffErrorCategory {
+  switch (errorCode) {
+    case 'AUTH_REQUIRED':
+    case 'SESSION_INVALID':
+    case 'STEP_UP_REQUIRED':
+      return 'AUTHENTICATION';
+    case 'RESOURCE_NOT_OWNED':
+    case 'FORBIDDEN_PROFILE_FIELD':
+    case 'FORBIDDEN':
+    case 'KERNEL_DENIED':
+    case 'KERNEL_REFUSED':
+      return 'AUTHORIZATION';
+    case 'NOT_FOUND':
+      return 'NOT_FOUND';
+    case 'FEATURE_UNAVAILABLE':
+      return 'TEMPORARY_UNAVAILABLE';
+    case 'VALIDATION':
+    case 'INVALID_PAGINATION_CURSOR':
+    case 'INVALID_FILTER':
+    case 'INVALID_PERIOD':
+    case 'MALFORMED':
+    case 'METHOD_NOT_ALLOWED':
+      return 'VALIDATION';
+    default:
+      return 'INTERNAL';
+  }
+}
+
 export function bffError(input: {
   readonly errorCode: BffErrorCode;
-  readonly category: BffErrorCategory;
+  readonly category?: BffErrorCategory;
   readonly message: string;
-  readonly retryable: boolean;
+  readonly retryable?: boolean;
   readonly requestId: string;
   readonly detailsSafeForClient?: Readonly<Record<string, string>>;
 }): BffErrorEnvelope {
+  const category = input.category ?? defaultCategoryForErrorCode(input.errorCode);
+  const retryable =
+    input.retryable ??
+    (category === 'TEMPORARY_UNAVAILABLE' || input.errorCode === 'FEATURE_UNAVAILABLE');
   return Object.freeze({
     errorCode: input.errorCode,
-    category: input.category,
+    category,
     message: input.message,
-    retryable: input.retryable,
+    retryable,
     detailsSafeForClient: Object.freeze({ ...(input.detailsSafeForClient ?? {}) }),
     requestId: input.requestId,
     apiVersion: 'v1',

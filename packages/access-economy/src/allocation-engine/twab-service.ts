@@ -12,6 +12,7 @@ import {
 } from '../dual-token-allocation/twab.ts';
 import type { BalanceCheckpoint } from '../dual-token-allocation/types.ts';
 import type { ParticipantAllocationInput, TokenBalanceReaderPort } from './types.ts';
+export type { TokenBalanceReaderPort } from './types.ts';
 
 export type TimeWeightedBalance = {
   readonly subjectRef: SubjectRef;

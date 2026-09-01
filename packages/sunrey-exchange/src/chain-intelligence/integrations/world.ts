@@ -2,7 +2,7 @@
  * World surface — Bitcoin network health display via canonical APIs.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type { ExternalChainIntelligenceService } from '../../../sunrey-chain/src/chain-intelligence/service.ts';
 import type { ExternalBlockchainId } from '../../../sunrey-chain/src/chain-intelligence/types.ts';
 

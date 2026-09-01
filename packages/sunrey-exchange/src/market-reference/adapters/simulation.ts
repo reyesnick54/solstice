@@ -5,7 +5,7 @@
  * Clearly non-production. Not a catalog provider.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import { commodityAssetId, resolveMarketAsset, searchRegisteredAssets } from '../assets.ts';
 import { defaultCommodityUnit, validatePriceMinorUnits } from '../units.ts';
 import {
