@@ -52,7 +52,7 @@ export type PhaseHWorld = {
   readonly startHttp: () => ReturnType<typeof startConsumerBff>;
 };
 
-export function createPhaseHWorld(): PhaseHWorld {
+export async function createPhaseHWorld(): PhaseHWorld {
   const alice = principal({
     actorId: 'actor_hin_alice',
     customerId: 'cust_hin_alice',

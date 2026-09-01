@@ -167,7 +167,7 @@ const STUB_GROUPS = [
   'notifications',
 ] as const;
 
-export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffRequest): BffResponse | Promise<BffResponse> {
+export async function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffRequest): Promise<BffResponse> {
   const requestId = request.requestId ?? `req_${randomUUID()}`;
   const headers = {
     'cache-control': cachePolicyForPath(request.path).cacheControl,
@@ -299,13 +299,13 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
   }
 }
 
-function dispatchAuthenticated(
+async function dispatchAuthenticated(
   runtime: ConsumerBffRuntime,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
   headers: Record<string, string>,
-): BffResponse | Promise<BffResponse> {
+): Promise<BffResponse> {
   const { method, path, query, body } = request;
   const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
 
@@ -465,32 +465,23 @@ function dispatchAuthenticated(
     return environmental;
   }
 
-  const opportunity = dispatchOpportunity(request, requestId, headers, runtime.opportunity);
+  const opportunity = dispatchOpportunity({ method, url: path }, requestId, headers, runtime.opportunity);
   if (opportunity) {
-    return opportunity;
+    return bffFromResponse(opportunity);
   }
 
   if (runtime.subscriptions && path.startsWith('/api/v1/subscriptions')) {
-    return dispatchSubscriptions(
+    const subscriptions = await dispatchSubscriptions(
       { method, url: path, body },
       requestId,
       headers,
       runtime.subscriptions,
       principal,
-    ).then(async (subscriptions) => {
-      if (!subscriptions) {
-        return json(
-          404,
-          bffError({ errorCode: 'NOT_FOUND', message: 'Subscription route not found', requestId }),
-          headers,
-        );
-      }
-      return {
-        status: subscriptions.status,
-        body: await subscriptions.json(),
-        headers: Object.fromEntries(subscriptions.headers.entries()),
-      };
-    });
+    );
+    if (!subscriptions) {
+      return json(404, bffNotFound('Subscription route not found', requestId), headers);
+    }
+    return bffFromResponse(subscriptions);
   }
   if (runtime.hin && isRightsMarketplace(runtime.hin)) {
     const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);
@@ -810,35 +801,35 @@ function dispatchAuthenticated(
   if (path === '/api/v1/world/economy' && method === 'GET') {
     const world = runtime.worldExternalData;
     if (!world) {
-      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'World external data unavailable', requestId }), headers);
+      return json(404, bffNotFound( 'World external data unavailable', requestId), headers);
     }
     return json(200, world.economy(), headers);
   }
   if (path === '/api/v1/world/fx' && method === 'GET') {
     const world = runtime.worldExternalData;
     if (!world) {
-      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'World FX reference unavailable', requestId }), headers);
+      return json(404, bffNotFound( 'World FX reference unavailable', requestId), headers);
     }
     return json(200, world.fx(), headers);
   }
   if (path === '/api/v1/world/markets' && method === 'GET') {
     const world = runtime.worldExternalData;
     if (!world) {
-      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'World market reference unavailable', requestId }), headers);
+      return json(404, bffNotFound( 'World market reference unavailable', requestId), headers);
     }
     return json(200, world.markets(), headers);
   }
   if (path === '/api/v1/world/filings' && method === 'GET') {
     const world = runtime.worldExternalData;
     if (!world) {
-      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Company filings unavailable', requestId }), headers);
+      return json(404, bffNotFound( 'Company filings unavailable', requestId), headers);
     }
     return json(200, world.filings(), headers);
   }
   if (path === '/api/v1/world/regulatory' && method === 'GET') {
     const world = runtime.worldExternalData;
     if (!world) {
-      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Regulatory publications unavailable', requestId }), headers);
+      return json(404, bffNotFound( 'Regulatory publications unavailable', requestId), headers);
     }
     return json(200, world.regulatory(), headers);
   }
@@ -863,70 +854,70 @@ function dispatchAuthenticated(
   if (path === '/api/v1/world/physical-economy' && method === 'GET') {
     const world = runtime.worldExternalData;
     if (!world) {
-      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Physical economy data unavailable', requestId }), headers);
+      return json(404, bffNotFound( 'Physical economy data unavailable', requestId), headers);
     }
     return json(200, world.physicalEconomy(), headers);
   }
   if (path === '/api/v1/world/energy' && method === 'GET') {
     const world = runtime.worldExternalData;
     if (!world) {
-      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Energy data unavailable', requestId }), headers);
+      return json(404, bffNotFound( 'Energy data unavailable', requestId), headers);
     }
     return json(200, world.energy(), headers);
   }
   if (path === '/api/v1/world/weather' && method === 'GET') {
     const world = runtime.worldExternalData;
     if (!world) {
-      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Weather data unavailable', requestId }), headers);
+      return json(404, bffNotFound( 'Weather data unavailable', requestId), headers);
     }
     return json(200, world.weather(), headers);
   }
   if (path === '/api/v1/world/geospatial' && method === 'GET') {
     const world = runtime.worldExternalData;
     if (!world) {
-      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Geospatial data unavailable', requestId }), headers);
+      return json(404, bffNotFound( 'Geospatial data unavailable', requestId), headers);
     }
     return json(200, world.geospatial(), headers);
   }
   if (path === '/api/v1/world/maritime' && method === 'GET') {
     const world = runtime.worldExternalData;
     if (!world) {
-      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Maritime data unavailable', requestId }), headers);
+      return json(404, bffNotFound( 'Maritime data unavailable', requestId), headers);
     }
     return json(200, world.maritime(), headers);
   }
   if (path === '/api/v1/world/logistics' && method === 'GET') {
     const world = runtime.worldExternalData;
     if (!world) {
-      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Logistics data unavailable', requestId }), headers);
+      return json(404, bffNotFound( 'Logistics data unavailable', requestId), headers);
     }
     return json(200, world.logistics(), headers);
   }
   if (path === '/api/v1/world/productive-graph' && method === 'GET') {
     const world = runtime.worldExternalData;
     if (!world) {
-      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Productive economic graph unavailable', requestId }), headers);
+      return json(404, bffNotFound( 'Productive economic graph unavailable', requestId), headers);
     }
     return json(200, world.productiveEconomicGraph(), headers);
   }
   if (path === '/api/v1/travel/context' && method === 'GET') {
     const world = runtime.worldExternalData;
     if (!world) {
-      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Travel context unavailable', requestId }), headers);
+      return json(404, bffNotFound( 'Travel context unavailable', requestId), headers);
     }
     return json(200, world.travelContext(), headers);
   }
   if (path === '/api/v1/world/provider-risk' && method === 'GET') {
     const world = runtime.worldExternalData;
     if (!world) {
-      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Provider risk monitor unavailable', requestId }), headers);
+      return json(404, bffNotFound( 'Provider risk monitor unavailable', requestId), headers);
     }
     return json(200, world.providerRisk(), headers);
   }
   if (path === '/api/v1/world/wave5-coverage' && method === 'GET') {
     const world = runtime.worldExternalData;
     if (!world) {
-      return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Wave 5 coverage unavailable', requestId }), headers);
+      return json(404, bffNotFound( 'Wave 5 coverage unavailable', requestId), headers);
     }
     return json(200, world.wave5Coverage(), headers);
   }
@@ -1378,7 +1369,7 @@ async function handleWorldSnapshotRoute(
 ): Promise<BffResponse> {
   const world = runtime.worldExternalData;
   if (!world) {
-    return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'World snapshot unavailable', requestId }), headers);
+    return json(404, bffNotFound( 'World snapshot unavailable', requestId), headers);
   }
   return json(200, await world.worldSnapshot(), headers);
 }
@@ -1390,7 +1381,7 @@ async function handleGrowContextRoute(
 ): Promise<BffResponse> {
   const world = runtime.worldExternalData;
   if (!world) {
-    return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Grow external context unavailable', requestId }), headers);
+    return json(404, bffNotFound( 'Grow external context unavailable', requestId), headers);
   }
   return json(200, await world.growContextAsync(), headers);
 }
@@ -1402,7 +1393,7 @@ async function handleAgentExternalEvidenceRoute(
 ): Promise<BffResponse> {
   const evidence = runtime.agentExternalEvidence;
   if (!evidence) {
-    return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Agent external evidence unavailable', requestId }), headers);
+    return json(404, bffNotFound( 'Agent external evidence unavailable', requestId), headers);
   }
   return json(200, await evidence.evidenceCatalog(), headers);
 }
@@ -1411,11 +1402,11 @@ function handleAgentExternalEventsRoute(
   runtime: ConsumerBffRuntime,
   requestId: string,
   headers: Record<string, string>,
-  principal?: BffPrincipal,
+  principal?: import('./ports.ts').BffPrincipal,
 ): BffResponse {
   const evidence = runtime.agentExternalEvidence;
   if (!evidence) {
-    return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'External action events unavailable', requestId }), headers);
+    return json(404, bffNotFound( 'External action events unavailable', requestId), headers);
   }
   const baseEvents = evidence.externalEvents();
   const accessEvents =
@@ -1437,16 +1428,17 @@ async function handleTravelOverviewRoute(
 ): Promise<BffResponse> {
   const travel = runtime.travel;
   if (!travel) {
-    return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Travel overview unavailable', requestId }), headers);
+    return json(404, bffNotFound( 'Travel overview unavailable', requestId), headers);
   }
   const q = request.query ?? {};
-  const body = await travel.overview({
+  const overviewQuery: import('./travel-adapter.ts').TravelOverviewQuery = {
     originLat: q.originLat != null ? Number(q.originLat) : null,
     originLon: q.originLon != null ? Number(q.originLon) : null,
-    destLat: q.destLat != null ? Number(q.destLat) : undefined,
-    destLon: q.destLon != null ? Number(q.destLon) : undefined,
-    destinationLabel: q.destinationLabel,
-  });
+    ...(q.destLat != null ? { destLat: Number(q.destLat) } : {}),
+    ...(q.destLon != null ? { destLon: Number(q.destLon) } : {}),
+    ...(q.destinationLabel !== undefined ? { destinationLabel: q.destinationLabel } : {}),
+  };
+  const body = await travel.overview(overviewQuery);
   return json(200, body, headers);
 }
 
@@ -1457,7 +1449,7 @@ async function handleProductiveEconomySnapshotRoute(
 ): Promise<BffResponse> {
   const world = runtime.worldExternalData;
   if (!world) {
-    return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Productive economy snapshot unavailable', requestId }), headers);
+    return json(404, bffNotFound( 'Productive economy snapshot unavailable', requestId), headers);
   }
   return json(200, await world.productiveEconomySnapshot(), headers);
 }
@@ -1875,6 +1867,24 @@ function json(status: number, body: unknown, headers: Record<string, string>): B
       'content-type': 'application/json',
     }),
   });
+}
+
+function bffNotFound(message: string, requestId: string): BffErrorEnvelope {
+  return bffError({
+    errorCode: 'NOT_FOUND',
+    category: 'NOT_FOUND',
+    message,
+    retryable: false,
+    requestId,
+  });
+}
+
+async function bffFromResponse(response: Response): Promise<BffResponse> {
+  return {
+    status: response.status,
+    body: await response.json(),
+    headers: Object.fromEntries(response.headers.entries()),
+  };
 }
 
 export const CONSUMER_BFF_ROUTES = [

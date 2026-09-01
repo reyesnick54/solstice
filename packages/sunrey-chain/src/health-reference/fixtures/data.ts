@@ -2,7 +2,7 @@
  * Wave 6 health reference fixture data.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type {
   ClinicalTrialObservation,
   DrugReference,

@@ -22,7 +22,7 @@ import { handleConsumerBff, type ConsumerBffRuntime } from '../services/api/src/
 
 const NOW = asUtcInstant('2026-08-23T12:00:00.000Z');
 
-function bffCall(
+async function bffCall(
   world: ReturnType<typeof createSandboxWorld>,
   method: string,
   path: string,
@@ -35,7 +35,7 @@ function bffCall(
     identity: world.runtime.identity.service,
     access: world.access,
   };
-  return handleConsumerBff(runtime, {
+  return await handleConsumerBff(runtime, {
     method,
     path,
     query: {},
@@ -343,12 +343,12 @@ describe('ACCESS-17 canonical access runtime', () => {
 
   it('BFF Mustang path uses canonical provider orchestration behind stable routes', () => {
     const world = createSandboxWorld();
-    const entitlements = bffCall(world, 'GET', '/api/v1/access/entitlements', 'basic_verified');
+    const entitlements = await bffCall(world, 'GET', '/api/v1/access/entitlements', 'basic_verified');
     const mobility = (entitlements.body as { items: { entitlementId: string; category: string }[] }).items.find(
       (row) => row.category === 'MOBILITY',
     );
     assert.ok(mobility);
-    const search = bffCall(world, 'POST', '/api/v1/access/search', 'basic_verified', {
+    const search = await bffCall(world, 'POST', '/api/v1/access/search', 'basic_verified', {
       category: 'MOBILITY',
       query: 'Mustang Miami',
       location: 'Miami, FL',
@@ -356,9 +356,9 @@ describe('ACCESS-17 canonical access runtime', () => {
     });
     assert.equal(search.status, 200);
     const opportunityId = (search.body as { items: { opportunityId: string }[] }).items[0]!.opportunityId;
-    const opportunity = bffCall(world, 'GET', `/api/v1/access/opportunities/${opportunityId}`, 'basic_verified');
+    const opportunity = await bffCall(world, 'GET', `/api/v1/access/opportunities/${opportunityId}`, 'basic_verified');
     assert.equal(opportunity.status, 200);
-    const quote = bffCall(world, 'POST', '/api/v1/access/quotes', 'basic_verified', {
+    const quote = await bffCall(world, 'POST', '/api/v1/access/quotes', 'basic_verified', {
       providerId: (opportunity.body as { providerId: string }).providerId,
       catalogItemId: (opportunity.body as { catalogItemId: string }).catalogItemId,
       quantity: 4,
@@ -368,7 +368,7 @@ describe('ACCESS-17 canonical access runtime', () => {
       idempotencyKey: 'access17_bff_quote',
     });
     assert.equal(quote.status, 201);
-    const started = bffCall(world, 'POST', '/api/v1/access/redemptions', 'basic_verified', {
+    const started = await bffCall(world, 'POST', '/api/v1/access/redemptions', 'basic_verified', {
       category: 'MOBILITY',
       providerId: 'turo',
       quoteId: (quote.body as { quoteId: string }).quoteId,
@@ -380,7 +380,7 @@ describe('ACCESS-17 canonical access runtime', () => {
     });
     assert.equal(started.status, 201);
     const redemptionId = (started.body as { redemptionId: string }).redemptionId;
-    const confirmed = bffCall(
+    const confirmed = await bffCall(
       world,
       'POST',
       `/api/v1/access/redemptions/${redemptionId}/confirm`,

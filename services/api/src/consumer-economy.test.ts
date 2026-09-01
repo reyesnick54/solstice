@@ -58,8 +58,8 @@ describe('Consumer BFF native economy', () => {
     assert.ok(!CONSUMER_BFF_ROUTES.some((row) => row.includes('issuance') || row.includes('mint') || row.includes('burn')));
   });
 
-  it('returns protocol-native SunRey and MoonRey supply without fabricating HIN metrics', () => {
-    const res = handleConsumerBff(economyRuntime(), {
+  it('returns protocol-native SunRey and MoonRey supply without fabricating HIN metrics', async () => {
+    const res = await handleConsumerBff(economyRuntime(), {
       method: 'GET',
       path: '/api/v1/economy',
       query: {},
@@ -83,9 +83,9 @@ describe('Consumer BFF native economy', () => {
     assert.equal(body.sunrey.marketPrice.valuationDoesNotSetPrice, true);
   });
 
-  it('rejects unknown assets and privileged POST issuance', () => {
+  it('rejects unknown assets and privileged POST issuance', async () => {
     const runtime = economyRuntime();
-    const missing = handleConsumerBff(runtime, {
+    const missing = await handleConsumerBff(runtime, {
       method: 'GET',
       path: '/api/v1/economy/assets/USDT',
       query: {},
@@ -93,7 +93,7 @@ describe('Consumer BFF native economy', () => {
       authorization: `Bearer ${TOKEN}`,
     });
     assert.equal(missing.status, 404);
-    const mint = handleConsumerBff(runtime, {
+    const mint = await handleConsumerBff(runtime, {
       method: 'POST',
       path: '/api/v1/economy/issuance',
       query: {},
@@ -103,8 +103,8 @@ describe('Consumer BFF native economy', () => {
     assert.ok(mint.status === 404 || mint.status === 405);
   });
 
-  it('returns verified productive-economy metrics without minting', () => {
-    const res = handleConsumerBff(economyRuntime(), {
+  it('returns verified productive-economy metrics without minting', async () => {
+    const res = await handleConsumerBff(economyRuntime(), {
       method: 'GET',
       path: '/api/v1/economy/productive',
       query: {},
@@ -124,7 +124,7 @@ describe('Consumer BFF native economy', () => {
     assert.equal(body.moonreyInput.minted, false);
     assert.equal(body.moonreyInput.marketPriceSet, false);
 
-    const sources = handleConsumerBff(economyRuntime(), {
+    const sources = await handleConsumerBff(economyRuntime(), {
       method: 'GET',
       path: '/api/v1/economy/productive/sources',
       query: {},

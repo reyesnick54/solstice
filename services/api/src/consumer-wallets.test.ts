@@ -4,7 +4,7 @@ import { describe, it } from 'node:test';
 import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
 import { handleConsumerBff, type ConsumerBffRuntime } from './consumer/handler.ts';
 
-function call(
+async function call(
   world: ReturnType<typeof createSandboxWorld>,
   method: string,
   path: string,
@@ -17,7 +17,7 @@ function call(
     identity: world.runtime.identity.service,
     wallets: world.wallets,
   };
-  return handleConsumerBff(runtime, {
+  return await handleConsumerBff(runtime, {
     method,
     path,
     query: {},
@@ -30,7 +30,7 @@ function call(
 describe('Consumer BFF wallets productization', () => {
   it('lists owned wallets without signing material', () => {
     const world = createSandboxWorld();
-    const listed = call(world, 'GET', '/api/v1/wallets', 'basic_verified');
+    const listed = await call(world, 'GET', '/api/v1/wallets', 'basic_verified');
     assert.equal(listed.status, 200);
     const body = listed.body as { items: { walletId: string; assetId: string }[]; productionSigningAuthorized: boolean };
     assert.equal(body.productionSigningAuthorized, false);
@@ -42,13 +42,13 @@ describe('Consumer BFF wallets productization', () => {
 
   it('denies cross-user wallet access', () => {
     const world = createSandboxWorld();
-    const denied = call(world, 'GET', '/api/v1/wallets/wal_sandbox_basic_sunrey', 'exchange');
+    const denied = await call(world, 'GET', '/api/v1/wallets/wal_sandbox_basic_sunrey', 'exchange');
     assert.equal(denied.status, 403);
   });
 
   it('returns a deposit address bound to the wallet asset', () => {
     const world = createSandboxWorld();
-    const address = call(world, 'GET', '/api/v1/wallets/wal_sandbox_basic_sunrey/deposit-address', 'basic_verified');
+    const address = await call(world, 'GET', '/api/v1/wallets/wal_sandbox_basic_sunrey/deposit-address', 'basic_verified');
     assert.equal(address.status, 200);
     const body = address.body as { address: string; assetId: string; qrPayload: string };
     assert.equal(body.address.startsWith('sr1'), true);
@@ -58,18 +58,18 @@ describe('Consumer BFF wallets productization', () => {
 
   it('quotes and executes a withdrawal only after step-up', () => {
     const world = createSandboxWorld();
-    const quoted = call(world, 'POST', '/api/v1/wallets/wal_sandbox_basic_sunrey/withdrawal-quote', 'basic_verified', {
+    const quoted = await call(world, 'POST', '/api/v1/wallets/wal_sandbox_basic_sunrey/withdrawal-quote', 'basic_verified', {
       destination: 'sr1peerxxxxxxxx',
       amountMinorUnits: '100000',
     });
     assert.equal(quoted.status, 200);
     const quote = quoted.body as { quoteId: string; estimate: boolean };
     assert.equal(quote.estimate, true);
-    const refused = call(world, 'POST', '/api/v1/wallets/wal_sandbox_basic_sunrey/withdrawals', 'basic_verified', {
+    const refused = await call(world, 'POST', '/api/v1/wallets/wal_sandbox_basic_sunrey/withdrawals', 'basic_verified', {
       quoteId: quote.quoteId,
     });
     assert.equal(refused.status, 401);
-    const executed = call(world, 'POST', '/api/v1/wallets/wal_sandbox_basic_sunrey/withdrawals', 'basic_verified', {
+    const executed = await call(world, 'POST', '/api/v1/wallets/wal_sandbox_basic_sunrey/withdrawals', 'basic_verified', {
       quoteId: quote.quoteId,
       stepUpSatisfied: true,
     });
@@ -81,7 +81,7 @@ describe('Consumer BFF wallets productization', () => {
 
   it('lets an Agent create a proposal without broadcasting', () => {
     const world = createSandboxWorld();
-    const proposal = call(world, 'POST', '/api/v1/wallets/wal_sandbox_agent_sunrey/withdrawals', 'agent_enabled', {
+    const proposal = await call(world, 'POST', '/api/v1/wallets/wal_sandbox_agent_sunrey/withdrawals', 'agent_enabled', {
       destination: 'sr1peerxxxxxxxx',
       amountMinorUnits: '50000',
       originatedFromAgent: true,
@@ -95,7 +95,7 @@ describe('Consumer BFF wallets productization', () => {
 
   it('aggregates SunRey Coin asset detail for Lovable', () => {
     const world = createSandboxWorld();
-    const detail = call(world, 'GET', '/api/v1/assets/SUNREY_COIN', 'basic_verified');
+    const detail = await call(world, 'GET', '/api/v1/assets/SUNREY_COIN', 'basic_verified');
     assert.equal(detail.status, 200);
     const body = detail.body as {
       displayName: string;
