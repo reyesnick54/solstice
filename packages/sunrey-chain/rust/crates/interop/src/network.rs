@@ -80,10 +80,10 @@ pub fn require_egress(
     if !egress_allowed(policy, role, destination) {
         return Err(InteropError::NetworkEgressDenied);
     }
-    if role != InteropServiceRole::ValidatorNode {
-        if destination.contains("validator-key") || destination.contains("consensus-key") {
-            return Err(InteropError::NetworkEgressDenied);
-        }
+    if role != InteropServiceRole::ValidatorNode
+        && (destination.contains("validator-key") || destination.contains("consensus-key"))
+    {
+        return Err(InteropError::NetworkEgressDenied);
     }
     if !policy.allow_database_access && destination.starts_with("postgres://") {
         return Err(InteropError::NetworkEgressDenied);

@@ -148,7 +148,7 @@ fn wrong_source_chain_and_unsupported_version_rejected() {
             .unwrap_err(),
         InteropError::ProductionInteropDisabled
     );
-    let mut gate_dev = InteropActivationGate {
+    let gate_dev = InteropActivationGate {
         state: InteropActivationState::DevelopmentOnly,
         environment: "simulation".into(),
         live_flags: false,
@@ -262,8 +262,7 @@ fn paused_global_and_network_and_asset() {
 
 #[test]
 fn value_and_message_limits_enforced() {
-    let mut circuits = InteropCircuitBreakers::default();
-    circuits.value_limit_minor = 100;
+    let mut circuits = InteropCircuitBreakers { value_limit_minor: 100, ..Default::default() };
     assert_eq!(
         circuits.guard_message("net_a", None, 200).unwrap_err(),
         InteropError::ValueLimitExceeded
@@ -395,7 +394,7 @@ fn outbound_failure_does_not_corrupt_settlement() {
     ledger.prepare_outbound(&envelope).unwrap();
     ledger.outbound_failed().unwrap();
     assert_eq!(ledger.outbound.failed, 1);
-    assert_eq!(ledger.outbound.settlement_committed, false);
+    assert!(!ledger.outbound.settlement_committed);
     ledger.commit_outbound_settlement();
     assert_eq!(ledger.outbound_failed().unwrap_err(), InteropError::OutboundSettlementCorruption);
 }
