@@ -301,7 +301,7 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
   }
 }
 
-async function dispatchAuthenticated(
+function dispatchAuthenticated(
   runtime: ConsumerBffRuntime,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
@@ -503,9 +503,23 @@ async function dispatchAuthenticated(
     return opportunity;
   }
 
-  const subscriptions = await dispatchSubscriptions(request, requestId, headers, runtime.subscriptions, principal);
-  if (subscriptions) {
-    return subscriptions;
+  if (path.startsWith('/api/v1/subscriptions')) {
+    return dispatchSubscriptions(
+      { method, url: path, body },
+      requestId,
+      headers,
+      runtime.subscriptions,
+      principal,
+    ).then((subscriptions) => {
+      if (!subscriptions) {
+        return json(
+          404,
+          bffError({ errorCode: 'NOT_FOUND', message: 'Subscription route not found', requestId }),
+          headers,
+        );
+      }
+      return subscriptions as unknown as BffResponse;
+    });
   }
   if (runtime.hin && isRightsMarketplace(runtime.hin)) {
     const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);

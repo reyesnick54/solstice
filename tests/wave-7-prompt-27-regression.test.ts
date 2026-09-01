@@ -45,13 +45,13 @@ describe('Wave 7 Prompt 27 — provider program regression', () => {
     assert.equal(classified, report.catalogTotal);
   });
 
-  it('documents accepted Wave 6 program gaps honestly (53 slots)', () => {
+  it('documents accepted Wave 6 program gaps honestly (24 slots)', () => {
     const gaps = wave7AcceptedGapSummary();
     const total = gaps.reduce((sum, g) => sum + g.slotCount, 0);
     const report = buildWave7CoverageReport();
     assert.equal(report.catalogTotal + total, WAVE7_EXPECTED_PROGRAM_TOTAL);
-    assert.ok(gaps.some((g) => g.category === 'travel'));
     assert.ok(gaps.some((g) => g.category === 'hin'));
+    assert.ok(gaps.some((g) => g.category === 'logistics'));
   });
 
   it('3. every implemented adapter loads without optional credentials', () => {
