@@ -46,7 +46,11 @@ impl FinalityRequirement {
         }
     }
 
-    pub fn satisfies(&self, observation: &ExternalRpcObservation, now_unix: u64) -> Result<(), InteropError> {
+    pub fn satisfies(
+        &self,
+        observation: &ExternalRpcObservation,
+        now_unix: u64,
+    ) -> Result<(), InteropError> {
         if observation.chain_id != self.chain_id {
             return Err(InteropError::WrongExternalChainId);
         }
@@ -88,9 +92,9 @@ impl ExternalRpcEvaluator {
         }
         candidates.sort_by_key(|o| o.block_height);
         let tallest = candidates.last().unwrap();
-        let conflicting = candidates.iter().any(|o| {
-            o.block_height == tallest.block_height && o.block_hash != tallest.block_hash
-        });
+        let conflicting = candidates
+            .iter()
+            .any(|o| o.block_height == tallest.block_height && o.block_hash != tallest.block_hash);
         if conflicting {
             return Err(InteropError::ExternalRpcConflict);
         }
