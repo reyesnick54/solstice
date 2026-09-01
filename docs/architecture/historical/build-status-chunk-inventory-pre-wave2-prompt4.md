@@ -4,7 +4,6 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
-<<<<<<< HEAD:docs/architecture/historical/build-status-chunk-inventory-pre-wave2-prompt4.md
 - Wave 4 Prompt 11 external opportunity live integrations
   (`packages/external-data/src/wave6`, `packages/external-data/src/certification`):
   governed HTTP adapters for Arbeitnow, RemoteOK, Remotive, Jobicy, Himalayas,
@@ -16,7 +15,6 @@ This document describes only what is implemented and tested in this tree.
   `graphql-jobs`, `artificial-intelligence-jobs`. `ENVIRONMENT` remains
   `simulation`; `productionAuthorized` stays `false` on all adapters.
 
-=======
 - SunRey Merchant Exchange — verified purchase intent marketplace
   (Wave 5 Prompt 14, `packages/sunrey-exchange/src/merchant-exchange`):
   `PurchaseIntent` lifecycle, intent verification, merchant eligibility,
@@ -30,7 +28,7 @@ This document describes only what is implemented and tested in this tree.
   identity verification state. Live merchant supply, payment execution,
   and fulfillment integration remain `NOT_CONNECTED`. See
   `docs/architecture/merchant-exchange.md`.
->>>>>>> db774484 (feat: implement SunRey Merchant Exchange purchase-intent marketplace (Wave 5 Prompt 14)):docs/build-status.md
+
 - Deterministic Human Contribution Valuation Engine (Chunk 111,
   `packages/human-economic-contribution/src/valuation`): evaluates a
   VERIFIED contribution under an active versioned valuation policy.
