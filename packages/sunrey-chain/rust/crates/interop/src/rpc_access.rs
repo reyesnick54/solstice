@@ -53,7 +53,10 @@ pub fn interop_may_call(role: &str, method: &str, path: &str) -> Result<(), Inte
         "WATCHER" => INTEROP_WATCHER_ALLOWED,
         _ => return Err(InteropError::RpcMethodForbidden),
     };
-    if matches!(class, RpcMethodClass::Dangerous | RpcMethodClass::Admin | RpcMethodClass::Validator) {
+    if matches!(
+        class,
+        RpcMethodClass::Dangerous | RpcMethodClass::Admin | RpcMethodClass::Validator
+    ) {
         return Err(InteropError::RpcMethodForbidden);
     }
     if allowed.contains(&class) {
