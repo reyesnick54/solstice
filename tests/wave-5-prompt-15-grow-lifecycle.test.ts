@@ -128,7 +128,7 @@ function plan(subjectId: string): GrowthPlan {
 }
 
 describe('Wave 5 Prompt 15 — Grow My Money lifecycle', () => {
-  it('maps opportunity discovery to canonical FinancialOpportunity without inventing returns', () => {
+  it('maps opportunity discovery to canonical FinancialOpportunity without inventing returns', async () => {
     const normalized = normalizeFinancialOpportunity(
       {
         opportunityId: 'opp_idle_cash' as never,
@@ -192,18 +192,18 @@ describe('Wave 5 Prompt 15 — Grow My Money lifecycle', () => {
     assert.equal(normalized.expectedReturnData.kind, 'DETERMINISTIC_EFFECT');
   });
 
-  it('SCENARIO A: excess cash → proposal → authorization → simulated execution → monitoring', () => {
+  it('SCENARIO A: excess cash → proposal → authorization → simulated execution → monitoring', async () => {
     const world = createPhaseEWorld('happy');
-    const opportunities = world.handle({ method: 'GET', path: '/api/v1/grow/opportunities', query: {} });
+    const opportunities = await world.handle({ method: 'GET', path: '/api/v1/grow/opportunities', query: {} });
     assert.equal(opportunities.status, 200);
-    const planRes = world.handle({ method: 'GET', path: '/api/v1/grow/plan', query: {} });
+    const planRes = await world.handle({ method: 'GET', path: '/api/v1/grow/plan', query: {} });
     assert.equal(planRes.status, 200);
     const planBody = planRes.body as { actions: Array<{ actionId: string; action: string }> };
     const action =
       planBody.actions.find((row) => row.action === 'PAPER_INVESTMENT_REVIEW_AVAILABLE') ??
       planBody.actions.find((row) => row.action === 'INVESTMENT_ACCOUNT_AVAILABLE') ??
       planBody.actions[0]!;
-    const created = world.handle({
+    const created = await world.handle({
       method: 'POST',
       path: '/api/v1/grow/proposals',
       query: {},
@@ -211,32 +211,32 @@ describe('Wave 5 Prompt 15 — Grow My Money lifecycle', () => {
     });
     assert.equal(created.status, 201);
     const proposalId = (created.body as { proposalId: string }).proposalId;
-    const modified = world.handle({
+    const modified = await world.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${proposalId}/modify`,
       query: {},
       body: { amountMinorUnits: '20000' },
     });
     assert.equal(modified.status, 200);
-    const approved = world.handle({
+    const approved = await world.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${proposalId}/approve`,
       query: {},
       body: { stepUpSatisfied: true },
     });
     assert.equal(approved.status, 200);
-    const executed = world.handle({
+    const executed = await world.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${proposalId}/execute`,
       query: {},
       body: { idempotencyKey: 'w5-scenario-a' },
     });
     assert.equal(executed.status, 200, JSON.stringify(executed.body));
-    const monitor = world.handle({ method: 'POST', path: '/api/v1/grow/monitor', query: {}, body: {} });
+    const monitor = await world.handle({ method: 'POST', path: '/api/v1/grow/monitor', query: {}, body: {} });
     assert.equal(monitor.status, 200);
   });
 
-  it('SCENARIO B: investment proposal blocked by compliance rejection', () => {
+  it('SCENARIO B: investment proposal blocked by compliance rejection', async () => {
     const blocked = evaluateGrowComplianceCheckpoint({
       suitability: evaluateGrowSuitability({
         kycComplete: true,
@@ -259,7 +259,7 @@ describe('Wave 5 Prompt 15 — Grow My Money lifecycle', () => {
     }
   });
 
-  it('SCENARIO C: material quote change invalidates authorization via proposal versioning', () => {
+  it('SCENARIO C: material quote change invalidates authorization via proposal versioning', async () => {
     const { grow, actor, subjectId } = setupGrow('scenario_c');
     const created = grow.generateProposal(actor, plan(subjectId), candidate(), `cust_${subjectId}`, {
       kycComplete: true,
@@ -303,7 +303,7 @@ describe('Wave 5 Prompt 15 — Grow My Money lifecycle', () => {
     }
   });
 
-  it('SCENARIO D: provider timeout reconciles without duplicate trade via idempotency', () => {
+  it('SCENARIO D: provider timeout reconciles without duplicate trade via idempotency', async () => {
     const adapter = new SimulationGrowExecutionAdapter();
     const key = idempotentExecutionKey('prop_demo', 1, 'client-key');
     assert.match(key, /prop_demo/);
@@ -339,7 +339,7 @@ describe('Wave 5 Prompt 15 — Grow My Money lifecycle', () => {
     assert.equal(submittedIsNotCompleted('SUBMITTED'), true);
   });
 
-  it('SCENARIO E: AI unsupported execution action rejected at backend boundary', () => {
+  it('SCENARIO E: AI unsupported execution action rejected at backend boundary', async () => {
     const port: GrowAgentToolPort = {
       getFinancialSnapshot: () => ({}),
       getGoals: () => ({}),
@@ -366,7 +366,7 @@ describe('Wave 5 Prompt 15 — Grow My Money lifecycle', () => {
     assert.equal(refusePrivilegedGrowExecution().code, 'AGENT_CANNOT_EXECUTE');
   });
 
-  it('SCENARIO F: revoked recurring mandate prevents future action', () => {
+  it('SCENARIO F: revoked recurring mandate prevents future action', async () => {
     const { grow, actor, subjectId } = setupGrow('scenario_f');
     const recurring = grow.createRecurring(actor, {
       subjectId,
@@ -387,7 +387,7 @@ describe('Wave 5 Prompt 15 — Grow My Money lifecycle', () => {
     assert.equal(revoked.value.state, 'REVOKED');
   });
 
-  it('blocks actionable proposals from stale market facts', () => {
+  it('blocks actionable proposals from stale market facts', async () => {
     const stale = sourcedFact({
       source: 'PUBLIC_MARKET_RESEARCH',
       retrievedAt: asUtcInstant('2026-08-31T10:00:00.000Z'),
@@ -399,11 +399,11 @@ describe('Wave 5 Prompt 15 — Grow My Money lifecycle', () => {
     assert.equal(gate.labelRequired, true);
   });
 
-  it('uses deterministic analysis engine for allocation math', () => {
+  it('uses deterministic analysis engine for allocation math', async () => {
     assert.equal(allocationWeightBps('2500', '10000', 'USD'), 2500);
   });
 
-  it('separates projected and realized outcomes', () => {
+  it('separates projected and realized outcomes', async () => {
     const attribution = projectedVsRealized({
       metric: 'interest',
       projectedMinorUnits: '500',
@@ -414,7 +414,7 @@ describe('Wave 5 Prompt 15 — Grow My Money lifecycle', () => {
     assert.notEqual(attribution.projected?.minorUnits, attribution.realized?.minorUnits);
   });
 
-  it('enforces reassessment cooldown to avoid proposal spam', () => {
+  it('enforces reassessment cooldown to avoid proposal spam', async () => {
     const decision = shouldReassess({
       finding: {
         kind: 'PORTFOLIO_DRIFT',
@@ -430,19 +430,19 @@ describe('Wave 5 Prompt 15 — Grow My Money lifecycle', () => {
     assert.equal(decision.cooldownActive, true);
   });
 
-  it('stops honestly when no execution provider exists', () => {
+  it('stops honestly when no execution provider exists', async () => {
     const unavailable = new UnavailableGrowExecutionAdapter();
     const prepare = unavailable.prepareExecution();
     assert.equal('code' in prepare && prepare.code, 'PROVIDER_UNAVAILABLE');
   });
 
-  it('proves AI/execution credential separation', () => {
+  it('proves AI/execution credential separation', async () => {
     const report = assertAiRuntimeIsolation();
     assert.equal(report.pass, true);
     assert.equal(report.aiReceivesMasterKey, false);
   });
 
-  it('exports a truthful Grow capability matrix and build status', () => {
+  it('exports a truthful Grow capability matrix and build status', async () => {
     const matrix = deriveCapabilityMatrixJson();
     assert.equal(matrix.schema, 'sunrey.grow.agent-capability-matrix.v1');
     assert.equal(matrix.environment, 'simulation');
@@ -453,7 +453,7 @@ describe('Wave 5 Prompt 15 — Grow My Money lifecycle', () => {
     assert.ok(GROW_BUILD_STATUS.some((row) => row.subsystem.includes('Investment execution (live)')));
   });
 
-  it('extends financial agent evaluation coverage for Grow safety cases', () => {
+  it('extends financial agent evaluation coverage for Grow safety cases', async () => {
     const growCases = evalCasesByCategory('GROW_MY_MONEY');
     assert.ok(growCases.length >= 4);
     assert.ok(AGENT_EVAL_CATEGORIES.includes('GROW_MY_MONEY'));

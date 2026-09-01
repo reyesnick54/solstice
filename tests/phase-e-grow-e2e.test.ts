@@ -5,19 +5,19 @@ import { containsGuaranteedReturnClaim } from '../packages/platform/src/grow/no-
 import { createPhaseEWorld } from './phase-e-world.ts';
 
 describe('Phase E Grow My Money E2E', () => {
-  it('runs the sandbox Grow lifecycle through the Consumer BFF', () => {
+  it('runs the sandbox Grow lifecycle through the Consumer BFF', async () => {
     const world = createPhaseEWorld('happy');
-    const home = world.handle({ method: 'GET', path: '/api/v1/grow', query: {} });
+    const home = await world.handle({ method: 'GET', path: '/api/v1/grow', query: {} });
     assert.equal(home.status, 200);
     const homeBody = home.body as { schema: string; screens: string[] };
     assert.equal(homeBody.schema, 'sunrey.consumer.grow.home.v1');
     assert.ok(homeBody.screens.includes('PROPOSAL_DETAIL'));
     assert.equal(containsGuaranteedReturnClaim(home.body), false);
 
-    const accounts = world.handle({ method: 'GET', path: '/api/v1/accounts', query: {} });
+    const accounts = await world.handle({ method: 'GET', path: '/api/v1/accounts', query: {} });
     assert.equal(accounts.status, 200);
 
-    const goal = world.handle({
+    const goal = await world.handle({
       method: 'POST',
       path: '/api/v1/grow/goals',
       query: {},
@@ -25,14 +25,14 @@ describe('Phase E Grow My Money E2E', () => {
     });
     assert.equal(goal.status, 201);
 
-    const snapshot = world.handle({ method: 'GET', path: '/api/v1/grow/snapshot', query: {} });
+    const snapshot = await world.handle({ method: 'GET', path: '/api/v1/grow/snapshot', query: {} });
     assert.equal(snapshot.status, 200);
     assert.equal((snapshot.body as { ledgerWins: boolean }).ledgerWins, true);
 
-    const opportunities = world.handle({ method: 'GET', path: '/api/v1/grow/opportunities', query: {} });
+    const opportunities = await world.handle({ method: 'GET', path: '/api/v1/grow/opportunities', query: {} });
     assert.equal(opportunities.status, 200);
 
-    const plan = world.handle({ method: 'GET', path: '/api/v1/grow/plan', query: {} });
+    const plan = await world.handle({ method: 'GET', path: '/api/v1/grow/plan', query: {} });
     assert.equal(plan.status, 200);
     const planBody = plan.body as { actions: Array<{ actionId: string; action: string }>; achievementPromised: boolean };
     assert.equal(planBody.achievementPromised, false);
@@ -42,11 +42,11 @@ describe('Phase E Grow My Money E2E', () => {
       planBody.actions[0];
     assert.ok(investAction);
 
-    const scenarios = world.handle({ method: 'GET', path: '/api/v1/grow/scenarios', query: {} });
+    const scenarios = await world.handle({ method: 'GET', path: '/api/v1/grow/scenarios', query: {} });
     assert.equal(scenarios.status, 200);
     assert.equal(containsGuaranteedReturnClaim(scenarios.body), false);
 
-    const created = world.handle({
+    const created = await world.handle({
       method: 'POST',
       path: '/api/v1/grow/proposals',
       query: {},
@@ -56,10 +56,10 @@ describe('Phase E Grow My Money E2E', () => {
     const proposal = created.body as { proposalId: string; contentHash: string; explainability: { canExecuteWithoutAuthority: boolean } };
     assert.equal(proposal.explainability.canExecuteWithoutAuthority, false);
 
-    const detail = world.handle({ method: 'GET', path: `/api/v1/grow/proposals/${proposal.proposalId}`, query: {} });
+    const detail = await world.handle({ method: 'GET', path: `/api/v1/grow/proposals/${proposal.proposalId}`, query: {} });
     assert.equal(detail.status, 200);
 
-    const modified = world.handle({
+    const modified = await world.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${proposal.proposalId}/modify`,
       query: {},
@@ -68,7 +68,7 @@ describe('Phase E Grow My Money E2E', () => {
     assert.equal(modified.status, 200);
     assert.equal((modified.body as { version: number }).version, 2);
 
-    const needsStepUp = world.handle({
+    const needsStepUp = await world.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${proposal.proposalId}/approve`,
       query: {},
@@ -77,7 +77,7 @@ describe('Phase E Grow My Money E2E', () => {
     assert.equal(needsStepUp.status, 401);
     assert.equal((needsStepUp.body as { errorCode?: string }).errorCode, 'STEP_UP_REQUIRED');
 
-    const approved = world.handle({
+    const approved = await world.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${proposal.proposalId}/approve`,
       query: {},
@@ -85,7 +85,7 @@ describe('Phase E Grow My Money E2E', () => {
     });
     assert.equal(approved.status, 200);
 
-    const executed = world.handle({
+    const executed = await world.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${proposal.proposalId}/execute`,
       query: {},
@@ -96,25 +96,25 @@ describe('Phase E Grow My Money E2E', () => {
     assert.ok(execution.state === 'COMPLETED' || execution.state === 'PARTIALLY_COMPLETED');
     assert.equal(execution.submittedIsNotCompleted, execution.state !== 'COMPLETED');
 
-    const status = world.handle({ method: 'GET', path: `/api/v1/grow/executions/${execution.executionId}`, query: {} });
+    const status = await world.handle({ method: 'GET', path: `/api/v1/grow/executions/${execution.executionId}`, query: {} });
     assert.equal(status.status, 200);
 
-    const portfolio = world.handle({ method: 'GET', path: '/api/v1/grow/portfolio', query: {} });
+    const portfolio = await world.handle({ method: 'GET', path: '/api/v1/grow/portfolio', query: {} });
     assert.equal(portfolio.status, 200);
     assert.equal((portfolio.body as { liveInvestmentExecution: boolean }).liveInvestmentExecution, false);
 
-    const performance = world.handle({ method: 'GET', path: '/api/v1/grow/performance', query: {} });
+    const performance = await world.handle({ method: 'GET', path: '/api/v1/grow/performance', query: {} });
     assert.equal(performance.status, 200);
     assert.equal((performance.body as { depositsAreNotPerformance: boolean }).depositsAreNotPerformance, true);
 
-    const progress = world.handle({ method: 'GET', path: '/api/v1/grow/plan/progress', query: {} });
+    const progress = await world.handle({ method: 'GET', path: '/api/v1/grow/plan/progress', query: {} });
     assert.equal(progress.status, 200);
 
-    const monitor = world.handle({ method: 'POST', path: '/api/v1/grow/monitor', query: {}, body: {} });
+    const monitor = await world.handle({ method: 'POST', path: '/api/v1/grow/monitor', query: {}, body: {} });
     assert.equal(monitor.status, 200);
     assert.equal((monitor.body as { silentInvestmentChange: boolean }).silentInvestmentChange, false);
 
-    const duplicate = world.handle({
+    const duplicate = await world.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${proposal.proposalId}/execute`,
       query: {},
