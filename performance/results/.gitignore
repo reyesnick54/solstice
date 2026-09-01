@@ -1,0 +1,3 @@
+# Ignore raw benchmark logs; summarized JSON is committed under wave6-prompt16-* directories.
+*.log
+*.raw

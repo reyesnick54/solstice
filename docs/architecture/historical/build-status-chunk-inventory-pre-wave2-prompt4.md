@@ -4,6 +4,22 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- Wave 6 Prompt 16 production performance qualification harness
+  (`performance/`, `scripts/qualify-performance.mjs`,
+  `docs/qualification/PERFORMANCE_QUALIFICATION.md`): reproducible
+  API, ledger, chain, exchange, grow, access, provider fan-out,
+  subscription-intelligence, stress, and chaos suites with
+  machine-readable results under `performance/results/`. CI regression
+  via `npm run test:performance-regression`. Executed on this tree
+  2026-08-31 — see
+  `performance/results/wave6-prompt16-2026-08-31T16-27-43-672Z/`.
+  Status by suite: API `BENCHMARKED`, database `TARGET_MET`,
+  blockchain `BENCHMARKED`, exchange `TARGET_MET`, grow `TARGET_MET`,
+  access `TARGET_MET`, providers `TARGET_MET`,
+  subscription-intelligence `BENCHMARKED`, stress `BENCHMARKED`,
+  chaos/soak `ENVIRONMENT_LIMITED`, merchant-exchange `NOT_TESTED`.
+  Engineering measurements only — not contractual SLAs.
+
 - Wave 4 Prompt 11 external opportunity live integrations
   (`packages/external-data/src/wave6`, `packages/external-data/src/certification`):
   governed HTTP adapters for Arbeitnow, RemoteOK, Remotive, Jobicy, Himalayas,
