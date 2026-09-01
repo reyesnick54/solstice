@@ -183,8 +183,12 @@ describe('provider-sdk transport', () => {
 
   it('6. redacts secrets from logs', () => {
     const catalog = createRedactionCatalog();
+    const fakeBearer = `Bearer ${'x'.repeat(24)}`;
+    const fakeApiKey = `k${'y'.repeat(24)}`;
     const headers = redactHeaderRecord(
       {
+        Authorization: fakeBearer,
+        'X-API-Key': fakeApiKey,
         Authorization: 'Bearer ' + 'super-secret-bearer-token-value',
         'X-API-Key': 'super-secret-api-key-value',
         Accept: 'application/json',

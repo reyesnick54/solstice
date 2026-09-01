@@ -27,6 +27,8 @@ It is not:
 
 | Topic | Canonical reference |
 | --- | --- |
+| **Audit-readiness (Wave 6 P17)** | `docs/security/audit-readiness/README.md` |
+| Independent audit scope | `docs/security/INDEPENDENT_SECURITY_AUDIT_SCOPE.md` |
 | Constitution | `docs/architecture/constitution.md` |
 | Manifest | `docs/architecture/manifest.json` |
 | Authority map | `docs/productization/sunrey-authority-map.json` |
@@ -65,6 +67,7 @@ It is not:
 Run and retain output of:
 
 ```
+npm run security:test
 npm run productization:preflight
 npm run typecheck
 npm test -- packages/security/src/productization.test.ts packages/security/src/security.test.ts packages/security/src/hsm.test.ts packages/security/src/regulated.test.ts
