@@ -372,3 +372,4 @@ export * from './catalog/types.ts';
 export * from './catalog/loader.ts';
 export * from './mocks/index.ts';
 export * from './trust/index.ts';
+export * from './certification/index.ts';

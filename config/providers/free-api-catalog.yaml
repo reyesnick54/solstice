@@ -5,7 +5,7 @@ population_status: partial
 source_list:
   document: wave2 + wave3 + wave4 + wave5 YAML + FX + crypto + chain-intelligence + compliance + environmental +
     productive-economy + wave6 health/opportunity catalog entries
-  version: wave-1-prompt-2
+  version: wave-4-prompt-10
   verified_at: 2026-08-31
 notes: "Catalog rebuild: 102 unique providers merged from Waves 2–6 implementations. Authoritative 126-provider master
   list remains partially populated; remaining slots are documented in wave7 coverage as MISSING_IMPLEMENTATION."

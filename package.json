@@ -45,6 +45,7 @@
     "test:phase-f": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/sunrey-agent/src/productization*.test.ts packages/sunrey-sdk/src/agent-productization.test.ts services/api/src/consumer-agent.test.ts",
     "provider:test": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/provider-test.ts",
     "provider:certify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/provider-certify.ts",
+    "providers:certify:live": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/providers-certify-live.ts",
     "providers:validate": "node scripts/validate-free-api-catalog.mjs",
     "integrity:check": "node scripts/check-json-integrity.mjs && node scripts/validate-json.mjs && node scripts/check-merge-integrity.mjs && node scripts/check-yaml-integrity.mjs && node scripts/check-case-collisions.mjs && node scripts/validate-free-api-catalog.mjs",
     "integrity:report": "node scripts/integrity-report.mjs",

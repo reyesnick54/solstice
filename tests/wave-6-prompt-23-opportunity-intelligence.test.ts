@@ -27,7 +27,7 @@ import {
   OPPORTUNITY_CACHE_CAPABILITIES,
   WAVE6_ACTION_CENTER_EVENT_TYPES,
   newRelevantJobEvent,
-  buildWave6CoverageReport,
+  buildOpportunityCoverageReport,
 } from '../packages/external-data/src/wave6/index.ts';
 import { setAdapterScenario } from '../packages/external-data/src/wave6/adapters/base.ts';
 import { createOpportunityAdapter } from '../packages/external-data/src/wave6/adapters/index.ts';
@@ -321,7 +321,7 @@ describe('Wave 6 Prompt 23 — opportunity intelligence', () => {
   });
 
   it('28. coverage report counts providers', () => {
-    const report = buildWave6CoverageReport();
+    const report = buildOpportunityCoverageReport();
     assert.equal(report.totalProviders, 11);
     assert.equal(report.jobProviders, 5);
     assert.equal(report.skillsProviders, 2);

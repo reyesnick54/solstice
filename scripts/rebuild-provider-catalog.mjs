@@ -1,12 +1,6 @@
 #!/usr/bin/env node
 /**
- * Rebuild config/providers/free-api-catalog.yaml from authoritative partial sources:
- * - Wave 2 YAML entries (macro, markets, filings, commodities, gov data)
- * - FX reference catalog entries (packages/payments)
- * - Crypto market catalog entries (packages/sunrey-exchange)
- * - Compliance intelligence catalog entries (packages/kernel)
- * - Wave 3–6 YAML catalog entry files
- * - External-data, environmental, chain-intelligence, and productive-economy entries
+ * Rebuild config/providers/free-api-catalog.yaml from authoritative partial sources.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -73,7 +67,6 @@ const WAVE5_PRODUCTIVE_CATALOG_ENTRIES = await loadTsExport(
 
 const byId = new Map();
 
-/** Stable catalog field order — provider identity first for readable diffs and review. */
 function normalizeProviderEntry(entry) {
   const clone = structuredClone(entry);
   const {
@@ -106,7 +99,6 @@ function addEntries(entries) {
   }
 }
 
-// Later sources override earlier by provider_id.
 addEntries(wave2.providers);
 addEntries(FX_REFERENCE_CATALOG_ENTRIES);
 addEntries([FX_REFERENCE_BLOCKED_CATALOG_ENTRY]);
@@ -132,7 +124,7 @@ const catalog = {
   source_list: {
     document:
       'wave2 + wave3 + wave4 + wave5 YAML + FX + crypto + chain-intelligence + compliance + environmental + productive-economy + wave6 health/opportunity catalog entries',
-    version: 'wave-1-prompt-2',
+    version: 'wave-4-prompt-10',
     verified_at: '2026-08-31',
   },
   notes:
