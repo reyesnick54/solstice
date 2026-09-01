@@ -168,7 +168,9 @@ export async function certifyOpportunityProvider(
 export async function runOpportunityCertification(
   options: CertificationRunnerOptions = {},
 ): Promise<ProviderCertificationReport> {
-  const allowNetwork = options.allowNetwork ?? process.env.SUNREY_LIVE_CERTIFICATION === '1';
+  const allowNetwork =
+    options.allowNetwork ??
+    (process.env.PROVIDERS_LIVE_CERTIFY === '1' || process.env.SUNREY_LIVE_CERTIFICATION === '1');
   const providerIds = options.providerIds ?? [...createAllOpportunityAdapters().map((p) => p.providerId)];
   const results: ProviderCertificationResult[] = [];
   for (const providerId of providerIds) {
@@ -182,7 +184,8 @@ export async function runOpportunityCertification(
 }
 
 export async function runEconomicCertification(
-  allowNetwork = process.env.SUNREY_LIVE_CERTIFICATION === '1',
+  allowNetwork =
+    process.env.PROVIDERS_LIVE_CERTIFY === '1' || process.env.SUNREY_LIVE_CERTIFICATION === '1',
 ): Promise<readonly ProviderCertificationResult[]> {
   const certifiedAtUtc = asUtcInstant(new Date().toISOString());
   const results: ProviderCertificationResult[] = [];
