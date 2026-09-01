@@ -4,30 +4,50 @@
 //! External chains may interoperate. They are not SunRey's source of truth.
 //! Relayers are untrusted. There is no trusted-multisig bridge.
 
+pub mod activation;
 pub mod asset;
+pub mod boundary;
 pub mod channel;
+pub mod circuit_breaker;
 pub mod client;
 pub mod connection;
 pub mod crypto;
 pub mod encoding;
 pub mod engine;
+pub mod envelope;
 pub mod error;
 pub mod evidence;
+pub mod external_rpc;
+pub mod flow;
 pub mod foreign;
 pub mod governance;
 pub mod header;
 pub mod identity;
 pub mod ids;
+pub mod keys;
 pub mod light_client;
+pub mod network;
 pub mod oracle;
 pub mod packet;
 pub mod registry;
 pub mod relayer;
+pub mod rpc_access;
 pub mod security;
 pub mod types;
+pub mod watcher;
 
 pub mod cli;
 
+pub use activation::{InteropActivationGate, InteropActivationState};
+pub use boundary::{InteropBoundary, ValidationPhase, VerifiedInteropMessage};
+pub use circuit_breaker::{InteropCircuitBreakers, PauseAuthorityRegistry};
+pub use envelope::{InteropFlowDirection, InteropMessageEnvelope, ENVELOPE_SCHEMA_VERSION};
+pub use external_rpc::{ExternalRpcEvaluator, ExternalRpcObservation, FinalityRequirement};
+pub use flow::{InteropFlowLedger, OutboundFlowState};
+pub use keys::{InteropKeyBinding, INTEROP_SIGNING_PURPOSE};
+pub use network::{InteropNetworkPolicy, InteropServiceRole};
+pub use rpc_access::{classify_rpc_method, interop_may_call, RpcMethodClass};
+pub use watcher::{IsolatedWatcher, WatcherObservation, WatcherPort};
 pub use asset::{InteropAssetLedger, DEV_INTEROP_TEST_ASSET};
 pub use engine::{
     amount_payload, development_fixture, make_packet, open_dev_path, InteropEngine, InteropMetrics,

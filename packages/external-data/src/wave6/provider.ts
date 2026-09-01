@@ -33,7 +33,8 @@ export interface OpportunityProvider {
   readonly capabilities: readonly OpportunityCapability[];
   readonly geographicScope: readonly string[];
   readonly productionAuthorized: false;
-  readonly liveProviderConnected: false;
+  /** Whether this adapter can reach a documented production endpoint when data mode is live. */
+  readonly liveCapable: boolean;
 
   searchJobs(
     query: JobSearchQuery,

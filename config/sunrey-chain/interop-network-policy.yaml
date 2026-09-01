@@ -1,0 +1,72 @@
+# SunRey interoperability network policy (Wave 3 Prompt 9)
+#
+# Allowlist-based egress for isolated watcher and relayer services.
+# Production interoperability remains DISABLED until governance activation.
+
+version: wave-3-prompt-9
+environment: simulation
+productionInteropEnabled: false
+
+services:
+  watcher:
+    role: WATCHER
+    allowedEgress:
+      - fixture://external-dev-rpc
+    deniedEgress:
+      - postgres://*
+      - https://admin.sunrey.internal/*
+      - https://vault.sunrey.internal/*
+    credentials:
+      - WATCHER_ATTESTATION
+    forbiddenCredentials:
+      - VALIDATOR_VOTING_KEY
+      - GOVERNANCE_KEY
+      - TREASURY_MASTER
+      - CUSTODY_HSM_SECRET
+
+  relayer:
+    role: RELAYER
+    allowedEgress:
+      - https://interop-ingress.sunrey.test/v1
+    deniedEgress:
+      - postgres://*
+      - https://admin.sunrey.internal/*
+      - https://vault.sunrey.internal/*
+    credentials:
+      - RELAYER_SUBMISSION
+      - INTEROPERABILITY_SIGNING
+    forbiddenCredentials:
+      - VALIDATOR_VOTING_KEY
+      - GOVERNANCE_KEY
+      - TREASURY_MASTER
+
+  validatorNode:
+    role: VALIDATOR_NODE
+    note: interop services must not run in the validator process
+    interopEgress: false
+
+rpcAccess:
+  watcherAllowed:
+    - GET /v1/chain/status
+    - GET /v1/network/status
+    - GET /v1/chain/blocks
+  relayerAllowed:
+    - GET /v1/chain/status
+    - GET /v1/network/status
+    - POST /v1/transactions
+  forbiddenForInterop:
+    - POST /admin/produce-block
+    - GET /v1/validator/admin
+    - POST /v1/validator/sign
+    - POST /validator/unsafe-reset
+
+activation:
+  defaultState: DISABLED
+  relayerStartActivates: false
+  rpcUrlActivates: false
+  credentialPresentActivates: false
+  nodeEnvProductionActivates: false
+  requiredForProduction:
+    - governanceApprovalId
+    - qualificationComplete
+    - counselReviewConfirmed

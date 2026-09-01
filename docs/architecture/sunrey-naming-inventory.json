@@ -746,7 +746,7 @@
       "lineText": "      org.opencontainers.image.source=\"https://github.com/reyesnick54/solstice\" \\"
     },
     {
-      "path": "docs/BUILD-STATUS.md",
+      "path": "docs/BUILD_STATUS.md",
       "line": 1,
       "column": 3,
       "token": "Solstice",
@@ -4035,7 +4035,7 @@
       "lineText": "Do not allowlist an active public-facing Solstice name just to make"
     },
     {
-      "path": "docs/build-status.md",
+      "path": "docs/BUILD_STATUS.md",
       "line": 406,
       "column": 3,
       "token": "Solstice",

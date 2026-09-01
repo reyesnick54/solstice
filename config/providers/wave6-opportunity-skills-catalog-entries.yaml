@@ -9,7 +9,7 @@ providers:
       technology and general roles across Europe and globally.
     primary_category: jobs_skills
     secondary_categories:
-      - career_opportunities
+      - jobs_skills
     capabilities:
       - job_search
       - employment_market
@@ -72,6 +72,250 @@ providers:
       verified_against_official_docs: true
       last_verified: "2026-08-31"
       notes: Official Arbeitnow API documentation reviewed.
+
+  - provider_id: remoteok
+    name: Remote OK API
+    short_name: RemoteOK
+    description: >
+      Free public remote job listings API covering technology and startup roles globally.
+    primary_category: jobs_skills
+    capabilities:
+      - job_search
+      - employment_market
+      - career_opportunities
+    endpoints:
+      base_url: https://remoteok.com
+      api_version: v1
+      documentation_url: https://remoteok.com/api
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public REST API.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Free public remote job listings.
+    commercial_use:
+      status: verified_allowed
+      notes: Attribution to Remote OK required.
+    redistribution:
+      status: attribution_required
+      notes: Job listing attribution required.
+    rate_limits:
+      documented: false
+      notes: Enforce SunRey caching.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: Remote technology roles.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+        - action_center
+      canonical_provider_interface: OpportunityProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: live_validated
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Live network validation in Wave 4 Prompt 11.
+
+  - provider_id: remotive
+    name: Remotive Remote Jobs API
+    short_name: Remotive
+    description: >
+      Free public remote jobs API from Remotive covering global technology roles.
+    primary_category: jobs_skills
+    capabilities:
+      - job_search
+      - employment_market
+      - career_opportunities
+    endpoints:
+      base_url: https://remotive.com
+      api_version: v1
+      documentation_url: https://remotive.com/api-doc
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public REST API.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Free public remote job listings.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      notes: Enforce SunRey caching.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: Remote technology roles.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+        - action_center
+      canonical_provider_interface: OpportunityProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: live_validated
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Live network validation in Wave 4 Prompt 11.
+
+  - provider_id: jobicy
+    name: Jobicy Remote Jobs API
+    short_name: Jobicy
+    description: >
+      Free public remote jobs API from Jobicy covering global technology roles.
+    primary_category: jobs_skills
+    capabilities:
+      - job_search
+      - career_opportunities
+    endpoints:
+      base_url: https://jobicy.com
+      api_version: v2
+      documentation_url: https://jobicy.com/api
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public REST API.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Free public remote job listings.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      notes: Enforce SunRey caching.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: Remote technology roles.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+      canonical_provider_interface: OpportunityProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: live_validated
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Live network validation in Wave 4 Prompt 11.
+
+  - provider_id: himalayas
+    name: Himalayas Remote Jobs API
+    short_name: Himalayas
+    description: >
+      Free public remote jobs API from Himalayas covering global technology roles.
+    primary_category: jobs_skills
+    capabilities:
+      - job_search
+      - career_opportunities
+    endpoints:
+      base_url: https://himalayas.app
+      api_version: v1
+      documentation_url: https://himalayas.app/jobs/api
+      status_url: null
+    authentication:
+      type: none
+      required: false
+      registration_required: false
+      environment_variable: null
+      notes: Public REST API.
+    access:
+      status: verified_free
+      free_tier_verified: true
+      registration_required: false
+      notes: Free public remote job listings.
+    commercial_use:
+      status: verified_allowed
+      notes: null
+    redistribution:
+      status: attribution_required
+      notes: null
+    rate_limits:
+      documented: false
+      notes: Enforce SunRey caching.
+    data_characteristics:
+      freshness: realtime
+      geographic_scope:
+        - GLOBAL
+      historical_data: false
+      realtime: true
+      data_format: json
+      notes: Remote technology roles.
+    sunrey:
+      domain:
+        - grow
+        - financial_agent
+        - economic_graph
+        - world
+      canonical_provider_interface: OpportunityProvider
+      priority: high
+      launch_tier: production_candidate
+      authority_class: community_data
+      integration_state: live_validated
+      existing_adapter: packages/external-data/src/wave6/adapters/index.ts
+    verification:
+      status: verified
+      verified_against_official_docs: true
+      last_verified: "2026-08-31"
+      notes: Live network validation in Wave 4 Prompt 11.
 
   - provider_id: ai-dev-jobs
     name: AI Dev Jobs API
@@ -329,7 +573,7 @@ providers:
       titles, skill requirements, and market demand signals for tech careers.
     primary_category: jobs_skills
     secondary_categories:
-      - occupations
+      - jobs_skills
     capabilities:
       - occupations
       - skills

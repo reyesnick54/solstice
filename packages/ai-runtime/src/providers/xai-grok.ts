@@ -188,7 +188,7 @@ export class XaiGrokAiProvider implements AiInferenceProvider {
     if (!transported.ok) {
       return err({ ...transported, ok: false, providerKind: 'XAI_GROK' });
     }
-    const status = classifyHttpsStatus(transported.status);
+    const status = classifyHttpsStatus(transported.status, transported.body);
     if (!status.ok) {
       return err({
         ok: false,

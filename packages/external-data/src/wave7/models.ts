@@ -19,6 +19,9 @@ export type Wave7ProviderCoverage = {
   readonly providerId: string;
   readonly category: string;
   readonly status: Wave7ProgramStatus;
+  readonly certificationStatus: string;
+  readonly liveValidated: boolean;
+  readonly simulated: boolean;
   readonly adapterId: string | null;
   readonly environment: 'simulation';
   readonly authRequired: boolean;

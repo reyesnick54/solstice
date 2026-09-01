@@ -1,0 +1,15 @@
+{
+  "jobs": [
+    {
+      "id": 2001,
+      "url": "https://remotive.com/remote-jobs/software-development/senior-backend-2001",
+      "title": "Senior Backend Engineer",
+      "company_name": "Remote Labs",
+      "tags": ["python", "postgres", "aws"],
+      "job_type": "full_time",
+      "publication_date": "2026-08-28T10:00:00.000Z",
+      "candidate_required_location": "Worldwide",
+      "description": "Design APIs and data pipelines for a global product team."
+    }
+  ]
+}

@@ -4,6 +4,17 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- Wave 4 Prompt 11 external opportunity live integrations
+  (`packages/external-data/src/wave6`, `packages/external-data/src/certification`):
+  governed HTTP adapters for Arbeitnow, RemoteOK, Remotive, Jobicy, Himalayas,
+  and Hacker News with fixture simulation fallback, execution provenance
+  (`simulated` / `liveNetworkCallObserved`), in-memory cache, and live
+  certification via `npm run provider:live-certify` when
+  `SUNREY_LIVE_CERTIFICATION=1`. Frankfurter FX and World Bank macro probes
+  live at `packages/external-data/src/wave2/live-economic.ts`. Blocked:
+  `graphql-jobs`, `artificial-intelligence-jobs`. `ENVIRONMENT` remains
+  `simulation`; `productionAuthorized` stays `false` on all adapters.
+
 - Deterministic Human Contribution Valuation Engine (Chunk 111,
   `packages/human-economic-contribution/src/valuation`): evaluates a
   VERIFIED contribution under an active versioned valuation policy.
@@ -85,6 +96,15 @@ This document describes only what is implemented and tested in this tree.
   legal or commercial approval. `PRODUCTION_AUTHORIZED` remains gated
   on configured evidence and human authority. See
   `docs/providers/chunk-91-provider-runtime.md`.
+- Universal provider certification framework (Wave 4 Prompt 10,
+  `packages/provider-sdk/src/certification`): canonical lifecycle states
+  (`CATALOGED` through `PRODUCTION_QUALIFIED`, plus `SIMULATED`,
+  `DEGRADED`, `DISABLED`), evidence-derived `ProviderCertification`
+  results, failure taxonomy, response provenance, silent-simulation
+  rejection, and `ProviderCertificationService` integrated with Wave 7
+  coverage. Catalog presence does not imply live status.
+  `npm run providers:certify:live` runs controlled live checks only when
+  explicitly enabled. Normal CI uses fixture/simulation probes only.
 - SunRey production handoff and day-2 operations control plane
   (Chunk 90, `packages/sunrey-chain/src/production-handoff`):
   `ProductionHandoffPackage`, system inventory, responsibility matrix,
@@ -827,10 +847,18 @@ This document describes only what is implemented and tested in this tree.
 - SunRey AI runtime (Chunk 101, `packages/ai-runtime`):
   provider-neutral inference plane behind the Financial Agent.
   Capability `sunrey-ai-runtime` is `IMPLEMENTED`. S3M is the
-  intended primary intelligence engine. xAI/Grok is reserved for
-  Chunk 103 and is not networked. LocalTest is deterministic and
-  offline. Providers cannot execute payments, trades, mint, or
-  sign. Tool intents enter `packages/sunrey-agent` as proposals.
+  intended primary intelligence engine. Chunk 103 xAI/Grok adapter
+  is implemented at `packages/ai-runtime/src/providers/xai-grok.ts`
+  with fixture-first CI and opt-in live preview
+  (`SUNREY_EXTERNAL_AI_PREVIEW_ENABLED`, `ai:certify:live --live`).
+  Wave 4 Prompt 12 qualification states distinguish reachability,
+  authentication, model availability, inference, structured output,
+  and evaluation. **xAI status (2026-08-31):** adapter
+  `IMPLEMENTED`; live inference requires credential + billing;
+  `PRODUCTION_QUALIFIED` not claimed without evaluation pass.
+  LocalTest is deterministic and offline. Providers cannot execute
+  payments, trades, mint, or sign. Tool intents enter
+  `packages/sunrey-agent` as proposals.
 - SunRey consumer Exchange (Chunk 99,
   `packages/sunrey-exchange/src/consumer`): consumer portfolio,
   indicative quotes, trade preview, buy/sell/convert with price
