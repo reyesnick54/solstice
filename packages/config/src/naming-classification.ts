@@ -266,7 +266,7 @@ function isPublicProductPath(path: string): boolean {
     posix === 'package.json' ||
     posix === 'AGENTS.md' ||
     posix === 'docs/architecture/constitution.md' ||
-    posix === 'docs/build-status.md'
+    posix === 'docs/BUILD_STATUS.md'
   );
 }
 

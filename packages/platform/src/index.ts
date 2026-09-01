@@ -263,3 +263,4 @@ export type {
   OpportunityDiscoveryContext,
 } from './growth/opportunity/types.ts';
 export * from './personal-economy/index.ts';
+export * from './subscription-intelligence/index.ts';

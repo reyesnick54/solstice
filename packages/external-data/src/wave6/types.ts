@@ -6,6 +6,7 @@
  */
 
 import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { ProviderExecutionProvenance } from '../certification/types.ts';
 import type { AuthorityClass } from '../../../provider-sdk/src/types.ts';
 
 export const EMPLOYMENT_TYPES = Object.freeze([
@@ -158,9 +159,11 @@ export type OpportunityServiceResult<T> = {
   readonly value: T;
   readonly fromCache: boolean;
   readonly providersUsed: readonly string[];
+  readonly execution?: ProviderExecutionProvenance;
 } | {
   readonly ok: false;
   readonly code: string;
   readonly message: string;
   readonly providerId: string | null;
+  readonly execution?: ProviderExecutionProvenance;
 };

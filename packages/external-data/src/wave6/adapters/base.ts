@@ -17,6 +17,8 @@ import {
   normalizeSkillLabels,
 } from '../normalization.ts';
 import { validateApplicationUrl } from '../safe-url.ts';
+import type { ProviderExecutionProvenance } from '../../certification/types.ts';
+import { deriveExecutionProvenance } from '../../certification/types.ts';
 import type {
   JobOpportunity,
   JobSearchQuery,
@@ -51,12 +53,26 @@ export function ok<T>(
   value: T,
   providersUsed: readonly string[],
   fromCache = false,
+  execution?: ProviderExecutionProvenance,
 ): OpportunityServiceResult<T> {
-  return Object.freeze({ ok: true, value, fromCache, providersUsed });
+  return Object.freeze({ ok: true, value, fromCache, providersUsed, execution });
 }
 
-export function fail(code: string, message: string, providerId: string): OpportunityServiceResult<never> {
-  return Object.freeze({ ok: false, code, message, providerId });
+export function fail(
+  code: string,
+  message: string,
+  providerId: string,
+  execution?: ProviderExecutionProvenance,
+): OpportunityServiceResult<never> {
+  return Object.freeze({ ok: false, code, message, providerId, execution });
+}
+
+export function simulationProvenance(): ProviderExecutionProvenance {
+  return deriveExecutionProvenance({
+    simulated: true,
+    liveNetworkCallObserved: false,
+    productionEndpointUsed: false,
+  });
 }
 
 export function buildProvenance(

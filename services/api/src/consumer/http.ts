@@ -269,7 +269,7 @@ export async function serve(
   const idempotencyKey =
     typeof req.headers['idempotency-key'] === 'string' ? req.headers['idempotency-key'] : undefined;
   const accept = typeof req.headers.accept === 'string' ? req.headers.accept : undefined;
-  const result = await Promise.resolve(handleConsumerBff(runtime, {
+  const result = await handleConsumerBff(runtime, {
     method,
     path: url.pathname,
     query,

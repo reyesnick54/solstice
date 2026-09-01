@@ -96,6 +96,13 @@ export function lintProductionEconomicActivation(root: string): Finding[] {
     'LIVE_DATA_MONETIZATION_ENABLED',
     'LIVE_HIN_BASED_ISSUANCE_ENABLED',
     'LIVE_MOONREY_PRODUCTIVE_ISSUANCE_ENABLED',
+    'LIVE_INTEROP_ENABLED',
+    'LIVE_INTEROP_RELAYERS_ENABLED',
+    'LIVE_INTEROP_WATCHERS_ENABLED',
+    'LIVE_EXTERNAL_CHAIN_INTERACTION_ENABLED',
+    'LIVE_CUSTODY_ENABLED',
+    'LIVE_AGENT_FINANCIAL_EXECUTION_ENABLED',
+    'LIVE_CONNECTIVITY_ENABLED',
   ]) {
     if (new RegExp(`${name}\\s*=\\s*true`).test(flags)) {
       findings.push(finding(FLAGS, `${name} must remain false`));

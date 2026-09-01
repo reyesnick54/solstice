@@ -3,6 +3,10 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
+import {
+  accessEconomySourceArchitectureIsClean,
+  scanAccessEconomySourceArchitecture,
+} from './architecture-guards.ts';
 import { ACCESS_ECONOMY_ISOLATION } from './isolation.ts';
 
 const ROOT = join(import.meta.dirname, '..', '..', '..');
@@ -38,7 +42,8 @@ describe('ACCESS-01 architecture guards', () => {
         file.endsWith('isolation.ts') ||
         file.endsWith('taxonomy.ts') ||
         file.endsWith('registry-types.ts') ||
-        file.endsWith('registry-invariants.ts')
+        file.endsWith('registry-invariants.ts') ||
+        file.endsWith('architecture-guards.ts')
       ) {
         continue;
       }
@@ -46,11 +51,11 @@ describe('ACCESS-01 architecture guards', () => {
       assert.equal(/postJournal\s*\(/.test(source), false, file);
       assert.equal(/openAccount\s*\(/.test(source), false, file);
       assert.equal(/new AuthorityIssuer/.test(source), false, file);
-      assert.equal(/ComplianceKernel/.test(source), false, file);
+      assert.equal(/\bComplianceKernel\b/.test(source), false, file);
       assert.equal(/ActionIntent/.test(source), false, file);
       assert.equal(/LIVE_\w+\s*=\s*true/.test(source), false, file);
       assert.equal(/ENVIRONMENT\s*=\s*'live'/.test(source), false, file);
-      assert.equal(/\bAPY\b|\bAPR\b|blended return|guaranteed profit|access coin|social credit/i.test(source), false, file);
+      assert.equal(accessEconomySourceArchitectureIsClean(source), true, file);
       assert.equal(/\bfetch\s*\(/.test(source), false, file);
       assert.equal(/https?:\/\//.test(source), false, file);
       assert.equal(/parseFloat\s*\(/.test(source), false, file);
@@ -89,5 +94,37 @@ describe('ACCESS-01 architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-agent/src/engine.ts')), true);
     assert.equal(existsSync(join(ROOT, 'packages/regulatory-twin/src/service.ts')), true);
     assert.equal(existsSync(join(ROOT, 'packages/evidence/src/vault.ts')), true);
+  });
+
+  it('allows benign invariant evidence phrasing without social-credit false positives', () => {
+    const benign = `
+      NO_SOCIAL_CREDIT_SCORE: {
+        held: !serialized.includes('socialCreditScore'),
+        evidence: 'no social credit fields',
+      },
+    `;
+    assert.equal(accessEconomySourceArchitectureIsClean(benign), true);
+    const violations = scanAccessEconomySourceArchitecture(benign);
+    assert.equal(violations.length, 0);
+  });
+
+  it('rejects actual prohibited social-credit scoring property implementations', () => {
+    const prohibited = `
+      type ReputationModel = {
+        socialCreditScore: number;
+      };
+    `;
+    assert.equal(accessEconomySourceArchitectureIsClean(prohibited), false);
+    const violations = scanAccessEconomySourceArchitecture(prohibited);
+    assert.equal(violations.some((row) => row.kind === 'FORBIDDEN_SCORE_FIELD'), true);
+    assert.equal(violations.some((row) => row.detail.includes('socialCreditScore')), true);
+  });
+
+  it('allows structural social-credit negation markers', () => {
+    const structural = `
+      readonly socialCreditScore: false;
+      socialCreditImplemented: false as const,
+    `;
+    assert.equal(accessEconomySourceArchitectureIsClean(structural), true);
   });
 });

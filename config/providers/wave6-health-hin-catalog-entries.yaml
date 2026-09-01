@@ -62,7 +62,7 @@ providers:
     verification:
       status: verified
       verified_against_official_docs: true
-      last_verified: 2026-08-31
+      last_verified: "2026-08-31"
       notes: Wave 6 Prompt 22 fixture adapter. Reference only — not medical advice.
   - provider_id: usda-fooddata-central
     name: USDA FoodData Central
@@ -127,7 +127,7 @@ providers:
     verification:
       status: verified
       verified_against_official_docs: true
-      last_verified: 2026-08-31
+      last_verified: "2026-08-31"
       notes: Wave 6 Prompt 22 fixture adapter.
   - provider_id: medlineplus-genetics
     name: MedlinePlus Genetics
@@ -192,7 +192,7 @@ providers:
     verification:
       status: verified
       verified_against_official_docs: true
-      last_verified: 2026-08-31
+      last_verified: "2026-08-31"
       notes: Educational reference only. Must not attach to user DNA without explicit consent.
   - provider_id: openfda
     name: openFDA
@@ -258,7 +258,7 @@ providers:
     verification:
       status: verified
       verified_against_official_docs: true
-      last_verified: 2026-08-31
+      last_verified: "2026-08-31"
       notes: Reference metadata only. Adverse events are not user diagnoses.
   - provider_id: nppes
     name: NPPES NPI Registry
@@ -321,7 +321,7 @@ providers:
     verification:
       status: verified
       verified_against_official_docs: true
-      last_verified: 2026-08-31
+      last_verified: "2026-08-31"
       notes: Directory semantics preserved. Not insurance eligibility.
   - provider_id: clinicaltrials-gov
     name: ClinicalTrials.gov
@@ -388,7 +388,7 @@ providers:
     verification:
       status: verified
       verified_against_official_docs: true
-      last_verified: 2026-08-31
+      last_verified: "2026-08-31"
       notes: Advisory discovery only. No automated eligibility.
   - provider_id: nhs-scotland-open-data
     name: Open Data NHS Scotland
@@ -452,7 +452,7 @@ providers:
     verification:
       status: verified
       verified_against_official_docs: true
-      last_verified: 2026-08-31
+      last_verified: "2026-08-31"
       notes: Aggregate public health data only.
   - provider_id: hdx-health
     name: Humanitarian Data Exchange (Health)
@@ -516,7 +516,7 @@ providers:
     verification:
       status: partially_verified
       verified_against_official_docs: true
-      last_verified: 2026-08-31
+      last_verified: "2026-08-31"
       notes: Dataset-level license review required for production activation.
   - provider_id: longevity-world-cup
     name: Longevity World Cup
@@ -580,5 +580,5 @@ providers:
     verification:
       status: partially_verified
       verified_against_official_docs: false
-      last_verified: 2026-08-31
+      last_verified: "2026-08-31"
       notes: Preview only. Production activation blocked pending terms review.

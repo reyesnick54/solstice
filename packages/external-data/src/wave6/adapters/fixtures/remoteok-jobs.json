@@ -1,0 +1,13 @@
+[
+  {
+    "slug": "remote-senior-engineer-acme-1001",
+    "id": "1001",
+    "date": "2026-08-30T03:32:53+00:00",
+    "company": "Acme Remote",
+    "position": "Senior Software Engineer",
+    "tags": ["typescript", "react", "node"],
+    "description": "Build distributed systems for a remote-first team.",
+    "url": "https://remoteok.com/remote-jobs/1001",
+    "location": "Remote"
+  }
+]

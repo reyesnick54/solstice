@@ -23,6 +23,7 @@ import {
   WAVE7_NOT_FREE_IDS,
   WAVE7_PREVIEW_ONLY_IDS,
 } from './registry.ts';
+import { createProviderCertificationService } from '../../../provider-sdk/src/certification/service.ts';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../../../..');
 const CATALOG_PATH = join(ROOT, 'config/providers/free-api-catalog.yaml');
@@ -71,17 +72,36 @@ export function classifyWave7Provider(provider: Record<string, unknown>): Wave7P
     notes = 'Catalog entry present; adapter not implemented.';
   }
 
+  const certification = certificationForProvider(providerId);
+
   return Object.freeze({
     providerId,
     category,
     status,
+    certificationStatus: certification.status,
+    liveValidated: certification.liveNetworkCallObserved && certification.responseValidated,
+    simulated: certification.simulated,
     adapterId: WAVE7_ADAPTER_BY_PROVIDER[providerId] ?? (status.startsWith('IMPLEMENTED') ? 'fixture-adapter' : null),
     environment: 'simulation',
     authRequired: auth,
     commercialStatus: commercial,
     canonicalService: WAVE7_CANONICAL_SERVICE_BY_CATEGORY[category] ?? null,
-    notes,
+    notes:
+      status === 'IMPLEMENTED_PREVIEW_ONLY' || status === 'IMPLEMENTED_ACTIVE'
+        ? `${notes} Certification: ${certification.status}; not live without evidence.`
+        : notes,
   });
+}
+
+function certificationForProvider(providerId: string) {
+  return getWave7CertificationService().certifyCatalogEntry(providerId);
+}
+
+let wave7CertificationService: ReturnType<typeof createProviderCertificationService> | null = null;
+
+function getWave7CertificationService() {
+  wave7CertificationService ??= createProviderCertificationService();
+  return wave7CertificationService;
 }
 
 export function buildWave7CoverageReport(): Wave7CoverageReport {

@@ -12,6 +12,8 @@ data:
   protocolVersion: "1"
   environment: simulation
   productionNetworkEnabled: "false"
+  interopProductionEnabled: "false"
+  interopActivationState: "DISABLED"
   networkEnvironment: TESTNET
   rpcPlane: PUBLIC_RPC
   mainnetActive: "false"
