@@ -77,7 +77,12 @@ export function classifyWave5Provider(provider: Record<string, unknown>): Wave5P
     });
   }
 
-  if (WAVE5_IMPLEMENTED_PROVIDER_IDS.includes(providerId) || integration === 'implemented' || integration === 'adapter_implemented') {
+  if (
+    WAVE5_IMPLEMENTED_PROVIDER_IDS.includes(providerId) ||
+    integration === 'implemented' ||
+    integration === 'adapter_implemented' ||
+    integration === 'simulated'
+  ) {
     return Object.freeze({
       providerId,
       category,
