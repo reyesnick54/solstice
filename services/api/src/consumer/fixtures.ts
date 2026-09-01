@@ -85,6 +85,13 @@ import { createTravelBff, type TravelBff } from './travel-adapter.ts';
 import { createAgentExternalEvidenceBff, type AgentExternalEvidenceBff } from './agent-evidence-adapter.ts';
 import { createEnvironmentalOracleBff, type EnvironmentalOracleBff } from './environmental-adapter.ts';
 import { createOpportunityIntelligenceBff, type OpportunityIntelligenceBff } from './opportunity-adapter.ts';
+import {
+  createSubscriptionIntelligenceBff,
+  type SubscriptionIntelligenceBff,
+} from './subscription-intelligence-adapter.ts';
+import { SubscriptionIntelligenceService } from '../../../../packages/platform/src/subscription-intelligence/index.ts';
+import { asEconomicActivityId, deterministicActivityId } from '../../../../packages/personal-economic-graph/src/ids.ts';
+import type { EconomicActivity } from '../../../../packages/personal-economic-graph/src/store.ts';
 import { createSandboxAccessEconomy, type HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
 import {
   PersonalEconomyBffSurface,
@@ -173,6 +180,7 @@ export type SandboxWorld = {
   readonly travel: TravelBff;
   readonly agentExternalEvidence: AgentExternalEvidenceBff;
   readonly opportunity: OpportunityIntelligenceBff;
+  readonly subscriptions: SubscriptionIntelligenceBff;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -785,6 +793,10 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   const agentExternalEvidence = createAgentExternalEvidenceBff(createExternalDataPlane({ nowUtc: NOW }));
   const opportunity = createOpportunityIntelligenceBff();
 
+  const subscriptionService = new SubscriptionIntelligenceService({ clock: new FrozenClock(NOW) });
+  const subscriptions = createSubscriptionIntelligenceBff(subscriptionService);
+  seedSandboxSubscriptionActivities(subscriptionService, personas.basic_verified.identityId);
+
   return Object.freeze({
     label: SANDBOX_LABEL,
     production: false,
@@ -814,7 +826,89 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     travel,
     agentExternalEvidence,
     opportunity,
+    subscriptions,
   });
+}
+
+function seedSandboxSubscriptionActivities(
+  service: SubscriptionIntelligenceService,
+  subjectId: string,
+): void {
+  const graphId = 'egr_sandbox_sub' as never;
+  const months = ['03', '04', '05', '06', '07', '08'];
+  const activities: EconomicActivity[] = months.map((month, index) =>
+    Object.freeze({
+      activityId: deterministicActivityId(`src_netflix_${index}`),
+      graphId,
+      subjectId,
+      accountId: 'acct_sandbox_basic_usd',
+      direction: 'OUTFLOW' as const,
+      amount: Object.freeze({ minorUnits: index === months.length - 1 ? '1299' : '999', currency: 'USD' }),
+      occurredAt: asUtcInstant(`2026-${month}-15T10:00:00.000Z`),
+      counterpart: Object.freeze({
+        kind: 'MERCHANT' as const,
+        ref: 'merch_netflix',
+        label: 'NETFLIX.COM 866-579-7172',
+      }),
+      classification: 'SUBSCRIPTION' as const,
+      sourceType: 'LEDGER' as const,
+      sourceRef: `src_netflix_${index}`,
+      sourceEventType: 'CustomerActivityRecorded',
+      sourceEventId: `evt_netflix_${index}`,
+    }),
+  );
+  const spotifyMonths = ['04', '05', '06', '07', '08'];
+  for (const [index, month] of spotifyMonths.entries()) {
+    activities.push(
+      Object.freeze({
+        activityId: deterministicActivityId(`src_spotify_${index}`),
+        graphId,
+        subjectId,
+        accountId: 'acct_sandbox_basic_usd',
+        direction: 'OUTFLOW' as const,
+        amount: Object.freeze({ minorUnits: '1099', currency: 'USD' }),
+        occurredAt: asUtcInstant(`2026-${month}-12T10:00:00.000Z`),
+        counterpart: Object.freeze({
+          kind: 'MERCHANT' as const,
+          ref: 'merch_spotify',
+          label: 'SPOTIFY USA',
+        }),
+        classification: 'SUBSCRIPTION' as const,
+        sourceType: 'LEDGER' as const,
+        sourceRef: `src_spotify_${index}`,
+        sourceEventType: 'CustomerActivityRecorded',
+        sourceEventId: `evt_spotify_${index}`,
+      }),
+    );
+  }
+  service.analyze({
+    subjectId,
+    activities: Object.freeze(activities),
+    usageSignals: Object.freeze([
+      Object.freeze({
+        obligationId: 'pending' as never,
+        usageLevel: 'NONE' as const,
+        source: 'USER_AUTHORIZED' as const,
+        observedAt: asUtcInstant(NOW),
+      }),
+    ]),
+  });
+  const snapshot = service.getSnapshot(subjectId);
+  const netflix = snapshot.obligations.find((item) => item.merchant.normalizedMerchant === 'Netflix');
+  if (netflix) {
+    service.analyze({
+      subjectId,
+      activities: Object.freeze(activities),
+      usageSignals: Object.freeze([
+        Object.freeze({
+          obligationId: netflix.id,
+          usageLevel: 'NONE' as const,
+          source: 'USER_AUTHORIZED' as const,
+          observedAt: asUtcInstant(NOW),
+        }),
+      ]),
+    });
+  }
 }
 
 function attachSandboxDataRights(

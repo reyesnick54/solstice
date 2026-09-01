@@ -1,0 +1,19 @@
+{
+  "jobs": [
+    {
+      "id": "h-4001",
+      "title": "Staff Platform Engineer",
+      "excerpt": "Own core infrastructure for a distributed workforce platform.",
+      "companyName": "Summit Remote",
+      "companySlug": "summit-remote",
+      "employmentType": "Full Time",
+      "minSalary": 140000,
+      "maxSalary": 180000,
+      "salaryPeriod": "annual",
+      "currency": "USD",
+      "locationRestrictions": ["Americas"],
+      "categories": ["Platform", "Infrastructure"],
+      "applicationLink": "https://himalayas.app/companies/summit-remote/jobs/staff-platform-engineer"
+    }
+  ]
+}

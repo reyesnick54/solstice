@@ -4,7 +4,7 @@
 
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { OpportunityService } from './service.ts';
-import { buildWave6CoverageReport } from '../coverage.ts';
+import { buildOpportunityCoverageReport } from '../opportunity-coverage.ts';
 
 export type WorldOpportunitySnapshot = {
   readonly schema: 'sunrey.world.opportunity.v1';
@@ -42,7 +42,7 @@ export async function buildWorldOpportunitySnapshot(
   service: OpportunityService,
   nowUtc: UtcInstant,
 ): Promise<WorldOpportunitySnapshot> {
-  const coverage = buildWave6CoverageReport();
+  const coverage = buildOpportunityCoverageReport();
   const jobs = await service.searchJobs({}, nowUtc);
   const skills = await service.searchSkills('', nowUtc);
   const occupations = await service.searchOccupations('', nowUtc);

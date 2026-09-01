@@ -289,12 +289,12 @@ export const ENVIRONMENTAL_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Ob
       status_url: null,
     }),
     data_characteristics: Object.freeze({
-      freshness: 'hourly',
+      freshness: 'delayed',
       geographic_scope: Object.freeze(['US']),
       historical_data: true,
       realtime: true,
       data_format: 'json',
-      notes: 'United States water gauge coverage only.',
+      notes: 'United States water gauge coverage only; sub-daily gauge updates.',
     }),
     sunrey: Object.freeze({
       domain: Object.freeze(['world', 'moonrey', 'research', 'infrastructure']),
@@ -320,12 +320,12 @@ export const ENVIRONMENTAL_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Ob
       status_url: null,
     }),
     data_characteristics: Object.freeze({
-      freshness: 'hourly',
+      freshness: 'delayed',
       geographic_scope: Object.freeze(['US']),
       historical_data: true,
       realtime: false,
       data_format: 'json',
-      notes: 'United States air quality monitoring network.',
+      notes: 'United States air quality monitoring network; hourly aggregation cadence.',
     }),
     sunrey: Object.freeze({
       domain: Object.freeze(['world', 'research', 'financial_agent']),
@@ -396,12 +396,12 @@ export const ENVIRONMENTAL_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Ob
       status_url: 'https://status.openaq.org/',
     }),
     data_characteristics: Object.freeze({
-      freshness: 'hourly',
+      freshness: 'delayed',
       geographic_scope: Object.freeze(['GLOBAL']),
       historical_data: true,
       realtime: true,
       data_format: 'json',
-      notes: 'AQI standards preserved per source; no cross-standard comparison without metadata.',
+      notes: 'AQI standards preserved per source; hourly station cadence, no cross-standard comparison without metadata.',
     }),
   }),
   envProvider({
@@ -433,8 +433,8 @@ export const ENVIRONMENTAL_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Ob
     sunrey: Object.freeze({
       domain: Object.freeze(['world', 'research']),
       canonical_provider_interface: 'EnvironmentalOracleProvider',
-      priority: 'secondary',
-      launch_tier: 'production_candidate',
+      priority: 'medium',
+      launch_tier: 'secondary_source',
       authority_class: 'community_data',
       integration_state: 'adapter_implemented',
       existing_adapter: 'packages/sunrey-chain/src/environmental/adapters/purpleair.ts',

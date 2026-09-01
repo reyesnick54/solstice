@@ -75,3 +75,22 @@ None.
 bridge." Development interoperability: **implemented** (Chunk 50).
 Production interoperability: **not implemented**. Legal confidence:
 `RESEARCH_REQUIRED`.
+
+## Production activation control (Wave 2 Prompt 6)
+
+Runtime gates in `packages/config/src/flags.ts` and
+`packages/config/src/activation-gates.ts`:
+
+| Control | Default | Notes |
+| --- | --- | --- |
+| `LIVE_INTEROP_ENABLED` | `false` | No production bridge |
+| `LIVE_INTEROP_RELAYERS_ENABLED` | `false` | Relayers isolated; cannot govern or vote |
+| `LIVE_INTEROP_WATCHERS_ENABLED` | `false` | No production watchers |
+| `LIVE_EXTERNAL_CHAIN_INTERACTION_ENABLED` | `false` | Foreign chain events are oracle-class only |
+| Interop signing keys | unavailable for production | `PRODUCTION_HSM_KMS_CONFIGURED=false` |
+| `ENVIRONMENT` | `simulation` | Test/development cannot flip production interop |
+
+`packages/sunrey-chain/src/interop/activation-guard.ts` calls
+`assertInteropDevelopmentOnly()` before chain registration or activation.
+`InteropSecurityProfile.productionReady` is typed `false`.
+Wrapped fiat and production native assets are refused at runtime.

@@ -48,7 +48,7 @@ export type PhaseHWorld = {
       readonly body?: unknown;
       readonly query?: Readonly<Record<string, string>>;
     },
-  ) => BffResponse;
+  ) => Promise<BffResponse>;
   readonly startHttp: () => ReturnType<typeof startConsumerBff>;
 };
 
@@ -99,8 +99,8 @@ export function createPhaseHWorld(): PhaseHWorld {
     alice,
     bob,
     licensee,
-    handle(request) {
-      return handleConsumerBff(runtime, {
+    async handle(request) {
+      return await handleConsumerBff(runtime, {
         method: request.method,
         path: request.path,
         query: request.query ?? {},

@@ -1,0 +1,164 @@
+{
+  "schema": "sunrey.grow.agent-capability-matrix.v1",
+  "generatedAt": "2026-08-31T12:00:00.000Z",
+  "environment": "simulation",
+  "lifecycle": [
+    "DISCOVER",
+    "INGEST",
+    "NORMALIZE",
+    "ANALYZE",
+    "RANK",
+    "EXPLAIN",
+    "PROPOSE",
+    "POLICY_COMPLIANCE",
+    "USER_AUTHORIZE",
+    "EXECUTE",
+    "CONFIRM",
+    "MONITOR",
+    "REASSESS",
+    "SETTLE",
+    "AUDIT"
+  ],
+  "agents": [
+    {
+      "agentId": "savings",
+      "label": "Savings / recurring contribution",
+      "stages": {
+        "DISCOVER": "IMPLEMENTED",
+        "ANALYZE": "IMPLEMENTED",
+        "PROPOSE": "IMPLEMENTED",
+        "AUTHORIZE": "IMPLEMENTED",
+        "EXECUTE": "SIMULATED",
+        "MONITOR": "IMPLEMENTED"
+      },
+      "liveProvider": "NOT_IMPLEMENTED",
+      "regulatoryDependency": "REGULATORY_GATED"
+    },
+    {
+      "agentId": "cash_optimization",
+      "label": "Cash optimization",
+      "stages": {
+        "DISCOVER": "IMPLEMENTED",
+        "ANALYZE": "IMPLEMENTED",
+        "PROPOSE": "IMPLEMENTED",
+        "AUTHORIZE": "IMPLEMENTED",
+        "EXECUTE": "SIMULATED",
+        "MONITOR": "IMPLEMENTED"
+      },
+      "liveProvider": "NOT_IMPLEMENTED",
+      "regulatoryDependency": "REGULATORY_GATED"
+    },
+    {
+      "agentId": "investment",
+      "label": "Investment allocation",
+      "stages": {
+        "DISCOVER": "IMPLEMENTED",
+        "ANALYZE": "IMPLEMENTED",
+        "PROPOSE": "IMPLEMENTED",
+        "AUTHORIZE": "IMPLEMENTED",
+        "EXECUTE": "PROVIDER_GATED",
+        "MONITOR": "PARTIAL"
+      },
+      "liveProvider": "NOT_IMPLEMENTED",
+      "regulatoryDependency": "REGULATORY_GATED"
+    },
+    {
+      "agentId": "debt",
+      "label": "Debt optimization",
+      "stages": {
+        "DISCOVER": "PARTIAL",
+        "ANALYZE": "PARTIAL",
+        "PROPOSE": "NOT_IMPLEMENTED",
+        "AUTHORIZE": "NOT_IMPLEMENTED",
+        "EXECUTE": "NOT_IMPLEMENTED",
+        "MONITOR": "NOT_IMPLEMENTED"
+      },
+      "liveProvider": "NOT_IMPLEMENTED",
+      "regulatoryDependency": "REGULATORY_GATED"
+    },
+    {
+      "agentId": "income_opportunity",
+      "label": "Income allocation",
+      "stages": {
+        "DISCOVER": "PARTIAL",
+        "ANALYZE": "IMPLEMENTED",
+        "PROPOSE": "IMPLEMENTED",
+        "AUTHORIZE": "IMPLEMENTED",
+        "EXECUTE": "PROVIDER_GATED",
+        "MONITOR": "PARTIAL"
+      },
+      "liveProvider": "NOT_IMPLEMENTED",
+      "regulatoryDependency": "REGULATORY_GATED"
+    },
+    {
+      "agentId": "subscription_savings",
+      "label": "Subscription / expense savings",
+      "stages": {
+        "DISCOVER": "IMPLEMENTED",
+        "ANALYZE": "IMPLEMENTED",
+        "PROPOSE": "PARTIAL",
+        "AUTHORIZE": "IMPLEMENTED",
+        "EXECUTE": "NOT_IMPLEMENTED",
+        "MONITOR": "PARTIAL"
+      },
+      "liveProvider": "NOT_IMPLEMENTED",
+      "regulatoryDependency": "REGULATORY_GATED"
+    },
+    {
+      "agentId": "resource_exposure",
+      "label": "Resource / physical economy exposure",
+      "stages": {
+        "DISCOVER": "PARTIAL",
+        "ANALYZE": "PARTIAL",
+        "PROPOSE": "NOT_IMPLEMENTED",
+        "AUTHORIZE": "NOT_IMPLEMENTED",
+        "EXECUTE": "NOT_IMPLEMENTED",
+        "MONITOR": "PARTIAL"
+      },
+      "liveProvider": "NOT_IMPLEMENTED",
+      "regulatoryDependency": "REGULATORY_GATED"
+    },
+    {
+      "agentId": "real_estate",
+      "label": "Real estate savings context",
+      "stages": {
+        "DISCOVER": "PARTIAL",
+        "ANALYZE": "PARTIAL",
+        "PROPOSE": "PARTIAL",
+        "AUTHORIZE": "IMPLEMENTED",
+        "EXECUTE": "NOT_IMPLEMENTED",
+        "MONITOR": "PARTIAL"
+      },
+      "liveProvider": "NOT_IMPLEMENTED",
+      "regulatoryDependency": "REGULATORY_GATED"
+    },
+    {
+      "agentId": "travel_savings",
+      "label": "Travel savings goals",
+      "stages": {
+        "DISCOVER": "PARTIAL",
+        "ANALYZE": "PARTIAL",
+        "PROPOSE": "PARTIAL",
+        "AUTHORIZE": "IMPLEMENTED",
+        "EXECUTE": "NOT_IMPLEMENTED",
+        "MONITOR": "PARTIAL"
+      },
+      "liveProvider": "NOT_IMPLEMENTED",
+      "regulatoryDependency": "REGULATORY_GATED"
+    },
+    {
+      "agentId": "portfolio_monitoring",
+      "label": "Portfolio monitoring / rebalance proposals",
+      "stages": {
+        "DISCOVER": "IMPLEMENTED",
+        "ANALYZE": "IMPLEMENTED",
+        "PROPOSE": "IMPLEMENTED",
+        "AUTHORIZE": "IMPLEMENTED",
+        "EXECUTE": "PROVIDER_GATED",
+        "MONITOR": "IMPLEMENTED"
+      },
+      "liveProvider": "NOT_IMPLEMENTED",
+      "regulatoryDependency": "REGULATORY_GATED"
+    }
+  ]
+}

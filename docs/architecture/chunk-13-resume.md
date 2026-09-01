@@ -2,7 +2,7 @@
 
 Chunk 13 originally stopped because the task’s pre-coding process
 gate failed: Chunk 12 wallet / SoftPOS was not yet genuinely
-implemented, `docs/build-status.md` still described Chunk 12 as
+implemented, `docs/BUILD_STATUS.md` still described Chunk 12 as
 stopped, and `main` CI was red. That stop is preserved in
 [`chunk-13-stop.md`](./chunk-13-stop.md). It is not the current
 state.

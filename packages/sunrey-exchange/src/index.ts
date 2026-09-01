@@ -265,3 +265,4 @@ export type { ExchangeSettlementDraft, SettlementPhase } from './operation-recov
 export * from './product/index.ts';
 export * from './production-core/index.ts';
 export * as accessFabric from './access-fabric/index.ts';
+export * as merchantExchange from './merchant-exchange/index.ts';

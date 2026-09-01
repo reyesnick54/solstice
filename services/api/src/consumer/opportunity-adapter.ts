@@ -14,7 +14,7 @@ import {
   type OpportunityService,
 } from '../../../../packages/external-data/src/wave6/index.ts';
 import type { JobSearchQuery, UserMatchContext } from '../../../../packages/external-data/src/wave6/types.ts';
-import { buildWave6CoverageReport } from '../../../../packages/external-data/src/wave6/coverage.ts';
+import { buildOpportunityCoverageReport } from '../../../../packages/external-data/src/wave6/opportunity-coverage.ts';
 
 export type OpportunityIntelligenceBff = {
   readonly searchJobs: (query?: JobSearchQuery) => ReturnType<OpportunityService['searchJobs']>;
@@ -26,7 +26,7 @@ export type OpportunityIntelligenceBff = {
   readonly growContext: (context: UserMatchContext) => ReturnType<typeof buildGrowOpportunityContext>;
   readonly agentEvidence: (context: UserMatchContext) => ReturnType<typeof buildAgentOpportunityEvidence>;
   readonly pegContext: (context: UserMatchContext) => ReturnType<typeof buildPegOpportunityContext>;
-  readonly coverage: () => ReturnType<typeof buildWave6CoverageReport>;
+  readonly coverage: () => ReturnType<typeof buildOpportunityCoverageReport>;
 };
 
 export function createOpportunityIntelligenceBff(
@@ -43,6 +43,6 @@ export function createOpportunityIntelligenceBff(
     growContext: (context) => buildGrowOpportunityContext(service, context, nowUtc),
     agentEvidence: (context) => buildAgentOpportunityEvidence(service, context, undefined, nowUtc),
     pegContext: (context) => buildPegOpportunityContext(service, context, nowUtc),
-    coverage: () => buildWave6CoverageReport(),
+    coverage: () => buildOpportunityCoverageReport(),
   });
 }

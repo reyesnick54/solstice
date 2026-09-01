@@ -20,3 +20,4 @@ images:
   faucet: sunrey-faucet:testnet-1
   explorer: sunrey-explorer:testnet-1
   relayer: sunrey-relayer:testnet-1
+  watcher: sunrey-watcher:testnet-1

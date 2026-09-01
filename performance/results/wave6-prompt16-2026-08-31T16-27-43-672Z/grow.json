@@ -1,0 +1,77 @@
+{
+  "suite": "grow",
+  "status": "TARGET_MET",
+  "durationMs": 22,
+  "cases": [
+    {
+      "name": "opportunity-ingestion",
+      "category": "deterministic-backend",
+      "status": "BENCHMARKED",
+      "latency": {
+        "count": 20,
+        "minMs": 0.09933300000193412,
+        "maxMs": 2.8133859999979904,
+        "meanMs": 0.3697095499994248,
+        "medianMs": 0.1711669999967853,
+        "p50Ms": 0.1711669999967853,
+        "p95Ms": 0.668774999998277,
+        "p99Ms": 2.8133859999979904,
+        "stddevMs": 0.5865999647834406
+      }
+    },
+    {
+      "name": "proposal-creation",
+      "category": "deterministic-backend",
+      "status": "TARGET_MET",
+      "latency": {
+        "count": 20,
+        "minMs": 0.07909699999800068,
+        "maxMs": 2.089638000001287,
+        "meanMs": 0.31637700000010227,
+        "medianMs": 0.16098399999827961,
+        "p50Ms": 0.16098399999827961,
+        "p95Ms": 0.6079249999966123,
+        "p99Ms": 2.089638000001287,
+        "stddevMs": 0.4317584011392851
+      }
+    },
+    {
+      "name": "s3m-inference",
+      "category": "external-ai",
+      "status": "BENCHMARKED",
+      "latency": {
+        "count": 10,
+        "minMs": 0.0782710000021325,
+        "maxMs": 1.6190399999977672,
+        "meanMs": 0.29733140000025743,
+        "medianMs": 0.14728800000011688,
+        "p50Ms": 0.14728800000011688,
+        "p95Ms": 1.6190399999977672,
+        "p99Ms": 1.6190399999977672,
+        "stddevMs": 0.4438166488260935
+      },
+      "note": "Simulator only — not live provider latency"
+    }
+  ],
+  "environment": {
+    "resultClass": "ENGINEERING_MEASUREMENT",
+    "label": "ENGINEERING_QUALIFICATION_TARGET",
+    "sourceCommit": "8f4683320e0a0957c8d623ce881634577ac0bff6",
+    "recordedAtUtc": "2026-08-31T16:28:07.017Z",
+    "nodeVersion": "v22.14.0",
+    "platform": "linux",
+    "arch": "x64",
+    "cpuCount": 4,
+    "cpuModel": "Intel(R) Xeon(R) Processor",
+    "totalMemoryGiB": 15.64,
+    "freeMemoryGiB": 14.66,
+    "container": false,
+    "environment": "simulation",
+    "databaseMode": "in-process",
+    "networkMode": "in-process",
+    "cryptoMode": "HYBRID_SIMULATION",
+    "validatorCount": null,
+    "benchmarkTool": "grow-orchestrator-in-process",
+    "benchmarkToolVersion": "wave6-prompt16"
+  }
+}
