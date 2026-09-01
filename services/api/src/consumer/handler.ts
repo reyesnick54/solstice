@@ -77,6 +77,7 @@ import {
 } from '../../../../packages/human-economic-contribution/src/hin-value/index.ts';
 import { dispatchBlockchain } from './blockchain.ts';
 import { dispatchTravel } from './travel.ts';
+import { dispatchMerchantExchange } from './merchant-exchange.ts';
 import { dispatchHealthReference, HEALTH_REFERENCE_BFF_ROUTES } from './health-reference.ts';
 import { dispatchEnvironmental } from './environmental.ts';
 import type { EnvironmentalOracleBff } from './environmental-adapter.ts';
@@ -476,6 +477,15 @@ async function dispatchAuthenticated(
   const travel = dispatchTravel(request, requestId, headers);
   if (travel) {
     return travel;
+  }
+
+  const merchantExchange = dispatchMerchantExchange(
+    { method: request.method, path: request.path, query: request.query, body: request.body },
+    requestId,
+    headers,
+  );
+  if (merchantExchange) {
+    return merchantExchange;
   }
 
   const healthReference = dispatchHealthReference(request, requestId, headers);
