@@ -3,19 +3,19 @@ import { describe, it } from 'node:test';
 
 import { createPhaseEWorld } from './phase-e-world.ts';
 
-function proposalFor(world: ReturnType<typeof createPhaseEWorld>): string {
-  world.handle({ method: 'GET', path: '/api/v1/grow/plan', query: {} });
-  const created = world.handle({ method: 'POST', path: '/api/v1/grow/proposals', query: {}, body: {} });
+async function proposalFor(world: ReturnType<typeof createPhaseEWorld>): Promise<string> {
+  await world.handle({ method: 'GET', path: '/api/v1/grow/plan', query: {} });
+  const created = await world.handle({ method: 'POST', path: '/api/v1/grow/proposals', query: {}, body: {} });
   assert.equal(created.status, 201);
   return (created.body as { proposalId: string }).proposalId;
 }
 
 describe('Phase E Grow negative E2E', () => {
-  it('fails safely for ineligible, forged, expired, agent, and provider cases', () => {
+  it('fails safely for ineligible, forged, expired, agent, and provider cases', async () => {
     const world = createPhaseEWorld('neg');
-    const proposalId = proposalFor(world);
+    const proposalId = await proposalFor(world);
 
-    const ineligible = world.handle({
+    const ineligible = await world.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${proposalId}/approve`,
       query: {},
@@ -24,7 +24,7 @@ describe('Phase E Grow negative E2E', () => {
     });
     assert.equal(ineligible.status, 401);
 
-    const forged = world.handle({
+    const forged = await world.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${proposalId}/modify`,
       query: {},
@@ -32,7 +32,7 @@ describe('Phase E Grow negative E2E', () => {
     });
     assert.ok(forged.status >= 400);
 
-    const executeForged = world.handle({
+    const executeForged = await world.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${proposalId}/execute`,
       query: {},
@@ -40,7 +40,7 @@ describe('Phase E Grow negative E2E', () => {
     });
     assert.ok(executeForged.status >= 400);
 
-    const agent = world.handle({
+    const agent = await world.handle({
       method: 'POST',
       path: '/api/v1/grow/agent-tools',
       query: {},
@@ -48,7 +48,7 @@ describe('Phase E Grow negative E2E', () => {
     });
     assert.ok(agent.status >= 400);
 
-    const privileged = world.handle({
+    const privileged = await world.handle({
       method: 'POST',
       path: '/api/v1/grow/agent-tools',
       query: {},
@@ -56,13 +56,13 @@ describe('Phase E Grow negative E2E', () => {
     });
     assert.ok(privileged.status >= 400);
 
-    world.handle({
+    await world.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${proposalId}/modify`,
       query: {},
       body: { amountMinorUnits: '20000' },
     });
-    const approved = world.handle({
+    const approved = await world.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${proposalId}/approve`,
       query: {},
@@ -70,21 +70,21 @@ describe('Phase E Grow negative E2E', () => {
     });
     assert.equal(approved.status, 200);
 
-    const insufficient = world.handle({
+    const insufficient = await world.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${proposalId}/modify`,
       query: {},
       body: { amountMinorUnits: '999999999' },
     });
     assert.equal(insufficient.status, 200);
-    const approveHuge = world.handle({
+    const approveHuge = await world.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${proposalId}/approve`,
       query: {},
       body: { stepUpSatisfied: true },
     });
     assert.equal(approveHuge.status, 200);
-    const executeHuge = world.handle({
+    const executeHuge = await world.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${proposalId}/execute`,
       query: {},
@@ -92,7 +92,7 @@ describe('Phase E Grow negative E2E', () => {
     });
     assert.ok(executeHuge.status >= 400);
 
-    const recurring = world.handle({
+    const recurring = await world.handle({
       method: 'POST',
       path: '/api/v1/grow/recurring',
       query: {},
@@ -107,7 +107,7 @@ describe('Phase E Grow negative E2E', () => {
     });
     assert.equal(recurring.status, 201);
     const recurringId = (recurring.body as { recurringMandateId: string }).recurringMandateId;
-    const revoked = world.handle({
+    const revoked = await world.handle({
       method: 'POST',
       path: `/api/v1/grow/recurring/${recurringId}/cancel`,
       query: {},
@@ -118,11 +118,11 @@ describe('Phase E Grow negative E2E', () => {
     assert.equal(reuse.code, 'AMOUNT_EXCEEDS_MANDATE');
   });
 
-  it('refuses expired proposals and unavailable providers without substituting a new action', () => {
+  it('refuses expired proposals and unavailable providers without substituting a new action', async () => {
     const world = createPhaseEWorld('exp');
-    const proposalId = proposalFor(world);
+    const proposalId = await proposalFor(world);
     world.clock.advanceMs(31n * 60n * 1000n);
-    const expired = world.handle({
+    const expired = await world.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${proposalId}/approve`,
       query: {},
@@ -141,25 +141,25 @@ describe('Phase E Grow negative E2E', () => {
       reason: 'phase-e negative provider unavailable',
       nowUtc: providerWorld.clock.now(),
     });
-    providerWorld.handle({ method: 'GET', path: '/api/v1/grow/plan', query: {} });
-    const created = providerWorld.handle({ method: 'POST', path: '/api/v1/grow/proposals', query: {}, body: {} });
+    await providerWorld.handle({ method: 'GET', path: '/api/v1/grow/plan', query: {} });
+    const created = await providerWorld.handle({ method: 'POST', path: '/api/v1/grow/proposals', query: {}, body: {} });
     assert.equal(created.status, 201);
     const id = (created.body as { proposalId: string }).proposalId;
-    const modified = providerWorld.handle({
+    const modified = await providerWorld.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${id}/modify`,
       query: {},
       body: { amountMinorUnits: '20000' },
     });
     assert.equal(modified.status, 200);
-    const approved = providerWorld.handle({
+    const approved = await providerWorld.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${id}/approve`,
       query: {},
       body: { stepUpSatisfied: true },
     });
     assert.equal(approved.status, 200);
-    const executed = providerWorld.handle({
+    const executed = await providerWorld.handle({
       method: 'POST',
       path: `/api/v1/grow/proposals/${id}/execute`,
       query: {},
@@ -168,7 +168,7 @@ describe('Phase E Grow negative E2E', () => {
     assert.ok(executed.status >= 400);
   });
 
-  it('refuses restricted and incomplete KYC suitability', () => {
+  it('refuses restricted and incomplete KYC suitability', async () => {
     const world = createPhaseEWorld('kyc');
     const plannedResult = world.orchestrator.plan(world.actor, world.principal.identityId);
     assert.equal(plannedResult.ok, true);
