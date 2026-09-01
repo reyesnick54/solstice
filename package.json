@@ -53,6 +53,7 @@
     "providers:validate": "node scripts/validate-free-api-catalog.mjs",
     "integrity:check": "node scripts/check-json-integrity.mjs && node scripts/validate-json.mjs && node scripts/check-merge-integrity.mjs && node scripts/check-yaml-integrity.mjs && node scripts/check-case-collisions.mjs && node scripts/validate-free-api-catalog.mjs",
     "integrity:report": "node scripts/integrity-report.mjs",
+    "release:qualify": "node scripts/release-qualify.mjs",
     "policy:diff": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/policy-diff.mjs",
     "test:persistence": "SUNREY_PERSISTENCE_TEST=1 node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-concurrency=1 --test-reporter=spec tests/persistence/*.test.ts",
     "demo:sunrey-naming-migration": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/config/src/naming-migration-demo.ts",

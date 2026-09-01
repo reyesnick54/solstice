@@ -1,0 +1,158 @@
+{
+  "schema": "sunrey.release.qualification.v1",
+  "release": {
+    "id": "sunrey-platform-wave6-prompt18-rc.1",
+    "commitSha": "8f4683320e0a0957c8d623ce881634577ac0bff6",
+    "branch": "main",
+    "qualifiedFromBranch": "cursor/production-readiness-certification-c151",
+    "dateUtc": "2026-08-31",
+    "version": "0.1.0"
+  },
+  "system": "sunrey-platform",
+  "status": "NO_GO",
+  "executiveDecision": "CONDITIONAL_GO_SIMULATION_PREVIEW_ONLY",
+  "evaluatedAtUtc": "2026-08-31T16:41:51.740Z",
+  "gates": [
+    { "id": "json-integrity", "status": "FAIL", "mandatory": true, "passed": false },
+    { "id": "merge-integrity", "status": "FAIL", "mandatory": true, "passed": false },
+    { "id": "yaml-integrity", "status": "PASS", "mandatory": true, "passed": true },
+    { "id": "authority-map", "status": "PASS", "mandatory": true, "passed": true },
+    { "id": "architecture-freeze", "status": "PASS", "mandatory": true, "passed": true },
+    { "id": "production-safety", "status": "PASS", "mandatory": true, "passed": true },
+    { "id": "deployment-posture", "status": "PASS", "mandatory": true, "passed": true },
+    { "id": "architectural-invariants", "status": "FAIL", "mandatory": true, "passed": false },
+    { "id": "extraction-dryrun", "status": "PASS", "mandatory": true, "passed": true },
+    { "id": "lint-architecture", "status": "FAIL", "mandatory": true, "passed": false },
+    { "id": "kernel-gating", "status": "PASS", "mandatory": true, "passed": true },
+    { "id": "typescript", "status": "FAIL", "mandatory": true, "passed": false },
+    { "id": "migration-quality", "status": "PASS", "mandatory": true, "passed": true },
+    { "id": "provider-certify-sandbox", "status": "PASS", "mandatory": true, "passed": true },
+    { "id": "performance-sanity-bench", "status": "PASS", "mandatory": true, "passed": true },
+    { "id": "unit-integration-tests", "status": "FAIL", "mandatory": true, "passed": false },
+    { "id": "external-security-audit", "status": "EXTERNAL_REQUIRED", "mandatory": false, "passed": null },
+    { "id": "external-pentest", "status": "EXTERNAL_REQUIRED", "mandatory": false, "passed": null },
+    { "id": "external-cryptography-review", "status": "EXTERNAL_REQUIRED", "mandatory": false, "passed": null },
+    { "id": "provider-live-validation", "status": "EXTERNAL_REQUIRED", "mandatory": false, "passed": null },
+    { "id": "regulatory-legal-approval", "status": "EXTERNAL_REQUIRED", "mandatory": false, "passed": null },
+    { "id": "production-hsm-kms", "status": "EXTERNAL_REQUIRED", "mandatory": false, "passed": null },
+    { "id": "hosted-preproduction-soak", "status": "EXTERNAL_REQUIRED", "mandatory": false, "passed": null }
+  ],
+  "mandatoryFailureCount": 7,
+  "testEvidence": {
+    "command": "npm test",
+    "commitSha": "8f4683320e0a0957c8d623ce881634577ac0bff6",
+    "tests": 4535,
+    "pass": 4474,
+    "fail": 60,
+    "skipped": 1,
+    "durationMs": 255129,
+    "notableFailures": [
+      "tools/architectural-linter/src/constitution.test.ts",
+      "services/api/src/consumer-*.test.ts",
+      "tests/wave-5-prompt-18-energy-resources.test.ts",
+      "tests/wave-6-prompt-23-opportunity-intelligence.test.ts",
+      "tests/wave-6-prompt-24-knowledge-intelligence.test.ts",
+      "tests/wave-7-prompt-25-product-wiring.test.ts",
+      "tests/wave-7-prompt-26-external-data-trust-engine.test.ts",
+      "tests/wave-7-prompt-27-regression.test.ts"
+    ]
+  },
+  "providerStatus": {
+    "catalogProviders": 73,
+    "expectedTotal": 126,
+    "acceptedGaps": 53,
+    "harness": {
+      "contractTests": "CONTRACT_TEST_PASS",
+      "sandboxIntegration": "SANDBOX_INTEGRATION_PASS",
+      "externalCertification": "EXTERNAL_CERTIFICATION_REQUIRED",
+      "productionAuthorized": false,
+      "environment": "simulation"
+    },
+    "stateLegend": [
+      "CATALOGED",
+      "CONFIGURED",
+      "CREDENTIALS_PRESENT",
+      "REACHABLE",
+      "AUTHENTICATED",
+      "LIVE_VALIDATED",
+      "PRODUCTION_QUALIFIED",
+      "DEGRADED",
+      "DISABLED",
+      "SIMULATED",
+      "BLOCKED"
+    ],
+    "summary": "All active adapters SIMULATED or BLOCKED; none PRODUCTION_QUALIFIED"
+  },
+  "securityStatus": {
+    "internalTesting": "PASS_WITH_LIMITATIONS",
+    "auditReadiness": "READY_WITH_KNOWN_LIMITATIONS",
+    "externalAudit": "EXTERNAL_REQUIRED",
+    "externalPentest": "EXTERNAL_REQUIRED",
+    "criticalVulnerabilitiesOpen": "NONE_EVIDENCED_IN_REPO",
+    "dependencyAudit": "0 vulnerabilities at npm ci",
+    "kernelGating": "PASS"
+  },
+  "performanceStatus": {
+    "chainSanityBench": "PASS",
+    "resultClass": "ENGINEERING_MEASUREMENT",
+    "productionSlaClaimed": false,
+    "baselines": [
+      "packages/sunrey-chain/perf/baseline/manifest.json",
+      "docs/productization/phase-g-performance-baseline.json",
+      "docs/productization/PHASE_C_PERFORMANCE_BASELINE.json"
+    ]
+  },
+  "activationState": {
+    "ENVIRONMENT": "simulation",
+    "PRODUCTION_READY": false,
+    "PRODUCTION_ACTIVE": false,
+    "LIVE_CONNECTIVITY_ENABLED": false,
+    "PRODUCTION_HSM_KMS_CONFIGURED": false,
+    "productionAuthorized": false,
+    "LIVE_MONEY_ENABLED": false,
+    "LIVE_PAYMENTS_ENABLED": false,
+    "LIVE_BANKING_RAILS": false,
+    "LIVE_TRADING_ENABLED": false,
+    "LIVE_CRYPTO_ENABLED": false,
+    "LIVE_EXCHANGE_ENABLED": false,
+    "LIVE_INVESTMENT_EXECUTION": false,
+    "LIVE_HIN_BASED_ISSUANCE_ENABLED": false,
+    "LIVE_MOONREY_PRODUCTIVE_ISSUANCE_ENABLED": false
+  },
+  "featureDecisions": {
+    "coreApplicationPreview": "CONDITIONAL_GO",
+    "growAdvisorySimulation": "CONDITIONAL_GO",
+    "investmentExecution": "NO_GO",
+    "liveBankingPayments": "NO_GO",
+    "cryptoExchangeLive": "NO_GO",
+    "custodyLive": "NO_GO",
+    "mainnetBlockchain": "NO_GO",
+    "interop": "NO_GO",
+    "accessLivePayment": "NO_GO",
+    "grokProduction": "NO_GO",
+    "hinLiveMarketplace": "NO_GO",
+    "subscriptionIntelligence": "NO_GO",
+    "merchantExchange": "NO_GO"
+  },
+  "evidence": {
+    "report": "docs/qualification/PRODUCTION_READINESS_REPORT.md",
+    "buildStatus": "docs/build-status.md",
+    "providerScorecard": "docs/providers/PRODUCTION_READINESS_SCORECARD.md",
+    "backendRc": "docs/productization/PHASE_I_06_BACKEND_RC_QUALIFICATION.md",
+    "performanceBaseline": "packages/sunrey-chain/perf/baseline/manifest.json",
+    "securityAuditReadiness": "docs/audit/README.md",
+    "accessLaunchReport": "docs/access/ACCESS_V1_LAUNCH_REPORT.md"
+  },
+  "externalDependencies": [
+    { "id": "external-security-audit", "status": "EXTERNAL_REQUIRED" },
+    { "id": "external-pentest", "status": "EXTERNAL_REQUIRED" },
+    { "id": "external-cryptography-review", "status": "EXTERNAL_REQUIRED" },
+    { "id": "provider-live-validation", "status": "EXTERNAL_REQUIRED" },
+    { "id": "regulatory-legal-approval", "status": "EXTERNAL_REQUIRED" },
+    { "id": "production-hsm-kms", "status": "EXTERNAL_REQUIRED" },
+    { "id": "hosted-preproduction-cluster", "status": "EXTERNAL_REQUIRED" },
+    { "id": "banking-baas-partner", "status": "PARTNER_REQUIRED" },
+    { "id": "custody-provider", "status": "PARTNER_REQUIRED" },
+    { "id": "access-provider-contracts", "status": "PARTNER_REQUIRED" }
+  ]
+}
