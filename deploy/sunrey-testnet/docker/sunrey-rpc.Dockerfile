@@ -5,6 +5,7 @@ ARG DISTROLESS_CC_IMAGE=gcr.io/distroless/cc-debian12:nonroot
 FROM ${RUST_IMAGE} AS build
 WORKDIR /src
 COPY packages/sunrey-chain/rust /src/rust
+COPY packages/sunrey-chain/schemas /src/schemas
 WORKDIR /src/rust
 RUN cargo build --release -p sunrey-rpc --bin sunrey-node --locked
 

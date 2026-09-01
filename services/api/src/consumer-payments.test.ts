@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { handleConsumerBff } from './consumer/handler.ts';
+import { callConsumerBffSync } from './consumer/sync-call.ts';
 import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
 
 function auth(persona: Parameters<typeof sandboxToken>[0]) {
@@ -16,7 +16,7 @@ function call(
   body: Record<string, unknown> = {},
   idempotencyKey?: string,
 ) {
-  return handleConsumerBff(
+  return callConsumerBffSync(
     { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments, agent: world.agent },
     {
       method,

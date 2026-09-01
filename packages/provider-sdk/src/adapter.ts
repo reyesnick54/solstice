@@ -7,7 +7,6 @@
  */
 
 import type { ProviderId, ProviderAdapterRequestContext, ProviderAdapterResponseMetadata } from './types.ts';
-import type { ProviderId, ProviderRequestContext, ProviderResponseMetadata } from './registry-types.ts';
 
 export type AdapterRequest<TParams = unknown> = {
   readonly providerId: ProviderId;

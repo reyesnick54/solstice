@@ -97,41 +97,5 @@ export type ProviderTransportSuccess<T> = ProviderHttpTransportSuccess<T>;
 export type ProviderTransportFailure = ProviderHttpTransportFailure;
 /** @deprecated Use ProviderHttpTransport */
 export type ProviderTransport = ProviderHttpTransport;
-export type HttpProviderTransportResult<T = unknown> =
-  | HttpProviderTransportSuccess<T>
-  | HttpProviderTransportFailure;
-
-/** Governed outbound HTTP transport used by external provider adapters. */
-export type HttpProviderTransport = {
-  readonly transportId: string;
-  request<T = unknown>(context: HttpProviderRequestContext): Promise<HttpProviderTransportResult<T>>;
-};
-
-/** @deprecated Use HttpProviderRequestContext */
-export type ProviderHttpRequestContext = HttpProviderRequestContext;
-/** @deprecated Use HttpProviderResponseMetadata */
-export type ProviderHttpResponseMetadata = HttpProviderResponseMetadata;
-/** @deprecated Use HttpProviderTransportResponse */
-export type ProviderHttpTransportResponse<T = unknown> = HttpProviderTransportResponse<T>;
-/** @deprecated Use HttpProviderTransportSuccess */
-export type ProviderHttpTransportSuccess<T> = HttpProviderTransportSuccess<T>;
-/** @deprecated Use HttpProviderTransportFailure */
-export type ProviderHttpTransportFailure = HttpProviderTransportFailure;
-/** @deprecated Use HttpProviderTransportResult */
-export type ProviderHttpTransportResult<T = unknown> = HttpProviderTransportResult<T>;
-/** @deprecated Use HttpProviderTransport */
-export type ProviderHttpTransport = HttpProviderTransport;
-/** @deprecated Use HttpProviderRequestContext */
-export type ProviderRequestContext = HttpProviderRequestContext;
-/** @deprecated Use HttpProviderResponseMetadata */
-export type ProviderResponseMetadata = HttpProviderResponseMetadata;
-/** @deprecated Use HttpProviderTransportResponse */
-export type ProviderTransportResponse<T = unknown> = HttpProviderTransportResponse<T>;
-/** @deprecated Use HttpProviderTransportResult */
-export type ProviderTransportResult<T = unknown> = HttpProviderTransportResult<T>;
-/** @deprecated Use HttpProviderTransportSuccess */
-export type ProviderTransportSuccess<T> = HttpProviderTransportSuccess<T>;
-/** @deprecated Use HttpProviderTransportFailure */
-export type ProviderTransportFailure = HttpProviderTransportFailure;
 /** @deprecated Use HttpProviderTransport */
 export type ProviderTransport = HttpProviderTransport;

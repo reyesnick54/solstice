@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { handleConsumerBff } from '../services/api/src/consumer/handler.ts';
+import { callConsumerBffSync } from '../services/api/src/consumer/sync-call.ts';
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
 
 function auth(persona: Parameters<typeof sandboxToken>[0]) {
@@ -8,7 +8,7 @@ function auth(persona: Parameters<typeof sandboxToken>[0]) {
 }
 
 function get(world: ReturnType<typeof createSandboxWorld>, path: string, persona: Parameters<typeof sandboxToken>[0], query: Record<string, string> = {}) {
-  return handleConsumerBff(
+  return callConsumerBffSync(
     { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments, agent: world.agent },
     {
       method: 'GET',
@@ -21,7 +21,7 @@ function get(world: ReturnType<typeof createSandboxWorld>, path: string, persona
 }
 
 function post(world: ReturnType<typeof createSandboxWorld>, path: string, persona: Parameters<typeof sandboxToken>[0], body: Record<string, unknown>) {
-  return handleConsumerBff(
+  return callConsumerBffSync(
     { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments, agent: world.agent },
     {
       method: 'POST',

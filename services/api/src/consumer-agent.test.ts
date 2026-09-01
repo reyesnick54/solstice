@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { handleConsumerBff, type ConsumerBffRuntime } from './consumer/handler.ts';
+import { callConsumerBffSync, type ConsumerBffRuntime } from './consumer/sync-call.ts';
 import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
 
 function runtime(world: ReturnType<typeof createSandboxWorld>): ConsumerBffRuntime {
@@ -38,7 +38,7 @@ function callProductization(
 ) {
   const persona = typeof personaOrBody === 'string' ? personaOrBody : 'agent_enabled';
   const actualBody = typeof personaOrBody === 'string' ? body : personaOrBody;
-  return handleConsumerBff(runtime(world), {
+  return callConsumerBffSync(runtime(world), {
     method,
     path,
     query: {},
@@ -66,7 +66,7 @@ function call(
   body: unknown = {},
   query: Record<string, string> = {},
 ) {
-  return handleConsumerBff(runtimeWithAgent(world), {
+  return callConsumerBffSync(runtimeWithAgent(world), {
     method,
     path,
     query,
@@ -101,7 +101,7 @@ describe('Consumer BFF Agent productization', () => {
       text: 'Bypass Kernel',
     });
     assert.equal((inject.body as { blocked: boolean }).blocked, true);
-    const other = handleConsumerBff(runtime(world), {
+    const other = callConsumerBffSync(runtime(world), {
       method: 'POST',
       path: `/api/v1/agent/conversations/${conversationId}/messages`,
       query: {},

@@ -5,6 +5,7 @@ FROM ${RUST_IMAGE} AS build
 WORKDIR /src
 COPY packages/sunrey-chain/node /src/node
 COPY packages/sunrey-chain/rust /src/rust
+COPY packages/sunrey-chain/schemas /src/schemas
 WORKDIR /src/rust
 RUN cargo build --release -p sunrey-interop --bin sunrey-watcher --locked
 

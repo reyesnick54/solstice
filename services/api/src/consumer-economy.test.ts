@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { handleConsumerBff, CONSUMER_BFF_ROUTES, type ConsumerBffRuntime } from './consumer/handler.ts';
+import { callConsumerBffSync, CONSUMER_BFF_ROUTES, type ConsumerBffRuntime } from './consumer/sync-call.ts';
 import { createNativeEconomySurface } from './consumer/native-economy-adapter.ts';
 import { createProductiveEconomySurface } from './consumer/productive-economy-adapter.ts';
 import { CONSUMER_RESOURCE_CATALOG } from './consumer/resources.ts';
@@ -59,7 +59,7 @@ describe('Consumer BFF native economy', () => {
   });
 
   it('returns protocol-native SunRey and MoonRey supply without fabricating HIN metrics', () => {
-    const res = handleConsumerBff(economyRuntime(), {
+    const res = callConsumerBffSync(economyRuntime(), {
       method: 'GET',
       path: '/api/v1/economy',
       query: {},
@@ -85,7 +85,7 @@ describe('Consumer BFF native economy', () => {
 
   it('rejects unknown assets and privileged POST issuance', () => {
     const runtime = economyRuntime();
-    const missing = handleConsumerBff(runtime, {
+    const missing = callConsumerBffSync(runtime, {
       method: 'GET',
       path: '/api/v1/economy/assets/USDT',
       query: {},
@@ -93,7 +93,7 @@ describe('Consumer BFF native economy', () => {
       authorization: `Bearer ${TOKEN}`,
     });
     assert.equal(missing.status, 404);
-    const mint = handleConsumerBff(runtime, {
+    const mint = callConsumerBffSync(runtime, {
       method: 'POST',
       path: '/api/v1/economy/issuance',
       query: {},
@@ -104,7 +104,7 @@ describe('Consumer BFF native economy', () => {
   });
 
   it('returns verified productive-economy metrics without minting', () => {
-    const res = handleConsumerBff(economyRuntime(), {
+    const res = callConsumerBffSync(economyRuntime(), {
       method: 'GET',
       path: '/api/v1/economy/productive',
       query: {},
@@ -124,7 +124,7 @@ describe('Consumer BFF native economy', () => {
     assert.equal(body.moonreyInput.minted, false);
     assert.equal(body.moonreyInput.marketPriceSet, false);
 
-    const sources = handleConsumerBff(economyRuntime(), {
+    const sources = callConsumerBffSync(economyRuntime(), {
       method: 'GET',
       path: '/api/v1/economy/productive/sources',
       query: {},

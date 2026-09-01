@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
-import { handleConsumerBff, type ConsumerBffRuntime } from './consumer/handler.ts';
+import { callConsumerBffSync, type ConsumerBffRuntime } from './consumer/sync-call.ts';
 
 function call(
   world: ReturnType<typeof createSandboxWorld>,
@@ -18,7 +18,7 @@ function call(
     access: world.access,
     agentExternalEvidence: world.agentExternalEvidence,
   };
-  return handleConsumerBff(runtime, {
+  return callConsumerBffSync(runtime, {
     method,
     path,
     query: {},

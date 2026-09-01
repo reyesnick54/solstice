@@ -6,6 +6,7 @@ FROM ${RUST_IMAGE} AS build
 WORKDIR /src
 COPY packages/sunrey-chain/node /src/node
 COPY packages/sunrey-chain/rust /src/rust
+COPY packages/sunrey-chain/schemas /src/schemas
 WORKDIR /src/node
 RUN cargo build --release --bin sunrey-relayer --locked
 

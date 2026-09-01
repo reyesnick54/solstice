@@ -4,7 +4,7 @@ import { describe, it } from 'node:test';
 import { FrozenClock } from '../../../packages/config/src/clock.ts';
 import { asUtcInstant } from '../../../packages/domain/src/time.ts';
 import { createSandboxRightsMarketplace } from '../../../packages/information-market/src/rights-marketplace/index.ts';
-import { CONSUMER_BFF_ROUTES, handleConsumerBff, type ConsumerBffRuntime } from './consumer/handler.ts';
+import { CONSUMER_BFF_ROUTES, callConsumerBffSync, type ConsumerBffRuntime } from './consumer/sync-call.ts';
 import { createHinContributionSurface } from './consumer/hin-adapter.ts';
 import { CONSUMER_RESOURCE_CATALOG } from './consumer/resources.ts';
 import type { ConsumerBff } from './consumer/orchestrator.ts';
@@ -47,7 +47,7 @@ function hinRuntime(): ConsumerBffRuntime {
 }
 
 function call(runtime: ConsumerBffRuntime, method: string, path: string, persona: 'basic_verified' | 'exchange') {
-  return handleConsumerBff(runtime, {
+  return callConsumerBffSync(runtime, {
     method,
     path,
     query: {},
@@ -153,7 +153,7 @@ describe('Consumer BFF HIN contributions', () => {
 
   it('returns customer contributions and aggregate metrics without raw personal data', () => {
     const runtime = contributionRuntime();
-    const list = handleConsumerBff(runtime, {
+    const list = callConsumerBffSync(runtime, {
       method: 'GET',
       path: '/api/v1/hin/contributions',
       query: {},
@@ -166,7 +166,7 @@ describe('Consumer BFF HIN contributions', () => {
     assert.equal(body.items[0]?.containsRawPersonalData, false);
     assert.equal(body.items[0]?.issuancePromised, false);
 
-    const metrics = handleConsumerBff(runtime, {
+    const metrics = callConsumerBffSync(runtime, {
       method: 'GET',
       path: '/api/v1/hin/metrics',
       query: {},
@@ -178,7 +178,7 @@ describe('Consumer BFF HIN contributions', () => {
     assert.equal(aggregate.suppression.individualRecordsExposed, false);
     assert.equal(aggregate.economicValueInputs.isMintAmount, false);
 
-    const summary = handleConsumerBff(runtime, {
+    const summary = callConsumerBffSync(runtime, {
       method: 'GET',
       path: '/api/v1/hin/me/summary',
       query: {},
@@ -193,7 +193,7 @@ describe('Consumer BFF HIN contributions', () => {
 
   it('rejects privileged verify and mint posts', () => {
     const runtime = contributionRuntime();
-    const verify = handleConsumerBff(runtime, {
+    const verify = callConsumerBffSync(runtime, {
       method: 'POST',
       path: '/api/v1/hin/contributions/hec_1/verify',
       query: {},
@@ -201,7 +201,7 @@ describe('Consumer BFF HIN contributions', () => {
       authorization: `Bearer ${TOKEN}`,
     });
     assert.ok(verify.status === 404 || verify.status === 405);
-    const mint = handleConsumerBff(runtime, {
+    const mint = callConsumerBffSync(runtime, {
       method: 'POST',
       path: '/api/v1/hin/issuance',
       query: {},

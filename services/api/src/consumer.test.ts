@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 import { isOk } from '../../../packages/domain/src/result.ts';
 import { projectBankingPosition } from '../../accounts/src/available-funds.ts';
-import { handleConsumerBff } from './consumer/handler.ts';
+import { callConsumerBffSync } from './consumer/sync-call.ts';
 import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
 import { FINANCIAL_CACHE, cachePolicyForPath } from './consumer/cache.ts';
 import { mapInternalActionStatus } from './consumer/action-status.ts';
@@ -20,7 +20,7 @@ function auth(persona: Parameters<typeof sandboxToken>[0]) {
 }
 
 function get(world: ReturnType<typeof createSandboxWorld>, path: string, persona: Parameters<typeof sandboxToken>[0] | null, query: Record<string, string> = {}) {
-  return handleConsumerBff(
+  return callConsumerBffSync(
     { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments, agent: world.agent },
     {
       method: 'GET',
@@ -33,7 +33,7 @@ function get(world: ReturnType<typeof createSandboxWorld>, path: string, persona
 }
 
 function patch(world: ReturnType<typeof createSandboxWorld>, path: string, persona: Parameters<typeof sandboxToken>[0], body: Record<string, unknown>) {
-  return handleConsumerBff(
+  return callConsumerBffSync(
     { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments, agent: world.agent },
     {
       method: 'PATCH',
@@ -233,7 +233,7 @@ describe('Consumer BFF', () => {
     assert.equal(source.includes('AuthorityIssuer'), false);
     assert.equal(/reduce\(.*minorUnits/.test(source), false);
     const world = createSandboxWorld();
-    const posted = handleConsumerBff(
+    const posted = callConsumerBffSync(
       { bff: world.bff, sessions: world.sessions },
       {
         method: 'POST',
@@ -276,7 +276,7 @@ describe('Consumer BFF', () => {
     assert.ok(listed.some((row) => row.code === 'SAR'));
     assert.equal((currencies.body as { liveEnabled: boolean }).liveEnabled, false);
 
-    const created = handleConsumerBff(
+    const created = callConsumerBffSync(
       { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
       {
         method: 'POST',
@@ -298,7 +298,7 @@ describe('Consumer BFF', () => {
     assert.equal(quote.requiredApproval, 'CUSTOMER_CONFIRMATION');
     assert.equal(quote.provider.live, false);
 
-    const accepted = handleConsumerBff(
+    const accepted = callConsumerBffSync(
       { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
       {
         method: 'POST',
@@ -310,7 +310,7 @@ describe('Consumer BFF', () => {
     );
     assert.equal(accepted.status, 200);
 
-    const executed = handleConsumerBff(
+    const executed = callConsumerBffSync(
       { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
       {
         method: 'POST',
@@ -353,7 +353,7 @@ describe('Consumer BFF', () => {
 
   it('streams Agent conversation events and refuses raw public LLM routes', () => {
     const world = createSandboxWorld();
-    const posted = handleConsumerBff(
+    const posted = callConsumerBffSync(
       { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
       {
         method: 'POST',
@@ -376,7 +376,7 @@ describe('Consumer BFF', () => {
     assert.equal(body.events.every((event) => event.hiddenReasoning === false), true);
     assert.equal(body.sse.includes('event: message.completed'), true);
 
-    const sse = handleConsumerBff(
+    const sse = callConsumerBffSync(
       { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
       {
         method: 'POST',

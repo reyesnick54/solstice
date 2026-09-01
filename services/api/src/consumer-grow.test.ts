@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { handleConsumerBff } from './consumer/handler.ts';
+import { callConsumerBffSync } from './consumer/sync-call.ts';
 import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
 
 function runtime(world: ReturnType<typeof createSandboxWorld>) {
@@ -21,7 +21,7 @@ function call(
   persona: Parameters<typeof sandboxToken>[0] | null,
   body: Record<string, unknown> = {},
 ) {
-  return handleConsumerBff(runtime(world), {
+  return callConsumerBffSync(runtime(world), {
     method,
     path,
     query: {},
@@ -123,7 +123,7 @@ function get(
   persona: Parameters<typeof sandboxToken>[0] | null,
   query: Record<string, string> = {},
 ) {
-  return handleConsumerBff(
+  return callConsumerBffSync(
     { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments },
     {
       method: 'GET',
@@ -176,7 +176,7 @@ describe('Consumer BFF grow portfolio', () => {
 
   it('does not expose execution routes', () => {
     const world = createSandboxWorld();
-    const res = handleConsumerBff(
+    const res = callConsumerBffSync(
       { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments },
       {
         method: 'POST',
@@ -196,7 +196,7 @@ function post(
   persona: Parameters<typeof sandboxToken>[0],
   body: Record<string, unknown>,
 ) {
-  return handleConsumerBff(
+  return callConsumerBffSync(
     { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments },
     {
       method: 'POST',

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { handleConsumerBff } from './consumer/handler.ts';
+import { callConsumerBffSync } from './consumer/sync-call.ts';
 import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
 
 function get(
@@ -10,7 +10,7 @@ function get(
   persona: Parameters<typeof sandboxToken>[0],
   query: Record<string, string> = {},
 ) {
-  return handleConsumerBff(
+  return callConsumerBffSync(
     { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, agent: world.agent },
     {
       method: 'GET',

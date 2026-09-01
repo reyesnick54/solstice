@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { handleConsumerBff } from './consumer/handler.ts';
+import { callConsumerBffSync } from './consumer/sync-call.ts';
 import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
 
 function runtime(world: ReturnType<typeof createSandboxWorld>) {
@@ -22,7 +22,7 @@ function call(
   persona: Parameters<typeof sandboxToken>[0] | null,
   body: Record<string, unknown> = {},
 ) {
-  return handleConsumerBff(runtime(world), {
+  return callConsumerBffSync(runtime(world), {
     method,
     path,
     query: {},
@@ -75,7 +75,7 @@ describe('Consumer BFF exchange productization', () => {
 
   it('streams non-privileged market events', () => {
     const world = createSandboxWorld();
-    const streamed = handleConsumerBff(runtime(world), {
+    const streamed = callConsumerBffSync(runtime(world), {
       method: 'GET',
       path: '/api/v1/exchange/stream',
       query: { after: '0' },
