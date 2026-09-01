@@ -46,8 +46,15 @@ export const SAVINGS_OPPORTUNITY_TYPES = [
 ] as const;
 export type SavingsOpportunityType = (typeof SAVINGS_OPPORTUNITY_TYPES)[number];
 
-export const ACTION_TYPES = ['CANCEL', 'DOWNGRADE', 'RENEGOTIATE', 'SWITCH_PROVIDER', 'REVIEW', 'KEEP'] as const;
-export type SubscriptionActionType = (typeof ACTION_TYPES)[number];
+export const SUBSCRIPTION_ACTION_TYPES = [
+  'CANCEL',
+  'DOWNGRADE',
+  'RENEGOTIATE',
+  'SWITCH_PROVIDER',
+  'REVIEW',
+  'KEEP',
+] as const;
+export type SubscriptionActionType = (typeof SUBSCRIPTION_ACTION_TYPES)[number];
 
 export const ACTION_CAPABILITY_LEVELS = [
   'ADVISORY_ONLY',
