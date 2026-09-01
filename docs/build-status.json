@@ -164,6 +164,22 @@
       ]
     },
     {
+      "id": "subscription-intelligence",
+      "name": "Subscription intelligence and bill-savings workflow",
+      "implementation": "PARTIAL",
+      "tests": "PASSING",
+      "integration": "SIMULATED",
+      "security": "ENGINEERING_VERIFIED",
+      "regulatory": "REGULATORY_GATED",
+      "production": "NOT_PRODUCTION_QUALIFIED",
+      "evidence": [
+        "packages/platform/src/subscription-intelligence",
+        "services/api/src/consumer/subscriptions.ts",
+        "tests/wave-5-prompt-13-subscription-intelligence.test.ts"
+      ],
+      "notes": "Detection and savings IMPLEMENTED; cancellation PARTIAL (simulation provider); negotiation EXTERNAL_DEPENDENCY"
+    },
+    {
       "id": "sunrey-chain",
       "name": "SunRey Chain simulation trust layer",
       "implementation": "IMPLEMENTED",

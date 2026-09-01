@@ -82,6 +82,8 @@ import { dispatchEnvironmental } from './environmental.ts';
 import type { EnvironmentalOracleBff } from './environmental-adapter.ts';
 import { dispatchOpportunity } from './opportunity.ts';
 import type { OpportunityIntelligenceBff } from './opportunity-adapter.ts';
+import { dispatchSubscriptions, SUBSCRIPTION_BFF_ROUTES } from './subscriptions.ts';
+import type { SubscriptionIntelligenceBff } from './subscription-intelligence-adapter.ts';
 import { dispatchDataRights } from './data-rights.ts';
 import { dispatchHinAccess } from './hin-access.ts';
 import type { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
@@ -145,6 +147,7 @@ export type ConsumerBffRuntime = {
   readonly travel?: import('./travel-adapter.ts').TravelBff;
   readonly agentExternalEvidence?: import('./agent-evidence-adapter.ts').AgentExternalEvidenceBff;
   readonly opportunity?: OpportunityIntelligenceBff;
+  readonly subscriptions?: SubscriptionIntelligenceBff;
   readonly previewDiagnostics?: () => Readonly<Record<string, unknown>>;
 };
 
@@ -297,13 +300,13 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
   }
 }
 
-function dispatchAuthenticated(
+async function dispatchAuthenticated(
   runtime: ConsumerBffRuntime,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
   headers: Record<string, string>,
-): BffResponse {
+): BffResponse | Promise<BffResponse> {
   const { method, path, query, body } = request;
   const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
 
@@ -488,6 +491,11 @@ function dispatchAuthenticated(
   const opportunity = dispatchOpportunity(request, requestId, headers, runtime.opportunity);
   if (opportunity) {
     return opportunity;
+  }
+
+  const subscriptions = await dispatchSubscriptions(request, requestId, headers, runtime.subscriptions, principal);
+  if (subscriptions) {
+    return subscriptions;
   }
   if (runtime.hin && isRightsMarketplace(runtime.hin)) {
     const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);
@@ -2240,4 +2248,5 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/catalog/enums',
   'GET /api/v1/sandbox/personas',
   'POST /api/v1/webhooks/cards',
+  ...SUBSCRIPTION_BFF_ROUTES,
 ] as const;

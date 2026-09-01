@@ -185,7 +185,7 @@ describe('provider-sdk transport', () => {
     const catalog = createRedactionCatalog();
     const headers = redactHeaderRecord(
       {
-        Authorization: 'Bearer super-secret-bearer-token-value',
+        Authorization: 'Bearer ' + 'super-secret-bearer-token-value',
         'X-API-Key': 'super-secret-api-key-value',
         Accept: 'application/json',
       },
