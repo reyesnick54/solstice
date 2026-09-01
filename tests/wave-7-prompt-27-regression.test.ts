@@ -38,7 +38,7 @@ describe('Wave 7 Prompt 27 — provider program regression', () => {
   it('44. catalog coverage test accounts for every catalog provider', () => {
     const report = buildWave7CoverageReport();
     assert.ok(report.catalogTotal >= 70);
-    assert.equal(report.expectedTotal, 126);
+    assert.equal(report.expectedTotal, WAVE7_EXPECTED_PROGRAM_TOTAL);
     assertWave7CatalogCoverageComplete();
     assertWave7ProgramAccounting();
     const classified = Object.values(report.summary).reduce((a, b) => a + b, 0);
