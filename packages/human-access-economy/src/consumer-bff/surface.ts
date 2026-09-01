@@ -388,6 +388,8 @@ export class AccessConsumerBffSurface {
             providerDisplayName: row.providerDisplayName,
             providerType: row.providerType,
             providerTermsReference: row.providerTermsReference,
+            providerId: row.providerId,
+            catalogItemId: row.catalogItemId,
             location: row.location,
             start: row.start,
             end: row.end,
