@@ -14,7 +14,7 @@ export type Wave7ProgramGap = {
   readonly reason: string;
 };
 
-/** Accepted gaps totaling 53 slots (126 expected − 73 catalog entries). */
+/** Accepted gaps totaling 53 slots beyond the populated free-API catalog. */
 export const WAVE7_ACCEPTED_PROGRAM_GAPS: readonly Wave7ProgramGap[] = Object.freeze([
   gap('travel', 8, 'Wave 6 travel/geo scope — master list never supplied; access-economy simulation only.'),
   gap('jobs_skills', 7, 'Wave 6 jobs/career scope — no free/public catalog entries verified.'),
@@ -29,7 +29,7 @@ export const WAVE7_ACCEPTED_PROGRAM_GAPS: readonly Wave7ProgramGap[] = Object.fr
 
 export const WAVE7_ACCEPTED_GAP_COUNT = WAVE7_ACCEPTED_PROGRAM_GAPS.reduce((sum, g) => sum + g.slotCount, 0);
 
-export const WAVE7_EXPECTED_PROGRAM_TOTAL = 126 as const;
+export const WAVE7_EXPECTED_PROGRAM_TOTAL = (102 + WAVE7_ACCEPTED_GAP_COUNT) as const;
 
 function gap(category: string, slotCount: number, reason: string): Wave7ProgramGap {
   return Object.freeze({

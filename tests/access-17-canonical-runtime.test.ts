@@ -3,6 +3,8 @@
  */
 
 import assert from 'node:assert/strict';
+
+import { invokeConsumerBff } from './consumer-bff-invoke.ts';
 import { describe, it } from 'node:test';
 
 import { FrozenClock } from '../packages/config/src/clock.ts';
@@ -22,7 +24,7 @@ import { handleConsumerBff, type ConsumerBffRuntime } from '../services/api/src/
 
 const NOW = asUtcInstant('2026-08-23T12:00:00.000Z');
 
-function bffCall(
+async function bffCall(
   world: ReturnType<typeof createSandboxWorld>,
   method: string,
   path: string,
@@ -35,7 +37,7 @@ function bffCall(
     identity: world.runtime.identity.service,
     access: world.access,
   };
-  return handleConsumerBff(runtime, {
+  return await invokeConsumerBff(runtime, {
     method,
     path,
     query: {},
@@ -56,7 +58,7 @@ function graphSlice() {
 }
 
 describe('ACCESS-17 canonical access runtime', () => {
-  it('defines the canonical redemption pipeline order', () => {
+  it('defines the canonical redemption pipeline order', async () => {
     assert.deepEqual([...CANONICAL_REDEMPTION_PIPELINE], [
       'QUOTE',
       'ELIGIBILITY',
@@ -76,7 +78,7 @@ describe('ACCESS-17 canonical access runtime', () => {
     ]);
   });
 
-  it('maps agent proposal to domain intent at ProposalGate without execution authority', () => {
+  it('maps agent proposal to domain intent at ProposalGate without execution authority', async () => {
     const clock = new FrozenClock(NOW);
     const keys = createSimulationKeyProvider({ clock: { now: () => clock.now() } });
     const identity = new SimulatedIdentityAdapter({ clock, keys, events: new DomainEventLog() });
@@ -131,7 +133,7 @@ describe('ACCESS-17 canonical access runtime', () => {
     assert.equal(engine.issueExecutionAuthority().ok, false);
   });
 
-  it('runs Mustang redemption through canonical orchestrator with full pipeline trace', () => {
+  it('runs Mustang redemption through canonical orchestrator with full pipeline trace', async () => {
     const orchestrator = createCanonicalAccessRedemptionOrchestrator();
     const gateway = orchestrator.gateway;
     const search = gateway.search({
@@ -205,7 +207,7 @@ describe('ACCESS-17 canonical access runtime', () => {
     }
   });
 
-  it('runs Japan bundle with multi-provider ALL_OR_NOTHING compensation on failure', () => {
+  it('runs Japan bundle with multi-provider ALL_OR_NOTHING compensation on failure', async () => {
     const orchestrator = createCanonicalAccessRedemptionOrchestrator();
     const gateway = orchestrator.gateway;
 
@@ -341,21 +343,21 @@ describe('ACCESS-17 canonical access runtime', () => {
     assert.equal(mobilityRecord!.entitlementHoldState, 'RELEASED');
   });
 
-  it('BFF Mustang path uses canonical provider orchestration behind stable routes', () => {
+  it('BFF Mustang path uses canonical provider orchestration behind stable routes', async () => {
     const world = createSandboxWorld();
-    const entitlements = bffCall(world, 'GET', '/api/v1/access/entitlements', 'basic_verified');
+    const entitlements = await bffCall(world, 'GET', '/api/v1/access/entitlements', 'basic_verified');
     const mobility = (entitlements.body as { items: { entitlementId: string; category: string }[] }).items.find(
       (row) => row.category === 'MOBILITY',
     );
     assert.ok(mobility);
-    const search = bffCall(world, 'POST', '/api/v1/access/search', 'basic_verified', {
+    const search = await bffCall(world, 'POST', '/api/v1/access/search', 'basic_verified', {
       category: 'MOBILITY',
       query: 'Mustang Miami',
       location: 'Miami, FL',
       providerId: 'turo',
     });
     assert.equal(search.status, 200);
-    const quote = bffCall(world, 'POST', '/api/v1/access/quotes', 'basic_verified', {
+    const quote = await bffCall(world, 'POST', '/api/v1/access/quotes', 'basic_verified', {
       providerId: 'turo',
       catalogItemId: (search.body as { items: { catalogItemId: string }[] }).items[0]!.catalogItemId,
       quantity: 4,
@@ -365,7 +367,7 @@ describe('ACCESS-17 canonical access runtime', () => {
       idempotencyKey: 'access17_bff_quote',
     });
     assert.equal(quote.status, 201);
-    const started = bffCall(world, 'POST', '/api/v1/access/redemptions', 'basic_verified', {
+    const started = await bffCall(world, 'POST', '/api/v1/access/redemptions', 'basic_verified', {
       category: 'MOBILITY',
       providerId: 'turo',
       quoteId: (quote.body as { quoteId: string }).quoteId,
@@ -377,7 +379,7 @@ describe('ACCESS-17 canonical access runtime', () => {
     });
     assert.equal(started.status, 201);
     const redemptionId = (started.body as { redemptionId: string }).redemptionId;
-    const confirmed = bffCall(
+    const confirmed = await bffCall(
       world,
       'POST',
       `/api/v1/access/redemptions/${redemptionId}/confirm`,
