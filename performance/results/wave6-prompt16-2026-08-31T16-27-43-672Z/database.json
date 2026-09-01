@@ -1,0 +1,113 @@
+{
+  "suite": "database",
+  "status": "TARGET_MET",
+  "durationMs": 3,
+  "cases": [
+    {
+      "name": "single-row-posting",
+      "status": "TARGET_MET",
+      "latency": {
+        "count": 80,
+        "minMs": 0.01149600000007922,
+        "maxMs": 0.11039400000026944,
+        "meanMs": 0.014968237500022496,
+        "medianMs": 0.012313000000176544,
+        "p50Ms": 0.012313000000176544,
+        "p95Ms": 0.021604999999908614,
+        "p99Ms": 0.11039400000026944,
+        "stddevMs": 0.011555262323155638
+      }
+    },
+    {
+      "name": "journal-lookup",
+      "status": "TARGET_MET",
+      "latency": {
+        "count": 80,
+        "minMs": 0.0008699999998498242,
+        "maxMs": 0.025808999999753723,
+        "meanMs": 0.00224774999999795,
+        "medianMs": 0.0016319999999723223,
+        "p50Ms": 0.0016319999999723223,
+        "p95Ms": 0.0024450000000797445,
+        "p99Ms": 0.025808999999753723,
+        "stddevMs": 0.0037869381018495116
+      }
+    },
+    {
+      "name": "history-pagination",
+      "status": "BENCHMARKED",
+      "latency": {
+        "count": 80,
+        "minMs": 0.000653000000056636,
+        "maxMs": 0.08112800000026255,
+        "meanMs": 0.00248253750000913,
+        "medianMs": 0.0013030000000071595,
+        "p50Ms": 0.0013030000000071595,
+        "p95Ms": 0.0022630000003118766,
+        "p99Ms": 0.08112800000026255,
+        "stddevMs": 0.008957448505246636
+      }
+    },
+    {
+      "name": "offset-pagination",
+      "status": "BENCHMARKED",
+      "latency": {
+        "count": 80,
+        "minMs": 0.0006170000001475273,
+        "maxMs": 0.05491900000015448,
+        "meanMs": 0.002164012499991941,
+        "medianMs": 0.0012300000003051537,
+        "p50Ms": 0.0012300000003051537,
+        "p95Ms": 0.0025749999999788997,
+        "p99Ms": 0.05491900000015448,
+        "stddevMs": 0.006158909561558353
+      }
+    },
+    {
+      "name": "balance-projection",
+      "status": "BENCHMARKED",
+      "latencyMs": 0.19912699999986216
+    },
+    {
+      "name": "concurrent-writes-10x40",
+      "status": "BENCHMARKED",
+      "latency": {
+        "count": 40,
+        "minMs": 0.012688000000252941,
+        "maxMs": 0.3014109999999164,
+        "meanMs": 0.11095224999995708,
+        "medianMs": 0.10226599999987229,
+        "p50Ms": 0.10226599999987229,
+        "p95Ms": 0.1984359999996741,
+        "p99Ms": 0.3014109999999164,
+        "stddevMs": 0.06403314396572474
+      }
+    },
+    {
+      "name": "postgresql",
+      "status": "ENVIRONMENT_LIMITED",
+      "note": "Set SUNREY_PERSISTENCE_TEST=1 and run npm run db:up && npm run db:migrate for PostgreSQL qualification"
+    }
+  ],
+  "environment": {
+    "resultClass": "ENGINEERING_MEASUREMENT",
+    "label": "ENGINEERING_QUALIFICATION_TARGET",
+    "sourceCommit": "8f4683320e0a0957c8d623ce881634577ac0bff6",
+    "recordedAtUtc": "2026-08-31T16:27:47.035Z",
+    "nodeVersion": "v22.14.0",
+    "platform": "linux",
+    "arch": "x64",
+    "cpuCount": 4,
+    "cpuModel": "Intel(R) Xeon(R) Processor",
+    "totalMemoryGiB": 15.64,
+    "freeMemoryGiB": 14.71,
+    "container": false,
+    "environment": "simulation",
+    "databaseMode": "in-process",
+    "networkMode": "in-process",
+    "cryptoMode": "HYBRID_SIMULATION",
+    "validatorCount": null,
+    "benchmarkTool": "sunrey-qualify-performance",
+    "benchmarkToolVersion": "wave6-prompt16"
+  }
+}

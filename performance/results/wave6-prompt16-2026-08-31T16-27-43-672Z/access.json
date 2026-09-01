@@ -1,0 +1,128 @@
+{
+  "suite": "access",
+  "status": "TARGET_MET",
+  "durationMs": 37,
+  "cases": [
+    {
+      "name": "overview-read",
+      "status": "TARGET_MET",
+      "latency": {
+        "count": 200,
+        "minMs": 0.0005409999976109248,
+        "maxMs": 0.04251699999804259,
+        "meanMs": 0.0011658699998952215,
+        "medianMs": 0.0006030000004102476,
+        "p50Ms": 0.0006030000004102476,
+        "p95Ms": 0.0016829999985930044,
+        "p99Ms": 0.009277000001020497,
+        "stddevMs": 0.003816198501481695
+      }
+    },
+    {
+      "name": "provider-search",
+      "status": "TARGET_MET",
+      "latency": {
+        "count": 200,
+        "minMs": 0.004232999999658205,
+        "maxMs": 0.3674649999993562,
+        "meanMs": 0.007728940000124567,
+        "medianMs": 0.00442299999849638,
+        "p50Ms": 0.00442299999849638,
+        "p95Ms": 0.012587999997776933,
+        "p99Ms": 0.05251499999940279,
+        "stddevMs": 0.02655796921924857
+      }
+    },
+    {
+      "name": "provider-quote",
+      "status": "TARGET_MET",
+      "latency": {
+        "count": 200,
+        "minMs": 0.0025659999992058147,
+        "maxMs": 0.14889099999709288,
+        "meanMs": 0.004146495000040887,
+        "medianMs": 0.002759999999398133,
+        "p50Ms": 0.002759999999398133,
+        "p95Ms": 0.005483000000822358,
+        "p99Ms": 0.025799999999435386,
+        "stddevMs": 0.010859831281655135
+      }
+    },
+    {
+      "name": "coverage-evaluation",
+      "status": "BENCHMARKED",
+      "latency": {
+        "count": 200,
+        "minMs": 0.0026639999996405095,
+        "maxMs": 0.182078999998339,
+        "meanMs": 0.005550179999900138,
+        "medianMs": 0.0037030000021331944,
+        "p50Ms": 0.0037030000021331944,
+        "p95Ms": 0.012127999998483574,
+        "p99Ms": 0.02571700000044075,
+        "stddevMs": 0.013237654036280409
+      }
+    },
+    {
+      "name": "wave1-allocation-flow",
+      "status": "BENCHMARKED",
+      "latency": {
+        "count": 50,
+        "minMs": 0.07923899999877904,
+        "maxMs": 1.9070019999999204,
+        "meanMs": 0.16004721999997856,
+        "medianMs": 0.10231900000144378,
+        "p50Ms": 0.10231900000144378,
+        "p95Ms": 0.33052200000020093,
+        "p99Ms": 1.9070019999999204,
+        "stddevMs": 0.2606810326728057
+      }
+    },
+    {
+      "name": "concurrency-50x250",
+      "status": "BENCHMARKED",
+      "latency": {
+        "count": 250,
+        "minMs": 0.07589300000108778,
+        "maxMs": 6.176742999999988,
+        "meanMs": 2.6456244599999628,
+        "medianMs": 2.6506330000011076,
+        "p50Ms": 2.6506330000011076,
+        "p95Ms": 5.365634999998292,
+        "p99Ms": 5.949020000000019,
+        "stddevMs": 1.571386922758208
+      },
+      "throughput": {
+        "requests": 250,
+        "durationMs": 24.107879999999568,
+        "requestsPerSec": 10370.053277185903,
+        "errors": 0,
+        "errorRate": 0
+      }
+    }
+  ],
+  "environment": {
+    "resultClass": "ENGINEERING_MEASUREMENT",
+    "label": "ENGINEERING_QUALIFICATION_TARGET",
+    "sourceCommit": "8f4683320e0a0957c8d623ce881634577ac0bff6",
+    "recordedAtUtc": "2026-08-31T16:28:07.071Z",
+    "nodeVersion": "v22.14.0",
+    "platform": "linux",
+    "arch": "x64",
+    "cpuCount": 4,
+    "cpuModel": "Intel(R) Xeon(R) Processor",
+    "totalMemoryGiB": 15.64,
+    "freeMemoryGiB": 14.67,
+    "container": false,
+    "environment": "simulation",
+    "databaseMode": "in-process",
+    "networkMode": "in-process",
+    "cryptoMode": "HYBRID_SIMULATION",
+    "validatorCount": null,
+    "benchmarkTool": "access-economy-in-process",
+    "benchmarkToolVersion": "wave6-prompt16"
+  },
+  "notes": [
+    "Deterministic fixtures — not live provider or payment rail"
+  ]
+}

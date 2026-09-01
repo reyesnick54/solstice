@@ -281,7 +281,7 @@ describe('Wave 5 Prompt 19 — environmental oracle', () => {
   it('25. BFF environmental routes', async () => {
     const world = createSandboxWorld();
     const runtime = { bff: world.bff, sessions: world.sessions, environmental: world.environmental };
-    const response = handleConsumerBff(runtime, {
+    const response = await handleConsumerBff(runtime, {
       method: 'GET',
       path: '/api/v1/world/environmental',
       query: { lat: '37.7749', lon: '-122.4194' },

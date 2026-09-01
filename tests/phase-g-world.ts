@@ -17,7 +17,7 @@ export type PhaseGWorld = {
       readonly body?: unknown;
       readonly query?: Readonly<Record<string, string>>;
     },
-  ) => BffResponse;
+  ) => Promise<BffResponse>;
   readonly startHttp: () => ReturnType<typeof startConsumerBff>;
 };
 
@@ -35,8 +35,8 @@ export function createPhaseGWorld(): PhaseGWorld {
   return {
     token: PHASE_G_TOKEN,
     exchange,
-    handle: (request) =>
-      handleConsumerBff(runtime, {
+    handle: async (request) =>
+      await handleConsumerBff(runtime, {
         method: request.method,
         path: request.path,
         query: request.query ?? {},

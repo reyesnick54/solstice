@@ -483,6 +483,9 @@ jobs:
           node scripts/check-merge-integrity.mjs
           node scripts/check-case-collisions.mjs
 
+      - name: "[TYPECHECK] Install from lockfile"
+        run: npm ci --ignore-scripts
+
       - name: "[INTEGRITY] YAML and provider catalog validation"
         run: |
           node scripts/check-yaml-integrity.mjs

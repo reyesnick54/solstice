@@ -4,6 +4,47 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- Wave 6 Prompt 16 production performance qualification harness
+  (`performance/`, `scripts/qualify-performance.mjs`,
+  `docs/qualification/PERFORMANCE_QUALIFICATION.md`): reproducible
+  API, ledger, chain, exchange, grow, access, provider fan-out,
+  subscription-intelligence, stress, and chaos suites with
+  machine-readable results under `performance/results/`. CI regression
+  via `npm run test:performance-regression`. Executed on this tree
+  2026-08-31 — see
+  `performance/results/wave6-prompt16-2026-08-31T16-27-43-672Z/`.
+  Status by suite: API `BENCHMARKED`, database `TARGET_MET`,
+  blockchain `BENCHMARKED`, exchange `TARGET_MET`, grow `TARGET_MET`,
+  access `TARGET_MET`, providers `TARGET_MET`,
+  subscription-intelligence `BENCHMARKED`, stress `BENCHMARKED`,
+  chaos/soak `ENVIRONMENT_LIMITED`, merchant-exchange `NOT_TESTED`.
+  Engineering measurements only — not contractual SLAs.
+
+- Wave 4 Prompt 11 external opportunity live integrations
+  (`packages/external-data/src/wave6`, `packages/external-data/src/certification`):
+  governed HTTP adapters for Arbeitnow, RemoteOK, Remotive, Jobicy, Himalayas,
+  and Hacker News with fixture simulation fallback, execution provenance
+  (`simulated` / `liveNetworkCallObserved`), in-memory cache, and live
+  certification via `npm run provider:live-certify` when
+  `SUNREY_LIVE_CERTIFICATION=1`. Frankfurter FX and World Bank macro probes
+  live at `packages/external-data/src/wave2/live-economic.ts`. Blocked:
+  `graphql-jobs`, `artificial-intelligence-jobs`. `ENVIRONMENT` remains
+  `simulation`; `productionAuthorized` stays `false` on all adapters.
+
+- SunRey Merchant Exchange — verified purchase intent marketplace
+  (Wave 5 Prompt 14, `packages/sunrey-exchange/src/merchant-exchange`):
+  `PurchaseIntent` lifecycle, intent verification, merchant eligibility,
+  sealed merchant offers, deterministic ranking, explicit user selection,
+  offer immutability, payment authorization boundary, fulfillment state
+  machine, settlement boundary, economic attribution references, abuse
+  controls, audit events, and BFF routes at
+  `/api/v1/merchant-exchange/*`. Capability
+  `sunrey-exchange-merchant-commerce` is `IMPLEMENTED` in simulation.
+  Not a generic auction engine. Merchant onboarding/KYB depends on
+  identity verification state. Live merchant supply, payment execution,
+  and fulfillment integration remain `NOT_CONNECTED`. See
+  `docs/architecture/merchant-exchange.md`.
+
 - Deterministic Human Contribution Valuation Engine (Chunk 111,
   `packages/human-economic-contribution/src/valuation`): evaluates a
   VERIFIED contribution under an active versioned valuation policy.
@@ -473,6 +514,20 @@ This document describes only what is implemented and tested in this tree.
   prevention, resilience/capacity/goal-progress views, and read-only
   agent/Growth access. Not a human-worth score, credit score, or
   execution authority. No money movement.
+- Subscription intelligence and bill-savings workflow (Wave 5 Prompt 13,
+  `packages/platform/src/subscription-intelligence`,
+  `services/api/src/consumer/subscriptions.ts`): deterministic
+  recurring-payment detection with merchant normalization, subscription
+  classification, price-change detection, duplicate/overlap evidence,
+  usage-aware savings opportunities, user-authorized action lifecycle,
+  idempotent cancellation requests, provider-result verification, and
+  estimated-vs-verified savings attribution with audit events.
+  Subscription detection: `IMPLEMENTED`. Savings recommendations:
+  `IMPLEMENTED`. Automated cancellation: `PARTIAL` / provider-dependent
+  (simulation provider for certified rehearsal only; live providers
+  not connected). Bill negotiation: `PARTIAL` / provider-dependent
+  (`ACTION_NOT_AVAILABLE` unless a certified provider is registered).
+  AI may propose and explain only; it cannot execute actions.
 - Simulated mobile wallet provisioning and merchant SoftPOS / Tap-to-Pay
   (Chunk 12, still inside `packages/cards`): provider-neutral wallet
   port with Apple-style and Google-style simulation adapters,
@@ -661,6 +716,25 @@ This document describes only what is implemented and tested in this tree.
   contribution-review metadata without marketplace or tokens.
   Not GDPR/CCPA/PDPL/HIPAA compliance. Consent Ledger is Chunk 24.
 
+- Grow My Money end-to-end agentic financial lifecycle (Wave 5 Prompt 15,
+  `packages/platform/src/grow/lifecycle`): canonical `FinancialOpportunity`,
+  `CanonicalFinancialProposal`, structured `FinancialRiskProfile`, data
+  freshness (`SourcedFact`), compliance checkpoint, execution adapter
+  contract (`prepareExecution` … `reconcile`), outcome attribution
+  (projected vs realized), reassessment cooldown, audit event kinds, AI
+  credential isolation guards, and machine-readable agent capability matrix
+  (`docs/productization/grow-agent-capability-matrix.json`). Composes with
+  existing Phase E Grow orchestrator (`packages/platform/src/grow`),
+  opportunity engine (`packages/platform/src/growth/opportunity`), Consumer
+  BFF (`services/api/src/consumer/grow.ts`), Kernel-gated sandbox investment
+  execution (`packages/investments/src/grow-adapter.ts`), and agent tool
+  boundaries (`packages/sunrey-agent/src/grow-tools.ts`). Capability
+  `sunrey-grow-lifecycle` is `IMPLEMENTED` for discovery, analysis, proposal,
+  authorization, monitoring, and audit in simulation. Investment live
+  execution is `PROVIDER_GATED`. Debt optimization agent is `PARTIAL`.
+  `ENVIRONMENT` remains `simulation`. See
+  `docs/productization/WAVE_5_PROMPT_15_GROW_LIFECYCLE.md`.
+
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
 - Production BFT consensus, public SunRey network, mainnet, or
@@ -822,10 +896,18 @@ This document describes only what is implemented and tested in this tree.
 - SunRey AI runtime (Chunk 101, `packages/ai-runtime`):
   provider-neutral inference plane behind the Financial Agent.
   Capability `sunrey-ai-runtime` is `IMPLEMENTED`. S3M is the
-  intended primary intelligence engine. xAI/Grok is reserved for
-  Chunk 103 and is not networked. LocalTest is deterministic and
-  offline. Providers cannot execute payments, trades, mint, or
-  sign. Tool intents enter `packages/sunrey-agent` as proposals.
+  intended primary intelligence engine. Chunk 103 xAI/Grok adapter
+  is implemented at `packages/ai-runtime/src/providers/xai-grok.ts`
+  with fixture-first CI and opt-in live preview
+  (`SUNREY_EXTERNAL_AI_PREVIEW_ENABLED`, `ai:certify:live --live`).
+  Wave 4 Prompt 12 qualification states distinguish reachability,
+  authentication, model availability, inference, structured output,
+  and evaluation. **xAI status (2026-08-31):** adapter
+  `IMPLEMENTED`; live inference requires credential + billing;
+  `PRODUCTION_QUALIFIED` not claimed without evaluation pass.
+  LocalTest is deterministic and offline. Providers cannot execute
+  payments, trades, mint, or sign. Tool intents enter
+  `packages/sunrey-agent` as proposals.
 - SunRey consumer Exchange (Chunk 99,
   `packages/sunrey-exchange/src/consumer`): consumer portfolio,
   indicative quotes, trade preview, buy/sell/convert with price

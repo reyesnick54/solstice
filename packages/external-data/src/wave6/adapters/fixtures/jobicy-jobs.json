@@ -1,0 +1,16 @@
+{
+  "jobs": [
+    {
+      "id": 3001,
+      "url": "https://jobicy.com/jobs/3001-product-designer",
+      "jobSlug": "3001-product-designer",
+      "jobTitle": "Product Designer",
+      "companyName": "Design Co",
+      "jobIndustry": ["Design"],
+      "jobType": ["Full-Time"],
+      "jobGeo": "Remote",
+      "jobExcerpt": "Lead product design for a B2B SaaS platform.",
+      "pubDate": "2026-08-29T12:00:00.000Z"
+    }
+  ]
+}

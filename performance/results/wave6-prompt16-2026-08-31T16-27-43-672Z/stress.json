@@ -1,0 +1,38 @@
+{
+  "suite": "stress",
+  "status": "BENCHMARKED",
+  "durationMs": 28,
+  "cases": [
+    {
+      "name": "seven-validator-saturation",
+      "sustainedFinalizedTxPerSec": 13363.014072367401,
+      "rejected": 0,
+      "submitted": 48,
+      "status": "BENCHMARKED"
+    }
+  ],
+  "environment": {
+    "resultClass": "ENGINEERING_MEASUREMENT",
+    "label": "ENGINEERING_QUALIFICATION_TARGET",
+    "sourceCommit": "8f4683320e0a0957c8d623ce881634577ac0bff6",
+    "recordedAtUtc": "2026-08-31T16:28:07.218Z",
+    "nodeVersion": "v22.14.0",
+    "platform": "linux",
+    "arch": "x64",
+    "cpuCount": 4,
+    "cpuModel": "Intel(R) Xeon(R) Processor",
+    "totalMemoryGiB": 15.64,
+    "freeMemoryGiB": 14.67,
+    "container": false,
+    "environment": "simulation",
+    "databaseMode": "in-process",
+    "networkMode": "in-process",
+    "cryptoMode": "HYBRID_SIMULATION",
+    "validatorCount": 7,
+    "benchmarkTool": "sunrey-bench",
+    "benchmarkToolVersion": "wave6-prompt16"
+  },
+  "notes": [
+    "Stress point is in-process seven-validator mixed workload"
+  ]
+}

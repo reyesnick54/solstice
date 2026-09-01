@@ -6,28 +6,44 @@ import { hrtime } from 'node:process';
 
 import { createPhaseHWorld } from './phase-h-world.ts';
 
-function measure(label: string, fn: () => void): { readonly label: string; readonly ns: string } {
+async function measureAsync(label: string, fn: () => Promise<void>): Promise<{ readonly label: string; readonly ns: string }> {
   const start = hrtime.bigint();
-  fn();
+  await fn();
   const elapsed = hrtime.bigint() - start;
   return { label, ns: elapsed.toString() };
 }
 
 describe('Phase H performance baseline', () => {
-  it('measures non-production Vault/HIN/economy reads without inventing an SLA', () => {
+  it('measures non-production Vault/HIN/economy reads without inventing an SLA', async () => {
     const world = createPhaseHWorld();
-    world.handle({ method: 'POST', path: '/api/v1/data/records', body: { idempotencyKey: 'perf_pref' } });
-    world.handle({ method: 'POST', path: '/api/v1/data/hin/participate' });
-    const samples = [
-      measure('vault_summary', () => world.handle({ method: 'GET', path: '/api/v1/data' })),
-      measure('permissions', () => world.handle({ method: 'GET', path: '/api/v1/data/permissions' })),
-      measure('access_history', () => world.handle({ method: 'GET', path: '/api/v1/data/access-history' })),
-      measure('hin_contribution_summary', () => world.handle({ method: 'GET', path: '/api/v1/data/contributions' })),
-      measure('aggregate_hin_metrics', () => world.handle({ method: 'GET', path: '/api/v1/economy/hin' })),
-      measure('earnings', () => world.handle({ method: 'GET', path: '/api/v1/data/earnings' })),
-      measure('productive_overview', () => world.handle({ method: 'GET', path: '/api/v1/economy/productive' })),
-      measure('category_metric_history', () => world.handle({ method: 'GET', path: '/api/v1/economy/productive/ENERGY' })),
-    ];
+    await world.handle({ method: 'POST', path: '/api/v1/data/records', body: { idempotencyKey: 'perf_pref' } });
+    await world.handle({ method: 'POST', path: '/api/v1/data/hin/participate' });
+    const samples = await Promise.all([
+      measureAsync('vault_summary', async () => {
+        await world.handle({ method: 'GET', path: '/api/v1/data' });
+      }),
+      measureAsync('permissions', async () => {
+        await world.handle({ method: 'GET', path: '/api/v1/data/permissions' });
+      }),
+      measureAsync('access_history', async () => {
+        await world.handle({ method: 'GET', path: '/api/v1/data/access-history' });
+      }),
+      measureAsync('hin_contribution_summary', async () => {
+        await world.handle({ method: 'GET', path: '/api/v1/data/contributions' });
+      }),
+      measureAsync('aggregate_hin_metrics', async () => {
+        await world.handle({ method: 'GET', path: '/api/v1/economy/hin' });
+      }),
+      measureAsync('earnings', async () => {
+        await world.handle({ method: 'GET', path: '/api/v1/data/earnings' });
+      }),
+      measureAsync('productive_overview', async () => {
+        await world.handle({ method: 'GET', path: '/api/v1/economy/productive' });
+      }),
+      measureAsync('category_metric_history', async () => {
+        await world.handle({ method: 'GET', path: '/api/v1/economy/productive/ENERGY' });
+      }),
+    ]);
     writeFileSync(
       join(import.meta.dirname, '../docs/productization/PHASE_H_PERFORMANCE_BASELINE.json'),
       `${JSON.stringify(

@@ -56,3 +56,4 @@ export {
 export { buildGrowScenarios } from './scenarios.ts';
 export { InMemoryGrowStore } from './store.ts';
 export { GrowLifecycleService } from './service.ts';
+export * from './lifecycle/index.ts';

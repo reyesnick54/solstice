@@ -55,6 +55,9 @@ export function parseStructuredOutput(
       ? ok(Object.freeze({ kind: 'MARKET_OPPORTUNITY_RESEARCH', result: parsed.value }))
       : parsed;
   }
+  if (record.kind === 'GROWTH_AGENT_PROPOSAL') {
+    return parseGrowthAgentProposal(record);
+  }
   if (record.kind === 'EXPLANATION') {
     if (typeof record.text !== 'string' || record.text.length === 0) {
       return fail('INVALID_STRUCTURED_OUTPUT', 'EXPLANATION.text is required');
@@ -100,6 +103,87 @@ export function parseStructuredOutput(
     );
   }
   return fail('INVALID_STRUCTURED_OUTPUT', 'structured output kind is missing or unsupported');
+}
+
+const GROWTH_RISK_LEVELS = new Set(['LOW', 'MEDIUM', 'HIGH']);
+const CONFIDENCE_LEVELS = new Set(['LOW', 'MEDIUM', 'HIGH']);
+
+function parseStringArray(value: unknown, field: string): Result<readonly string[], AiProviderFailure> {
+  if (!Array.isArray(value)) {
+    return fail('INVALID_STRUCTURED_OUTPUT', `${field} must be an array`);
+  }
+  const items: string[] = [];
+  for (const [index, item] of value.entries()) {
+    if (typeof item !== 'string' || item.length === 0) {
+      return fail('INVALID_STRUCTURED_OUTPUT', `${field}[${String(index)}] must be a non-empty string`);
+    }
+    items.push(item);
+  }
+  return ok(Object.freeze(items));
+}
+
+function parseGrowthAgentProposal(record: Record<string, unknown>): Result<
+  import('./types.ts').AiStructuredGrowthAgentProposal,
+  AiProviderFailure
+> {
+  if (typeof record.proposalType !== 'string' || record.proposalType.length === 0) {
+    return fail('INVALID_STRUCTURED_OUTPUT', 'GROWTH_AGENT_PROPOSAL.proposalType is required');
+  }
+  if (typeof record.summary !== 'string' || record.summary.length === 0) {
+    return fail('INVALID_STRUCTURED_OUTPUT', 'GROWTH_AGENT_PROPOSAL.summary is required');
+  }
+  if (typeof record.rationale !== 'string' || record.rationale.length === 0) {
+    return fail('INVALID_STRUCTURED_OUTPUT', 'GROWTH_AGENT_PROPOSAL.rationale is required');
+  }
+  const evidence = parseStringArray(record.evidence, 'evidence');
+  if (!evidence.ok) {
+    return evidence;
+  }
+  if (!GROWTH_RISK_LEVELS.has(String(record.riskLevel))) {
+    return fail('INVALID_STRUCTURED_OUTPUT', 'GROWTH_AGENT_PROPOSAL.riskLevel must be LOW, MEDIUM, or HIGH');
+  }
+  const assumptions = parseStringArray(record.assumptions, 'assumptions');
+  if (!assumptions.ok) {
+    return assumptions;
+  }
+  const recommendedAmount = parseMoneyQuantity(record.recommendedAmount, 'recommendedAmount');
+  if (!recommendedAmount.ok) {
+    return recommendedAmount;
+  }
+  if (typeof record.currency !== 'string' || record.currency.length === 0) {
+    return fail('INVALID_STRUCTURED_OUTPUT', 'GROWTH_AGENT_PROPOSAL.currency is required');
+  }
+  if (typeof record.timeHorizon !== 'string' || record.timeHorizon.length === 0) {
+    return fail('INVALID_STRUCTURED_OUTPUT', 'GROWTH_AGENT_PROPOSAL.timeHorizon is required');
+  }
+  if (record.requiredUserApproval !== true) {
+    return fail('INVALID_STRUCTURED_OUTPUT', 'GROWTH_AGENT_PROPOSAL.requiredUserApproval must be true');
+  }
+  const providerDataReferences = parseStringArray(record.providerDataReferences, 'providerDataReferences');
+  if (!providerDataReferences.ok) {
+    return providerDataReferences;
+  }
+  if (!CONFIDENCE_LEVELS.has(String(record.confidence))) {
+    return fail('INVALID_STRUCTURED_OUTPUT', 'GROWTH_AGENT_PROPOSAL.confidence must be LOW, MEDIUM, or HIGH');
+  }
+  return ok(
+    Object.freeze({
+      kind: 'GROWTH_AGENT_PROPOSAL',
+      proposalType: record.proposalType,
+      summary: record.summary,
+      rationale: record.rationale,
+      evidence: evidence.value,
+      riskLevel: record.riskLevel as 'LOW' | 'MEDIUM' | 'HIGH',
+      assumptions: assumptions.value,
+      recommendedAmount: recommendedAmount.value,
+      currency: record.currency,
+      timeHorizon: record.timeHorizon,
+      requiredUserApproval: true as const,
+      providerDataReferences: providerDataReferences.value,
+      confidence: record.confidence as 'LOW' | 'MEDIUM' | 'HIGH',
+      guaranteedReturn: false as const,
+    }),
+  );
 }
 
 export function parseToolIntents(

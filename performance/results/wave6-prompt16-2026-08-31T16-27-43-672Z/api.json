@@ -1,0 +1,252 @@
+{
+  "suite": "api",
+  "status": "BENCHMARKED",
+  "durationMs": 2080,
+  "cases": [
+    {
+      "name": "health",
+      "category": "health",
+      "path": "/health",
+      "status": "TARGET_MET",
+      "latency": {
+        "count": 40,
+        "minMs": 0.30754300000012336,
+        "maxMs": 14.585957999999891,
+        "meanMs": 0.874254475000015,
+        "medianMs": 0.36788799999999355,
+        "p50Ms": 0.36788799999999355,
+        "p95Ms": 1.6933619999999792,
+        "p99Ms": 14.585957999999891,
+        "stddevMs": 2.2210422798314156
+      },
+      "errors": 0,
+      "errorRate": 0
+    },
+    {
+      "name": "bootstrap",
+      "category": "authenticatedRead",
+      "path": "/api/v1/me/bootstrap",
+      "status": "TARGET_MET",
+      "latency": {
+        "count": 40,
+        "minMs": 0.37032700000008845,
+        "maxMs": 2.12261199999989,
+        "meanMs": 0.5137946500000226,
+        "medianMs": 0.44440000000008695,
+        "p50Ms": 0.44440000000008695,
+        "p95Ms": 0.7146730000001753,
+        "p99Ms": 2.12261199999989,
+        "stddevMs": 0.27225073685551326
+      },
+      "errors": 0,
+      "errorRate": 0
+    },
+    {
+      "name": "home",
+      "category": "multiService",
+      "path": "/api/v1/me/home",
+      "status": "TARGET_MET",
+      "latency": {
+        "count": 40,
+        "minMs": 0.8223970000001373,
+        "maxMs": 3.165600999999924,
+        "meanMs": 1.0215191249999975,
+        "medianMs": 0.8989050000000134,
+        "p50Ms": 0.8989050000000134,
+        "p95Ms": 1.3471750000001066,
+        "p99Ms": 3.165600999999924,
+        "stddevMs": 0.46111084758163795
+      },
+      "errors": 0,
+      "errorRate": 0
+    },
+    {
+      "name": "accounts-list",
+      "category": "authenticatedRead",
+      "path": "/api/v1/accounts",
+      "status": "TARGET_MET",
+      "latency": {
+        "count": 40,
+        "minMs": 0.2859570000000531,
+        "maxMs": 0.5919579999999769,
+        "meanMs": 0.33513792499999795,
+        "medianMs": 0.32725600000003396,
+        "p50Ms": 0.32725600000003396,
+        "p95Ms": 0.38066600000001927,
+        "p99Ms": 0.5919579999999769,
+        "stddevMs": 0.0494890408446175
+      },
+      "errors": 0,
+      "errorRate": 0
+    },
+    {
+      "name": "grow-snapshot",
+      "category": "multiService",
+      "path": "/api/v1/grow/snapshot",
+      "status": "TARGET_MET",
+      "latency": {
+        "count": 40,
+        "minMs": 0.3162999999999556,
+        "maxMs": 1.089080999999851,
+        "meanMs": 0.4293305499999917,
+        "medianMs": 0.38982099999998354,
+        "p50Ms": 0.38982099999998354,
+        "p95Ms": 0.7535179999999855,
+        "p99Ms": 1.089080999999851,
+        "stddevMs": 0.14106162416827844
+      },
+      "errors": 0,
+      "errorRate": 0
+    },
+    {
+      "name": "access-overview",
+      "category": "multiService",
+      "path": "/api/v1/access/overview",
+      "status": "TARGET_MET",
+      "latency": {
+        "count": 40,
+        "minMs": 0.6690940000000865,
+        "maxMs": 2.5985970000001544,
+        "meanMs": 0.8489068250000174,
+        "medianMs": 0.7415149999999358,
+        "p50Ms": 0.7415149999999358,
+        "p95Ms": 1.1824980000001233,
+        "p99Ms": 2.5985970000001544,
+        "stddevMs": 0.35703712149249583
+      },
+      "errors": 0,
+      "errorRate": 0
+    },
+    {
+      "name": "exchange-markets",
+      "category": "authenticatedRead",
+      "path": "/api/v1/exchange/markets",
+      "status": "TARGET_MET",
+      "latency": {
+        "count": 40,
+        "minMs": 0.2564740000000256,
+        "maxMs": 0.48270000000002256,
+        "meanMs": 0.3185811499999772,
+        "medianMs": 0.30666599999995015,
+        "p50Ms": 0.30666599999995015,
+        "p95Ms": 0.37218399999983376,
+        "p99Ms": 0.48270000000002256,
+        "stddevMs": 0.04442137199733895
+      },
+      "errors": 0,
+      "errorRate": 0
+    },
+    {
+      "name": "not-found",
+      "category": "errorPath",
+      "path": "/api/v1/does-not-exist",
+      "status": "BENCHMARKED",
+      "latency": {
+        "count": 40,
+        "minMs": 0.4083140000000185,
+        "maxMs": 1.951727000000119,
+        "meanMs": 0.5010924999999873,
+        "medianMs": 0.4356390000000374,
+        "p50Ms": 0.4356390000000374,
+        "p95Ms": 0.6752000000001317,
+        "p99Ms": 1.951727000000119,
+        "stddevMs": 0.24837894445425573
+      },
+      "errors": 0,
+      "errorRate": 0
+    },
+    {
+      "name": "concurrency-home-10",
+      "category": "stress",
+      "status": "BENCHMARKED",
+      "concurrency": 10,
+      "latency": {
+        "count": 50,
+        "minMs": 2.7729309999999714,
+        "maxMs": 28.419731000000183,
+        "meanMs": 9.515577919999997,
+        "medianMs": 8.204081999999971,
+        "p50Ms": 8.204081999999971,
+        "p95Ms": 23.763740999999982,
+        "p99Ms": 28.419731000000183,
+        "stddevMs": 5.82048411687986
+      },
+      "throughput": {
+        "requests": 50,
+        "durationMs": 50.63569299999995,
+        "requestsPerSec": 987.4457529395332,
+        "errors": 0,
+        "errorRate": 0
+      }
+    },
+    {
+      "name": "concurrency-home-50",
+      "category": "stress",
+      "status": "BENCHMARKED",
+      "concurrency": 50,
+      "latency": {
+        "count": 250,
+        "minMs": 5.052537000000029,
+        "maxMs": 353.0227010000001,
+        "meanMs": 66.81445966000001,
+        "medianMs": 33.5560039999998,
+        "p50Ms": 33.5560039999998,
+        "p95Ms": 338.52406799999994,
+        "p99Ms": 349.5434129999999,
+        "stddevMs": 96.46270961707334
+      },
+      "throughput": {
+        "requests": 250,
+        "durationMs": 370.4071660000002,
+        "requestsPerSec": 674.9329466266316,
+        "errors": 0,
+        "errorRate": 0
+      }
+    },
+    {
+      "name": "concurrency-home-100",
+      "category": "stress",
+      "status": "BENCHMARKED",
+      "concurrency": 100,
+      "latency": {
+        "count": 500,
+        "minMs": 9.167911000000004,
+        "maxMs": 1249.415187,
+        "meanMs": 243.24653112600004,
+        "medianMs": 99.01933099999997,
+        "p50Ms": 99.01933099999997,
+        "p95Ms": 1165.548538,
+        "p99Ms": 1233.010604,
+        "stddevMs": 369.3231656197315
+      },
+      "throughput": {
+        "requests": 500,
+        "durationMs": 1372.778318,
+        "requestsPerSec": 364.22486678581123,
+        "errors": 0,
+        "errorRate": 0
+      }
+    }
+  ],
+  "environment": {
+    "resultClass": "ENGINEERING_MEASUREMENT",
+    "label": "ENGINEERING_QUALIFICATION_TARGET",
+    "sourceCommit": "8f4683320e0a0957c8d623ce881634577ac0bff6",
+    "recordedAtUtc": "2026-08-31T16:27:47.016Z",
+    "nodeVersion": "v22.14.0",
+    "platform": "linux",
+    "arch": "x64",
+    "cpuCount": 4,
+    "cpuModel": "Intel(R) Xeon(R) Processor",
+    "totalMemoryGiB": 15.64,
+    "freeMemoryGiB": 14.71,
+    "container": false,
+    "environment": "simulation",
+    "databaseMode": "in-process",
+    "networkMode": "localhost",
+    "cryptoMode": "HYBRID_SIMULATION",
+    "validatorCount": null,
+    "benchmarkTool": "node-fetch",
+    "benchmarkToolVersion": "wave6-prompt16"
+  }
+}

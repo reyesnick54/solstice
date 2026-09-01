@@ -6,7 +6,7 @@
 
 import { randomUUID } from 'node:crypto';
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '../../../domain/src/time.ts';
 import {
   accessDomainEntitlementIdFor,
   accessDomainQuoteIdFor,
@@ -439,7 +439,8 @@ export class SimulatedComplianceGatePort implements ComplianceGatePort {
 }
 
 export class SimulatedCanonicalFiatLedgerPort implements CanonicalFiatLedgerPort {
-  private readonly settlementRecords: Array<{ journalId: string; settlementId: string; type: string }> = [];
+  private readonly settlementCaptureRecords: Array<{ journalId: string; settlementId: string; type: string }> =
+    [];
   private readonly captureIdempotency = new Map<string, string>();
   private readonly refundIdempotency = new Map<string, string>();
 
@@ -462,7 +463,7 @@ export class SimulatedCanonicalFiatLedgerPort implements CanonicalFiatLedgerPort
       });
     }
     const journalId = `journal_${randomUUID()}`;
-    this.settlementRecords.push({ journalId, settlementId: input.settlementId, type: 'CAPTURE' });
+    this.settlementCaptureRecords.push({ journalId, settlementId: input.settlementId, type: 'CAPTURE' });
     this.captureIdempotency.set(input.idempotencyKey, journalId);
     return Object.freeze({
       journalId,
@@ -486,7 +487,7 @@ export class SimulatedCanonicalFiatLedgerPort implements CanonicalFiatLedgerPort
       });
     }
     const journalId = `journal_ref_${randomUUID()}`;
-    this.settlementRecords.push({ journalId, settlementId: input.settlementId, type: 'REFUND' });
+    this.settlementCaptureRecords.push({ journalId, settlementId: input.settlementId, type: 'REFUND' });
     this.refundIdempotency.set(input.idempotencyKey, journalId);
     return Object.freeze({
       journalId,
@@ -495,7 +496,7 @@ export class SimulatedCanonicalFiatLedgerPort implements CanonicalFiatLedgerPort
   }
 
   getJournals() {
-    return Object.freeze([...this.settlementRecords]);
+    return Object.freeze([...this.settlementCaptureRecords]);
   }
 }
 
