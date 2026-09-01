@@ -42,7 +42,7 @@ pub struct InteropBoundary<'a> {
     pub consumed: &'a mut BTreeSet<String>,
 }
 
-impl<'a> InteropBoundary<'a> {
+impl InteropBoundary<'_> {
     pub fn observe(&self, _observation: &WatcherObservation) -> Result<(), InteropError> {
         self.activation.require_development()
     }
