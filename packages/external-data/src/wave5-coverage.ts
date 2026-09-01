@@ -12,6 +12,7 @@ import type { Wave5CoverageStatus, Wave5ProviderCoverage } from './wave5-models.
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../../..');
 const CATALOG_PATH = join(ROOT, 'config/providers/free-api-catalog.yaml');
+const WAVE5_CATALOG_PATH = join(ROOT, 'config/providers/wave5-physical-economy-catalog-entries.yaml');
 
 export const WAVE5_CATEGORIES = new Set([
   'energy',
@@ -32,7 +33,20 @@ const UNAVAILABLE_IDS = new Set<string>([]);
 
 export function loadCatalogProviders(): readonly Record<string, unknown>[] {
   const catalog = parseYaml(readFileSync(CATALOG_PATH, 'utf8')) as { providers: Record<string, unknown>[] };
-  return Object.freeze(catalog.providers ?? []);
+  const primary = catalog.providers ?? [];
+  const wave5Supplement = parseYaml(readFileSync(WAVE5_CATALOG_PATH, 'utf8')) as {
+    providers: Record<string, unknown>[];
+  };
+  const seen = new Set(primary.map((provider) => String(provider.provider_id)));
+  const merged = [...primary];
+  for (const entry of wave5Supplement.providers ?? []) {
+    const providerId = String(entry.provider_id);
+    if (!seen.has(providerId) && WAVE5_BLOCKED_PROVIDER_IDS.includes(providerId)) {
+      merged.push(entry);
+      seen.add(providerId);
+    }
+  }
+  return Object.freeze(merged);
 }
 
 export function classifyWave5Provider(provider: Record<string, unknown>): Wave5ProviderCoverage {
@@ -40,6 +54,7 @@ export function classifyWave5Provider(provider: Record<string, unknown>): Wave5P
   const category = String(provider.primary_category);
   const verification = (provider.verification as { status?: string })?.status ?? 'unverified';
   const integration = (provider.sunrey as { integration_state?: string })?.integration_state ?? 'catalog_only';
+  const launchTier = (provider.sunrey as { launch_tier?: string })?.launch_tier;
 
   if (!WAVE5_CATEGORIES.has(category)) {
     return Object.freeze({
@@ -50,7 +65,11 @@ export function classifyWave5Provider(provider: Record<string, unknown>): Wave5P
     });
   }
 
-  if (WAVE5_BLOCKED_PROVIDER_IDS.includes(providerId) || integration === 'blocked') {
+  if (
+    WAVE5_BLOCKED_PROVIDER_IDS.includes(providerId) ||
+    integration === 'blocked' ||
+    launchTier === 'blocked_pending_review'
+  ) {
     return Object.freeze({
       providerId,
       category,
@@ -77,7 +96,12 @@ export function classifyWave5Provider(provider: Record<string, unknown>): Wave5P
     });
   }
 
-  if (WAVE5_IMPLEMENTED_PROVIDER_IDS.includes(providerId) || integration === 'implemented' || integration === 'adapter_implemented') {
+  if (
+    WAVE5_IMPLEMENTED_PROVIDER_IDS.includes(providerId) ||
+    integration === 'implemented' ||
+    integration === 'adapter_implemented' ||
+    integration === 'simulated'
+  ) {
     return Object.freeze({
       providerId,
       category,

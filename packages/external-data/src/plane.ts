@@ -88,7 +88,7 @@ export class ExternalDataPlane {
     this.company = services.company;
     this.wave5 = createWave5Services(this.#wave5Ctx);
     this.productiveEconomy = createWave5ExternalData({ nowUtc: () => nowUtc });
-    const wave4 = createWave4Services(this.#wave4Ctx);
+    const wave4 = createWave4Services(this.#wave4Ctx, this.#wave5Ctx);
     this.compliance = wave4.compliance;
     this.businessIdentity = wave4.businessIdentity;
     this.digitalRisk = wave4.digitalRisk;
