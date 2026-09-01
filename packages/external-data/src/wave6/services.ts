@@ -248,7 +248,7 @@ export class HinReferenceService {
   }
 }
 
-export class OpportunityService {
+export class Wave6OpportunityCatalogService {
   readonly #ctx: Wave6AdapterContext;
 
   constructor(ctx?: Wave6AdapterContext) {
@@ -274,7 +274,7 @@ export type Wave6Services = {
   readonly knowledge: KnowledgeIntelligenceService;
   readonly aiEconomics: AiEconomicsIntelligenceService;
   readonly hinReference: HinReferenceService;
-  readonly opportunities: OpportunityService;
+  readonly opportunities: Wave6OpportunityCatalogService;
 };
 
 export function createWave6Services(ctx?: Wave6AdapterContext): Wave6Services {
@@ -285,7 +285,7 @@ export function createWave6Services(ctx?: Wave6AdapterContext): Wave6Services {
     knowledge: new KnowledgeIntelligenceService(context),
     aiEconomics: new AiEconomicsIntelligenceService(context),
     hinReference: new HinReferenceService(context),
-    opportunities: new OpportunityService(context),
+    opportunities: new Wave6OpportunityCatalogService(context),
   });
 }
 
