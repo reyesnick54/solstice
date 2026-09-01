@@ -3,8 +3,8 @@
  */
 
 import type { UtcInstant } from '../../../../domain/src/time.ts';
-import type { ExternalChainIntelligenceService } from '../../../sunrey-chain/src/chain-intelligence/service.ts';
-import type { ExternalBlockchainId } from '../../../sunrey-chain/src/chain-intelligence/types.ts';
+import type { ExternalChainIntelligenceService } from '../../../../sunrey-chain/src/chain-intelligence/service.ts';
+import type { ExternalBlockchainId } from '../../../../sunrey-chain/src/chain-intelligence/types.ts';
 
 export type WorldBlockchainHealthSnapshot = {
   readonly schema: 'sunrey.world.blockchain-health.v1';

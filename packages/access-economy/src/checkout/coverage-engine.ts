@@ -8,6 +8,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
+import type { AccessSolvencyService } from '../funding-solvency/solvency-service.ts';
 import { TOKEN_CONVERSION_CONTRIBUTION } from '../funding-solvency/taxonomy.ts';
 import type { ProviderFxQuote, ProviderFxQuotePort } from '../providers/fx-port.ts';
 import { UnavailableProviderFxQuotePort } from '../providers/fx-port.ts';
@@ -147,8 +148,12 @@ export class AccessCoverageEngine {
     const excludedAmount = sumExcludedCost(classified);
 
     const policyCappedEligible = applyCoverageCaps(eligibleCost, policy, {
-      programCoverageRemainingMinorUnits: request.programCoverageRemainingMinorUnits,
-      transactionCoverageCapMinorUnits: request.transactionCoverageCapMinorUnits,
+      ...(request.programCoverageRemainingMinorUnits !== undefined
+        ? { programCoverageRemainingMinorUnits: request.programCoverageRemainingMinorUnits }
+        : {}),
+      ...(request.transactionCoverageCapMinorUnits !== undefined
+        ? { transactionCoverageCapMinorUnits: request.transactionCoverageCapMinorUnits }
+        : {}),
     });
 
     const fundingCurrency = request.fundingCurrency;

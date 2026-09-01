@@ -54,6 +54,7 @@ jobs:
         env:
           SUNREY_REQUIRE_KIND: "1"
           SUNREY_TESTNET_VERIFY_TIMEOUT_SECONDS: "360"
+          SUNREY_TESTNET_ROLLOUT_TIMEOUT_SECONDS: "420"
         run: |
           export PATH="$(go env GOPATH)/bin:$PATH"
           bash scripts/sunrey-testnet-kind.sh

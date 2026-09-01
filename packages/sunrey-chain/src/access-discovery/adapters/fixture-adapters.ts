@@ -43,8 +43,8 @@ abstract class BaseAccessDiscoveryFixtureProvider {
   abstract readonly providerId: AccessDiscoveryAdapterId;
   abstract readonly capabilities: readonly string[];
   protected readonly clock: Clock;
-  private healthy = true;
-  private degraded = false;
+  protected healthy = true;
+  protected degraded = false;
   private message = 'fixture healthy';
 
   constructor(clock: Clock = defaultClock()) {

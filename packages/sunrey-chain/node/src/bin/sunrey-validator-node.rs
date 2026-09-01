@@ -137,14 +137,15 @@ async fn resolve_seeds_with_retry(
         })
         .count()
         .max(1);
-    let deadline = Instant::now() + Duration::from_secs(90);
+    let minimum = target.clamp(1, 3);
+    let deadline = Instant::now() + Duration::from_secs(30);
     loop {
         let seeds = resolve_seeds(Some(raw.clone()), own_hostname).await;
-        if seeds.len() >= target || Instant::now() >= deadline {
-            if seeds.len() < target {
+        if seeds.len() >= minimum || Instant::now() >= deadline {
+            if seeds.len() < minimum {
                 tracing::warn!(
                     resolved = seeds.len(),
-                    target,
+                    minimum,
                     "proceeding with partial seed list after DNS retry deadline"
                 );
             }
@@ -152,8 +153,8 @@ async fn resolve_seeds_with_retry(
         }
         tracing::debug!(
             resolved = seeds.len(),
-            target,
-            "waiting for remaining validator seed DNS records"
+            minimum,
+            "waiting for validator seed DNS records"
         );
         tokio::time::sleep(Duration::from_secs(2)).await;
     }

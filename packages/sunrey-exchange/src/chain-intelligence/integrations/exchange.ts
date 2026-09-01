@@ -3,8 +3,8 @@
  */
 
 import type { UtcInstant } from '../../../../domain/src/time.ts';
-import type { ExternalChainIntelligenceService } from '../../../sunrey-chain/src/chain-intelligence/service.ts';
-import type { ExternalBlockchainId, MempoolObservation, NormalizedFeeEstimate } from '../../../sunrey-chain/src/chain-intelligence/types.ts';
+import type { ExternalChainIntelligenceService } from '../../../../sunrey-chain/src/chain-intelligence/service.ts';
+import type { ExternalBlockchainId, MempoolObservation, NormalizedFeeEstimate } from '../../../../sunrey-chain/src/chain-intelligence/types.ts';
 
 export type ExchangeChainContext = {
   readonly schema: 'sunrey.exchange.chain-context.v1';

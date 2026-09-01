@@ -28,10 +28,11 @@ import { toMoonReyResourceObservation } from '../packages/sunrey-exchange/src/ma
 import { buildWorldEconomySnapshot } from '../packages/sunrey-exchange/src/market-reference/integrations/world.ts';
 import { createMarketReferenceAdapterFactory } from '../packages/sunrey-exchange/src/market-reference/adapters/factory.ts';
 import { listEligibleMarketReferenceProviders } from '../packages/sunrey-exchange/src/market-reference/registry.ts';
+import type { CatalogProviderEntry } from '../packages/provider-sdk/src/catalog/types.ts';
 
 const NOW = defaultMarketReferenceNow();
 
-function fixtureCatalogProvider(overrides: Record<string, unknown> = {}) {
+function fixtureCatalogProvider(overrides: Partial<CatalogProviderEntry> = {}): CatalogProviderEntry {
   return {
     ...FIXTURE_CATALOG_ENTRIES.healthy,
     provider_id: 'fixture-metals-api',
@@ -233,7 +234,7 @@ describe('Wave 2 Prompt 10 — market reference layer', () => {
   it('20. BFF sanitized output hides raw provider payloads', async () => {
     const world = createSandboxWorld();
     const response = await handleConsumerBff(
-      { ...world, marketReference: undefined },
+      world,
       {
         method: 'GET',
         path: '/api/v1/world/resources/gold',

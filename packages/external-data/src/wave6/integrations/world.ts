@@ -3,7 +3,7 @@
  */
 
 import type { UtcInstant } from '../../../../domain/src/time.ts';
-import type { OpportunityService } from './service.ts';
+import type { OpportunityService } from '../service.ts';
 import { buildOpportunityCoverageReport } from '../opportunity-coverage.ts';
 
 export type WorldOpportunitySnapshot = {
