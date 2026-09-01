@@ -10,12 +10,11 @@ import { Money } from '../../../packages/money/src/money.ts';
 import { asIntentId } from '../../../packages/permissions/src/action-intent.ts';
 import { ACTION_TYPES, type PostWithdrawalIntent } from '../../../packages/permissions/src/action-types.ts';
 import { parseActivityFilter } from './activity.ts';
-import { activateCustomer, NOW, openIntent } from './test-helpers.ts';
-import { createSimulationRuntime } from './runtime.ts';
+import { activateCustomer, NOW, openIntent, createTestSimulationRuntime } from './test-helpers.ts';
 
 describe('Account product service', () => {
   it('derives lifecycle, ownership, and activation events from Kernel-gated open', () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime);
     const opened = runtime.accountsService.open(
       openIntent({ id: 'intent_prod_open', accountId: 'acct_prod_1', ownerId: customer.id }),
@@ -33,7 +32,7 @@ describe('Account product service', () => {
   });
 
   it('refuses a client-declared ACTIVE transition that is not server-legal', () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime);
     runtime.accountsService.open(openIntent({ id: 'intent_prod_open_2', accountId: 'acct_prod_2', ownerId: customer.id }));
     const again = runtime.accountProduct.transitionLifecycle({
@@ -45,7 +44,7 @@ describe('Account product service', () => {
   });
 
   it('applies restrictions that block withdrawals without posting', () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime);
     const opened = runtime.accountsService.open(
       openIntent({ id: 'intent_prod_r', accountId: 'acct_prod_r', ownerId: customer.id }),
@@ -92,7 +91,7 @@ describe('Account product service', () => {
   });
 
   it('derives posted/pending/held/available from the ledger and holds', () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime);
     const opened = runtime.accountsService.open(
       openIntent({ id: 'intent_prod_b', accountId: 'acct_prod_b', ownerId: customer.id }),
@@ -139,7 +138,7 @@ describe('Account product service', () => {
   });
 
   it('keeps USD and SAR as separate positions and refuses blended wealth without FX', () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime);
     runtime.accountsService.open(openIntent({ id: 'intent_usd', accountId: 'acct_usd', ownerId: customer.id }));
     const sarOpen = runtime.accountsService.open({
@@ -159,7 +158,7 @@ describe('Account product service', () => {
   });
 
   it('normalizes activity and applies safe filters', () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime);
     const opened = runtime.accountsService.open(
       openIntent({ id: 'intent_act', accountId: 'acct_act', ownerId: customer.id }),
@@ -187,7 +186,7 @@ describe('Account product service', () => {
   });
 
   it('builds statement opening and closing from ledger postings', () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime);
     const opened = runtime.accountsService.open(
       openIntent({ id: 'intent_stmt', accountId: 'acct_stmt', ownerId: customer.id }),
@@ -220,7 +219,7 @@ describe('Account product service', () => {
   });
 
   it('refuses to close an account that still has a posted ledger balance', () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime);
     const opened = runtime.accountsService.open(openIntent({ id: 'intent_close_bal', accountId: 'acct_close_bal', ownerId: customer.id }));
     assert.equal(opened.outcome, 'OPENED');
@@ -249,7 +248,7 @@ describe('Account product service', () => {
   });
 
   it('closes an account through server-controlled lifecycle and emits AccountClosed', () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime);
     runtime.accountsService.open(openIntent({ id: 'intent_close', accountId: 'acct_close', ownerId: customer.id }));
     const closed = runtime.accountProduct.transitionLifecycle({
@@ -267,7 +266,7 @@ describe('Account product service', () => {
   });
 
   it('denies cross-customer reads', () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const owner = activateCustomer(runtime, 'cust_owner');
     activateCustomer(runtime, 'cust_other');
     runtime.accountsService.open(openIntent({ id: 'intent_own', accountId: 'acct_own', ownerId: owner.id }));

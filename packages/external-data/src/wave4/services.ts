@@ -28,6 +28,11 @@ import type {
   VulnerabilityObservation,
 } from './models.ts';
 import { ProviderRiskMonitor, type ProviderRiskInput, type ProviderRiskScore } from './provider-risk-monitor.ts';
+import {
+  ProviderRiskMonitor as Wave5ProviderRiskMonitor,
+  type ProviderRiskMonitorSnapshot,
+} from '../wave5-provider-risk.ts';
+import type { Wave5AdapterContext } from '../wave5-adapters.ts';
 
 export type Wave4ServiceResult<T> = {
   readonly observations: readonly ExternalObservation<T>[];
@@ -171,10 +176,18 @@ export class ServiceOutageService {
 export class ProviderRiskService {
   readonly #monitor: ProviderRiskMonitor;
   readonly #getStates: () => Map<string, ProviderAdapterState>;
+  readonly #wave5Monitor?: Wave5ProviderRiskMonitor;
 
-  constructor(monitor: ProviderRiskMonitor, getStates: () => Map<string, ProviderAdapterState>) {
+  constructor(
+    monitor: ProviderRiskMonitor,
+    getStates: () => Map<string, ProviderAdapterState>,
+    wave5Ctx?: Wave5AdapterContext,
+  ) {
     this.#monitor = monitor;
     this.#getStates = getStates;
+    if (wave5Ctx) {
+      this.#wave5Monitor = new Wave5ProviderRiskMonitor(wave5Ctx);
+    }
   }
 
   assessProvider(providerId: string, extras?: Partial<ProviderRiskInput>): ProviderRiskScore {
@@ -214,9 +227,30 @@ export class ProviderRiskService {
   get monitor(): ProviderRiskMonitor {
     return this.#monitor;
   }
+
+  snapshot(): ProviderRiskMonitorSnapshot {
+    if (!this.#wave5Monitor) {
+      throw new Error('Wave 5 provider risk monitor is not configured');
+    }
+    return this.#wave5Monitor.snapshot();
+  }
+
+  disableProvider(providerId: string): boolean {
+    if (!this.#wave5Monitor) {
+      return false;
+    }
+    return this.#wave5Monitor.disableProvider(providerId);
+  }
+
+  enableProvider(providerId: string): boolean {
+    if (!this.#wave5Monitor) {
+      return false;
+    }
+    return this.#wave5Monitor.enableProvider(providerId);
+  }
 }
 
-export function createWave4Services(ctx?: Wave4AdapterContext) {
+export function createWave4Services(ctx?: Wave4AdapterContext, wave5Ctx?: Wave5AdapterContext) {
   const context = ctx ?? { nowUtc: new Date().toISOString(), states: createDefaultWave4AdapterStates() };
   const monitor = new ProviderRiskMonitor({ nowUtc: context.nowUtc });
   return Object.freeze({
@@ -227,7 +261,7 @@ export function createWave4Services(ctx?: Wave4AdapterContext) {
     threatIntel: new ThreatIntelligenceService(context),
     endpointSecurity: new EndpointSecurityService(context),
     serviceOutage: new ServiceOutageService(context),
-    providerRisk: new ProviderRiskService(monitor, () => context.states),
+    providerRisk: new ProviderRiskService(monitor, () => context.states, wave5Ctx),
     context,
   });
 }

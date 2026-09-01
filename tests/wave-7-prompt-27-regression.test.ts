@@ -45,7 +45,7 @@ describe('Wave 7 Prompt 27 — provider program regression', () => {
     assert.equal(classified, report.catalogTotal);
   });
 
-  it('documents accepted Wave 6 program gaps honestly (53 slots)', () => {
+  it('documents accepted Wave 6 program gaps honestly (24 slots)', () => {
     const gaps = wave7AcceptedGapSummary();
     const total = gaps.reduce((sum, g) => sum + g.slotCount, 0);
     const report = buildWave7CoverageReport();

@@ -284,6 +284,25 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
   }
 
   try {
+    if (request.path.startsWith('/api/v1/subscriptions') && runtime.subscriptions) {
+      return dispatchSubscriptions(
+        { method: request.method, url: request.path, body: request.body },
+        requestId,
+        headers,
+        runtime.subscriptions,
+        principal,
+      ).then(async (response) => {
+        if (!response) {
+          return dispatchAuthenticated(runtime, request, principal, requestId, headers);
+        }
+        const body = await response.json();
+        const responseHeaders: Record<string, string> = {};
+        response.headers.forEach((value, key) => {
+          responseHeaders[key] = value;
+        });
+        return { status: response.status, body, headers: responseHeaders };
+      });
+    }
     return dispatchAuthenticated(runtime, request, principal, requestId, headers);
   } catch (error) {
     const message = error instanceof Error ? error.message : 'request failed';
@@ -301,7 +320,7 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
   }
 }
 
-async function dispatchAuthenticated(
+function dispatchAuthenticated(
   runtime: ConsumerBffRuntime,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
@@ -503,10 +522,6 @@ async function dispatchAuthenticated(
     return opportunity;
   }
 
-  const subscriptions = await dispatchSubscriptions(request, requestId, headers, runtime.subscriptions, principal);
-  if (subscriptions) {
-    return subscriptions;
-  }
   if (runtime.hin && isRightsMarketplace(runtime.hin)) {
     const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);
     if (hin) {

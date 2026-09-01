@@ -53,19 +53,21 @@ impl InteropServiceRole {
     }
 }
 
-pub fn egress_allowed(policy: &InteropNetworkPolicy, role: InteropServiceRole, destination: &str) -> bool {
+pub fn egress_allowed(
+    policy: &InteropNetworkPolicy,
+    role: InteropServiceRole,
+    destination: &str,
+) -> bool {
     if policy.denied_destinations.iter().any(|d| pattern_match(d, destination)) {
         return false;
     }
     match role {
-        InteropServiceRole::Watcher => policy
-            .allowed_external_rpc_endpoints
-            .iter()
-            .any(|e| pattern_match(e, destination)),
-        InteropServiceRole::Relayer => policy
-            .allowed_sunrey_ingress_endpoints
-            .iter()
-            .any(|e| pattern_match(e, destination)),
+        InteropServiceRole::Watcher => {
+            policy.allowed_external_rpc_endpoints.iter().any(|e| pattern_match(e, destination))
+        }
+        InteropServiceRole::Relayer => {
+            policy.allowed_sunrey_ingress_endpoints.iter().any(|e| pattern_match(e, destination))
+        }
         InteropServiceRole::ValidatorNode => false,
     }
 }
@@ -78,10 +80,10 @@ pub fn require_egress(
     if !egress_allowed(policy, role, destination) {
         return Err(InteropError::NetworkEgressDenied);
     }
-    if role != InteropServiceRole::ValidatorNode {
-        if destination.contains("validator-key") || destination.contains("consensus-key") {
-            return Err(InteropError::NetworkEgressDenied);
-        }
+    if role != InteropServiceRole::ValidatorNode
+        && (destination.contains("validator-key") || destination.contains("consensus-key"))
+    {
+        return Err(InteropError::NetworkEgressDenied);
     }
     if !policy.allow_database_access && destination.starts_with("postgres://") {
         return Err(InteropError::NetworkEgressDenied);
@@ -92,7 +94,10 @@ pub fn require_egress(
     if !policy.allow_secret_store_access && destination.contains("vault") {
         return Err(InteropError::NetworkEgressDenied);
     }
-    if !policy.allow_validator_key_access && destination.contains("validator") && destination.contains("key") {
+    if !policy.allow_validator_key_access
+        && destination.contains("validator")
+        && destination.contains("key")
+    {
         return Err(InteropError::NetworkEgressDenied);
     }
     Ok(())

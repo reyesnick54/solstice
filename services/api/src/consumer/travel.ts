@@ -63,6 +63,7 @@ export function dispatchTravel(
 ): TravelDispatchResponse | null {
   const { method, path, query = {} } = request;
   if (!path.startsWith('/api/v1/travel')) return null;
+  if (path === '/api/v1/travel/overview') return null;
 
   const svc = resolveService(travel);
 

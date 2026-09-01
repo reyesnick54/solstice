@@ -18,9 +18,16 @@ import type { AccountClass } from '../../../packages/domain/src/account-class.ts
 import type { ProductId } from '../../../packages/domain/src/product.ts';
 import { asProductId } from '../../../packages/domain/src/product.ts';
 import type { SimulationRuntime } from './runtime.ts';
+import { FrozenClock, createSimulationRuntime } from './runtime.ts';
 import type { PurposeCode } from '../../../packages/permissions/src/action-intent.ts';
 
 export const NOW = asUtcInstant('2026-08-13T15:00:00.000Z');
+
+export function createTestSimulationRuntime(
+  options: Parameters<typeof createSimulationRuntime>[0] = {},
+): SimulationRuntime {
+  return createSimulationRuntime({ clock: new FrozenClock(NOW), ...options });
+}
 
 export function activateCustomer(
   runtime: SimulationRuntime,
