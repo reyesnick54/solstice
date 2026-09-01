@@ -262,10 +262,7 @@ fn paused_global_and_network_and_asset() {
 
 #[test]
 fn value_and_message_limits_enforced() {
-    let mut circuits = InteropCircuitBreakers {
-        value_limit_minor: 100,
-        ..Default::default()
-    };
+    let mut circuits = InteropCircuitBreakers { value_limit_minor: 100, ..Default::default() };
     assert_eq!(
         circuits.guard_message("net_a", None, 200).unwrap_err(),
         InteropError::ValueLimitExceeded
