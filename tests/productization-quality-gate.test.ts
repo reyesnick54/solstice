@@ -8,6 +8,9 @@ const require = createRequire(import.meta.url);
 const { checkJsonIntegrity } = require('../scripts/check-json-integrity.mjs') as {
   checkJsonIntegrity: (root: string) => { findings: string[] };
 };
+const { REPOSITORY_TEST_GLOBS } = require('../scripts/run-repository-tests.mjs') as {
+  REPOSITORY_TEST_GLOBS: string[];
+};
 const { checkAuthorityMap } = require('../scripts/check-authority-map.mjs') as {
   checkAuthorityMap: (root: string) => { findings: string[] };
 };
@@ -36,9 +39,11 @@ describe('Phase A productization quality gate', () => {
     const pkg = readFileSync(join(ROOT, 'package.json'), 'utf8');
     assert.equal([...pkg.matchAll(/^\s*"test"\s*:/gm)].length, 1);
     assert.match(pkg, /productization:preflight/);
-    assert.match(pkg, /packages\/sunrey-chain\/src\/native-assets\/\*\.test\.ts/);
-    assert.match(pkg, /packages\/sunrey-chain\/src\/production-ceremony\/\*\.test\.ts/);
-    assert.match(pkg, /packages\/sunrey-chain\/src\/release-candidate\/mainnet\/\*\.test\.ts/);
+    assert.match(pkg, /validate:json/);
+    const coverage = REPOSITORY_TEST_GLOBS.join(' ');
+    assert.match(coverage, /packages\/sunrey-chain\/src\/native-assets\/\*\.test\.ts/);
+    assert.match(coverage, /packages\/sunrey-chain\/src\/production-ceremony\/\*\.test\.ts/);
+    assert.match(coverage, /packages\/sunrey-chain\/src\/release-candidate\/mainnet\/\*\.test\.ts/);
   });
 
   it('authority map and architecture freeze validate', () => {

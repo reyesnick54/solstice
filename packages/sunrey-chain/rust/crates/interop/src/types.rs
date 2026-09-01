@@ -287,6 +287,7 @@ pub enum ActorKind {
     GovernanceSigner,
     ProtocolOperator,
     Relayer,
+    Watcher,
     AiPreparer,
     ValidatorConsensus,
 }
@@ -297,6 +298,7 @@ impl ActorKind {
             Self::GovernanceSigner => "GOVERNANCE_SIGNER",
             Self::ProtocolOperator => "PROTOCOL_OPERATOR",
             Self::Relayer => "RELAYER",
+            Self::Watcher => "WATCHER",
             Self::AiPreparer => "AI_PREPARER",
             Self::ValidatorConsensus => "VALIDATOR_CONSENSUS",
         }
@@ -307,6 +309,7 @@ impl ActorKind {
             Self::GovernanceSigner | Self::ProtocolOperator => Ok(()),
             Self::AiPreparer => Err(InteropError::AiCannotActivate),
             Self::Relayer => Err(InteropError::RelayerForbidden),
+            Self::Watcher => Err(InteropError::WatcherForbidden),
             Self::ValidatorConsensus => Err(InteropError::RelayerForbidden),
         }
     }

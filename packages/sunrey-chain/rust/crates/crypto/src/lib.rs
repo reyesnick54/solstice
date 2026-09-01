@@ -1,15 +1,40 @@
-//! CryptoSuite provider ports for the local SunRey node.
+//! CryptoSuite provider ports for the SunRey Blockchain.
 //!
 //! Algorithm choice lives only in this crate. State and execution modules
 //! receive a [`CryptoSuite`] and must not name a concrete algorithm.
 
 #![forbid(unsafe_code)]
 
-use ed25519_dalek::{Signature, Signer, SigningKey, Verifier, VerifyingKey};
-use sha2::{Digest, Sha256};
+mod algorithm_ids;
+mod envelope;
+mod migration;
+mod registry;
+mod signature_version;
+mod suite;
+mod verify;
+
+pub use algorithm_ids::{AlgorithmWireId, KeyId};
+pub use envelope::{
+    HybridCombiner, HybridSignatureEnvelope, HybridVerificationPolicy, PublicKeyEnvelope,
+    SignatureEnvelope,
+};
+pub use migration::{
+    historical_verify_allowed, migration_state_at_height, recommended_verification_model,
+    role_accepts_suite_for_sign, CryptoMigrationState, CryptoOperationCategory,
+    HeightActivatedCryptoSchedule, MigrationVerificationModel, HYBRID_REQUIRED_ROLES,
+};
+pub use registry::{algorithm_wire_id_for_suite, dev_suite, resolve_suite, RegisteredSuite};
+pub use signature_version::SignatureVersion;
+pub use suite::{
+    development_fixture_secret, verify_ed25519, CryptoSuite, DevEd25519Sha256Suite,
+    ProtocolEd25519Sha256Suite, SigningSecret,
+};
+pub use verify::{
+    dispatch_verify, reject_algorithm_downgrade, sign, verify_envelope, verify_hybrid_envelope,
+};
+
 use sunrey_protocol::{
-    domain_payload, encode_string, DomainHasher, Hash32, RejectReason, DOMAIN_CRYPTO_POLICY,
-    DOMAIN_SCHEMA,
+    encode_string, DomainHasher, Hash32, RejectReason, DOMAIN_CRYPTO_POLICY, DOMAIN_SCHEMA,
 };
 
 pub const DEV_SUITE_ID: &str = "SUNREY_DEV_ED25519_SHA256";
@@ -25,121 +50,60 @@ pub const MAX_REMOTE_SIGNER_SIGNATURE_BYTES: usize = 16384;
 pub const MAX_P2P_PQ_MESSAGE_BYTES: usize = 1_048_576;
 pub const DEV_SUITE_LIFECYCLE: &str = "APPROVED_FOR_SIMULATION";
 pub const DEV_KEY_ID: &str = "dev_fixture_key_v1";
-const DEV_KEY_LABEL: &[u8] = b"SUNREY_LOCAL_DEV_FIXTURE_KEY_NOT_FOR_PRODUCTION_v1";
 
 #[derive(Debug, thiserror::Error, Clone, PartialEq, Eq)]
 pub enum CryptoError {
     #[error("unknown crypto suite")]
     UnknownSuite,
+    #[error("unknown algorithm")]
+    UnknownAlgorithm,
+    #[error("unknown signature version")]
+    UnknownSignatureVersion,
     #[error("invalid signature descriptor")]
     InvalidDescriptor,
     #[error("invalid signature")]
     InvalidSignature,
+    #[error("post-quantum cryptography is not enabled")]
+    PqNotEnabled,
 }
 
 impl From<CryptoError> for RejectReason {
     fn from(value: CryptoError) -> Self {
         match value {
-            CryptoError::UnknownSuite => RejectReason::InvalidCryptoSuite,
-            CryptoError::InvalidDescriptor => RejectReason::InvalidSignatureDescriptor,
+            CryptoError::UnknownSuite
+            | CryptoError::UnknownAlgorithm
+            | CryptoError::PqNotEnabled => RejectReason::InvalidCryptoSuite,
+            CryptoError::UnknownSignatureVersion | CryptoError::InvalidDescriptor => {
+                RejectReason::InvalidSignatureDescriptor
+            }
             CryptoError::InvalidSignature => RejectReason::InvalidSignature,
         }
     }
 }
 
-pub trait CryptoSuite: DomainHasher + Send + Sync {
-    fn suite_id(&self) -> &'static str;
-    fn algorithm_id(&self) -> &'static str;
-    fn sign(&self, secret: &SigningSecret, message: &[u8]) -> Result<Vec<u8>, CryptoError>;
-    fn verify(
-        &self,
-        public_key: &[u8],
-        message: &[u8],
-        signature: &[u8],
-    ) -> Result<(), CryptoError>;
-}
-
-#[derive(Clone)]
-pub struct SigningSecret {
-    bytes: [u8; 32],
-}
-
-impl SigningSecret {
-    pub fn from_bytes(bytes: [u8; 32]) -> Self {
-        Self { bytes }
-    }
-
-    pub fn public_key(&self) -> Vec<u8> {
-        SigningKey::from_bytes(&self.bytes).verifying_key().to_bytes().to_vec()
-    }
-}
-
-/// Development-only fixture key. Not production key infrastructure.
-pub fn development_fixture_secret() -> SigningSecret {
-    let digest = Sha256::digest(DEV_KEY_LABEL);
-    let mut bytes = [0u8; 32];
-    bytes.copy_from_slice(&digest);
-    SigningSecret { bytes }
-}
-
-#[derive(Debug, Default, Clone)]
-pub struct DevEd25519Sha256Suite;
-
-impl DomainHasher for DevEd25519Sha256Suite {
-    fn hash(&self, domain: &str, payload: &[u8]) -> Hash32 {
-        let framed = domain_payload(domain, payload);
-        Sha256::digest(&framed).into()
-    }
-}
-
-impl CryptoSuite for DevEd25519Sha256Suite {
-    fn suite_id(&self) -> &'static str {
-        DEV_SUITE_ID
-    }
-
-    fn algorithm_id(&self) -> &'static str {
-        DEV_ALGORITHM_ID
-    }
-
-    fn sign(&self, secret: &SigningSecret, message: &[u8]) -> Result<Vec<u8>, CryptoError> {
-        let key = SigningKey::from_bytes(&secret.bytes);
-        Ok(key.sign(message).to_bytes().to_vec())
-    }
-
-    fn verify(
-        &self,
-        public_key: &[u8],
-        message: &[u8],
-        signature: &[u8],
-    ) -> Result<(), CryptoError> {
-        let pk_bytes: [u8; 32] =
-            public_key.try_into().map_err(|_| CryptoError::InvalidDescriptor)?;
-        let sig_bytes: [u8; 64] =
-            signature.try_into().map_err(|_| CryptoError::InvalidDescriptor)?;
-        let verifying =
-            VerifyingKey::from_bytes(&pk_bytes).map_err(|_| CryptoError::InvalidDescriptor)?;
-        let signature = Signature::from_bytes(&sig_bytes);
-        verifying.verify(message, &signature).map_err(|_| CryptoError::InvalidSignature)
-    }
-}
-
+/// Backwards-compatible suite resolver used by the node and validators.
+///
+/// Both development and protocol classical suites map to the same
+/// [`DevEd25519Sha256Suite`] implementation. PQ and hybrid suites fail closed.
 pub fn suite_by_id(suite_id: &str) -> Result<DevEd25519Sha256Suite, CryptoError> {
     match suite_id {
         DEV_SUITE_ID | PROTOCOL_SUITE_ID => Ok(DevEd25519Sha256Suite),
-        // Standardized PQ/hybrid suites are registered in the TypeScript
-        // CryptoSuite catalog. The Rust node fail-closes rather than
-        // silently mapping them to Ed25519.
-        HYBRID_ED25519_MLDSA_SUITE_ID | ML_DSA_65_SUITE_ID => Err(CryptoError::UnknownSuite),
+        HYBRID_ED25519_MLDSA_SUITE_ID | ML_DSA_65_SUITE_ID => {
+            #[cfg(feature = "experimental-pqc")]
+            {
+                Err(CryptoError::PqNotEnabled)
+            }
+            #[cfg(not(feature = "experimental-pqc"))]
+            {
+                Err(CryptoError::UnknownSuite)
+            }
+        }
         _ => Err(CryptoError::UnknownSuite),
     }
 }
 
 pub fn algorithm_id_for_suite(suite_id: &str) -> Result<&'static str, CryptoError> {
-    match suite_id {
-        DEV_SUITE_ID => Ok(DEV_ALGORITHM_ID),
-        PROTOCOL_SUITE_ID => Ok(PROTOCOL_ALGORITHM_ID),
-        _ => Err(CryptoError::UnknownSuite),
-    }
+    registry::algorithm_id_for_suite(suite_id)
 }
 
 pub fn schema_registry_hash(hasher: &dyn DomainHasher) -> Hash32 {
@@ -180,12 +144,83 @@ mod tests {
 
     #[test]
     fn standardized_pq_suites_fail_closed_without_ed25519_fallback() {
-        assert_eq!(
-            suite_by_id(HYBRID_ED25519_MLDSA_SUITE_ID).unwrap_err(),
-            CryptoError::UnknownSuite
-        );
-        assert_eq!(suite_by_id(ML_DSA_65_SUITE_ID).unwrap_err(), CryptoError::UnknownSuite);
+        assert!(matches!(
+            suite_by_id(HYBRID_ED25519_MLDSA_SUITE_ID),
+            Err(CryptoError::UnknownSuite) | Err(CryptoError::PqNotEnabled)
+        ));
+        assert!(matches!(
+            suite_by_id(ML_DSA_65_SUITE_ID),
+            Err(CryptoError::UnknownSuite) | Err(CryptoError::PqNotEnabled)
+        ));
         const _: () = assert!(MAX_REMOTE_SIGNER_SIGNATURE_BYTES >= 3309);
         assert_eq!(MAX_P2P_PQ_MESSAGE_BYTES, 1_048_576);
+    }
+
+    #[test]
+    fn resolve_suite_dispatches_protocol_and_dev() {
+        assert!(resolve_suite(DEV_SUITE_ID).is_ok());
+        assert!(resolve_suite(PROTOCOL_SUITE_ID).is_ok());
+    }
+
+    #[test]
+    fn versioned_sign_compat_with_existing_classical() {
+        let secret = development_fixture_secret();
+        let suite = DevEd25519Sha256Suite;
+        let message = b"classical-fixture";
+        let legacy = suite.sign(&secret, message).unwrap();
+        let envelope = sign(DEV_SUITE_ID, &secret, message).unwrap();
+        assert_eq!(legacy, envelope.signature);
+    }
+
+    #[test]
+    fn malformed_public_key_rejects() {
+        let suite = DevEd25519Sha256Suite;
+        assert_eq!(
+            suite.verify(&[0u8; 16], b"msg", &[0u8; 64]),
+            Err(CryptoError::InvalidDescriptor)
+        );
+    }
+
+    #[test]
+    fn malformed_signature_rejects() {
+        let secret = development_fixture_secret();
+        let suite = DevEd25519Sha256Suite;
+        assert_eq!(
+            suite.verify(&secret.public_key(), b"msg", &[0u8; 32]),
+            Err(CryptoError::InvalidDescriptor)
+        );
+    }
+
+    #[test]
+    fn unknown_algorithm_wire_id_fails_closed() {
+        assert_eq!(AlgorithmWireId::from_u16(0), Err(CryptoError::UnknownAlgorithm));
+    }
+
+    #[test]
+    fn compatibility_with_protocol_vectors() {
+        use sunrey_protocol::{
+            encode_system_payload, hash_to_hex, transaction_id, SystemPayload, TransactionFamily,
+            UnsignedTransaction, LOCAL_DEV_CHAIN_ID, LOCAL_DEV_NETWORK_ID, SCHEMA_VERSION,
+            SRCB_CODEC_ID,
+        };
+        let payload = encode_system_payload(&SystemPayload {
+            op: "SET_OBJECT".to_string(),
+            object_key: "alpha".to_string(),
+            object_value: b"one".to_vec(),
+        });
+        let unsigned = UnsignedTransaction {
+            network_id: LOCAL_DEV_NETWORK_ID.to_string(),
+            chain_id: LOCAL_DEV_CHAIN_ID.to_string(),
+            codec_id: SRCB_CODEC_ID.to_string(),
+            schema_version: SCHEMA_VERSION,
+            family: TransactionFamily::System,
+            nonce: 0,
+            idempotency_key: "vector-1".to_string(),
+            payload,
+        };
+        assert_eq!(
+            hash_to_hex(&transaction_id(&DevEd25519Sha256Suite, &unsigned)),
+            "66a121afafb7f545ae5dddfedd43bc0e17bdc758e919f4e16ac5943811f5b993"
+        );
     }
 }

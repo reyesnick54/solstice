@@ -5,7 +5,7 @@ execution. An event never bypasses `ActionIntent` → Compliance Kernel →
 Execution Authority.
 
 This document is the delivery contract for Chunk 3. Implementation
-inventory is in [`docs/build-status.md`](../build-status.md).
+inventory is in [`docs/BUILD_STATUS.md`](../BUILD_STATUS.md).
 
 ## Event vs Evidence
 
