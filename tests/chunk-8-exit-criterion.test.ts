@@ -16,13 +16,12 @@ import {
   projectCurrencyIndexedPosition,
 } from '../services/accounts/src/balances.ts';
 import { PRODUCT_DEMAND_SAR_GB, SOLSTICE_UK } from '../services/accounts/src/catalog.ts';
-import { createSimulationRuntime } from '../services/accounts/src/runtime.ts';
-import { activateCustomer, openIntent, NOW } from '../services/accounts/src/test-helpers.ts';
+import { activateCustomer, openIntent, NOW, createTestSimulationRuntime } from '../services/accounts/src/test-helpers.ts';
 
 describe('Chunk 8 exit criterion', () => {
   it('walks the multi-currency banking core without FX or external rails', async () => {
     assert.deepEqual([...CANONICAL_SIMULATION_CURRENCIES], ['USD', 'EUR', 'GBP', 'SAR', 'AED']);
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime, 'cust_chunk8');
     const usd = runtime.accountsService.open(
       openIntent({ id: 'c8_open_usd', accountId: 'c8_usd', ownerId: customer.id }),

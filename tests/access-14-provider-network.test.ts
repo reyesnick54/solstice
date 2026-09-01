@@ -54,12 +54,12 @@ describe('ACCESS-14 provider network BFF integration', () => {
       providerId: 'turo',
     });
     assert.equal(search.status, 200);
-    const catalogItem = (search.body as { items: { catalogItemId: string }[] }).items[0];
-    assert.ok(catalogItem);
+    const searchItem = (search.body as { items: { opportunityId: string }[] }).items[0];
+    assert.ok(searchItem);
 
     const quote = call(world, 'POST', '/api/v1/access/quotes', 'basic_verified', {
       providerId: 'turo',
-      catalogItemId: catalogItem.catalogItemId,
+      catalogItemId: searchItem.opportunityId.replace(/^acc_opp_/, ''),
       quantity: 4,
       startsAt: '2026-08-29T10:00:00.000Z',
       endsAt: '2026-09-02T10:00:00.000Z',

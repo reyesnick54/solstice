@@ -22,11 +22,10 @@ import {
   projectCustomerPosition,
 } from './balances.ts';
 import { PRODUCT_DEMAND_SAR_GB, PRODUCT_PENDING_USD_GB, SOLSTICE_UK } from './catalog.ts';
-import { createSimulationRuntime } from './runtime.ts';
-import { activateCustomer, openIntent, NOW } from './test-helpers.ts';
+import { activateCustomer, openIntent, NOW, createTestSimulationRuntime } from './test-helpers.ts';
 import { projectTransactionHistory } from './transaction-history.ts';
 
-function deposit(runtime: ReturnType<typeof createSimulationRuntime>, accountId: string, amount: bigint, currency: string, key: string) {
+function deposit(runtime: ReturnType<typeof createTestSimulationRuntime>, accountId: string, amount: bigint, currency: string, key: string) {
   return runtime.money.deposit({
     id: asIntentId(key),
     actionType: ACTION_TYPES.POST_DEPOSIT,
@@ -40,7 +39,7 @@ function deposit(runtime: ReturnType<typeof createSimulationRuntime>, accountId:
 
 describe('multi-currency banking core', () => {
   it('separates available and ledger balances across a hold lifecycle', async () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime, 'cust_hold');
     const opened = runtime.accountsService.open(
       openIntent({ id: 'open_hold', accountId: 'acct_hold', ownerId: customer.id }),
@@ -93,7 +92,7 @@ describe('multi-currency banking core', () => {
   });
 
   it('refuses concurrent overspending of available funds', async () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime, 'cust_race');
     const opened = runtime.accountsService.open(
       openIntent({ id: 'open_race', accountId: 'acct_race', ownerId: customer.id }),
@@ -144,7 +143,7 @@ describe('multi-currency banking core', () => {
   });
 
   it('keeps USD and SAR positions separate and refuses a blended total without FX', () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime, 'cust_fx');
     const usd = runtime.accountsService.open(
       openIntent({ id: 'open_usd', accountId: 'acct_usd_fx', ownerId: customer.id }),
@@ -199,7 +198,7 @@ describe('multi-currency banking core', () => {
   });
 
   it('posts fees as explicit journals and reverses with a compensating entry', () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime, 'cust_fee');
     const opened = runtime.accountsService.open(
       openIntent({ id: 'open_fee', accountId: 'acct_fee', ownerId: customer.id }),
@@ -257,7 +256,7 @@ describe('multi-currency banking core', () => {
   });
 
   it('derives statements from journals and records reconciliation mismatches', () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime, 'cust_stmt');
     const opened = runtime.accountsService.open(
       openIntent({ id: 'open_stmt', accountId: 'acct_stmt', ownerId: customer.id }),
@@ -295,7 +294,7 @@ describe('multi-currency banking core', () => {
   });
 
   it('blocks outgoing movement on a FROZEN account and keeps pending settlement out of settled balance', async () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime, 'cust_frz');
     const demand = runtime.accountsService.open(
       openIntent({ id: 'open_frz', accountId: 'acct_frz', ownerId: customer.id }),
@@ -361,7 +360,7 @@ describe('multi-currency banking core', () => {
   });
 
   it('posts interest from a rate version without inventing APY and assigns synthetic coordinates', () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime, 'cust_int');
     const opened = runtime.accountsService.open(
       openIntent({ id: 'open_int', accountId: 'acct_int', ownerId: customer.id }),
@@ -397,7 +396,7 @@ describe('multi-currency banking core', () => {
   });
 
   it('is idempotent for hold create and fee posting', async () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime, 'cust_idemp');
     const opened = runtime.accountsService.open(
       openIntent({ id: 'open_idemp', accountId: 'acct_idemp', ownerId: customer.id }),
@@ -442,7 +441,7 @@ describe('multi-currency banking core', () => {
   });
 
   it('adjusts an active hold without posting and refuses a second full reversal', async () => {
-    const runtime = createSimulationRuntime();
+    const runtime = createTestSimulationRuntime();
     const customer = activateCustomer(runtime, 'cust_adj');
     const opened = runtime.accountsService.open(
       openIntent({ id: 'open_adj', accountId: 'acct_adj', ownerId: customer.id }),
