@@ -1062,6 +1062,25 @@
       "notes": "Deterministic market-surveillance alerts and restriction proposals. Cannot freeze balances, issue Execution Authority, or mutate the ledger. Reuses canonical compliance cases."
     },
     {
+      "id": "packages/risk-evidence",
+      "npmName": "@solstice/risk-evidence",
+      "path": "packages/risk-evidence",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/external-data"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Wave 4 canonical SunRey Risk Evidence layer — KYB, corporate identity, and digital-risk intelligence. Provider signals only. Does not authorize money movement, issue Execution Authority, or mutate the ledger. Compliance Kernel and internal Risk Policy remain authoritative. Simulation only."
+    },
+    {
       "id": "packages/sunrey-sdk",
       "npmName": "@solstice/sunrey-sdk",
       "path": "packages/sunrey-sdk",
@@ -1403,6 +1422,7 @@
         "packages/personal-data-vault",
         "packages/sunrey-exchange",
         "packages/external-data",
+        "packages/risk-evidence",
         "services/investments",
         "services/economic-graph"
       ],

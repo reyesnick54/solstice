@@ -5,7 +5,6 @@
  * provider-sdk activation posture: catalog presence ≠ runtime activation.
  */
 
-import { ENVIRONMENT } from '../../../../config/src/flags.ts';
 import type {
   AccessProviderCapability,
   CommercialAccessCapabilityId,
@@ -41,9 +40,11 @@ const BLOCKED_STATES: ReadonlySet<CommercialProviderActivationState> = new Set([
   'DISABLED',
 ]);
 
+const DEFAULT_ACCESS_ENVIRONMENT = 'simulation' as const;
+
 export function evaluateCommercialActivation(input: ActivationGateInput): ActivationGateResult {
   const reasons: string[] = [];
-  const environment = input.environment ?? ENVIRONMENT;
+  const environment = input.environment ?? DEFAULT_ACCESS_ENVIRONMENT;
 
   if (BLOCKED_STATES.has(input.activationState)) {
     return Object.freeze({
