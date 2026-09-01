@@ -28,7 +28,7 @@ async function call(
 }
 
 describe('Consumer BFF wallets productization', () => {
-  it('lists owned wallets without signing material', () => {
+  it('lists owned wallets without signing material', async () => {
     const world = createSandboxWorld();
     const listed = await call(world, 'GET', '/api/v1/wallets', 'basic_verified');
     assert.equal(listed.status, 200);
@@ -40,13 +40,13 @@ describe('Consumer BFF wallets productization', () => {
     assert.equal(JSON.stringify(body).includes('signingKey'), false);
   });
 
-  it('denies cross-user wallet access', () => {
+  it('denies cross-user wallet access', async () => {
     const world = createSandboxWorld();
     const denied = await call(world, 'GET', '/api/v1/wallets/wal_sandbox_basic_sunrey', 'exchange');
     assert.equal(denied.status, 403);
   });
 
-  it('returns a deposit address bound to the wallet asset', () => {
+  it('returns a deposit address bound to the wallet asset', async () => {
     const world = createSandboxWorld();
     const address = await call(world, 'GET', '/api/v1/wallets/wal_sandbox_basic_sunrey/deposit-address', 'basic_verified');
     assert.equal(address.status, 200);
@@ -56,7 +56,7 @@ describe('Consumer BFF wallets productization', () => {
     assert.equal(body.qrPayload, body.address);
   });
 
-  it('quotes and executes a withdrawal only after step-up', () => {
+  it('quotes and executes a withdrawal only after step-up', async () => {
     const world = createSandboxWorld();
     const quoted = await call(world, 'POST', '/api/v1/wallets/wal_sandbox_basic_sunrey/withdrawal-quote', 'basic_verified', {
       destination: 'sr1peerxxxxxxxx',
@@ -79,7 +79,7 @@ describe('Consumer BFF wallets productization', () => {
     assert.equal(withdrawal.productionSigningAuthorized, false);
   });
 
-  it('lets an Agent create a proposal without broadcasting', () => {
+  it('lets an Agent create a proposal without broadcasting', async () => {
     const world = createSandboxWorld();
     const proposal = await call(world, 'POST', '/api/v1/wallets/wal_sandbox_agent_sunrey/withdrawals', 'agent_enabled', {
       destination: 'sr1peerxxxxxxxx',
@@ -93,7 +93,7 @@ describe('Consumer BFF wallets productization', () => {
     assert.equal(body.originatedFromAgent, true);
   });
 
-  it('aggregates SunRey Coin asset detail for Lovable', () => {
+  it('aggregates SunRey Coin asset detail for Lovable', async () => {
     const world = createSandboxWorld();
     const detail = await call(world, 'GET', '/api/v1/assets/SUNREY_COIN', 'basic_verified');
     assert.equal(detail.status, 200);

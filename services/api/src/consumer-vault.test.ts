@@ -29,7 +29,7 @@ async function call(
 }
 
 describe('Consumer BFF Personal Data Vault', () => {
-  it('serves vault home, categories, and records for the owner', () => {
+  it('serves vault home, categories, and records for the owner', async () => {
     const world = createSandboxWorld();
     const home = await call(world, 'GET', '/api/v1/data/vault', 'vault_financial');
     assert.equal(home.status, 200);
@@ -49,7 +49,7 @@ describe('Consumer BFF Personal Data Vault', () => {
     assert.equal((detail.body as { payloadRedacted: boolean }).payloadRedacted, true);
   });
 
-  it('isolates customers and does not expose another vault', () => {
+  it('isolates customers and does not expose another vault', async () => {
     const world = createSandboxWorld();
     const listed = await call(world, 'GET', '/api/v1/data/vault/records', 'vault_minimal');
     assert.equal(listed.status, 200);
@@ -62,7 +62,7 @@ describe('Consumer BFF Personal Data Vault', () => {
     assert.equal(stolen.status, 403);
   });
 
-  it('corrects user-declared data and exports a portable bundle', () => {
+  it('corrects user-declared data and exports a portable bundle', async () => {
     const world = createSandboxWorld();
     const listed = await call(world, 'GET', '/api/v1/data/vault/records', 'vault_employment');
     const job = (listed.body as { items: { dataRecordId: string; dataKind: string }[] }).items.find(
@@ -84,7 +84,7 @@ describe('Consumer BFF Personal Data Vault', () => {
     assert.equal(JSON.stringify(bundle.body).includes('privateKey'), false);
   });
 
-  it('shows disputed and revoked sandbox personas', () => {
+  it('shows disputed and revoked sandbox personas', async () => {
     const world = createSandboxWorld();
     const disputed = await call(world, 'GET', '/api/v1/data/vault', 'vault_disputed');
     assert.equal(disputed.status, 200);

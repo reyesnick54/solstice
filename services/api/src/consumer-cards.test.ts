@@ -28,7 +28,7 @@ async function call(
 }
 
 describe('Consumer BFF cards productization', () => {
-  it('lists a sandbox virtual card without PCI-sensitive fields', () => {
+  it('lists a sandbox virtual card without PCI-sensitive fields', async () => {
     const world = createSandboxWorld();
     const listed = await call(world, 'GET', '/api/v1/cards', 'basic_verified');
     assert.equal(listed.status, 200);
@@ -41,7 +41,7 @@ describe('Consumer BFF cards productization', () => {
     assert.equal(JSON.stringify(body).includes('cvv'), false);
   });
 
-  it('returns card detail with funding available balance and wallet status', () => {
+  it('returns card detail with funding available balance and wallet status', async () => {
     const world = createSandboxWorld();
     const detail = await call(world, 'GET', '/api/v1/cards/card_sandbox_basic_virtual', 'basic_verified');
     assert.equal(detail.status, 200);
@@ -56,7 +56,7 @@ describe('Consumer BFF cards productization', () => {
     assert.equal(body.wallet.productionReady, false);
   });
 
-  it('freezes and unfreezes through the BFF', () => {
+  it('freezes and unfreezes through the BFF', async () => {
     const world = createSandboxWorld();
     const frozen = await call(world, 'POST', '/api/v1/cards/card_sandbox_basic_virtual/freeze', 'basic_verified');
     assert.equal(frozen.status, 200);
@@ -66,7 +66,7 @@ describe('Consumer BFF cards productization', () => {
     assert.equal((unfrozen.body as { status: string }).status, 'ACTIVE');
   });
 
-  it('patches spending controls on the server', () => {
+  it('patches spending controls on the server', async () => {
     const world = createSandboxWorld();
     const patched = await call(world, 'PATCH', '/api/v1/cards/card_sandbox_basic_virtual/controls', 'basic_verified', {
       internationalTransactions: false,
@@ -79,14 +79,14 @@ describe('Consumer BFF cards productization', () => {
     assert.equal(controls.transactionLimitMinor, '2500');
   });
 
-  it('refuses cross-user card access', () => {
+  it('refuses cross-user card access', async () => {
     const world = createSandboxWorld();
     const other = await call(world, 'GET', '/api/v1/cards/card_sandbox_basic_virtual', 'investment');
     assert.equal(other.status, 403);
     assert.equal((other.body as { errorCode: string }).errorCode, 'RESOURCE_NOT_OWNED');
   });
 
-  it('issues a simulated virtual card for the authenticated owner', () => {
+  it('issues a simulated virtual card for the authenticated owner', async () => {
     const world = createSandboxWorld();
     const issued = await call(world, 'POST', '/api/v1/cards', 'basic_verified', {
       fundingAccountId: 'acct_sandbox_basic_usd',
@@ -99,7 +99,7 @@ describe('Consumer BFF cards productization', () => {
     assert.equal((issued.body as { last4: string }).last4, '0000');
   });
 
-  it('requires step-up for sensitive card actions without high assurance', () => {
+  it('requires step-up for sensitive card actions without high assurance', async () => {
     const world = createSandboxWorld();
     const pending = await call(world, 'POST', '/api/v1/cards/card_sandbox_basic_virtual/freeze', 'kyc_pending');
     assert.ok(pending.status === 403 || pending.status === 401);

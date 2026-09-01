@@ -46,7 +46,7 @@ async function patch(world: ReturnType<typeof createSandboxWorld>, path: string,
 }
 
 describe('Consumer BFF', () => {
-  it('requires authentication on Home, bootstrap, and accounts', () => {
+  it('requires authentication on Home, bootstrap, and accounts', async () => {
     const world = createSandboxWorld();
     for (const path of ['/api/v1/me/home', '/api/v1/me/bootstrap', '/api/v1/accounts']) {
       const res = await get(world, path, null);
@@ -55,14 +55,14 @@ describe('Consumer BFF', () => {
     }
   });
 
-  it('rejects another customer account as RESOURCE_NOT_OWNED', () => {
+  it('rejects another customer account as RESOURCE_NOT_OWNED', async () => {
     const world = createSandboxWorld();
     const res = await get(world, '/api/v1/accounts/acct_sandbox_basic_usd', 'restricted');
     assert.equal(res.status, 403);
     assert.equal((res.body as { errorCode: string }).errorCode, 'RESOURCE_NOT_OWNED');
   });
 
-  it('aggregates Home from ledger-derived account positions', () => {
+  it('aggregates Home from ledger-derived account positions', async () => {
     const world = createSandboxWorld();
     const res = await get(world, '/api/v1/me/home', 'basic_verified');
     assert.equal(res.status, 200);
@@ -81,7 +81,7 @@ describe('Consumer BFF', () => {
     assert.equal(typeof home.recentActivity.value.hasMore, 'boolean');
   });
 
-  it('does not manufacture a blended wealth total for mixed-currency users', () => {
+  it('does not manufacture a blended wealth total for mixed-currency users', async () => {
     const world = createSandboxWorld();
     const res = await get(world, '/api/v1/me/home', 'multi_currency');
     assert.equal(res.status, 200);
@@ -107,7 +107,7 @@ describe('Consumer BFF', () => {
     assert.ok(valuation.value?.rateTimestamp);
   });
 
-  it('returns bootstrap with capabilities and no secrets', () => {
+  it('returns bootstrap with capabilities and no secrets', async () => {
     const world = createSandboxWorld();
     const res = await get(world, '/api/v1/me/bootstrap', 'basic_verified');
     assert.equal(res.status, 200);
@@ -128,7 +128,7 @@ describe('Consumer BFF', () => {
     assert.equal(json.includes('LIVE_PAYMENTS_ENABLED":true'), false);
   });
 
-  it('computes capabilities server-side for restricted and KYC-pending users', () => {
+  it('computes capabilities server-side for restricted and KYC-pending users', async () => {
     const world = createSandboxWorld();
     const restricted = await get(world, '/api/v1/me/capabilities', 'restricted');
     const pending = await get(world, '/api/v1/me/capabilities', 'kyc_pending');
@@ -146,7 +146,7 @@ describe('Consumer BFF', () => {
     assert.equal(v.details.cards.state, 'SIMULATION_ONLY');
   });
 
-  it('reads account balances from the ledger projection, not activity sums', () => {
+  it('reads account balances from the ledger projection, not activity sums', async () => {
     const world = createSandboxWorld();
     const account = await get(world, '/api/v1/accounts/acct_sandbox_basic_usd', 'basic_verified');
     const owned = world.runtime.accounts.get('acct_sandbox_basic_usd' as Account['id']);
@@ -163,7 +163,7 @@ describe('Consumer BFF', () => {
     assert.equal(source.includes('reduce'), false);
   });
 
-  it('paginates activity with items, nextCursor, and hasMore', () => {
+  it('paginates activity with items, nextCursor, and hasMore', async () => {
     const items = Array.from({ length: 5 }, (_, i) => i);
     const first = paginate(items, 'test', undefined, 2);
     if ('error' in first) {
@@ -181,7 +181,7 @@ describe('Consumer BFF', () => {
     assert.equal('error' in invalid, true);
   });
 
-  it('represents provider-down as unavailable, never a zero balance', () => {
+  it('represents provider-down as unavailable, never a zero balance', async () => {
     const world = createSandboxWorld({ providerDown: true });
     const home = await get(world, '/api/v1/me/home', 'provider_down');
     const cards = await get(world, '/api/v1/cards', 'provider_down');
@@ -195,7 +195,7 @@ describe('Consumer BFF', () => {
     assert.equal((capabilities.body as { details: { cards: { state: string } } }).details.cards.state, 'PROVIDER_UNAVAILABLE');
   });
 
-  it('exposes restricted user state without hiding the restriction', () => {
+  it('exposes restricted user state without hiding the restriction', async () => {
     const world = createSandboxWorld();
     const home = await get(world, '/api/v1/me/home', 'restricted');
     const alerts = (home.body as { securityAlerts: { state: string; value: { severity: string }[] | null } }).securityAlerts;
@@ -203,7 +203,7 @@ describe('Consumer BFF', () => {
     assert.equal(alerts.value?.[0]?.severity, 'RESTRICTED');
   });
 
-  it('rejects KYC/legal identity edits on PATCH /me', () => {
+  it('rejects KYC/legal identity edits on PATCH /me', async () => {
     const world = createSandboxWorld();
     const forbidden = await patch(world, '/api/v1/me', 'basic_verified', { legalName: 'Ada Lovelace' });
     assert.equal(forbidden.status, 403);
@@ -213,7 +213,7 @@ describe('Consumer BFF', () => {
     assert.equal((ok.body as { editable: { displayLabel: string } }).editable.displayLabel, 'Ada');
   });
 
-  it('uses one error envelope across auth, ownership, and validation failures', () => {
+  it('uses one error envelope across auth, ownership, and validation failures', async () => {
     const world = createSandboxWorld();
     const authFail = await get(world, '/api/v1/me', null);
     const owned = await get(world, '/api/v1/accounts/acct_sandbox_basic_usd', 'investment');
@@ -246,19 +246,19 @@ describe('Consumer BFF', () => {
     assert.ok(posted.status === 404 || posted.status === 405);
   });
 
-  it('maps regulated Kernel states onto client action statuses without collapsing them', () => {
+  it('maps regulated Kernel states onto client action statuses without collapsing them', async () => {
     assert.equal(mapInternalActionStatus('REQUIRE_MANUAL_REVIEW').status, 'AWAITING_APPROVAL');
     assert.equal(mapInternalActionStatus('HOLD').approvalRequirement, 'KERNEL_HOLD');
     assert.equal(mapInternalActionStatus('BLOCK').status, 'FAILED');
   });
 
-  it('never caches financial responses publicly', () => {
+  it('never caches financial responses publicly', async () => {
     assert.equal(FINANCIAL_CACHE.public, false);
     assert.match(cachePolicyForPath('/api/v1/me/home').cacheControl, /no-store/);
     assert.match(cachePolicyForPath('/api/v1/me/bootstrap').cacheControl, /private/);
   });
 
-  it('lists sandbox personas as non-production fixtures', () => {
+  it('lists sandbox personas as non-production fixtures', async () => {
     const world = createSandboxWorld();
     const res = await get(world, '/api/v1/sandbox/personas', null);
     assert.equal(res.status, 200);
@@ -327,7 +327,7 @@ describe('Consumer BFF', () => {
     assert.equal((executed.body as { status: string }).status, 'SETTLED');
   });
 
-  it('lists grow opportunities with structured cards and denies cross-user access', () => {
+  it('lists grow opportunities with structured cards and denies cross-user access', async () => {
     const world = createSandboxWorld();
     const listed = await get(world, '/api/v1/grow/opportunities', 'grow');
     assert.equal(listed.status, 200);
@@ -344,7 +344,7 @@ describe('Consumer BFF', () => {
     assert.equal(other.status === 403 || other.status === 404, true);
   });
 
-  it('surfaces agent recommendation counts for the agent-enabled persona', () => {
+  it('surfaces agent recommendation counts for the agent-enabled persona', async () => {
     const world = createSandboxWorld();
     const home = await get(world, '/api/v1/me/home', 'agent_enabled');
     const agent = (home.body as { agent: { value: { recommendationCount: number } | null } }).agent;

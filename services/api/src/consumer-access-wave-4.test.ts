@@ -29,17 +29,17 @@ async function call(
 }
 
 describe('Access Wave 4 BFF productization', () => {
-  it('includes Access summary on Home', () => {
+  it('includes Access summary on Home', async () => {
     const world = createSandboxWorld();
     const home = await call(world, 'GET', '/api/v1/me/home', 'basic_verified');
     assert.equal(home.status, 200);
     const homeBody = home.body as {
-      access: { value: { categoryHighlights: { category: string }[] } };
+      access: { value: { categories: { category: string }[] } };
     };
-    assert.ok(homeBody.access.value.categoryHighlights.some((row) => row.category === 'MOBILITY'));
+    assert.ok(homeBody.access.value.categories.some((row) => row.category === 'MOBILITY'));
   });
 
-  it('completes Mustang user journey with backend-authoritative receipt values', () => {
+  it('completes Mustang user journey with backend-authoritative receipt values', async () => {
     const world = createSandboxWorld();
     const landing = await call(world, 'GET', '/api/v1/access/landing', 'basic_verified');
     assert.equal(landing.status, 200);
@@ -89,7 +89,7 @@ describe('Access Wave 4 BFF productization', () => {
     assert.ok(eventTypes.includes('ACCESS_BOOKING_CONFIRMED') || eventTypes.includes('ACCESS_ALLOCATION_AVAILABLE'));
   });
 
-  it('denies cross-user receipt access', () => {
+  it('denies cross-user receipt access', async () => {
     const world = createSandboxWorld();
     const quote = await call(world, 'POST', '/api/v1/access/quotes', 'basic_verified', {
       category: 'MOBILITY',
@@ -118,7 +118,7 @@ describe('Access Wave 4 BFF productization', () => {
     assert.notEqual(denied.status, 200);
   });
 
-  it('does not expose provider secrets in checkout contract', () => {
+  it('does not expose provider secrets in checkout contract', async () => {
     const world = createSandboxWorld();
     const quote = await call(world, 'POST', '/api/v1/access/quotes', 'basic_verified', {
       category: 'MOBILITY',

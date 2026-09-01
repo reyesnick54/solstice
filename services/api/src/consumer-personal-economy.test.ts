@@ -32,7 +32,7 @@ async function call(
 }
 
 describe('Consumer BFF personal economy ACCESS-20', () => {
-  it('returns unified overview projection', () => {
+  it('returns unified overview projection', async () => {
     const world = createSandboxWorld();
     const response = await call(world, 'GET', '/api/v1/personal-economy/overview', 'personal_economy');
     assert.equal(response.status, 200);
@@ -49,7 +49,7 @@ describe('Consumer BFF personal economy ACCESS-20', () => {
     assert.equal(body.snapshot.ledgerWins, true);
   });
 
-  it('returns a simulation plan and proposal-only recommendations', () => {
+  it('returns a simulation plan and proposal-only recommendations', async () => {
     const world = createSandboxWorld();
     const plan = await call(world, 'GET', '/api/v1/personal-economy/plan', 'personal_economy');
     assert.equal(plan.status, 200);
@@ -69,7 +69,7 @@ describe('Consumer BFF personal economy ACCESS-20', () => {
     assert.equal((proposals.body as { resultKind: string }).resultKind, 'PROPOSAL');
   });
 
-  it('runs what-if scenarios without promising outcomes', () => {
+  it('runs what-if scenarios without promising outcomes', async () => {
     const world = createSandboxWorld();
     const scenario = await call(world, 'POST', '/api/v1/personal-economy/scenarios', 'personal_economy', {
       scenario: 'What if I invest $5,000?',

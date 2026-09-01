@@ -29,7 +29,7 @@ async function call(
 }
 
 describe('ACCESS-15 BFF integration', () => {
-  it('exposes epoch and participation read surfaces', () => {
+  it('exposes epoch and participation read surfaces', async () => {
     const world = createSandboxWorld();
     const epoch = await call(world, 'GET', '/api/v1/access/epoch', 'basic_verified');
     assert.equal(epoch.status, 200);
@@ -45,7 +45,7 @@ describe('ACCESS-15 BFF integration', () => {
     assert.match(participationBody.explanation, /capacity available this period/);
   });
 
-  it('exposes allocation categories and preview without global distribution', () => {
+  it('exposes allocation categories and preview without global distribution', async () => {
     const world = createSandboxWorld();
     const categories = await call(world, 'GET', '/api/v1/access/allocation/categories', 'basic_verified');
     assert.equal(categories.status, 200);

@@ -47,7 +47,7 @@ function economyRuntime(): ConsumerBffRuntime {
 }
 
 describe('Consumer BFF native economy', () => {
-  it('catalogs the read-only economy resource and does not expose issuance routes', () => {
+  it('catalogs the read-only economy resource and does not expose issuance routes', async () => {
     const economy = CONSUMER_RESOURCE_CATALOG.find((row) => row.group === 'ECONOMY');
     assert.ok(economy);
     assert.deepEqual(economy?.methods, ['GET']);

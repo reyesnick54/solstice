@@ -46,7 +46,7 @@ async function call(method: string, path: string, query: Record<string, string> 
 }
 
 describe('Wave 7 Prompt 25 — product wiring contract tests', () => {
-  it('registers new BFF routes', () => {
+  it('registers new BFF routes', async () => {
     for (const route of [
       'GET /api/v1/world/snapshot',
       'GET /api/v1/grow/context',
@@ -145,14 +145,14 @@ describe('Wave 7 Prompt 25 — product wiring contract tests', () => {
     assert.ok(body.includes('dataState'));
   });
 
-  it('simulation inventory exists with classifications', () => {
+  it('simulation inventory exists with classifications', async () => {
     assert.ok(SIMULATION_INVENTORY.length >= 10);
     const classifications = new Set(SIMULATION_INVENTORY.map((row) => row.classification));
     assert.ok(classifications.has('KEEP_FOR_TEST'));
     assert.ok(classifications.has('LIVE_SOURCE_NOT_AVAILABLE'));
   });
 
-  it('frontend security — built SDK has no provider API keys', () => {
+  it('frontend security — built SDK has no provider API keys', async () => {
     const clientPath = join(ROOT, 'packages/sunrey-sdk/src/consumer-bff/client.ts');
     const source = readFileSync(clientPath, 'utf8');
     assert.equal(/FRED_API_KEY|COINGECKO|api\.open-meteo|api_key/i.test(source), false);

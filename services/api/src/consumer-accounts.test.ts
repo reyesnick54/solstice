@@ -23,7 +23,7 @@ async function get(
 }
 
 describe('Consumer BFF accounts productization', () => {
-  it('returns posted/pending/held/available and product lifecycle', () => {
+  it('returns posted/pending/held/available and product lifecycle', async () => {
     const world = createSandboxWorld();
     const res = await get(world, '/api/v1/accounts/acct_sandbox_basic_usd', 'basic_verified');
     assert.equal(res.status, 200);
@@ -41,7 +41,7 @@ describe('Consumer BFF accounts productization', () => {
     assert.equal(body.balance.value.held.minorUnits, '0');
   });
 
-  it('reflects holds in available balance and pending activity', () => {
+  it('reflects holds in available balance and pending activity', async () => {
     const world = createSandboxWorld();
     const account = await get(world, '/api/v1/accounts/acct_sandbox_pending_usd', 'pending_activity');
     const body = account.body as { balance: { value: { posted: { minorUnits: string }; available: { minorUnits: string }; held: { minorUnits: string } } } };
@@ -55,7 +55,7 @@ describe('Consumer BFF accounts productization', () => {
     assert.ok(items.some((item) => item.status === 'PENDING' && item.type === 'HOLD'));
   });
 
-  it('keeps USD and SAR separate and marks home valuation unavailable', () => {
+  it('keeps USD and SAR separate and marks home valuation unavailable', async () => {
     const world = createSandboxWorld();
     const home = await get(world, '/api/v1/me/home', 'multi_currency', { valuationCurrency: 'USD' });
     const wealth = (home.body as { wealth: { state: string; valuation: { status: string; currencies: string[] } } }).wealth;
@@ -65,7 +65,7 @@ describe('Consumer BFF accounts productization', () => {
     assert.ok(wealth.valuation.currencies.includes('SAR'));
   });
 
-  it('filters activity by type and paginates', () => {
+  it('filters activity by type and paginates', async () => {
     const world = createSandboxWorld();
     const res = await get(world, '/api/v1/accounts/acct_sandbox_basic_usd/activity', 'basic_verified', {
       type: 'DEPOSIT',
@@ -80,7 +80,7 @@ describe('Consumer BFF accounts productization', () => {
     assert.equal(injected.status, 400);
   });
 
-  it('returns statement opening and closing balances', () => {
+  it('returns statement opening and closing balances', async () => {
     const world = createSandboxWorld();
     const res = await get(world, '/api/v1/accounts/acct_sandbox_basic_usd/statement', 'basic_verified', {
       periodStart: '2026-08-01T00:00:00.000Z',
@@ -92,7 +92,7 @@ describe('Consumer BFF accounts productization', () => {
     assert.equal(statement.closing.minorUnits, '25000');
   });
 
-  it('surfaces restricted account restrictions and denies cross-user access', () => {
+  it('surfaces restricted account restrictions and denies cross-user access', async () => {
     const world = createSandboxWorld();
     const own = await get(world, '/api/v1/accounts/acct_sandbox_restricted_usd', 'restricted');
     assert.equal(own.status, 200);
@@ -102,7 +102,7 @@ describe('Consumer BFF accounts productization', () => {
     assert.equal(cross.status, 403);
   });
 
-  it('includes a zero-balance new account and multiple-account investment persona', () => {
+  it('includes a zero-balance new account and multiple-account investment persona', async () => {
     const world = createSandboxWorld();
     const zero = await get(world, '/api/v1/accounts/acct_sandbox_zero_usd', 'zero_balance');
     assert.equal((zero.body as { balance: { value: { posted: { minorUnits: string } } } }).balance.value.posted.minorUnits, '0');

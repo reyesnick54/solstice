@@ -34,7 +34,7 @@ async function call(
 }
 
 describe('ACCESS-18 BFF integration', () => {
-  it('lists funded data opportunities without raw PDV', () => {
+  it('lists funded data opportunities without raw PDV', async () => {
     const world = createSandboxWorld();
     const response = await call(world, 'GET', '/api/v1/data/opportunities', 'basic_verified');
     assert.equal(response.status, 200);
@@ -45,7 +45,7 @@ describe('ACCESS-18 BFF integration', () => {
     assert.equal((body[0] as { rawPdvExposed: boolean }).rawPdvExposed, false);
   });
 
-  it('returns participation and compensation history surfaces', () => {
+  it('returns participation and compensation history surfaces', async () => {
     const world = createSandboxWorld();
     const participation = await call(world, 'GET', '/api/v1/data/participation/history', 'basic_verified');
     assert.equal(participation.status, 200);
@@ -65,7 +65,7 @@ describe('ACCESS-18 BFF integration', () => {
     assert.equal((consent.body as { rawPdvExposed: boolean }).rawPdvExposed, false);
   });
 
-  it('records opt-in without exposing vault contents', () => {
+  it('records opt-in without exposing vault contents', async () => {
     const world = createSandboxWorld();
     const listed = await call(world, 'GET', '/api/v1/data/opportunities', 'basic_verified');
     const opportunityId = (listed.body as { opportunityId: string }[])[0]!.opportunityId;

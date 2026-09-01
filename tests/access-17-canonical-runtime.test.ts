@@ -56,7 +56,7 @@ function graphSlice() {
 }
 
 describe('ACCESS-17 canonical access runtime', () => {
-  it('defines the canonical redemption pipeline order', () => {
+  it('defines the canonical redemption pipeline order', async () => {
     assert.deepEqual([...CANONICAL_REDEMPTION_PIPELINE], [
       'QUOTE',
       'ELIGIBILITY',
@@ -76,7 +76,7 @@ describe('ACCESS-17 canonical access runtime', () => {
     ]);
   });
 
-  it('maps agent proposal to domain intent at ProposalGate without execution authority', () => {
+  it('maps agent proposal to domain intent at ProposalGate without execution authority', async () => {
     const clock = new FrozenClock(NOW);
     const keys = createSimulationKeyProvider({ clock: { now: () => clock.now() } });
     const identity = new SimulatedIdentityAdapter({ clock, keys, events: new DomainEventLog() });
@@ -131,7 +131,7 @@ describe('ACCESS-17 canonical access runtime', () => {
     assert.equal(engine.issueExecutionAuthority().ok, false);
   });
 
-  it('runs Mustang redemption through canonical orchestrator with full pipeline trace', () => {
+  it('runs Mustang redemption through canonical orchestrator with full pipeline trace', async () => {
     const orchestrator = createCanonicalAccessRedemptionOrchestrator();
     const gateway = orchestrator.gateway;
     const search = gateway.search({
@@ -205,7 +205,7 @@ describe('ACCESS-17 canonical access runtime', () => {
     }
   });
 
-  it('runs Japan bundle with multi-provider ALL_OR_NOTHING compensation on failure', () => {
+  it('runs Japan bundle with multi-provider ALL_OR_NOTHING compensation on failure', async () => {
     const orchestrator = createCanonicalAccessRedemptionOrchestrator();
     const gateway = orchestrator.gateway;
 
@@ -341,7 +341,7 @@ describe('ACCESS-17 canonical access runtime', () => {
     assert.equal(mobilityRecord!.entitlementHoldState, 'RELEASED');
   });
 
-  it('BFF Mustang path uses canonical provider orchestration behind stable routes', () => {
+  it('BFF Mustang path uses canonical provider orchestration behind stable routes', async () => {
     const world = createSandboxWorld();
     const entitlements = await bffCall(world, 'GET', '/api/v1/access/entitlements', 'basic_verified');
     const mobility = (entitlements.body as { items: { entitlementId: string; category: string }[] }).items.find(

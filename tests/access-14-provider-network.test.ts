@@ -28,7 +28,7 @@ async function call(
 }
 
 describe('ACCESS-14 provider network BFF integration', () => {
-  it('exposes provider registry with live connectivity disabled', () => {
+  it('exposes provider registry with live connectivity disabled', async () => {
     const world = createSandboxWorld();
     const res = await call(world, 'GET', '/api/v1/access/providers', 'basic_verified');
     assert.equal(res.status, 200);
@@ -38,7 +38,7 @@ describe('ACCESS-14 provider network BFF integration', () => {
     assert.ok(body.items.some((row) => row.providerId === 'expedia'));
   });
 
-  it('runs Mustang redemption through provider gateway and redemption engine', () => {
+  it('runs Mustang redemption through provider gateway and redemption engine', async () => {
     const world = createSandboxWorld();
     const entitlements = await call(world, 'GET', '/api/v1/access/entitlements', 'basic_verified');
     assert.equal(entitlements.status, 200);
@@ -107,7 +107,7 @@ describe('ACCESS-14 provider network BFF integration', () => {
     assert.ok(confirmedBody.accessRightRef);
   });
 
-  it('overview exposes Access product contract metadata', () => {
+  it('overview exposes Access product contract metadata', async () => {
     const world = createSandboxWorld();
     const res = await call(world, 'GET', '/api/v1/access/overview', 'basic_verified');
     assert.equal(res.status, 200);

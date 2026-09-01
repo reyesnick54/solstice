@@ -30,7 +30,7 @@ async function call(
 }
 
 describe('Consumer BFF payments', () => {
-  it('creates a recipient and denies cross-user reads', () => {
+  it('creates a recipient and denies cross-user reads', async () => {
     const world = createSandboxWorld();
     const created = await call(world, 'POST', '/api/v1/recipients', 'basic_verified', {
       accountId: 'acct_sandbox_basic_usd',
@@ -47,7 +47,7 @@ describe('Consumer BFF payments', () => {
     assert.equal(denied.status, 403);
   });
 
-  it('quotes and completes an internal transfer', () => {
+  it('quotes and completes an internal transfer', async () => {
     const world = createSandboxWorld();
     const quote = await call(world, 'POST', '/api/v1/payments/quote', 'basic_verified', {
       sourceAccountId: 'acct_sandbox_basic_usd',
@@ -86,7 +86,7 @@ describe('Consumer BFF payments', () => {
     assert.equal((fetched.body as { status: string }).status, 'SETTLED');
   });
 
-  it('lists recipients after create', () => {
+  it('lists recipients after create', async () => {
     const world = createSandboxWorld();
     const created = await call(world, 'POST', '/api/v1/recipients', 'basic_verified', {
       accountId: 'acct_sandbox_basic_usd',

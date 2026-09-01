@@ -58,7 +58,7 @@ async function call(runtime: ConsumerBffRuntime, method: string, path: string, p
 }
 
 describe('Consumer BFF HIN rights marketplace', () => {
-  it('lists subject-scoped information rights without ownership transfer', () => {
+  it('lists subject-scoped information rights without ownership transfer', async () => {
     const runtime = hinRuntime();
     const listed = await call(runtime, 'GET', '/api/v1/hin/rights', 'basic_verified');
     assert.equal(listed.status, 200);
@@ -69,7 +69,7 @@ describe('Consumer BFF HIN rights marketplace', () => {
     assert.equal(body.items[0]?.usageRightOnly, true);
   });
 
-  it('shows active licenses and does not guarantee earnings', () => {
+  it('shows active licenses and does not guarantee earnings', async () => {
     const runtime = hinRuntime();
     const licenses = await call(runtime, 'GET', '/api/v1/hin/licenses', 'basic_verified');
     assert.equal(licenses.status, 200);
@@ -82,7 +82,7 @@ describe('Consumer BFF HIN rights marketplace', () => {
     assert.equal(activity.status, 200);
   });
 
-  it('denies cross-user rights and hides licensee controls', () => {
+  it('denies cross-user rights and hides licensee controls', async () => {
     const runtime = hinRuntime();
     const other = await call(runtime, 'GET', '/api/v1/hin/rights', 'exchange');
     assert.equal(other.status, 200);
@@ -92,7 +92,7 @@ describe('Consumer BFF HIN rights marketplace', () => {
     assert.equal(licensee.status, 404);
   });
 
-  it('pauses HIN participation', () => {
+  it('pauses HIN participation', async () => {
     const runtime = hinRuntime();
     const paused = await call(runtime, 'POST', '/api/v1/hin/participation/pause', 'basic_verified');
     assert.equal(paused.status, 200);
@@ -140,7 +140,7 @@ function contributionRuntime(): ConsumerBffRuntime {
 }
 
 describe('Consumer BFF HIN contributions', () => {
-  it('catalogs the read-only HIN resource and does not expose verification or issuance routes', () => {
+  it('catalogs the read-only HIN resource and does not expose verification or issuance routes', async () => {
     const hin = CONSUMER_RESOURCE_CATALOG.find((row) => row.group === 'HIN');
     assert.ok(hin);
     assert.deepEqual(hin?.methods, ['GET']);

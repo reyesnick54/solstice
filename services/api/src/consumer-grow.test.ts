@@ -31,7 +31,7 @@ async function call(
 }
 
 describe('Consumer BFF grow plans and proposals', () => {
-  it('creates a plan, returns Lovable experience, and lists it', () => {
+  it('creates a plan, returns Lovable experience, and lists it', async () => {
     const world = createSandboxWorld();
     const created = await call(world, 'POST', '/api/v1/grow/plans', 'basic_verified', {
       startingCapitalMinorUnits: '1000000',
@@ -59,7 +59,7 @@ describe('Consumer BFF grow plans and proposals', () => {
     assert.equal((catalog.body as { productionActive: boolean }).productionActive, false);
   });
 
-  it('denies cross-user plan reads', () => {
+  it('denies cross-user plan reads', async () => {
     const world = createSandboxWorld();
     const created = await call(world, 'POST', '/api/v1/grow/plans', 'basic_verified', {
       startingCapitalMinorUnits: '500000',
@@ -72,7 +72,7 @@ describe('Consumer BFF grow plans and proposals', () => {
     assert.equal(denied.status, 403);
   });
 
-  it('approves with step-up and refuses fabricated proposal ids', () => {
+  it('approves with step-up and refuses fabricated proposal ids', async () => {
     const world = createSandboxWorld();
     const created = await call(world, 'POST', '/api/v1/grow/plans', 'basic_verified', {
       startingCapitalMinorUnits: '1000000',
@@ -93,7 +93,7 @@ describe('Consumer BFF grow plans and proposals', () => {
     assert.equal(fake.status, 404);
   });
 
-  it('modification creates a new proposal version', () => {
+  it('modification creates a new proposal version', async () => {
     const world = createSandboxWorld();
     const created = await call(world, 'POST', '/api/v1/grow/plans', 'basic_verified', {
       startingCapitalMinorUnits: '800000',
@@ -136,13 +136,13 @@ async function get(
 }
 
 describe('Consumer BFF grow portfolio', () => {
-  it('requires authentication', () => {
+  it('requires authentication', async () => {
     const world = createSandboxWorld();
     const res = await get(world, '/api/v1/grow/portfolio', null);
     assert.equal(res.status, 401);
   });
 
-  it('returns portfolio, holdings, performance, allocation, and risk for the investment persona', () => {
+  it('returns portfolio, holdings, performance, allocation, and risk for the investment persona', async () => {
     const world = createSandboxWorld();
     const portfolio = await get(world, '/api/v1/grow/portfolio', 'investment');
     assert.equal(portfolio.status, 200);
@@ -168,7 +168,7 @@ describe('Consumer BFF grow portfolio', () => {
     assert.equal((risk.body as { fabricatedStatistics: boolean }).fabricatedStatistics, false);
   });
 
-  it('denies another customer', () => {
+  it('denies another customer', async () => {
     const world = createSandboxWorld();
     const res = await get(world, '/api/v1/grow/portfolio', 'basic_verified');
     assert.ok(res.status === 404 || res.status === 403);
@@ -210,7 +210,7 @@ async function post(
 }
 
 describe('Consumer BFF Grow / PEG', () => {
-  it('renders a financial profile for a grow sandbox persona', () => {
+  it('renders a financial profile for a grow sandbox persona', async () => {
     const world = createSandboxWorld();
     const res = await get(world, '/api/v1/grow/profile', 'grow_healthy_saver');
     assert.equal(res.status, 200);
@@ -220,7 +220,7 @@ describe('Consumer BFF Grow / PEG', () => {
     assert.ok(body.cash.length >= 1);
   });
 
-  it('returns a snapshot without a cross-currency total', () => {
+  it('returns a snapshot without a cross-currency total', async () => {
     const world = createSandboxWorld();
     const res = await get(world, '/api/v1/grow/snapshot', 'grow_multi_currency');
     assert.equal(res.status, 200);
@@ -243,7 +243,7 @@ describe('Consumer BFF Grow / PEG', () => {
     assert.ok(valuedBody.presentationValuation?.lines.every((line) => typeof line.rateTimestamp === 'string'));
   });
 
-  it('creates a goal and lists it', () => {
+  it('creates a goal and lists it', async () => {
     const world = createSandboxWorld();
     const created = await post(world, '/api/v1/grow/goals', 'grow_new_user', {
       goalKind: 'TRAVEL',
@@ -259,7 +259,7 @@ describe('Consumer BFF Grow / PEG', () => {
     assert.ok(items.some((item) => item.name === 'Trip'));
   });
 
-  it('refuses an authoritative balance override', () => {
+  it('refuses an authoritative balance override', async () => {
     const world = createSandboxWorld();
     const res = await post(world, '/api/v1/grow/assumptions', 'grow_healthy_saver', {
       kind: 'BALANCE_OVERRIDE',
@@ -271,13 +271,13 @@ describe('Consumer BFF Grow / PEG', () => {
     assert.equal((res.body as { errorCode: string }).errorCode, 'FORBIDDEN_PROFILE_FIELD');
   });
 
-  it('does not give an Agent every PEG category automatically', () => {
+  it('does not give an Agent every PEG category automatically', async () => {
     const world = createSandboxWorld();
     const res = await get(world, '/api/v1/grow/agent', 'grow_healthy_saver');
     assert.equal(res.status, 403);
   });
 
-  it('lists derived insights for idle cash', () => {
+  it('lists derived insights for idle cash', async () => {
     const world = createSandboxWorld();
     const res = await get(world, '/api/v1/grow/insights', 'grow_high_idle_cash');
     assert.equal(res.status, 200);

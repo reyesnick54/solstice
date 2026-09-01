@@ -32,7 +32,7 @@ async function call(
 }
 
 describe('Consumer BFF exchange productization', () => {
-  it('lists markets and order preview without guaranteeing price', () => {
+  it('lists markets and order preview without guaranteeing price', async () => {
     const world = createSandboxWorld();
     const markets = await call(world, 'GET', '/api/v1/exchange/markets', 'exchange');
     assert.equal(markets.status, 200);
@@ -49,7 +49,7 @@ describe('Consumer BFF exchange productization', () => {
     assert.equal((preview.body as { guaranteedExecutionPrice: false }).guaranteedExecutionPrice, false);
   });
 
-  it('refuses raw agent-style order submission without an approved proposal', () => {
+  it('refuses raw agent-style order submission without an approved proposal', async () => {
     const world = createSandboxWorld();
     const raw = await call(world, 'POST', '/api/v1/exchange/orders', 'exchange', {
       marketId: 'market:sunrey-coin-usd-simulation',
@@ -67,7 +67,7 @@ describe('Consumer BFF exchange productization', () => {
     assert.equal((proposed.body as { requiresExecution: true }).requiresExecution, true);
   });
 
-  it('denies cross-user order reads', () => {
+  it('denies cross-user order reads', async () => {
     const world = createSandboxWorld();
     const denied = await call(world, 'GET', '/api/v1/exchange/orders/xord_someone_else', 'exchange');
     assert.equal(denied.status, 403);

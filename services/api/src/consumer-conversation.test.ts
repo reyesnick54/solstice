@@ -25,7 +25,7 @@ function principal(): BffPrincipal {
 }
 
 describe('Consumer BFF conversational actions', () => {
-  it('supports conversation, Action Card, Action Center, and human approval', () => {
+  it('supports conversation, Action Card, Action Center, and human approval', async () => {
     const surface = createAgentConversationSurface();
     const actor = principal();
     const started = dispatchConversationSurface(surface, actor, {
@@ -77,7 +77,7 @@ describe('Consumer BFF conversational actions', () => {
     assert.ok(((stream.body as { events: unknown[] }).events.length) > 0);
   });
 
-  it('refuses agent self-approval and injection from the BFF', () => {
+  it('refuses agent self-approval and injection from the BFF', async () => {
     const surface = createAgentConversationSurface();
     const actor = principal();
     const started = dispatchConversationSurface(surface, actor, {

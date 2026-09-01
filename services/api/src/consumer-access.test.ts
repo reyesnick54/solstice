@@ -28,14 +28,14 @@ async function call(
 }
 
 describe('Consumer BFF Human Access Economy', () => {
-  it('requires authentication on access routes', () => {
+  it('requires authentication on access routes', async () => {
     const world = createSandboxWorld();
     const res = await call(world, 'GET', '/api/v1/access/overview', null);
     assert.equal(res.status, 401);
     assert.equal((res.body as { errorCode: string }).errorCode, 'AUTH_REQUIRED');
   });
 
-  it('returns disabled overview for pending verification', () => {
+  it('returns disabled overview for pending verification', async () => {
     const world = createSandboxWorld();
     const res = await call(world, 'GET', '/api/v1/access/overview', 'kyc_pending');
     assert.equal(res.status, 200);
@@ -54,7 +54,7 @@ describe('Consumer BFF Human Access Economy', () => {
     assert.equal(body.activeEntitlements.items.length, 0);
   });
 
-  it('exposes categories as presentation metadata', () => {
+  it('exposes categories as presentation metadata', async () => {
     const world = createSandboxWorld();
     const res = await call(world, 'GET', '/api/v1/access/categories', 'basic_verified');
     assert.equal(res.status, 200);
@@ -64,7 +64,7 @@ describe('Consumer BFF Human Access Economy', () => {
     assert.equal(body.items[0]?.productiveTaxonomyOwnedBy, 'packages/sunrey-chain');
   });
 
-  it('lists a food-access entitlement for the verified sandbox persona', () => {
+  it('lists a food-access entitlement for the verified sandbox persona', async () => {
     const world = createSandboxWorld();
     const res = await call(world, 'GET', '/api/v1/access/entitlements', 'basic_verified');
     assert.equal(res.status, 200);
@@ -75,7 +75,7 @@ describe('Consumer BFF Human Access Economy', () => {
     assert.match(food.label, /meal/i);
   });
 
-  it('supports Mustang in Miami reservation flow without fabricating unmatched quotes', () => {
+  it('supports Mustang in Miami reservation flow without fabricating unmatched quotes', async () => {
     const world = createSandboxWorld();
     const intent = await call(world, 'POST', '/api/v1/access/intents', 'basic_verified', {
       category: 'MOBILITY',
@@ -126,7 +126,7 @@ describe('Consumer BFF Human Access Economy', () => {
     assert.equal(rejectedQuote.status, 503);
   });
 
-  it('quotes and confirms a Japan 14-day experience', () => {
+  it('quotes and confirms a Japan 14-day experience', async () => {
     const world = createSandboxWorld();
     const quoted = await call(world, 'POST', '/api/v1/access/experiences/quote', 'basic_verified', {
       destination: 'Japan',
@@ -141,7 +141,7 @@ describe('Consumer BFF Human Access Economy', () => {
     assert.equal((confirmed.body as { durationDays: number }).durationDays, 14);
   });
 
-  it('includes access capability in /me/capabilities', () => {
+  it('includes access capability in /me/capabilities', async () => {
     const world = createSandboxWorld();
     const res = await call(world, 'GET', '/api/v1/me/capabilities', 'basic_verified');
     assert.equal(res.status, 200);

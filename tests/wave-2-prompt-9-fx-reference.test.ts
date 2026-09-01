@@ -34,16 +34,18 @@ async function post(world: ReturnType<typeof createSandboxWorld>, path: string, 
 }
 
 describe('wave 2 prompt 9 fx reference bff', () => {
-  it('serves normalized FX reference endpoints without exposing provider secrets', () => {
+  it('serves normalized FX reference endpoints without exposing provider secrets', async () => {
     const world = createSandboxWorld();
-    const providers = await get(world, '/api/v1/fx/reference', 'multi_currency').body as {
+    const providersRes = await get(world, '/api/v1/fx/reference', 'multi_currency');
+    const providers = providersRes.body as {
       authority: string;
       items: { providerId: string }[];
     };
     assert.equal(providers.authority, 'FX_REFERENCE_ONLY_NOT_EXECUTION');
     assert.ok(providers.items.length >= 7);
 
-    const rate = await get(world, '/api/v1/fx/reference/USD/SAR', 'multi_currency').body as {
+    const rateRes = await get(world, '/api/v1/fx/reference/USD/SAR', 'multi_currency');
+    const rate = rateRes.body as {
       ok: boolean;
       authority: string;
       providerId: string;
@@ -54,7 +56,8 @@ describe('wave 2 prompt 9 fx reference bff', () => {
     assert.equal(rate.executionAuthority, false);
     assert.ok(rate.providerId);
 
-    const history = await get(world, '/api/v1/fx/reference/USD/SAR/history', 'multi_currency', { date: '2026-08-01' }).body as {
+    const historyRes = await get(world, '/api/v1/fx/reference/USD/SAR/history', 'multi_currency', { date: '2026-08-01' });
+    const history = historyRes.body as {
       ok: boolean;
       date: string;
     };
@@ -62,7 +65,7 @@ describe('wave 2 prompt 9 fx reference bff', () => {
     assert.equal(history.date, '2026-08-01');
   });
 
-  it('leaves execution FX paths unchanged', () => {
+  it('leaves execution FX paths unchanged', async () => {
     const world = createSandboxWorld();
     const currencies = await get(world, '/api/v1/fx/currencies', 'multi_currency');
     assert.equal(currencies.status, 200);

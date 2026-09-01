@@ -113,7 +113,7 @@ describe('Consumer BFF Agent productization', () => {
 });
 
 describe('Consumer BFF Agent runtime', () => {
-  it('lists the sandbox agent and denies cross-user access', () => {
+  it('lists the sandbox agent and denies cross-user access', async () => {
     const world = createSandboxWorld();
     const listed = await call(world, 'GET', '/api/v1/agents', 'agent_enabled');
     assert.equal(listed.status, 200);
@@ -126,7 +126,7 @@ describe('Consumer BFF Agent runtime', () => {
     assert.equal(pausedByOther.status, 403);
   });
 
-  it('creates a conversation, streams a message, and keeps financial state unchanged', () => {
+  it('creates a conversation, streams a message, and keeps financial state unchanged', async () => {
     const world = createSandboxWorld();
     const listed = await call(world, 'GET', '/api/v1/agents', 'agent_enabled');
     const agentId = (listed.body as { items: { agentId: string }[] }).items[0]?.agentId ?? '';
@@ -149,11 +149,11 @@ describe('Consumer BFF Agent runtime', () => {
     assert.equal((posted.body as { financialStateChanged: boolean }).financialStateChanged, false);
   });
 
-  it('supports memory controls and pause', () => {
+  it('supports memory controls and pause', async () => {
     const world = createSandboxWorld();
+    const agents = await call(world, 'GET', '/api/v1/agents', 'agent_enabled');
     const agentId =
-      (await call(world, 'GET', '/api/v1/agents', 'agent_enabled').body as { items: { agentId: string }[] }).items[0]
-        ?.agentId ?? '';
+      (agents.body as { items: { agentId: string }[] }).items[0]?.agentId ?? '';
     const memory = await call(world, 'POST', `/api/v1/agents/${agentId}/memories`, 'agent_enabled', {
       category: 'USER_PREFERENCE',
       content: 'User prefers explanations in simple language.',

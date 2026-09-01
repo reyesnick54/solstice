@@ -28,7 +28,7 @@ async function call(
 }
 
 describe('Consumer BFF consent and data rights', () => {
-  it('lists permissions without implicit monetization opt-in', () => {
+  it('lists permissions without implicit monetization opt-in', async () => {
     const world = createSandboxWorld();
     const listed = await call(world, 'GET', '/api/v1/data/permissions', 'basic_verified');
     assert.equal(listed.status, 200);
@@ -44,7 +44,7 @@ describe('Consumer BFF consent and data rights', () => {
     assert.equal(licensing.requiredForBasicAccount, false);
   });
 
-  it('grants a bundle, isolates users, and revokes immediately', () => {
+  it('grants a bundle, isolates users, and revokes immediately', async () => {
     const world = createSandboxWorld();
     const granted = await call(world, 'POST', '/api/v1/data/consents', 'basic_verified', {
       bundleId: 'AGENT_SPENDING_DATA',
@@ -66,7 +66,7 @@ describe('Consumer BFF consent and data rights', () => {
     assert.equal((revoked.body as { revocation: { historicalProcessingErased: boolean } }).revocation.historicalProcessingErased, false);
   });
 
-  it('enrolls and withdraws HIN without closing financial services', () => {
+  it('enrolls and withdraws HIN without closing financial services', async () => {
     const world = createSandboxWorld();
     const before = await call(world, 'GET', '/api/v1/hin/participation', 'basic_verified');
     assert.equal(before.status, 200);
@@ -84,7 +84,7 @@ describe('Consumer BFF consent and data rights', () => {
     assert.equal(body.financialServicesRemainOpen, true);
   });
 
-  it('submits a rights request and records access history without raw values', () => {
+  it('submits a rights request and records access history without raw values', async () => {
     const world = createSandboxWorld();
     const submitted = await call(world, 'POST', '/api/v1/data/rights/requests', 'basic_verified', {
       type: 'EXPORT',
