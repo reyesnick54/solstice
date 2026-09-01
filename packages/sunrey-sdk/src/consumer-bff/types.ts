@@ -1280,6 +1280,8 @@ export type AccessCheckout = {
   readonly statusLabel: string;
   readonly requiredActions: readonly string[];
   readonly fundingAvailable: boolean;
+};
+
 export type AccessDashboard = AccessPosture & {
   readonly schema: 'sunrey.consumer.access.dashboard.v1';
   readonly user: {
