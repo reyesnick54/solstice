@@ -63,14 +63,12 @@ impl InteropCircuitBreakers {
 
     pub fn pause_asset(&mut self, asset_id: &str, actor: &str, reason: &str) {
         self.paused_assets.insert(asset_id.to_string());
-        self.audit_log
-            .push(format!("ASSET_PAUSE asset={asset_id} actor={actor} reason={reason}"));
+        self.audit_log.push(format!("ASSET_PAUSE asset={asset_id} actor={actor} reason={reason}"));
     }
 
     pub fn emergency_disable(&mut self, actor: &str, reason: &str) {
         self.global_paused = true;
-        self.audit_log
-            .push(format!("EMERGENCY_DISABLE actor={actor} reason={reason}"));
+        self.audit_log.push(format!("EMERGENCY_DISABLE actor={actor} reason={reason}"));
     }
 
     pub fn guard_message(
