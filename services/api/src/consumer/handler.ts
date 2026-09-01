@@ -91,8 +91,6 @@ import type { ConsentDataRightsEngine } from '../../../../packages/consent/src/p
 import type { PersonalDataVaultProduct } from '../../../../packages/personal-data-vault/src/product/index.ts';
 import { dispatchVault } from './vault.ts';
 import { dispatchAccess } from './access.ts';
-import { createAccessConsumerBffSurface } from '../../../../packages/human-access-economy/src/consumer-bff/index.ts';
-import { resourceField } from './types.ts';
 import { dispatchPersonalEconomy, type PersonalEconomyBffSurface } from './personal-economy.ts';
 import type { HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
 import type { MarketReferenceBffSurface } from './market-reference.ts';
@@ -319,37 +317,6 @@ function dispatchAuthenticated(
   }
   if (path === '/api/v1/me/home' && method === 'GET') {
     const home = runtime.bff.home(principal, requestId, query.valuationCurrency ?? query.valuation_currency ?? 'USD');
-    if (!isBffError(home) && runtime.access) {
-      const actor = Object.freeze({
-        actorId: principal.actorId,
-        customerId: principal.customerId,
-        verified: principal.verification === 'VERIFIED' && principal.customerStatus !== 'PENDING_VERIFICATION',
-        restricted: principal.restricted || principal.customerStatus === 'SUSPENDED',
-      });
-      const accessSummary = createAccessConsumerBffSurface(runtime.access).homeSummary(actor);
-      if (accessSummary.ok) {
-        const summary = accessSummary.value;
-        return result(
-          Object.freeze({
-            ...home,
-            access: resourceField({
-              state: summary.accessEnabled ? 'SIMULATION_ONLY' : 'FEATURE_DISABLED',
-              availability: summary.accessEnabled ? 'AVAILABLE_SIMULATION' : 'NOT_YET_PRODUCTIZED',
-              reason: summary.actionRequiredMessage,
-              value: Object.freeze({
-                accessEnabled: summary.accessEnabled,
-                overallStatus: summary.overallStatus,
-                categoryHighlights: summary.categoryHighlights,
-                nextExpiration: summary.nextExpiration,
-                activeBooking: summary.activeBooking,
-                actionRequired: summary.actionRequired,
-              }),
-            }),
-          }),
-          headers,
-        );
-      }
-    }
     return result(home, headers);
   }
   if (path === '/api/v1/me/bootstrap' && method === 'GET') {

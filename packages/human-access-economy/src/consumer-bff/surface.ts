@@ -401,6 +401,7 @@ export class AccessConsumerBffSurface {
             status: row.status,
             freshness: row.freshness,
             travelAccessLink: row.travelAccessLink,
+            catalogItemId: row.catalogItemId,
           }),
         ),
         nextCursor: page.nextCursor,

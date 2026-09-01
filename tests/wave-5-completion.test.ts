@@ -155,21 +155,21 @@ describe('Wave 5 physical-economy data plane', () => {
 
   it('exposes ProviderRiskMonitor for all Wave 5 providers', () => {
     const plane = createExternalDataPlane();
-    const risk = plane.providerRisk.snapshot();
+    const risk = plane.wave5ProviderRisk.snapshot();
     assert.equal(risk.schema, 'sunrey.provider-risk-monitor.v1');
     assert.ok(risk.providers.length >= WAVE5_IMPLEMENTED_PROVIDER_IDS.length);
     assert.ok(risk.summary.total > 0);
-    plane.providerRisk.disableProvider('eia');
-    const after = plane.providerRisk.snapshot();
+    plane.wave5ProviderRisk.disableProvider('eia');
+    const after = plane.wave5ProviderRisk.snapshot();
     const eia = after.providers.find((p) => p.providerId === 'eia');
     assert.equal(eia?.activationState, 'disabled');
-    plane.providerRisk.enableProvider('eia');
+    plane.wave5ProviderRisk.enableProvider('eia');
   });
 
   it('does not leak credentials or personal addresses in surfaces', () => {
     const plane = createExternalDataPlane();
     const healthJson = JSON.stringify(plane.health());
-    const riskJson = JSON.stringify(plane.providerRisk.snapshot());
+    const riskJson = JSON.stringify(plane.wave5ProviderRisk.snapshot());
     assert.equal(healthJson.includes('api_key'), false);
     assert.equal(healthJson.includes('EIA_API_KEY'), false);
     assert.equal(riskJson.includes('OPENWEATHERMAP_API_KEY'), false);

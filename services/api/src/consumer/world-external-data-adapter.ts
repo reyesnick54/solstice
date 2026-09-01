@@ -301,7 +301,7 @@ export function createWorldExternalDataBff(plane: ExternalDataPlane): WorldExter
     moonReyProductiveEconomy: () => moonReyProductiveEconomySnapshot(plane),
     realEstateContext: () => realEstateContextSnapshot(plane),
     productiveEconomicGraph: () => buildProductiveEconomicGraph(plane),
-    providerRisk: () => plane.providerRisk.snapshot(),
+    providerRisk: () => plane.wave5ProviderRisk.snapshot(),
     wave5Coverage: () => plane.wave5CoverageReport(),
     geospatial: () => {
       const countries = plane.wave5.geospatial.getCountries();
