@@ -89,8 +89,8 @@ export function classifyWave5Provider(provider: Record<string, unknown>): Wave5P
   return Object.freeze({
     providerId,
     category,
-    status: 'NOT_WAVE_5',
-    notes: 'Awaiting implementation or authoritative catalog entry.',
+    status: 'UNAVAILABLE',
+    notes: 'Catalog entry present; Wave 5 adapter not yet implemented.',
   });
 }
 
