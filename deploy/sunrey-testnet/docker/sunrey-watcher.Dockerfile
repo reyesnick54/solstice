@@ -16,4 +16,5 @@ LABEL org.opencontainers.image.title="sunrey-watcher" \
       sunrey.service.role="WATCHER"
 COPY --from=build /src/rust/target/release/sunrey-watcher /usr/local/bin/sunrey-watcher
 USER nonroot
+HEALTHCHECK --interval=30s --timeout=5s CMD ["/usr/local/bin/sunrey-watcher"]
 ENTRYPOINT ["/usr/local/bin/sunrey-watcher"]
