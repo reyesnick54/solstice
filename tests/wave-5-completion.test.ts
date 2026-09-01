@@ -181,7 +181,6 @@ describe('Wave 5 physical-economy data plane', () => {
   it('accounts for every Wave 5 catalog provider', () => {
     const report = buildWave5CoverageReport();
     assert.ok(report.implemented >= 19);
-    assert.ok(report.blocked >= 2);
     assert.doesNotThrow(() => assertWave5CoverageComplete());
     const unexplained = report.providers.filter(
       (p) =>

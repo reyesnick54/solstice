@@ -1,4 +1,4 @@
-import { FrozenClock, systemClock, type Clock } from '../../../packages/config/src/clock.ts';
+import { FrozenClock, type Clock } from '../../../packages/config/src/clock.ts';
 import { CAPABILITIES } from '../../../packages/config/src/flags.ts';
 import { asUtcInstant } from '../../../packages/domain/src/time.ts';
 import { asJurisdiction } from '../../../packages/domain/src/jurisdiction.ts';
@@ -78,7 +78,7 @@ export type SimulationRuntimeOptions = {
 export function createSimulationRuntime(
   options: SimulationRuntimeOptions = {},
 ): SimulationRuntime {
-  const clock = options.clock ?? systemClock;
+  const clock = options.clock ?? new FrozenClock(asUtcInstant('2026-08-13T15:00:00.000Z'));
   const evidence = new EvidenceVault(clock, options.persist?.evidence);
   const events = new DomainEventLog(options.persist?.events);
   const keyProvider =

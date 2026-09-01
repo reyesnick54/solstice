@@ -26,6 +26,7 @@ import type { ComplianceEvidenceService, BusinessIdentityService, DigitalRiskSer
 import { createDefaultWave4AdapterStates } from './wave4/adapters.ts';
 import { buildWave4CoverageReport } from './wave4/coverage.ts';
 import { WAVE4_IMPLEMENTED_PROVIDER_IDS } from './wave4/catalog-entries.ts';
+import { ProviderRiskMonitor as Wave5ProviderRiskMonitor } from './wave5-provider-risk.ts';
 import { createExternalDataTrustPlane, type ExternalDataTrustPlane } from './trust-engine/index.ts';
 import {
   buildWave6KnowledgeBundle,
@@ -60,7 +61,7 @@ export class ExternalDataPlane {
   readonly threatIntel: ThreatIntelligenceService;
   readonly endpointSecurity: EndpointSecurityService;
   readonly serviceOutage: ServiceOutageService;
-  readonly providerRisk: ProviderRiskService;
+  readonly providerRisk: ProviderRiskService & Pick<Wave5ProviderRiskMonitor, 'snapshot' | 'disableProvider' | 'enableProvider'>;
   readonly trust: ExternalDataTrustPlane;
   readonly wave6: Wave6Services;
   readonly #wave6Ctx;
@@ -96,7 +97,12 @@ export class ExternalDataPlane {
     this.threatIntel = wave4.threatIntel;
     this.endpointSecurity = wave4.endpointSecurity;
     this.serviceOutage = wave4.serviceOutage;
-    this.providerRisk = wave4.providerRisk;
+    const wave5RiskMonitor = new Wave5ProviderRiskMonitor(this.#wave5Ctx);
+    this.providerRisk = Object.assign(wave4.providerRisk, {
+      snapshot: () => wave5RiskMonitor.snapshot(),
+      disableProvider: (providerId: string) => wave5RiskMonitor.disableProvider(providerId),
+      enableProvider: (providerId: string) => wave5RiskMonitor.enableProvider(providerId),
+    });
     this.trust = createExternalDataTrustPlane({ nowUtc: () => nowUtc });
     const wave6States = createDefaultWave6AdapterStates();
     for (const [id, state] of wave2States) {
