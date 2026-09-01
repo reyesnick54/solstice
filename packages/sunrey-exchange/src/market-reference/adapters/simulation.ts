@@ -99,7 +99,7 @@ export class SimulationMarketReferenceAdapter implements MarketReferenceProvider
       }
       quotes.push(result.value);
     }
-    return { ok: true, value: Object.freeze(quotes), fromCache: false, fallbackProviderId: null };
+    return Object.freeze({ ok: true as const, value: Object.freeze(quotes), fromCache: false, fallbackProviderId: null });
   }
 
   async getHistory(
