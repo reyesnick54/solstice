@@ -2,9 +2,10 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
+import { invokeConsumerBff } from './consumer/bff-test-invoke.ts';
 import { handleConsumerBff, type ConsumerBffRuntime } from './consumer/handler.ts';
 
-function call(
+async function call(
   world: ReturnType<typeof createSandboxWorld>,
   method: string,
   path: string,
@@ -18,7 +19,7 @@ function call(
     access: world.access,
     agentExternalEvidence: world.agentExternalEvidence,
   };
-  return handleConsumerBff(runtime, {
+  return await invokeConsumerBff(runtime, {
     method,
     path,
     query: {},
@@ -29,21 +30,22 @@ function call(
 }
 
 describe('Access Wave 4 BFF productization', () => {
-  it('includes Access summary on Home', () => {
+  it('includes Access summary on Home', async () => {
     const world = createSandboxWorld();
-    const home = call(world, 'GET', '/api/v1/me/home', 'basic_verified');
+    const home = await call(world, 'GET', '/api/v1/me/home', 'basic_verified');
     assert.equal(home.status, 200);
-    const homeBody = home.body as { access: { value: { title: string; categories: { category: string }[] } } };
-    assert.equal(homeBody.access.value.title, 'Your Available Access');
-    assert.ok(homeBody.access.value.categories.some((row) => row.category === 'MOBILITY'));
+    const homeBody = home.body as {
+      access: { value: { categoryHighlights: { category: string }[] } };
+    };
+    assert.ok(homeBody.access.value.categoryHighlights.some((row) => row.category === 'MOBILITY'));
   });
 
-  it('completes Mustang user journey with backend-authoritative receipt values', () => {
+  it('completes Mustang user journey with backend-authoritative receipt values', async () => {
     const world = createSandboxWorld();
-    const landing = call(world, 'GET', '/api/v1/access/landing', 'basic_verified');
+    const landing = await call(world, 'GET', '/api/v1/access/landing', 'basic_verified');
     assert.equal(landing.status, 200);
 
-    const quote = call(world, 'POST', '/api/v1/access/quotes', 'basic_verified', {
+    const quote = await call(world, 'POST', '/api/v1/access/quotes', 'basic_verified', {
       category: 'MOBILITY',
       summary: 'Ford Mustang — Miami weekend',
       location: 'Miami, FL',
@@ -52,17 +54,17 @@ describe('Access Wave 4 BFF productization', () => {
     assert.equal(quote.status, 201);
     const quoteBody = quote.body as { quoteId: string; pricing: { minorUnits: string } };
 
-    const historyAfterQuote = call(world, 'GET', '/api/v1/access/history', 'basic_verified');
+    const historyAfterQuote = await call(world, 'GET', '/api/v1/access/history', 'basic_verified');
     assert.equal(historyAfterQuote.status, 200);
 
-    const reservation = call(world, 'POST', '/api/v1/access/reservations', 'basic_verified', {
+    const reservation = await call(world, 'POST', '/api/v1/access/reservations', 'basic_verified', {
       quoteId: quoteBody.quoteId,
       idempotencyKey: 'wave4-mustang-reservation',
     });
     assert.equal(reservation.status, 201);
     const reservationBody = reservation.body as { reservationId: string };
 
-    const confirm = call(
+    const confirm = await call(
       world,
       'POST',
       `/api/v1/access/reservations/${reservationBody.reservationId}/confirm`,
@@ -71,55 +73,55 @@ describe('Access Wave 4 BFF productization', () => {
     );
     assert.equal(confirm.status, 200);
 
-    const receipts = call(world, 'GET', '/api/v1/access/receipts', 'basic_verified');
+    const receipts = await call(world, 'GET', '/api/v1/access/receipts', 'basic_verified');
     assert.equal(receipts.status, 200);
     const receiptItems = (receipts.body as { items: { receiptType: string; financial: { providerTotal: string } }[] })
       .items;
     assert.ok(receiptItems.length > 0);
     assert.equal(receiptItems[0]!.financial.providerTotal, quoteBody.pricing.minorUnits);
 
-    const upcoming = call(world, 'GET', '/api/v1/access/upcoming', 'basic_verified');
+    const upcoming = await call(world, 'GET', '/api/v1/access/upcoming', 'basic_verified');
     assert.equal(upcoming.status, 200);
     assert.ok((upcoming.body as { items: unknown[] }).items.length > 0);
 
-    const events = call(world, 'GET', '/api/v1/agent/external-events', 'basic_verified');
+    const events = await call(world, 'GET', '/api/v1/agent/external-events', 'basic_verified');
     assert.equal(events.status, 200);
     const eventTypes = (events.body as { events: { type: string }[] }).events.map((row) => row.type);
     assert.ok(eventTypes.includes('ACCESS_BOOKING_CONFIRMED') || eventTypes.includes('ACCESS_ALLOCATION_AVAILABLE'));
   });
 
-  it('denies cross-user receipt access', () => {
+  it('denies cross-user receipt access', async () => {
     const world = createSandboxWorld();
-    const quote = call(world, 'POST', '/api/v1/access/quotes', 'basic_verified', {
+    const quote = await call(world, 'POST', '/api/v1/access/quotes', 'basic_verified', {
       category: 'MOBILITY',
       summary: 'Ford Mustang — Miami weekend',
       location: 'Miami, FL',
       idempotencyKey: 'sec-quote',
     });
     assert.equal(quote.status, 201);
-    call(world, 'POST', '/api/v1/access/reservations', 'basic_verified', {
+    await call(world, 'POST', '/api/v1/access/reservations', 'basic_verified', {
       quoteId: (quote.body as { quoteId: string }).quoteId,
       idempotencyKey: 'sec-res',
     });
-    call(
+    await call(
       world,
       'POST',
       `/api/v1/access/reservations/${(quote.body as { reservationId?: string }).reservationId ?? 'x'}/confirm`,
       'basic_verified',
       {},
     );
-    const receipts = call(world, 'GET', '/api/v1/access/receipts', 'basic_verified');
+    const receipts = await call(world, 'GET', '/api/v1/access/receipts', 'basic_verified');
     const receiptId = (receipts.body as { items: { receiptId: string }[] }).items[0]?.receiptId;
     if (!receiptId) {
       return;
     }
-    const denied = call(world, 'GET', `/api/v1/access/receipts/${receiptId}`, 'kyc_pending');
+    const denied = await call(world, 'GET', `/api/v1/access/receipts/${receiptId}`, 'kyc_pending');
     assert.notEqual(denied.status, 200);
   });
 
-  it('does not expose provider secrets in checkout contract', () => {
+  it('does not expose provider secrets in checkout contract', async () => {
     const world = createSandboxWorld();
-    const quote = call(world, 'POST', '/api/v1/access/quotes', 'basic_verified', {
+    const quote = await call(world, 'POST', '/api/v1/access/quotes', 'basic_verified', {
       category: 'MOBILITY',
       summary: 'Ford Mustang — Miami weekend',
       location: 'Miami, FL',
@@ -129,7 +131,7 @@ describe('Access Wave 4 BFF productization', () => {
       (quote.body as { quoteId: string }).quoteId,
     );
     assert.ok(txnId);
-    const checkout = call(world, 'GET', `/api/v1/access/transactions/${txnId}/checkout`, 'basic_verified');
+    const checkout = await call(world, 'GET', `/api/v1/access/transactions/${txnId}/checkout`, 'basic_verified');
     assert.equal(checkout.status, 200);
     const body = JSON.stringify(checkout.body);
     assert.equal(body.includes('PAN'), false);
