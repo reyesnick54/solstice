@@ -53,7 +53,7 @@ jobs:
       - name: Real seven-validator Testnet-1 qualification
         env:
           SUNREY_REQUIRE_KIND: "1"
-          SUNREY_TESTNET_VERIFY_TIMEOUT_SECONDS: "240"
+          SUNREY_TESTNET_VERIFY_TIMEOUT_SECONDS: "360"
         run: |
           export PATH="$(go env GOPATH)/bin:$PATH"
           bash scripts/sunrey-testnet-kind.sh

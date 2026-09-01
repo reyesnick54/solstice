@@ -5,6 +5,7 @@
 
 use std::path::PathBuf;
 use std::sync::Arc;
+use std::time::{Duration, Instant};
 
 use sunrey_chain_node::chain::TESTNET_1_NETWORK_ID;
 use sunrey_chain_node::consensus::{FourValidatorFixture, SevenValidatorFixture};
@@ -75,7 +76,8 @@ async fn main() {
         .parse()
         .expect("SUNREY_OPERATOR_ADDR");
     let hostname = std::env::var("HOSTNAME").ok();
-    let seeds = resolve_seeds(std::env::var("SUNREY_SEEDS").ok(), hostname.as_deref()).await;
+    let seeds =
+        resolve_seeds_with_retry(std::env::var("SUNREY_SEEDS").ok(), hostname.as_deref()).await;
 
     let mut config = NodeConfig::development(&name, data_dir, listen, operator);
     config.seeds = seeds;
@@ -114,6 +116,47 @@ fn validator_name() -> String {
         }
     }
     "A".into()
+}
+
+async fn resolve_seeds_with_retry(
+    raw: Option<String>,
+    own_hostname: Option<&str>,
+) -> Vec<PeerAddress> {
+    let Some(raw) = raw else {
+        return Vec::new();
+    };
+    let target = raw
+        .split(',')
+        .map(str::trim)
+        .filter(|item| !item.is_empty())
+        .filter(|item| {
+            let Some((host, _)) = item.rsplit_once(':') else {
+                return false;
+            };
+            !own_hostname.is_some_and(|own| host.split('.').next() == Some(own))
+        })
+        .count()
+        .max(1);
+    let deadline = Instant::now() + Duration::from_secs(90);
+    loop {
+        let seeds = resolve_seeds(Some(raw.clone()), own_hostname).await;
+        if seeds.len() >= target || Instant::now() >= deadline {
+            if seeds.len() < target {
+                tracing::warn!(
+                    resolved = seeds.len(),
+                    target,
+                    "proceeding with partial seed list after DNS retry deadline"
+                );
+            }
+            return seeds;
+        }
+        tracing::debug!(
+            resolved = seeds.len(),
+            target,
+            "waiting for remaining validator seed DNS records"
+        );
+        tokio::time::sleep(Duration::from_secs(2)).await;
+    }
 }
 
 async fn resolve_seeds(raw: Option<String>, own_hostname: Option<&str>) -> Vec<PeerAddress> {

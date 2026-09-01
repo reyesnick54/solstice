@@ -6,7 +6,6 @@ metadata:
 spec:
   serviceName: sunrey-validator
   replicas: 7
-  podManagementPolicy: Parallel
   selector:
     matchLabels:
       app: sunrey-validator

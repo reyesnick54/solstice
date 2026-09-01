@@ -101,6 +101,8 @@ common_finalized_root() {
 
 echo "Waiting for seven SunRey Testnet-1 validators..."
 kubectl -n "$NAMESPACE" rollout status "statefulset/${STATEFULSET}" --timeout="${TIMEOUT_SECONDS}s"
+echo "Allowing validator mesh to stabilize after rollout..."
+sleep 15
 
 for ((i=0; i<VALIDATORS; i++)); do
   start_forward "$i"
