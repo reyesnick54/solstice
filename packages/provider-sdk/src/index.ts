@@ -291,6 +291,7 @@ export {
   type ProviderAuthInjection,
   type ProviderAuthResolver,
   SecretBackedProviderAuthResolver,
+  NO_AUTH_PROVIDER_RESOLVER,
   basicAuthHeader,
   bearerAuthHeader,
   unresolvedSecretMessage,

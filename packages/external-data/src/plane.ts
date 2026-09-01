@@ -37,6 +37,7 @@ import { buildWave6ConsumerSnapshots } from './wave6/bridges.ts';
 import { buildWave6CoverageReport } from './wave6/coverage.ts';
 import { createDefaultWave6AdapterStates, setWave6ProviderState } from './wave6/adapters.ts';
 import { WAVE6_IMPLEMENTED_PROVIDER_IDS } from './wave6/catalog-entries.ts';
+import { ProviderRiskMonitor as Wave5ProviderRiskMonitor } from './wave5-provider-risk.ts';
 
 export type ExternalDataPlaneOptions = {
   readonly nowUtc?: string;
@@ -97,6 +98,7 @@ export class ExternalDataPlane {
     this.endpointSecurity = wave4.endpointSecurity;
     this.serviceOutage = wave4.serviceOutage;
     this.providerRisk = wave4.providerRisk;
+    this.providerRisk.bindWave5Monitor(new Wave5ProviderRiskMonitor(this.#wave5Ctx));
     this.trust = createExternalDataTrustPlane({ nowUtc: () => nowUtc });
     const wave6States = createDefaultWave6AdapterStates();
     for (const [id, state] of wave2States) {

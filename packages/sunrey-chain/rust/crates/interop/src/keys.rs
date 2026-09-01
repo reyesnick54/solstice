@@ -95,7 +95,9 @@ pub fn assert_key_separation(bindings: &[InteropKeyBinding]) -> Result<(), Inter
         refuse_treasury_key_reuse(&binding.purpose)?;
     }
     let purposes: Vec<&str> = bindings.iter().map(|b| b.purpose.as_str()).collect();
-    if purposes.contains(&"VALIDATOR_CONSENSUS_SIGNING") && purposes.contains(&INTEROP_SIGNING_PURPOSE) {
+    if purposes.contains(&"VALIDATOR_CONSENSUS_SIGNING")
+        && purposes.contains(&INTEROP_SIGNING_PURPOSE)
+    {
         return Err(InteropError::KeyPurposeForbidden);
     }
     Ok(())

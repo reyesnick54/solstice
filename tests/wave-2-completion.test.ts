@@ -22,7 +22,7 @@ describe('Wave 2 BFF external data adapter', () => {
   it('surfaces provider coverage for operators', () => {
     const bff = createWorldExternalDataBff(createExternalDataPlane());
     const coverage = bff.coverage();
-    assert.equal(coverage.implemented, 17);
+    assert.equal(coverage.wave2.implemented, 17);
     assert.ok(bff.providerHealth().length > 0);
   });
 });

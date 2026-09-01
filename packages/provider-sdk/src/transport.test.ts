@@ -189,8 +189,6 @@ describe('provider-sdk transport', () => {
       {
         Authorization: fakeBearer,
         'X-API-Key': fakeApiKey,
-        Authorization: 'Bearer ' + 'super-secret-bearer-token-value',
-        'X-API-Key': 'super-secret-api-key-value',
         Accept: 'application/json',
       },
       catalog,
