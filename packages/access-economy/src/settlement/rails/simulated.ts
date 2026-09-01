@@ -439,7 +439,7 @@ export class SimulatedComplianceGatePort implements ComplianceGatePort {
 }
 
 export class SimulatedCanonicalFiatLedgerPort implements CanonicalFiatLedgerPort {
-  private readonly journals: Array<{ journalId: string; settlementId: string; type: string }> = [];
+  private readonly settlementRecords: Array<{ journalId: string; settlementId: string; type: string }> = [];
   private readonly captureIdempotency = new Map<string, string>();
   private readonly refundIdempotency = new Map<string, string>();
 
@@ -462,7 +462,7 @@ export class SimulatedCanonicalFiatLedgerPort implements CanonicalFiatLedgerPort
       });
     }
     const journalId = `journal_${randomUUID()}`;
-    this.journals.push({ journalId, settlementId: input.settlementId, type: 'CAPTURE' });
+    this.settlementRecords.push({ journalId, settlementId: input.settlementId, type: 'CAPTURE' });
     this.captureIdempotency.set(input.idempotencyKey, journalId);
     return Object.freeze({
       journalId,
@@ -486,7 +486,7 @@ export class SimulatedCanonicalFiatLedgerPort implements CanonicalFiatLedgerPort
       });
     }
     const journalId = `journal_ref_${randomUUID()}`;
-    this.journals.push({ journalId, settlementId: input.settlementId, type: 'REFUND' });
+    this.settlementRecords.push({ journalId, settlementId: input.settlementId, type: 'REFUND' });
     this.refundIdempotency.set(input.idempotencyKey, journalId);
     return Object.freeze({
       journalId,
@@ -495,7 +495,7 @@ export class SimulatedCanonicalFiatLedgerPort implements CanonicalFiatLedgerPort
   }
 
   getJournals() {
-    return Object.freeze([...this.journals]);
+    return Object.freeze([...this.settlementRecords]);
   }
 }
 

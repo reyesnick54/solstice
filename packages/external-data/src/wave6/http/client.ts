@@ -8,12 +8,11 @@ import { DATA_MODE } from '../../../../config/src/data-mode.ts';
 import {
   createFetchProviderTransport,
   createProviderTransportConfig,
-  SecretBackedProviderAuthResolver,
+  NO_AUTH_PROVIDER_RESOLVER,
   type FetchLike,
   type HttpProviderTransportResult,
   type ProviderTransportEnvironment,
 } from '../../../../provider-sdk/src/index.ts';
-import { InMemorySecretProvider } from '../../../../security/src/secrets.ts';
 import type { ProviderExecutionProvenance } from '../../certification/types.ts';
 import { deriveExecutionProvenance } from '../../certification/types.ts';
 
@@ -102,9 +101,7 @@ export class OpportunityHttpClient {
           defaultTimeoutMs: endpoint.timeoutMs ?? 15_000,
         },
       }),
-      authResolver: new SecretBackedProviderAuthResolver({
-        secrets: new InMemorySecretProvider('wave6-opportunity'),
-      }),
+      authResolver: NO_AUTH_PROVIDER_RESOLVER,
       authStrategy: { kind: 'none' },
       fetchFn: this.#fetchFn,
     });

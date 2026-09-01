@@ -7,9 +7,8 @@ import { randomUUID } from 'node:crypto';
 import {
   createFetchProviderTransport,
   createProviderTransportConfig,
-  SecretBackedProviderAuthResolver,
+  NO_AUTH_PROVIDER_RESOLVER,
 } from '../../../provider-sdk/src/index.ts';
-import { InMemorySecretProvider } from '../../../security/src/secrets.ts';
 import { deriveExecutionProvenance } from '../certification/types.ts';
 
 export type EconomicLiveProbeResult = {
@@ -41,9 +40,7 @@ async function probeGet(input: {
         defaultTimeoutMs: 15_000,
       },
     }),
-    authResolver: new SecretBackedProviderAuthResolver({
-      secrets: new InMemorySecretProvider('wave2-economic-live'),
-    }),
+    authResolver: NO_AUTH_PROVIDER_RESOLVER,
     authStrategy: { kind: 'none' },
   });
 
