@@ -1,6 +1,6 @@
 # SunRey Human Economic Intelligence Capability Matrix
 
-**Status:** Wave 6 exit-gate audit (2026-09-02)  
+**Status:** Wave 6 exit-gate audit; **Wave 9 re-audit** 2026-09-02 — see `WAVE9_CAPABILITY_REAUDIT.md`  
 **Environment:** `ENVIRONMENT=simulation`; all `LIVE_*` flags `false`  
 **Legend:** **IMPLEMENTED** · **PARTIAL** · **SIMULATION** · **TEST_ONLY** · **NOT_IMPLEMENTED** · **BLOCKED** · **FUTURE_WAVE**
 

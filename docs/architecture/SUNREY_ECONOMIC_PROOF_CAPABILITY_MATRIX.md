@@ -1,7 +1,7 @@
 # SunRey Economic Proof Capability Matrix
 
 **Program:** Sovereign Architecture Wave 3 — Economic Proof Architecture  
-**Date:** 2026-09-02  
+**Date:** 2026-09-02; **Wave 9 re-audit** — see `WAVE9_CAPABILITY_REAUDIT.md`  
 **Auditor:** Cloud Agent (Wave 3 final red-team audit)  
 **Verdict:** Wave 3 sovereign economic proof is **not implemented** on `main`. This matrix records actual repository state, not aspirational architecture.
 

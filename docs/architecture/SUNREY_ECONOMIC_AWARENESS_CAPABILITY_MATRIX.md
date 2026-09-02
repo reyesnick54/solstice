@@ -1,6 +1,6 @@
 # SunRey Economic Awareness Capability Matrix
 
-**Status:** Wave 4 exit-gate audit (2026-09-02)  
+**Status:** Wave 4 exit-gate audit; **Wave 9 re-audit** 2026-09-02 — see `WAVE9_CAPABILITY_REAUDIT.md`  
 **Environment:** `ENVIRONMENT=simulation`; all `LIVE_*` flags `false`  
 **Legend:** **IMPLEMENTED** · **PARTIAL** · **SIMULATION** · **TEST ONLY** · **NOT IMPLEMENTED** · **BLOCKED** · **FUTURE WAVE**
 
