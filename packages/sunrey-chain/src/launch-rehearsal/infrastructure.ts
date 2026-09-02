@@ -9,7 +9,7 @@
 
 import { secretRef, type SecretReference } from '../../../security/src/secrets.ts';
 import { SignerFencingController } from '../ops/fencing.ts';
-import { createSnapshot, verifySnapshot } from '../ops/snapshots.ts';
+import { createSnapshot, genesisFingerprint, verifySnapshot } from '../ops/snapshots.ts';
 import {
   createSignerSafetyBackup,
   dumpApplicationDatabase,
@@ -146,6 +146,7 @@ export function provisionRehearsalStorage(stateRoot: string, height: bigint): Re
   const snapshot = createSnapshot({
     networkId: REHEARSAL_NETWORK_ID,
     chainId: REHEARSAL_CHAIN_ID,
+    genesisFingerprint: genesisFingerprint(REHEARSAL_NETWORK_ID, REHEARSAL_CHAIN_ID, stateRoot),
     height,
     blockId: `block-${height.toString()}`,
     stateRoot,
@@ -158,6 +159,7 @@ export function provisionRehearsalStorage(stateRoot: string, height: bigint): Re
   const trust = {
     networkId: REHEARSAL_NETWORK_ID,
     chainId: REHEARSAL_CHAIN_ID,
+    genesisFingerprint: genesisFingerprint(REHEARSAL_NETWORK_ID, REHEARSAL_CHAIN_ID, stateRoot),
     protocolVersion: '1',
     trustedFinalizedHeight: height,
     trustedStateRoot: stateRoot,

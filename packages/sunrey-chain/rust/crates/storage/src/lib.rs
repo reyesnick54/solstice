@@ -9,7 +9,8 @@ use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 use sunrey_protocol::{
-    hash_to_hex, BlockHeader, GenesisV1, Hash32, RejectReason, SignedTransaction,
+    block_id, genesis_hash, hash_from_hex, hash_to_hex, BlockHeader, DomainHasher, GenesisV1,
+    Hash32, RejectReason, SignedTransaction,
 };
 use sunrey_state::ChainView;
 
@@ -378,6 +379,43 @@ impl ChainStore {
             Backend::File => StorageMetrics::default(),
             Backend::Production(engine) => engine.metrics(),
         }
+    }
+
+    /// Fail-closed startup validation for consensus-critical persistence.
+    ///
+    /// Verifies checksum integrity, genesis fingerprint, state-root commitment,
+    /// tip linkage, and block height continuity. Indexes are conveniences; this
+    /// checks the authoritative block + state binding.
+    pub fn validate_canonical_startup(
+        &self,
+        hasher: &dyn DomainHasher,
+        expected_genesis_hash: &Hash32,
+    ) -> Result<(), RejectReason> {
+        self.verify_integrity()?;
+        let computed = genesis_hash(hasher, &self.genesis);
+        if computed != *expected_genesis_hash {
+            return Err(RejectReason::IncompatibleProtocol);
+        }
+        let tip = hash_from_hex(&self.meta.tip_block_id)?;
+        if self.meta.height == 0 {
+            if tip != *expected_genesis_hash {
+                return Err(RejectReason::IncompatibleProtocol);
+            }
+        } else {
+            let stored = self.load_block(self.meta.height)?;
+            let expected_tip = block_id(hasher, &stored.header);
+            if tip != expected_tip {
+                return Err(RejectReason::CorruptStore);
+            }
+            if stored.header.height != self.meta.height {
+                return Err(RejectReason::IncorrectHeight);
+            }
+            if hash_to_hex(&stored.header.app_hash) != self.meta.app_hash {
+                return Err(RejectReason::WrongStateRoot);
+            }
+        }
+        assert_state_root(self, hasher)?;
+        Ok(())
     }
 
     pub fn verify_integrity(&self) -> Result<(), RejectReason> {

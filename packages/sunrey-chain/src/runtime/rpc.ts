@@ -2,22 +2,38 @@ export const RPC_PLANES = ['PUBLIC_RPC', 'VALIDATOR_RPC', 'ADMIN_RPC'] as const;
 export type RpcPlane = (typeof RPC_PLANES)[number];
 
 export const PUBLIC_RPC_METHODS = [
+  'GET /health',
+  'GET /ready',
+  'GET /v1/health',
+  'GET /v1/ready',
   'GET /v1/chain/status',
   'GET /v1/network/status',
+  'GET /v1/chain/blocks',
   'GET /v1/chain/blocks/{height}',
+  'GET /v1/chain/blocks/finalized',
   'GET /v1/transactions/{id}',
   'GET /v1/accounts/{id}',
   'GET /v1/assets',
+  'GET /v1/assets/supply',
   'GET /v1/fees/estimate',
   'GET /v1/validators',
+  'GET /v1/metrics',
   'POST /v1/transactions',
+] as const;
+
+export const VALIDATOR_RPC_METHODS = [
+  'GET /v1/validator/status',
+  'GET /v1/validator/peers',
 ] as const;
 
 export const FORBIDDEN_PUBLIC_RPC_METHODS = [
   'POST /admin/produce-block',
+  'POST /admin/mutate-balance',
+  'POST /admin/set-balance',
   'GET /v1/validator/admin',
   'POST /v1/validator/sign',
   'POST /validator/unsafe-reset',
+  'POST /v1/accounts/mutate',
 ] as const;
 
 export type RpcSecurityPolicy = {
@@ -43,9 +59,25 @@ export function methodAllowedOnPlane(plane: RpcPlane, method: string, path: stri
     path.startsWith('/admin') ||
     path.includes('produce-block') ||
     path.startsWith('/v1/validator/admin') ||
-    path.includes('/sign');
+    path.includes('/sign') ||
+    path.includes('mutate-balance') ||
+    path.includes('set-balance') ||
+    path.includes('/accounts/mutate');
   if (privileged) {
     return plane !== 'PUBLIC_RPC';
+  }
+  if (plane === 'PUBLIC_RPC') {
+    const route = `${method} ${path.split('?')[0]}`;
+    const allowed = PUBLIC_RPC_METHODS.some((entry) => {
+      if (entry.includes('{')) {
+        const prefix = entry.slice(0, entry.indexOf('{'));
+        return route.startsWith(prefix);
+      }
+      return route === entry || route.startsWith(`${entry}/`);
+    });
+    if (!allowed && path.startsWith('/v1/')) {
+      return false;
+    }
   }
   return true;
 }

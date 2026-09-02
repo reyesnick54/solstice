@@ -7,13 +7,14 @@
  */
 
 import type { HardwareSignRequest, HardwareSignResponse, SignerProviderClass, WalletSignature } from './types.ts';
-import { signWalletBytes } from './keys.ts';
+import { signProtocolDigest, signWalletBytes } from './keys.ts';
 import type { DevelopmentKeystore } from './keystore.ts';
 
 export type WalletSignerProvider = {
   readonly providerClass: SignerProviderClass;
   readonly canHoldLocalKeyMaterial: boolean;
   readonly sign: (keyId: string, signBytes: Uint8Array) => WalletSignature;
+  readonly signProtocol: (keyId: string, digestHex: string) => WalletSignature;
 };
 
 export class LocalEncryptedDevelopmentSigner implements WalletSignerProvider {
@@ -43,6 +44,25 @@ export class LocalEncryptedDevelopmentSigner implements WalletSignerProvider {
       signatureHex,
     });
   }
+
+  signProtocol(keyId: string, digestHex: string): WalletSignature {
+    if (!this.keystore.unlocked) {
+      throw new Error('keystore is locked');
+    }
+    const record = this.keystore.get(keyId);
+    if (!record) {
+      throw new Error(`development key ${keyId} is not in the unlocked keystore`);
+    }
+    const seed = Buffer.from(record.seedHex, 'hex');
+    const signatureHex = signProtocolDigest(seed, digestHex, record.suiteId);
+    seed.fill(0);
+    return Object.freeze({
+      keyId: record.keyId,
+      suiteId: record.suiteId,
+      publicKeyHex: record.publicKeyHex,
+      signatureHex,
+    });
+  }
 }
 
 export class UnimplementedSigner implements WalletSignerProvider {
@@ -54,6 +74,10 @@ export class UnimplementedSigner implements WalletSignerProvider {
   }
 
   sign(_keyId: string, _signBytes: Uint8Array): WalletSignature {
+    throw new Error(`${this.providerClass} is a protocol port; it does not hold local key material`);
+  }
+
+  signProtocol(_keyId: string, _digestHex: string): WalletSignature {
     throw new Error(`${this.providerClass} is a protocol port; it does not hold local key material`);
   }
 }

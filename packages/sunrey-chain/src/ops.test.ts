@@ -44,6 +44,7 @@ import {
   dashboardDefinitions,
   decryptBackup,
   developmentEpoch,
+  developmentGenesisFingerprint,
   developmentMultiDomainProfile,
   developmentRemoteSigner,
   developmentSentryConfig,
@@ -596,6 +597,7 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
     const created = createSnapshot({
       networkId: 'net_sunrey_local_dev',
       chainId: 'chn_sunrey_local_dev',
+      genesisFingerprint: developmentGenesisFingerprint(),
       height: 10n,
       blockId: 'block-10',
       stateRoot: '11'.repeat(32),
@@ -611,6 +613,7 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
     const trust = {
       networkId: 'net_sunrey_local_dev',
       chainId: 'chn_sunrey_local_dev',
+      genesisFingerprint: developmentGenesisFingerprint(),
       protocolVersion: '1',
       trustedFinalizedHeight: 10n,
       trustedStateRoot: '11'.repeat(32),
