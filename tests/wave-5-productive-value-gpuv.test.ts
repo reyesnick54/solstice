@@ -310,7 +310,7 @@ describe('Wave 5 — market price separation', () => {
       gpuvEqualsMoonReyPrice: false,
       gpuvDeterminesExchangeQuote: false,
       exchangeQuoteFeedsGpuv: false,
-      marketCapDeterminesIssuance: false,
+      exchangeValuationDrivesIssuance: false,
     });
   });
 

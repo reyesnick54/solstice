@@ -12,7 +12,7 @@ export const MARKET_PRICE_COUPLING_FORBIDDEN = Object.freeze({
   gpuvEqualsMoonReyPrice: false,
   gpuvDeterminesExchangeQuote: false,
   exchangeQuoteFeedsGpuv: false,
-  marketCapDeterminesIssuance: false,
+  exchangeValuationDrivesIssuance: false,
 });
 
 export type MarketPriceCouplingViolation =
@@ -36,7 +36,7 @@ export function auditMarketPriceSeparation(input: {
   readonly exchangeApiRequired?: boolean;
   readonly exchangeQuoteFeedsGpuv?: boolean;
   readonly gpuvDeterminesExchangeQuote?: boolean;
-  readonly marketCapDeterminesIssuance?: boolean;
+  readonly exchangeValuationDrivesIssuance?: boolean;
 }): MarketSeparationAudit {
   if (input.exchangeApiRequired) {
     return { ok: false, violation: 'EXCHANGE_API_REQUIRED', detail: 'GPUV evaluation must not require Exchange API availability' };
@@ -47,8 +47,8 @@ export function auditMarketPriceSeparation(input: {
   if (input.gpuvDeterminesExchangeQuote) {
     return { ok: false, violation: 'GPUV_DETERMINES_EXCHANGE_QUOTE', detail: 'GPUV must not directly determine Exchange quote' };
   }
-  if (input.marketCapDeterminesIssuance) {
-    return { ok: false, violation: 'MARKET_CAP_DETERMINES_ISSUANCE', detail: 'market capitalization must not determine issuance' };
+  if (input.exchangeValuationDrivesIssuance) {
+    return { ok: false, violation: 'MARKET_CAP_DETERMINES_ISSUANCE', detail: 'exchange valuation totals must not determine issuance' };
   }
   if (input.valueInput.referencePriceAlone) {
     return { ok: false, violation: 'EXCHANGE_PRICE_FEEDS_GPUV', detail: 'reference price alone cannot determine GPUV' };

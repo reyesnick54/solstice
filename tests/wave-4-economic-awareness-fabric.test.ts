@@ -1,1 +1,1 @@
-import './packages/economic-awareness-fabric/src/fabric.test.ts';
+import '../packages/economic-awareness-fabric/src/fabric.test.ts';

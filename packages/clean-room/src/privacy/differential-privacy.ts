@@ -22,7 +22,7 @@ export const DIFFERENTIAL_PRIVACY_EVALUATION = Object.freeze({
   ]),
   productionEpsilonConfigured: false,
   reason:
-    'Differential privacy requires governed epsilon budgets and validated mechanisms; simulation records DIFFERENTIAL_PRIVACY_NOT_IMPLEMENTED',
+    'Differential privacy requires governed noise parameters and validated release controls; simulation records DIFFERENTIAL_PRIVACY_NOT_IMPLEMENTED',
 });
 
 export type DifferentialPrivacyDecision = {
@@ -59,7 +59,7 @@ export function evaluateDifferentialPrivacyApplicability(input: {
     purposeId: input.purposeId,
     dpApplicable: allowed,
     reason: allowed
-      ? 'aggregate analytics may consume a privacy budget when a DP mechanism is configured'
+      ? 'aggregate analytics may consume a governed noise allowance when a DP release control is configured'
       : 'query class is not in the DP-appropriate allow list',
   });
 }
