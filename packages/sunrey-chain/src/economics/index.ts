@@ -14,5 +14,6 @@ export * from './treasury/index.ts';
 export * from './stack.ts';
 export * from './explorer.ts';
 export * from './human-contribution-bridge/index.ts';
+export * as humanEconomy from './human-economy/index.ts';
 export * as productionActivation from './production-activation/index.ts';
 export * as observation from './observation/index.ts';
