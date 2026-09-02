@@ -39,10 +39,36 @@ export function assessHumanEvidence(
   return Object.freeze({ satisfied: true, codes: Object.freeze(codes) });
 }
 
+export const HUMAN_ATTESTATION_MESH_SOURCE_CLASSES = [
+  'PRIMARY_INSTITUTION',
+  'EMPLOYER',
+  'EDUCATIONAL_INSTITUTION',
+  'RESEARCH_PUBLISHER',
+  'RESEARCH_REGISTRY',
+  'CREDENTIAL_ISSUER',
+  'GOVERNMENT',
+  'SIGNED_COMPUTATION_RECEIPT',
+  'SIGNED_WORK_RECEIPT',
+  'PEER_ATTESTATION',
+  'USER_SELF_ATTESTATION',
+  'AUTHORIZED_DATA_PROVIDER',
+  'OTHER_GOVERNANCE_APPROVED',
+] as const;
+
+export type HumanAttestationMeshSourceClass = (typeof HUMAN_ATTESTATION_MESH_SOURCE_CLASSES)[number];
+
+export function isHumanAttestationMeshSourceClass(value: string): value is HumanAttestationMeshSourceClass {
+  return (HUMAN_ATTESTATION_MESH_SOURCE_CLASSES as readonly string[]).includes(value);
+}
+
 export const HUMAN_CONSENSUS_EXTENSIONS = Object.freeze({
   allowProductiveOracleLogicBlindly: false,
   supportsAttestations: true,
   supportsCredentials: true,
   supportsComputationReceipts: true,
-  wave6FullIntelligenceDeferred: true,
+  supportsAttestationMesh: true,
+  selfAttestationMaySoleVerify: false,
+  endpointCountIsNotIndependence: true,
+  wave6AttestationMeshImplemented: true,
+  wave6FullIntelligenceDeferred: false,
 });
