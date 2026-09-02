@@ -319,4 +319,22 @@ mod tests {
         assert_eq!(genesis.environment, "simulation");
         assert_eq!(genesis.native_assets[0].ticker_status, "NOT_ASSIGNED");
     }
+
+    #[test]
+    fn consensus_critical_genesis_fields_change_encoded_fingerprint() {
+        let base = local_dev_genesis(vec![1, 2, 3], "cs_ed25519_sha256_v1".into());
+        let base_bytes = base.encode();
+
+        let mut other_chain = base.clone();
+        other_chain.chain_id = "chn_sunrey_other".to_string();
+        assert_ne!(other_chain.encode(), base_bytes);
+
+        let mut other_protocol = base.clone();
+        other_protocol.protocol_version = "2".to_string();
+        assert_ne!(other_protocol.encode(), base_bytes);
+
+        let mut other_assets = base.clone();
+        other_assets.native_assets[0].genesis_supply = 1;
+        assert_ne!(other_assets.encode(), base_bytes);
+    }
 }
