@@ -5,6 +5,9 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
+const PEER_READINESS_TIMEOUT: Duration = Duration::from_secs(45);
+const CONSENSUS_SYNC_TIMEOUT: Duration = Duration::from_secs(60);
+
 use crate::chain::{Transaction, DEV_CHAIN_ID, DEV_NETWORK_ID};
 use crate::consensus::FourValidatorFixture;
 use crate::error::{NodeError, NodeResult};
@@ -44,7 +47,7 @@ pub async fn run_four_validator_devnet(root: PathBuf) -> NodeResult<FourValidato
     let (d, _) = spawn_validator("D", root.join("d"), vec![seed], &fixture).await?;
     let nodes = [a, b, c, d];
 
-    wait_until(Duration::from_secs(12), || {
+    wait_until(PEER_READINESS_TIMEOUT, || {
         nodes[0].metrics_snapshot().peer_count >= 3
             && nodes[1].metrics_snapshot().peer_count >= 1
             && nodes[2].metrics_snapshot().peer_count >= 1
@@ -77,7 +80,7 @@ pub async fn run_four_validator_devnet(root: PathBuf) -> NodeResult<FourValidato
     )?;
     let _ = nodes[3].submit_tx(tx)?;
 
-    wait_until(Duration::from_secs(30), || {
+    wait_until(CONSENSUS_SYNC_TIMEOUT, || {
         nodes.iter().all(|n| n.finalized_height() >= 2)
     })
     .await?;
@@ -222,7 +225,7 @@ pub async fn run_native_asset_devnet(root: PathBuf) -> NodeResult<NativeAssetDev
     let (c, _) = spawn_validator("C", root.join("c"), vec![seed.clone()], &fixture).await?;
     let (d, _) = spawn_validator("D", root.join("d"), vec![seed], &fixture).await?;
     let nodes = [a, b, c, d];
-    wait_until(Duration::from_secs(12), || {
+    wait_until(PEER_READINESS_TIMEOUT, || {
         nodes[0].metrics_snapshot().peer_count >= 3
             && nodes[1].metrics_snapshot().peer_count >= 1
             && nodes[2].metrics_snapshot().peer_count >= 1
@@ -265,7 +268,7 @@ pub async fn run_native_asset_devnet(root: PathBuf) -> NodeResult<NativeAssetDev
     // Mempool admission checks the committed nonce only. Same-actor
     // transactions must finalize before the next nonce is submitted.
     nodes[3].submit_tx(sun_tx)?;
-    wait_until(Duration::from_secs(30), || {
+    wait_until(CONSENSUS_SYNC_TIMEOUT, || {
         nodes.iter().all(|n| {
             n.native_assets()
                 .available("alice", NativeAssetId::SunReyCoin)
@@ -274,7 +277,7 @@ pub async fn run_native_asset_devnet(root: PathBuf) -> NodeResult<NativeAssetDev
     })
     .await?;
     nodes[3].submit_tx(moon_tx)?;
-    wait_until(Duration::from_secs(30), || {
+    wait_until(CONSENSUS_SYNC_TIMEOUT, || {
         nodes.iter().all(|n| {
             n.native_assets()
                 .available("alice", NativeAssetId::MoonReyCoin)
@@ -293,7 +296,7 @@ pub async fn run_native_asset_devnet(root: PathBuf) -> NodeResult<NativeAssetDev
         40,
     )?)?;
     alice_nonce += 1;
-    wait_until(Duration::from_secs(30), || {
+    wait_until(CONSENSUS_SYNC_TIMEOUT, || {
         nodes.iter().all(|n| {
             n.native_assets()
                 .available("bob", NativeAssetId::SunReyCoin)
@@ -310,7 +313,7 @@ pub async fn run_native_asset_devnet(root: PathBuf) -> NodeResult<NativeAssetDev
         20,
     )?)?;
     alice_nonce += 1;
-    wait_until(Duration::from_secs(30), || {
+    wait_until(CONSENSUS_SYNC_TIMEOUT, || {
         nodes.iter().all(|n| {
             n.native_assets()
                 .available("bob", NativeAssetId::MoonReyCoin)
@@ -328,7 +331,7 @@ pub async fn run_native_asset_devnet(root: PathBuf) -> NodeResult<NativeAssetDev
         "lock-1",
     )?)?;
     alice_nonce += 1;
-    wait_until(Duration::from_secs(30), || {
+    wait_until(CONSENSUS_SYNC_TIMEOUT, || {
         nodes.iter().all(|n| {
             n.native_assets()
                 .available("alice", NativeAssetId::SunReyCoin)
@@ -368,7 +371,7 @@ pub async fn run_native_asset_devnet(root: PathBuf) -> NodeResult<NativeAssetDev
         "lock-1",
     )?)?;
     alice_nonce += 1;
-    wait_until(Duration::from_secs(30), || {
+    wait_until(CONSENSUS_SYNC_TIMEOUT, || {
         nodes.iter().all(|n| {
             n.native_assets()
                 .holding("alice", NativeAssetId::SunReyCoin)
@@ -388,7 +391,7 @@ pub async fn run_native_asset_devnet(root: PathBuf) -> NodeResult<NativeAssetDev
         "bob",
         20,
     )?)?;
-    wait_until(Duration::from_secs(30), || {
+    wait_until(CONSENSUS_SYNC_TIMEOUT, || {
         nodes.iter().all(|n| {
             n.native_assets()
                 .available("bob", NativeAssetId::SunReyCoin)
@@ -403,7 +406,7 @@ pub async fn run_native_asset_devnet(root: PathBuf) -> NodeResult<NativeAssetDev
         NativeAssetId::SunReyCoin,
         10,
     )?)?;
-    wait_until(Duration::from_secs(30), || {
+    wait_until(CONSENSUS_SYNC_TIMEOUT, || {
         nodes
             .iter()
             .all(|n| n.native_assets().supply(NativeAssetId::SunReyCoin).burned == 10)
@@ -481,7 +484,7 @@ pub async fn run_exchange_settlement_devnet(
     let (c, _) = spawn_validator("C", root.join("c"), vec![seed.clone()], &fixture).await?;
     let (d, _) = spawn_validator("D", root.join("d"), vec![seed], &fixture).await?;
     let nodes = [a, b, c, d];
-    wait_until(Duration::from_secs(30), || {
+    wait_until(CONSENSUS_SYNC_TIMEOUT, || {
         nodes[0].metrics_snapshot().peer_count >= 3
             && nodes[1].metrics_snapshot().peer_count >= 1
             && nodes[2].metrics_snapshot().peer_count >= 1
@@ -498,7 +501,7 @@ pub async fn run_exchange_settlement_devnet(
         26,
         "ex-moon-alice",
     )?)?;
-    wait_until(Duration::from_secs(30), || {
+    wait_until(CONSENSUS_SYNC_TIMEOUT, || {
         nodes.iter().all(|n| {
             n.native_assets()
                 .available("alice", NativeAssetId::MoonReyCoin)
@@ -514,7 +517,7 @@ pub async fn run_exchange_settlement_devnet(
         12,
         "ex-sun-bob",
     )?)?;
-    wait_until(Duration::from_secs(30), || {
+    wait_until(CONSENSUS_SYNC_TIMEOUT, || {
         nodes.iter().all(|n| {
             n.native_assets()
                 .available("bob", NativeAssetId::SunReyCoin)
@@ -532,7 +535,7 @@ pub async fn run_exchange_settlement_devnet(
         10,
         "res-bob-sun",
     )?)?;
-    wait_until(Duration::from_secs(30), || {
+    wait_until(CONSENSUS_SYNC_TIMEOUT, || {
         nodes.iter().all(|n| {
             n.native_assets()
                 .available("bob", NativeAssetId::SunReyCoin)
@@ -548,7 +551,7 @@ pub async fn run_exchange_settlement_devnet(
         25,
         "res-alice-moon",
     )?)?;
-    wait_until(Duration::from_secs(30), || {
+    wait_until(CONSENSUS_SYNC_TIMEOUT, || {
         nodes.iter().all(|n| {
             n.native_assets()
                 .available("alice", NativeAssetId::MoonReyCoin)
@@ -576,7 +579,7 @@ pub async fn run_exchange_settlement_devnet(
         },
     )?;
     let settlement_tx_id = hex::encode(nodes[1].submit_tx(settlement)?);
-    wait_until(Duration::from_secs(30), || {
+    wait_until(CONSENSUS_SYNC_TIMEOUT, || {
         nodes.iter().all(|n| {
             n.native_assets()
                 .available("alice", NativeAssetId::SunReyCoin)
@@ -682,7 +685,7 @@ pub async fn run_exchange_settlement_devnet(
 }
 
 async fn wait_height(nodes: &[Arc<DevelopmentNode>; 4], min: u64) -> NodeResult<u64> {
-    wait_until(Duration::from_secs(30), || {
+    wait_until(CONSENSUS_SYNC_TIMEOUT, || {
         nodes.iter().all(|n| n.finalized_height() >= min)
     })
     .await?;

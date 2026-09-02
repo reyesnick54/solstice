@@ -16,6 +16,7 @@ export type SuiteResult = {
   readonly cases: readonly Record<string, unknown>[];
   readonly failures?: readonly string[];
   readonly notes?: readonly string[];
+  readonly environment?: Record<string, unknown>;
 };
 
 export type QualificationReport = {

@@ -3,7 +3,7 @@
  * Simulation only — no live provider HTTP.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type {
   AccessDiscoveryAdapterId,
   AccessDiscoveryProviderHealth,
@@ -43,8 +43,8 @@ abstract class BaseAccessDiscoveryFixtureProvider {
   abstract readonly providerId: AccessDiscoveryAdapterId;
   abstract readonly capabilities: readonly string[];
   protected readonly clock: Clock;
-  private healthy = true;
-  private degraded = false;
+  protected healthy = true;
+  protected degraded = false;
   private message = 'fixture healthy';
 
   constructor(clock: Clock = defaultClock()) {

@@ -50,8 +50,8 @@ describe('Wave 7 Prompt 27 — provider program regression', () => {
     const total = gaps.reduce((sum, g) => sum + g.slotCount, 0);
     const report = buildWave7CoverageReport();
     assert.equal(report.catalogTotal + total, WAVE7_EXPECTED_PROGRAM_TOTAL);
-    assert.ok(gaps.some((g) => g.category === 'travel'));
     assert.ok(gaps.some((g) => g.category === 'hin'));
+    assert.ok(gaps.some((g) => g.category === 'logistics'));
   });
 
   it('3. every implemented adapter loads without optional credentials', () => {

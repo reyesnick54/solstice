@@ -17,12 +17,12 @@ describe('Merchant Exchange BFF', () => {
   const sandbox = createMerchantExchangeSandbox();
   const requestId = 'req_bff_test';
 
-  it('registers expected routes', () => {
+  it('registers expected routes', async () => {
     assert.ok(MERCHANT_EXCHANGE_BFF_ROUTES.length >= 8);
     assert.ok(MERCHANT_EXCHANGE_BFF_ROUTES.some((r) => r.includes('intents')));
   });
 
-  it('user creates purchase intent', () => {
+  it('user creates purchase intent', async () => {
     const res = dispatchMerchantExchange(
       {
         method: 'POST',
@@ -46,7 +46,7 @@ describe('Merchant Exchange BFF', () => {
     assert.equal(res!.status, 201);
   });
 
-  it('merchant cannot create purchase intent', () => {
+  it('merchant cannot create purchase intent', async () => {
     const res = dispatchMerchantExchange(
       {
         method: 'POST',
@@ -62,7 +62,7 @@ describe('Merchant Exchange BFF', () => {
     assert.equal(res!.status, 403);
   });
 
-  it('user cannot submit merchant offer', () => {
+  it('user cannot submit merchant offer', async () => {
     const res = dispatchMerchantExchange(
       {
         method: 'POST',
@@ -78,7 +78,7 @@ describe('Merchant Exchange BFF', () => {
     assert.equal(res!.status, 403);
   });
 
-  it('unknown route returns 404', () => {
+  it('unknown route returns 404', async () => {
     const res = dispatchMerchantExchange(
       { method: 'GET', path: '/api/v1/merchant-exchange/unknown' },
       requestId,
@@ -89,7 +89,7 @@ describe('Merchant Exchange BFF', () => {
     assert.equal(res!.status, 404);
   });
 
-  it('non-merchant-exchange path returns null', () => {
+  it('non-merchant-exchange path returns null', async () => {
     const res = dispatchMerchantExchange(
       { method: 'GET', path: '/api/v1/exchange/markets' },
       requestId,

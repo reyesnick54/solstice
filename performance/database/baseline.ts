@@ -74,12 +74,20 @@ export async function runDatabaseBaseline(): Promise<SuiteResult> {
       lastId = journal.id;
     });
     postSamples.push(postMs);
-    lookupSamples.push(await timeMs(() => ledger.getJournal(lastId)));
-    historySamples.push(await timeMs(() => ledger.history({ limit: 20 })));
-    paginationSamples.push(await timeMs(() => ledger.history({ limit: 50, offset: Math.max(0, i - 10) })));
+    lookupSamples.push(await timeMs(() => {
+      ledger.getJournal(lastId);
+    }));
+    historySamples.push(await timeMs(() => {
+      ledger.history({ limit: 20 });
+    }));
+    paginationSamples.push(await timeMs(() => {
+      ledger.history({ limit: 50, cursor: lastId });
+    }));
   }
 
-  const balanceMs = await timeMs(() => ledger.projectAccountBalance(SIMULATION_FUNDING_SOURCE_ID));
+  const balanceMs = await timeMs(() => {
+    ledger.projectAccountBalance(SIMULATION_FUNDING_SOURCE_ID);
+  });
   const concurrentWrites: number[] = [];
   const { ledger: concurrentLedger, issuer: concurrentIssuer } = buildLedger();
   await runConcurrent(10, 40, async (index) => {

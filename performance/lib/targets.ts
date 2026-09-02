@@ -26,6 +26,9 @@ export type ThroughputTarget = {
 export const QUALIFICATION_TARGETS = {
   api: {
     health: {
+      class: 'ENGINEERING_QUALIFICATION_TARGET',
+      p50Ms: null,
+      p95Ms: null,
       p99Ms: 100,
       note: 'Health is not representative application performance',
       source: 'wave6-prompt16',

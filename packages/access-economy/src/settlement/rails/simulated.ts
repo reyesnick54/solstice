@@ -6,7 +6,7 @@
 
 import { randomUUID } from 'node:crypto';
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import {
   accessDomainEntitlementIdFor,
   accessDomainQuoteIdFor,
@@ -17,6 +17,7 @@ import {
   type AccessEvidenceRef,
 } from '../../domain/ids.ts';
 import { providerRefFor } from '../../ids.ts';
+import type { AccessPaymentRailCapability } from '../taxonomy.ts';
 import type {
   AccessPaymentRailAuthorizeInput,
   AccessPaymentRailCaptureInput,
@@ -35,6 +36,7 @@ import type {
 import type {
   AccessPaymentAuthorizationResult,
   AccessPaymentCaptureResult,
+  AccessPaymentRailDescriptor,
   AccessPaymentReconcileResult,
   AccessPaymentRefundResult,
   AccessPaymentStatusResult,
@@ -60,7 +62,7 @@ export type SimulatedPaymentRailOptions = {
 };
 
 export class SimulatedAccessPaymentRail implements AccessPaymentRail {
-  readonly descriptor = Object.freeze({
+  readonly descriptor: AccessPaymentRailDescriptor = Object.freeze({
     railKind: 'SIMULATED' as const,
     capabilities: Object.freeze([
       'AUTHORIZE',
@@ -70,7 +72,7 @@ export class SimulatedAccessPaymentRail implements AccessPaymentRail {
       'PARTIAL_REFUND',
       'STATUS',
       'RECONCILE',
-    ] as const),
+    ] as AccessPaymentRailCapability[]),
     settlementStrategy: 'AUTHORIZE_THEN_BOOK_THEN_CAPTURE' as const,
   });
 

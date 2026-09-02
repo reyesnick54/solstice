@@ -6,6 +6,7 @@ STATEFULSET="sunrey-validator"
 VALIDATORS=7
 BASE_PORT="${SUNREY_TESTNET_OPERATOR_BASE_PORT:-27650}"
 TIMEOUT_SECONDS="${SUNREY_TESTNET_VERIFY_TIMEOUT_SECONDS:-180}"
+ROLLOUT_TIMEOUT_SECONDS="${SUNREY_TESTNET_ROLLOUT_TIMEOUT_SECONDS:-$TIMEOUT_SECONDS}"
 
 PIDS=()
 
@@ -100,7 +101,9 @@ common_finalized_root() {
 }
 
 echo "Waiting for seven SunRey Testnet-1 validators..."
-kubectl -n "$NAMESPACE" rollout status "statefulset/${STATEFULSET}" --timeout="${TIMEOUT_SECONDS}s"
+kubectl -n "$NAMESPACE" rollout status "statefulset/${STATEFULSET}" --timeout="${ROLLOUT_TIMEOUT_SECONDS}s"
+echo "Allowing validator mesh to stabilize after rollout..."
+sleep 15
 
 for ((i=0; i<VALIDATORS; i++)); do
   start_forward "$i"

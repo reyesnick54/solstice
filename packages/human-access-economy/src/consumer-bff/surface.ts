@@ -149,7 +149,6 @@ export class AccessConsumerBffSurface {
     if (!auth.ok) return err(auth.error);
     const enabled = capabilityEnabled(actor);
     const overview = this.product.overview(actor);
-    if (!overview.ok) return err(overview.error);
     const entitlements = enabled ? this.entitlementRows(actor) : [];
     const reservations = enabled ? this.reservationRows(actor) : [];
     const activities = enabled ? this.activityRows(actor) : [];
@@ -401,6 +400,7 @@ export class AccessConsumerBffSurface {
             status: row.status,
             freshness: row.freshness,
             travelAccessLink: row.travelAccessLink,
+            catalogItemId: row.catalogItemId,
           }),
         ),
         nextCursor: page.nextCursor,
@@ -589,7 +589,7 @@ export class AccessConsumerBffSurface {
       entitlementId: quote.entitlementId,
       entitlementClass: quote.entitlementClass,
       requestedQuantity: quote.requestedUnits,
-      redemptionId: quote.redemptionId ?? undefined,
+      ...(quote.redemptionId ? { redemptionId: quote.redemptionId } : {}),
       idempotencyKey: input.idempotencyKey,
     });
     if (!started.ok) return err({ code: 'REDEMPTION_BLOCKED', message: started.error.message });

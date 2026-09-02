@@ -108,6 +108,17 @@ export function buildWave5CoverageReport(): {
   readonly previewOnly: number;
 } {
   const providers = loadCatalogProviders().map(classifyWave5Provider);
+  const knownIds = new Set(providers.map((entry) => entry.providerId));
+  const blockedCatalogEntries = WAVE5_BLOCKED_PROVIDER_IDS.filter((providerId) => !knownIds.has(providerId)).map(
+    (providerId) =>
+      Object.freeze({
+        providerId,
+        category: providerId === 'entsoe' ? 'energy' : 'aviation',
+        status: 'BLOCKED' as const,
+        notes: 'Blocked pending legal/commercial review.',
+      }),
+  );
+  const allProviders = Object.freeze([...providers, ...blockedCatalogEntries]);
   const summary: Record<Wave5CoverageStatus, number> = {
     IMPLEMENTED: 0,
     BLOCKED: 0,
@@ -115,17 +126,17 @@ export function buildWave5CoverageReport(): {
     UNAVAILABLE: 0,
     NOT_WAVE_5: 0,
   };
-  for (const entry of providers) {
+  for (const entry of allProviders) {
     summary[entry.status] += 1;
   }
-  const wave5Entries = providers.filter((p) => WAVE5_CATEGORIES.has(p.category));
+  const wave5Entries = allProviders.filter((p) => WAVE5_CATEGORIES.has(p.category));
   const implemented = wave5Entries.filter((p) => p.status === 'IMPLEMENTED').length;
   const blocked = wave5Entries.filter((p) => p.status === 'BLOCKED').length;
   const previewOnly = WAVE5_IMPLEMENTED_PROVIDER_IDS.filter((id) =>
     ['open-meteo', 'opensky', 'nominatim', 'openstreetmap', 'geojs', 'ipapi', 'ipwhois', 'onwater', 'hormuz-ship-monitor', 'openvan'].includes(id),
   ).length;
   return Object.freeze({
-    providers: Object.freeze(providers),
+    providers: allProviders,
     summary: Object.freeze(summary),
     wave5Expected: wave5Entries.length,
     implemented,

@@ -31,6 +31,15 @@ describe('architectural linter rules', () => {
     assert.equal(hit.line, 2);
   });
 
+  it('allows ledger posting in the performance qualification harness', () => {
+    const source = `
+      ledger.postJournal(request);
+    `;
+    const findings = lintSource('performance/database/baseline.ts', source);
+    const hit = findings.find((f) => f.rule === 'journal-outside-authorized-path');
+    assert.equal(hit, undefined);
+  });
+
   it('catches a balance field on the Account entity', () => {
     const source = `
       export type Account = {

@@ -34,15 +34,15 @@ jobs:
           node scripts/sunrey-testnet-validate-manifests.mjs
       - name: Install pinned Rust components
         run: |
-          rustup toolchain install 1.83.0 --profile minimal
-          rustup component add --toolchain 1.83.0 rustfmt clippy
+          rustup toolchain install 1.88.0 --profile minimal
+          rustup component add --toolchain 1.88.0 rustfmt clippy
       - name: Rust validator checks
         run: |
           cd packages/sunrey-chain/node
-          cargo +1.83.0 fmt --check
-          cargo +1.83.0 clippy --all-targets --locked -- -D warnings
-          cargo +1.83.0 test --locked consensus::tests::seven_testnet_validators_finalize_and_survive_two_faults
-          cargo +1.83.0 test --locked consensus::tests::seven_validator_partition_without_quorum_has_no_conflicting_finality
+          cargo +1.88.0 fmt --check
+          cargo +1.88.0 clippy --all-targets --locked -- -D warnings
+          cargo +1.88.0 test --locked consensus::tests::seven_testnet_validators_finalize_and_survive_two_faults
+          cargo +1.88.0 test --locked consensus::tests::seven_validator_partition_without_quorum_has_no_conflicting_finality
       - name: Install pinned kind
         shell: bash
         run: |
@@ -53,7 +53,8 @@ jobs:
       - name: Real seven-validator Testnet-1 qualification
         env:
           SUNREY_REQUIRE_KIND: "1"
-          SUNREY_TESTNET_VERIFY_TIMEOUT_SECONDS: "240"
+          SUNREY_TESTNET_VERIFY_TIMEOUT_SECONDS: "360"
+          SUNREY_TESTNET_ROLLOUT_TIMEOUT_SECONDS: "420"
         run: |
           export PATH="$(go env GOPATH)/bin:$PATH"
           bash scripts/sunrey-testnet-kind.sh

@@ -62,6 +62,7 @@ export class ExternalDataPlane {
   readonly endpointSecurity: EndpointSecurityService;
   readonly serviceOutage: ServiceOutageService;
   readonly providerRisk: ProviderRiskService;
+  readonly wave5ProviderRisk: Wave5ProviderRiskMonitor;
   readonly trust: ExternalDataTrustPlane;
   readonly wave6: Wave6Services;
   readonly #wave6Ctx;
@@ -98,7 +99,9 @@ export class ExternalDataPlane {
     this.endpointSecurity = wave4.endpointSecurity;
     this.serviceOutage = wave4.serviceOutage;
     this.providerRisk = wave4.providerRisk;
-    this.providerRisk.bindWave5Monitor(new Wave5ProviderRiskMonitor(this.#wave5Ctx));
+    const wave5Monitor = new Wave5ProviderRiskMonitor(this.#wave5Ctx);
+    this.wave5ProviderRisk = wave5Monitor;
+    this.providerRisk.bindWave5Monitor(wave5Monitor);
     this.trust = createExternalDataTrustPlane({ nowUtc: () => nowUtc });
     const wave6States = createDefaultWave6AdapterStates();
     for (const [id, state] of wave2States) {
@@ -225,9 +228,13 @@ export class ExternalDataPlane {
   }
 
   coverageReport() {
+    const wave2 = buildWave2CoverageReport();
+    const wave5 = buildWave5CoverageReport();
     return Object.freeze({
-      wave2: buildWave2CoverageReport(),
-      wave5: wave5CoverageReport(),
+      wave2,
+      wave5,
+      implemented: wave2.implemented,
+      blocked: wave5.blocked,
     });
   }
 

@@ -5,7 +5,7 @@
  * Clearly non-production. Not a catalog provider.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import { commodityAssetId, resolveMarketAsset, searchRegisteredAssets } from '../assets.ts';
 import { defaultCommodityUnit, validatePriceMinorUnits } from '../units.ts';
 import {
@@ -20,7 +20,9 @@ import type {
   AssetSearchQuery,
   CommodityCode,
   HistoryInterval,
+  MarketHistoryCandle,
   MarketReferenceCapability,
+  MarketReferenceQuote,
   MarketReferenceResult,
 } from '../types.ts';
 
@@ -90,7 +92,10 @@ export class SimulationMarketReferenceAdapter implements MarketReferenceProvider
     });
   }
 
-  async getQuotes(assetIds: readonly string[], nowUtc: UtcInstant) {
+  async getQuotes(
+    assetIds: readonly string[],
+    nowUtc: UtcInstant,
+  ): Promise<MarketReferenceResult<readonly MarketReferenceQuote[]>> {
     const quotes = [];
     for (const assetId of assetIds) {
       const result = await this.getQuote(assetId, nowUtc);
@@ -140,7 +145,7 @@ export class SimulationMarketReferenceAdapter implements MarketReferenceProvider
     interval: HistoryInterval,
     range: { readonly from: UtcInstant; readonly to: UtcInstant },
     nowUtc: UtcInstant,
-  ) {
+  ): Promise<MarketReferenceResult<readonly MarketHistoryCandle[]>> {
     const assetId = commodityAssetId(commodity);
     if (!assetId) {
       return { ok: false, code: 'UNKNOWN_COMMODITY', message: commodity, providerId: null };
