@@ -1,4 +1,4 @@
-export const TRANSACTION_FINALITY = ['PENDING', 'INCLUDED', 'FINALIZED', 'FAILED'] as const;
+export const TRANSACTION_FINALITY = ['SUBMITTED', 'PENDING', 'INCLUDED', 'EXECUTED', 'FINALIZED', 'FAILED'] as const;
 export type TransactionFinality = (typeof TRANSACTION_FINALITY)[number];
 
 export const FINALITY_SOURCES = [
@@ -28,6 +28,11 @@ export function classifyFinality(source: FinalitySource): TransactionFinality {
     case 'REJECTION':
       return 'FAILED';
   }
+}
+
+/** Map block-local execution observation to EXECUTED (still not network finality). */
+export function classifyExecutedObservation(): TransactionFinality {
+  return 'EXECUTED';
 }
 
 export function observeTransaction(

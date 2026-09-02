@@ -91,6 +91,7 @@ export const REPOSITORY_TEST_GLOBS = [
   "tests/assurance/*.test.ts",
   "tests/free-api-catalog.test.ts",
   "tests/wave-2-prompt-8-macro-providers.test.ts",
+  "tests/wave-2-prompt-5-blocks-finality.test.ts",
   "tests/wave-4-prompt-16-kyb-fraud-intelligence.test.ts",
   "tests/wave-5-prompt-13-subscription-intelligence.test.ts",
   "tools/architectural-linter/src/*.test.ts"
@@ -169,6 +170,7 @@ export const TEST_SUITES = {
     "tests/assurance/*.test.ts",
     "tests/free-api-catalog.test.ts",
     "tests/wave-2-prompt-8-macro-providers.test.ts",
+  "tests/wave-2-prompt-5-blocks-finality.test.ts",
     "tests/wave-4-prompt-16-kyb-fraud-intelligence.test.ts",
   "tests/wave-5-prompt-13-subscription-intelligence.test.ts",
     "tools/architectural-linter/src/*.test.ts"
@@ -176,6 +178,7 @@ export const TEST_SUITES = {
   "external-data": [
     "packages/external-data/src/**/*.test.ts",
     "tests/wave-2-prompt-8-macro-providers.test.ts",
+  "tests/wave-2-prompt-5-blocks-finality.test.ts",
     "tests/wave-4-prompt-16-kyb-fraud-intelligence.test.ts"
   ],
   "risk-evidence": [
@@ -205,6 +208,7 @@ export const TEST_SUITES = {
     "packages/provider-sdk/src/**/*.test.ts",
     "packages/sunrey-chain/src/provider-runtime/data-delivery/*.test.ts",
     "tests/wave-2-prompt-8-macro-providers.test.ts",
+  "tests/wave-2-prompt-5-blocks-finality.test.ts",
     "tests/wave-4-prompt-16-kyb-fraud-intelligence.test.ts"
   ],
   "access": [
@@ -695,6 +699,7 @@ export const TEST_SUITES = {
     "tools/architectural-linter/src/*.test.ts",
     "tests/free-api-catalog.test.ts",
     "tests/wave-2-prompt-8-macro-providers.test.ts",
+  "tests/wave-2-prompt-5-blocks-finality.test.ts",
     "tests/wave-4-prompt-16-kyb-fraud-intelligence.test.ts",
   "tests/wave-5-prompt-13-subscription-intelligence.test.ts",
     "tests/*.test.ts",
