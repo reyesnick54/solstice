@@ -13,8 +13,8 @@ use sunrey_crypto::{
 use sunrey_execution::{apply_transaction, install_genesis_assets, ExecutionContext};
 use sunrey_native_assets::IssuanceAuthorization;
 use sunrey_protocol::{
-    transaction_id, transaction_root, unsigned_signature_payload, GenesisV1, Hash32,
-    RejectReason, SignatureDescriptor, SignedTransaction, TransactionFamily, UnsignedTransaction,
+    transaction_id, transaction_root, unsigned_signature_payload, GenesisV1, Hash32, RejectReason,
+    SignatureDescriptor, SignedTransaction, TransactionFamily, UnsignedTransaction,
 };
 use sunrey_state::ChainView;
 
@@ -52,13 +52,7 @@ impl ExecutionConsensusAdapter {
     pub fn development(genesis: GenesisV1) -> Self {
         let mut view = ChainView::default();
         install_genesis_assets(&mut view, &genesis);
-        Self {
-            genesis,
-            view,
-            suite: DevEd25519Sha256Suite,
-            height: 0,
-            mempool: VecDeque::new(),
-        }
+        Self { genesis, view, suite: DevEd25519Sha256Suite, height: 0, mempool: VecDeque::new() }
     }
 
     pub fn from_view(genesis: GenesisV1, view: ChainView, height: u64) -> Self {
@@ -98,10 +92,9 @@ impl ExecutionConsensusAdapter {
         view.record_nonce(&signer, tx.unsigned.nonce).map_err(map_reject)?;
         view.record_idempotency(&tx.unsigned.idempotency_key).map_err(map_reject)?;
         let embedded = if tx.unsigned.family == TransactionFamily::NativeAsset {
-            let (_, rest) = sunrey_native_assets::NativeAssetPayload::decode_prefix(
-                &tx.unsigned.payload,
-            )
-            .map_err(map_asset)?;
+            let (_, rest) =
+                sunrey_native_assets::NativeAssetPayload::decode_prefix(&tx.unsigned.payload)
+                    .map_err(map_asset)?;
             if rest.is_empty() {
                 None
             } else {
@@ -122,7 +115,11 @@ impl ExecutionConsensusAdapter {
         Ok(())
     }
 
-    pub fn validate_tx(&self, tx: &SignedTransaction, view: &ChainView) -> Result<Hash32, ConsensusError> {
+    pub fn validate_tx(
+        &self,
+        tx: &SignedTransaction,
+        view: &ChainView,
+    ) -> Result<Hash32, ConsensusError> {
         Self::validate_tx_static(&self.genesis, &self.suite, tx, view)
     }
 
@@ -194,7 +191,10 @@ impl ExecutionConsensusAdapter {
         Ok(())
     }
 
-    fn validate_payload_static(_genesis: &GenesisV1, unsigned: &UnsignedTransaction) -> Result<(), ConsensusError> {
+    fn validate_payload_static(
+        _genesis: &GenesisV1,
+        unsigned: &UnsignedTransaction,
+    ) -> Result<(), ConsensusError> {
         match unsigned.family {
             TransactionFamily::System => {
                 let payload = sunrey_protocol::decode_system_payload(&unsigned.payload)
@@ -220,10 +220,9 @@ impl ExecutionConsensusAdapter {
                     sunrey_native_assets::ExchangeSettlementPayload::decode(&unsigned.payload)
                         .map_err(map_asset)?;
                 } else {
-                    let (payload, rest) = sunrey_native_assets::NativeAssetPayload::decode_prefix(
-                        &unsigned.payload,
-                    )
-                    .map_err(map_asset)?;
+                    let (payload, rest) =
+                        sunrey_native_assets::NativeAssetPayload::decode_prefix(&unsigned.payload)
+                            .map_err(map_asset)?;
                     if payload.quantity == 0
                         && payload.op != sunrey_native_assets::NativeAssetOp::Unlock
                     {
@@ -374,9 +373,8 @@ impl ConsensusAdapter for ExecutionConsensusAdapter {
         }
         self.height = height;
         let app_hash = self.view.store.app_hash(&self.suite);
-        self.mempool.retain(|queued| {
-            !block.value.transactions.iter().any(|raw| raw == &queued.encode())
-        });
+        self.mempool
+            .retain(|queued| !block.value.transactions.iter().any(|raw| raw == &queued.encode()));
         Ok(app_hash)
     }
 

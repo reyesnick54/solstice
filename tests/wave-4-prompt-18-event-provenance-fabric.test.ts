@@ -10,6 +10,8 @@ import {
   InProcessTransport,
   OutboxDispatcher,
   parseEnvelope,
+  newEventId,
+  sealEnvelope,
 } from '../packages/events/src/index.ts';
 import { asUtcInstant } from '../packages/domain/src/time.ts';
 import { buildExternalObservation } from '../packages/provider-sdk/src/observation.ts';
@@ -31,6 +33,11 @@ import { asProvenanceNodeId } from '../packages/external-data/src/wave4/provenan
 const NOW = '2026-09-02T10:00:00.000Z';
 const clock = { now: () => NOW, nowMs: () => Date.parse(NOW) };
 
+const simulationEnvelopeToolkit = {
+  newEventId: () => newEventId(),
+  sealEnvelope: (input: Parameters<typeof sealEnvelope>[0], sequence: number) => sealEnvelope(input, sequence),
+};
+
 function fabricSetup() {
   const outbox = new InMemoryOutboxStore();
   const deadLetters = new InMemoryDeadLetterStore();
@@ -41,6 +48,7 @@ function fabricSetup() {
   const quarantine = new InMemoryQuarantineStore();
   const fabric = createEconomicProvenanceFabric({
     eventBus: bus,
+    envelopeToolkit: simulationEnvelopeToolkit,
     graph,
     idempotency,
     quarantine,
@@ -323,6 +331,7 @@ describe('Wave 4 Prompt 18 — event and provenance fabric', () => {
     const bus = new DurableLocalEventBus({ outbox, transport, clock });
     const fabric = createEconomicProvenanceFabric({
       eventBus: bus,
+      envelopeToolkit: simulationEnvelopeToolkit,
       graph,
       idempotency,
       now: () => NOW,
@@ -336,6 +345,7 @@ describe('Wave 4 Prompt 18 — event and provenance fabric', () => {
     });
     const restartedFabric = createEconomicProvenanceFabric({
       eventBus: bus,
+      envelopeToolkit: simulationEnvelopeToolkit,
       graph,
       idempotency,
       now: () => NOW,
@@ -369,6 +379,7 @@ describe('Wave 4 Prompt 18 — event and provenance fabric', () => {
     const quarantine = new InMemoryQuarantineStore();
     const fabric = createEconomicProvenanceFabric({
       eventBus: bus,
+      envelopeToolkit: simulationEnvelopeToolkit,
       quarantine,
       now: () => NOW,
     });

@@ -8,9 +8,8 @@ use sunrey_native_assets::{
     DEVELOPMENT_FAUCET_POLICY, DEV_FAUCET_ISSUER,
 };
 use sunrey_protocol::{
-    encode_system_payload, local_dev_genesis, SystemPayload,
-    TransactionFamily, UnsignedTransaction, LOCAL_DEV_CHAIN_ID, LOCAL_DEV_NETWORK_ID,
-    SCHEMA_VERSION, SRCB_CODEC_ID,
+    encode_system_payload, local_dev_genesis, SystemPayload, TransactionFamily,
+    UnsignedTransaction, LOCAL_DEV_CHAIN_ID, LOCAL_DEV_NETWORK_ID, SCHEMA_VERSION, SRCB_CODEC_ID,
 };
 
 fn adapter() -> ExecutionConsensusAdapter {
@@ -168,11 +167,15 @@ fn authorized_faucet_issue_succeeds_in_simulation() {
     };
     let tx = adapter.sign_dev_tx(unsigned, &secret).unwrap();
     let mut view = adapter.view.clone();
-    ExecutionConsensusAdapter::apply_one(&adapter.genesis, &adapter.suite, &mut view, tx, 1).unwrap();
-    assert!(view.store.get(&sunrey_state::ObjectStore::namespaced(
-        sunrey_state::NS_ASSET,
-        sunrey_native_assets::LEDGER_STORE_KEY,
-    )).is_some());
+    ExecutionConsensusAdapter::apply_one(&adapter.genesis, &adapter.suite, &mut view, tx, 1)
+        .unwrap();
+    assert!(view
+        .store
+        .get(&sunrey_state::ObjectStore::namespaced(
+            sunrey_state::NS_ASSET,
+            sunrey_native_assets::LEDGER_STORE_KEY,
+        ))
+        .is_some());
 }
 
 #[test]
@@ -206,7 +209,8 @@ fn system_transactions_do_not_move_supply() {
     let tx = adapter.sign_dev_tx(unsigned, &secret).unwrap();
     let before = adapter.state_commitment();
     let mut view = adapter.view.clone();
-    ExecutionConsensusAdapter::apply_one(&adapter.genesis, &adapter.suite, &mut view, tx, 1).unwrap();
+    ExecutionConsensusAdapter::apply_one(&adapter.genesis, &adapter.suite, &mut view, tx, 1)
+        .unwrap();
     assert_ne!(before, view.store.app_hash(&DevEd25519Sha256Suite));
 }
 

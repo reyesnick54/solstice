@@ -3,8 +3,10 @@
  * No failed event silently becomes an accepted economic record.
  */
 
-import type { DeadLetterStore } from '../../../../events/src/dispatcher.ts';
-import type { DeadLetterRecord } from '../../../../events/src/delivery.ts';
+import type {
+  ProvenanceDeadLetterRecord,
+  ProvenanceDeadLetterStore,
+} from './event-ports.ts';
 import type { QuarantineReasonCode, QuarantinedObservation } from './types.ts';
 
 export type QuarantineStore = {
@@ -68,7 +70,7 @@ export function classifyQuarantineReason(failureCode: string): {
 
 export async function quarantineFailedObservation(input: {
   readonly store: QuarantineStore;
-  readonly deadLetters?: DeadLetterStore;
+  readonly deadLetters?: ProvenanceDeadLetterStore;
   readonly quarantineId: string;
   readonly failureCode: string;
   readonly failureMessage: string;
@@ -96,8 +98,8 @@ export async function quarantineFailedObservation(input: {
   await input.store.record(entry);
 
   if (input.deadLetters && input.eventId) {
-    const row: Omit<DeadLetterRecord, 'id'> = {
-      eventId: input.eventId as DeadLetterRecord['eventId'],
+    const row: Omit<ProvenanceDeadLetterRecord, 'id'> = {
+      eventId: input.eventId,
       eventType: 'ObservationRejected',
       eventVersion: 1,
       consumerId: input.consumerId ?? 'economic-provenance-fabric',

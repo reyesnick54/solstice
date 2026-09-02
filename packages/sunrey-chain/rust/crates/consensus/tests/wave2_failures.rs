@@ -8,9 +8,8 @@ use sunrey_consensus::{
 };
 use sunrey_crypto::{schema_registry_hash, DevEd25519Sha256Suite};
 use sunrey_protocol::{
-    encode_system_payload, local_dev_genesis, SystemPayload,
-    TransactionFamily, UnsignedTransaction, LOCAL_DEV_CHAIN_ID, LOCAL_DEV_NETWORK_ID,
-    SCHEMA_VERSION, SRCB_CODEC_ID,
+    encode_system_payload, local_dev_genesis, SystemPayload, TransactionFamily,
+    UnsignedTransaction, LOCAL_DEV_CHAIN_ID, LOCAL_DEV_NETWORK_ID, SCHEMA_VERSION, SRCB_CODEC_ID,
 };
 
 fn genesis() -> sunrey_protocol::GenesisV1 {
@@ -19,7 +18,11 @@ fn genesis() -> sunrey_protocol::GenesisV1 {
     local_dev_genesis(schema_hash.to_vec(), "sunrey.dev.ed25519.v1".to_string())
 }
 
-fn system_tx(adapter: &ExecutionConsensusAdapter, nonce: u64, key: &str) -> sunrey_protocol::SignedTransaction {
+fn system_tx(
+    adapter: &ExecutionConsensusAdapter,
+    nonce: u64,
+    key: &str,
+) -> sunrey_protocol::SignedTransaction {
     let unsigned = UnsignedTransaction {
         network_id: LOCAL_DEV_NETWORK_ID.to_string(),
         chain_id: LOCAL_DEV_CHAIN_ID.to_string(),
@@ -38,7 +41,10 @@ fn system_tx(adapter: &ExecutionConsensusAdapter, nonce: u64, key: &str) -> sunr
 }
 
 fn execution_harness() -> (
-    std::collections::BTreeMap<String, ConsensusEngine<ExecutionConsensusAdapter, DevEd25519Sha256Suite>>,
+    std::collections::BTreeMap<
+        String,
+        ConsensusEngine<ExecutionConsensusAdapter, DevEd25519Sha256Suite>,
+    >,
     std::collections::BTreeMap<String, bool>,
 ) {
     let set = four_validator_set().unwrap();
@@ -131,7 +137,6 @@ fn four_validators_agree_on_execution_state() {
     assert!(roots.windows(2).all(|w| w[0] == w[1]));
     assert_eq!(nodes["val_a"].app.canonical_height(), 1);
 }
-
 
 #[test]
 fn one_validator_offline_still_finalizes() {
