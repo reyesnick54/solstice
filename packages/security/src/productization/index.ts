@@ -35,11 +35,13 @@ export {
 
 export {
   ROTATION_POLICIES,
+  SECRET_ROTATION_TARGETS,
   emergencyRevoke,
   historicalVerifyAllowed,
   rotateWithOverlap,
   type EmergencyRevocation,
   type RotationWindow,
+  type SecretRotationTarget,
 } from './rotation.ts';
 
 export {
@@ -108,6 +110,119 @@ export {
 } from './webhook.ts';
 
 export { CHAIN_SECURITY_POSTURE, assertMainnetOff } from './chain.ts';
+
+export {
+  KEY_ROLES,
+  KEY_ROLE_POLICIES,
+  assertKeyRoleSeparation,
+  assertPurposeMatchesRole,
+  assertWrongKeyType,
+  isKeyRole,
+  policyForKeyRole,
+  roleForPurpose,
+  type KeyRole,
+  type KeyRolePolicy,
+} from './key-classification.ts';
+
+export {
+  APPROVAL_MODELS,
+  PRIVILEGED_OPERATION_CATEGORIES,
+  PRIVILEGED_OPERATIONS,
+  privilegedOperation,
+  privilegedOperationCount,
+  privilegedOperationsByCategory,
+  type ApprovalModel,
+  type PrivilegedOperation,
+  type PrivilegedOperationCategory,
+} from './privileged-matrix.ts';
+
+export {
+  ALLOWED_KEY_STORAGE_BY_ROLE,
+  FORBIDDEN_KEY_STORAGE_SURFACES,
+  assertKeyNotOnSurface,
+  assertNoPrivateKeyInDatabaseRow,
+  assertValidatorKeyNotOnPublicApi,
+  auditTextForHardcodedSecrets,
+  redactForAuditLog,
+  type ForbiddenKeyStorageSurface,
+  type KeyStorageAuditFinding,
+} from './key-storage.ts';
+
+export {
+  HSM_KMS_CONNECTION_STATUS,
+  HSM_KMS_PRODUCTION_POSTURE,
+  assertHsmRequiredForRole,
+  hsmRequiredRoles,
+  requestRemoteSignature,
+  type HsmKmsConnectionPosture,
+  type RemoteSignRequest,
+  type RemoteSignResult,
+} from './hsm-production.ts';
+
+export {
+  DEFAULT_GOVERNANCE_THRESHOLDS,
+  GOVERNANCE_APPROVAL_ROLES,
+  assertExpiredApprovalRejected,
+  assertServiceCannotGovern,
+  bindProposal,
+  computeProposalHash,
+  evaluateGovernanceThreshold,
+  thresholdForOperation,
+  type GovernanceApproval,
+  type GovernanceApprovalRole,
+  type GovernanceProposal,
+  type GovernanceThresholdConfig,
+} from './governance-signing.ts';
+
+export {
+  BREAK_GLASS_FORBIDDEN_TARGETS,
+  assertBreakGlassActive,
+  breakGlassCannotBypassMonetaryControl,
+  evaluateBreakGlassAttempt,
+  type BreakGlassAttempt,
+  type BreakGlassAuditEvent,
+  type BreakGlassForbiddenTarget,
+} from './break-glass-monetary.ts';
+
+export {
+  PRIVILEGED_AUDIT_KINDS,
+  assertAuditContainsNoSecrets,
+  sealPrivilegedAuditEvent,
+  type PrivilegedAuditEvent,
+  type PrivilegedAuditInput,
+  type PrivilegedAuditKind,
+} from './admin-audit.ts';
+
+export {
+  SENSITIVE_NON_MONETARY_OPERATIONS,
+  evaluateAdminApproval,
+  isSensitiveNonMonetaryOperation,
+  type AdminApprovalDecision,
+  type AdminApprovalRequest,
+  type SensitiveNonMonetaryOperation,
+} from './admin-approvals.ts';
+
+export {
+  MAINNET_CEREMONY_PREREQUISITES,
+  assertCeremonyNotExecuted,
+  assertMissingPrerequisiteBlocksActivation,
+  evaluateMainnetCeremonyReadiness,
+  refuseSingleEnvMainnetActivation,
+  type MainnetCeremonyInput,
+  type MainnetCeremonyPrerequisite,
+  type MainnetCeremonyPrerequisiteRecord,
+  type MainnetCeremonyReadiness,
+  type PrerequisiteStatus,
+} from './mainnet-ceremony-design.ts';
+
+export {
+  enforceAdminCannotMint,
+  enforceKeyRoleSeparation,
+  enforcePrivilegedOperation,
+  enforceRevokedServiceCredential,
+  enforceValidatorKeyNotUserKey,
+  type PrivilegedEnforcementInput,
+} from './privileged-enforcement.ts';
 
 export {
   AGENT_FORBIDDEN_CONTEXT,

@@ -28,7 +28,25 @@ export const ROTATION_POLICIES = Object.freeze({
     ceremonyRequired: true,
     note: 'validator rotation is a ceremony; historical signatures remain verifiable',
   }),
+  GOVERNANCE_SIGNING: Object.freeze({
+    overlapVerification: true,
+    ceremonyRequired: true,
+    historicalVerificationPreserved: true,
+    note: 'governance key rotation per governance design; proposal hashes remain verifiable',
+  }),
 });
+
+/** Wave 7 — secret classes that support rotation without destroying historical verification. */
+export const SECRET_ROTATION_TARGETS = Object.freeze([
+  'API_CREDENTIAL',
+  'SERVICE_CREDENTIAL',
+  'DATABASE_CREDENTIAL',
+  'ENCRYPTION_KEY',
+  'VALIDATOR_KEY',
+  'GOVERNANCE_SIGNING_KEY',
+] as const);
+
+export type SecretRotationTarget = (typeof SECRET_ROTATION_TARGETS)[number];
 
 export type RotationWindow = {
   readonly purpose: KeyPurpose;
