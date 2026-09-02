@@ -122,6 +122,25 @@ export {
 } from './events.ts';
 
 export {
+  ECONOMIC_PROVENANCE_EVENT_TYPES,
+  createEconomicProvenanceEvent,
+  type EconomicProvenanceEventType,
+  type EconomicProvenanceRefs,
+  type EconomicProvenanceEvent,
+  type ProviderRecordReceivedV1,
+  type ObservationNormalizedV1,
+  type ObservationRejectedV1,
+  type ObservationDeduplicatedV1,
+  type ObservationLinkedV1,
+  type EntityResolvedV1,
+  type EvidenceCreatedV1,
+  type FactVerifiedV1,
+  type ClaimCreatedV1,
+  type ClaimChallengedV1,
+  type ClaimResolvedV1,
+} from './economic-events.ts';
+
+export {
   EXTERNAL_OBSERVATION_EVIDENCE_KIND,
   toAgentEvidenceRef,
   bundleObservationEvidence,
