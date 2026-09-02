@@ -12,7 +12,8 @@ export type DeduplicationKeyPart =
   | 'entityId'
   | 'rawPayloadHash'
   | 'capability'
-  | 'observationId';
+  | 'observationId'
+  | 'transportRetryIdentity';
 
 export type DeduplicationPolicy = {
   readonly policyId: string;
@@ -26,6 +27,7 @@ export type DeduplicationKey = {
 
 export type DeduplicationContext = {
   readonly entityId?: string | null;
+  readonly transportRetryIdentity?: string | null;
 };
 
 export const DEFAULT_DEDUPLICATION_POLICIES = Object.freeze({
@@ -40,6 +42,10 @@ export const DEFAULT_DEDUPLICATION_POLICIES = Object.freeze({
   capabilityPayload: Object.freeze({
     policyId: 'capability-payload',
     keyParts: ['providerId', 'capability', 'rawPayloadHash'] as const,
+  }),
+  transportRetry: Object.freeze({
+    policyId: 'transport-retry',
+    keyParts: ['providerId', 'transportRetryIdentity', 'rawPayloadHash'] as const,
   }),
 });
 
@@ -109,6 +115,8 @@ function resolveKeyPart<T>(
       return observation.capability;
     case 'observationId':
       return observation.observationId;
+    case 'transportRetryIdentity':
+      return context.transportRetryIdentity ?? '';
     default: {
       const _exhaustive: never = part;
       return String(_exhaustive);

@@ -66,3 +66,50 @@ export * from './authority.ts';
 export * from './persistence.ts';
 export * from './adapters.ts';
 export * from './fixtures.ts';
+export {
+  deriveProductiveEventKey,
+  deriveCanonicalEventIdFromKey,
+  domainBoundaryDefaults,
+  inferDomainFromAction,
+  type ProductiveEventKey,
+  type ProductiveEventKeyMaterial,
+} from './productive-event-key.ts';
+export * from './productive-event-types.ts';
+export {
+  temporalWindowsOverlap,
+  temporalWindowContains,
+  classifyTemporalOverlap,
+  isAggregationTemporalRelationship,
+  intervalDurationMs,
+  type TemporalWindow,
+  type TemporalOverlapKind,
+} from './temporal-overlap.ts';
+export {
+  classifyEventOverlap,
+  assessAllOverlaps,
+  groupByEventKey,
+  hasUnresolvedOverlap,
+  hasAggregationConflict,
+  mergeCorroboratingCandidates,
+  quantityWithinTolerance,
+  selectCanonicalFromGroup,
+} from './event-overlap.ts';
+export {
+  buildCandidateFromObservation,
+  reconcileProductiveEvents,
+  reconcileQuantity,
+  isReconciliationClaimReady,
+  deriveReconciliationId,
+  WAVE5_RECONCILIATION_METHODOLOGY,
+  type BuildCandidateInput,
+  type ReconcileEventsInput,
+} from './event-reconciliation.ts';
+export {
+  canPromoteReconciliationToClaim,
+  promoteReconciliationToClaim,
+  reconcileAndPromoteToClaim,
+  assertMonetizationLockForReconciliation,
+  type PromoteReconciliationInput,
+  type ReconcileAndPromoteInput,
+  type ClaimPromotionFailure,
+} from './claim-promotion.ts';

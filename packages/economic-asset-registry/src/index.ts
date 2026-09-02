@@ -185,3 +185,17 @@ export {
   type EconomicAssetVerificationPolicy,
   type VerificationPolicyState,
 } from './verification/index.ts';
+export {
+  ECONOMIC_KNOWLEDGE_GRAPH_ONTOLOGY_ID,
+  EconomicKnowledgeGraphService,
+  AGE_EVALUATION,
+  observationsOfEvent,
+  providersSupportingClaim,
+  eventsForProductiveAsset,
+  evidenceForPseudonymousContribution,
+  derivedSourcesBehindDataset,
+  type KnowledgeNode,
+  type KnowledgeEdge,
+  type EntityResolutionOutcome,
+  type KnowledgeGraphSnapshot,
+} from './knowledge-graph/index.ts';
