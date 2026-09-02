@@ -558,6 +558,28 @@
       "notes": "Wave 2 external reference data plane facade — macro, FX, markets, commodities, filings. Orchestration only. Not a second ledger or provider runtime."
     },
     {
+      "id": "packages/economic-awareness-fabric",
+      "npmName": "@solstice/economic-awareness-fabric",
+      "path": "packages/economic-awareness-fabric",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": false,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/config",
+        "packages/provider-sdk",
+        "packages/events",
+        "packages/sunrey-chain"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Wave 4 Economic Awareness Fabric — federated information processing between external sources and Wave 3 economic proof. Observes and proposes; does not mint or authorize monetary mutation."
+    },
+    {
       "id": "packages/risk-evidence",
       "npmName": "@solstice/risk-evidence",
       "path": "packages/risk-evidence",
