@@ -1113,6 +1113,74 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/exchange/holdings', undefined, options);
   }
 
+  async getHome(
+    query?: { readonly valuationCurrency?: string },
+    options?: BffRequestOptions,
+  ): Promise<Record<string, unknown>> {
+    const suffix = query?.valuationCurrency ? `?valuationCurrency=${encodeURIComponent(query.valuationCurrency)}` : '';
+    return this.request('GET', `/api/v1/me/home${suffix}`, undefined, options);
+  }
+
+  async getBootstrap(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/me/bootstrap', undefined, options);
+  }
+
+  async getApplicationState(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/me/application-state', undefined, options);
+  }
+
+  async getCapabilities(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/me/capabilities', undefined, options);
+  }
+
+  async getActionCenter(options?: BffRequestOptions): Promise<ActionCenterList> {
+    return this.request('GET', '/api/v1/action-center', undefined, options);
+  }
+
+  async dismissActionCenterItem(actionId: string, options?: BffRequestOptions): Promise<{ readonly dismissed: true; readonly actionId: string }> {
+    return this.request('POST', `/api/v1/action-center/${encodeURIComponent(actionId)}/dismiss`, {}, options);
+  }
+
+  async getAgentAuthorizationPolicy(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/agent/authorization-policy', undefined, options);
+  }
+
+  async getAgentMandate(agentId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', `/api/v1/agents/${encodeURIComponent(agentId)}/mandates`, undefined, options);
+  }
+
+  async grantAgentMandate(
+    agentId: string,
+    input: {
+      readonly allowedActions?: readonly string[];
+      readonly allowedData?: readonly string[];
+      readonly allowedAccountId?: string;
+      readonly expiresAt?: string;
+      readonly perTransactionLimit?: string;
+      readonly perPeriodLimit?: string;
+      readonly maxProposalAmount?: string;
+      readonly approvalClass?: string;
+      readonly highRiskAlwaysHuman?: boolean;
+      readonly humanInformationAccess?: boolean;
+    },
+    options?: BffRequestOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.request('POST', `/api/v1/agents/${encodeURIComponent(agentId)}/mandates`, input, options);
+  }
+
+  async revokeAgentMandate(agentId: string, mandateId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request(
+      'POST',
+      `/api/v1/agents/${encodeURIComponent(agentId)}/mandates/${encodeURIComponent(mandateId)}/revoke`,
+      {},
+      options,
+    );
+  }
+
+  async listVaultOpportunities(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/data/vault/opportunities', undefined, options);
+  }
+
   async request<T>(
     method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
     path: string,

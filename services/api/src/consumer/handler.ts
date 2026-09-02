@@ -101,6 +101,18 @@ import type { MarketReferenceBffSurface } from './market-reference.ts';
 import { createMarketReferenceBffSurface } from './market-reference.ts';
 import type { CryptoMarketBffSurface } from './crypto-market.ts';
 import { createCryptoMarketBffSurface } from './crypto-market.ts';
+import { buildSandboxModeMetadata } from './sandbox-mode.ts';
+import { buildApplicationState } from './application-state.ts';
+import {
+  buildActionCenter,
+  dismissActionCenterItem,
+  ACTION_CENTER_ITEM_STATUSES,
+  type ActionCenterDeps,
+} from './action-center.ts';
+import { enrichHomeResource } from './home-integration.ts';
+import { AGENT_AUTHORIZATION_POLICY } from './agent-authorization.ts';
+import { getAgentMandate, grantAgentMandate, revokeAgentMandate } from './agent-mandates.ts';
+import { dispatchVaultOpportunities } from './vault-opportunities.ts';
 import { dispatchWave8, WAVE8_BFF_ROUTES } from './wave8-dispatch.ts';
 import { CONTRACT_RESPONSE_HEADERS } from './api-contract.ts';
 import { BLOCKCHAIN_TX_STATUSES, ECONOMIC_CLAIM_STATUSES } from './status-semantics.ts';
@@ -156,6 +168,7 @@ export type ConsumerBffRuntime = {
   readonly opportunity?: OpportunityIntelligenceBff;
   readonly subscriptions?: SubscriptionIntelligenceBff;
   readonly previewDiagnostics?: () => Readonly<Record<string, unknown>>;
+  readonly providerDown?: Readonly<Record<string, boolean>>;
 };
 
 const STUB_GROUPS = [
@@ -183,6 +196,8 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
     ...CONTRACT_RESPONSE_HEADERS,
     'x-sunrey-surface': 'CONSUMER_BFF',
     'x-sunrey-environment': 'simulation',
+    'x-sunrey-sandbox-mode': 'true',
+    'x-sunrey-production-active': 'false',
   };
 
   if (request.path === '/api/v1/webhooks/cards' && request.method === 'POST') {
@@ -262,6 +277,7 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
         actionCardType: ACTION_CARD_TYPES,
         actionCardStatus: ACTION_CARD_STATUSES,
         actionCenterView: ACTION_CENTER_VIEWS,
+        actionCenterItemStatus: ACTION_CENTER_ITEM_STATUSES,
         availableActionControl: AVAILABLE_ACTION_CONTROLS,
         walletStatus: WALLET_STATUSES,
         custodyModel: CUSTODY_MODELS,
@@ -343,8 +359,19 @@ function dispatchAuthenticated(
     return result(runtime.bff.patchProfile(principal, rec, requestId), headers);
   }
   if (path === '/api/v1/me/home' && method === 'GET') {
-    const home = runtime.bff.home(principal, requestId, query.valuationCurrency ?? query.valuation_currency ?? 'USD');
-    if (!isBffError(home) && runtime.access) {
+    const homeBase = runtime.bff.home(principal, requestId, query.valuationCurrency ?? query.valuation_currency ?? 'USD');
+    if (isBffError(homeBase)) {
+      return result(homeBase, headers);
+    }
+    let home = enrichHomeResource(homeBase, {
+      wallets: runtime.wallets,
+      worldExternalData: runtime.worldExternalData,
+      nativeEconomy: runtime.nativeEconomy,
+      actionCenterDeps: actionCenterDepsFrom(runtime),
+      principal,
+      now: new Date().toISOString(),
+    });
+    if (runtime.access) {
       const actor = Object.freeze({
         actorId: principal.actorId,
         customerId: principal.customerId,
@@ -354,31 +381,64 @@ function dispatchAuthenticated(
       const accessSummary = createAccessConsumerBffSurface(runtime.access).homeSummary(actor);
       if (accessSummary.ok) {
         const summary = accessSummary.value;
-        return result(
-          Object.freeze({
-            ...home,
-            access: resourceField({
-              state: summary.accessEnabled ? 'SIMULATION_ONLY' : 'FEATURE_DISABLED',
-              availability: summary.accessEnabled ? 'AVAILABLE_SIMULATION' : 'NOT_YET_PRODUCTIZED',
-              reason: summary.actionRequiredMessage,
-              value: Object.freeze({
-                accessEnabled: summary.accessEnabled,
-                overallStatus: summary.overallStatus,
-                categoryHighlights: summary.categoryHighlights,
-                nextExpiration: summary.nextExpiration,
-                activeBooking: summary.activeBooking,
-                actionRequired: summary.actionRequired,
-              }),
+        home = Object.freeze({
+          ...home,
+          access: resourceField({
+            state: summary.accessEnabled ? 'SIMULATION_ONLY' : 'FEATURE_DISABLED',
+            availability: summary.accessEnabled ? 'AVAILABLE_SIMULATION' : 'NOT_YET_PRODUCTIZED',
+            reason: summary.actionRequiredMessage,
+            value: Object.freeze({
+              accessEnabled: summary.accessEnabled,
+              overallStatus: summary.overallStatus,
+              categoryHighlights: summary.categoryHighlights,
+              nextExpiration: summary.nextExpiration,
+              activeBooking: summary.activeBooking,
+              actionRequired: summary.actionRequired,
             }),
           }),
-          headers,
-        );
+        });
       }
     }
-    return result(home, headers);
+    const sandbox = buildSandboxModeMetadata(principal);
+    return result(Object.freeze({ ...home, sandbox }), headers);
   }
   if (path === '/api/v1/me/bootstrap' && method === 'GET') {
-    return json(200, runtime.bff.bootstrap(principal), headers);
+    const bootstrap = runtime.bff.bootstrap(principal);
+    const sandbox = buildSandboxModeMetadata(principal);
+    const capabilities = runtime.bff.capabilities(principal);
+    const applicationState = buildApplicationState({
+      now: () => new Date().toISOString(),
+      principal,
+      capabilities,
+      sandbox,
+      providerDown: runtime.providerDown,
+    });
+    return json(200, Object.freeze({ ...bootstrap, sandbox, applicationState }), headers);
+  }
+  if (path === '/api/v1/me/application-state' && method === 'GET') {
+    const sandbox = buildSandboxModeMetadata(principal);
+    const capabilities = runtime.bff.capabilities(principal);
+    return json(
+      200,
+      buildApplicationState({
+        now: () => new Date().toISOString(),
+        principal,
+        capabilities,
+        sandbox,
+        providerDown: runtime.providerDown,
+      }),
+      headers,
+    );
+  }
+  if (path === '/api/v1/action-center' && method === 'GET') {
+    return json(200, buildActionCenter(actionCenterDepsFrom(runtime), principal), headers);
+  }
+  if (path.startsWith('/api/v1/action-center/') && path.endsWith('/dismiss') && method === 'POST') {
+    const actionId = path.slice('/api/v1/action-center/'.length, -'/dismiss'.length);
+    return json(200, dismissActionCenterItem(decodeURIComponent(actionId)), headers);
+  }
+  if (path === '/api/v1/agent/authorization-policy' && method === 'GET') {
+    return json(200, AGENT_AUTHORIZATION_POLICY, headers);
   }
   if (path === '/api/v1/me/capabilities' && method === 'GET') {
     return json(200, runtime.bff.capabilities(principal), headers);
@@ -565,6 +625,17 @@ function dispatchAuthenticated(
     }
   }
   if (runtime.vault && runtime.identity) {
+    const vaultOpportunities = dispatchVaultOpportunities(
+      runtime.vault,
+      request,
+      principal,
+      new Date().toISOString(),
+      headers,
+      requestId,
+    );
+    if (vaultOpportunities) {
+      return vaultOpportunities;
+    }
     const vault = dispatchVault(
       runtime.vault,
       request,
@@ -1088,11 +1159,16 @@ function dispatchAuthenticated(
   }
 
   if (path === '/api/v1/me/actions' && method === 'GET') {
-    const home = runtime.bff.home(principal, requestId);
-    if (isBffError(home)) {
-      return json(statusForError(home), home, headers);
-    }
-    return json(200, home.pendingApprovals, headers);
+    const center = buildActionCenter(actionCenterDepsFrom(runtime), principal);
+    return json(
+      200,
+      resourceField({
+        state: center.items.length === 0 ? 'EMPTY' : 'READY',
+        availability: 'AVAILABLE_SIMULATION',
+        value: center.items.filter((item) => item.status === 'ACTION_REQUIRED' || item.status === 'IN_REVIEW'),
+      }),
+      headers,
+    );
   }
 
   for (const group of STUB_GROUPS) {
@@ -1213,9 +1289,21 @@ function dispatchAgents(
             }
           : null,
         executionPrivileges: Object.freeze([]),
+        authorizationPolicy: AGENT_AUTHORIZATION_POLICY,
       },
       headers,
     );
+  }
+  if (rest === 'mandates' && method === 'GET') {
+    return result(getAgentMandate(runtime, principal, agentId, requestId), headers);
+  }
+  if (rest === 'mandates' && method === 'POST') {
+    return result(grantAgentMandate(runtime, principal, agentId, rec, requestId, new Date().toISOString()), headers, 201);
+  }
+  const mandateRevokeMatch = /^mandates\/([^/]+)\/revoke$/.exec(rest);
+  if (mandateRevokeMatch && method === 'POST') {
+    void mandateRevokeMatch;
+    return result(revokeAgentMandate(runtime, principal, agentId, requestId), headers);
   }
   if (rest === 'memories' && method === 'GET') {
     const listed = runtime.listMemories(ownerId, agentId);
@@ -1888,6 +1976,22 @@ function dispatchConversation(
   return null;
 }
 
+function actionCenterDepsFrom(runtime: ConsumerBffRuntime): ActionCenterDeps {
+  return {
+    now: () => new Date().toISOString(),
+    kernelActions: (principal) => {
+      const home = runtime.bff.home(principal, 'action_center');
+      if (isBffError(home)) {
+        return [];
+      }
+      return home.pendingApprovals.value ?? [];
+    },
+    ...(runtime.conversation ? { conversation: runtime.conversation } : {}),
+    ...(runtime.access ? { access: runtime.access } : {}),
+    ...(runtime.agentExternalEvidence ? { agentEvidence: runtime.agentExternalEvidence } : {}),
+  };
+}
+
 function isRightsMarketplace(
   value: InformationRightsMarketplace | HinContributionSurface,
 ): value is InformationRightsMarketplace {
@@ -1927,8 +2031,12 @@ export const CONSUMER_BFF_ROUTES = [
   'PATCH /api/v1/me',
   'GET /api/v1/me/home',
   'GET /api/v1/me/bootstrap',
+  'GET /api/v1/me/application-state',
   'GET /api/v1/me/capabilities',
   'GET /api/v1/me/actions',
+  'GET /api/v1/action-center',
+  'POST /api/v1/action-center/{id}/dismiss',
+  'GET /api/v1/agent/authorization-policy',
   'GET /api/v1/accounts',
   'GET /api/v1/accounts/{id}',
   'GET /api/v1/accounts/{id}/activity',
@@ -2044,6 +2152,9 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/agents/{id}/settings',
   'PATCH /api/v1/agents/{id}/settings',
   'GET /api/v1/agents/{id}/permissions',
+  'GET /api/v1/agents/{id}/mandates',
+  'POST /api/v1/agents/{id}/mandates',
+  'POST /api/v1/agents/{id}/mandates/{mandateId}/revoke',
   'GET /api/v1/agents/{id}/memories',
   'POST /api/v1/agents/{id}/memories',
   'PATCH /api/v1/agents/{id}/memories/{memoryId}',
@@ -2231,6 +2342,7 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/hin/participation/enroll',
   'POST /api/v1/hin/participation/pause',
   'POST /api/v1/hin/participation/withdraw',
+  'GET /api/v1/data/vault/opportunities',
   'GET /api/v1/data/vault',
   'GET /api/v1/data/vault/categories',
   'GET /api/v1/data/vault/records',
