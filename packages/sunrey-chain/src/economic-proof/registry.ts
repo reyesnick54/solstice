@@ -21,6 +21,7 @@ import { deriveObservationFingerprint } from './observation-fingerprint.ts';
 import type {
   CanonicalEntityMaterial,
   CanonicalEventMaterial,
+  CanonicalEventId,
   ChallengeState,
   ClaimFingerprint,
   DuplicateCluster,
@@ -89,6 +90,8 @@ export type RegisterClaimInput = {
   readonly lineageEdges: readonly LineageEdge[];
   readonly methodologyVersion: string;
   readonly producedRefs?: readonly string[];
+  /** Wave 5: pre-reconciled canonical event id from productive event resolution */
+  readonly reconciledCanonicalEventId?: CanonicalEventId;
 };
 
 export type EconomicClaimRegistrySnapshot = {
@@ -196,7 +199,7 @@ export class EconomicClaimRegistry {
 
   registerClaim(input: RegisterClaimInput): Result<EconomicClaim, RegistryFailure> {
     const canonicalEntityId = deriveCanonicalEntityId(input.entityMaterial);
-    const canonicalEventId = deriveCanonicalEventId({
+    const canonicalEventId = input.reconciledCanonicalEventId ?? deriveCanonicalEventId({
       ...input.eventMaterial,
       canonicalEntityId,
     });

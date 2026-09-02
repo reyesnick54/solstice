@@ -47,7 +47,17 @@ export const KNOWLEDGE_RELATION_KINDS = [
   'GENERATES',
   'EXECUTES',
   'HANDLES',
+  'DELIVERED',
+  'RESOLVES_TO',
   'LINKS_CLAIM',
+  'PERFORMED',
+  'DEMONSTRATED',
+  'EARNED',
+  'CONTRIBUTED_TO',
+  'AUTHORIZED',
+  'PARTICIPATED_IN',
+  'GRANTED',
+  'FOR_PURPOSE',
 ] as const;
 export type KnowledgeRelationKind = (typeof KNOWLEDGE_RELATION_KINDS)[number];
 
@@ -64,12 +74,32 @@ export const AUTHORIZATION_GATED_RELATIONS = Object.freeze(
   new Set<KnowledgeRelationKind>(['OWNED_BY', 'AUTHORIZED_BY']),
 );
 
-/** Productive-economy event relationship templates for Wave 5 preparation. */
+/** Productive-economy event relationship templates (Wave 5). */
 export const PRODUCTIVE_EVENT_TEMPLATES = Object.freeze([
   Object.freeze({ assetClass: 'FACILITY', eventClass: 'ECONOMIC_EVENT', relation: 'GENERATES' as KnowledgeRelationKind, label: 'PowerPlant→EnergyEvent' }),
+  Object.freeze({ assetClass: 'FACILITY', eventClass: 'ECONOMIC_EVENT', relation: 'DELIVERED' as KnowledgeRelationKind, label: 'GridResource→EnergyDeliveryEvent' }),
   Object.freeze({ assetClass: 'FACILITY', eventClass: 'ECONOMIC_EVENT', relation: 'PRODUCED' as KnowledgeRelationKind, label: 'Factory→ManufacturingEvent' }),
   Object.freeze({ assetClass: 'PRODUCTIVE_ASSET', eventClass: 'ECONOMIC_EVENT', relation: 'EXECUTES' as KnowledgeRelationKind, label: 'ComputeCluster→ComputeEvent' }),
   Object.freeze({ assetClass: 'FACILITY', eventClass: 'ECONOMIC_EVENT', relation: 'HANDLES' as KnowledgeRelationKind, label: 'Port→LogisticsEvent' }),
+  Object.freeze({ assetClass: 'FACILITY', eventClass: 'ECONOMIC_EVENT', relation: 'DELIVERED' as KnowledgeRelationKind, label: 'WaterPlant→WaterDeliveryEvent' }),
+  Object.freeze({ assetClass: 'FACILITY', eventClass: 'ECONOMIC_EVENT', relation: 'PRODUCED' as KnowledgeRelationKind, label: 'Farm→AgriculturalEvent' }),
+  Object.freeze({ assetClass: 'ECONOMIC_EVENT', eventClass: 'ECONOMIC_CLAIM', relation: 'RESOLVES_TO' as KnowledgeRelationKind, label: 'ProductiveEvent→EconomicClaim' }),
+]);
+
+/** Human-economy relationship templates (Wave 6). */
+export const HUMAN_EVENT_TEMPLATES = Object.freeze([
+  Object.freeze({ actorClass: 'PSEUDONYMOUS_PERSON', contributionClass: 'ECONOMIC_EVENT', relation: 'PERFORMED' as KnowledgeRelationKind, label: 'Human→WorkContribution' }),
+  Object.freeze({ actorClass: 'PSEUDONYMOUS_PERSON', contributionClass: 'ECONOMIC_EVENT', relation: 'DEMONSTRATED' as KnowledgeRelationKind, label: 'Human→Skill' }),
+  Object.freeze({ actorClass: 'PSEUDONYMOUS_PERSON', contributionClass: 'ECONOMIC_EVENT', relation: 'EARNED' as KnowledgeRelationKind, label: 'Human→Credential' }),
+  Object.freeze({ actorClass: 'PSEUDONYMOUS_PERSON', contributionClass: 'ECONOMIC_EVENT', relation: 'CONTRIBUTED_TO' as KnowledgeRelationKind, label: 'Human→Research' }),
+  Object.freeze({ actorClass: 'PSEUDONYMOUS_PERSON', contributionClass: 'ECONOMIC_EVENT', relation: 'AUTHORIZED' as KnowledgeRelationKind, label: 'Human→DatasetUse' }),
+  Object.freeze({ actorClass: 'PSEUDONYMOUS_PERSON', contributionClass: 'ECONOMIC_EVENT', relation: 'PARTICIPATED_IN' as KnowledgeRelationKind, label: 'Human→Computation' }),
+  Object.freeze({ actorClass: 'PSEUDONYMOUS_PERSON', rightsClass: 'RIGHTS_GRANT', relation: 'GRANTED' as KnowledgeRelationKind, label: 'Human→Consent' }),
+  Object.freeze({ rightsClass: 'RIGHTS_GRANT', purposeClass: 'RIGHTS_GRANT', relation: 'FOR_PURPOSE' as KnowledgeRelationKind, label: 'Consent→Purpose' }),
+  Object.freeze({ contributionClass: 'ECONOMIC_EVENT', evidenceClass: 'EVIDENCE', relation: 'SUPPORTED_BY' as KnowledgeRelationKind, label: 'Contribution→Evidence' }),
+  Object.freeze({ contributionClass: 'ECONOMIC_EVENT', attestationClass: 'VERIFIED_FACT', relation: 'ATTESTED_BY' as KnowledgeRelationKind, label: 'Contribution→Attestation' }),
+  Object.freeze({ contributionClass: 'ECONOMIC_EVENT', methodologyClass: 'METHODOLOGY', relation: 'USES_METHODOLOGY' as KnowledgeRelationKind, label: 'Contribution→Methodology' }),
+  Object.freeze({ contributionClass: 'ECONOMIC_EVENT', claimClass: 'ECONOMIC_CLAIM', relation: 'RESOLVES_TO' as KnowledgeRelationKind, label: 'Contribution→EconomicClaim' }),
 ]);
 
 export function isKnowledgeNodeClass(value: string): value is KnowledgeNodeClass {

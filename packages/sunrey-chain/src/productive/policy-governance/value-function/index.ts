@@ -246,6 +246,44 @@ export type {
   EvaluateProductiveValueContext,
   ProductiveValueEvaluation,
 } from './engine.ts';
+export * as wave5ProductiveValue from './wave5/index.ts';
+export {
+  PRODUCTIVE_ECONOMIC_CONTRIBUTION_SCHEMA_VERSION,
+  PRODUCTIVE_VALUE_ENGINE_BOUNDARY_ID,
+  PRODUCTIVE_VALUE_ENGINE_CAPABILITIES,
+  PRODUCTIVE_VALUATION_METHODOLOGY_SCHEMA_VERSION,
+  PRODUCTIVE_VALUATION_RESULT_SCHEMA_VERSION,
+  PRODUCTIVE_VALUE_RECEIPT_SCHEMA_VERSION,
+  GPUV_DEFINITION,
+  GPUV_DEFINITION_ID,
+  GPUV_DEFINITION_VERSION,
+  GPUV_DOES_NOT_MEASURE,
+  GPUV_MEASURES,
+  MARKET_PRICE_COUPLING_FORBIDDEN,
+  ProductiveValueEngine,
+  acceptProductiveEconomicContribution,
+  auditMarketPriceSeparation,
+  createProductiveValueEngine,
+  domainBindingForCategory,
+  exchangeApiUnavailableDoesNotAlterGpuv,
+  gpuvQuantityFromProductiveValue,
+  methodologyFromPolicy,
+  methodologyReferenceFromPolicy,
+} from './wave5/index.ts';
+export type {
+  AcceptContributionInput,
+  DomainMethodologyBinding,
+  GpuvDefinition,
+  InformationConsensusReceipt,
+  MethodologyReference,
+  ProductiveEconomicContribution,
+  ProductiveValuationMethodology,
+  ProductiveValuationResult,
+  ProductiveValueEngineCapabilities,
+  ProductiveValueEngineEvaluation,
+  ProductiveValueReceipt,
+  ValuationRejectionCode,
+} from './wave5/index.ts';
 export type { ProductiveValueExplanationReceipt } from './explanation.ts';
 export type {
   FactorApplicationRecord,
