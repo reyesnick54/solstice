@@ -1,3 +1,4 @@
+export * from './event-ports.ts';
 export * from './types.ts';
 export * from './content-hash.ts';
 export * from './graph.ts';

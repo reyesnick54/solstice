@@ -84,11 +84,14 @@ export function lintSunReyChainBoundary(root: string): Finding[] {
       .replace(/grantsExecutionAuthority\s*:\s*false/g, '')
       .replace(/issuesExecutionAuthority\s*:\s*false/g, '')
       .replace(/grantsBookingAuthority\s*:\s*false/g, '');
-    if (
+    const referencesForbiddenExecutionAuthority =
       /postJournal\s*\(/.test(withoutExplicitDenials) ||
       /AuthorityIssuer/.test(withoutExplicitDenials) ||
-      /ExecutionAuthority/.test(withoutExplicitDenials)
-    ) {
+      /import\s+[^'"]*\bExecutionAuthority\b/.test(withoutExplicitDenials) ||
+      /from ['"][^'"]*execution-authority/.test(withoutExplicitDenials) ||
+      /\btype\s+ExecutionAuthority\b/.test(withoutExplicitDenials) ||
+      /\bas\s+ExecutionAuthority\b/.test(withoutExplicitDenials);
+    if (referencesForbiddenExecutionAuthority) {
       findings.push({
         rule: 'unauthorized-mutator',
         file,

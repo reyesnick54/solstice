@@ -7,11 +7,10 @@ import { randomUUID } from 'node:crypto';
 
 import { asUtcInstant } from '../../../../domain/src/time.ts';
 import {
-  type DurableEventEnvelope,
-  newEventId,
-  sealEnvelope,
-  type EventBus,
-} from '../../../../events/src/index.ts';
+  type ProvenanceEnvelopeToolkit,
+  type ProvenanceEventBus,
+  type ProvenanceEventEnvelope,
+} from './event-ports.ts';
 import {
   createEconomicProvenanceEvent,
   type EconomicProvenanceEvent,
@@ -35,7 +34,8 @@ import {
 import { asProvenanceNodeId, type ProvenanceEdge, type ProvenanceNode } from './types.ts';
 
 export type EconomicProvenanceFabricOptions = {
-  readonly eventBus: EventBus;
+  readonly eventBus: ProvenanceEventBus;
+  readonly envelopeToolkit: ProvenanceEnvelopeToolkit;
   readonly graph?: ProvenanceGraphStore;
   readonly idempotency?: IdempotencyStore;
   readonly quarantine?: QuarantineStore;
@@ -57,21 +57,21 @@ export type NormalizationResult =
       readonly observation: ExternalObservation<unknown>;
       readonly normalizedNodeId: string;
       readonly providerRecordNodeId: string;
-      readonly event: DurableEventEnvelope;
+      readonly event: ProvenanceEventEnvelope;
     }
   | {
       readonly ok: false;
       readonly code: string;
       readonly message: string;
       readonly quarantineId: string;
-      readonly event: DurableEventEnvelope;
+      readonly event: ProvenanceEventEnvelope;
     };
 
 export type EvidenceChainResult = {
   readonly evidenceNodeId: string;
   readonly factNodeId: string;
   readonly claimNodeId: string;
-  readonly events: readonly DurableEventEnvelope[];
+  readonly events: readonly ProvenanceEventEnvelope[];
 };
 
 function baseRefs(input: {
@@ -113,7 +113,8 @@ function baseRefs(input: {
 }
 
 export class EconomicProvenanceFabric {
-  readonly #eventBus: EventBus;
+  readonly #eventBus: ProvenanceEventBus;
+  readonly #envelopeToolkit: ProvenanceEnvelopeToolkit;
   readonly #graph: ProvenanceGraphStore;
   readonly #idempotency: IdempotencyStore;
   readonly #quarantine: QuarantineStore;
@@ -122,6 +123,7 @@ export class EconomicProvenanceFabric {
 
   constructor(options: EconomicProvenanceFabricOptions) {
     this.#eventBus = options.eventBus;
+    this.#envelopeToolkit = options.envelopeToolkit;
     this.#graph = options.graph ?? createInMemoryProvenanceGraphStore();
     this.#idempotency = options.idempotency ?? new InMemoryIdempotencyStore();
     this.#quarantine = options.quarantine ?? new InMemoryQuarantineStore();
@@ -139,7 +141,7 @@ export class EconomicProvenanceFabric {
   async receiveProviderRecord(input: ProviderRecordInput): Promise<{
     readonly duplicate: boolean;
     readonly providerRecordNodeId: string;
-    readonly event: DurableEventEnvelope | null;
+    readonly event: ProvenanceEventEnvelope | null;
   }> {
     const idempotencyKey = buildTransportIdempotencyKey({
       providerId: input.providerId,
@@ -148,7 +150,7 @@ export class EconomicProvenanceFabric {
     });
     const claim = await this.#idempotency.tryClaim({
       idempotencyKey,
-      eventId: newEventId(),
+      eventId: this.#envelopeToolkit.newEventId(),
       now: this.#now(),
     });
     if (claim === 'duplicate') {
@@ -212,7 +214,7 @@ export class EconomicProvenanceFabric {
     });
     const claim = await this.#idempotency.tryClaim({
       idempotencyKey: processingKey,
-      eventId: newEventId(),
+      eventId: this.#envelopeToolkit.newEventId(),
       now: this.#now(),
     });
     if (claim === 'duplicate') {
@@ -364,7 +366,7 @@ export class EconomicProvenanceFabric {
     readonly failureMessage: string;
     readonly rawPayloadHash: string | null;
     readonly requestId?: string | null;
-  }): Promise<DurableEventEnvelope> {
+  }): Promise<ProvenanceEventEnvelope> {
     const quarantineId =
       this.#quarantine instanceof InMemoryQuarantineStore
         ? this.#quarantine.nextQuarantineId()
@@ -504,7 +506,7 @@ export class EconomicProvenanceFabric {
       parentNodeIds,
     });
 
-    const events: DurableEventEnvelope[] = [];
+    const events: ProvenanceEventEnvelope[] = [];
     events.push(
       await this.#publish(
         createEconomicProvenanceEvent('EvidenceCreated', asUtcInstant(now), {
@@ -547,7 +549,7 @@ export class EconomicProvenanceFabric {
     readonly capability: string;
     readonly dataset: string;
     readonly observationId: string;
-  }): Promise<DurableEventEnvelope> {
+  }): Promise<ProvenanceEventEnvelope> {
     const edge: ProvenanceEdge = Object.freeze({
       edgeId: `edge:link:${input.sourceNodeId}:${input.targetNodeId}`,
       kind: 'LINKED_TO',
@@ -578,9 +580,9 @@ export class EconomicProvenanceFabric {
     );
   }
 
-  async #publish(event: EconomicProvenanceEvent, aggregateId: string): Promise<DurableEventEnvelope> {
+  async #publish(event: EconomicProvenanceEvent, aggregateId: string): Promise<ProvenanceEventEnvelope> {
     this.#sequence += 1;
-    const sealed = sealEnvelope(
+    const sealed = this.#envelopeToolkit.sealEnvelope(
       {
         eventType: event.eventType,
         schemaVersion: event.schemaVersion,

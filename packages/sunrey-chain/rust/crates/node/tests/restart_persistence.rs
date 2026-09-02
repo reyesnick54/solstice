@@ -10,8 +10,8 @@ use sunrey_native_assets::{
 };
 use sunrey_node::LocalNode;
 use sunrey_protocol::{
-    encode_system_payload, genesis_hash, SystemPayload, TransactionFamily, UnsignedTransaction,
-    LOCAL_DEV_CHAIN_ID, LOCAL_DEV_NETWORK_ID, RejectReason, SCHEMA_VERSION, SRCB_CODEC_ID,
+    encode_system_payload, genesis_hash, RejectReason, SystemPayload, TransactionFamily,
+    UnsignedTransaction, LOCAL_DEV_CHAIN_ID, LOCAL_DEV_NETWORK_ID, SCHEMA_VERSION, SRCB_CODEC_ID,
 };
 use sunrey_storage::{assert_state_root, rebuild_state_root, ChainStore, FailPoint};
 
@@ -104,7 +104,11 @@ fn run_native_lifecycle(dir: &std::path::Path) -> LifecycleSnapshot {
 
     node.submit_signed(
         node.sign_dev_tx(
-            unsigned(nonce, faucet_bytes(NativeAssetId::SunReyCoin, "alice", 100, "sun-1"), "sun-1"),
+            unsigned(
+                nonce,
+                faucet_bytes(NativeAssetId::SunReyCoin, "alice", 100, "sun-1"),
+                "sun-1",
+            ),
             &secret,
         )
         .unwrap(),
@@ -216,10 +220,7 @@ fn state_mismatch_rejected_on_startup() {
     let mut store = ChainStore::open(&dir).unwrap();
     store.meta.app_hash = "00".repeat(32);
     store.persist_state_and_meta().unwrap();
-    assert!(matches!(
-        LocalNode::open(&dir),
-        Err(RejectReason::WrongStateRoot)
-    ));
+    assert!(matches!(LocalNode::open(&dir), Err(RejectReason::WrongStateRoot)));
 }
 
 #[test]
@@ -260,10 +261,7 @@ fn persisted_history_matches_state_commitments() {
     for height in 1..=store.meta.height {
         let block = store.load_block(height).unwrap();
         if height == store.meta.height {
-            assert_eq!(
-                sunrey_protocol::hash_to_hex(&block.header.app_hash),
-                store.meta.app_hash
-            );
+            assert_eq!(sunrey_protocol::hash_to_hex(&block.header.app_hash), store.meta.app_hash);
         }
     }
 
