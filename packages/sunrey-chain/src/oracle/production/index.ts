@@ -367,4 +367,5 @@ export type {
   ExternalProviderEndpointProfile,
   ExternalProviderRequestBlueprint,
 } from './external-provider-candidate/index.ts';
+export * from './oracle-mesh/index.ts';
 

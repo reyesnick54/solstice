@@ -3,8 +3,10 @@ export { WAVE3_ECONOMIC_PROOF_CAPABILITY } from './capability.ts';
 export * from './policy/index.ts';
 export * from './evidence/index.ts';
 export * from './rights/index.ts';
+export * from './human-economy/index.ts';
 export * from './roots/index.ts';
 export * as rights from './rights/index.ts';
+export * as humanEconomy from './human-economy/index.ts';
 export * as stateCommitment from './state-commitment/index.ts';
 export { merkleRoot, merkleLeaf, sortedMerkleRoot } from './merkle.ts';
 export { EXISTING_DUPLICATE_PROTECTIONS, WAVE3_GAPS_ADDRESSED } from './audit.ts';
@@ -66,3 +68,50 @@ export * from './authority.ts';
 export * from './persistence.ts';
 export * from './adapters.ts';
 export * from './fixtures.ts';
+export {
+  deriveProductiveEventKey,
+  deriveCanonicalEventIdFromKey,
+  domainBoundaryDefaults,
+  inferDomainFromAction,
+  type ProductiveEventKey,
+  type ProductiveEventKeyMaterial,
+} from './productive-event-key.ts';
+export * from './productive-event-types.ts';
+export {
+  temporalWindowsOverlap,
+  temporalWindowContains,
+  classifyTemporalOverlap,
+  isAggregationTemporalRelationship,
+  intervalDurationMs,
+  type TemporalWindow,
+  type TemporalOverlapKind,
+} from './temporal-overlap.ts';
+export {
+  classifyEventOverlap,
+  assessAllOverlaps,
+  groupByEventKey,
+  hasUnresolvedOverlap,
+  hasAggregationConflict,
+  mergeCorroboratingCandidates,
+  quantityWithinTolerance,
+  selectCanonicalFromGroup,
+} from './event-overlap.ts';
+export {
+  buildCandidateFromObservation,
+  reconcileProductiveEvents,
+  reconcileQuantity,
+  isReconciliationClaimReady,
+  deriveReconciliationId,
+  WAVE5_RECONCILIATION_METHODOLOGY,
+  type BuildCandidateInput,
+  type ReconcileEventsInput,
+} from './event-reconciliation.ts';
+export {
+  canPromoteReconciliationToClaim,
+  promoteReconciliationToClaim,
+  reconcileAndPromoteToClaim,
+  assertMonetizationLockForReconciliation,
+  type PromoteReconciliationInput,
+  type ReconcileAndPromoteInput,
+  type ClaimPromotionFailure,
+} from './claim-promotion.ts';
