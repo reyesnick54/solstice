@@ -102,9 +102,11 @@ export const REPOSITORY_TEST_GLOBS = [
   "tests/wave-2-prompt-8-macro-providers.test.ts",
   "tests/wave-3-economic-proof.test.ts",
   "tests/wave-2-prompt-5-blocks-finality.test.ts",
+  "packages/sunrey-chain/src/human/ontology/*.test.ts",
   "tests/wave-4-prompt-16-kyb-fraud-intelligence.test.ts",
   "tests/wave-5-prompt-13-subscription-intelligence.test.ts",
   "tests/wave-5-productive-economy-ontology.test.ts",
+  "tests/wave-6-human-economic-intelligence.test.ts",
   "tools/architectural-linter/src/*.test.ts"
 ];
 
