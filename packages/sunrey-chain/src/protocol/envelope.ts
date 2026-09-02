@@ -131,6 +131,28 @@ export type BlockHeaderV1 = {
   readonly timeUnixSeconds: bigint;
 };
 
+/**
+ * Wave 2 reserved commitment roots. `rightsRoot` and `policyRoot` remain
+ * all-zero until their owning waves activate. `evidenceRoot` is populated by
+ * Wave 3 economic proof architecture.
+ */
+export type BlockCommitmentRootsV1 = {
+  readonly evidenceRoot: Uint8Array;
+  readonly rightsRoot: Uint8Array;
+  readonly policyRoot: Uint8Array;
+};
+
+export type BlockHeaderV2 = BlockHeaderV1 & {
+  readonly schemaVersion: 2;
+  readonly commitmentRoots: BlockCommitmentRootsV1;
+};
+
+export type BlockHeader = BlockHeaderV1 | BlockHeaderV2;
+
+export function isBlockHeaderV2(header: BlockHeader): header is BlockHeaderV2 {
+  return header.schemaVersion === 2;
+}
+
 export function bodyHeaderOf(body: TransactionBodyV1): BodyHeader {
   return body.header;
 }
