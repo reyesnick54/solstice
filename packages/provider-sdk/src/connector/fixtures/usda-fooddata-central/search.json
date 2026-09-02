@@ -1,0 +1,11 @@
+{
+  "foods": [
+    {
+      "fdcId": 171077,
+      "description": "Yogurt, Greek, plain, nonfat",
+      "dataType": "Foundation",
+      "foodCategory": "Dairy and Egg Products"
+    }
+  ],
+  "totalHits": 1
+}
