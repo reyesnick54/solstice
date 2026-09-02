@@ -418,6 +418,18 @@ export * from './regulated/index.ts';
 export * from './productization/index.ts';
 
 export {
+  REDACTED,
+  assertLogPayloadSafe,
+  redactLogRecord,
+  redactLogValue,
+  safeLogLine,
+  shouldRedactKey,
+  shouldRedactValue,
+} from './safe-logging.ts';
+
+export * as zkProof from './zk-proof/index.ts';
+
+export {
   DEVELOPMENT_HSM_ENVIRONMENT_LABEL,
   DEVELOPMENT_HSM_PROVIDER_ID,
   DEVELOPMENT_HSM_VERSION,
