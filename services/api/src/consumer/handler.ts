@@ -99,6 +99,9 @@ import type { MarketReferenceBffSurface } from './market-reference.ts';
 import { createMarketReferenceBffSurface } from './market-reference.ts';
 import type { CryptoMarketBffSurface } from './crypto-market.ts';
 import { createCryptoMarketBffSurface } from './crypto-market.ts';
+import { dispatchWave8, WAVE8_BFF_ROUTES } from './wave8-dispatch.ts';
+import { CONTRACT_RESPONSE_HEADERS } from './api-contract.ts';
+import { BLOCKCHAIN_TX_STATUSES, ECONOMIC_CLAIM_STATUSES } from './status-semantics.ts';
 
 export type BffRequest = {
   readonly method: string;
@@ -174,7 +177,7 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
   const headers = {
     'cache-control': cachePolicyForPath(request.path).cacheControl,
     vary: 'Authorization',
-    'x-sunrey-api-version': 'v1',
+    ...CONTRACT_RESPONSE_HEADERS,
     'x-sunrey-surface': 'CONSUMER_BFF',
     'x-sunrey-environment': 'simulation',
   };
@@ -268,6 +271,8 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
         hinPurpose: ['RESEARCH', 'PRODUCT_IMPROVEMENT', 'AGGREGATED_ANALYTICS', 'STATISTICAL_INSIGHT', 'MODEL_EVALUATION', 'MARKETING', 'CREDIT_DECISIONING'],
         hinCategory: HIN_PRODUCT_CATEGORIES,
         hinVerification: HIN_VERIFICATION_STATES,
+        blockchainTxStatus: BLOCKCHAIN_TX_STATUSES,
+        economicClaimStatus: ECONOMIC_CLAIM_STATUSES,
       },
       headers,
     );
@@ -310,6 +315,23 @@ function dispatchAuthenticated(
 ): BffResponse | Promise<BffResponse> {
   const { method, path, query, body } = request;
   const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
+
+  const wave8 = dispatchWave8(runtime, { method, path, query, accept: request.accept }, principal, requestId);
+  if (wave8) {
+    const mergedHeaders = Object.freeze({
+      ...headers,
+      ...(wave8.extraHeaders ?? {}),
+    });
+    if (wave8.eventStream) {
+      return Object.freeze({
+        status: wave8.status,
+        body: wave8.body,
+        headers: mergedHeaders,
+        eventStream: wave8.eventStream,
+      });
+    }
+    return json(wave8.status, wave8.body, mergedHeaders as Record<string, string>);
+  }
 
   if (path === '/api/v1/me' && method === 'GET') {
     return json(200, runtime.bff.profile(principal), headers);
@@ -2258,4 +2280,5 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/sandbox/personas',
   'POST /api/v1/webhooks/cards',
   ...SUBSCRIPTION_BFF_ROUTES,
+  ...WAVE8_BFF_ROUTES,
 ] as const;

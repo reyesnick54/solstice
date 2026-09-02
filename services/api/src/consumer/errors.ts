@@ -26,6 +26,17 @@ export const BFF_ERROR_CODES = [
   'STEP_UP_REQUIRED',
   'KERNEL_REFUSED',
   'FORBIDDEN',
+  'POLICY_DENIED',
+  'CONSENT_REQUIRED',
+  'IDENTITY_ASSURANCE_INSUFFICIENT',
+  'CLAIM_DUPLICATE',
+  'CLAIM_DISPUTED',
+  'TRANSACTION_REJECTED',
+  'CHAIN_UNAVAILABLE',
+  'CHAIN_SYNCING',
+  'PROVIDER_UNAVAILABLE',
+  'REGULATED_FEATURE_DISABLED',
+  'SANDBOX_ONLY',
 ] as const;
 export type BffErrorCode = (typeof BFF_ERROR_CODES)[number];
 
@@ -71,7 +82,19 @@ export function statusForError(error: BffErrorEnvelope): number {
     case 'KERNEL_DENIED':
     case 'KERNEL_REFUSED':
     case 'FORBIDDEN':
+    case 'POLICY_DENIED':
+    case 'CONSENT_REQUIRED':
+    case 'IDENTITY_ASSURANCE_INSUFFICIENT':
+    case 'CLAIM_DUPLICATE':
+    case 'CLAIM_DISPUTED':
+    case 'TRANSACTION_REJECTED':
+    case 'REGULATED_FEATURE_DISABLED':
+    case 'SANDBOX_ONLY':
       return 403;
+    case 'CHAIN_UNAVAILABLE':
+    case 'CHAIN_SYNCING':
+    case 'PROVIDER_UNAVAILABLE':
+      return 503;
     case 'NOT_FOUND':
       return 404;
     case 'METHOD_NOT_ALLOWED':

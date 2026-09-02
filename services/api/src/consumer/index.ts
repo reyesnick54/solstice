@@ -44,3 +44,12 @@ export type {
   PaymentApproval,
 } from '../../../../packages/payments/src/platform/resources.ts';
 export { startConsumerBff, serve } from './http.ts';
+export { dispatchWave8, WAVE8_BFF_ROUTES } from './wave8-dispatch.ts';
+export { CONSUMER_API_DOMAINS, classifyEndpoint } from './domains.ts';
+export { consumerContractManifest, CONSUMER_API_CONTRACT_VERSION } from './api-contract.ts';
+export {
+  BLOCKCHAIN_TX_STATUSES,
+  ECONOMIC_CLAIM_STATUSES,
+  mapWalletFinalityToBlockchain,
+  mapHinVerificationToClaimStatus,
+} from './status-semantics.ts';
