@@ -244,7 +244,7 @@ export class HumanContributionResolutionEngine {
       clusters: Object.freeze([...this.clusters.values()]),
       claims: Object.freeze([...this.claims.values()]),
       conflicts: Object.freeze([...this.conflicts]),
-      consumedMonetizationKeys: Object.freeze([]),
+      consumedMonetizationKeys: Object.freeze(this.monetizationStore.listConsumedKeys()),
     });
   }
 }

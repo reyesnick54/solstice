@@ -111,6 +111,10 @@ export class HumanContributionMonetizationStore {
       this.consumedKeys.add(key);
     }
   }
+
+  listConsumedKeys(): readonly string[] {
+    return Object.freeze([...this.consumedKeys].sort());
+  }
 }
 
 export function wave3CompatibleReplayKey(
