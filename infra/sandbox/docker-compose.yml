@@ -1,0 +1,91 @@
+# SunRey integrated sandbox stack (simulation only).
+#
+# NON-MARKET sandbox deployment for founder/team testing, QA, architecture
+# validation, provider integration testing, and labeled investor demos.
+#
+# Does NOT enable production mainnet, live regulated money rails, or
+# unauthorized mainnet economics.
+name: sunrey-sandbox
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: solstice_bootstrap
+      POSTGRES_PASSWORD: solstice_dev_only_not_for_production
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    command: ["postgres", "-c", "max_prepared_transactions=64"]
+    volumes:
+      - sunrey_sandbox_pg:/var/lib/postgresql/data
+      - ../postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U solstice_bootstrap -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  platform-api:
+    image: node:22-bookworm
+    working_dir: /workspace
+    command: ["node", "--experimental-strip-types", "--disable-warning=ExperimentalWarning", "services/api/src/main.ts"]
+    environment:
+      ENVIRONMENT: simulation
+      SUNREY_DEPLOYMENT_TIER: staging
+      SUNREY_INTERNAL_OPERATOR_TOKEN: sandbox-operator-token-change-me
+      SUNREY_DATABASE_URL: postgres://solstice_bootstrap:solstice_dev_only_not_for_production@postgres:5432/postgres
+      SUNREY_FEATURE_REQUIRE_PERSISTENCE_FOR_READY: "true"
+      SUNREY_API_HOST: 0.0.0.0
+      SUNREY_API_PORT: "8080"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../../:/workspace:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  consumer-bff:
+    image: node:22-bookworm
+    working_dir: /workspace
+    command: ["node", "--experimental-strip-types", "--disable-warning=ExperimentalWarning", "services/api/src/preview-main.ts"]
+    environment:
+      ENVIRONMENT: simulation
+      SUNREY_PREVIEW_SANDBOX_PERSONAS: "true"
+      SUNREY_PREVIEW_AUTH_ENABLED: "true"
+      SUNREY_PREVIEW_ALLOW_LOCAL_ORIGINS: "true"
+      SUNREY_API_HOST: 0.0.0.0
+      SUNREY_API_PORT: "8443"
+      SUNREY_API_ALLOWED_ORIGINS: http://localhost:3000,https://app.sunrey.xyz
+    ports:
+      - "8443:8443"
+    volumes:
+      - ../../:/workspace:ro
+    depends_on:
+      - platform-api
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.enable-lifecycle
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../../packages/sunrey-chain/ops/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../../packages/sunrey-chain/ops/prometheus/alerts.json:/etc/prometheus/alerts.json:ro
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: sandbox-only-not-production
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    ports:
+      - "3001:3000"
+    volumes:
+      - ../../packages/sunrey-chain/ops/grafana/dashboards:/var/lib/grafana/dashboards:ro
+
+volumes:
+  sunrey_sandbox_pg:
