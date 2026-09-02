@@ -6,7 +6,7 @@ import {
 import { ED25519_PUBLIC_KEY_BYTES, ED25519_SIGNATURE_BYTES } from './constants.ts';
 import { encodeUnsignedEnvelope } from './codec.ts';
 import type { EnvelopeV1 } from './envelope.ts';
-import { transactionIdOf } from './hash.ts';
+import { transactionSigningDigest } from './signing.ts';
 
 /**
  * Wire algorithm 1 is registered to the canonical CryptoSuite.
@@ -71,7 +71,7 @@ export function signEnvelope(envelope: EnvelopeV1, seed: Uint8Array): EnvelopeV1
       keyVersion: envelope.authentication.keyVersion,
     }),
   });
-  const digest = Buffer.from(transactionIdOf(prepared), 'hex');
+  const digest = transactionSigningDigest(prepared);
   const { provider } = protocolProvider(WIRE_ALGORITHM_TO_SUITE[1]);
   const signature = provider.signRaw(Buffer.from(seed).toString('hex'), Buffer.from(keys.publicKey).toString('hex'), digest);
   if (!signature.ok) {
@@ -97,7 +97,7 @@ export function verifyEnvelopeSignature(envelope: EnvelopeV1): boolean {
   }
   try {
     const { provider } = protocolProvider(suiteId);
-    const digest = Buffer.from(transactionIdOf(envelope), 'hex');
+    const digest = transactionSigningDigest(envelope);
     const verified = provider.verifyRaw(
       Buffer.from(auth.publicKey).toString('hex'),
       digest,
