@@ -9,10 +9,6 @@ import {
   buildGovernanceDecisionRef,
   buildPolicyDefinition,
   canActivatePolicy,
-  evidenceCommitment,
-  evidenceRoot,
-  extensionCommitmentsFromFiveRoot,
-  fiveRootCommitment,
   forbidLatestPolicyLookupInReplay,
   hashPolicyDefinition,
   invalidMoonreyWithSunreyMethodology,
@@ -26,15 +22,16 @@ import {
   POLICY_AUDIT_INVENTORY,
   POLICY_TYPES,
   replayValuationWithPolicy,
-  rightsCommitment,
-  rightsRoot,
   SIMULATION_GOVERNANCE_V1,
   sunreyValuationPolicyV1,
   sunreyValuationPolicyV2,
   verifyPolicyCommitment,
   verifyPolicyDefinition,
-  WAVE3_ECONOMIC_PROOF_CAPABILITY,
-} from './index.ts';
+} from './policy/index.ts';
+import { evidenceCommitment, evidenceRoot } from './evidence/index.ts';
+import { rightsCommitment, rightsRoot } from './rights/index.ts';
+import { extensionCommitmentsFromFiveRoot, fiveRootCommitment } from './roots/index.ts';
+import { WAVE3_ECONOMIC_PROOF_CAPABILITY } from './capability.ts';
 
 describe('Wave 3 — Policy Commitments Architecture', () => {
   it('declares capability on canonical sunrey-chain owner', () => {
