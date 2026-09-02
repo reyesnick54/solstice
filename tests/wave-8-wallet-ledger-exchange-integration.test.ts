@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
+import { createSandboxWorld, sandboxToken, consumerBffRuntimeFromWorld } from '../services/api/src/consumer/fixtures.ts';
 import { handleConsumerBff, CONSUMER_BFF_ROUTES } from '../services/api/src/consumer/handler.ts';
 import { MONEY_INTEGRATION_ROUTES } from '../services/api/src/consumer/money-integration/dispatch.ts';
 import { createMoneyIntegrationPlatform } from '../services/api/src/consumer/money-integration/platform.ts';
@@ -44,13 +44,7 @@ const NOW = asUtcInstant('2026-09-02T12:00:00.000Z');
 
 function bffRuntime() {
   const world = createSandboxWorld();
-  return Object.freeze({
-    bff: world.bff,
-    sessions: world.sessions,
-    wallets: world.wallets,
-    moneyIntegration: world.moneyIntegration,
-    exchange: world.exchange,
-  });
+  return consumerBffRuntimeFromWorld(world);
 }
 
 async function call(method: string, path: string, body: Record<string, unknown> = {}) {
@@ -317,6 +311,62 @@ describe('Wave 8 — wallet, ledger, exchange integration', () => {
     const body = result.body as { sunreyMarketPriceIsPeve: false; moonreyMarketPriceIsGpuv: false };
     assert.equal(body.sunreyMarketPriceIsPeve, false);
     assert.equal(body.moonreyMarketPriceIsGpuv, false);
+  });
+
+  it('reports settlement failure before finality on matched trade', () => {
+    const clearing = new NativeClearingEngine();
+    const buyer = clearing.openExchangeAccount('cust_buyer');
+    const seller = clearing.openExchangeAccount('cust_seller');
+    clearing.faucetToCustody(seller, SUNREY_COIN_NATIVE_ASSET_ID, 1_000_000n);
+    clearing.faucetToCustody(buyer, MOONREY_COIN_NATIVE_ASSET_ID, 2_000_000n);
+    clearing.placeOrder({
+      accountId: seller,
+      side: 'SELL',
+      quantity: 100_000n,
+      priceUnits: 2_500_000n,
+      now: NOW,
+    });
+    clearing.placeOrder({
+      accountId: buyer,
+      side: 'BUY',
+      quantity: 100_000n,
+      priceUnits: 2_500_000n,
+      now: NOW,
+    });
+    const settlement = [...clearing.settlements.values()][0]!;
+    assert.equal(mapNativeSettlementToWave8(settlement.status), 'SETTLEMENT_PENDING');
+    assert.equal(settlement.status, 'SETTLEMENT_CREATED');
+    assert.equal(settlement.transactionId, null);
+  });
+
+  it('rebuilds money integration platform after simulated service restart', () => {
+    const world = createSandboxWorld();
+    const engine = new WalletEngine();
+    engine.unlock('development-passphrase');
+    const first = createMoneyIntegrationPlatform({
+      walletEngine: engine,
+      walletProduct: world.wallets,
+      nativeClearing: new NativeClearingEngine(),
+      nowUtc: NOW,
+    });
+    const before = first.unifiedHistory('cust_sandbox_basic');
+    const restarted = createMoneyIntegrationPlatform({
+      walletEngine: engine,
+      walletProduct: world.wallets,
+      nativeClearing: new NativeClearingEngine(),
+      nowUtc: NOW,
+    });
+    const after = restarted.unifiedHistory('cust_sandbox_basic');
+    assert.equal(before.length, after.length);
+  });
+
+  it('POST /api/v1/money/reconcile returns plane report', async () => {
+    const result = await call('POST', '/api/v1/money/reconcile', { assetId: 'SUNREY_COIN' });
+    assert.equal(result.status, 200);
+    const body = result.body as { schema: string; autoCorrected: false; chainStateRewritten: false };
+    assert.equal(body.schema, 'sunrey.money-reconciliation.v1');
+    assert.equal(body.autoCorrected, false);
+    assert.equal(body.chainStateRewritten, false);
   });
 
   it('money integration platform survives restart with same deps', () => {

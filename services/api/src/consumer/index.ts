@@ -21,6 +21,7 @@ export { ConsumerBff, memoryPreferenceStore } from './orchestrator.ts';
 export { createAccountsReadAdapter } from './accounts-adapter.ts';
 export {
   createSandboxWorld,
+  consumerBffRuntimeFromWorld,
   listSandboxPersonas,
   sandboxToken,
   SANDBOX_LABEL,

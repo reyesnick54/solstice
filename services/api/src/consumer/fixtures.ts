@@ -77,6 +77,7 @@ import { createWalletProductFromKernel } from '../../../../packages/custody/src/
 import type { WalletProductService } from '../../../../packages/custody/src/product/service.ts';
 import { createMoneyIntegrationPlatform, type MoneyIntegrationPlatform } from './money-integration/platform.ts';
 import { WalletEngine } from '../../../../packages/sunrey-chain/src/wallet/engine.ts';
+import type { ConsumerBffRuntime } from './handler.ts';
 import { createSandboxRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
 import type { InformationRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
 import { createHinContributionSurface, type HinContributionSurface } from './hin-adapter.ts';
@@ -838,6 +839,38 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     agentExternalEvidence,
     opportunity,
     subscriptions,
+  });
+}
+
+/** Canonical Consumer BFF runtime assembled from a sandbox world. */
+export function consumerBffRuntimeFromWorld(world: SandboxWorld): ConsumerBffRuntime {
+  return Object.freeze({
+    bff: world.bff,
+    sessions: world.sessions,
+    identity: world.runtime.identity.service,
+    payments: world.payments,
+    agent: world.agent,
+    agentRuntime: world.agentRuntime,
+    grow: world.grow,
+    previewDiagnostics: world.previewDiagnostics,
+    conversation: world.conversation,
+    wallets: world.wallets,
+    moneyIntegration: world.moneyIntegration,
+    hin: world.hin,
+    hinContributions: world.hinContributions,
+    productiveEconomy: world.productiveEconomy,
+    exchange: world.exchange,
+    dataRights: world.dataRights,
+    vault: world.vault,
+    access: world.access,
+    personalEconomy: world.personalEconomy,
+    hinAccess: world.hinAccess,
+    worldExternalData: world.worldExternalData,
+    environmental: world.environmental,
+    travel: world.travel,
+    agentExternalEvidence: world.agentExternalEvidence,
+    opportunity: world.opportunity,
+    subscriptions: world.subscriptions,
   });
 }
 
