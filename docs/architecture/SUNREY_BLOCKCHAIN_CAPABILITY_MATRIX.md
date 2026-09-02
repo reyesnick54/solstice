@@ -1,8 +1,9 @@
 # SunRey Blockchain Capability Matrix
 
-Status: Wave 2 completion audit (2026-09-02)  
+Status: Wave 2 completion audit; **Wave 9 re-audit** 2026-09-02 — see `WAVE9_CAPABILITY_REAUDIT.md`  
 Scope: sovereign blockchain **core** in `packages/sunrey-chain` — simulation / development / testnet rehearsal only.  
-Legend: **IMPLEMENTED** · **PARTIAL** · **SIMULATION** · **TEST ONLY** · **NOT IMPLEMENTED** · **BLOCKED**
+Legend: **IMPLEMENTED** · **PARTIAL** · **SIMULATION** · **TEST ONLY** · **NOT IMPLEMENTED** · **BLOCKED**  
+Wave 9 taxonomy: **PRODUCTION_READY** · **PRODUCTION_CAPABLE_WITH_EXTERNAL_DEPENDENCY** · **SANDBOX_READY** · **IMPLEMENTED_NON_PRODUCTION** · **INTERFACE_ONLY**
 
 Production mainnet is **NOT IMPLEMENTED** and **BLOCKED** by layered gates. This matrix does not claim public mainnet readiness.
 

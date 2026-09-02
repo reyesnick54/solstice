@@ -1,6 +1,6 @@
 # MoonRey Productive Intelligence Capability Matrix
 
-**Status:** Wave 5 audit (simulation)  
+**Status:** Wave 5 audit; **Wave 9 re-audit** 2026-09-02 — see `WAVE9_CAPABILITY_REAUDIT.md`  
 **Environment:** `simulation`; all `LIVE_*` flags remain `false`  
 **Date:** 2026-09-02
 

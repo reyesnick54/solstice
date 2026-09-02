@@ -1,6 +1,6 @@
 # SunRey Privacy, Identity, Policy and Authorization Capability Matrix
 
-**Status:** Wave 7 exit-gate audit (2026-09-02)  
+**Status:** Wave 7 exit-gate audit; **Wave 9 re-audit** 2026-09-02 — see `WAVE9_CAPABILITY_REAUDIT.md`  
 **Environment:** `ENVIRONMENT=simulation`; all `LIVE_*` flags `false`; `PRODUCTION_HSM_KMS_CONFIGURED=false`  
 **Legend:** **IMPLEMENTED** · **PARTIAL** · **INTERFACE_ONLY** · **SIMULATION** · **TEST_ONLY** · **NOT_IMPLEMENTED** · **BLOCKED** · **FUTURE_WAVE**
 
