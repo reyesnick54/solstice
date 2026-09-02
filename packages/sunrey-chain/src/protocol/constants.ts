@@ -24,6 +24,7 @@ export const HASH_DOMAINS = [
   'SUNREY_GOVERNANCE_V1',
   'SUNREY_VALIDATOR_V1',
   'SUNREY_EVIDENCE_V1',
+  'SUNREY_MONETARY_STATE_V1',
 ] as const;
 export type HashDomain = (typeof HASH_DOMAINS)[number];
 
