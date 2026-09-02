@@ -47,6 +47,8 @@ export const KNOWLEDGE_RELATION_KINDS = [
   'GENERATES',
   'EXECUTES',
   'HANDLES',
+  'DELIVERED',
+  'RESOLVES_TO',
   'LINKS_CLAIM',
 ] as const;
 export type KnowledgeRelationKind = (typeof KNOWLEDGE_RELATION_KINDS)[number];
@@ -64,12 +66,16 @@ export const AUTHORIZATION_GATED_RELATIONS = Object.freeze(
   new Set<KnowledgeRelationKind>(['OWNED_BY', 'AUTHORIZED_BY']),
 );
 
-/** Productive-economy event relationship templates for Wave 5 preparation. */
+/** Productive-economy event relationship templates (Wave 5). */
 export const PRODUCTIVE_EVENT_TEMPLATES = Object.freeze([
   Object.freeze({ assetClass: 'FACILITY', eventClass: 'ECONOMIC_EVENT', relation: 'GENERATES' as KnowledgeRelationKind, label: 'PowerPlant→EnergyEvent' }),
+  Object.freeze({ assetClass: 'FACILITY', eventClass: 'ECONOMIC_EVENT', relation: 'DELIVERED' as KnowledgeRelationKind, label: 'GridResource→EnergyDeliveryEvent' }),
   Object.freeze({ assetClass: 'FACILITY', eventClass: 'ECONOMIC_EVENT', relation: 'PRODUCED' as KnowledgeRelationKind, label: 'Factory→ManufacturingEvent' }),
   Object.freeze({ assetClass: 'PRODUCTIVE_ASSET', eventClass: 'ECONOMIC_EVENT', relation: 'EXECUTES' as KnowledgeRelationKind, label: 'ComputeCluster→ComputeEvent' }),
   Object.freeze({ assetClass: 'FACILITY', eventClass: 'ECONOMIC_EVENT', relation: 'HANDLES' as KnowledgeRelationKind, label: 'Port→LogisticsEvent' }),
+  Object.freeze({ assetClass: 'FACILITY', eventClass: 'ECONOMIC_EVENT', relation: 'DELIVERED' as KnowledgeRelationKind, label: 'WaterPlant→WaterDeliveryEvent' }),
+  Object.freeze({ assetClass: 'FACILITY', eventClass: 'ECONOMIC_EVENT', relation: 'PRODUCED' as KnowledgeRelationKind, label: 'Farm→AgriculturalEvent' }),
+  Object.freeze({ assetClass: 'ECONOMIC_EVENT', eventClass: 'ECONOMIC_CLAIM', relation: 'RESOLVES_TO' as KnowledgeRelationKind, label: 'ProductiveEvent→EconomicClaim' }),
 ]);
 
 export function isKnowledgeNodeClass(value: string): value is KnowledgeNodeClass {
