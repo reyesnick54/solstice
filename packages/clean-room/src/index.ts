@@ -1,3 +1,19 @@
+export {
+  CLEAN_ROOM_CAPABILITY,
+  DIFFERENTIAL_PRIVACY_CAPABILITY,
+  DIFFERENTIAL_PRIVACY_EVALUATION,
+  PrivacyBudgetLedger,
+  PRIVATE_COMPUTATION_CAPABILITY,
+  TEE_CAPABILITY,
+  createSimulationCleanRoomComputationProvider,
+  createUnavailableTeeComputationProvider,
+  evaluateDifferentialPrivacyApplicability,
+  type ComputationInPlaceRequest,
+  type ComputationInPlaceResult,
+  type DifferentialPrivacyDecision,
+  type PrivacyBudgetRecord,
+  type PrivateComputationProvider,
+} from './privacy/index.ts';
 export { SubjectScopedCleanRoomTool, assertNoCoinIssuance } from './agent-tool.ts';
 export { consumeBudget, emptyBudget } from './budget.ts';
 export { runApprovedComputation, type EphemeralRow } from './compute.ts';
