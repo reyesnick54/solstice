@@ -34,7 +34,7 @@ async function get(path) {
 }
 
 function lagLine(payload) {
-  return `<p class="live">indexed_finalized_height=${payload.indexed_finalized_height} chain_finalized_height=${payload.chain_finalized_height} index_lag=${payload.index_lag}</p>`;
+  return `<p class="live">indexed_finalized_height=${escapeHtml(payload.indexed_finalized_height)} chain_finalized_height=${escapeHtml(payload.chain_finalized_height)} index_lag=${escapeHtml(payload.index_lag)}</p>`;
 }
 
 async function renderHome() {
@@ -42,19 +42,19 @@ async function renderHome() {
   app.innerHTML = `
     ${lagLine(home)}
     <div class="grid">
-      <div class="card"><h3>Latest finalized height</h3><div>${home.latestFinalizedHeight}</div></div>
-      <div class="card"><h3>Latest block</h3><div>${home.latestBlock?.blockId ?? '—'}</div></div>
-      <div class="card"><h3>Transaction activity</h3><div>${home.transactionActivity}</div></div>
-      <div class="card"><h3>Validators</h3><div>${home.validatorCount}</div></div>
-      <div class="card"><h3>Protocol version</h3><div>${home.activeProtocolVersion}</div></div>
-      <div class="card"><h3>SunRey development/testnet supply</h3><div>${home.sunreyDevelopmentSupply}</div></div>
-      <div class="card"><h3>MoonRey development/testnet supply</h3><div>${home.moonreyDevelopmentSupply}</div></div>
-      <div class="card"><h3>Productive contributions</h3><div>${home.productiveContributionCount}</div></div>
-      <div class="card"><h3>Interop clients</h3><div>${home.interopClientCount}</div></div>
+      <div class="card"><h3>Latest finalized height</h3><div>${escapeHtml(home.latestFinalizedHeight)}</div></div>
+      <div class="card"><h3>Latest block</h3><div>${escapeHtml(home.latestBlock?.blockId ?? '—')}</div></div>
+      <div class="card"><h3>Transaction activity</h3><div>${escapeHtml(home.transactionActivity)}</div></div>
+      <div class="card"><h3>Validators</h3><div>${escapeHtml(home.validatorCount)}</div></div>
+      <div class="card"><h3>Protocol version</h3><div>${escapeHtml(home.activeProtocolVersion)}</div></div>
+      <div class="card"><h3>SunRey development/testnet supply</h3><div>${escapeHtml(home.sunreyDevelopmentSupply)}</div></div>
+      <div class="card"><h3>MoonRey development/testnet supply</h3><div>${escapeHtml(home.moonreyDevelopmentSupply)}</div></div>
+      <div class="card"><h3>Productive contributions</h3><div>${escapeHtml(home.productiveContributionCount)}</div></div>
+      <div class="card"><h3>Interop clients</h3><div>${escapeHtml(home.interopClientCount)}</div></div>
     </div>
     <p>Ticker status remains NOT_ASSIGNED. Development/testnet quantities are not market capitalization.</p>
     <h2>Latest oracle facts</h2>
-    <pre>${JSON.stringify(home.latestOracleFacts, null, 2)}</pre>
+    <pre>${escapeHtml(JSON.stringify(home.latestOracleFacts, null, 2))}</pre>
   `;
 }
 
@@ -134,7 +134,7 @@ document.getElementById('search-form').addEventListener('submit', async (event) 
   event.preventDefault();
   const q = document.getElementById('search').value;
   const payload = await get(`/v1/search?q=${encodeURIComponent(q)}`);
-  app.innerHTML = `<h2>Search</h2><pre>${JSON.stringify(payload, null, 2)}</pre>`;
+  app.innerHTML = `<h2>Search</h2><pre>${escapeHtml(JSON.stringify(payload, null, 2))}</pre>`;
 });
 
 for (const button of buttons) {

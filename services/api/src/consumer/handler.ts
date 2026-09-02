@@ -21,7 +21,8 @@ import {
   VERIFICATION_DISPLAY_STATES,
 } from './types.ts';
 import { PAYMENT_LIFECYCLE_STATUSES } from '../../../../packages/payments/src/platform/lifecycle.ts';
-import { bffError, isBffError, statusForError, type BffErrorEnvelope } from './errors.ts';
+import { handleVerifiedCardWebhook, type CardWebhookBridge } from './card-webhook.ts';
+import { bffError, bffFailClosedInternal, isBffError, statusForError, type BffErrorEnvelope } from './errors.ts';
 import { pageSizeOf } from './pagination.ts';
 import { cachePolicyForPath } from './cache.ts';
 import { CONSUMER_RESOURCE_CATALOG } from './resources.ts';
@@ -139,7 +140,7 @@ export type ConsumerBffRuntime = {
   readonly bff: ConsumerBff;
   readonly sessions: SessionDirectory;
   readonly identity?: IdentityService;
-  readonly ingestCardWebhook?: (body: unknown, requestId: string) => unknown;
+  readonly cardWebhook?: CardWebhookBridge;
   readonly payments?: PaymentPlatform;
   readonly agent?: AgentBffFacade;
   readonly agentRuntime?: AgentConversationRuntime;
@@ -201,7 +202,7 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
   };
 
   if (request.path === '/api/v1/webhooks/cards' && request.method === 'POST') {
-    if (!runtime.ingestCardWebhook) {
+    if (!runtime.cardWebhook) {
       return json(
         503,
         bffError({
@@ -214,7 +215,15 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
         headers,
       );
     }
-    return json(200, runtime.ingestCardWebhook(request.body, requestId), headers);
+    const verified = handleVerifiedCardWebhook({
+      body: request.body,
+      requestId,
+      bridge: runtime.cardWebhook,
+    });
+    if (isBffError(verified)) {
+      return json(statusForError(verified), verified, headers);
+    }
+    return json(verified.status, verified.body, headers);
   }
   if (request.path === '/api/v1/sandbox/personas' && request.method === 'GET') {
     return json(200, { label: 'SANDBOX_FIXTURE_NON_PRODUCTION', production: false, items: listSandboxPersonas() }, headers);
@@ -309,19 +318,8 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
 
   try {
     return dispatchAuthenticated(runtime, request, principal, requestId, headers);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'request failed';
-    return json(
-      500,
-      bffError({
-        errorCode: 'MALFORMED',
-        category: 'INTERNAL',
-        message,
-        retryable: true,
-        requestId,
-      }),
-      headers,
-    );
+  } catch {
+    return json(500, bffFailClosedInternal(requestId), headers);
   }
 }
 

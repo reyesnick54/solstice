@@ -70,6 +70,9 @@ export function bffError(input: {
 }
 
 export function statusForError(error: BffErrorEnvelope): number {
+  if (error.category === 'INTERNAL') {
+    return 500;
+  }
   switch (error.errorCode) {
     case 'AUTH_REQUIRED':
     case 'SESSION_INVALID':
@@ -108,6 +111,17 @@ export function statusForError(error: BffErrorEnvelope): number {
     default:
       return 400;
   }
+}
+
+/** Stack traces and internal diagnostics stay server-side. */
+export function bffFailClosedInternal(requestId: string): BffErrorEnvelope {
+  return bffError({
+    errorCode: 'MALFORMED',
+    category: 'INTERNAL',
+    message: 'an unexpected error occurred',
+    retryable: false,
+    requestId,
+  });
 }
 
 export function isBffError(value: unknown): value is BffErrorEnvelope {

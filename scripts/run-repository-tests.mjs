@@ -249,7 +249,8 @@ export const TEST_SUITES = {
   ],
   "security": [
     "packages/security/src/*.test.ts",
-    "packages/security/src/regulated/**/*.test.ts"
+    "packages/security/src/regulated/**/*.test.ts",
+    "tests/wave-9-application-exchange-security.test.ts"
   ],
   "merge-variant-1": [
     "packages/domain/src/*.test.ts",
