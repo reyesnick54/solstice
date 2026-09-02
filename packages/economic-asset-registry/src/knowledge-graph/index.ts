@@ -7,6 +7,7 @@ export {
   PSEUDONYMOUS_NODE_CLASSES,
   AUTHORIZATION_GATED_RELATIONS,
   PRODUCTIVE_EVENT_TEMPLATES,
+  HUMAN_EVENT_TEMPLATES,
   isKnowledgeNodeClass,
   isKnowledgeRelationKind,
   type KnowledgeNodeClass,
