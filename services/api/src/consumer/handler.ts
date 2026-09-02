@@ -63,6 +63,8 @@ import {
   WALLET_STATUSES,
 } from '../../../../packages/custody/src/product/taxonomy.ts';
 import { dispatchWallets } from './wallets.ts';
+import { dispatchMoneyIntegration } from './money-integration/dispatch.ts';
+import type { MoneyIntegrationPlatform } from './money-integration/platform.ts';
 import { dispatchHin } from './hin.ts';
 import type { InformationRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
 import type { NativeEconomySurface } from './native-economy-adapter.ts';
@@ -138,6 +140,7 @@ export type ConsumerBffRuntime = {
   readonly productiveEconomy?: ProductiveEconomySurface;
   readonly worldEconomy?: WorldEconomySurface;
   readonly exchange?: ExchangeLifecycleSurface | ExchangeProductSurface;
+  readonly moneyIntegration?: MoneyIntegrationPlatform;
   readonly phaseH?: PhaseHProductSurface;
   readonly dataRights?: ConsentDataRightsEngine;
   readonly hinAccess?: import('../../../../packages/human-access-economy/src/hin-access.ts').HumanInformationAccessBridge;
@@ -470,6 +473,12 @@ function dispatchAuthenticated(
     const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
     if (grow) {
       return grow;
+    }
+  }
+  if (runtime.moneyIntegration) {
+    const money = dispatchMoneyIntegration(runtime.moneyIntegration, request, principal, headers);
+    if (money) {
+      return money;
     }
   }
   if (runtime.exchange) {
@@ -2148,6 +2157,11 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/wallets/{id}/withdrawal-quote',
   'POST /api/v1/wallets/{id}/withdrawals',
   'GET /api/v1/wallets/{id}/withdrawals/{withdrawalId}',
+  'GET /api/v1/money/holdings',
+  'GET /api/v1/money/history',
+  'GET /api/v1/money/settlements',
+  'POST /api/v1/money/reconcile',
+  'GET /api/v1/money/market-price-boundary',
   'GET /api/v1/assets',
   'GET /api/v1/assets/{assetId}',
   'GET /api/v1/hin/rights',

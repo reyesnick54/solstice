@@ -125,6 +125,27 @@ export {
 } from './demo-helpers.ts';
 export * as mobileSync from './mobile-sync/index.ts';
 export {
+  canonicalChainBalance,
+  projectionMatchesCanonical,
+  rebuildBalanceProjectionFromHistory,
+} from './balance-projection.ts';
+export type { ChainBalanceProjection } from './balance-projection.ts';
+export {
+  executeNativeTransferLifecycle,
+  lifecycleStateFromRecord,
+  recordFinalizedClientTx,
+  rejectCrossAssetTransfer,
+  rejectReplay,
+  transferIsComplete,
+  transferIsTerminal,
+  NATIVE_TRANSFER_LIFECYCLE_STATES,
+} from './transfer-lifecycle.ts';
+export type {
+  NativeTransferAttempt,
+  NativeTransferLifecycleState,
+  NativeTransferReceipt,
+} from './transfer-lifecycle.ts';
+export {
   MobileWalletSyncEngine,
   ReferenceMobileClient,
   runMobileWalletCommand,

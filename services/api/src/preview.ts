@@ -46,6 +46,7 @@ export function createSunReyPreviewRuntime(
     previewDiagnostics: world.previewDiagnostics,
     conversation: world.conversation,
     wallets: world.wallets,
+    moneyIntegration: world.moneyIntegration,
     hin: world.hin,
     hinContributions: world.hinContributions,
     nativeEconomy: createNativeEconomySurface(),

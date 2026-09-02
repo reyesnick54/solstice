@@ -264,5 +264,25 @@ export { ExchangeSettlementRecovery } from './operation-recovery.ts';
 export type { ExchangeSettlementDraft, SettlementPhase } from './operation-recovery.ts';
 export * from './product/index.ts';
 export * from './production-core/index.ts';
+export {
+  WAVE8_SETTLEMENT_STATES,
+  mapOrderStatusToWave8,
+  mapNativeSettlementToWave8,
+  mapClearingStateToWave8,
+  wave8SettlementRecord,
+  assertAssetSeparation,
+  assertNoTickerCollision,
+} from './settlement-lifecycle.ts';
+export type { Wave8SettlementRecord, Wave8SettlementState } from './settlement-lifecycle.ts';
+export {
+  MARKET_PRICE_AUTHORITY,
+  PEVE_AUTHORITY,
+  GPUV_AUTHORITY,
+  NATIVE_SUPPLY_AUTHORITY,
+  assertMarketPriceDoesNotAlterSupply,
+  marketPriceBoundaryProof,
+  sunreyTickerIsDistinctFromMoonrey,
+} from './market-price-boundary.ts';
+export type { MarketPriceBoundaryProof } from './market-price-boundary.ts';
 export * as accessFabric from './access-fabric/index.ts';
 export * as merchantExchange from './merchant-exchange/index.ts';
