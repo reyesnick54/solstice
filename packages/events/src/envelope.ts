@@ -164,14 +164,31 @@ const SENSITIVE_PAYLOAD_KEYS = [
   'rawConsent',
 ];
 
-export function assertSafeEventPayload(payload: unknown): void {
-  if (payload === null || typeof payload !== 'object') {
-    return;
+function collectUnsafeEventPayloadKeys(payload: unknown, path = 'payload'): string[] {
+  const violations: string[] = [];
+  if (payload === null || typeof payload === 'bigint' || typeof payload !== 'object') {
+    return violations;
   }
-  for (const key of Object.keys(payload as Record<string, unknown>)) {
+  if (Array.isArray(payload)) {
+    payload.forEach((child, index) => {
+      violations.push(...collectUnsafeEventPayloadKeys(child, `${path}[${index}]`));
+    });
+    return violations;
+  }
+  for (const [key, child] of Object.entries(payload as Record<string, unknown>)) {
+    const fieldPath = path.length > 0 ? `${path}.${key}` : key;
     if (SENSITIVE_PAYLOAD_KEYS.includes(key)) {
-      throw new Error(`event payload must not include sensitive field '${key}'`);
+      violations.push(fieldPath);
     }
+    violations.push(...collectUnsafeEventPayloadKeys(child, fieldPath));
+  }
+  return violations;
+}
+
+export function assertSafeEventPayload(payload: unknown): void {
+  const violations = collectUnsafeEventPayloadKeys(payload);
+  if (violations.length > 0) {
+    throw new Error(`event payload must not include sensitive field '${violations[0]}'`);
   }
 }
 
