@@ -62,6 +62,11 @@ export {
   loadEconomicGraphState,
   persistEconomicGraphState,
 } from './economic-graph/pg-economic-graph-store.ts';
+export {
+  loadKnowledgeGraphSnapshot,
+  persistKnowledgeGraphSnapshot,
+  type PersistedKnowledgeGraphSnapshot,
+} from './economic-knowledge-graph/pg-economic-knowledge-graph-store.ts';
 export { loadGrowthState, persistGrowthState } from './growth/pg-growth-store.ts';
 export { persistGrowExecutionState } from './growth/pg-grow-execution-store.ts';
 export { loadPeveState, persistPeveState } from './value/pg-peve-store.ts';

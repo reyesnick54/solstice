@@ -117,3 +117,35 @@ export {
   waterFixture,
 } from './fixtures.ts';
 export { runUnifiedEconomicDataFabricDemo, simulateGovernedPath, submitEnvelopeGroupToOracle } from './demo.ts';
+export {
+  FEDERATED_QUERY_LAYER_ID,
+  FEDERATED_QUERY_LAYER_VERSION,
+  FEDERATION_NOT_MONETARY_AUTHORITY,
+  CANONICAL_FEDERATION_SOURCES,
+  FederationSourceRegistry,
+  TRINO_EVALUATION,
+  TRINO_OPERATIONALLY_JUSTIFIED,
+  TRINO_INTEGRATION_ACTIVE,
+  createDefaultFederationAdapter,
+  InMemoryFederationAdapter,
+  evaluateFederationPurpose,
+  refusePurposeExpansion,
+  applyMinimizationDefaults,
+  validateQueryMinimization,
+  resolveMaterialization,
+  executeFederatedQuery,
+  FederationAuditJournal,
+  ENERGY_WEATHER_CROSS_SOURCE_QUERY,
+  MANUFACTURING_LOGISTICS_CROSS_SOURCE_QUERY,
+  RESEARCH_PUBLICATION_CROSS_SOURCE_QUERY,
+  WORKFORCE_EDUCATION_CROSS_SOURCE_QUERY,
+  registerFederationFixtureHandlers,
+  FEDERATION_FIXTURE_NOW_UNIX,
+} from './federation/index.ts';
+export type {
+  FederatedQueryRequest,
+  FederatedQueryResult,
+  FederationQueryPurpose,
+  MaterializationLevel,
+  FederationAuditReceipt,
+} from './federation/index.ts';

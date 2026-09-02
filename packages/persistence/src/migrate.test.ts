@@ -700,6 +700,18 @@ describe('versioned SQL migrations', () => {
     assert.equal(/raw_payload|credential|password|secret/i.test(v006.sql), false);
   });
 
+  it('customer V041 persists economic knowledge graph without monetary authority', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v041 = files.find((file) => file.version === 41);
+    assert.ok(v041);
+    assert.equal(v041.filename, 'V041__economic_knowledge_graph.sql');
+    assert.match(v041.sql, /CREATE SCHEMA IF NOT EXISTS economic_knowledge_graph/);
+    assert.match(v041.sql, /CREATE TABLE economic_knowledge_graph\.node/);
+    assert.match(v041.sql, /CREATE TABLE economic_knowledge_graph\.alias/);
+    assert.match(v041.sql, /mutates_financial_state BOOLEAN NOT NULL DEFAULT FALSE CHECK \(mutates_financial_state = FALSE\)/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v041.sql), false);
+  });
+
   it('ledger V004 persists banking-core metadata without a balance column', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
     const v004 = files.find((file) => file.version === 4);

@@ -8,3 +8,4 @@ export * from './events.ts';
 export * from './bridges.ts';
 export * from './provider-risk-monitor.ts';
 export * from './safe-url.ts';
+export * from './provenance/index.ts';
