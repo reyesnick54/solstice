@@ -63,6 +63,8 @@ import {
   WALLET_STATUSES,
 } from '../../../../packages/custody/src/product/taxonomy.ts';
 import { dispatchWallets } from './wallets.ts';
+import { dispatchMoneyIntegration } from './money-integration/dispatch.ts';
+import type { MoneyIntegrationPlatform } from './money-integration/platform.ts';
 import { dispatchHin } from './hin.ts';
 import type { InformationRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
 import type { NativeEconomySurface } from './native-economy-adapter.ts';
@@ -111,6 +113,9 @@ import { enrichHomeResource } from './home-integration.ts';
 import { AGENT_AUTHORIZATION_POLICY } from './agent-authorization.ts';
 import { getAgentMandate, grantAgentMandate, revokeAgentMandate } from './agent-mandates.ts';
 import { dispatchVaultOpportunities } from './vault-opportunities.ts';
+import { dispatchWave8, WAVE8_BFF_ROUTES } from './wave8-dispatch.ts';
+import { CONTRACT_RESPONSE_HEADERS } from './api-contract.ts';
+import { BLOCKCHAIN_TX_STATUSES, ECONOMIC_CLAIM_STATUSES } from './status-semantics.ts';
 
 export type BffRequest = {
   readonly method: string;
@@ -147,6 +152,7 @@ export type ConsumerBffRuntime = {
   readonly productiveEconomy?: ProductiveEconomySurface;
   readonly worldEconomy?: WorldEconomySurface;
   readonly exchange?: ExchangeLifecycleSurface | ExchangeProductSurface;
+  readonly moneyIntegration?: MoneyIntegrationPlatform;
   readonly phaseH?: PhaseHProductSurface;
   readonly dataRights?: ConsentDataRightsEngine;
   readonly hinAccess?: import('../../../../packages/human-access-economy/src/hin-access.ts').HumanInformationAccessBridge;
@@ -187,7 +193,7 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
   const headers = {
     'cache-control': cachePolicyForPath(request.path).cacheControl,
     vary: 'Authorization',
-    'x-sunrey-api-version': 'v1',
+    ...CONTRACT_RESPONSE_HEADERS,
     'x-sunrey-surface': 'CONSUMER_BFF',
     'x-sunrey-environment': 'simulation',
     'x-sunrey-sandbox-mode': 'true',
@@ -284,6 +290,8 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
         hinPurpose: ['RESEARCH', 'PRODUCT_IMPROVEMENT', 'AGGREGATED_ANALYTICS', 'STATISTICAL_INSIGHT', 'MODEL_EVALUATION', 'MARKETING', 'CREDIT_DECISIONING'],
         hinCategory: HIN_PRODUCT_CATEGORIES,
         hinVerification: HIN_VERIFICATION_STATES,
+        blockchainTxStatus: BLOCKCHAIN_TX_STATUSES,
+        economicClaimStatus: ECONOMIC_CLAIM_STATUSES,
       },
       headers,
     );
@@ -326,6 +334,23 @@ function dispatchAuthenticated(
 ): BffResponse | Promise<BffResponse> {
   const { method, path, query, body } = request;
   const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
+
+  const wave8 = dispatchWave8(runtime, { method, path, query, accept: request.accept }, principal, requestId);
+  if (wave8) {
+    const mergedHeaders = Object.freeze({
+      ...headers,
+      ...(wave8.extraHeaders ?? {}),
+    });
+    if (wave8.eventStream) {
+      return Object.freeze({
+        status: wave8.status,
+        body: wave8.body,
+        headers: mergedHeaders,
+        eventStream: wave8.eventStream,
+      });
+    }
+    return json(wave8.status, wave8.body, mergedHeaders as Record<string, string>);
+  }
 
   if (path === '/api/v1/me' && method === 'GET') {
     return json(200, runtime.bff.profile(principal), headers);
@@ -508,6 +533,12 @@ function dispatchAuthenticated(
     const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
     if (grow) {
       return grow;
+    }
+  }
+  if (runtime.moneyIntegration) {
+    const money = dispatchMoneyIntegration(runtime.moneyIntegration, request, principal, headers);
+    if (money) {
+      return money;
     }
   }
   if (runtime.exchange) {
@@ -2237,6 +2268,11 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/wallets/{id}/withdrawal-quote',
   'POST /api/v1/wallets/{id}/withdrawals',
   'GET /api/v1/wallets/{id}/withdrawals/{withdrawalId}',
+  'GET /api/v1/money/holdings',
+  'GET /api/v1/money/history',
+  'GET /api/v1/money/settlements',
+  'POST /api/v1/money/reconcile',
+  'GET /api/v1/money/market-price-boundary',
   'GET /api/v1/assets',
   'GET /api/v1/assets/{assetId}',
   'GET /api/v1/hin/rights',
@@ -2370,4 +2406,5 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/sandbox/personas',
   'POST /api/v1/webhooks/cards',
   ...SUBSCRIPTION_BFF_ROUTES,
+  ...WAVE8_BFF_ROUTES,
 ] as const;

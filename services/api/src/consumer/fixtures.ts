@@ -75,6 +75,10 @@ import { ProductGrowthService } from '../../../../packages/platform/src/growth/p
 import { createAgentConversationSurface, type AgentConversationSurface } from './conversation.ts';
 import { createWalletProductFromKernel } from '../../../../packages/custody/src/product/sandbox.ts';
 import type { WalletProductService } from '../../../../packages/custody/src/product/service.ts';
+import { createSandboxMoneyIntegration } from './money-integration/sandbox.ts';
+import type { MoneyIntegrationPlatform } from './money-integration/platform.ts';
+import type { NativeClearingEngine } from '../../../../packages/sunrey-exchange/src/native-clearing/engine.ts';
+import type { ConsumerBffRuntime } from './handler.ts';
 import { createSandboxRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
 import type { InformationRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
 import { createHinContributionSurface, type HinContributionSurface } from './hin-adapter.ts';
@@ -166,6 +170,8 @@ export type SandboxWorld = {
   readonly previewDiagnostics: () => Readonly<Record<string, unknown>>;
   readonly conversation: AgentConversationSurface;
   readonly wallets: WalletProductService;
+  readonly moneyIntegration: MoneyIntegrationPlatform;
+  readonly nativeClearing: NativeClearingEngine;
   readonly hin: InformationRightsMarketplace;
   readonly hinContributions: HinContributionSurface;
   readonly productiveEconomy: ProductiveEconomySurface;
@@ -664,6 +670,13 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   });
 
   const wallets = attachSandboxWallets(runtime, personas, { providerDown: options.providerDown === true });
+  const moneySandbox = createSandboxMoneyIntegration({
+    walletProduct: wallets,
+    exchangeCustomerId: personas.exchange.customerId,
+    counterpartyCustomerId: personas.basic_verified.customerId,
+  });
+  const moneyIntegration = moneySandbox.platform;
+  const nativeClearing = moneySandbox.nativeClearing;
   const hin = createSandboxRightsMarketplace(runtime.clock, personas.basic_verified.customerId);
   const hinContributions = createHinContributionSurface();
   const productiveEconomy = createProductiveEconomySurface();
@@ -813,6 +826,8 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     previewDiagnostics: () => marketResearch.diagnostics(),
     conversation: createAgentConversationSurface(),
     wallets,
+    moneyIntegration,
+    nativeClearing,
     hin,
     hinContributions,
     productiveEconomy,
@@ -829,6 +844,38 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     opportunity,
     subscriptions,
     providerDown: options.providerDown ? { cards: true, payments: true, fx: true, custody: true } : {},
+  });
+}
+
+/** Canonical Consumer BFF runtime assembled from a sandbox world. */
+export function consumerBffRuntimeFromWorld(world: SandboxWorld): ConsumerBffRuntime {
+  return Object.freeze({
+    bff: world.bff,
+    sessions: world.sessions,
+    identity: world.runtime.identity.service,
+    payments: world.payments,
+    agent: world.agent,
+    agentRuntime: world.agentRuntime,
+    grow: world.grow,
+    previewDiagnostics: world.previewDiagnostics,
+    conversation: world.conversation,
+    wallets: world.wallets,
+    moneyIntegration: world.moneyIntegration,
+    hin: world.hin,
+    hinContributions: world.hinContributions,
+    productiveEconomy: world.productiveEconomy,
+    exchange: world.exchange,
+    dataRights: world.dataRights,
+    vault: world.vault,
+    access: world.access,
+    personalEconomy: world.personalEconomy,
+    hinAccess: world.hinAccess,
+    worldExternalData: world.worldExternalData,
+    environmental: world.environmental,
+    travel: world.travel,
+    agentExternalEvidence: world.agentExternalEvidence,
+    opportunity: world.opportunity,
+    subscriptions: world.subscriptions,
   });
 }
 

@@ -43,6 +43,25 @@ export { validateAddressBinding, deriveDepositAddress, networkForAsset } from '.
 export { estimateWalletFees, feeChangedMaterially } from './fees.ts';
 export { mapNativeFinality, mapExternalFinality, depositIsFinal } from './finality.ts';
 export {
+  describeBlockchainAccount,
+  describeCustodialWallet,
+  describeExchangeAccount,
+  describeFiatAccount,
+  WALLET_ARCHITECTURE_KINDS,
+  BALANCE_AUTHORITY_SOURCES,
+} from './wallet-architecture.ts';
+export type { WalletArchitectureDescriptor, WalletArchitectureKind, BalanceAuthoritySource } from './wallet-architecture.ts';
+export { reconcileMoneySurfaces, detectProjectionMismatch, MONEY_RECONCILIATION_BREAK_KINDS } from './money-reconciliation.ts';
+export type { MoneyReconciliationReport, MoneyReconciliationBreak } from './money-reconciliation.ts';
+export {
+  fromWalletTransaction,
+  fromNativeTransfer,
+  fromExchangeSettlement,
+  mergeUnifiedHistory,
+  UNIFIED_HISTORY_SOURCE_TYPES,
+} from './unified-transaction-history.ts';
+export type { UnifiedTransactionHistoryItem, UnifiedHistorySourceType } from './unified-transaction-history.ts';
+export {
   createWalletProductFromKernel,
   createWalletProductSandbox,
   provisionSandboxOwner,

@@ -206,6 +206,7 @@ export const CONSUMER_RESOURCE_GROUPS = [
   'AGENT',
   'EXCHANGE',
   'WALLETS',
+  'MONEY',
   'ECONOMY',
   'HIN',
   'ACCESS',

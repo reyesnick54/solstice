@@ -1806,6 +1806,52 @@ paths:
       responses:
         "200":
           description: Activity
+  /api/v1/money/holdings:
+    get:
+      operationId: listMoneyHoldings
+      summary: Unified money holdings across chain, custody, and exchange planes
+      description: Read models only. Production money movement and regulated custody remain disabled.
+      responses:
+        "200":
+          description: Holdings with architecture descriptors
+  /api/v1/money/history:
+    get:
+      operationId: listMoneyHistory
+      summary: Unified transaction history projection
+      responses:
+        "200":
+          description: Combined native, custody, and exchange activity
+  /api/v1/money/settlements:
+    get:
+      operationId: listMoneySettlements
+      summary: Exchange settlement records in Wave 8 lifecycle vocabulary
+      responses:
+        "200":
+          description: Settlement records with sandbox simulation labels
+  /api/v1/money/reconcile:
+    post:
+      operationId: reconcileMoneyPlanes
+      summary: Reconcile chain, custody, exchange, and customer read-model planes
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assetId:
+                  type: string
+                  example: SUNREY_COIN
+      responses:
+        "200":
+          description: Reconciliation report; never auto-corrects chain state
+  /api/v1/money/market-price-boundary:
+    get:
+      operationId: getMoneyMarketPriceBoundary
+      summary: Prove market price separation from PEVE, GPUV, and native supply
+      responses:
+        "200":
+          description: Market price boundary proof object
   /api/v1/economy:
     get:
       operationId: getEconomy

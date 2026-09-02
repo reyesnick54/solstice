@@ -35,6 +35,35 @@
     {
       "label": "category_metric_history",
       "ns": "77858"
+      "ns": "830325"
+    },
+    {
+      "label": "permissions",
+      "ns": "694864"
+    },
+    {
+      "label": "access_history",
+      "ns": "560066"
+    },
+    {
+      "label": "hin_contribution_summary",
+      "ns": "444554"
+    },
+    {
+      "label": "aggregate_hin_metrics",
+      "ns": "371733"
+    },
+    {
+      "label": "earnings",
+      "ns": "301134"
+    },
+    {
+      "label": "productive_overview",
+      "ns": "240382"
+    },
+    {
+      "label": "category_metric_history",
+      "ns": "78727"
     }
   ]
 }
