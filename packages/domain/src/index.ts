@@ -220,3 +220,34 @@ export {
   isConsumerActivityStatus,
   isConsumerActivityType,
 } from './customer-activity.ts';
+
+export type {
+  BlockHash,
+  CanonicalBlockchainReference,
+  ChainId,
+  ChainTransactionId,
+  EconomicClaimId,
+  EconomicReceiptId,
+  MonetaryStateRoot,
+} from './blockchain-reference.ts';
+export {
+  asBlockHash,
+  asChainId,
+  asChainTransactionId,
+  asEconomicClaimId,
+  asEconomicReceiptId,
+  asMonetaryStateRoot,
+  freezeCanonicalBlockchainReference,
+  isCanonicalBlockchainReference,
+} from './blockchain-reference.ts';
+
+export type {
+  ProductReconciliationLink,
+  ProductReconciliationLinkId,
+  ProductReconciliationSourceKind,
+} from './product-reconciliation-link.ts';
+export {
+  PRODUCT_RECONCILIATION_SOURCE_KINDS,
+  asProductReconciliationLinkId,
+  freezeProductReconciliationLink,
+} from './product-reconciliation-link.ts';
