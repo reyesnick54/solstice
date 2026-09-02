@@ -181,6 +181,8 @@ export {
 } from './workflows.ts';
 export {
   createSnapshot,
+  developmentGenesisFingerprint,
+  genesisFingerprint,
   loadSnapshot,
   persistSnapshot,
   restoreSnapshot,
@@ -189,6 +191,14 @@ export {
   verifySnapshot,
 } from './snapshots.ts';
 export { planGenesisSync, planSnapshotSync, refuseUnverifiedProvider } from './state-sync.ts';
+export {
+  assertBackupBoundariesDistinct,
+  reconcileSecondaryToChain,
+  runChaosRecoverySuite,
+  syncBlocksFromPeers,
+  verifyCanonicalSnapshot,
+  WAVE2_BACKUP_BOUNDARIES,
+} from '../sync/index.ts';
 export {
   authorizeDevelopmentUpgrade,
   developmentUpgradeFixture,
