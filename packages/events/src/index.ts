@@ -361,6 +361,7 @@ export {
   type RetryPolicy,
 } from './delivery.ts';
 export { InProcessTransport, type EventTransport, type InProcessHandler } from './transport.ts';
+export { DurableLocalEventBus, type EventBus, type DurableLocalEventBusOptions } from './durable-bus.ts';
 export {
   InboxProcessor,
   InMemoryInboxStore,

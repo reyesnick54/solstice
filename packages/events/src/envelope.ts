@@ -382,6 +382,32 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
       id: String(body.receiptId ?? body.deliveryId ?? body.providerEventId ?? 'unknown'),
     };
   }
+  if (
+    eventType === 'ProviderRecordReceived' ||
+    eventType.startsWith('Observation') ||
+    eventType === 'EntityResolved'
+  ) {
+    return {
+      type: 'provider',
+      id: String(
+        body.providerRecordId ??
+          body.observationId ??
+          body.normalizedObservationId ??
+          body.entityId ??
+          body.providerId ??
+          'unknown',
+      ),
+    };
+  }
+  if (eventType === 'EvidenceCreated') {
+    return { type: 'evidence', id: String(body.evidenceId ?? 'unknown') };
+  }
+  if (eventType === 'FactVerified') {
+    return { type: 'data', id: String(body.factId ?? 'unknown') };
+  }
+  if (eventType.startsWith('Claim')) {
+    return { type: 'data', id: String(body.claimId ?? 'unknown') };
+  }
   if (eventType.startsWith('Agent')) {
     return {
       type: 'agent',
