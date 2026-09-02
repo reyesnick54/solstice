@@ -6,6 +6,11 @@
  * transition.
  *
  * There is no oracle → mint path.
+ *
+ * @deprecated For direct observation → issuance proposals, use
+ * `rejectObservationToProposalShortcut` or the Wave 5 pipeline at
+ * `packages/sunrey-chain/src/economics/wave5-moonrey-pipeline`.
+ * Observations alone cannot propose MoonRey issuance.
  */
 
 import {
@@ -22,6 +27,9 @@ import type { EconomicObservation, ProductiveValueMethodology } from './types.ts
 export const ORACLE_CANNOT_MINT = true as const;
 export const PRODUCTIVE_VALUE_IS_NOT_SUPPLY_POLICY = true as const;
 export const SUPPLY_POLICY_IS_NOT_EXCHANGE_PRICE = true as const;
+
+/** @deprecated Simulation-only. Observations cannot propose issuance. */
+export const OBSERVATION_TO_ISSUANCE_SHORTCUT_DEPRECATED = true as const;
 
 export type EconomySeparation = {
   readonly productiveEconomicValue: {
@@ -98,19 +106,21 @@ export function proposeMoonReyIssuanceFromObservations(input: {
   readonly ok: false;
   readonly code: string;
   readonly minted: false;
+  readonly deprecated: true;
+  readonly simulationOnly: true;
 } {
   if (input.methodology.hardcodedIssuanceRatio || input.methodology.productionAuthorized) {
-    return { ok: false, code: 'METHODOLOGY_NOT_AUTHORIZED', minted: false };
+    return { ok: false, code: 'METHODOLOGY_NOT_AUTHORIZED', minted: false, deprecated: true, simulationOnly: true };
   }
   const usable = input.observations.filter(
     (row) => verificationEligibleForValuation(row.verification) && row.freshness.usableForTimeSensitiveValuation,
   );
   if (usable.length === 0) {
-    return { ok: false, code: 'NO_VERIFIED_FRESH_OBSERVATION', minted: false };
+    return { ok: false, code: 'NO_VERIFIED_FRESH_OBSERVATION', minted: false, deprecated: true, simulationOnly: true };
   }
   const safety = evaluateOracleSafety({ observations: observationsToOracleQuality(usable) });
   if (!safety.ok) {
-    return { ok: false, code: safety.code, minted: false };
+    return { ok: false, code: safety.code, minted: false, deprecated: true, simulationOnly: true };
   }
   const authority = input.authority ?? new ProtocolNativeSupplyAuthority();
   const pipeline = runMoonReyIssuancePipeline(authority, {
@@ -126,5 +136,11 @@ export function proposeMoonReyIssuanceFromObservations(input: {
     oracleOnly: true,
     observations: observationsToOracleQuality(usable),
   });
-  return { ok: false, code: pipeline.ok ? 'ORACLE_CANNOT_MINT' : pipeline.code, minted: false };
+  return {
+    ok: false,
+    code: pipeline.ok ? 'ORACLE_CANNOT_MINT' : pipeline.code,
+    minted: false,
+    deprecated: true,
+    simulationOnly: true,
+  };
 }
