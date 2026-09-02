@@ -48,11 +48,15 @@ export type { TransactionFamily } from './transaction-family.ts';
 
 export type {
   Authentication,
+  BlockCommitmentRootsV1,
+  BlockHeader,
   BlockHeaderV1,
+  BlockHeaderV2,
   BodyHeader,
   EnvelopeV1,
   TransactionBodyV1,
 } from './envelope.ts';
+export { isBlockHeaderV2 } from './envelope.ts';
 
 export {
   CodecError,
@@ -60,6 +64,8 @@ export {
   encodeEnvelope,
   encodeUnsignedEnvelope,
   encodeBlockHeader,
+  encodeBlockHeaderV2,
+  decodeBlockHeader,
   encodeEconomicObject,
   decodeEconomicObject,
   injectUnknownField,
