@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "wave": "wave9-readiness",
+  "label": "ENGINEERING_MEASUREMENT",
+  "suites": {
+    "rate-limit": {
+      "minDeniedRequests": 1,
+      "maxBurstCrashRate": 0
+    },
+    "event-backlog": {
+      "requireIdempotentRecovery": true
+    },
+    "blockchain-failure": {
+      "requireSupplyIdentical": true
+    },
+    "exchange-failure": {
+      "requireDuplicateSettlementNoop": true
+    }
+  }
+}

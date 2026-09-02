@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "wave": "wave9-readiness",
+  "label": "ENGINEERING_MEASUREMENT",
+  "dimensions": [
+    "scalability",
+    "resilience",
+    "failure-isolation",
+    "recovery",
+    "data-integrity"
+  ],
+  "suites": [
+    "baselines",
+    "load-profiles",
+    "rate-limit",
+    "event-backlog",
+    "database-failure",
+    "blockchain-failure",
+    "provider-failure",
+    "policy-auth-failure",
+    "exchange-failure",
+    "full-stack-restart",
+    "backup-restore",
+    "regional-failure",
+    "bottlenecks"
+  ],
+  "chaosScripts": [
+    "scripts/chaos/restart-sandbox.mjs",
+    "scripts/chaos/network-delay.mjs",
+    "scripts/chaos/service-unavailable.mjs",
+    "scripts/chaos/provider-failure.mjs",
+    "scripts/chaos/database-restart.mjs",
+    "scripts/chaos/blockchain-recovery.mjs"
+  ],
+  "delegates": {
+    "adversarialRange": "packages/sunrey-range",
+    "performanceHarness": "performance/",
+    "chainBenchmark": "packages/sunrey-chain/src/perf/",
+    "persistenceRecovery": "packages/persistence/src/production/recovery/",
+    "backendDbQualification": "scripts/qualify-backend-db.mjs"
+  }
+}
