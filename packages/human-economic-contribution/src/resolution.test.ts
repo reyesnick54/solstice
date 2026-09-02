@@ -345,6 +345,21 @@ describe('Wave 6 claim generation and monetization lock', () => {
     assert.equal(store.isConsumed(fingerprint, context), true);
   });
 
+  it('includes consumed monetization keys in engine snapshot', () => {
+    const engine = new HumanContributionResolutionEngine();
+    for (const source of ['pubmed', 'crossref']) {
+      engine.submitObservation(baseObservation({ providerId: source, providerRecordId: `${source}:snapshot` }));
+    }
+    const cluster = engine.resolveAll()[0]!;
+    const claim = engine.generateClaimForCluster(cluster.clusterId, NOW);
+    assert.equal(claim.ok, true);
+    if (!claim.ok) return;
+    const context = asMonetizationContextId('hctx_0123456789abcdef0123456789abcdef');
+    assert.equal(engine.attemptMonetization({ claimId: claim.value.claimId, contextId: context, now: NOW }).ok, true);
+    const snapshot = engine.snapshot();
+    assert.ok(snapshot.consumedMonetizationKeys.length >= 1);
+  });
+
   it('does not generate claim for unresolved single-source without force', () => {
     const engine = new HumanContributionResolutionEngine();
     engine.submitObservation(baseObservation());
