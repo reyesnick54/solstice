@@ -26,6 +26,7 @@ export {
   type ProofEvaluator,
 } from './proofs.ts';
 export * from './policy/index.ts';
+export * as regulatoryControls from './regulatory-controls/index.ts';
 export * from './compliance/index.ts';
 export * as operationsControl from './operations/index.ts';
 export * from './regulated/index.ts';
