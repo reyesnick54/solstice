@@ -94,6 +94,76 @@ function domainDigest(message: Uint8Array): Buffer {
   return createHash('sha256').update(DOMAIN).update(message).digest();
 }
 
+export function signProtocolDigest(seed: Uint8Array, digestHex: string, suiteId: string = CLASSICAL_WALLET_SUITE): string {
+  const digest = Buffer.from(digestHex, 'hex');
+  if (digest.length !== 32) {
+    throw new TypeError('protocol signing digest must be 32 bytes');
+  }
+  if (suiteId === PQ_WALLET_SUITE) {
+    const derived = mlDsa.fromSeed(Buffer.from(seed).toString('hex'), 'TRANSACTION_SIGNING', PQ_WALLET_SUITE, 'wallet-protocol-pq');
+    if (!derived.ok) {
+      throw new Error(derived.error.message);
+    }
+    const signed = mlDsa.signRaw(
+      derived.value.privateKey.reveal().toString('hex'),
+      derived.value.publicKey.publicKeyHex,
+      digest,
+    );
+    if (!signed.ok) {
+      throw new Error(signed.error.message);
+    }
+    return signed.value.toString('hex');
+  }
+  if (suiteId === HYBRID_WALLET_SUITE) {
+    const classical = ed25519FromSeed(seed);
+    const pqSeed = pqSeedFromClassicalSeed(seed);
+    const pq = mlDsa.fromSeed(Buffer.from(pqSeed).toString('hex'), 'TRANSACTION_SIGNING', HYBRID_WALLET_SUITE, 'wallet-protocol-hybrid-pq');
+    if (!pq.ok) {
+      throw new Error(pq.error.message);
+    }
+    const pqSigned = mlDsa.signRaw(
+      pq.value.privateKey.reveal().toString('hex'),
+      pq.value.publicKey.publicKeyHex,
+      digest,
+    );
+    if (!pqSigned.ok) {
+      throw new Error(pqSigned.error.message);
+    }
+    const privateKey = createPrivateKey({ key: classical.privateKey, format: 'der', type: 'pkcs8' });
+    const classicalSig = sign(null, digest, privateKey).toString('hex');
+    return encodeHybridComponent(classicalSig, pqSigned.value.toString('hex'));
+  }
+  const classical = ed25519FromSeed(seed);
+  const signature = sign(null, digest, createPrivateKey({ key: classical.privateKey, format: 'der', type: 'pkcs8' }));
+  return signature.toString('hex');
+}
+
+export function verifyProtocolDigest(
+  publicKeyHex: string,
+  digestHex: string,
+  signatureHex: string,
+  suiteId: string = CLASSICAL_WALLET_SUITE,
+): boolean {
+  const digest = Buffer.from(digestHex, 'hex');
+  if (isHybridEncoded(signatureHex) || isHybridEncoded(publicKeyHex) || suiteId === HYBRID_WALLET_SUITE) {
+    const pub = decodeHybridComponent(publicKeyHex);
+    const sig = decodeHybridComponent(signatureHex);
+    if (!pub.ok || !sig.ok) {
+      return false;
+    }
+    const classicalOk = verifyEd25519(pub.value.classicalHex, digest, sig.value.classicalHex);
+    const pqOk = mlDsa.verifyRaw(pub.value.postQuantumHex, digest, sig.value.postQuantumHex);
+    return classicalOk && pqOk.ok;
+  }
+  if (suiteId === PQ_WALLET_SUITE) {
+    return mlDsa.verifyRaw(publicKeyHex, digest, signatureHex).ok;
+  }
+  const spki = Buffer.concat([SPKI_PREFIX, Buffer.from(publicKeyHex, 'hex')]);
+  const publicKey = createPublicKey({ key: spki, format: 'der', type: 'spki' });
+  return verify(null, digest, publicKey, Buffer.from(signatureHex, 'hex'));
+}
+
+
 export function signWalletBytes(seed: Uint8Array, message: Uint8Array, suiteId: string = CLASSICAL_WALLET_SUITE): string {
   const digest = domainDigest(message);
   if (suiteId === PQ_WALLET_SUITE) {

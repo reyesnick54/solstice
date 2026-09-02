@@ -146,6 +146,18 @@ export function validateStateless(envelope: EnvelopeV1): Result<EnvelopeV1, Prot
     if (native.amount && native.amount.scaledUnits <= 0n) {
       return reject('INVALID_QUANTITY', 'validateStateless');
     }
+    if (
+      native.amount?.assetId === 'MOONREY_COIN' &&
+      header.purpose === 'sunrey.native-asset.transfer'
+    ) {
+      return reject('INVALID_OBJECT_TYPE', 'validateStateless');
+    }
+    if (
+      native.amount?.assetId === 'SUNREY_COIN' &&
+      header.purpose.startsWith('moonrey.')
+    ) {
+      return reject('INVALID_OBJECT_TYPE', 'validateStateless');
+    }
     if (native.fee && (native.fee.scaledUnits < 0n || native.fee.assetId === 'MOONREY_COIN')) {
       return reject('INVALID_FEE', 'validateStateless');
     }
