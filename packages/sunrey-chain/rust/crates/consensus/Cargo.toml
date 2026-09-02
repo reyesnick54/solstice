@@ -11,7 +11,10 @@ serde.workspace = true
 serde_json.workspace = true
 sha2.workspace = true
 sunrey-crypto.workspace = true
+sunrey-execution.workspace = true
+sunrey-native-assets.workspace = true
 sunrey-protocol.workspace = true
+sunrey-state.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
 
@@ -19,4 +22,6 @@ tracing.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 sunrey-crypto.workspace = true
+sunrey-execution.workspace = true
+sunrey-fees.workspace = true
 tempfile = "=3.14.0"

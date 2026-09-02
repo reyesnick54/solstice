@@ -11,6 +11,7 @@
 //!
 //! See [`ALGORITHM.md`](../ALGORITHM.md) for the lock-rule specification.
 
+mod adapter;
 mod app;
 mod commit;
 mod engine;
@@ -27,6 +28,7 @@ mod valset;
 mod voteset;
 mod wal;
 
+pub use adapter::{ConsensusAdapter, ExecutionConsensusAdapter};
 pub use app::{
     app_proposal_from_txs, AppProposal, ConsensusApplication, MemoryApp, ProposalContext,
 };
