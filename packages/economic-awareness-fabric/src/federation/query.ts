@@ -16,6 +16,36 @@ export type FederatedQueryResult = {
   readonly completedAtUtc: string;
 };
 
+/**
+ * Strip provider raw payloads before federated query results leave the fabric.
+ * Downstream consumers receive digests and normalized fields only.
+ */
+export function minimizeObservationEnvelope(
+  envelope: CanonicalObservationEnvelope,
+): CanonicalObservationEnvelope {
+  const provenance = envelope.externalObservation.provenance;
+  if (!provenance || !('rawPayload' in provenance)) {
+    return envelope;
+  }
+  const { rawPayload: _rawPayload, ...restProvenance } = provenance as typeof provenance & {
+    readonly rawPayload?: unknown;
+  };
+  return Object.freeze({
+    ...envelope,
+    externalObservation: Object.freeze({
+      ...envelope.externalObservation,
+      provenance: Object.freeze(restProvenance),
+    }),
+  });
+}
+
+export function minimizeFederatedQueryResult(result: FederatedQueryResult): FederatedQueryResult {
+  return Object.freeze({
+    ...result,
+    envelopes: Object.freeze(result.envelopes.map((envelope) => minimizeObservationEnvelope(envelope))),
+  });
+}
+
 export type FederatedQueryEngine = {
   execute(query: FederatedQuery, store: ReadonlyMap<string, CanonicalObservationEnvelope>): FederatedQueryResult;
 };
@@ -43,12 +73,14 @@ export function createFederatedQueryEngine(): FederatedQueryEngine {
         }
       }
 
-      return Object.freeze({
-        queryId: query.queryId,
-        envelopes: Object.freeze(envelopes),
-        providerCoverage: Object.freeze(coverage),
-        completedAtUtc: query.asOfUtc,
-      });
+      return minimizeFederatedQueryResult(
+        Object.freeze({
+          queryId: query.queryId,
+          envelopes: Object.freeze(envelopes),
+          providerCoverage: Object.freeze(coverage),
+          completedAtUtc: query.asOfUtc,
+        }),
+      );
     },
   };
 }
