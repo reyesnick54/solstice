@@ -126,28 +126,31 @@ impl LocalNode {
         let suite = DevEd25519Sha256Suite;
         let store = ChainStore::open(&data_dir)?;
         let ghash = genesis_hash(&suite, &store.genesis);
+        store.validate_canonical_startup(&suite, &ghash)?;
+        let assets = load_assets(&store.view)?;
+        assets.reconcile_all().map_err(RejectReason::from)?;
         let queue = load_queue(store.data_dir())?;
-        info!(
-            event = "node_startup",
-            environment = "simulation",
-            role = NODE_ROLE,
-            height = store.meta.height,
-            genesis_hash = hash_to_hex(&ghash),
-            "opened local development node"
-        );
-        let governance = UpgradeManager::load_or_init(&data_dir)?;
-        let oracle = OracleEngine::load_or_init(&data_dir)?;
-        let fees = load_or_init_fees(&data_dir);
-        Ok(Self {
+        let node = Self {
             store,
             suite,
             genesis_hash: ghash,
             queue,
             metrics: NodeMetrics::default(),
-            governance,
-            oracle,
-            fees,
-        })
+            governance: UpgradeManager::load_or_init(&data_dir)?,
+            oracle: OracleEngine::load_or_init(&data_dir)?,
+            fees: load_or_init_fees(&data_dir),
+        };
+        node.verify_chain()?;
+        info!(
+            event = "node_startup",
+            environment = "simulation",
+            role = NODE_ROLE,
+            height = node.store.meta.height,
+            genesis_hash = hash_to_hex(&node.genesis_hash),
+            app_hash = node.store.meta.app_hash.as_str(),
+            "opened local development node"
+        );
+        Ok(node)
     }
 
     fn persist_queue(&self) -> Result<(), RejectReason> {
