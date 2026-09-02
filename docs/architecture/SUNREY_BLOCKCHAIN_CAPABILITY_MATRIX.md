@@ -71,7 +71,7 @@ Production mainnet is **NOT IMPLEMENTED** and **BLOCKED** by layered gates. This
 | Evidence Root | NOT IMPLEMENTED | ADR-0032 schema; anchoring family in dev execution only |
 | Rights Root | NOT IMPLEMENTED | Access Fabric commitments separate; no canonical Rights Root |
 | Policy Root | NOT IMPLEMENTED | Kernel policy authority; chain stores optional anchors only |
-| Economic Claims | NOT IMPLEMENTED | Productive/oracle claim paths exist; no Wave 3 proof lattice |
+| Economic Claims | PARTIAL | Wave 3 proof lattice at `src/economic-proof`; durable registry and roots pending |
 | Information Consensus | NOT IMPLEMENTED | HIN / information-market off-chain; no on-chain information consensus |
 
 ---

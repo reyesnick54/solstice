@@ -177,3 +177,4 @@ export * as economicUnits from './units/index.ts';
 export * as productionEconomicActivation from './economics/production-activation/index.ts';
 export * as chainRuntime from './runtime/index.ts';
 export * as accessRights from './access/index.ts';
+export * as economicProof from './economic-proof/index.ts';
