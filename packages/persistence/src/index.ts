@@ -152,6 +152,11 @@ export {
   crashRecoverOutbox,
 } from './production/event-fabric.ts';
 export type { DurableOutboxRecord } from './production/event-fabric.ts';
+export {
+  insertChainReferenceAnchor,
+  loadChainReferenceAnchor,
+  loadChainReferenceAnchorsByJournal,
+} from './ledger/chain-reference-anchor.ts';
 export { PostgresOperationStore, insertOperationExecution } from './ledger/pg-operation-store.ts';
 export { persistOperationWithOutbox } from './ledger/operation-unit.ts';
 export {
