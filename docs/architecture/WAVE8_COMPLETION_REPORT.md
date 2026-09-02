@@ -21,8 +21,11 @@ secondary system to become a second monetary ledger.
 | Reconciliation engine | Done | `packages/custody/src/product/money-reconciliation.ts` |
 | Unified transaction history | Done | `packages/custody/src/product/unified-transaction-history.ts` |
 | Consumer BFF `/api/v1/money/*` | Done | `services/api/src/consumer/money-integration/` |
+| Sandbox native clearing seed | Done | `services/api/src/consumer/money-integration/sandbox.ts` |
+| HTTP adapter coverage | Done | `services/api/src/consumer-http.test.ts` |
 | OpenAPI contract | Done | `api/sunrey-consumer-bff-v1.openapi.yaml` |
 | Integration tests | Done | `tests/wave-8-wallet-ledger-exchange-integration.test.ts` |
+| Exit gate tests | Done | `tests/wave-8-money-integration-exit-gate.test.ts` |
 | Architecture documentation | Done | `docs/architecture/WAVE8_WALLET_LEDGER_EXCHANGE_INTEGRATION.md` |
 
 ## Authority invariants preserved
@@ -46,7 +49,9 @@ secondary system to become a second monetary ledger.
 
 ## Validation
 
-- Wave 8 integration tests pass
+- Wave 8 integration tests pass (24 tests)
+- Wave 8 exit gate tests pass (10 tests)
+- Consumer HTTP money route tests pass
 - `npm run test:blockchain` pass
 - `npm run ci` pass locally
 - Architecture linter pass

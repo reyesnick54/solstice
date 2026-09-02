@@ -250,6 +250,9 @@ sequenceDiagram
 - Market price / PEVE / GPUV separation
 - BFF money integration routes
 
+`tests/wave-8-money-integration-exit-gate.test.ts` covers structural authority
+invariants, forbidden parallel packages, route registration, and sandbox wiring.
+
 ## Related documentation
 
 - `docs/productization/PHASE_G_05_WALLETS_CUSTODY.md`
