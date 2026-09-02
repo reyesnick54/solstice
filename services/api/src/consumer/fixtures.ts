@@ -75,8 +75,9 @@ import { ProductGrowthService } from '../../../../packages/platform/src/growth/p
 import { createAgentConversationSurface, type AgentConversationSurface } from './conversation.ts';
 import { createWalletProductFromKernel } from '../../../../packages/custody/src/product/sandbox.ts';
 import type { WalletProductService } from '../../../../packages/custody/src/product/service.ts';
-import { createMoneyIntegrationPlatform, type MoneyIntegrationPlatform } from './money-integration/platform.ts';
-import { WalletEngine } from '../../../../packages/sunrey-chain/src/wallet/engine.ts';
+import { createSandboxMoneyIntegration } from './money-integration/sandbox.ts';
+import type { MoneyIntegrationPlatform } from './money-integration/platform.ts';
+import type { NativeClearingEngine } from '../../../../packages/sunrey-exchange/src/native-clearing/engine.ts';
 import type { ConsumerBffRuntime } from './handler.ts';
 import { createSandboxRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
 import type { InformationRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
@@ -170,6 +171,7 @@ export type SandboxWorld = {
   readonly conversation: AgentConversationSurface;
   readonly wallets: WalletProductService;
   readonly moneyIntegration: MoneyIntegrationPlatform;
+  readonly nativeClearing: NativeClearingEngine;
   readonly hin: InformationRightsMarketplace;
   readonly hinContributions: HinContributionSurface;
   readonly productiveEconomy: ProductiveEconomySurface;
@@ -667,13 +669,13 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   });
 
   const wallets = attachSandboxWallets(runtime, personas, { providerDown: options.providerDown === true });
-  const walletEngine = new WalletEngine();
-  walletEngine.unlock('development-passphrase');
-  const moneyIntegration = createMoneyIntegrationPlatform({
-    walletEngine,
+  const moneySandbox = createSandboxMoneyIntegration({
     walletProduct: wallets,
-    nowUtc: NOW,
+    exchangeCustomerId: personas.exchange.customerId,
+    counterpartyCustomerId: personas.basic_verified.customerId,
   });
+  const moneyIntegration = moneySandbox.platform;
+  const nativeClearing = moneySandbox.nativeClearing;
   const hin = createSandboxRightsMarketplace(runtime.clock, personas.basic_verified.customerId);
   const hinContributions = createHinContributionSurface();
   const productiveEconomy = createProductiveEconomySurface();
@@ -824,6 +826,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     conversation: createAgentConversationSurface(),
     wallets,
     moneyIntegration,
+    nativeClearing,
     hin,
     hinContributions,
     productiveEconomy,

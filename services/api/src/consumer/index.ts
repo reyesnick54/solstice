@@ -27,6 +27,8 @@ export {
   SANDBOX_LABEL,
   SANDBOX_PERSONA_IDS,
 } from './fixtures.ts';
+export { createSandboxMoneyIntegration, seedSandboxNativeTrade } from './money-integration/sandbox.ts';
+export type { SandboxMoneyIntegration } from './money-integration/sandbox.ts';
 export { dispatchAccess } from './access.ts';
 export { handleConsumerBff, CONSUMER_BFF_ROUTES, type ConsumerBffRuntime } from './handler.ts';
 export { createNativeEconomySurface } from './native-economy-adapter.ts';

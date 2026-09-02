@@ -1,22 +1,12 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
+import { createSandboxWorld, sandboxToken, consumerBffRuntimeFromWorld } from './consumer/fixtures.ts';
 import { startConsumerBff } from './consumer/http.ts';
 
 function runtime() {
   const world = createSandboxWorld();
-  return {
-    world,
-    runtime: {
-      bff: world.bff,
-      sessions: world.sessions,
-      identity: world.runtime.identity.service,
-      payments: world.payments,
-      agent: world.agent,
-      grow: world.grow,
-    },
-  };
+  return { world, runtime: consumerBffRuntimeFromWorld(world) };
 }
 
 describe('Consumer BFF HTTP adapter', () => {
@@ -133,6 +123,47 @@ describe('Consumer BFF HTTP adapter', () => {
       const body = (await res.json()) as { errorCode: string; message: string };
       assert.equal(body.errorCode, 'AUTH_REQUIRED');
       assert.equal(body.message, 'email or password is incorrect');
+    } finally {
+      await server.close();
+    }
+  });
+
+  it('serves Wave 8 money holdings over HTTP', async () => {
+    const { runtime: consumerRuntime } = runtime();
+    const server = await startConsumerBff({ runtime: consumerRuntime });
+    try {
+      const res = await fetch(`${server.url}/api/v1/money/holdings`, {
+        headers: { authorization: `Bearer ${sandboxToken('exchange')}` },
+      });
+      assert.equal(res.status, 200);
+      const body = (await res.json()) as {
+        schema: string;
+        productionMoneyMovement: false;
+        items: { assetId: string; architecture: { kind: string } }[];
+      };
+      assert.equal(body.schema, 'sunrey.money-integration.holdings.v1');
+      assert.equal(body.productionMoneyMovement, false);
+      assert.ok(body.items.some((item) => item.assetId === 'SUNREY_COIN'));
+      assert.ok(body.items.some((item) => item.architecture.kind === 'EXCHANGE_ACCOUNT'));
+    } finally {
+      await server.close();
+    }
+  });
+
+  it('serves Wave 8 settlement records for exchange persona', async () => {
+    const { runtime: consumerRuntime } = runtime();
+    const server = await startConsumerBff({ runtime: consumerRuntime });
+    try {
+      const res = await fetch(`${server.url}/api/v1/money/settlements`, {
+        headers: { authorization: `Bearer ${sandboxToken('exchange')}` },
+      });
+      assert.equal(res.status, 200);
+      const body = (await res.json()) as {
+        items: { state: string; sandboxSimulation: true }[];
+      };
+      assert.ok(body.items.length > 0);
+      assert.equal(body.items[0]?.sandboxSimulation, true);
+      assert.equal(body.items[0]?.state, 'SETTLED');
     } finally {
       await server.close();
     }

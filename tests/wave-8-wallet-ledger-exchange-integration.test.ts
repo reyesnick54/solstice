@@ -47,14 +47,19 @@ function bffRuntime() {
   return consumerBffRuntimeFromWorld(world);
 }
 
-async function call(method: string, path: string, body: Record<string, unknown> = {}) {
+async function call(
+  method: string,
+  path: string,
+  body: Record<string, unknown> = {},
+  persona: Parameters<typeof sandboxToken>[0] = 'basic_verified',
+) {
   return Promise.resolve(
     handleConsumerBff(bffRuntime(), {
       method,
       path,
       query: {},
       body,
-      authorization: `Bearer ${sandboxToken('basic_verified')}`,
+      authorization: `Bearer ${sandboxToken(persona)}`,
       requestId: 'req_wave8',
     }),
   );
@@ -367,6 +372,14 @@ describe('Wave 8 — wallet, ledger, exchange integration', () => {
     assert.equal(body.schema, 'sunrey.money-reconciliation.v1');
     assert.equal(body.autoCorrected, false);
     assert.equal(body.chainStateRewritten, false);
+  });
+
+  it('GET /api/v1/money/settlements returns exchange sandbox settlements for exchange persona', async () => {
+    const exchange = await call('GET', '/api/v1/money/settlements', {}, 'exchange');
+    assert.equal(exchange.status, 200);
+    const body = exchange.body as { items: { state: string; sandboxSimulation: true }[] };
+    assert.ok(body.items.length > 0);
+    assert.equal(body.items[0]?.state, 'SETTLED');
   });
 
   it('money integration platform survives restart with same deps', () => {
