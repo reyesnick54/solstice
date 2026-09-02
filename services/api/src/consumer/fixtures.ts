@@ -75,6 +75,8 @@ import { ProductGrowthService } from '../../../../packages/platform/src/growth/p
 import { createAgentConversationSurface, type AgentConversationSurface } from './conversation.ts';
 import { createWalletProductFromKernel } from '../../../../packages/custody/src/product/sandbox.ts';
 import type { WalletProductService } from '../../../../packages/custody/src/product/service.ts';
+import { createMoneyIntegrationPlatform, type MoneyIntegrationPlatform } from './money-integration/platform.ts';
+import { WalletEngine } from '../../../../packages/sunrey-chain/src/wallet/engine.ts';
 import { createSandboxRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
 import type { InformationRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
 import { createHinContributionSurface, type HinContributionSurface } from './hin-adapter.ts';
@@ -166,6 +168,7 @@ export type SandboxWorld = {
   readonly previewDiagnostics: () => Readonly<Record<string, unknown>>;
   readonly conversation: AgentConversationSurface;
   readonly wallets: WalletProductService;
+  readonly moneyIntegration: MoneyIntegrationPlatform;
   readonly hin: InformationRightsMarketplace;
   readonly hinContributions: HinContributionSurface;
   readonly productiveEconomy: ProductiveEconomySurface;
@@ -663,6 +666,13 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   });
 
   const wallets = attachSandboxWallets(runtime, personas, { providerDown: options.providerDown === true });
+  const walletEngine = new WalletEngine();
+  walletEngine.unlock('development-passphrase');
+  const moneyIntegration = createMoneyIntegrationPlatform({
+    walletEngine,
+    walletProduct: wallets,
+    nowUtc: NOW,
+  });
   const hin = createSandboxRightsMarketplace(runtime.clock, personas.basic_verified.customerId);
   const hinContributions = createHinContributionSurface();
   const productiveEconomy = createProductiveEconomySurface();
@@ -812,6 +822,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     previewDiagnostics: () => marketResearch.diagnostics(),
     conversation: createAgentConversationSurface(),
     wallets,
+    moneyIntegration,
     hin,
     hinContributions,
     productiveEconomy,
