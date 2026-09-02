@@ -8,6 +8,7 @@ import type { ReadinessReport } from './readiness.ts';
 import type { RouteDefinition } from './http.ts';
 import { createInternalProductionGateRoutes } from './internal-production-gates.ts';
 import { createInternalProviderOpsRoutes } from './internal-provider-ops.ts';
+import { createInternalOperationsRoutes } from './operations/routes.ts';
 
 export const FUTURE_NAMESPACES = [
   '/api/v1/auth',
@@ -98,6 +99,14 @@ export function createRoutes(deps: RouteDependencies): readonly RouteDefinition[
 
   routes.push(...createInternalProductionGateRoutes({ operatorToken: deps.internalOperatorToken }));
   routes.push(...createInternalProviderOpsRoutes({ operatorToken: deps.internalOperatorToken }));
+  routes.push(
+    ...createInternalOperationsRoutes({
+      config: deps.config,
+      readiness: deps.readiness,
+      operatorToken: deps.internalOperatorToken,
+      persistenceConfigured: deps.config.databaseConfigured,
+    }),
+  );
 
   if (deps.config.featureFlags.testRoutes) {
     routes.push(

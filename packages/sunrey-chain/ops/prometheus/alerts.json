@@ -111,6 +111,61 @@
       "alert": "CREDENTIAL_MISUSE",
       "expr": "credential_scope_rejections > 0",
       "severity": "CRITICAL"
+    },
+    {
+      "alert": "VALIDATOR_DOWN",
+      "expr": "validator_health == 0",
+      "severity": "CRITICAL"
+    },
+    {
+      "alert": "CONSENSUS_STALLED",
+      "expr": "consensus_state == 0",
+      "severity": "CRITICAL"
+    },
+    {
+      "alert": "CHAIN_STATE_MISMATCH",
+      "expr": "chain_state_mismatch > 0",
+      "severity": "CRITICAL"
+    },
+    {
+      "alert": "HIGH_CLAIM_CONFLICT",
+      "expr": "claim_conflict_rate_bps > 500",
+      "severity": "HIGH"
+    },
+    {
+      "alert": "DEAD_LETTER_GROWTH",
+      "expr": "dead_letter_count > 10",
+      "severity": "HIGH"
+    },
+    {
+      "alert": "POLICY_SERVICE_UNAVAILABLE",
+      "expr": "policy_service_health == 0",
+      "severity": "HIGH"
+    },
+    {
+      "alert": "AUTHORIZATION_SERVICE_UNAVAILABLE",
+      "expr": "authorization_service_health == 0",
+      "severity": "HIGH"
+    },
+    {
+      "alert": "KMS_SECRET_ISSUE",
+      "expr": "kms_health == 0 or secret_resolution_failures > 0",
+      "severity": "CRITICAL"
+    },
+    {
+      "alert": "DATABASE_UNAVAILABLE",
+      "expr": "database_health == 0",
+      "severity": "CRITICAL"
+    },
+    {
+      "alert": "EXCHANGE_SETTLEMENT_MISMATCH",
+      "expr": "exchange_settlement_mismatch > 0",
+      "severity": "CRITICAL"
+    },
+    {
+      "alert": "UNEXPECTED_PRODUCTION_FEATURE_ENABLEMENT",
+      "expr": "production_feature_enabled == 1",
+      "severity": "CRITICAL"
     }
   ]
 }
