@@ -1,3 +1,9 @@
+export { WAVE3_ECONOMIC_PROOF_CAPABILITY } from './capability.ts';
+
+export * from './policy/index.ts';
+export * from './evidence/index.ts';
+export * from './rights/index.ts';
+export * from './roots/index.ts';
 export * as rights from './rights/index.ts';
 export * as stateCommitment from './state-commitment/index.ts';
 export { merkleRoot, merkleLeaf, sortedMerkleRoot } from './merkle.ts';
