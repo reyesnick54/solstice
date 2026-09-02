@@ -6,12 +6,12 @@ export {
   verifyRightsCommitment,
 } from './commitment.ts';
 export type { RightsCommitment, RightsRoot, RightsRootInput } from './commitment.ts';
+export {
   RIGHTS_COMMITMENT_DOMAINS,
   RIGHTS_COMMITMENT_SCHEMA_VERSION,
   RIGHTS_ECONOMY_KINDS,
   RIGHTS_EVALUATION_DECISIONS,
   RIGHTS_GRANT_STATES,
-  RIGHTS_ROOT_DOMAIN,
   RIGHTS_SCHEMA_VERSION,
   LICENSE_RESTRICTION_LEVELS,
   PURPOSE_AUTHORIZATION_CODES,

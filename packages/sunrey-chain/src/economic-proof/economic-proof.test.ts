@@ -38,6 +38,47 @@ import {
   workloadReceiptDigest,
 } from './fixtures/productive.ts';
 import { asMonetizationContextId } from './monetization-lock.ts';
+import {
+  claimCannotAuthorizeIssuance,
+  evidenceCannotAuthorizeIssuance,
+  humanAndProductiveClaimsAreDistinguishable,
+  observationCannotAuthorizeIssuance,
+  verifiedFactCannotAuthorizeIssuance,
+} from './authority.ts';
+import {
+  buildHumanEconomicClaim,
+  buildProductiveEconomicClaim,
+  buildVerifiedFactFromEvidence,
+  fromEconomyDataObservation,
+  fromOracleVerifiedFact,
+} from './adapters.ts';
+import { ECONOMIC_OBSERVATION_SCHEMA_VERSION } from './constants.ts';
+import {
+  fixtureHumanProofPipeline,
+  fixtureProductiveProofPipeline,
+  malformedClaim,
+} from './fixtures.ts';
+import { duplicateClaimFingerprint } from './ids.ts';
+import { InMemoryEconomicProofPersistence } from './persistence.ts';
+import {
+  chainCommitmentRepresentation,
+  claimCommitment,
+  encodeCanonicalEconomicClaim,
+  encodeEconomicEvidence,
+  encodeEconomicObservation,
+  encodeVerifiedEconomicFact,
+  evidenceCommitment,
+  observationCommitment,
+  verifiedFactCommitment,
+} from './serialization.ts';
+import type { EconomicObservation } from './types.ts';
+import {
+  assertSupportedSchemaVersion,
+  validateCanonicalEconomicClaim,
+  validateEconomicEvidence,
+  validateEconomicObservation,
+  validateVerifiedEconomicFact,
+} from './validation.ts';
 
 describe('Wave 3 economic proof — core invariants', () => {
   it('distinguishes observation replay from multi-source corroboration', () => {
@@ -677,46 +718,8 @@ describe('Wave 3 audit surfaces', () => {
     const productive = EXISTING_DUPLICATE_PROTECTIONS.filter((entry) => entry.economy === 'PRODUCTIVE');
     assert.ok(human.length >= 4);
     assert.ok(productive.length >= 3);
-  claimCannotAuthorizeIssuance,
-  evidenceCannotAuthorizeIssuance,
-  humanAndProductiveClaimsAreDistinguishable,
-  observationCannotAuthorizeIssuance,
-  verifiedFactCannotAuthorizeIssuance,
-} from './authority.ts';
-import {
-  buildHumanEconomicClaim,
-  buildProductiveEconomicClaim,
-  buildVerifiedFactFromEvidence,
-  fromEconomyDataObservation,
-  fromOracleVerifiedFact,
-} from './adapters.ts';
-import { ECONOMIC_OBSERVATION_SCHEMA_VERSION } from './constants.ts';
-import {
-  fixtureHumanProofPipeline,
-  fixtureProductiveProofPipeline,
-  malformedClaim,
-} from './fixtures.ts';
-import { duplicateClaimFingerprint } from './ids.ts';
-import { InMemoryEconomicProofPersistence } from './persistence.ts';
-import {
-  chainCommitmentRepresentation,
-  claimCommitment,
-  encodeCanonicalEconomicClaim,
-  encodeEconomicEvidence,
-  encodeEconomicObservation,
-  encodeVerifiedEconomicFact,
-  evidenceCommitment,
-  observationCommitment,
-  verifiedFactCommitment,
-} from './serialization.ts';
-import type { EconomicObservation } from './types.ts';
-import {
-  assertSupportedSchemaVersion,
-  validateCanonicalEconomicClaim,
-  validateEconomicEvidence,
-  validateEconomicObservation,
-  validateVerifiedEconomicFact,
-} from './validation.ts';
+  });
+});
 
 describe('Wave 3 economic proof domain', () => {
   it('produces deterministic serialization for observations', () => {

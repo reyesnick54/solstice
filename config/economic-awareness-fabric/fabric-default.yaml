@@ -1,0 +1,78 @@
+# Economic Awareness Fabric — versioned configuration (Wave 4 Prompt 1)
+# No secrets. Credential references only via Chunk 149 secret refs at runtime.
+
+schema_version: "1.0.0"
+fabric_id: sunrey-economic-awareness-fabric
+environment: simulation
+
+provider_registry:
+  catalog_path: config/providers/free-api-catalog.yaml
+  require_catalog_entry: true
+  unknown_provider_trust: untrusted
+
+connector_activation:
+  default_mode: fixture
+  allowed_modes:
+    - fixture
+    - preview
+    - simulation
+  live_mode_requires:
+    - SUNREY_DATA_MODE=live
+    - provider_certification_live_validated
+  blocked_in_ci: live
+
+domain_classification:
+  human_economy_domains:
+    - hin
+    - health_reference
+    - research
+    - workforce
+  productive_economy_domains:
+    - energy
+    - compute
+    - manufacturing
+    - logistics
+    - resources
+    - real_estate
+    - bandwidth
+    - agriculture
+    - environmental
+  shared_domains:
+    - macroeconomics
+    - foreign_exchange
+    - markets
+    - compliance
+    - geospatial
+
+source_class:
+  require_taxonomy_compatibility: true
+  default_trust_tier: catalog_registered
+
+normalization:
+  schema_version: sunrey.fabric.observation-envelope.v1
+  require_provenance_digest: true
+  require_licensing_metadata: true
+  max_payload_bytes: 1048576
+
+retention:
+  raw_payload_storage: prohibited
+  observation_cache_ttl_seconds: 3600
+  provenance_journal: append_only
+  graph_projection: rebuildable
+
+rights_license:
+  default_purpose: research_simulation
+  deny_on_missing_license: true
+  deny_on_revoked_consent: true
+
+rate_limits:
+  per_provider_default_rpm: 60
+  federation_query_concurrency: 4
+
+fail_closed:
+  unknown_provider_is_untrusted: true
+  configured_not_trusted: true
+  api_response_not_verified_fact: true
+  multiple_responses_not_consensus: true
+  raw_observation_not_claim: true
+  claim_not_monetary_authorization: true
