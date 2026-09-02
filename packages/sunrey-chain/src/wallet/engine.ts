@@ -387,11 +387,12 @@ export class WalletEngine {
           return denied;
         }
       }
-      signatures.push(this.signer.sign(keyId, Buffer.from(input.built.signBytesHex, 'hex')));
+      signatures.push(this.signer.signProtocol(keyId, input.built.signBytesHex));
     }
     const authorized = authorizeAccountAction({
       account,
       bodyHash: input.built.bodyHash,
+      signBytesHex: input.built.signBytesHex,
       signatures,
       currentHeight: this.height,
     });
@@ -413,6 +414,7 @@ export class WalletEngine {
     const authorized = authorizeAccountAction({
       account,
       bodyHash: input.built.bodyHash,
+      signBytesHex: input.built.signBytesHex,
       signatures: input.signatures,
       currentHeight: this.height,
     });
@@ -443,6 +445,7 @@ export class WalletEngine {
       actualFinalizedFee: null,
       height: null,
       bodyHash: input.built.bodyHash,
+      signBytesHex: input.built.signBytesHex,
       historicSignatureHex: input.signatures[0]?.signatureHex ?? null,
     });
     return this.finalize(account, input.built, txId, input.signatures);
@@ -767,7 +770,12 @@ export class WalletEngine {
     if (!record?.historicSignatureHex) {
       return false;
     }
-    return historicalSignatureStillVerifies(publicKeyHex, record.bodyHash, record.historicSignatureHex);
+    return historicalSignatureStillVerifies(
+      publicKeyHex,
+      record.bodyHash,
+      record.historicSignatureHex,
+      record.signBytesHex,
+    );
   }
 
   parseAddress(text: string) {

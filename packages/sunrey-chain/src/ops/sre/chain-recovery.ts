@@ -1,5 +1,5 @@
 import type { SignerSafetyState } from '../../validators/types.ts';
-import { createSnapshot, verifySnapshot, type SnapshotTrust } from '../snapshots.ts';
+import { createSnapshot, developmentGenesisFingerprint, verifySnapshot, type SnapshotTrust } from '../snapshots.ts';
 import { planGenesisSync, planSnapshotSync, refuseUnverifiedProvider } from '../state-sync.ts';
 import { safeRestart } from '../restart.ts';
 import { DEVELOPMENT_CHAIN_ID, DEVELOPMENT_NETWORK_ID } from '../types.ts';
@@ -35,6 +35,7 @@ export function rehearseChainRecovery(nowUtc = '2026-08-23T00:00:00.000Z'): {
   const created = createSnapshot({
     networkId: DEVELOPMENT_NETWORK_ID,
     chainId: DEVELOPMENT_CHAIN_ID,
+    genesisFingerprint: developmentGenesisFingerprint(),
     height: 4n,
     blockId: 'block_4',
     stateRoot: 'aa'.repeat(32),
@@ -50,6 +51,7 @@ export function rehearseChainRecovery(nowUtc = '2026-08-23T00:00:00.000Z'): {
   const trust: SnapshotTrust = {
     networkId: DEVELOPMENT_NETWORK_ID,
     chainId: DEVELOPMENT_CHAIN_ID,
+    genesisFingerprint: developmentGenesisFingerprint(),
     protocolVersion: '1',
     trustedFinalizedHeight: 4n,
     trustedStateRoot: 'aa'.repeat(32),

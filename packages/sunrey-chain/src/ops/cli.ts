@@ -15,7 +15,7 @@ import { operatorReadiness } from './readiness.ts';
 import { developmentSentryTopology } from './sentry.ts';
 import { developmentRemoteSigner, publicRpcSignerIdentity, sentrySignerIdentity } from './signer.ts';
 import { databaseRestoreTest, databaseStatus, verifyDatabase } from './database.ts';
-import { createSnapshot, verifySnapshot } from './snapshots.ts';
+import { createSnapshot, developmentGenesisFingerprint, genesisFingerprint, verifySnapshot } from './snapshots.ts';
 import { planGenesisSync } from './state-sync.ts';
 import {
   createStorageSnapshot,
@@ -449,6 +449,7 @@ export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-op
     const created = createSnapshot({
       networkId: config.networkId,
       chainId: config.chainId,
+      genesisFingerprint: genesisFingerprint(config.networkId, config.chainId, '00'.repeat(32)),
       height: 10n,
       blockId: 'block-10',
       stateRoot: '11'.repeat(32),
@@ -465,6 +466,7 @@ export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-op
       const verified = verifySnapshot(created.value, {
         networkId: config.networkId,
         chainId: config.chainId,
+        genesisFingerprint: genesisFingerprint(config.networkId, config.chainId, '00'.repeat(32)),
         protocolVersion: '1',
         trustedFinalizedHeight: 10n,
         trustedStateRoot: '11'.repeat(32),

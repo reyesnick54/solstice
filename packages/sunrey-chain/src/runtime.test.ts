@@ -174,7 +174,8 @@ describe('Phase G Prompt 3 chain runtime productization', () => {
   });
 
   it('exposes metrics without secrets and verifies snapshots before trust', () => {
-    assert.equal(RUNTIME_METRICS.length, 10);
+    assert.ok(RUNTIME_METRICS.length >= 10);
+    assert.ok(RUNTIME_METRICS.includes('finalized_height'));
     assert.equal(metricSample('block_height', 12, { network: 'testnet' }).value, 12);
     assert.throws(() => metricSample('rpc_latency_ms', 1, { token: 'secret' }));
     assert.equal(

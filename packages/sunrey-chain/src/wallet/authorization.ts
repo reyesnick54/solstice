@@ -6,11 +6,12 @@
  */
 
 import type { BlockchainAccount, WalletRejection, WalletSignature } from './types.ts';
-import { isApprovedWalletSuite, suiteRank, verifyWalletBytes } from './keys.ts';
+import { isApprovedWalletSuite, suiteRank, verifyProtocolDigest, verifyWalletBytes } from './keys.ts';
 
 export function authorizeAccountAction(input: {
   readonly account: BlockchainAccount;
   readonly bodyHash: string;
+  readonly signBytesHex?: string;
   readonly signatures: readonly WalletSignature[];
   readonly allowRecoveryKeys?: boolean;
   readonly currentHeight: number;
@@ -64,7 +65,14 @@ export function authorizeAccountAction(input: {
     if (suiteRank(signature.suiteId) < highest && policy.kind !== 'M_OF_N') {
       return { ok: false, code: 'CRYPTO_SUITE_DOWNGRADE', detail: 'cannot sign new transactions with a downgraded CryptoSuite' };
     }
+    const signedPayload = input.signBytesHex ?? input.bodyHash;
     if (
+      !verifyProtocolDigest(
+        signature.publicKeyHex,
+        signedPayload,
+        signature.signatureHex,
+        signature.suiteId,
+      ) &&
       !verifyWalletBytes(
         signature.publicKeyHex,
         Buffer.from(input.bodyHash, 'hex'),
@@ -95,6 +103,10 @@ export function historicalSignatureStillVerifies(
   publicKeyHex: string,
   bodyHash: string,
   signatureHex: string,
+  signBytesHex?: string,
 ): boolean {
+  if (signBytesHex && verifyProtocolDigest(publicKeyHex, signBytesHex, signatureHex)) {
+    return true;
+  }
   return verifyWalletBytes(publicKeyHex, Buffer.from(bodyHash, 'hex'), signatureHex);
 }

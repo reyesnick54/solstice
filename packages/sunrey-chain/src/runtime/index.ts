@@ -11,6 +11,73 @@ export {
 export type { NetworkEnvironment, NetworkIdentity } from './identity.ts';
 
 export {
+  ENVIRONMENT_MATRIX,
+  RUNTIME_ENVIRONMENT_LABEL,
+  assertEnvironmentBinding,
+  assertResourceIsolation,
+  developmentSignatureInvalidOnMainnet,
+  matrixRow,
+} from './environment.ts';
+export type {
+  EnvironmentBindingCheck,
+  EnvironmentMatrixRow,
+  IsolationResource,
+  ResourceIsolationCheck,
+} from './environment.ts';
+
+export {
+  NODE_ROLES,
+  PRODUCTION_PRIVATE_KEYS_COMMITTED as NODE_ROLE_KEYS_NOT_COMMITTED,
+  nodeRoleConfig,
+  validateNodeRoleConfig,
+} from './node-roles.ts';
+export type { NodeRole, NodeRoleConfig, NodeRoleValidation } from './node-roles.ts';
+
+export {
+  READINESS_PROBE_PATHS,
+  evaluateRuntimeHealth,
+  evaluateRuntimeReadiness,
+} from './readiness.ts';
+export type {
+  RuntimeHealthStatus,
+  RuntimeReadinessCheck,
+  RuntimeReadinessInput,
+  RuntimeReadinessReport,
+} from './readiness.ts';
+
+export {
+  FUTURE_UPGRADE_REQUIREMENTS,
+  PROTOCOL_UPGRADE_POLICY,
+  SUPPORTED_PROTOCOL_VERSIONS,
+  assertProtocolCompatible,
+} from './protocol-version.ts';
+export type {
+  ProtocolCompatibilityResult,
+  SupportedProtocolVersion,
+  UpgradeMechanismRequirements,
+} from './protocol-version.ts';
+
+export {
+  evaluateMainnetRuntimeGate,
+  refuseMainnetRuntimeAction,
+} from './mainnet-gate.ts';
+export type {
+  MainnetRuntimeAction,
+  MainnetRuntimeBlocker,
+  MainnetRuntimeGate,
+  MainnetGateStatus,
+} from './mainnet-gate.ts';
+
+export {
+  RUNTIME_SECURITY_DEFAULTS,
+  assertKeyFilePermissions,
+  assertSafeLogPayload,
+  defaultSecurityConfig,
+  validateSecurityConfig,
+} from './security.ts';
+export type { RuntimeSecurityConfig, SecurityValidationResult } from './security.ts';
+
+export {
   CRYPTO_SUITE,
   DETERMINISTIC_CODEC,
   TRANSACTION_FIELDS,
@@ -48,6 +115,7 @@ export {
   PUBLIC_RPC_METHODS,
   PUBLIC_RPC_SECURITY,
   RPC_PLANES,
+  VALIDATOR_RPC_METHODS,
   allowRequest,
   methodAllowedOnPlane,
 } from './rpc.ts';
@@ -79,12 +147,18 @@ export { RECOVERY_PROCEDURES, recoveryPlan, snapshotTrust } from './recovery.ts'
 export type { RecoveryPlan, RecoveryProcedure } from './recovery.ts';
 
 export {
+  DEPLOYMENT_PROFILES_BY_ENVIRONMENT,
+  DEVNET_DEPLOYMENT_PROFILES,
   INFRA_PRODUCTION_CANDIDATE_ROOT,
+  LOCAL_DEPLOYMENT_PROFILES,
+  MAINNET_DEPLOYMENT_PROFILES,
+  MULTI_VALIDATOR_DEVNET,
   NODE_TYPES,
+  STAGING_DEPLOYMENT_PROFILES,
   TESTNET_DEPLOYMENT_PROFILES,
   TESTNET_DEPLOY_ROOT,
 } from './deployment.ts';
-export type { DeploymentProfile, NodeType } from './deployment.ts';
+export type { DeploymentProfile, MultiValidatorDevnetSpec, NodeType } from './deployment.ts';
 
 export { CHAOS_SCENARIOS, evaluateChaos, runChaosSuite } from './chaos.ts';
 export type { ChaosOutcome, ChaosScenario } from './chaos.ts';
@@ -97,4 +171,22 @@ export const PHASE_G_03_RUNTIME = {
   mainnetActive: false,
   testnetActive: true,
   replacedByEthereumOrEvm: false,
+} as const;
+
+export const WAVE2_PRODUCTION_RUNTIME = {
+  owner: 'packages/sunrey-chain/src/runtime',
+  schema: 'sunrey.chain.wave2.runtime.v1',
+  mainnetActive: false,
+  productionEconomicsAuthorized: false,
+  environmentIsolation: true,
+  nodeRoleSeparation: true,
+  healthReadinessSemantics: true,
+  observability: true,
+  securityHardening: true,
+  protocolVersioning: true,
+  mainnetFailClosedGate: true,
+  documentation: [
+    'docs/architecture/WAVE2_PRODUCTION_RUNTIME.md',
+    'docs/runbooks/SUNREY_NODE_OPERATIONS.md',
+  ],
 } as const;

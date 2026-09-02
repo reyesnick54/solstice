@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { createSnapshot, persistSnapshot, restoreSnapshot, verifySnapshot } from '../ops/snapshots.ts';
+import { createSnapshot, genesisFingerprint, persistSnapshot, restoreSnapshot, verifySnapshot } from '../ops/snapshots.ts';
 import { caseResult } from './result.ts';
 import { elapsedNs, measureMany, nowNs, summarizeLatency } from './statistics.ts';
 import type { BenchCaseResult } from './types.ts';
@@ -10,6 +10,7 @@ import type { BenchCaseResult } from './types.ts';
 const TRUST = Object.freeze({
   networkId: 'net_sunrey_simulation',
   chainId: 'chn_sunrey_simulation',
+  genesisFingerprint: genesisFingerprint('net_sunrey_simulation', 'chn_sunrey_simulation', 'sim_genesis'),
   protocolVersion: 'sunrey.protocol.v1',
   trustedFinalizedHeight: 10_000n,
 });
@@ -24,6 +25,7 @@ export function measureStorage(input: { readonly snapshots: number }): readonly 
       const created = createSnapshot({
         networkId: TRUST.networkId,
         chainId: TRUST.chainId,
+        genesisFingerprint: TRUST.genesisFingerprint,
         height: BigInt(i + 1),
         blockId: `blk_${i + 1}`,
         stateRoot: `state_${i + 1}`,
@@ -61,6 +63,7 @@ export function measureStorage(input: { readonly snapshots: number }): readonly 
     const created = createSnapshot({
       networkId: TRUST.networkId,
       chainId: TRUST.chainId,
+      genesisFingerprint: TRUST.genesisFingerprint,
       height: 4n,
       blockId: 'blk_4',
       stateRoot: 'state_4',

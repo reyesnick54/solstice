@@ -357,6 +357,7 @@ export type WalletTransactionRecord = {
   readonly actualFinalizedFee: bigint | null;
   readonly height: number | null;
   readonly bodyHash: string;
+  readonly signBytesHex: string;
   readonly historicSignatureHex: string | null;
 };
 

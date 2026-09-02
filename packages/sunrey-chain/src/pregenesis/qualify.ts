@@ -16,7 +16,7 @@ import { assertNoPrivateKeyMaterial, structuredLog } from '../ops/logging.ts';
 import { requiredMetricCatalog } from '../ops/observability.ts';
 import { assertSafeTelemetryRecord } from '../ops/privacy.ts';
 import { SevenValidatorNetwork } from '../ops/seven-validator.ts';
-import { createSnapshot, verifySnapshot } from '../ops/snapshots.ts';
+import { createSnapshot, genesisFingerprint, verifySnapshot } from '../ops/snapshots.ts';
 import { STORAGE_ENGINE_NAME, storageStatus, verifyStorage } from '../ops/storage.ts';
 import { commitCanonical } from '../hash.ts';
 import { runSanity } from '../perf/runner.ts';
@@ -203,6 +203,7 @@ function qualifyStorage(): PregenesisQualificationReport['storage'] {
   const snapshot = createSnapshot({
     networkId: PREGENESIS_NETWORK_ID,
     chainId: PREGENESIS_CHAIN_ID,
+    genesisFingerprint: genesisFingerprint(PREGENESIS_NETWORK_ID, PREGENESIS_CHAIN_ID, 'pregenesis_genesis'),
     height: 8n,
     blockId: 'block-8',
     stateRoot: '11'.repeat(32),
@@ -218,6 +219,7 @@ function qualifyStorage(): PregenesisQualificationReport['storage'] {
   const verifiedSnapshot = verifySnapshot(snapshot.value, {
     networkId: PREGENESIS_NETWORK_ID,
     chainId: PREGENESIS_CHAIN_ID,
+    genesisFingerprint: genesisFingerprint(PREGENESIS_NETWORK_ID, PREGENESIS_CHAIN_ID, 'pregenesis_genesis'),
     protocolVersion: '1',
     trustedFinalizedHeight: 8n,
     trustedStateRoot: '11'.repeat(32),
