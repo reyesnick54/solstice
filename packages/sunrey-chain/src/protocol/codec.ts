@@ -29,7 +29,11 @@ import {
 import type {
   AttestationBody,
   Authentication,
+  BlockCommitmentRootsV1,
+  BlockHeader,
   BlockHeaderV1,
+  BlockHeaderV2,
+  isBlockHeaderV2,
   BodyHeader,
   ConsentReferenceBody,
   DeliveryBody,
@@ -937,22 +941,83 @@ export function decodeEnvelope(bytes: Uint8Array): EnvelopeV1 {
   });
 }
 
+function requireHashBytes(bytes: Uint8Array, label: string): Uint8Array {
+  if (bytes.length !== 32) {
+    fail('MALFORMED');
+  }
+  return bytes;
+}
+
+function encodeCommitmentRoots(roots: BlockCommitmentRootsV1): Array<{ tag: number; kind: 'bytes'; value: Buffer }> {
+  return [
+    { tag: 12, kind: 'bytes', value: Buffer.from(requireHashBytes(roots.evidenceRoot, 'evidenceRoot')) },
+    { tag: 13, kind: 'bytes', value: Buffer.from(requireHashBytes(roots.rightsRoot, 'rightsRoot')) },
+    { tag: 14, kind: 'bytes', value: Buffer.from(requireHashBytes(roots.policyRoot, 'policyRoot')) },
+  ];
+}
+
+function encodeBlockHeaderBase(header: BlockHeaderV1): Array<{ tag: number; kind: 'bytes' | 'varint'; value: Buffer | bigint }> {
+  return [
+    { tag: 1, kind: 'bytes', value: utf8(header.networkId) },
+    { tag: 2, kind: 'bytes', value: utf8(header.chainId) },
+    { tag: 3, kind: 'bytes', value: utf8(header.codecId) },
+    { tag: 4, kind: 'varint', value: BigInt(header.schemaVersion) },
+    { tag: 5, kind: 'varint', value: header.height },
+    { tag: 6, kind: 'bytes', value: Buffer.from(header.previousBlockHash) },
+    { tag: 7, kind: 'bytes', value: Buffer.from(header.appHash) },
+    { tag: 8, kind: 'bytes', value: Buffer.from(header.transactionRoot) },
+    { tag: 9, kind: 'bytes', value: Buffer.from(header.validatorSetHash) },
+    { tag: 10, kind: 'bytes', value: Buffer.from(header.consensusParametersHash) },
+    { tag: 11, kind: 'varint', value: header.timeUnixSeconds },
+  ];
+}
+
 export function encodeBlockHeader(header: BlockHeaderV1): Uint8Array {
+  return new Uint8Array(writeFields(encodeBlockHeaderBase(header)));
+}
+
+export function encodeBlockHeaderV2(header: BlockHeaderV2): Uint8Array {
   return new Uint8Array(
-    writeFields([
-      { tag: 1, kind: 'bytes', value: utf8(header.networkId) },
-      { tag: 2, kind: 'bytes', value: utf8(header.chainId) },
-      { tag: 3, kind: 'bytes', value: utf8(header.codecId) },
-      { tag: 4, kind: 'varint', value: BigInt(header.schemaVersion) },
-      { tag: 5, kind: 'varint', value: header.height },
-      { tag: 6, kind: 'bytes', value: Buffer.from(header.previousBlockHash) },
-      { tag: 7, kind: 'bytes', value: Buffer.from(header.appHash) },
-      { tag: 8, kind: 'bytes', value: Buffer.from(header.transactionRoot) },
-      { tag: 9, kind: 'bytes', value: Buffer.from(header.validatorSetHash) },
-      { tag: 10, kind: 'bytes', value: Buffer.from(header.consensusParametersHash) },
-      { tag: 11, kind: 'varint', value: header.timeUnixSeconds },
-    ]),
+    writeFields([...encodeBlockHeaderBase(header), ...encodeCommitmentRoots(header.commitmentRoots)]),
   );
+}
+
+function decodeBlockHeaderFields(bytes: Uint8Array): BlockHeader {
+  const fields = readFields(Buffer.from(bytes), new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]));
+  const schemaVersion = Number(readUint(first(fields, 4)));
+  const base: BlockHeaderV1 = Object.freeze({
+    networkId: readString(first(fields, 1)),
+    chainId: readString(first(fields, 2)),
+    codecId: readString(first(fields, 3)),
+    schemaVersion: 1,
+    height: readUint(first(fields, 5)),
+    previousBlockHash: new Uint8Array(readBytes(first(fields, 6))),
+    appHash: new Uint8Array(readBytes(first(fields, 7))),
+    transactionRoot: new Uint8Array(readBytes(first(fields, 8))),
+    validatorSetHash: new Uint8Array(readBytes(first(fields, 9))),
+    consensusParametersHash: new Uint8Array(readBytes(first(fields, 10))),
+    timeUnixSeconds: readUint(first(fields, 11)),
+  });
+  if (schemaVersion === 1) {
+    return base;
+  }
+  if (schemaVersion !== 2) {
+    fail('INVALID_VERSION');
+  }
+  const commitmentRoots: BlockCommitmentRootsV1 = Object.freeze({
+    evidenceRoot: new Uint8Array(requireHashBytes(new Uint8Array(readBytes(first(fields, 12))), 'evidenceRoot')),
+    rightsRoot: new Uint8Array(requireHashBytes(new Uint8Array(readBytes(first(fields, 13))), 'rightsRoot')),
+    policyRoot: new Uint8Array(requireHashBytes(new Uint8Array(readBytes(first(fields, 14))), 'policyRoot')),
+  });
+  return Object.freeze({
+    ...base,
+    schemaVersion: 2,
+    commitmentRoots,
+  });
+}
+
+export function decodeBlockHeader(bytes: Uint8Array): BlockHeader {
+  return decodeBlockHeaderFields(bytes);
 }
 
 export function encodeEconomicObject(object: EconomicObject): Uint8Array {
