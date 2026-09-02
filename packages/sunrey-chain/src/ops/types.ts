@@ -596,14 +596,19 @@ export type ValidatorWorkflowReceipt = {
   readonly evidenceErased: false;
 };
 
+export const SNAPSHOT_FORMAT_VERSION = 1 as const;
+
 export type SnapshotManifest = {
   readonly kind: SnapshotKind;
   readonly networkId: string;
   readonly chainId: string;
+  readonly genesisFingerprint: string;
   readonly height: bigint;
   readonly blockId: string;
+  readonly finalizedBlockId: string;
   readonly stateRoot: string;
   readonly protocolVersion: string;
+  readonly snapshotFormatVersion: typeof SNAPSHOT_FORMAT_VERSION;
   readonly storageSchema: number;
   readonly validatorSetHash: string;
   readonly validatorSetVersion: bigint;

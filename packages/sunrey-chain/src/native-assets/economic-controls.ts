@@ -25,6 +25,12 @@ import {
   type AssetSupplyBook,
 } from '../economics/supply.ts';
 import {
+  booksFromCanonicalSupplies,
+  canonicalSuppliesFromBooks,
+  type CanonicalProtocolState,
+} from '../deterministic-state/index.ts';
+import { createGenesisState } from '../deterministic-state/genesis.ts';
+import {
   ENGINEERING_SIMULATION,
   PRODUCTION_PARAMETER_UNCONFIGURED,
   type BurnClass,
@@ -374,6 +380,45 @@ export class ProtocolNativeSupplyAuthority {
 
   invariantReport(): SupplyInvariantReport {
     return enforceSupplyInvariants([this.books.SUNREY_COIN, this.books.MOONREY_COIN]);
+  }
+
+  toCanonicalState(input?: {
+    readonly height?: bigint;
+    readonly finalizedBlockId?: string | null;
+    readonly executedTransactionIds?: readonly string[];
+    readonly executedIssuanceAuthorizationIds?: readonly string[];
+    readonly governanceAuthorizationRefs?: readonly string[];
+    readonly accountNonces?: CanonicalProtocolState['accountNonces'];
+  }): CanonicalProtocolState {
+    const base = createGenesisState({ policyState: this.policyState });
+    return Object.freeze({
+      ...base,
+      height: input?.height ?? 0n,
+      finalizedBlockId: input?.finalizedBlockId ?? null,
+      supplies: canonicalSuppliesFromBooks(this.books),
+      accountNonces: Object.freeze([...(input?.accountNonces ?? [])]),
+      executedTransactionIds: Object.freeze([...(input?.executedTransactionIds ?? [])].sort()),
+      executedIssuanceAuthorizationIds: Object.freeze(
+        [...(input?.executedIssuanceAuthorizationIds ?? [])].sort(),
+      ),
+      governanceAuthorizationRefs: Object.freeze([...(input?.governanceAuthorizationRefs ?? [])].sort()),
+    });
+  }
+
+  static fromCanonicalState(state: CanonicalProtocolState): ProtocolNativeSupplyAuthority {
+    const authority = new ProtocolNativeSupplyAuthority({
+      policyState: state.policyState,
+      network:
+        state.policyState === 'TESTNET_ACTIVE'
+          ? 'TESTNET'
+          : state.policyState === 'PRODUCTION_CANDIDATE'
+            ? 'MAINNET'
+            : 'DEVELOPMENT',
+    });
+    const books = booksFromCanonicalSupplies(state.supplies);
+    authority.books.SUNREY_COIN = books.SUNREY_COIN;
+    authority.books.MOONREY_COIN = books.MOONREY_COIN;
+    return authority;
   }
 }
 

@@ -20,7 +20,7 @@ import {
   type RelayerInstance,
   type RpcInstance,
 } from '../ops/failover.ts';
-import { createSnapshot, verifySnapshot } from '../ops/snapshots.ts';
+import { createSnapshot, genesisFingerprint, verifySnapshot } from '../ops/snapshots.ts';
 import { SevenValidatorNetwork, runRollingUpgrade } from '../ops/seven-validator.ts';
 import { sevenValidatorPlacements, developmentFailureDomains } from '../ops/topology.ts';
 import { runHybridTestnetRehearsal } from '../pqc/hybrid-rehearsal.ts';
@@ -203,6 +203,7 @@ export function qualifySnapshotRestore(): SnapshotRestoreReport {
   const snapshot = createSnapshot({
     networkId: 'net_sunrey_testnet_1',
     chainId: 'chn_sunrey_testnet_1',
+    genesisFingerprint: genesisFingerprint('net_sunrey_testnet_1', 'chn_sunrey_testnet_1', healthyRoot),
     height: 6n,
     blockId: healthyRoot,
     stateRoot: healthyRoot,
@@ -224,6 +225,7 @@ export function qualifySnapshotRestore(): SnapshotRestoreReport {
   const trust = {
     networkId: 'net_sunrey_testnet_1',
     chainId: 'chn_sunrey_testnet_1',
+    genesisFingerprint: genesisFingerprint('net_sunrey_testnet_1', 'chn_sunrey_testnet_1', healthyRoot),
     protocolVersion: '1',
     trustedFinalizedHeight: 6n,
     trustedStateRoot: healthyRoot,

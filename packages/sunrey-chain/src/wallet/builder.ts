@@ -6,8 +6,6 @@
  * maximum authorized, and actual finalized fees.
  */
 
-import { createHash } from 'node:crypto';
-
 import {
   PROTOCOL_CHAIN_ID,
   PROTOCOL_CODEC_ID,
@@ -19,6 +17,8 @@ import type { EnvelopeV1, NativeAssetBody, ReservedBody, TransactionBodyV1 } fro
 import type { NativeAssetId } from '../protocol/assets.ts';
 import type { TransactionFamily } from '../protocol/transaction-family.ts';
 import { fixtureHeader, fixtureObject, fixtureQuantity, fixtureRight } from '../protocol/fixtures.ts';
+import { transactionIdOf } from '../protocol/hash.ts';
+import { transactionSigningDigestHex } from '../protocol/signing.ts';
 import { developmentFeeSchedule, hashFeeSchedule } from '../fees/schedule.ts';
 import { estimateFee } from '../fees/engine.ts';
 import { usageForOperation } from '../fees/meter.ts';
@@ -42,18 +42,10 @@ export type BuildTransferInput = {
   readonly chainId?: string;
 };
 
-function bodyHashOf(body: TransactionBodyV1, networkId: string, chainId: string): string {
-  return createHash('sha256')
-    .update('SUNREY_TX_V1')
-    .update(networkId)
-    .update(chainId)
-    .update(JSON.stringify({
-      family: body.family,
-      clientTxId: body.header.clientTxId,
-      sequence: body.header.sequence.toString(),
-      purpose: body.header.purpose,
-    }))
-    .digest('hex');
+function canonicalSignBytesOf(envelope: EnvelopeV1): { readonly bodyHash: string; readonly signBytesHex: string } {
+  const bodyHash = transactionIdOf(envelope);
+  const signBytesHex = transactionSigningDigestHex(envelope);
+  return Object.freeze({ bodyHash, signBytesHex });
 }
 
 function quoteFee(operation: ProtocolOperation, encodedBytes: number, signatureCount: number, maxFee: bigint): FeeQuote {
@@ -125,7 +117,7 @@ export function buildNativeTransfer(input: BuildTransferInput): BuiltTransaction
       keyVersion: 1,
     }),
   });
-  const hash = bodyHashOf(body, networkId, chainId);
+  const { bodyHash, signBytesHex } = canonicalSignBytesOf(envelope);
   return Object.freeze({
     clientTxId,
     networkId,
@@ -137,9 +129,9 @@ export function buildNativeTransfer(input: BuildTransferInput): BuiltTransaction
     amount: input.amount,
     fee,
     nonce: input.nonce,
-    bodyHash: hash,
+    bodyHash,
     unsignedEnvelope: envelope,
-    signBytesHex: hash,
+    signBytesHex,
   });
 }
 
@@ -174,7 +166,22 @@ export function buildReservedFamily(input: {
       purpose: input.purpose,
     }),
   });
-  const hash = bodyHashOf(body, networkId, chainId);
+  const envelope: EnvelopeV1 = Object.freeze({
+    networkId,
+    chainId,
+    codecId: PROTOCOL_CODEC_ID,
+    schemaVersion: PROTOCOL_SCHEMA_VERSION,
+    transactionType: input.family,
+    body,
+    authentication: Object.freeze({
+      schemaVersion: 1 as const,
+      algorithmId: 1 as const,
+      publicKey: new Uint8Array(32),
+      signature: new Uint8Array(0),
+      keyVersion: 1,
+    }),
+  });
+  const { bodyHash, signBytesHex } = canonicalSignBytesOf(envelope);
   const operation = input.family === 'GOVERNANCE' ? 'GOVERNANCE_SIGNATURE_VERIFY' : 'ORDINARY_STATE_WRITE';
   return Object.freeze({
     clientTxId,
@@ -187,15 +194,8 @@ export function buildReservedFamily(input: {
     amount: null,
     fee: quoteFee(operation, 128, 1, input.maxFee),
     nonce: input.nonce,
-    bodyHash: hash,
-    unsignedEnvelope: Object.freeze({
-      networkId,
-      chainId,
-      codecId: PROTOCOL_CODEC_ID,
-      schemaVersion: PROTOCOL_SCHEMA_VERSION,
-      transactionType: input.family,
-      body,
-    }),
-    signBytesHex: hash,
+    bodyHash,
+    unsignedEnvelope: envelope,
+    signBytesHex,
   });
 }

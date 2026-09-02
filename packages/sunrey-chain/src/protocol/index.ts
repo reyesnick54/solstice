@@ -48,11 +48,15 @@ export type { TransactionFamily } from './transaction-family.ts';
 
 export type {
   Authentication,
+  BlockCommitmentRootsV1,
+  BlockHeader,
   BlockHeaderV1,
+  BlockHeaderV2,
   BodyHeader,
   EnvelopeV1,
   TransactionBodyV1,
 } from './envelope.ts';
+export { isBlockHeaderV2 } from './envelope.ts';
 
 export {
   CodecError,
@@ -60,6 +64,8 @@ export {
   encodeEnvelope,
   encodeUnsignedEnvelope,
   encodeBlockHeader,
+  encodeBlockHeaderV2,
+  decodeBlockHeader,
   encodeEconomicObject,
   decodeEconomicObject,
   injectUnknownField,
@@ -72,6 +78,51 @@ export {
   hashForDomain,
   rejectJsonConsensusHash,
 } from './hash.ts';
+
+export {
+  transactionSigningBinding,
+  transactionSigningDigest,
+  transactionSigningDigestHex,
+  canonicalTransactionId,
+} from './signing.ts';
+
+export {
+  deriveAccountIdFromPublicKey,
+  publicKeyMatchesAccount,
+  assertSequenceAdvance,
+  AccountSequenceTracker,
+} from './account.ts';
+export type { AccountSequenceState } from './account.ts';
+
+export {
+  issuanceReplayKey,
+  ConsumedAuthorizationRegistry,
+  extractIssuanceAuthorization,
+} from './issuance-replay.ts';
+export type { IssuanceAuthorizationRef } from './issuance-replay.ts';
+
+export {
+  TRANSACTION_LIFECYCLE_STAGES,
+  TRANSACTION_RESULT_SOURCES,
+  receiptForStage,
+  advanceReceipt,
+  mempoolAdmissionIsNotFinality,
+} from './receipt.ts';
+export type {
+  TransactionLifecycleStage,
+  TransactionResultSource,
+  TransactionReceipt,
+} from './receipt.ts';
+
+export {
+  DEFAULT_PROTOCOL_MEMPOOL_POLICY,
+  ProtocolMempool,
+  contextNowMs,
+} from './mempool.ts';
+export type { MempoolPolicy, MempoolEntry, MempoolAdmissionResult } from './mempool.ts';
+
+export { TransactionLifecycle, executeBlock } from './lifecycle.ts';
+export type { SignedTransaction, LifecycleRejection } from './lifecycle.ts';
 
 export { toDebugJson, debugJsonMustNotBeHashed } from './json-projection.ts';
 export {

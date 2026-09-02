@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import { opsErr, opsOk, type OpsResult, type SnapshotManifest } from './types.ts';
+import { opsErr, opsOk, DEVELOPMENT_CHAIN_ID, DEVELOPMENT_NETWORK_ID, SNAPSHOT_FORMAT_VERSION, type OpsResult, type SnapshotManifest } from './types.ts';
 
 export type ChainSnapshot = {
   readonly manifest: SnapshotManifest;
@@ -12,6 +12,7 @@ export type ChainSnapshot = {
 export type SnapshotTrust = {
   readonly networkId: string;
   readonly chainId: string;
+  readonly genesisFingerprint: string;
   readonly protocolVersion: string;
   readonly trustedFinalizedHeight: bigint;
   readonly trustedStateRoot?: string;
@@ -21,16 +22,30 @@ function sha256Hex(value: string): string {
   return createHash('sha256').update(value).digest('hex');
 }
 
+export function genesisFingerprint(networkId: string, chainId: string, genesisHash: string): string {
+  return sha256Hex([networkId, chainId, genesisHash].join('|'));
+}
+
+/** Deterministic development-network genesis fingerprint for engineering simulations. */
+export const DEVELOPMENT_GENESIS_HASH = '00'.repeat(32);
+
+export function developmentGenesisFingerprint(): string {
+  return genesisFingerprint(DEVELOPMENT_NETWORK_ID, DEVELOPMENT_CHAIN_ID, DEVELOPMENT_GENESIS_HASH);
+}
+
 export function snapshotManifestHash(manifest: Omit<SnapshotManifest, 'manifestHash'>): string {
   return sha256Hex(
     [
       manifest.kind,
       manifest.networkId,
       manifest.chainId,
+      manifest.genesisFingerprint,
       manifest.height.toString(),
       manifest.blockId,
+      manifest.finalizedBlockId,
       manifest.stateRoot,
       manifest.protocolVersion,
+      String(manifest.snapshotFormatVersion),
       String(manifest.storageSchema),
       manifest.validatorSetHash,
       manifest.validatorSetVersion.toString(),
@@ -43,8 +58,10 @@ export function snapshotManifestHash(manifest: Omit<SnapshotManifest, 'manifestH
 export function createSnapshot(input: {
   readonly networkId: string;
   readonly chainId: string;
+  readonly genesisFingerprint: string;
   readonly height: bigint;
   readonly blockId: string;
+  readonly finalizedBlockId?: string;
   readonly stateRoot: string;
   readonly protocolVersion: string;
   readonly validatorSetHash: string;
@@ -55,15 +72,22 @@ export function createSnapshot(input: {
   if (/private[_-]?key|seedHex|pkcs8/i.test(input.payload)) {
     return opsErr('PRIVATE_KEY_EXPORT_FORBIDDEN', 'snapshot must not include validator private keys');
   }
+  if (/hin_|rawSubject|travelHistory|healthData|paymentCredential/i.test(input.payload)) {
+    return opsErr('SNAPSHOT_TAMPER', 'snapshot must not include raw HIN or private economic data');
+  }
   const payloadHash = sha256Hex(input.payload);
+  const finalizedBlockId = input.finalizedBlockId ?? input.blockId;
   const unsigned = {
     kind: 'CHAIN_STATE' as const,
     networkId: input.networkId,
     chainId: input.chainId,
+    genesisFingerprint: input.genesisFingerprint,
     height: input.height,
     blockId: input.blockId,
+    finalizedBlockId,
     stateRoot: input.stateRoot,
     protocolVersion: input.protocolVersion,
+    snapshotFormatVersion: SNAPSHOT_FORMAT_VERSION,
     storageSchema: 1,
     validatorSetHash: input.validatorSetHash,
     validatorSetVersion: input.validatorSetVersion,
@@ -79,11 +103,17 @@ export function verifySnapshot(snapshot: ChainSnapshot, trust: SnapshotTrust): O
   if (snapshot.manifest.includesPrivateKey) {
     return opsErr('PRIVATE_KEY_EXPORT_FORBIDDEN', 'snapshot claims to include a private key');
   }
+  if (snapshot.manifest.snapshotFormatVersion !== SNAPSHOT_FORMAT_VERSION) {
+    return opsErr('INCOMPATIBLE_PROTOCOL', 'snapshot format version is incompatible');
+  }
   if (snapshot.manifest.networkId !== trust.networkId) {
     return opsErr('WRONG_NETWORK_SNAPSHOT', 'snapshot network does not match the local network');
   }
   if (snapshot.manifest.chainId !== trust.chainId) {
     return opsErr('WRONG_NETWORK_SNAPSHOT', 'snapshot chain does not match the local chain');
+  }
+  if (snapshot.manifest.genesisFingerprint !== trust.genesisFingerprint) {
+    return opsErr('WRONG_NETWORK_SNAPSHOT', 'snapshot genesis fingerprint does not match');
   }
   if (snapshot.manifest.protocolVersion !== trust.protocolVersion) {
     return opsErr('INCOMPATIBLE_PROTOCOL', 'snapshot protocol is incompatible');

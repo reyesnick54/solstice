@@ -9,6 +9,7 @@ import { join } from 'node:path';
 
 import {
   createSnapshot,
+  developmentGenesisFingerprint,
   restoreSnapshot,
   verifySnapshot,
   type ChainSnapshot,
@@ -121,6 +122,7 @@ export function createStorageSnapshot(input: {
   return createSnapshot({
     networkId: DEVELOPMENT_NETWORK_ID,
     chainId: DEVELOPMENT_CHAIN_ID,
+    genesisFingerprint: developmentGenesisFingerprint(),
     height: input.height,
     blockId: input.blockId,
     stateRoot: input.stateRoot,
@@ -139,6 +141,7 @@ export function restoreStorageSnapshot(
   const trust: SnapshotTrust = {
     networkId: DEVELOPMENT_NETWORK_ID,
     chainId: DEVELOPMENT_CHAIN_ID,
+    genesisFingerprint: developmentGenesisFingerprint(),
     protocolVersion: '1',
     trustedFinalizedHeight: snapshot.manifest.height,
     trustedStateRoot: snapshot.manifest.stateRoot,
