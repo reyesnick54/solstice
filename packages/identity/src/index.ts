@@ -296,6 +296,25 @@ export {
   type TokenBundle,
 } from './authentication-service.ts';
 export { evaluateStepUp, type StepUpDecision } from './step-up.ts';
+export * as fineGrainedAuthorization from './fine-grained/index.ts';
+export {
+  AUTHORIZATION_ACTOR_TYPES,
+  CANONICAL_RELATIONSHIPS,
+  SimulationRelationshipEngine,
+  createSimulationRelationshipEngine,
+  evaluateAdminAuthorization,
+  evaluateDelegation,
+  evaluateServiceAuthorization,
+  IdentityLinkRegistry,
+  KEYCLOAK_INTEGRATION_DECISION,
+  OPENFGA_INTEGRATION_DECISION,
+  type AuthorizationActorType,
+  type AuthorizationCheck,
+  type AuthorizationDecision,
+  type DelegationRecord,
+  type FineGrainedAuthorization,
+  type RelationshipTuple,
+} from './fine-grained/index.ts';
 export {
   ProductionWebAuthnRelyingParty,
   WEBAUTHN_BROWSER_DEPENDENCY,
