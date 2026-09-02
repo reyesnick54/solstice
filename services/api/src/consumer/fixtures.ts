@@ -181,6 +181,7 @@ export type SandboxWorld = {
   readonly agentExternalEvidence: AgentExternalEvidenceBff;
   readonly opportunity: OpportunityIntelligenceBff;
   readonly subscriptions: SubscriptionIntelligenceBff;
+  readonly providerDown: Readonly<Record<string, boolean>>;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -827,6 +828,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     agentExternalEvidence,
     opportunity,
     subscriptions,
+    providerDown: options.providerDown ? { cards: true, payments: true, fx: true, custody: true } : {},
   });
 }
 
