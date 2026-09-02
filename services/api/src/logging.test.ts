@@ -43,6 +43,25 @@ describe('structured logging redaction', () => {
     assert.equal(redacted.route, '/api/v1/consumer/home');
   });
 
+  it('redacts genetics, location, consent, and government identifiers', () => {
+    const redacted = redactRecord({
+      dna: 'ATCGATCG',
+      geneticData: { variant: 'rs123' },
+      locationHistory: [{ lat: 51.5, lon: -0.1 }],
+      consentDocument: 'signed-consent.pdf',
+      governmentId: 'AB1234567',
+      communications: ['sms body'],
+      route: '/api/v1/consumer/vault',
+    });
+    assert.equal(redacted.dna, '[REDACTED]');
+    assert.equal((redacted.geneticData as unknown), '[REDACTED]');
+    assert.equal((redacted.locationHistory as unknown), '[REDACTED]');
+    assert.equal(redacted.consentDocument, '[REDACTED]');
+    assert.equal(redacted.governmentId, '[REDACTED]');
+    assert.equal((redacted.communications as unknown), '[REDACTED]');
+    assert.equal(redacted.route, '/api/v1/consumer/vault');
+  });
+
   it('emits machine-readable JSON with request fields', () => {
     const lines: string[] = [];
     const logger = createLogger(validatePlatformApiConfig({}), (line) => lines.push(line));

@@ -24,6 +24,13 @@ export const FORBIDDEN_PAYLOAD_KEYS = [
   'apiKey',
   'password',
   'rawCredential',
+  'dna',
+  'geneticSequence',
+  'geneticData',
+  'locationHistory',
+  'consentDocument',
+  'governmentId',
+  'communications',
 ] as const;
 
 export type MinimizationFailure = {

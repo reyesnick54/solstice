@@ -19,7 +19,7 @@ export type StructuredLog = {
 const REDACTED = '[REDACTED]';
 
 const SENSITIVE_KEY_RE =
-  /pass(word|wd)?|secret|token|refresh|authorization|private[_-]?key|seed|mnemonic|ssn|pan|card([_-]?number)?|cvv|cvc|api[_-]?key|hmac|cookie|iban|routing|account([_-]?number)?|hin([_-]?data)?|health([_-]?data)?|diagnosis|medical|phi|prompt([_-]?context)?/i;
+  /pass(word|wd)?|secret|token|refresh|authorization|private[_-]?key|seed|mnemonic|ssn|pan|card([_-]?number)?|cvv|cvc|api[_-]?key|hmac|cookie|iban|routing|account([_-]?number)?|hin([_-]?data)?|health([_-]?data)?|diagnosis|medical|phi|prompt([_-]?context)?|dna|genetic|government[_-]?id|national[_-]?id|passport|consent([_-]?document)?|location([_-]?history)?|communications?|raw[_-]?credential/i;
 
 const SENSITIVE_VALUE_RE =
   /bearer\s+[a-z0-9._~+/=-]+|eyj[a-z0-9_-]+\.[a-z0-9_-]+|sk_[a-z0-9]+|-----begin [a-z ]+private key-----/i;

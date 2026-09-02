@@ -152,6 +152,16 @@ const SENSITIVE_PAYLOAD_KEYS = [
   'track1',
   'track2',
   'magstripe',
+  'dna',
+  'geneticData',
+  'geneticSequence',
+  'locationHistory',
+  'consentDocument',
+  'governmentId',
+  'nationalId',
+  'communications',
+  'rawCredential',
+  'rawConsent',
 ];
 
 export function assertSafeEventPayload(payload: unknown): void {
