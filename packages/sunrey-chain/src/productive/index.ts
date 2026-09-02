@@ -89,6 +89,8 @@ export { runProductiveCommand } from './cli.ts';
 export { fourValidatorsAgree, runAllDemos, runComputeDemo, runEnergyDemo, runManufacturingDemo } from './demo.ts';
 export * from './policy-governance/index.ts';
 export * from './claim-candidate/index.ts';
+export * as productiveOperations from './operations/index.ts';
+export * from './operations/index.ts';
 export * as productiveOntology from './ontology/index.ts';
 export {
   assertTaxonomyComplete,
