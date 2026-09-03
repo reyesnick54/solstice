@@ -61,7 +61,16 @@ export {
 } from './types.ts';
 export * from './constants.ts';
 export * from './types.ts';
-export * from './serialization.ts';
+export {
+  encodeEconomicObservation,
+  encodeEconomicEvidence,
+  encodeVerifiedEconomicFact,
+  encodeCanonicalEconomicClaim,
+  observationCommitment,
+  verifiedFactCommitment,
+  claimCommitment,
+  chainCommitmentRepresentation,
+} from './serialization.ts';
 export * from './ids.ts';
 export * from './validation.ts';
 export * from './authority.ts';

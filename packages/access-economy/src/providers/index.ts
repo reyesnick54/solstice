@@ -32,5 +32,5 @@ export * from './redemption/workflow.ts';
 export * from './redemption/entitlement-store.ts';
 export * from './redemption/metrics.ts';
 export * from './redemption/invariants.ts';
-export * from './sdk/index.ts';
-export * from './commercial/index.ts';
+export * as accessProviderSdk from './sdk/index.ts';
+export * as commercialAccess from './commercial/index.ts';

@@ -1,4 +1,4 @@
-export type { HealthProvider, HealthProviderBundle } from './base.ts';
+export type { HealthProvider } from './base.ts';
 export {
   createWave6FixtureProviders,
   type Wave6FixtureProviders,

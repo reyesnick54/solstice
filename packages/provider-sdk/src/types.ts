@@ -4,8 +4,52 @@
 
 export * from './observation-types.ts';
 export * from './registry-types.ts';
-export * from './http-transport-types.ts';
-export * from './reliability-types.ts';
+export {
+  PROVIDER_HTTP_METHODS,
+  PROVIDER_CONTENT_TYPES,
+  type ProviderHttpMethod,
+  type ProviderContentType,
+  type ProviderHttpRequestContext,
+  type ProviderHttpResponseMetadata,
+  type ProviderParsedBody,
+  type ProviderHttpTransportResponse,
+  type ProviderHttpTransportSuccess,
+  type ProviderHttpTransportFailure,
+  type ProviderHttpTransportResult,
+  type ProviderHttpTransport,
+  type HttpProviderRequestContext,
+  type HttpProviderResponseMetadata,
+  type HttpProviderTransportResponse,
+  type HttpProviderTransportSuccess,
+  type HttpProviderTransportFailure,
+  type HttpProviderTransportResult,
+  type HttpProviderTransport,
+} from './http-transport-types.ts';
+export {
+  HTTP_METHODS,
+  CIRCUIT_STATES,
+  FAILURE_CLASSIFICATIONS,
+  defaultClock,
+  isSafeReadMethod,
+  type HttpMethod,
+  type CircuitState,
+  type FailureClassification,
+  type ReliabilityProviderTransport,
+  type ReliabilityTransport,
+  type ReliabilityTransportRequest,
+  type ReliabilityTransportResponse,
+  type ProviderError,
+  type ReliabilityOutcome,
+  type DeadlineContext,
+  type FallbackContext,
+  type FallbackDecision,
+  type FallbackHook,
+  type ReliabilityClock,
+  type ProviderTransportRequest,
+  type ProviderTransportResponse,
+  type ProviderTransport,
+  type Clock,
+} from './reliability-types.ts';
 
 import { PROVIDER_AUTHORITY_CLASSES } from './registry-types.ts';
 

@@ -30,7 +30,7 @@ export const WAVE5_CATEGORIES = new Set([
 const DEPRECATED_IDS = new Set<string>([]);
 const UNAVAILABLE_IDS = new Set<string>([]);
 
-export function loadCatalogProviders(): readonly Record<string, unknown>[] {
+function loadWave5CatalogProviders(): readonly Record<string, unknown>[] {
   const catalog = parseYaml(readFileSync(CATALOG_PATH, 'utf8')) as { providers: Record<string, unknown>[] };
   return Object.freeze(catalog.providers ?? []);
 }
@@ -107,7 +107,7 @@ export function buildWave5CoverageReport(): {
   readonly blocked: number;
   readonly previewOnly: number;
 } {
-  const providers = loadCatalogProviders().map(classifyWave5Provider);
+  const providers = loadWave5CatalogProviders().map(classifyWave5Provider);
   const summary: Record<Wave5CoverageStatus, number> = {
     IMPLEMENTED: 0,
     BLOCKED: 0,

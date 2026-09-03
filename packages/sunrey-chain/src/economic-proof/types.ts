@@ -169,7 +169,7 @@ export const DEFAULT_MONETIZATION_POLICY: MonetizationPolicy = Object.freeze({
 
 import type {
   CANONICAL_ECONOMIC_CLAIM_SCHEMA_VERSION,
-  ChallengeStatus,
+  LatticeChallengeStatus,
   EconomicClaimType,
   EconomicDomain,
   ECONOMIC_EVIDENCE_SCHEMA_VERSION,
@@ -353,7 +353,7 @@ export type VerifiedEconomicFact = {
   readonly verifiers: readonly VerifierAttribution[];
   readonly confidence: ConfidenceAssessment;
   readonly verificationStatus: ProofVerificationStatus;
-  readonly challengeStatus: ChallengeStatus;
+  readonly challengeStatus: LatticeChallengeStatus;
   readonly temporalBounds: TemporalBounds;
   readonly geographicBounds: GeographicBounds;
   readonly simulation: true;
@@ -396,7 +396,7 @@ export type CanonicalEconomicClaim = {
   readonly lineage: ClaimLineage;
   readonly duplicateFingerprint: string;
   readonly verificationStatus: ProofVerificationStatus;
-  readonly challengeStatus: ChallengeStatus;
+  readonly challengeStatus: LatticeChallengeStatus;
   readonly monetizationStatus: MonetizationStatus;
   readonly simulation: true;
   readonly authority: ClaimAuthorityBoundary;

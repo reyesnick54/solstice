@@ -5,16 +5,9 @@
  * medical diagnosis, or private HIN/Vault data exfiltration.
  */
 
-import type { ExternalObservation } from '../../../provider-sdk/src/index.ts';
+import type { ExternalObservation, AuthorityClass } from '../../../provider-sdk/src/index.ts';
 
 export type FreshnessStatus = 'fresh' | 'aging' | 'stale' | 'expired' | 'unknown';
-export type AuthorityClass =
-  | 'authoritative_official'
-  | 'regulated_provider'
-  | 'reference_data'
-  | 'research_data'
-  | 'community_data'
-  | 'derived_data';
 
 export type ResearchWorkType =
   | 'PEER_REVIEWED'
