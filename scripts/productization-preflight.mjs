@@ -18,6 +18,7 @@ const STEPS = [
   { group: 'INTEGRITY', command: ['node', 'scripts/check-lockfiles.mjs'] },
   { group: 'ARCHITECTURE', command: ['python3', 'scripts/lint-architectural-invariants.py'] },
   { group: 'ARCHITECTURE', command: ['python3', 'scripts/extraction-dryrun.py'] },
+  { group: 'ARCHITECTURE', command: ['python3', 'scripts/check-package-boundaries.py'] },
   { group: 'ARCHITECTURE', command: ['npm', 'run', 'lint:architecture'] },
   { group: 'ARCHITECTURE', command: ['node', 'scripts/check-authority-map.mjs'] },
   { group: 'ARCHITECTURE', command: ['node', 'scripts/check-architecture-freeze.mjs'] },

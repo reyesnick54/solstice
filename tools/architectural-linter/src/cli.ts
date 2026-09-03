@@ -22,6 +22,7 @@ import { lintSurveillanceBoundary } from './surveillance-guards.ts';
 import { lintEngineeringClosure } from './engineering-closure-guards.ts';
 import { lintProductizationFreeze } from './productization-guards.ts';
 import { lintArchitectureFreeze } from './architecture-freeze-guards.ts';
+import { lintPackageBoundary } from './package-boundary-guards.ts';
 import { lintTree, formatFindings } from './linter.ts';
 
 const root = process.cwd();
@@ -51,6 +52,7 @@ const findings = [
   ...lintEngineeringClosure(root),
   ...lintProductizationFreeze(root),
   ...lintArchitectureFreeze(root),
+  ...lintPackageBoundary(root),
 ];
 if (findings.length > 0) {
   console.error(formatFindings(findings));
