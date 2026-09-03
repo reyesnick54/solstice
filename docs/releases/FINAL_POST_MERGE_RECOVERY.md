@@ -9,7 +9,7 @@ Post-merge stabilization repair for integration corruption introduced when stale
 | | SHA |
 |---|---|
 | **Starting** | `12b583e61e086c671e8535e7e8209d64b5630c4a` |
-| **Ending** | `91400106c3b50d8491440f6b922450180901fa93` |
+| **Ending** | `9b70fc83` (HEC persistence round-trip + integration test fixes) |
 
 ## Files repaired
 
@@ -24,7 +24,8 @@ Post-merge stabilization repair for integration corruption introduced when stale
 | `scripts/lib/package_boundary.py` | Services scan, `package.json` export validation, absolute-path fix |
 | `tools/architectural-linter/src/package-boundary-guards.ts` | Mirror: services scan + export validation |
 | `tools/architectural-linter/src/package-boundary-guards.test.ts` | Tests H–I for declared/undeclared subpath exports |
-| `docs/architecture/package-boundary-baseline.json` | Regenerated: 4688 package + 663 service grandfathered deep-imports |
+| `services/api/src/product-integration/durable-human-economic-state.ts` | Serialize/deserialize `ClaimRegistry` for DB snapshot round-trip |
+| `tests/persistence/human-economic-state-idempotency.test.ts` | Pool lifecycle + TEST 7 duplicate-fingerprint pattern |
 
 ## Merge corruptions found
 
@@ -50,7 +51,7 @@ Concurrent merges landed overlapping durable-runtime, RC1 qualification, and arc
 | Rust fmt/clippy/tests | Passed in local full CI run | N/A | Dockerfile fix unblocks tail | **PASS** (local `ci.sh` through Rust) |
 | Testnet manifests | **FAIL** — watcher Dockerfile | Missing HEALTHCHECK | Added HEALTHCHECK line | **PASS** |
 | OpenAPI / migrations | Passed in integrity stage | N/A | — | **PASS** |
-| Persistence integration | Not run locally (no Docker) | Environment | — | **PENDING** — GitHub `[DATABASE]` job |
+| Persistence integration | **FAIL** on `a349f037` — ClaimRegistry JSON round-trip + pool lifecycle | Maps/Sets serialized as `{}`; tests closed pools mid-run | Serialize proof-bound claims; fix TEST 3/4/6/7 | **PENDING** — GitHub `[DATABASE]` job on `9b70fc83` |
 | TypeScript typecheck | **FAIL** — ~1689 errors on `main` | Post-`d919aa69` merge type drift (not JSON/runtime) | Not fully repaired in this prompt | **FAIL** — `tsc` exit 2 |
 | Full `scripts/ci.sh` | **FAIL** at JSON then Dockerfile | Above | Partial | **BLOCKED** at typecheck until TS errors addressed |
 | Production flags | Simulation | N/A | Verified unchanged | **PASS** — `ENVIRONMENT=simulation`, `LIVE_*` false |

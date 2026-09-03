@@ -36,14 +36,6 @@ const CONTEXT = asMonetizationContextId('hctx_0123456789abcdef0123456789abcdef')
 
 const openRuntimes: DurableSimulationRuntime[] = [];
 
-async function closeTracked(runtime: DurableSimulationRuntime): Promise<void> {
-  await runtime.close();
-  const index = openRuntimes.indexOf(runtime);
-  if (index >= 0) {
-    openRuntimes.splice(index, 1);
-  }
-}
-
 function baseObservation(providerId: string, providerRecordId: string) {
   return {
     sourceClass: 'VERIFIED_RESEARCH_ATTESTATION' as const,
