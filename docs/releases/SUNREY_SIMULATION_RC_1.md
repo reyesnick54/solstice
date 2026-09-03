@@ -5,7 +5,7 @@
 | **Release candidate name** | `SUNREY SIMULATION RC1` |
 | **Package identifier** | `sunrey-backend-v1.0.0-rc.2` |
 | **Qualification branch** | `release/simulation-rc1-qualification` |
-| **Qualification commit** | `a8235fc9d4e8f2b1c0a9e7f6d5c4b3a291807060` |
+| **Qualification commit** | `a8235fc92d9b2ad75d59ec919f9b48ab40b5c9ee` |
 | **Base commit (pre-qualification fixes)** | `8f20c3fcd5c7928c7e9841454eace9d0cebd870a` |
 | **Qualification date** | 2026-09-03 (UTC) |
 | **Intended environment** | Fully functional **simulation / sandbox** for `https://app.sunrey.xyz` (Consumer BFF at `/api/v1/*`) |
