@@ -36,27 +36,27 @@ function asPrefixedHex<T extends string>(value: string, prefix: string, label: s
 }
 
 export function knowledgeNodeIdFor(material: string): KnowledgeNodeId {
-  return brandAs<string, KnowledgeNodeId>(`${KNOWLEDGE_ID_PREFIXES.node}${digest(material)}`);
+  return brandAs<string, 'KnowledgeNodeId'>(`${KNOWLEDGE_ID_PREFIXES.node}${digest(material)}`);
 }
 
 export function knowledgeEdgeIdFor(material: string): KnowledgeEdgeId {
-  return brandAs<string, KnowledgeEdgeId>(`${KNOWLEDGE_ID_PREFIXES.edge}${digest(material)}`);
+  return brandAs<string, 'KnowledgeEdgeId'>(`${KNOWLEDGE_ID_PREFIXES.edge}${digest(material)}`);
 }
 
 export function knowledgeAliasIdFor(material: string): KnowledgeAliasId {
-  return brandAs<string, KnowledgeAliasId>(`${KNOWLEDGE_ID_PREFIXES.alias}${digest(material)}`);
+  return brandAs<string, 'KnowledgeAliasId'>(`${KNOWLEDGE_ID_PREFIXES.alias}${digest(material)}`);
 }
 
 export function canonicalEntityIdFor(material: string): CanonicalEntityId {
-  return brandAs<string, CanonicalEntityId>(`${KNOWLEDGE_ID_PREFIXES.entity}${digest(material)}`);
+  return brandAs<string, 'CanonicalEntityId'>(`${KNOWLEDGE_ID_PREFIXES.entity}${digest(material)}`);
 }
 
 export function entityResolutionIdFor(material: string): EntityResolutionId {
-  return brandAs<string, EntityResolutionId>(`${KNOWLEDGE_ID_PREFIXES.resolution}${digest(material)}`);
+  return brandAs<string, 'EntityResolutionId'>(`${KNOWLEDGE_ID_PREFIXES.resolution}${digest(material)}`);
 }
 
 export function matchSuggestionIdFor(material: string): MatchSuggestionId {
-  return brandAs<string, MatchSuggestionId>(`${KNOWLEDGE_ID_PREFIXES.suggestion}${digest(material)}`);
+  return brandAs<string, 'MatchSuggestionId'>(`${KNOWLEDGE_ID_PREFIXES.suggestion}${digest(material)}`);
 }
 
 export function asKnowledgeNodeId(value: string): KnowledgeNodeId {

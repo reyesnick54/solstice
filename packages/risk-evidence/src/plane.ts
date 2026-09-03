@@ -53,8 +53,8 @@ export class RiskEvidencePlane {
   }): readonly DigitalRiskEvidence[] {
     const context = {
       sessionId: input.sessionId,
-      deviceId: input.deviceId,
-      userId: input.userId,
+      ...(input.deviceId !== undefined ? { deviceId: input.deviceId } : {}),
+      ...(input.userId !== undefined ? { userId: input.userId } : {}),
     };
     const evidence: DigitalRiskEvidence[] = [];
     const ip = this.digitalRisk.assessIp(input.subjectRef, context);

@@ -1,4 +1,4 @@
-import { Money } from '../../../money/src/money.ts';
+import { Money, RoundingMode } from '../../../money/src/money.ts';
 import type { SerializedMoney } from '../../../personal-economic-graph/src/taxonomy.ts';
 import { savingsOpportunityIdFor } from './ids.ts';
 import type {
@@ -13,21 +13,21 @@ function monthlyEquivalent(amount: SerializedMoney, frequency: RecurringObligati
   const base = Money.fromMinorUnitsString(amount.minorUnits, amount.currency);
   switch (frequency) {
     case 'WEEKLY':
-      return base.allocate(52n, 12n);
+      return base.allocate(52n, 12n, RoundingMode.HALF_EVEN);
     case 'BIWEEKLY':
-      return base.allocate(26n, 12n);
+      return base.allocate(26n, 12n, RoundingMode.HALF_EVEN);
     case 'MONTHLY':
     case 'VARIABLE':
       return base;
     case 'QUARTERLY':
-      return base.allocate(1n, 3n);
+      return base.allocate(1n, 3n, RoundingMode.HALF_EVEN);
     case 'YEARLY':
-      return base.allocate(1n, 12n);
+      return base.allocate(1n, 12n, RoundingMode.HALF_EVEN);
   }
 }
 
 function annualFromMonthly(monthly: Money): Money {
-  return monthly.allocate(12n, 1n);
+  return monthly.allocate(12n, 1n, RoundingMode.HALF_EVEN);
 }
 
 function opportunityFor(

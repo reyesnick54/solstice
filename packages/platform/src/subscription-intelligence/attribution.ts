@@ -1,4 +1,5 @@
-import { Money } from '../../../money/src/money.ts';
+import { Money, RoundingMode } from '../../../money/src/money.ts';
+import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { SerializedMoney } from '../../../personal-economic-graph/src/taxonomy.ts';
 import type { RecurringObligation, SavingsOpportunity, SubscriptionActionProposal, VerifiedSavings } from './models.ts';
 import type { SavingsKind } from './taxonomy.ts';
@@ -34,7 +35,7 @@ export function attributeVerifiedSavings(input: {
   readonly obligation: RecurringObligation;
   readonly opportunity: SavingsOpportunity;
   readonly action: SubscriptionActionProposal;
-  readonly verifiedAt: string;
+  readonly verifiedAt: UtcInstant;
 }): VerifiedSavings | null {
   if (!input.action.actionConfirmed || !input.action.providerEvidenceRef) {
     return null;
@@ -44,7 +45,7 @@ export function attributeVerifiedSavings(input: {
     return null;
   }
   const monthlyMoney = Money.fromMinorUnitsString(monthly.minorUnits, monthly.currency);
-  const annualMoney = monthlyMoney.allocate(12n, 1n);
+  const annualMoney = monthlyMoney.allocate(12n, 1n, RoundingMode.HALF_EVEN);
   return Object.freeze({
     obligationId: input.obligation.id,
     actionId: input.action.actionId,

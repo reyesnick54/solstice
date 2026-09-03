@@ -122,7 +122,7 @@ export function toBffRiskSummary(decision: RiskPolicyDecision): BffRiskSummary {
 export function sampleSecurityActionCenterEvents(
   plane: RiskEvidencePlane,
   decision: RiskPolicyDecision,
-): readonly ReturnType<typeof securityReviewEvent> {
+): readonly import('./events.ts').Wave4SecurityEvent[] {
   const events = [];
   if (decision.outcome === 'REVIEW' || decision.outcome === 'HOLD') {
     events.push(securityReviewEvent({ occurredAt: plane.adapterContext().nowUtc }));

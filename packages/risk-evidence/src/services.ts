@@ -17,7 +17,7 @@ export type BusinessIdentityProvider = {
   lookupBusiness(key: BusinessResolutionKey): BusinessIdentityEvidence | null;
   getBusinessEvidence(entityId: string): BusinessIdentityEvidence | null;
   getRegistrationStatus(entityId: string): { readonly status: BusinessIdentityEvidence['status']; readonly providerNativeStatus: string | null } | null;
-  getPublicOfficers(entityId: string): readonly BusinessIdentityEvidence['officers'];
+  getPublicOfficers(entityId: string): BusinessIdentityEvidence['officers'];
 };
 
 export type DigitalRiskProvider = {
@@ -54,7 +54,7 @@ export class KYBEvidenceService implements BusinessIdentityProvider {
     });
   }
 
-  getPublicOfficers(entityId: string): readonly BusinessIdentityEvidence['officers'] {
+  getPublicOfficers(entityId: string): BusinessIdentityEvidence['officers'] {
     const evidence = this.getBusinessEvidence(entityId);
     return evidence?.officers ?? Object.freeze([]);
   }
@@ -62,6 +62,20 @@ export class KYBEvidenceService implements BusinessIdentityProvider {
   adapterContext(): Wave4AdapterContext {
     return this.#ctx;
   }
+}
+
+function digitalRiskQuery(
+  subjectRef: string,
+  riskType: DigitalRiskType,
+  context: RiskEvidenceSubjectRef,
+) {
+  return {
+    subjectRef,
+    riskType,
+    ...(context.sessionId !== undefined ? { sessionId: context.sessionId } : {}),
+    ...(context.deviceId !== undefined ? { deviceId: context.deviceId } : {}),
+    ...(context.userId !== undefined ? { userId: context.userId } : {}),
+  };
 }
 
 export class DigitalRiskEvidenceService implements DigitalRiskProvider {
@@ -72,23 +86,11 @@ export class DigitalRiskEvidenceService implements DigitalRiskProvider {
   }
 
   assessIp(subjectRef: string, context: RiskEvidenceSubjectRef): DigitalRiskEvidence | null {
-    return fetchDigitalRiskEvidence(this.#ctx, {
-      subjectRef,
-      riskType: 'IP_REPUTATION',
-      sessionId: context.sessionId,
-      deviceId: context.deviceId,
-      userId: context.userId,
-    });
+    return fetchDigitalRiskEvidence(this.#ctx, digitalRiskQuery(subjectRef, 'IP_REPUTATION', context));
   }
 
   assessEmail(subjectRef: string, context: RiskEvidenceSubjectRef): DigitalRiskEvidence | null {
-    return fetchDigitalRiskEvidence(this.#ctx, {
-      subjectRef,
-      riskType: 'EMAIL_REPUTATION',
-      sessionId: context.sessionId,
-      deviceId: context.deviceId,
-      userId: context.userId,
-    });
+    return fetchDigitalRiskEvidence(this.#ctx, digitalRiskQuery(subjectRef, 'EMAIL_REPUTATION', context));
   }
 
   assessNetwork(
@@ -96,13 +98,7 @@ export class DigitalRiskEvidenceService implements DigitalRiskProvider {
     riskType: DigitalRiskType,
     context: RiskEvidenceSubjectRef,
   ): DigitalRiskEvidence | null {
-    return fetchDigitalRiskEvidence(this.#ctx, {
-      subjectRef,
-      riskType,
-      sessionId: context.sessionId,
-      deviceId: context.deviceId,
-      userId: context.userId,
-    });
+    return fetchDigitalRiskEvidence(this.#ctx, digitalRiskQuery(subjectRef, riskType, context));
   }
 
   assessVpn(subjectRef: string, context: RiskEvidenceSubjectRef): DigitalRiskEvidence | null {

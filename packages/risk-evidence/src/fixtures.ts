@@ -4,7 +4,7 @@
 
 import type { BusinessIdentityEvidence, DigitalRiskEvidence } from './models.ts';
 
-export const FIXTURE_BUSINESSES: readonly BusinessIdentityEvidence[] = Object.freeze([
+export const FIXTURE_BUSINESSES = Object.freeze([
   {
     evidenceId: 'kyb-ev:us:0000320193',
     entityId: 'sunrey:company:us:0000320193',
@@ -87,9 +87,9 @@ export const FIXTURE_BUSINESSES: readonly BusinessIdentityEvidence[] = Object.fr
     authorityClass: 'regulated_provider',
     provenance: 'fixture:fixture-identity:kyb-dissolved',
   },
-]);
+]) as readonly BusinessIdentityEvidence[];
 
-export const FIXTURE_DIGITAL_RISK: readonly DigitalRiskEvidence[] = Object.freeze([
+export const FIXTURE_DIGITAL_RISK = Object.freeze([
   {
     evidenceId: 'dr-ev:ip:clean',
     sessionId: 'sess_clean',
@@ -249,7 +249,7 @@ export const FIXTURE_DIGITAL_RISK: readonly DigitalRiskEvidence[] = Object.freez
     }),
     emailReputation: null,
   },
-]);
+]) as readonly DigitalRiskEvidence[];
 
 export const TIMEOUT_PROVIDER = 'fixture-risk-timeout';
 export const RATE_LIMIT_PROVIDER = 'fixture-risk-rate-limit';

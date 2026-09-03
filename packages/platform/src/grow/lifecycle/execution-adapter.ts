@@ -140,7 +140,12 @@ export class SimulationGrowExecutionAdapter implements GrowExecutionAdapter {
 
   reconcile(
     executionId: string,
-    providerOutcome: Parameters<SimulationGrowExecutionAdapter['reconcile']>[1],
+    providerOutcome: {
+      readonly kind: 'FILL' | 'PARTIAL_FILL' | 'PENDING' | 'UNKNOWN' | 'REJECTION' | 'SETTLEMENT_FAILURE' | 'QUOTE_EXPIRED' | 'TIMEOUT';
+      readonly providerTransactionId?: string;
+      readonly filledMinorUnits?: string;
+      readonly requestedMinorUnits: string;
+    },
   ): GrowExecutionRecord['state'] {
     const row = this.submissions.get(executionId);
     if (!row) {

@@ -3,6 +3,7 @@ import { ok, type Result } from '../../../domain/src/result.ts';
 import type { SecretProvider, SecretReference } from '../../../security/src/secrets.ts';
 import { secretRef } from '../../../security/src/secrets.ts';
 import { requestIdFor } from '../ids.ts';
+import { CANONICAL_GROK_MODEL_ID, CANONICAL_GROK_MODEL_VERSION } from '../registry.ts';
 import { XaiGrokAiProvider } from '../providers/xai-grok.ts';
 import { resolveXaiGrokProviderConfig } from '../providers/xai-grok/configuration.ts';
 import { parseStructuredOutput } from '../structured.ts';
@@ -96,7 +97,7 @@ export function runAiCertificationHarness(options: AiCertificationHarnessOptions
     Object.freeze({
       requestId: requestIdFor('ai:certify:live'),
       taskClass: 'GENERAL_ASSISTANT',
-      modelRef: Object.freeze({ modelId: 'grok-4.6-sandbox-v1', version: '1' }),
+      modelRef: Object.freeze({ modelId: CANONICAL_GROK_MODEL_ID, version: CANONICAL_GROK_MODEL_VERSION }),
       promptHash: 'sha256:qualification',
       releasedContext: Object.freeze([]),
       purpose: 'GENERAL_ASSISTANT',
@@ -109,7 +110,7 @@ export function runAiCertificationHarness(options: AiCertificationHarnessOptions
 
   if (inferResult.ok) {
     inferenceSuccessful = true;
-    latencyMs = inferResult.value.usage.latencyMs;
+    latencyMs = inferResult.value.usage.latencyMs ?? null;
     modelAvailable = true;
     if (!externalEnabled) {
       reachable = true;

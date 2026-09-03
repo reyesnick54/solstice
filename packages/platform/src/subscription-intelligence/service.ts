@@ -75,7 +75,7 @@ export class SubscriptionIntelligenceService {
     const opportunities = buildSavingsOpportunities({
       obligations,
       duplicates,
-      usageSignals: input.usageSignals,
+      ...(input.usageSignals !== undefined ? { usageSignals: input.usageSignals } : {}),
     });
 
     this.store.putObligations(input.subjectId, obligations);
@@ -179,7 +179,7 @@ export class SubscriptionIntelligenceService {
       obligationCapabilities: obligation.actionCapabilities,
       idempotencyKey: input.idempotencyKey,
       now: this.clock.now(),
-      existing,
+      ...(existing !== undefined ? { existing } : {}),
     });
 
     if ('code' in proposed) {

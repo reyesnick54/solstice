@@ -76,7 +76,7 @@ export function detectPriceChanges(
   }
 
   const confidence: ConfidenceLevel =
-    obligation.variableAmount && obligation.category === 'UTILITIES' ? 'LOW' : change.bps >= 1000 ? 'HIGH' : 'MEDIUM';
+    obligation.variableAmount ? 'LOW' : change.bps >= 1000 ? 'HIGH' : 'MEDIUM';
 
   return Object.freeze({
     previousAmount: Object.freeze({ ...previous.amount }),

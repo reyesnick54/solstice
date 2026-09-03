@@ -4,7 +4,8 @@ import { describe, it } from 'node:test';
 import { FrozenClock } from '../../../config/src/clock.ts';
 import { asUtcInstant } from '../../../domain/src/time.ts';
 import type { EconomicActivity } from '../../../personal-economic-graph/src/store.ts';
-import { asEconomicActivityId, deterministicActivityId } from '../../../personal-economic-graph/src/ids.ts';
+import { deterministicActivityId } from '../../../personal-economic-graph/src/ids.ts';
+import { asEconomicGraphId } from '../../../personal-economic-graph/src/ids.ts';
 import { assertAiCannotExecute } from './ai-boundary.ts';
 import { attributeVerifiedSavings, estimatedSavingsFromOpportunity, savingsMustNotBePresentedAsVerified } from './attribution.ts';
 import { classifySubscription } from './classification.ts';
@@ -17,7 +18,7 @@ import { SubscriptionIntelligenceService } from './service.ts';
 import { subscriptionActionIdFor } from './ids.ts';
 
 const NOW = asUtcInstant('2026-08-15T12:00:00.000Z');
-const GRAPH_ID = 'egr_test' as never;
+const GRAPH_ID = asEconomicGraphId('peg_g_test');
 const SUBJECT = 'id_sub_test';
 
 function activity(
