@@ -57,8 +57,8 @@ export class ProviderCertificationService {
       providerId,
       probe,
       environment: this.#environment,
-      explicitlyDisabled: options.explicitlyDisabled,
-      degraded: options.degraded,
+      ...(options.explicitlyDisabled !== undefined ? { explicitlyDisabled: options.explicitlyDisabled } : {}),
+      ...(options.degraded !== undefined ? { degraded: options.degraded } : {}),
       nowUtc: this.#nowUtc,
     });
   }
@@ -72,8 +72,8 @@ export class ProviderCertificationService {
       providerId,
       probe,
       environment: this.#environment,
-      explicitlyDisabled: options.explicitlyDisabled,
-      degraded: options.degraded,
+      ...(options.explicitlyDisabled !== undefined ? { explicitlyDisabled: options.explicitlyDisabled } : {}),
+      ...(options.degraded !== undefined ? { degraded: options.degraded } : {}),
       nowUtc: this.#nowUtc,
     });
   }
@@ -90,8 +90,10 @@ export class ProviderCertificationService {
       Object.freeze([...this.#catalog.byId.keys()]);
     const providers = ids.map((providerId) =>
       this.certifyCatalogEntry(providerId, {
-        liveProbeEnabled: options.liveProbeEnabled,
-        networkProbe: options.networkProbeByProvider?.[providerId],
+        ...(options.liveProbeEnabled !== undefined ? { liveProbeEnabled: options.liveProbeEnabled } : {}),
+        ...(options.networkProbeByProvider?.[providerId]
+          ? { networkProbe: options.networkProbeByProvider[providerId] }
+          : {}),
       }),
     );
     return this.buildReport(providers, options.liveProbeEnabled ? 'live' : 'unit');
@@ -122,8 +124,10 @@ export class ProviderCertificationService {
       }
       providers.push(
         await this.certifyCatalogEntryAsync(providerId, {
-          liveProbeEnabled: options.liveProbeEnabled,
-          networkProbe: options.networkProbeByProvider?.[providerId],
+          ...(options.liveProbeEnabled !== undefined ? { liveProbeEnabled: options.liveProbeEnabled } : {}),
+          ...(options.networkProbeByProvider?.[providerId]
+            ? { networkProbe: options.networkProbeByProvider[providerId] }
+            : {}),
         }),
       );
     }
@@ -173,7 +177,7 @@ export class ProviderCertificationService {
       credentialAvailable: options.credentialAvailable ?? false,
       environment: this.#environment,
       nowUtc: this.#nowUtc,
-      liveProbeEnabled: options.liveProbeEnabled,
+      liveProbeEnabled: options.liveProbeEnabled ?? false,
       ...(options.networkProbe ? { networkProbe: options.networkProbe } : {}),
     };
   }

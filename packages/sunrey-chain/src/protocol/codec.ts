@@ -956,7 +956,7 @@ function encodeCommitmentRoots(roots: BlockCommitmentRootsV1): Array<{ tag: numb
   ];
 }
 
-function encodeBlockHeaderBase(header: BlockHeaderV1): Array<{ tag: number; kind: 'bytes' | 'varint'; value: Buffer | bigint }> {
+function encodeBlockHeaderBase(header: BlockHeaderV1): WireField[] {
   return [
     { tag: 1, kind: 'bytes', value: utf8(header.networkId) },
     { tag: 2, kind: 'bytes', value: utf8(header.chainId) },
@@ -989,7 +989,7 @@ function decodeBlockHeaderFields(bytes: Uint8Array): BlockHeader {
     networkId: readString(first(fields, 1)),
     chainId: readString(first(fields, 2)),
     codecId: readString(first(fields, 3)),
-    schemaVersion: 1,
+    schemaVersion: 1 as const,
     height: readUint(first(fields, 5)),
     previousBlockHash: new Uint8Array(readBytes(first(fields, 6))),
     appHash: new Uint8Array(readBytes(first(fields, 7))),

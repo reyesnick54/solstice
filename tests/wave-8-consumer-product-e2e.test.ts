@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 
 import { createSunReyConsumerBffClient } from '../packages/sunrey-sdk/src/consumer-bff/client.ts';
 import { createSunReyPreviewRuntime } from '../services/api/src/preview.ts';
-import { handleConsumerBff } from '../services/api/src/consumer/handler.ts';
+import { handleConsumerBff } from '../services/api/src/consumer/bff-test-utils.ts';
 import { sandboxToken } from '../services/api/src/consumer/sandbox-personas.ts';
 
 function call(
@@ -13,7 +13,7 @@ function call(
   persona: string,
   body?: unknown,
 ) {
-  return handleConsumerBff(runtime, {
+  return handleConsumerBffSync(runtime, {
     method,
     path,
     query: {},

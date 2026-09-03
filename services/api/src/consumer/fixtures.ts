@@ -94,7 +94,7 @@ import {
   type SubscriptionIntelligenceBff,
 } from './subscription-intelligence-adapter.ts';
 import { SubscriptionIntelligenceService } from '../../../../packages/platform/src/subscription-intelligence/index.ts';
-import { asEconomicActivityId, deterministicActivityId } from '../../../../packages/personal-economic-graph/src/ids.ts';
+import { asEconomicActivityId, asEconomicGraphId, deterministicActivityId } from '../../../../packages/personal-economic-graph/src/ids.ts';
 import type { EconomicActivity } from '../../../../packages/personal-economic-graph/src/store.ts';
 import { createSandboxAccessEconomy, type HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
 import {
@@ -639,33 +639,34 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
           verified: principal.verification === 'VERIFIED' && principal.customerStatus !== 'PENDING_VERIFICATION',
           restricted: principal.restricted || principal.customerStatus === 'SUSPENDED',
         });
-        if (outcome.ok) {
-          return outcome.value;
+        if (!outcome.ok) {
+          const denied = outcome as { readonly ok: false; readonly error: { readonly message: string } };
+          return Object.freeze({
+            schema: 'sunrey.consumer.access.home-summary.v1' as const,
+            productionReady: false as const,
+            productionActive: false as const,
+            liveConnectivityEnabled: false as const,
+            navigationLabel: 'Access' as const,
+            title: 'Your Available Access',
+            categories: Object.freeze([]),
+            nextExpiration: null,
+            primaryCta: 'Explore Access' as const,
+            capability: Object.freeze({
+              enabled: false,
+              state: 'FEATURE_DISABLED' as const,
+              reason: denied.error.message,
+            }),
+            terminology: Object.freeze({
+              access: 'Access',
+              availableAccess: 'Available Access',
+              accessCovers: 'Access covers',
+              youPay: 'You pay',
+              accessUsed: 'Access used',
+              remainingAccess: 'Remaining Access',
+            }),
+          });
         }
-        return Object.freeze({
-          schema: 'sunrey.consumer.access.home-summary.v1' as const,
-          productionReady: false as const,
-          productionActive: false as const,
-          liveConnectivityEnabled: false as const,
-          navigationLabel: 'Access' as const,
-          title: 'Your Available Access',
-          categories: Object.freeze([]),
-          nextExpiration: null,
-          primaryCta: 'Explore Access' as const,
-          capability: Object.freeze({
-            enabled: false,
-            state: 'FEATURE_DISABLED' as const,
-            reason: outcome.error.message,
-          }),
-          terminology: Object.freeze({
-            access: 'Access',
-            availableAccess: 'Available Access',
-            accessCovers: 'Access covers',
-            youPay: 'You pay',
-            accessUsed: 'Access used',
-            remainingAccess: 'Remaining Access',
-          }),
-        });
+        return outcome.value;
       },
     },
   });
@@ -884,52 +885,48 @@ function seedSandboxSubscriptionActivities(
   service: SubscriptionIntelligenceService,
   subjectId: string,
 ): void {
-  const graphId = 'egr_sandbox_sub' as never;
+  const graphId = asEconomicGraphId('egr_sandbox_sub');
   const months = ['03', '04', '05', '06', '07', '08'];
-  const activities: EconomicActivity[] = months.map((month, index) =>
-    Object.freeze({
-      activityId: deterministicActivityId(`src_netflix_${index}`),
+  const activities: EconomicActivity[] = months.map((month, index) => ({
+    activityId: deterministicActivityId(`src_netflix_${index}`),
+    graphId,
+    subjectId,
+    accountId: 'acct_sandbox_basic_usd',
+    direction: 'OUTFLOW' as const,
+    amount: { minorUnits: index === months.length - 1 ? '1299' : '999', currency: 'USD' },
+    occurredAt: asUtcInstant(`2026-${month}-15T10:00:00.000Z`),
+    counterpart: {
+      kind: 'MERCHANT' as const,
+      ref: 'merch_netflix',
+      label: 'NETFLIX.COM 866-579-7172',
+    },
+    classification: 'SUBSCRIPTION' as const,
+    sourceType: 'LEDGER' as const,
+    sourceRef: `src_netflix_${index}`,
+    sourceEventType: 'CustomerActivityRecorded',
+    sourceEventId: `evt_netflix_${index}`,
+  }));
+  const spotifyMonths = ['04', '05', '06', '07', '08'];
+  for (const [index, month] of spotifyMonths.entries()) {
+    activities.push({
+      activityId: deterministicActivityId(`src_spotify_${index}`),
       graphId,
       subjectId,
       accountId: 'acct_sandbox_basic_usd',
       direction: 'OUTFLOW' as const,
-      amount: Object.freeze({ minorUnits: index === months.length - 1 ? '1299' : '999', currency: 'USD' }),
-      occurredAt: asUtcInstant(`2026-${month}-15T10:00:00.000Z`),
-      counterpart: Object.freeze({
+      amount: { minorUnits: '1099', currency: 'USD' },
+      occurredAt: asUtcInstant(`2026-${month}-12T10:00:00.000Z`),
+      counterpart: {
         kind: 'MERCHANT' as const,
-        ref: 'merch_netflix',
-        label: 'NETFLIX.COM 866-579-7172',
-      }),
+        ref: 'merch_spotify',
+        label: 'SPOTIFY USA',
+      },
       classification: 'SUBSCRIPTION' as const,
       sourceType: 'LEDGER' as const,
-      sourceRef: `src_netflix_${index}`,
+      sourceRef: `src_spotify_${index}`,
       sourceEventType: 'CustomerActivityRecorded',
-      sourceEventId: `evt_netflix_${index}`,
-    }),
-  );
-  const spotifyMonths = ['04', '05', '06', '07', '08'];
-  for (const [index, month] of spotifyMonths.entries()) {
-    activities.push(
-      Object.freeze({
-        activityId: deterministicActivityId(`src_spotify_${index}`),
-        graphId,
-        subjectId,
-        accountId: 'acct_sandbox_basic_usd',
-        direction: 'OUTFLOW' as const,
-        amount: Object.freeze({ minorUnits: '1099', currency: 'USD' }),
-        occurredAt: asUtcInstant(`2026-${month}-12T10:00:00.000Z`),
-        counterpart: Object.freeze({
-          kind: 'MERCHANT' as const,
-          ref: 'merch_spotify',
-          label: 'SPOTIFY USA',
-        }),
-        classification: 'SUBSCRIPTION' as const,
-        sourceType: 'LEDGER' as const,
-        sourceRef: `src_spotify_${index}`,
-        sourceEventType: 'CustomerActivityRecorded',
-        sourceEventId: `evt_spotify_${index}`,
-      }),
-    );
+      sourceEventId: `evt_spotify_${index}`,
+    });
   }
   service.analyze({
     subjectId,

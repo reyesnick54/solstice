@@ -13,8 +13,13 @@ import {
 } from './event-ports.ts';
 import {
   createEconomicProvenanceEvent,
+  type ClaimLifecyclePayload,
   type EconomicProvenanceEvent,
   type EconomicProvenanceRefs,
+  type EvidenceCreatedPayload,
+  type FactVerifiedPayload,
+  type ObservationLifecyclePayload,
+  type ProviderRecordReceivedPayload,
 } from '../../../../provider-sdk/src/economic-events.ts';
 import type { ExternalObservation } from '../../../../provider-sdk/src/types.ts';
 import { buildDeduplicationKey, DEFAULT_DEDUPLICATION_POLICIES } from '../../../../provider-sdk/src/deduplication.ts';
@@ -193,7 +198,7 @@ export class EconomicProvenanceFabric {
         }),
         receivedAt: this.#now(),
         transportEventId: input.transportEventId,
-      }),
+      } as ProviderRecordReceivedPayload),
       providerRecordId,
     );
 
@@ -234,7 +239,7 @@ export class EconomicProvenanceFabric {
           transformationKind: 'deduplicate',
           reasonCode: 'DUPLICATE_TRANSPORT',
           detail: 'duplicate observation suppressed',
-        }),
+        } as ObservationLifecyclePayload),
         observation.observationId,
       );
       return {
@@ -318,7 +323,7 @@ export class EconomicProvenanceFabric {
           transformationKind: 'normalize',
           reasonCode: edgeResult.error.code,
           detail: edgeResult.error.message,
-        }),
+        } as ObservationLifecyclePayload),
         observation.observationId,
       );
       await this.#idempotency.complete(processingKey, 'quarantined', this.#now());
@@ -343,7 +348,7 @@ export class EconomicProvenanceFabric {
         transformationKind: 'normalize',
         reasonCode: null,
         detail: null,
-      }),
+      } as ObservationLifecyclePayload),
       normalizedId,
     );
     await this.#idempotency.complete(processingKey, 'accepted', this.#now());
@@ -398,7 +403,7 @@ export class EconomicProvenanceFabric {
         transformationKind: 'normalize',
         reasonCode: input.failureCode,
         detail: input.failureMessage,
-      }),
+      } as ObservationLifecyclePayload),
       input.providerRecordId,
     );
   }
@@ -513,7 +518,7 @@ export class EconomicProvenanceFabric {
           ...refs,
           evidenceKind: 'economic_observation_evidence',
           grantsDecision: false,
-        }),
+        } as EvidenceCreatedPayload),
         evidenceId,
       ),
     );
@@ -523,7 +528,7 @@ export class EconomicProvenanceFabric {
           ...refs,
           verificationMethod: 'wave4-simulation-verifier',
           verifierRef: 'simulation/verifier/v1',
-        }),
+        } as FactVerifiedPayload),
         factId,
       ),
     );
@@ -534,7 +539,7 @@ export class EconomicProvenanceFabric {
           claimKind: input.claimKind,
           challengeReason: null,
           resolutionOutcome: null,
-        }),
+        } as ClaimLifecyclePayload),
         claimId,
       ),
     );
@@ -575,7 +580,7 @@ export class EconomicProvenanceFabric {
         transformationKind: 'link',
         reasonCode: null,
         detail: null,
-      }),
+      } as ObservationLifecyclePayload),
       input.observationId,
     );
   }

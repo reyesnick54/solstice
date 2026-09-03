@@ -165,7 +165,7 @@ export class ProductiveOperationsPlatform {
 
     for (const providerId of input.providerIds) {
       if (this.incidents.isProviderDisabled(providerId)) {
-        const rejection = err({
+        const rejection = err<ProductiveOperationsRejection>({
           code: 'PROVIDER_ALREADY_DISABLED',
           detail: `provider ${providerId} disabled by incident containment`,
         });
@@ -174,7 +174,7 @@ export class ProductiveOperationsPlatform {
         return rejection;
       }
       if (this.incidents.isProviderQuarantined(providerId)) {
-        const rejection = err({
+        const rejection = err<ProductiveOperationsRejection>({
           code: 'DOMAIN_CIRCUIT_OPEN',
           detail: `provider ${providerId} quarantined`,
         });
@@ -186,7 +186,7 @@ export class ProductiveOperationsPlatform {
 
     if (input.independentSourceCount < circuit.requiredIndependentSources) {
       this.metrics.recordSourceDependenceWarning();
-      const rejection = err({
+      const rejection = err<ProductiveOperationsRejection>({
         code: 'DOMAIN_CIRCUIT_OPEN',
         detail: `insufficient independent sources for ${input.domain}`,
       });
@@ -197,7 +197,7 @@ export class ProductiveOperationsPlatform {
 
     for (const challenge of this.challenges.values()) {
       if (challenge.claimId === input.claimId && challengeBlocksFutureMonetization(challenge)) {
-        const rejection = err({
+        const rejection = err<ProductiveOperationsRejection>({
           code: 'INVALID_CHALLENGE_TRANSITION',
           detail: `claim ${input.claimId} under active challenge ${challenge.challengeId}`,
         });
@@ -211,7 +211,7 @@ export class ProductiveOperationsPlatform {
       (row) => row.claimId === input.claimId && row.reviewSignalOnly,
     );
     if (claimAnomalies.length > 0) {
-      const rejection = err({
+      const rejection = err<ProductiveOperationsRejection>({
         code: 'DOMAIN_CIRCUIT_OPEN',
         detail: `claim ${input.claimId} has anomaly review signals`,
       });

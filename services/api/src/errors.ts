@@ -187,6 +187,10 @@ export function categoryForCode(code: ApiErrorCode): ApiErrorCategory {
     case 'REQUEST_TIMEOUT':
     case 'CONFIGURATION_INVALID':
       return 'TEMPORARY_UNAVAILABLE';
+    case 'CHAIN_UNAVAILABLE':
+    case 'CHAIN_SYNCING':
+    case 'PROVIDER_UNAVAILABLE':
+      return 'TEMPORARY_UNAVAILABLE';
     case 'INTERNAL_ERROR':
       return 'INTERNAL';
   }

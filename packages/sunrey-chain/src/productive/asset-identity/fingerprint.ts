@@ -39,7 +39,7 @@ export function deriveAssetFingerprint(input: {
   readonly jurisdiction: string;
   readonly geography: RegisterProductiveAssetInput['geography'];
   readonly technologyMetadata?: Readonly<Record<string, string>>;
-  readonly externalIdentifiers?: readonly RegisterProductiveAssetInput['externalIdentifiers'];
+  readonly externalIdentifiers?: RegisterProductiveAssetInput['externalIdentifiers'];
   readonly commissionedAtUtc?: string | null;
   readonly resolutionHint?: AssetResolutionHint;
 }): ProductiveAssetFingerprint {

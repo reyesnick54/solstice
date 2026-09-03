@@ -132,18 +132,22 @@ describe('Economic Knowledge Graph', () => {
 
   it('provider lineage via DERIVED_FROM query', () => {
     const service = new EconomicKnowledgeGraphService({ nowUtc: NOW });
-    const dataset = service.registerNode({
+    const datasetResult = service.registerNode({
       nodeClass: 'DATASET',
       domain: 'SHARED_REFERENCE',
       label: 'dataset-n',
       externalRef: 'dataset:n',
-    }).value!;
-    const parent = service.registerNode({
+    });
+    assert.ok(datasetResult.ok);
+    const dataset = datasetResult.value;
+    const parentResult = service.registerNode({
       nodeClass: 'DATASET',
       domain: 'SHARED_REFERENCE',
       label: 'dataset-parent',
       externalRef: 'dataset:parent',
-    }).value!;
+    });
+    assert.ok(parentResult.ok);
+    const parent = parentResult.value;
     service.registerEdge({
       kind: 'DERIVED_FROM',
       fromNodeId: dataset.nodeId,
@@ -157,18 +161,22 @@ describe('Economic Knowledge Graph', () => {
 
   it('duplicate event linking via SAME_AS', () => {
     const service = new EconomicKnowledgeGraphService({ nowUtc: NOW });
-    const primary = service.registerNode({
+    const primaryResult = service.registerNode({
       nodeClass: 'ECONOMIC_EVENT',
       domain: 'PRODUCTIVE_ECONOMY',
       label: 'event-primary',
       externalRef: 'event:1',
-    }).value!;
-    const duplicate = service.registerNode({
+    });
+    assert.ok(primaryResult.ok);
+    const primary = primaryResult.value;
+    const duplicateResult = service.registerNode({
       nodeClass: 'ECONOMIC_EVENT',
       domain: 'PRODUCTIVE_ECONOMY',
       label: 'event-dup',
       externalRef: 'event:1-dup',
-    }).value!;
+    });
+    assert.ok(duplicateResult.ok);
+    const duplicate = duplicateResult.value;
     service.linkDuplicateEvents(primary.nodeId, duplicate.nodeId, 'dedupe');
     const edges = service.repository().edgesFrom(duplicate.nodeId, 'SAME_AS');
     assert.equal(edges.length, 1);
@@ -198,7 +206,10 @@ describe('Economic Knowledge Graph', () => {
       contributionClass: 'VERIFIED_SKILL',
     });
     assert.equal(contribution.ok, true);
-    const evidence = evidenceForPseudonymousContribution(service.repository(), contribution.value!.nodeId);
+    if (!contribution.ok) {
+      return;
+    }
+    const evidence = evidenceForPseudonymousContribution(service.repository(), contribution.value.nodeId);
     assert.equal(evidence.nodes.length, 0);
   });
 

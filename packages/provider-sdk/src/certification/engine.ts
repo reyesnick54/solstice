@@ -280,8 +280,8 @@ export function buildProviderCertification(input: {
   readonly nowUtc?: () => string;
 }): ProviderCertification {
   const status = deriveLifecycleState(input.probe, {
-    explicitlyDisabled: input.explicitlyDisabled,
-    degraded: input.degraded,
+    ...(input.explicitlyDisabled !== undefined ? { explicitlyDisabled: input.explicitlyDisabled } : {}),
+    ...(input.degraded !== undefined ? { degraded: input.degraded } : {}),
   });
   return Object.freeze({
     schemaVersion: PROVIDER_CERTIFICATION_SCHEMA_VERSION,

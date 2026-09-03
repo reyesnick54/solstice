@@ -127,12 +127,12 @@ export function mempoolToAgentEvidence(mempool: MempoolObservation): ExternalObs
 }
 
 export function networkMetricsToAgentEvidence(metrics: NetworkMetrics): ExternalObservationEvidenceRef {
-  const observation: ChainObservation = Object.freeze({
-    schema: 'sunrey.chain-intelligence.v1',
-    authority: 'OBSERVATION_ONLY',
+  const observation = Object.freeze({
+    schema: 'sunrey.chain-intelligence.v1' as const,
+    authority: 'OBSERVATION_ONLY' as const,
     chainId: metrics.chainId,
     network: metrics.chainId,
-    observationType: 'HASHRATE',
+    observationType: 'HASHRATE' as const,
     blockHeight: null,
     blockHash: null,
     transactionHash: null,
@@ -140,18 +140,18 @@ export function networkMetricsToAgentEvidence(metrics: NetworkMetrics): External
     providerId: metrics.providerId,
     retrievedAt: metrics.timestamp,
     freshness: metrics.freshness,
-    authorityClass: 'reference_data',
+    authorityClass: 'reference_data' as const,
     provenance: Object.freeze({
       providerId: metrics.providerId,
-      authorityClass: 'reference_data',
+      authorityClass: 'reference_data' as const,
       sourceUrl: null,
       rawPayloadHash: null,
       observationId: `metrics_${metrics.providerId}`,
       capability: 'network_statistics',
     }),
-    data: { kind: 'NETWORK_METRICS', metrics },
-    reorgAware: true,
+    data: { kind: 'NETWORK_METRICS' as const, metrics },
+    reorgAware: true as const,
     finalityNote: 'External network statistics',
-  });
+  }) satisfies ChainObservation;
   return toAgentEvidenceRef(chainObservationToExternalObservation(observation));
 }

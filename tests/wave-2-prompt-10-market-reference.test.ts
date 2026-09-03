@@ -4,7 +4,7 @@ import { describe, it } from 'node:test';
 import { asUtcInstant } from '../packages/domain/src/time.ts';
 import { createFixtureCatalog, FIXTURE_CATALOG_ENTRIES } from '../packages/provider-sdk/src/test-fixtures/catalog.ts';
 import { buildCatalogIndex } from '../packages/provider-sdk/src/catalog/loader.ts';
-import { handleConsumerBff } from '../services/api/src/consumer/handler.ts';
+import { handleConsumerBff } from '../services/api/src/consumer/bff-test-utils.ts';
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
 import {
   COMMODITY_CODES,
@@ -232,7 +232,7 @@ describe('Wave 2 Prompt 10 — market reference layer', () => {
 
   it('20. BFF sanitized output hides raw provider payloads', () => {
     const world = createSandboxWorld();
-    const response = handleConsumerBff(
+    const response = handleConsumerBffSync(
       { ...world, marketReference: undefined },
       {
         method: 'GET',

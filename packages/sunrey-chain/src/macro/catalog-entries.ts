@@ -11,12 +11,8 @@ import type { CatalogProviderEntry } from '../../../provider-sdk/src/catalog/typ
 function macroProvider(
   overrides: Partial<CatalogProviderEntry> & Pick<CatalogProviderEntry, 'provider_id' | 'name' | 'short_name' | 'description'>,
 ): CatalogProviderEntry {
-  const base: CatalogProviderEntry = {
-    provider_id: overrides.provider_id,
-    name: overrides.name,
-    short_name: overrides.short_name,
-    description: overrides.description,
-    primary_category: 'macroeconomics',
+  return Object.freeze({
+    primary_category: 'macroeconomics' as const,
     capabilities: ['macroeconomic_indicators', 'economic_indicators'],
     endpoints: {
       base_url: null,
@@ -79,8 +75,7 @@ function macroProvider(
       notes: 'Wave 2 Prompt 8 macro subset.',
     },
     ...overrides,
-  };
-  return Object.freeze(base);
+  }) as CatalogProviderEntry;
 }
 
 export const MACRO_CATALOG_PROVIDER_IDS = [

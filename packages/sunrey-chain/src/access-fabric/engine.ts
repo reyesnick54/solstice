@@ -9,6 +9,7 @@
  */
 
 import { FrozenClock } from '../../../config/src/clock.ts';
+import type { UtcInstant } from '../../../domain/src/time.ts';
 import { EvidenceVault } from '../../../evidence/src/vault.ts';
 import {
   deliveryClaimCommitment,
@@ -115,7 +116,9 @@ export class AccessFabricEngine {
     clockMs = Date.parse('2026-08-29T00:00:00.000Z'),
   ) {
     this.ports = ports;
-    this.vault = new EvidenceVault(new FrozenClock(() => new Date(clockMs).toISOString()));
+    this.vault = new EvidenceVault(
+      new FrozenClock(new Date(clockMs).toISOString() as UtcInstant),
+    );
     this.clockMs = clockMs;
   }
 
@@ -203,7 +206,7 @@ export class AccessFabricEngine {
     const provenance = buildProvenance({
       sourceSystem: input.sourceSystem,
       sourceClass: input.sourceClass,
-      oracleFactRefs: input.oracleFactRefs,
+      ...(input.oracleFactRefs !== undefined ? { oracleFactRefs: input.oracleFactRefs } : {}),
       observedAtUtc: this.nowUtc(),
       payloadDigest: input.payloadDigest,
     });
@@ -280,7 +283,7 @@ export class AccessFabricEngine {
     const provenance = buildProvenance({
       sourceSystem: input.sourceSystem,
       sourceClass: input.sourceClass,
-      oracleFactRefs: input.oracleFactRefs,
+      ...(input.oracleFactRefs !== undefined ? { oracleFactRefs: input.oracleFactRefs } : {}),
       observedAtUtc: this.nowUtc(),
       payloadDigest: input.payloadDigest,
     });

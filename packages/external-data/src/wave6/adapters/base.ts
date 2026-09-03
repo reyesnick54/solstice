@@ -55,7 +55,13 @@ export function ok<T>(
   fromCache = false,
   execution?: ProviderExecutionProvenance,
 ): OpportunityServiceResult<T> {
-  return Object.freeze({ ok: true, value, fromCache, providersUsed, execution });
+  return Object.freeze({
+    ok: true,
+    value,
+    fromCache,
+    providersUsed,
+    ...(execution !== undefined ? { execution } : {}),
+  }) as OpportunityServiceResult<T>;
 }
 
 export function fail(
@@ -64,7 +70,13 @@ export function fail(
   providerId: string,
   execution?: ProviderExecutionProvenance,
 ): OpportunityServiceResult<never> {
-  return Object.freeze({ ok: false, code, message, providerId, execution });
+  return Object.freeze({
+    ok: false,
+    code,
+    message,
+    providerId,
+    ...(execution !== undefined ? { execution } : {}),
+  }) as OpportunityServiceResult<never>;
 }
 
 export function simulationProvenance(): ProviderExecutionProvenance {
@@ -173,7 +185,7 @@ export function buildJobOpportunity(
 }
 
 export abstract class BaseOpportunityAdapter {
-  abstract readonly providerId: string;
+  abstract get providerId(): string;
   protected scenario: AdapterScenario = 'normal';
 
   setScenario(scenario: AdapterScenario): void {

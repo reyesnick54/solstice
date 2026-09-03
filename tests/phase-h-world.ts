@@ -1,5 +1,5 @@
 import { asUtcInstant } from '../packages/domain/src/time.ts';
-import { handleConsumerBff, type BffRequest, type BffResponse, type ConsumerBffRuntime } from '../services/api/src/consumer/handler.ts';
+import { handleConsumerBffSync, type BffRequest, type BffResponse, type ConsumerBffRuntime } from '../services/api/src/consumer/bff-test-utils.ts';
 import { startConsumerBff } from '../services/api/src/consumer/http.ts';
 import type { ConsumerBff } from '../services/api/src/consumer/orchestrator.ts';
 import type { BffPrincipal } from '../services/api/src/consumer/ports.ts';

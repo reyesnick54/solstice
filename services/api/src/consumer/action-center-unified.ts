@@ -144,8 +144,8 @@ export function listUnifiedActions(
 
   if (sources.conversation) {
     const agentList = sources.conversation.listActions(principal, view, requestId);
-    if (!isBffError(agentList) && Array.isArray((agentList as { items?: unknown[] }).items)) {
-      for (const row of (agentList as { items: { actionId: string; type: string; title: string; status: string; view: string; availableActions: string[] }[] }).items) {
+    if (!isBffError(agentList) && Array.isArray((agentList as unknown as { items?: unknown[] }).items)) {
+      for (const row of (agentList as unknown as { items: { actionId: string; type: string; title: string; status: string; view: string; availableActions: string[] }[] }).items) {
         const mapped: ActionCenterItem = Object.freeze({
           actionId: row.actionId,
           kind: row.type,

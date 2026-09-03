@@ -3,7 +3,7 @@
  */
 
 import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
-import { opportunityCachePolicy, OPPORTUNITY_CACHE_CAPABILITIES } from './cache-policies.ts';
+import { opportunityCachePolicy, OPPORTUNITY_CACHE_CAPABILITIES, type OpportunityCacheCapability } from './cache-policies.ts';
 import { detectDuplicateJobs } from './deduplication.ts';
 import { matchJobsToUser, assertNoSensitiveDataInQuery } from './matching.ts';
 import type { OpportunityProvider } from './provider.ts';
@@ -86,7 +86,7 @@ export class OpportunityService {
       const search = await this.searchJobs({}, nowUtc);
       if (!search.ok) return search;
       const found = search.value.find((j) => j.opportunityId === opportunityId);
-      if (!found) return { ok: false, code: 'NOT_FOUND', message: `job ${opportunityId} not found`, providerId };
+      if (!found) return { ok: false, code: 'NOT_FOUND', message: `job ${opportunityId} not found`, providerId: providerId ?? null };
       return { ok: true, value: found, fromCache: false, providersUsed: search.providersUsed };
     }
     const result = await provider.getJob(providerJobId!, nowUtc);
@@ -216,8 +216,8 @@ export class OpportunityService {
     return entry.value;
   }
 
-  #setCache<T>(key: string, value: T, capability: keyof typeof OPPORTUNITY_CACHE_CAPABILITIES): void {
-    const policy = opportunityCachePolicy(OPPORTUNITY_CACHE_CAPABILITIES[capability]);
+  #setCache<T>(key: string, value: T, capability: OpportunityCacheCapability): void {
+    const policy = opportunityCachePolicy(capability);
     this.#memory.set(key, { value, expiresAtMs: Date.now() + policy.ttlMs });
   }
 }

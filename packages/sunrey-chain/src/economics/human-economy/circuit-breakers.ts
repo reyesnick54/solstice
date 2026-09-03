@@ -9,7 +9,7 @@
 import type { DomainCircuitBreakerState, HumanContributionDomain } from './types.ts';
 
 export type DomainCircuitBreakerRegistry = {
-  readonly domains: ReadonlyMap<HumanContributionDomain, DomainCircuitBreakerState>;
+  readonly domains: Map<HumanContributionDomain, DomainCircuitBreakerState>;
 };
 
 export function emptyDomainCircuitBreakerRegistry(): DomainCircuitBreakerRegistry {

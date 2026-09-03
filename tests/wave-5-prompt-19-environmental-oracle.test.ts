@@ -30,7 +30,7 @@ import {
 import { loadEnvironmentalFixture, normalizeWeatherForecast } from '../packages/sunrey-chain/src/environmental/adapters/base.ts';
 import { createEnvironmentalOracleBff } from '../services/api/src/consumer/environmental-adapter.ts';
 import { dispatchEnvironmental } from '../services/api/src/consumer/environmental.ts';
-import { handleConsumerBff } from '../services/api/src/consumer/handler.ts';
+import { handleConsumerBff } from '../services/api/src/consumer/bff-test-utils.ts';
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
 
 const NOW = defaultEnvironmentalNow();

@@ -109,7 +109,8 @@ export function auditProviderCatalogs(): ProviderInventoryReport {
       entry.primary_category,
       entry.secondary_categories ?? [],
     );
-    const plane = domains.length > 0 ? planeForDomain(domains[0]) : 'REFERENCE_CONTEXT';
+    const firstDomain = domains[0];
+    const plane = firstDomain !== undefined ? planeForDomain(firstDomain) : 'REFERENCE_CONTEXT';
     byPlane[plane] += 1;
     for (const d of domains) {
       byDomain[d] = (byDomain[d] ?? 0) + 1;

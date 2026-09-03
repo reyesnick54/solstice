@@ -44,7 +44,7 @@ export async function certifyOpportunityProvider(
           liveCall: false,
           validated: simulated.ok,
           implemented,
-          blocked: simulated.code === 'PROVIDER_UNAVAILABLE',
+          blocked: !simulated.ok && simulated.code === 'PROVIDER_UNAVAILABLE',
         }),
         liveCall: false,
         validated: simulated.ok,

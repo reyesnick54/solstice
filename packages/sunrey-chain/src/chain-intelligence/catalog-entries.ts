@@ -19,7 +19,7 @@ function chainProvider(
   overrides: Partial<CatalogProviderEntry> & Pick<CatalogProviderEntry, 'provider_id' | 'name' | 'short_name' | 'description'>,
 ): CatalogProviderEntry {
   return Object.freeze({
-    primary_category: 'blockchain',
+    primary_category: 'blockchain' as const,
     secondary_categories: Object.freeze(['cryptocurrency']),
     capabilities: Object.freeze(['blockchain_intelligence', 'bitcoin_network', 'mempool', 'network_statistics']),
     endpoints: Object.freeze({
@@ -83,7 +83,7 @@ function chainProvider(
       notes: 'Wave 3 Prompt 13 blockchain network intelligence subset.',
     }),
     ...overrides,
-  });
+  }) as CatalogProviderEntry;
 }
 
 export const CHAIN_INTELLIGENCE_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Object.freeze([

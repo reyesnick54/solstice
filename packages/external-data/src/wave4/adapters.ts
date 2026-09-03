@@ -316,7 +316,7 @@ export function mapDependencyVulnerabilities(
         if (product.toLowerCase().includes(dep.dependencyName.toLowerCase())) {
           exposureStatus = 'DEPENDENCY_POTENTIALLY_AFFECTED';
           const versionMatch = product.match(/<\s*([\d.]+)/);
-          if (versionMatch && dep.dependencyVersion < versionMatch[1]) {
+          if (versionMatch && dep.dependencyVersion < versionMatch[1]!) {
             exposureStatus = 'CONFIRMED_VULNERABLE';
           }
         }

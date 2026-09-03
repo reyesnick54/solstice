@@ -91,5 +91,5 @@ const POLICIES: Readonly<Record<string, CachePolicy>> = Object.freeze({
 });
 
 export function environmentalCachePolicy(capability: string): CachePolicy {
-  return POLICIES[capability] ?? POLICIES[ENVIRONMENTAL_CACHE_CAPABILITIES.currentWeather];
+  return POLICIES[capability] ?? POLICIES[ENVIRONMENTAL_CACHE_CAPABILITIES.currentWeather]!;
 }

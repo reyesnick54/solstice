@@ -9,7 +9,7 @@ import { join } from 'node:path';
 
 import { createPlatformApi } from '../services/api/src/app.ts';
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
-import { handleConsumerBff } from '../services/api/src/consumer/handler.ts';
+import { handleConsumerBff } from '../services/api/src/consumer/bff-test-utils.ts';
 import {
   buildSandboxSeedCatalog,
   createSandboxOperationsPlane,

@@ -32,6 +32,7 @@ describe('Wave 3 Prompt 14 — blockchain intelligence', () => {
   it('capability matrix marks execution false for external chains', () => {
     const matrix = createBlockchainIntelligenceSandbox().capabilityMatrix();
     const eth = matrix['ethereum-mainnet'];
+    assert.ok(eth);
     assert.equal(eth.EXECUTION, false);
     assert.equal(eth.CUSTODY, false);
     assert.equal(eth.READ_BLOCKS, true);
@@ -40,8 +41,10 @@ describe('Wave 3 Prompt 14 — blockchain intelligence', () => {
   it('crypto market reference returns fixture quotes', () => {
     const quotes = createBlockchainIntelligenceSandbox().cryptoMarketQuotes();
     assert.ok(quotes.length >= 2);
-    assert.equal(quotes[0].providerId, 'coingecko');
-    assert.match(quotes[0].data.priceUsdMinor, /^\d+$/);
+    const first = quotes[0];
+    assert.ok(first);
+    assert.equal(first.providerId, 'coingecko');
+    assert.match(first.data.priceUsdMinor, /^\d+$/);
   });
 
   it('ethereum RPC path returns network status and fees', () => {

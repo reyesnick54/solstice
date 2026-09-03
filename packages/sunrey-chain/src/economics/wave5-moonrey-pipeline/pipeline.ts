@@ -163,8 +163,8 @@ export function executeWave5MoonReyPipeline(
     const govErr = validateGovernanceActor({
       actor: input.forbiddenActor,
       authorizationId: input.governanceAuthorizationId,
-      aiApproved: input.aiApproved,
       network: input.network,
+      ...(input.aiApproved !== undefined ? { aiApproved: input.aiApproved } : {}),
     });
     if (govErr) return fail(govErr);
   }
@@ -172,8 +172,8 @@ export function executeWave5MoonReyPipeline(
   const govErr = validateGovernanceActor({
     actor: input.actor,
     authorizationId: input.governanceAuthorizationId,
-    aiApproved: input.aiApproved,
     network: input.network,
+    ...(input.aiApproved !== undefined ? { aiApproved: input.aiApproved } : {}),
   });
   if (govErr) return fail(govErr);
 
@@ -189,8 +189,10 @@ export function executeWave5MoonReyPipeline(
 
   const monetary = evaluateMonetaryPolicy({
     gpuvQuantity: input.gpuvResult.productiveValueQuantity,
-    exchangePriceMinorUnits: input.exchangePriceMinorUnits,
     network: input.network,
+    ...(input.exchangePriceMinorUnits !== undefined
+      ? { exchangePriceMinorUnits: input.exchangePriceMinorUnits }
+      : {}),
   });
   if (!monetary.ok) return fail(monetary.code);
 

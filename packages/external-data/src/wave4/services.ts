@@ -27,7 +27,8 @@ import type {
   ThreatIndicator,
   VulnerabilityObservation,
 } from './models.ts';
-import { ProviderRiskMonitor, type ProviderRiskInput, type ProviderRiskScore } from './provider-risk-monitor.ts';
+import { ProviderRiskMonitor, type ProviderRiskInput } from './provider-risk-monitor.ts';
+import type { ProviderRiskScore } from './models.ts';
 import {
   Wave5ProviderRiskMonitor,
   type ProviderRiskMonitorSnapshot,

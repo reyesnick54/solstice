@@ -166,7 +166,7 @@ export function dispatchHealthReference(
     );
   } catch {
     return result(
-      bffError({ errorCode: 'INTERNAL', category: 'SYSTEM', message: 'health reference dispatch failed', retryable: true, requestId }),
+      bffError({ errorCode: 'INTERNAL', category: 'INTERNAL', message: 'health reference dispatch failed', retryable: true, requestId }),
       headers,
       500,
     );

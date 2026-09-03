@@ -8,7 +8,7 @@
 import type { HumanContributionDomain, VerifierReputationSignal } from './types.ts';
 
 export type VerifierReputationRegistry = {
-  readonly signals: ReadonlyMap<string, VerifierReputationSignal>;
+  readonly signals: Map<string, VerifierReputationSignal>;
 };
 
 export function emptyVerifierReputationRegistry(): VerifierReputationRegistry {

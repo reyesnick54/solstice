@@ -39,7 +39,7 @@ export class ExternalDataTrustEngine {
   reconcile(observations: readonly TrustObservation[]): TrustEngineResult<number> {
     const usable = observations.filter((o) => !o.quarantined && !o.stale);
     if (usable.length === 0) {
-      return result('UNAVAILABLE', null, [], 'No usable observations after quarantine/stale filter.');
+      return result<number>('UNAVAILABLE', null, [], 'No usable observations after quarantine/stale filter.');
     }
 
     const official = this.#policy.officialSourceIds?.length
@@ -53,13 +53,13 @@ export class ExternalDataTrustEngine {
         corroborationCount: 1,
       });
       if (confidence.score === null) {
-        return result('LOW_CONFIDENCE', null, [official[0]!.providerId], 'Official source confidence insufficient.');
+        return result<number>('LOW_CONFIDENCE', null, [official[0]!.providerId], 'Official source confidence insufficient.');
       }
-      return result('AGREEMENT', official[0]!.value, [official[0]!.providerId], 'Official source precedence.');
+      return result<number>('AGREEMENT', official[0]!.value, [official[0]!.providerId], 'Official source precedence.');
     }
 
     if (usable.length < this.#policy.minimumSources) {
-      return result(
+      return result<number>(
         'LOW_CONFIDENCE',
         null,
         usable.map((o) => o.providerId),
@@ -73,7 +73,7 @@ export class ExternalDataTrustEngine {
     if (outliers.length > 0 && outliers.length < usable.length) {
       const agreeing = usable.filter((o) => pctDiff(o.value, median) <= this.#policy.agreementTolerancePct);
       if (agreeing.length < this.#policy.minimumSources) {
-        return result(
+        return result<number>(
           'CONFLICTED',
           null,
           usable.map((o) => o.providerId),
@@ -81,7 +81,7 @@ export class ExternalDataTrustEngine {
         );
       }
       const agreedMedian = medianOf(agreeing.map((o) => o.value));
-      return result(
+      return result<number>(
         'AGREEMENT',
         agreedMedian,
         agreeing.map((o) => o.providerId),
@@ -90,7 +90,7 @@ export class ExternalDataTrustEngine {
     }
 
     if (outliers.length === usable.length) {
-      return result(
+      return result<number>(
         'CONFLICTED',
         null,
         usable.map((o) => o.providerId),
@@ -98,7 +98,7 @@ export class ExternalDataTrustEngine {
       );
     }
 
-    return result('AGREEMENT', median, usable.map((o) => o.providerId), 'Sources agree within tolerance.');
+    return result<number>('AGREEMENT', median, usable.map((o) => o.providerId), 'Sources agree within tolerance.');
   }
 }
 

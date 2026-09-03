@@ -106,7 +106,7 @@ export function executeProofBoundSunReyIssuance(
     policy: input.policy,
     claim,
     nowUnixSeconds: input.nowUnixSeconds,
-    expectedPurpose: input.expectedPurpose,
+    ...(input.expectedPurpose !== undefined ? { expectedPurpose: input.expectedPurpose } : {}),
   });
   if (!proofCheck.ok) {
     return { ok: false, code: proofCheck.code, supplyUnchanged: true };
@@ -200,7 +200,7 @@ export function executeProofBoundMoonReyIssuance(
     policy: input.policy,
     claim,
     nowUnixSeconds: input.nowUnixSeconds,
-    expectedPurpose: input.expectedPurpose,
+    ...(input.expectedPurpose !== undefined ? { expectedPurpose: input.expectedPurpose } : {}),
   });
   if (!proofCheck.ok) {
     return { ok: false, code: proofCheck.code, supplyUnchanged: true };

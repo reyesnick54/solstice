@@ -7,7 +7,7 @@ import { emptyBook } from '../economics/supply.ts';
 import type { MonetaryPolicyState } from '../economics/types.ts';
 import { PROTOCOL_CHAIN_ID, PROTOCOL_NETWORK_ID } from '../protocol/constants.ts';
 import { bookToCanonical } from './books.ts';
-import type { CanonicalProtocolState } from './types.ts';
+import type { CanonicalProtocolState, CanonicalSupplyBook } from './types.ts';
 import { CANONICAL_STATE_SCHEMA_VERSION } from './types.ts';
 
 export type GenesisStateInput = {
@@ -32,7 +32,10 @@ export function createGenesisState(input: GenesisStateInput = {}): CanonicalProt
     height: 0n,
     finalizedBlockId: null,
     policyState,
-    supplies: Object.freeze([bookToCanonical(sunreyBook), bookToCanonical(moonreyBook)]),
+    supplies: Object.freeze([
+      bookToCanonical(sunreyBook),
+      bookToCanonical(moonreyBook),
+    ]) as readonly [CanonicalSupplyBook, CanonicalSupplyBook],
     accountNonces: Object.freeze([]),
     executedTransactionIds: Object.freeze([]),
     executedIssuanceAuthorizationIds: Object.freeze([]),
@@ -43,7 +46,10 @@ export function createGenesisState(input: GenesisStateInput = {}): CanonicalProt
 export function cloneCanonicalState(state: CanonicalProtocolState): CanonicalProtocolState {
   return Object.freeze({
     ...state,
-    supplies: Object.freeze([state.supplies[0], state.supplies[1]]),
+    supplies: Object.freeze([state.supplies[0], state.supplies[1]]) as readonly [
+      CanonicalSupplyBook,
+      CanonicalSupplyBook,
+    ],
     accountNonces: Object.freeze([...state.accountNonces]),
     executedTransactionIds: Object.freeze([...state.executedTransactionIds]),
     executedIssuanceAuthorizationIds: Object.freeze([...state.executedIssuanceAuthorizationIds]),

@@ -63,9 +63,9 @@ export function normalizeProviderFailure(input: {
   const httpStatus = input.httpStatus ?? null;
   const rawMessage = input.message ?? 'provider operation failed';
   const code = classifyFailureCode({
-    code: input.code,
+    ...(input.code !== undefined ? { code: input.code } : {}),
     httpStatus,
-    kind: input.kind,
+    ...(input.kind !== undefined ? { kind: input.kind } : {}),
     message: rawMessage,
   });
   return Object.freeze({

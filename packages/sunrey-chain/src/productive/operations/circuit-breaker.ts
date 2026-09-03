@@ -77,7 +77,11 @@ export class DomainCircuitBreakerRegistry {
     reason?: string,
   ): DomainCircuitBreaker {
     const breaker = this.ensure(domain);
-    const next = evaluateDomainCoverage({ breaker, independentSourceCount, reason });
+    const next = evaluateDomainCoverage({
+      breaker,
+      independentSourceCount,
+      ...(reason !== undefined ? { reason } : {}),
+    });
     this.breakers.set(domain, next);
     return next;
   }

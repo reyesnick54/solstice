@@ -33,7 +33,9 @@ export class ExternalDataTrustPlane {
   readonly #auditLog: TrustResultRecord[] = [];
 
   constructor(options: ExternalDataTrustPlaneOptions = {}) {
-    this.#engine = createExternalDataTrustEngine({ nowUtc: options.nowUtc });
+    this.#engine = createExternalDataTrustEngine(
+      options.nowUtc !== undefined ? { nowUtc: options.nowUtc } : {},
+    );
   }
 
   engine(): ExternalDataTrustEngine {
@@ -142,7 +144,7 @@ export class ExternalDataTrustPlane {
       contexts,
       policyProfile,
       semanticKey,
-      unit,
+      ...(unit !== undefined && unit !== null ? { unit } : {}),
     });
     this.#record(result);
     return result;
@@ -194,7 +196,7 @@ export class ExternalDataTrustPlane {
           down: health.health === 'unhealthy',
           malformed: false,
           rateLimited: health.health === 'degraded',
-          circuitState: health.circuitState,
+          circuitState: health.circuitState as 'OPEN' | 'CLOSED' | 'HALF_OPEN',
           lastSuccess: health.lastSuccess,
           lastError: health.lastError,
         },

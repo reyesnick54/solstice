@@ -24,7 +24,7 @@ export type ComputationInPlaceResult = {
 };
 
 export type PrivateComputationProvider = {
-  readonly capability: typeof PRIVATE_COMPUTATION_CAPABILITY | 'PARTIAL' | 'IMPLEMENTED';
+  readonly capability: CapabilityClassification;
   execute(request: ComputationInPlaceRequest): Promise<
     import('../../../domain/src/result.ts').Result<ComputationInPlaceResult, { readonly code: string; readonly message: string }>
   >;

@@ -241,7 +241,7 @@ describe('Provider Risk Monitor', () => {
     plane.providerRisk.quarantine('phishstats', 'test quarantine', 'test');
     const history = plane.providerRisk.monitor.getHistory('phishstats');
     assert.equal(history.length, 1);
-    assert.equal(history[0].reason, 'test quarantine');
+    assert.equal(history[0]!.reason, 'test quarantine');
   });
 
   it('emits internal security events without sensitive user exposure', () => {

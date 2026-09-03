@@ -25,7 +25,7 @@ export type SybilEvaluationInput = {
     readonly severity: 'LOW' | 'MEDIUM' | 'HIGH';
     readonly evidenceCommitment: string;
     readonly relatedActorIds: readonly HumanEconomicIdentityId[];
-  };
+  }[];
   readonly existingUniquenessOwners: ReadonlyMap<string, HumanEconomicIdentityId>;
   readonly existingExternalOwners: ReadonlyMap<string, HumanEconomicIdentityId>;
   readonly existingCredentialOwners: ReadonlyMap<string, HumanEconomicIdentityId>;

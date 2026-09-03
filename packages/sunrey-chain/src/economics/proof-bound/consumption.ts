@@ -12,9 +12,9 @@ import { dirname } from 'node:path';
 import type { MonetizationConsumptionRecord } from './types.ts';
 
 export type ConsumptionStore = {
-  readonly consumedKeys: ReadonlySet<string>;
-  readonly consumedAuthorizations: ReadonlySet<string>;
-  readonly records: ReadonlyMap<string, MonetizationConsumptionRecord>;
+  readonly consumedKeys: Set<string>;
+  readonly consumedAuthorizations: Set<string>;
+  readonly records: Map<string, MonetizationConsumptionRecord>;
   readonly appendLog: readonly MonetizationConsumptionRecord[];
 };
 

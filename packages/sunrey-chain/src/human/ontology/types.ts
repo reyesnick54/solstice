@@ -3,6 +3,7 @@
  */
 
 import type { ContributionClass } from '../../../../human-economic-contribution/src/taxonomy.ts';
+import { HUMAN_ONTOLOGY_VERSION } from './constants.ts';
 
 export const HUMAN_CONTRIBUTION_EVENT_KINDS = ['ACTIVITY', 'ACHIEVEMENT', 'AUTHORIZED_USE'] as const;
 export type HumanContributionEventKind = (typeof HUMAN_CONTRIBUTION_EVENT_KINDS)[number];

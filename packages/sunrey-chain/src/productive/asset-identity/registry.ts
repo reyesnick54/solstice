@@ -43,9 +43,9 @@ export class ProductiveAssetIdentityRegistry {
       assetClass: input.assetClass,
       jurisdiction: input.jurisdiction,
       geography: input.geography,
-      technologyMetadata: input.technologyMetadata,
-      externalIdentifiers: input.externalIdentifiers,
-      commissionedAtUtc: input.commissionedAtUtc,
+      ...(input.technologyMetadata !== undefined ? { technologyMetadata: input.technologyMetadata } : {}),
+      ...(input.externalIdentifiers !== undefined ? { externalIdentifiers: input.externalIdentifiers } : {}),
+      ...(input.commissionedAtUtc !== undefined ? { commissionedAtUtc: input.commissionedAtUtc } : {}),
     });
     const asset = Object.freeze({
       schemaVersion: PRODUCTIVE_ASSET_IDENTITY_SCHEMA,

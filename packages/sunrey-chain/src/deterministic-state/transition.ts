@@ -59,7 +59,10 @@ function replaceSupply(
 }
 
 function reject(code: StateTransitionRejection, detail?: string): StateTransitionResult {
-  return Object.freeze({ ok: false as const, code, detail });
+  if (detail !== undefined) {
+    return Object.freeze({ ok: false as const, code, detail });
+  }
+  return Object.freeze({ ok: false as const, code });
 }
 
 function accept(state: CanonicalProtocolState): StateTransitionResult {

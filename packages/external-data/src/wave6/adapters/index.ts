@@ -151,12 +151,16 @@ function wrapLiveJobAdapter(
     geographicScope,
     productionAuthorized: false as const,
     liveCapable: inner.liveCapable,
-    searchJobs: (query, nowUtc) => inner.searchJobs(query, nowUtc),
+    searchJobs: (query: JobSearchQuery, nowUtc: UtcInstant) => inner.searchJobs(query, nowUtc),
     setScenario: (scenario: import('./base.ts').AdapterScenario) => inner.setScenario(scenario),
   });
 }
 
 class FixtureOnlyJobAdapter extends BaseOpportunityAdapter implements OpportunityProvider {
+  readonly #providerId: string;
+  get providerId(): string {
+    return this.#providerId;
+  }
   readonly capabilities: readonly OpportunityCapability[];
   readonly geographicScope: readonly string[];
   readonly productionAuthorized = false as const;
@@ -172,7 +176,7 @@ class FixtureOnlyJobAdapter extends BaseOpportunityAdapter implements Opportunit
     mapper: (raw: unknown, nowUtc: UtcInstant) => readonly JobOpportunity[],
   ) {
     super();
-    this.providerId = providerId;
+    this.#providerId = providerId;
     this.#fixtureFile = fixtureFile;
     this.capabilities = capabilities;
     this.geographicScope = geographicScope;
@@ -189,6 +193,10 @@ class FixtureOnlyJobAdapter extends BaseOpportunityAdapter implements Opportunit
 }
 
 class UnavailableJobAdapter extends BaseOpportunityAdapter implements OpportunityProvider {
+  readonly #providerId: string;
+  get providerId(): string {
+    return this.#providerId;
+  }
   readonly capabilities: readonly OpportunityCapability[];
   readonly geographicScope: readonly string[];
   readonly productionAuthorized = false as const;
@@ -202,7 +210,7 @@ class UnavailableJobAdapter extends BaseOpportunityAdapter implements Opportunit
     geographicScope: readonly string[],
   ) {
     super();
-    this.providerId = providerId;
+    this.#providerId = providerId;
     this.#reason = reason;
     this.capabilities = capabilities;
     this.geographicScope = geographicScope;
@@ -355,6 +363,10 @@ class OpenSkillsAdapter extends BaseOpportunityAdapter implements OpportunityPro
 }
 
 class IntelligenceFixtureAdapter extends BaseOpportunityAdapter implements OpportunityProvider {
+  readonly #providerId: string;
+  get providerId(): string {
+    return this.#providerId;
+  }
   readonly capabilities: readonly OpportunityCapability[];
   readonly geographicScope: readonly string[];
   readonly productionAuthorized = false as const;
@@ -370,7 +382,7 @@ class IntelligenceFixtureAdapter extends BaseOpportunityAdapter implements Oppor
     mapper: (raw: unknown, nowUtc: UtcInstant) => readonly PublicIntelligenceObservation[],
   ) {
     super();
-    this.providerId = providerId;
+    this.#providerId = providerId;
     this.#fixtureFile = fixtureFile;
     this.capabilities = capabilities;
     this.geographicScope = geographicScope;
@@ -562,7 +574,7 @@ export function createAllOpportunityAdapters(options?: OpportunityAdapterFactory
 }
 
 export function setAdapterScenario(providerId: OpportunityAdapterId, scenario: import('./base.ts').AdapterScenario): void {
-  const adapter = createOpportunityAdapter(providerId) as BaseOpportunityAdapter & { setScenario?: (s: import('./base.ts').AdapterScenario) => void };
+  const adapter = createOpportunityAdapter(providerId) as unknown as BaseOpportunityAdapter & { setScenario?: (s: import('./base.ts').AdapterScenario) => void };
   adapter.setScenario?.(scenario);
 }
 

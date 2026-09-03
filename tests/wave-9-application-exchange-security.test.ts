@@ -37,7 +37,7 @@ import { WalletSecurityEngine } from '../packages/sunrey-chain/src/wallet/securi
 import { createPlatformApi } from '../services/api/src/app.ts';
 import { handleVerifiedCardWebhook } from '../services/api/src/consumer/card-webhook.ts';
 import { bffFailClosedInternal, statusForError } from '../services/api/src/consumer/errors.ts';
-import { handleConsumerBff } from '../services/api/src/consumer/handler.ts';
+import { handleConsumerBff } from '../services/api/src/consumer/bff-test-utils.ts';
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
 import { startConsumerBff } from '../services/api/src/consumer/http.ts';
 import { createExchangeBffSurface } from '../services/api/src/consumer/exchange-bff.ts';
@@ -69,7 +69,7 @@ describe('Wave 9 — application and Exchange security', () => {
   describe('API authentication and error handling', () => {
     it('requires Bearer session for protected Consumer BFF routes', () => {
       const world = createSandboxWorld();
-      const denied = handleConsumerBff(bffRuntime(world), {
+      const denied = handleConsumerBffSync(bffRuntime(world), {
         method: 'GET',
         path: '/api/v1/me',
         query: {},
@@ -93,7 +93,7 @@ describe('Wave 9 — application and Exchange security', () => {
           },
         },
       };
-      const response = handleConsumerBff(runtime, {
+      const response = handleConsumerBffSync(runtime, {
         method: 'GET',
         path: '/api/v1/me',
         query: {},
@@ -350,7 +350,7 @@ describe('Wave 9 — application and Exchange security', () => {
       adapter.service.revokeSession(session!.sessionId, 'USER_LOGOUT');
       const world = createSandboxWorld();
       world.sessions.delete(sandboxToken('basic_verified'));
-      const denied = handleConsumerBff(
+      const denied = handleConsumerBffSync(
         { ...bffRuntime(world), identity: adapter.service },
         {
           method: 'GET',
@@ -368,7 +368,7 @@ describe('Wave 9 — application and Exchange security', () => {
   describe('Action Center server authority', () => {
     it('does not allow marking another user action complete via forged outcome', () => {
       const world = createSandboxWorld();
-      const opened = handleConsumerBff(bffRuntime(world), {
+      const opened = handleConsumerBffSync(bffRuntime(world), {
         method: 'POST',
         path: '/api/v1/agent/conversations',
         query: {},
@@ -378,7 +378,7 @@ describe('Wave 9 — application and Exchange security', () => {
       });
       assert.equal(opened.status, 201);
       const conversationId = (opened.body as { conversationId: string }).conversationId;
-      const pay = handleConsumerBff(bffRuntime(world), {
+      const pay = handleConsumerBffSync(bffRuntime(world), {
         method: 'POST',
         path: `/api/v1/agent/conversations/${conversationId}/messages`,
         query: {},
@@ -389,7 +389,7 @@ describe('Wave 9 — application and Exchange security', () => {
       assert.equal(pay.status, 200);
       const actionId = (pay.body as { cards: { actionId: string }[] }).cards[0]?.actionId;
       assert.ok(actionId);
-      const forged = handleConsumerBff(bffRuntime(world), {
+      const forged = handleConsumerBffSync(bffRuntime(world), {
         method: 'POST',
         path: `/api/v1/agent/actions/${actionId}/outcome`,
         query: {},

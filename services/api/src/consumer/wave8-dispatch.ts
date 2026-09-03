@@ -65,12 +65,16 @@ export function dispatchWave8(
   }
 
   const sunrey = createSunReyApiSurface({
-    nativeEconomy: runtime.nativeEconomy,
-    hinContributions: runtime.hinContributions ?? (runtime.hin && isHin(runtime.hin) ? runtime.hin : undefined),
+    ...(runtime.nativeEconomy ? { nativeEconomy: runtime.nativeEconomy } : {}),
+    ...(runtime.hinContributions
+      ? { hinContributions: runtime.hinContributions }
+      : runtime.hin && isHin(runtime.hin)
+        ? { hinContributions: runtime.hin }
+        : {}),
   });
   const moonrey = createMoonReyApiSurface({
-    nativeEconomy: runtime.nativeEconomy,
-    productiveEconomy: runtime.productiveEconomy,
+    ...(runtime.nativeEconomy ? { nativeEconomy: runtime.nativeEconomy } : {}),
+    ...(runtime.productiveEconomy ? { productiveEconomy: runtime.productiveEconomy } : {}),
   });
 
   if (path === '/api/v1/sunrey/balance' && method === 'GET') {
@@ -195,9 +199,11 @@ export function dispatchWave8(
 
 function respond(status: number, body: unknown, extraHeaders?: Readonly<Record<string, string>>): Wave8DispatchResponse {
   if (isBffError(body)) {
-    return { status: statusForError(body), body, extraHeaders };
+    return extraHeaders !== undefined
+      ? { status: statusForError(body), body, extraHeaders }
+      : { status: statusForError(body), body };
   }
-  return { status, body, extraHeaders };
+  return extraHeaders !== undefined ? { status, body, extraHeaders } : { status, body };
 }
 
 function actionCenterSources(runtime: ConsumerBffRuntime): ActionCenterSources {

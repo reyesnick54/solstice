@@ -2,6 +2,7 @@
  * ACCESS Wave 2 Prompt 31 — fixture data for GBFS, NPS, and RIDB discovery providers.
  */
 
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type {
   GbfsPricingPlan,
   GbfsStationInfo,
@@ -12,7 +13,7 @@ import type {
   RidbFacilityRecord,
 } from '../types.ts';
 
-const NOW = '2026-08-31T12:00:00.000Z' as const;
+const NOW = '2026-08-31T12:00:00.000Z' as UtcInstant;
 
 export const FIXTURE_GBFS_SYSTEM: GbfsSystemInfo = Object.freeze({
   systemId: 'demo_city_bikes',
@@ -100,7 +101,7 @@ export const FIXTURE_NPS_PARKS: readonly NpsParkRecord[] = Object.freeze([
     visitorInfo: 'Most roads open late April through early November.',
     providerId: 'national-park-service',
     freshness: Object.freeze({
-      freshnessStatus: 'fresh',
+      freshnessStatus: 'fresh' as const,
       retrievedAt: NOW,
       sourceTimestamp: NOW,
     }),
@@ -116,7 +117,7 @@ export const FIXTURE_NPS_PARKS: readonly NpsParkRecord[] = Object.freeze([
     visitorInfo: 'South Rim open year-round.',
     providerId: 'national-park-service',
     freshness: Object.freeze({
-      freshnessStatus: 'fresh',
+      freshnessStatus: 'fresh' as const,
       retrievedAt: NOW,
       sourceTimestamp: NOW,
     }),
@@ -136,7 +137,7 @@ export const FIXTURE_RIDB_FACILITIES: readonly RidbFacilityRecord[] = Object.fre
     currency: 'USD',
     providerId: 'recreation-gov-ridb',
     freshness: Object.freeze({
-      freshnessStatus: 'fresh',
+      freshnessStatus: 'fresh' as const,
       retrievedAt: NOW,
       sourceTimestamp: NOW,
     }),
@@ -153,7 +154,7 @@ export const FIXTURE_RIDB_FACILITIES: readonly RidbFacilityRecord[] = Object.fre
     currency: null,
     providerId: 'recreation-gov-ridb',
     freshness: Object.freeze({
-      freshnessStatus: 'unknown',
+      freshnessStatus: 'unknown' as const,
       retrievedAt: NOW,
       sourceTimestamp: null,
     }),

@@ -9,8 +9,8 @@ import { createHash } from 'node:crypto';
 import type { ClaimChallengeReason, ClaimChallengeRecord, ClaimChallengeState } from './types.ts';
 
 export type ClaimChallengeRegistry = {
-  readonly challenges: ReadonlyMap<string, ClaimChallengeRecord>;
-  readonly byClaimId: ReadonlyMap<string, readonly string[]>;
+  readonly challenges: Map<string, ClaimChallengeRecord>;
+  readonly byClaimId: Map<string, readonly string[]>;
 };
 
 export function emptyClaimChallengeRegistry(): ClaimChallengeRegistry {

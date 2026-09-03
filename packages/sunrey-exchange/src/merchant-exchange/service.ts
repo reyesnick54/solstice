@@ -25,6 +25,7 @@ import {
   newMerchantOfferId,
   newMerchantPurchaseId,
   newPurchaseIntentId,
+  type PurchaseIntentId,
 } from './ids.ts';
 import { toMerchantVisibleIntent } from './privacy.ts';
 import type { MerchantPaymentPort, MerchantRegistryPort } from './ports.ts';

@@ -186,8 +186,8 @@ export function runChaosRecoverySuite(): SyncResult<ChaosRecoveryReport> {
     indexRebuildIdentical:
       rebuilt.height === node.height && rebuilt.stateRoot === node.stateRoot && rebuilt.blockId === node.blockId,
     snapshotRestoreOk: verified.ok && verified.value.ok,
-    tamperedSnapshotRejected: verified.ok && !tampered.value.ok,
-    wrongNetworkRejected: verified.ok && !wrongNet.value.ok,
+    tamperedSnapshotRejected: verified.ok && !tampered.ok,
+    wrongNetworkRejected: verified.ok && !wrongNet.ok,
     peerSyncIdentical: synced.ok && synced.value.ok && synced.value.finalStateRoot === final.stateRoot,
     outageRecoveryIdentical:
       afterOutage.height === node.height && afterOutage.stateRoot === node.stateRoot,

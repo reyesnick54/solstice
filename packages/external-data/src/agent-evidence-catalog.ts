@@ -46,7 +46,7 @@ function categorizeMacro(plane: ExternalDataPlane): CategorizedAgentEvidence {
   ];
   return Object.freeze({
     category: 'MACRO',
-    refs: Object.freeze(observations.map((o) => toAgentEvidenceRef(o))),
+    refs: Object.freeze(observations.map((o) => toAgentEvidenceRef(o as Parameters<typeof toAgentEvidenceRef>[0]))),
   });
 }
 
@@ -57,14 +57,14 @@ function categorizeMarket(plane: ExternalDataPlane): CategorizedAgentEvidence {
   ];
   return Object.freeze({
     category: 'MARKET',
-    refs: Object.freeze(observations.map((o) => toAgentEvidenceRef(o))),
+    refs: Object.freeze(observations.map((o) => toAgentEvidenceRef(o as Parameters<typeof toAgentEvidenceRef>[0]))),
   });
 }
 
 function categorizeFx(plane: ExternalDataPlane): CategorizedAgentEvidence {
   return Object.freeze({
     category: 'FX',
-    refs: Object.freeze(plane.fx.getRates().observations.map((o) => toAgentEvidenceRef(o))),
+    refs: Object.freeze(plane.fx.getRates().observations.map((o) => toAgentEvidenceRef(o as Parameters<typeof toAgentEvidenceRef>[0]))),
   });
 }
 
@@ -75,7 +75,7 @@ function categorizeCompany(plane: ExternalDataPlane): CategorizedAgentEvidence {
   ];
   return Object.freeze({
     category: 'COMPANY',
-    refs: Object.freeze(observations.map((o) => toAgentEvidenceRef(o))),
+    refs: Object.freeze(observations.map((o) => toAgentEvidenceRef(o as Parameters<typeof toAgentEvidenceRef>[0]))),
   });
 }
 
@@ -120,7 +120,7 @@ export async function buildAgentEvidenceCatalog(
     const observations = [...energy, ...resources];
     resourceCategory = Object.freeze({
       category: 'RESOURCE',
-      refs: Object.freeze(observations.map((o) => toAgentEvidenceRef(o))),
+      refs: Object.freeze(observations.map((o) => toAgentEvidenceRef(o as Parameters<typeof toAgentEvidenceRef>[0]))),
     });
   } catch {
     resourceCategory = emptyCategory('RESOURCE');

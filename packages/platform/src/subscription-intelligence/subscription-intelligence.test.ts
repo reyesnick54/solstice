@@ -42,7 +42,7 @@ function activity(
       label: descriptor,
     }),
     classification: 'SUBSCRIPTION',
-    sourceType: 'LEDGER',
+    sourceType: 'CANONICAL_LEDGER',
     sourceRef: `src_${id}`,
     sourceEventType: 'CustomerActivityRecorded',
     sourceEventId: `evt_${id}`,

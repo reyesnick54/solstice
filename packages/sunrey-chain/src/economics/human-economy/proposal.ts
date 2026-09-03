@@ -62,7 +62,7 @@ export function createSunReyHumanEconomyIssuanceProposal(input: {
   const derivation = deriveProposedSunReyQuantity({
     peve: input.peveValuation,
     network: input.network,
-    usePeveAsQuantity: input.usePeveAsQuantity,
+    ...(input.usePeveAsQuantity !== undefined ? { usePeveAsQuantity: input.usePeveAsQuantity } : {}),
   });
   if (!derivation.ok) {
     return { ok: false, code: derivation.code };

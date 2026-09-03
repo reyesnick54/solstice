@@ -71,8 +71,10 @@ function observation(input: {
       providerId: input.providerId,
       sourceId: `source:${input.providerId}`,
       sourceClass: input.sourceClass,
-      lineageRootId: input.lineageRootId,
-      upstreamOrganizationId: input.upstreamOrganizationId,
+      ...(input.lineageRootId !== undefined ? { lineageRootId: input.lineageRootId } : {}),
+      ...(input.upstreamOrganizationId !== undefined
+        ? { upstreamOrganizationId: input.upstreamOrganizationId }
+        : {}),
     }),
   });
 }

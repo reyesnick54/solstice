@@ -97,9 +97,9 @@ export class ResearchIntelligenceService {
             data: author as unknown as ResearchWork,
           } as ExternalObservation<ResearchWork>),
         ),
-      ]);
+      ]) as Wave6ServiceResult<ResearchAuthor>;
     }
-    return summarize(observations);
+    return summarize(observations) as Wave6ServiceResult<ResearchAuthor>;
   }
 
   getInstitution(institutionId: string): Wave6ServiceResult<ResearchInstitution> {
@@ -113,7 +113,7 @@ export class ResearchIntelligenceService {
           data: institution as unknown as ResearchWork,
         }) as ExternalObservation<ResearchWork>,
     );
-    return summarize(observations);
+    return summarize(observations) as Wave6ServiceResult<ResearchInstitution>;
   }
 
   findRelatedWorks(workId: string): Wave6ServiceResult<ResearchWork> {

@@ -7,7 +7,7 @@
 
 import { FORBIDDEN_IDENTITY_FIELDS } from '../../../../human-economic-contribution/src/taxonomy.ts';
 import { HUMAN_ONTOLOGY_VERSION } from './constants.ts';
-import type { HumanEconomicActor, HumanIdentityAssuranceLevel, HumanOntologyResult } from './types.ts';
+import type { HumanControlRejectionCode, HumanEconomicActor, HumanIdentityAssuranceLevel, HumanOntologyResult } from './types.ts';
 
 export type CreateHumanEconomicActorInput = {
   readonly humanActorId: string;
@@ -26,10 +26,7 @@ function ok<T>(value: T): HumanOntologyResult<T> {
   return Object.freeze({ ok: true, value });
 }
 
-function fail<T>(
-  code: HumanOntologyResult<T> extends { ok: false; code: infer C } ? C : never,
-  message: string,
-): HumanOntologyResult<T> {
+function fail(code: HumanControlRejectionCode, message: string): HumanOntologyResult<never> {
   return Object.freeze({ ok: false, code, message });
 }
 

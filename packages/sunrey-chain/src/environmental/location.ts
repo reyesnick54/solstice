@@ -75,6 +75,11 @@ export function convertWindSpeed(
     mph: 0.44704,
     knots: 0.514444,
   };
-  const ms = value * toMs[from];
-  return ms / toMs[to];
+  const fromFactor = toMs[from];
+  const toFactor = toMs[to];
+  if (fromFactor === undefined || toFactor === undefined) {
+    throw new TypeError(`unsupported wind speed unit: ${from} or ${to}`);
+  }
+  const ms = value * fromFactor;
+  return ms / toFactor;
 }

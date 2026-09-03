@@ -151,6 +151,24 @@ function observe<T>(
   return built.value;
 }
 
+function mapWave6AuthorityClass(
+  authorityClass: string,
+): 'authoritative_official' | 'reference_data' | 'research_data' | 'community_data' | 'derived_data' {
+  if (authorityClass === 'regulated_provider') {
+    return 'reference_data';
+  }
+  if (
+    authorityClass === 'authoritative_official' ||
+    authorityClass === 'reference_data' ||
+    authorityClass === 'research_data' ||
+    authorityClass === 'community_data' ||
+    authorityClass === 'derived_data'
+  ) {
+    return authorityClass;
+  }
+  return 'reference_data';
+}
+
 function providerFilter<T extends { readonly providerId: string }>(
   items: readonly T[],
   providerIds: readonly string[],
@@ -181,7 +199,7 @@ export function fetchResearchWorks(
           capability: 'research_works',
           dataset: 'research_catalog',
           data: work,
-          authorityClass: work.authorityClass,
+          authorityClass: mapWave6AuthorityClass(work.authorityClass),
         }),
       )
       .filter((o): o is ExternalObservation<ResearchWork> => o !== null),
@@ -235,7 +253,7 @@ export function fetchKnowledgeEntities(
           capability: 'knowledge_graph',
           dataset: 'open_knowledge',
           data: entity,
-          authorityClass: entity.authorityClass,
+          authorityClass: mapWave6AuthorityClass(entity.authorityClass),
         }),
       )
       .filter((o): o is ExternalObservation<KnowledgeEntity> => o !== null),

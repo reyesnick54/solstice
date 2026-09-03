@@ -161,7 +161,7 @@ export class ProviderRiskMonitor {
     if (!history || history.length === 0) {
       return null;
     }
-    return history[history.length - 1].reason;
+    return history[history.length - 1]!.reason;
   }
 
   /** Quarantine a provider — no new live requests, cache subject to freshness policy. */
@@ -189,8 +189,8 @@ export class ProviderRiskMonitor {
       return Object.freeze({ allowed: false, reason: 'No quarantine history' });
     }
     const latest = history[history.length - 1];
-    if (latest.restoredAt) {
-      return Object.freeze({ allowed: false, reason: 'Already restored' });
+    if (!latest || latest.restoredAt) {
+      return Object.freeze({ allowed: false, reason: latest?.restoredAt ? 'Already restored' : 'No quarantine history' });
     }
     return Object.freeze({ allowed: true, reason: 'Safe probe permitted' });
   }
@@ -201,6 +201,9 @@ export class ProviderRiskMonitor {
       return null;
     }
     const latest = history[history.length - 1];
+    if (!latest) {
+      return null;
+    }
     if (latest.restoredAt) {
       return latest;
     }
@@ -208,13 +211,17 @@ export class ProviderRiskMonitor {
       return null;
     }
     this.#quarantined.delete(providerId);
-    const restored: ProviderQuarantineRecord = Object.freeze({
-      ...latest,
+    const restored: ProviderQuarantineRecord = {
+      providerId: latest.providerId,
+      quarantinedAt: latest.quarantinedAt,
+      reason: latest.reason,
+      triggeredBy: latest.triggeredBy,
+      previousState: latest.previousState,
       restoredAt: this.#nowUtc,
       restorationValidated: true,
-    });
-    history[history.length - 1] = restored;
-    return restored;
+    };
+    history[history.length - 1] = Object.freeze(restored);
+    return Object.freeze(restored);
   }
 
   isQuarantined(providerId: string): boolean {

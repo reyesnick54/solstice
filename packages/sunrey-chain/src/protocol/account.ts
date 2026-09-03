@@ -61,7 +61,7 @@ export class AccountSequenceTracker {
     return this.pending.get(accountId) ?? null;
   }
 
-  reserve(accountId: string, sequence: bigint): 'OK' | 'STALE' | 'FUTURE_GAP' | 'CONFLICT' {
+  reserve(accountId: string, sequence: bigint): 'OK' | 'STALE' | 'FUTURE_GAP' | 'CONFLICT' | 'REPLAY' {
     const current = this.lastExecuted(accountId);
     const verdict = assertSequenceAdvance(current, sequence);
     if (verdict !== 'OK') {

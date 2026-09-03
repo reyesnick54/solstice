@@ -184,7 +184,7 @@ export function executeHumanEconomySunReyIssuance(
     monetizationKey: 'draft',
     network: input.network,
     governanceAuthorizationId: input.governance.authorizationId,
-    usePeveAsQuantity: input.usePeveAsQuantity,
+    ...(input.usePeveAsQuantity !== undefined ? { usePeveAsQuantity: input.usePeveAsQuantity } : {}),
   });
   if (!draftProposal.ok) {
     if (ctx.monitoring) incrementMetric(ctx.monitoring, 'sunReyProposalRejections');
@@ -270,7 +270,7 @@ export function executeHumanEconomySunReyIssuance(
     monetizationKey: bundle.monetizationKey,
     network: input.network,
     governanceAuthorizationId: input.governance.authorizationId,
-    usePeveAsQuantity: input.usePeveAsQuantity,
+    ...(input.usePeveAsQuantity !== undefined ? { usePeveAsQuantity: input.usePeveAsQuantity } : {}),
   });
   if (!proposalResult.ok) {
     if (ctx.monitoring) incrementMetric(ctx.monitoring, 'sunReyProposalRejections');

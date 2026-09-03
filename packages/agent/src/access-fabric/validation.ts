@@ -11,7 +11,7 @@ import {
   isAccessIntentKind,
   isAuthorizedGraphCategory,
 } from './taxonomy.ts';
-import type { AccessIntent, AccessIntentFailure } from './types.ts';
+import type { AccessIntent, AccessIntentFailure, AccessWindow } from './types.ts';
 import { asAccessIntentId } from './types.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -78,7 +78,7 @@ function validateWindow(value: unknown): Result<AccessIntent['window'], AccessIn
       ...(typeof value.durationDays === 'number' ? { durationDays: value.durationDays } : {}),
       ...(typeof value.durationWeeks === 'number' ? { durationWeeks: value.durationWeeks } : {}),
       ...(value.recurrence ? { recurrence: value.recurrence as AccessIntent['window']['recurrence'] } : {}),
-    }),
+    }) as AccessIntent['window'],
   );
 }
 

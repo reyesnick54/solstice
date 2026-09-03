@@ -16,6 +16,7 @@ import {
   environmentalSeparationProof,
   type EnvironmentalOracleService,
 } from '../../../../packages/sunrey-chain/src/environmental/index.ts';
+import { asUtcInstant } from '../../../../packages/domain/src/time.ts';
 
 export type EnvironmentalOracleBff = {
   readonly snapshot: (lat: number, lon: number) => ReturnType<typeof buildWorldEnvironmentalSnapshot>;
@@ -49,7 +50,7 @@ export function createEnvironmentalOracleBff(
 
   const range = Object.freeze({
     from: nowUtc,
-    to: '2026-09-02T12:00:00.000Z',
+    to: asUtcInstant('2026-09-02T12:00:00.000Z'),
     resolution: 'hourly' as const,
   });
 

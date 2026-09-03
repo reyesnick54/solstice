@@ -25,7 +25,7 @@ import { assertInternalOperator } from '../internal-production-gates.ts';
 export type GovernanceStore = {
   readonly get: (proposalId: string) => GovernanceOperationPackage | null;
   readonly approvals: (proposalId: string) => readonly GovernanceApprovalRecord[];
-  readonly saveApproval: (record: GovernanceApprovalRecord) => void;
+  readonly saveApproval: (proposalId: string, record: GovernanceApprovalRecord) => void;
 };
 
 export function createDefaultGovernanceStore(): GovernanceStore {
@@ -34,11 +34,11 @@ export function createDefaultGovernanceStore(): GovernanceStore {
   const pkg = buildOperationPackage({
     packageId: 'gov.sandbox.fee-policy.001',
     operationType: 'FEE_POLICY',
-    activation: { height: 120, timeUtc: '2026-09-02T12:00:00.000Z' },
+    activation: { kind: 'HEIGHT', height: 120, epoch: null },
     evidence: developmentEvidence('gov.sandbox.fee-policy.001'),
   });
   packages.set(pkg.packageId, pkg);
-  approvals.set(pkg.packageId, fixtureHumanApprovals(pkg));
+  approvals.set(pkg.packageId, [...fixtureHumanApprovals(pkg)]);
   return {
     get(proposalId) {
       return packages.get(proposalId) ?? null;
@@ -46,9 +46,9 @@ export function createDefaultGovernanceStore(): GovernanceStore {
     approvals(proposalId) {
       return approvals.get(proposalId) ?? [];
     },
-    saveApproval(record) {
-      const current = approvals.get(record.packageId) ?? [];
-      approvals.set(record.packageId, [...current, record]);
+    saveApproval(proposalId, record) {
+      const current = approvals.get(proposalId) ?? [];
+      approvals.set(proposalId, [...current, record]);
     },
   };
 }
@@ -172,7 +172,7 @@ export function createInternalGovernanceRoutes(options: GovernanceRouteOptions =
           role: approvalRole as never,
           pkg,
         });
-        store.saveApproval(record);
+        store.saveApproval(proposalId, record);
         const approvalSet = evaluateApprovals(pkg, store.approvals(proposalId));
         return {
           status: 200,
@@ -210,7 +210,7 @@ export function createInternalGovernanceRoutes(options: GovernanceRouteOptions =
           pkg,
         });
         const rejected = Object.freeze({ ...record, accepted: false, rejectionReason: reason });
-        store.saveApproval(rejected);
+        store.saveApproval(proposalId, rejected);
         const approvalSet = evaluateApprovals(pkg, store.approvals(proposalId));
         return {
           status: 200,

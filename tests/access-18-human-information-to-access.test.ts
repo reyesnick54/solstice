@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { handleConsumerBff, type ConsumerBffRuntime } from '../services/api/src/consumer/handler.ts';
+import { handleConsumerBffSync, type ConsumerBffRuntime } from '../services/api/src/consumer/bff-test-utils.ts';
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
 
 function runtime(world: ReturnType<typeof createSandboxWorld>): ConsumerBffRuntime {
@@ -23,7 +23,7 @@ function call(
   persona: Parameters<typeof sandboxToken>[0],
   body?: unknown,
 ) {
-  return handleConsumerBff(runtime(world), {
+  return handleConsumerBffSync(runtime(world), {
     method,
     path,
     query: {},

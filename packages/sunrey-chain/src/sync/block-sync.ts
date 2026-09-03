@@ -130,7 +130,7 @@ export function syncBlocksFromPeers(input: BlockSyncInput): SyncResult<BlockSync
     ok: true,
     verifiedBlocks: input.blocks.length,
     finalHeight: last?.height ?? 0n,
-    finalStateRoot: last?.stateRoot ?? input.genesisBlockId,
+    finalStateRoot: last?.stateRoot ?? input.parentBlockId,
     failures,
   });
 }

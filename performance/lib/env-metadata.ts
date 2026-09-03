@@ -44,6 +44,9 @@ export function captureEnvironment(input: {
   readonly validatorCount?: number | null;
   readonly benchmarkTool?: string;
   readonly benchmarkToolVersion?: string;
+  readonly analysisMode?: string;
+  readonly queueMode?: string;
+  readonly deploymentMode?: string;
 } = {}): QualificationEnvironment {
   const list = cpus();
   return {

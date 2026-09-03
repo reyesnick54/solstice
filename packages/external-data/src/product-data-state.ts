@@ -59,7 +59,7 @@ export function sanitizeSourceFromObservation(
   observation: ExternalObservation<unknown>,
 ): SanitizedSourceMetadata {
   return Object.freeze({
-    displayName: observation.source.displayName || providerDisplayName(observation.providerId),
+    displayName: providerDisplayName(observation.providerId),
     authorityClass: mapAuthorityClass(observation.authority.authorityClass),
   });
 }

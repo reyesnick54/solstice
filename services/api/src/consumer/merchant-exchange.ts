@@ -6,7 +6,8 @@ import {
   createMerchantExchangeSandbox,
   type MerchantExchangeService,
 } from '../../../../packages/sunrey-exchange/src/merchant-exchange/index.ts';
-import { bffError, isBffError, type BffErrorEnvelope } from './errors.ts';
+import { asUtcInstant } from '../../../../packages/domain/src/time.ts';
+import { bffError, isBffError, type BffErrorCode, type BffErrorEnvelope } from './errors.ts';
 
 type MerchantExchangeDispatchRequest = {
   readonly method: string;
@@ -41,7 +42,7 @@ function result(body: unknown, headers: Record<string, string>, okStatus = 200):
   return json(okStatus, body, headers);
 }
 
-function failure(requestId: string, message: string, code = 'VALIDATION'): BffErrorEnvelope {
+function failure(requestId: string, message: string, code: BffErrorCode = 'VALIDATION'): BffErrorEnvelope {
   return bffError({
     errorCode: code,
     category: 'VALIDATION',
@@ -88,13 +89,13 @@ export function dispatchMerchantExchange(
         locationConstraint: {
           regionCode: String(payload.regionCode ?? 'US-CA'),
           countryCode: String(payload.countryCode ?? 'US'),
-          postalPrefix: payload.postalPrefix ? String(payload.postalPrefix) : undefined,
+          ...(payload.postalPrefix ? { postalPrefix: String(payload.postalPrefix) } : {}),
         },
         deliveryConstraint: {
           method: (payload.deliveryMethod as never) ?? 'DELIVERY',
         },
         budgetMinorUnits: payload.budgetMinorUnits ? String(payload.budgetMinorUnits) : undefined,
-        expiresAt: String(payload.expiresAt ?? new Date(Date.now() + 7 * 86400000).toISOString()),
+        expiresAt: asUtcInstant(String(payload.expiresAt ?? new Date(Date.now() + 7 * 86400000).toISOString())),
         submit: payload.submit !== false,
       });
       if (created.outcome === 'REJECTED') {
@@ -164,7 +165,7 @@ export function dispatchMerchantExchange(
         availability: String(payload.availability ?? ''),
         warranty: payload.warranty ? String(payload.warranty) : null,
         serviceTerms: payload.serviceTerms ? String(payload.serviceTerms) : null,
-        expiresAt: String(payload.expiresAt ?? new Date(Date.now() + 7 * 86400000).toISOString()),
+        expiresAt: asUtcInstant(String(payload.expiresAt ?? new Date(Date.now() + 7 * 86400000).toISOString())),
       });
       if (submitted.outcome === 'REJECTED') {
         return result(failure(requestId, submitted.message, submitted.code), headers);

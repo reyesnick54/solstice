@@ -7,9 +7,9 @@ import { ECONOMIC_CLAIM_SCHEMA } from './types.ts';
 import { economicClaimCommitment } from './commitments.ts';
 
 export type ClaimRegistry = {
-  readonly claims: ReadonlyMap<string, CanonicalEconomicClaim>;
-  readonly fingerprints: ReadonlyMap<string, string>;
-  readonly monetizedClaimIds: ReadonlySet<string>;
+  readonly claims: Map<string, CanonicalEconomicClaim>;
+  readonly fingerprints: Map<string, string>;
+  readonly monetizedClaimIds: Set<string>;
 };
 
 export function emptyClaimRegistry(): ClaimRegistry {

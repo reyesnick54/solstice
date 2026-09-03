@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { createSandboxWorld, sandboxToken, consumerBffRuntimeFromWorld } from '../services/api/src/consumer/fixtures.ts';
-import { handleConsumerBff, CONSUMER_BFF_ROUTES } from '../services/api/src/consumer/handler.ts';
+import { handleConsumerBffSync, CONSUMER_BFF_ROUTES } from '../services/api/src/consumer/bff-test-utils.ts';
 import { MONEY_INTEGRATION_ROUTES } from '../services/api/src/consumer/money-integration/dispatch.ts';
 import { createMoneyIntegrationPlatform } from '../services/api/src/consumer/money-integration/platform.ts';
 import {
@@ -54,7 +54,7 @@ async function call(
   persona: Parameters<typeof sandboxToken>[0] = 'basic_verified',
 ) {
   return Promise.resolve(
-    handleConsumerBff(bffRuntime(), {
+    handleConsumerBffSync(bffRuntime(), {
       method,
       path,
       query: {},

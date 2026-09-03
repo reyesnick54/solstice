@@ -44,7 +44,11 @@ export function createSubscriptionIntelligenceBff(
 ): SubscriptionIntelligenceBff {
   return Object.freeze({
     analyze: (subjectId, activities, usageSignals) =>
-      service.analyze({ subjectId, activities, usageSignals }),
+      service.analyze({
+        subjectId,
+        activities,
+        ...(usageSignals !== undefined ? { usageSignals } : {}),
+      }),
     getSnapshot: (subjectId) => service.getSnapshot(subjectId),
     proposeAction: (input) => service.proposeAction(input),
     authorizeAction: (input) =>

@@ -103,7 +103,7 @@ export class OpportunityHttpClient {
       }),
       authResolver: NO_AUTH_PROVIDER_RESOLVER,
       authStrategy: { kind: 'none' },
-      fetchFn: this.#fetchFn,
+      fetchFn: this.#fetchFn ?? fetch.bind(globalThis),
     });
 
     const queryParams: Record<string, string> = {};

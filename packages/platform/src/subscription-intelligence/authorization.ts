@@ -14,14 +14,14 @@ export type AuthorizationFailure = {
   readonly message: string;
 };
 
-const LEGAL = Object.freeze({
-  PROPOSED: ['USER_REVIEW', 'FAILED'] as const satisfies readonly ActionLifecycleState[],
-  USER_REVIEW: ['AUTHORIZED', 'FAILED'] as const satisfies readonly ActionLifecycleState[],
-  AUTHORIZED: ['EXECUTING', 'FAILED'] as const satisfies readonly ActionLifecycleState[],
-  EXECUTING: ['CONFIRMED', 'FAILED'] as const satisfies readonly ActionLifecycleState[],
-  CONFIRMED: [] as const satisfies readonly ActionLifecycleState[],
-  FAILED: [] as const satisfies readonly ActionLifecycleState[],
-}) satisfies Readonly<Record<ActionLifecycleState, readonly ActionLifecycleState[]>>;
+const LEGAL: Record<ActionLifecycleState, readonly ActionLifecycleState[]> = {
+  PROPOSED: ['USER_REVIEW', 'FAILED'],
+  USER_REVIEW: ['AUTHORIZED', 'FAILED'],
+  AUTHORIZED: ['EXECUTING', 'FAILED'],
+  EXECUTING: ['CONFIRMED', 'FAILED'],
+  CONFIRMED: [],
+  FAILED: [],
+};
 
 export function transitionActionState(
   action: SubscriptionActionProposal,

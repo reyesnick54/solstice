@@ -38,7 +38,7 @@ export function merkleRoot(domain: string, leaves: readonly Hash32[]): Hash32 {
   if (leaves.length === 0) {
     return hashDomain(domain, new Uint8Array());
   }
-  let layer = leaves.map((leaf) => Buffer.from(leaf));
+  let layer: Buffer[] = leaves.map((leaf) => Buffer.from(leaf));
   while (layer.length > 1) {
     if (layer.length % 2 === 1) {
       const last = layer[layer.length - 1];
@@ -53,7 +53,7 @@ export function merkleRoot(domain: string, leaves: readonly Hash32[]): Hash32 {
       if (!left || !right) {
         throw new Error('invalid merkle layer');
       }
-      next.push(hashDomain(DOMAIN_MERKLE, Buffer.concat([left, right])));
+      next.push(Buffer.from(hashDomain(DOMAIN_MERKLE, Buffer.concat([left, right]))));
     }
     layer = next;
   }

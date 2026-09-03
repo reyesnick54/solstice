@@ -23,7 +23,7 @@ export type RiskEvidenceBffSnapshot = {
     readonly missingCategoryCount: number;
   };
   readonly riskSummary: ReturnType<typeof toBffRiskSummary>;
-  readonly securityEvents: readonly { readonly type: string; readonly summary: string };
+  readonly securityEvents: readonly { readonly type: string; readonly summary: string }[];
   readonly providerDetailsExposed: false;
 };
 

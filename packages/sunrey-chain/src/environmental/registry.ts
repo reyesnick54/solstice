@@ -87,8 +87,6 @@ export function loadEnvironmentalCatalog(index?: CatalogIndex): readonly Environ
         providers: Object.freeze([...ENVIRONMENTAL_CATALOG_ENTRIES]),
       }),
       byId: new Map(ENVIRONMENTAL_CATALOG_ENTRIES.map((e) => [e.provider_id, e])),
-      byCapability: new Map(),
-      byDomain: new Map(),
     };
   }
   return listEligibleEnvironmentalProviders(catalogIndex);

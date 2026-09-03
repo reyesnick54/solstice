@@ -35,7 +35,7 @@ import {
 import { normalizeCoingeckoBtc } from '../packages/sunrey-exchange/src/crypto-market/adapters/normalize.ts';
 import { buildCatalogIndex } from '../packages/provider-sdk/src/catalog/loader.ts';
 import { createFixtureCatalog } from '../packages/provider-sdk/src/test-fixtures/catalog.ts';
-import { handleConsumerBff } from '../services/api/src/consumer/handler.ts';
+import { handleConsumerBff } from '../services/api/src/consumer/bff-test-utils.ts';
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
 
 const NOW = defaultCryptoMarketNow();
@@ -242,7 +242,7 @@ describe('Wave 3 Prompt 12 — crypto market reference layer', () => {
 
   it('26. no credentials exposed through BFF', () => {
     const world = createSandboxWorld();
-    const response = handleConsumerBff(
+    const response = handleConsumerBffSync(
       { ...world },
       {
         method: 'GET',
@@ -285,7 +285,7 @@ describe('Wave 3 Prompt 12 — crypto market reference layer', () => {
 
   it('BFF crypto asset route returns reference quote', () => {
     const world = createSandboxWorld();
-    const response = handleConsumerBff(
+    const response = handleConsumerBffSync(
       { ...world },
       {
         method: 'GET',

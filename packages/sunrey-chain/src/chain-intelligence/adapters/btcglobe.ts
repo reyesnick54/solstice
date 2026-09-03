@@ -4,7 +4,12 @@
 
 import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type { BlockchainIntelligenceProvider, BlockchainIntelligenceProviderHealth } from '../provider.ts';
-import type { ExternalBlockchainId } from '../types.ts';
+import type {
+  ChainIntelligenceResult,
+  ExternalBlockchainId,
+  NetworkMetrics,
+  NetworkStatus,
+} from '../types.ts';
 import {
   buildNetworkMetrics,
   fail,
@@ -52,9 +57,8 @@ export class BtcGlobeAdapter implements BlockchainIntelligenceProvider {
     return (this.supportedChains as readonly string[]).includes(chainId);
   }
 
-  async getNetworkStatus(chainId: ExternalBlockchainId, nowUtc: UtcInstant) {
+  async getNetworkStatus(chainId: ExternalBlockchainId, nowUtc: UtcInstant): Promise<ChainIntelligenceResult<NetworkStatus>> {
     const block = await this.getLatestBlock(chainId, nowUtc);
-    if (!block.ok) return block;
     const { buildNetworkStatus } = await import('./base.ts');
     return ok(buildNetworkStatus(chainId, this.providerId, block.value, null, nowUtc), this.providerId);
   }

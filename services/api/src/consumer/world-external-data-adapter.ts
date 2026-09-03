@@ -73,7 +73,7 @@ export type WorldExternalDataBff = {
   readonly agentEvidence: () => ReturnType<typeof agentEvidenceSnapshot>;
   readonly exchangeReference: () => ReturnType<typeof exchangeReferenceSnapshot>;
   readonly moonReyContext: () => ReturnType<typeof moonReyResourceContext>;
-  readonly moonReyContextAsync: () => Promise<ReturnType<typeof moonReyResourceContextAsync>>;
+  readonly moonReyContextAsync: () => ReturnType<typeof moonReyResourceContextAsync>;
   readonly resources: () => Promise<{
     readonly schema: 'sunrey.bff.resource-observations.v1';
     readonly dataState: ReturnType<typeof defaultDataStateForMode>;

@@ -88,8 +88,6 @@ export function loadChainIntelligenceCatalog(index?: CatalogIndex): readonly Cha
         providers: Object.freeze([...CHAIN_INTELLIGENCE_CATALOG_ENTRIES]),
       }),
       byId: new Map(CHAIN_INTELLIGENCE_CATALOG_ENTRIES.map((e) => [e.provider_id, e])),
-      byCapability: new Map(),
-      byDomain: new Map(),
     };
   }
   return listEligibleChainIntelligenceProviders(catalogIndex);

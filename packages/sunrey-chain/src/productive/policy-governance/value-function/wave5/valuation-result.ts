@@ -4,7 +4,8 @@
 
 import { sha256Hex } from '../../../../../../security/src/hash.ts';
 import { PRODUCTIVE_VALUE_FUNCTION_DOMAIN } from '../constitution.ts';
-import { PRODUCTIVE_VALUE_UNIT_ID, type ProductiveValueResult, type ValueResultState } from '../types.ts';
+import { PRODUCTIVE_VALUE_UNIT_ID, type ValueResultState } from '../types.ts';
+import type { ProductiveValueResult } from '../result.ts';
 import type { ProductiveEconomicContribution } from './contribution.ts';
 import { GPUV_DEFINITION, gpuvQuantityFromProductiveValue } from './gpuv.ts';
 import type { MethodologyReference } from './methodology.ts';

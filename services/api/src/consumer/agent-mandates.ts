@@ -5,6 +5,7 @@
  */
 
 import type { AgentConversationRuntime } from '../../../../packages/sunrey-agent/src/runtime.ts';
+import type { AgentActionClass, AgentAssistScope } from '../../../../packages/sunrey-agent/src/types.ts';
 import { asUtcInstant } from '../../../../packages/domain/src/time.ts';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import { AGENT_AUTHORIZATION_POLICY } from './agent-authorization.ts';
@@ -59,8 +60,8 @@ function clientMandate(
     environment: mandate.policy.environment,
     allowedData: mandate.assistScopes.filter((s) => s.startsWith('DATA:')),
     allowedAccounts: mandate.owner.accountId ? [mandate.owner.accountId] : [],
-    allowedActions: mandate.permissions.actionClasses,
-    assistScopes: mandate.assistScopes,
+    allowedActions: [...mandate.permissions.actionClasses],
+    assistScopes: [...mandate.assistScopes],
     budget: Object.freeze({
       perTransaction: mandate.budget.perTransaction.toString(),
       perPeriod: mandate.budget.perPeriod.toString(),
@@ -161,7 +162,7 @@ export function grantAgentMandate(
       message: 'Requested action classes are not delegatable to agents',
       retryable: false,
       requestId,
-      detailsSafeForClient: { forbidden },
+      detailsSafeForClient: { forbidden: forbidden.join(',') },
     });
   }
   const accountId =
@@ -186,11 +187,14 @@ export function grantAgentMandate(
     mode: 'SIMULATION_ONLY',
     environment: 'simulation',
     permissions: {
-      actionClasses: actionClasses as never[],
+      actionClasses: actionClasses as AgentActionClass[],
       assets: [{ assetId: 'FIAT_ACCOUNT', wildcard: false }],
       markets: [],
       destinations: [],
-      humanInformationAccess: body.humanInformationAccess === true,
+      humanInformationAccess:
+        body.humanInformationAccess === true
+          ? ({ granted: true, scopeId: 'hin:default' } as const)
+          : false,
       allowWildcardAssets: false,
     },
     budget: {
@@ -206,7 +210,7 @@ export function grantAgentMandate(
     },
     approval: {
       class: (typeof body.approvalClass === 'string' ? body.approvalClass : 'MOBILE_CONFIRMATION') as never,
-      highRiskAlwaysHuman: body.highRiskAlwaysHuman !== false,
+      highRiskAlwaysHuman: true,
     },
     expiry: asUtcInstant(expiresAt),
     frequencyMaxPerPeriod: 20,
@@ -214,9 +218,9 @@ export function grantAgentMandate(
     jurisdictionPackId: principal.jurisdiction,
     delegatedSigningKeyId: null,
     createdByActorId: principal.actorId,
-    assistScopes: Array.isArray(body.allowedData)
+    assistScopes: (Array.isArray(body.allowedData)
       ? body.allowedData.filter((v): v is string => typeof v === 'string')
-      : [],
+      : []) as AgentAssistScope[],
   });
   if (!created.ok) {
     return bffError({

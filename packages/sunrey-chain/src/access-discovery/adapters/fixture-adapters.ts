@@ -163,7 +163,13 @@ export class RidbFixtureProvider extends BaseAccessDiscoveryFixtureProvider {
   }
 }
 
-export function createAccessDiscoveryFixtureProviders(clock?: Clock): Readonly<Record<AccessDiscoveryAdapterId, GbfsFixtureProvider | NpsFixtureProvider | RidbFixtureProvider>> {
+export type AccessDiscoveryFixtureProviders = Readonly<{
+  gbfs: GbfsFixtureProvider;
+  'national-park-service': NpsFixtureProvider;
+  'recreation-gov-ridb': RidbFixtureProvider;
+}>;
+
+export function createAccessDiscoveryFixtureProviders(clock?: Clock): AccessDiscoveryFixtureProviders {
   const c = clock ?? defaultClock();
   return Object.freeze({
     gbfs: new GbfsFixtureProvider(c),
@@ -171,5 +177,3 @@ export function createAccessDiscoveryFixtureProviders(clock?: Clock): Readonly<R
     'recreation-gov-ridb': new RidbFixtureProvider(c),
   });
 }
-
-export type AccessDiscoveryFixtureProviders = ReturnType<typeof createAccessDiscoveryFixtureProviders>;

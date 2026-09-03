@@ -159,7 +159,7 @@ function fromAccessEvent(event: {
     title: event.summary,
     detail: event.summary,
     regulated: false,
-    deepLink: `/access/events/${encodeURIComponent(event.eventId)}`,
+    deepLink: `/access/events/${encodeURIComponent(event.resourceId)}`,
     createdAt: event.occurredAt,
     expiresAt: null,
     dismissible: true,

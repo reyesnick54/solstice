@@ -82,6 +82,7 @@ export function toOracleVerifiedEconomicFactCandidate(
     return null;
   }
   const aggregatedValue: FixedQuantity = Object.freeze({
+    schemaVersion: 1,
     mantissa: BigInt(Math.round(fact.verifiedNumericValue)),
     scale: 0,
     unit: fact.unit,

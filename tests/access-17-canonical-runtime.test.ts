@@ -18,7 +18,7 @@ import {
   createCanonicalAccessRedemptionOrchestrator,
 } from '../packages/human-access-economy/src/canonical-redemption-orchestrator.ts';
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
-import { handleConsumerBff, type ConsumerBffRuntime } from '../services/api/src/consumer/handler.ts';
+import { handleConsumerBffSync, type ConsumerBffRuntime } from '../services/api/src/consumer/bff-test-utils.ts';
 
 const NOW = asUtcInstant('2026-08-23T12:00:00.000Z');
 
@@ -35,7 +35,7 @@ function bffCall(
     identity: world.runtime.identity.service,
     access: world.access,
   };
-  return handleConsumerBff(runtime, {
+  return handleConsumerBffSync(runtime, {
     method,
     path,
     query: {},

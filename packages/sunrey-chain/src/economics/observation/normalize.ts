@@ -25,6 +25,7 @@ import {
   provenanceRefOf,
 } from './source.ts';
 import { normalizeObservationTime } from './time.ts';
+import type { LocationPrecision, RawGeographyInput } from './geography.ts';
 import { normalizeGeography } from './geography.ts';
 import { canonicalizeQuantity } from './units.ts';
 import { extensionForDomain } from './extensions.ts';
@@ -57,17 +58,30 @@ export function normalizeRawSourceRecord(
   }
 
   const timeResult = normalizeObservationTime({
-    observedAt: record.observedAt,
-    periodStart: record.periodStart,
-    periodEnd: record.periodEnd,
     receivedAt: record.receivedAt,
-    aggregationHint: record.aggregationHint,
+    ...(record.observedAt !== undefined ? { observedAt: record.observedAt } : {}),
+    ...(record.periodStart !== undefined ? { periodStart: record.periodStart } : {}),
+    ...(record.periodEnd !== undefined ? { periodEnd: record.periodEnd } : {}),
+    ...(record.aggregationHint !== undefined ? { aggregationHint: record.aggregationHint } : {}),
   });
   if (!timeResult.ok) {
     return reject(record, timeResult.code, timeResult.message, context);
   }
 
-  const geoResult = normalizeGeography(record.geography ?? {}, {
+  const geo = record.geography;
+  const geoInput: RawGeographyInput = {
+    ...(geo?.country !== undefined ? { country: geo.country } : {}),
+    ...(geo?.region !== undefined ? { region: geo.region } : {}),
+    ...(geo?.city !== undefined ? { city: geo.city } : {}),
+    ...(geo?.jurisdiction !== undefined ? { jurisdiction: geo.jurisdiction } : {}),
+    ...(geo?.facilityRef !== undefined ? { facilityRef: geo.facilityRef } : {}),
+    ...(geo?.gridZone !== undefined ? { gridZone: geo.gridZone } : {}),
+    ...(geo?.precision !== undefined ? { precision: geo.precision as LocationPrecision | null } : {}),
+    ...(geo?.publicDisclosureAllowed !== undefined
+      ? { publicDisclosureAllowed: geo.publicDisclosureAllowed }
+      : {}),
+  };
+  const geoResult = normalizeGeography(geoInput, {
     economicDomain: record.economicDomain,
   });
   if (!geoResult.ok) {

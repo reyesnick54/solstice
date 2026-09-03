@@ -129,7 +129,7 @@ export class TransactionLifecycle {
         rejectionCode: admission.reason,
       });
       this.receipts.set(signed.transactionId, receipt);
-      return err({ code: admission.reason as ProtocolRejection['code'], stage: 'mempool' });
+      return err<LifecycleRejection>({ code: admission.reason as ProtocolRejection['code'], stage: 'mempool' });
     }
 
     const receipt = receiptForStage({

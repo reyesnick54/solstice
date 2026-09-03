@@ -11,8 +11,8 @@ import { createHash } from 'node:crypto';
 import type { PostFinalityCorrectionRecord } from './types.ts';
 
 export type CorrectionRegistry = {
-  readonly corrections: ReadonlyMap<string, PostFinalityCorrectionRecord>;
-  readonly byClaimId: ReadonlyMap<string, readonly string[]>;
+  readonly corrections: Map<string, PostFinalityCorrectionRecord>;
+  readonly byClaimId: Map<string, readonly string[]>;
 };
 
 export function emptyCorrectionRegistry(): CorrectionRegistry {
