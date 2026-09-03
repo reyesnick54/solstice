@@ -21,6 +21,10 @@ RELEASE_BUNDLE_DIR = "dist/testnet-release"
 SKIP_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico", ".pdf", ".woff", ".woff2"}
 SKIP_PATH_PARTS = {"secret-scan-fixtures"}
 
+# Documented simulation-only fixture passwords (see docs/productization/PHASE_A_01_REPOSITORY_STABILIZATION.md).
+# Narrow content allowlist: only skips database URLs embedding this known non-production prefix.
+SYNTHETIC_DB_PASSWORD_PREFIX = "solstice_dev_only_"
+
 PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("AWS access key", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
     ("AWS secret access key assignment", re.compile(r"(?i)aws_secret_access_key\s*[:=]\s*['\"][A-Za-z0-9/+=]{30,}['\"]")),
@@ -71,7 +75,12 @@ def scan_tree(root: Path) -> list[str]:
         except (UnicodeDecodeError, OSError):
             continue
         rel = path.relative_to(root).as_posix()
+        lines = text.splitlines()
         for label, line, _snippet in scan_text(text):
+            if label == "Database URL with password":
+                line_text = lines[line - 1] if 0 < line <= len(lines) else ""
+                if SYNTHETIC_DB_PASSWORD_PREFIX in line_text:
+                    continue
             failures.append(f"{rel}:{line}: possible {label}")
     return failures
 

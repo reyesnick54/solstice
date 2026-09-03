@@ -8,82 +8,62 @@
     {
       "name": "market_list",
       "iterations": 40,
-      "elapsedMs": 1.1157670000000053,
-      "perOpMs": 0.027894175000000132
-      "elapsedMs": 1.1333899999999915,
-      "perOpMs": 0.028334749999999787
+      "elapsedMs": 1.2694299999999998,
+      "perOpMs": 0.03173574999999999
     },
     {
       "name": "ticker",
       "iterations": 40,
-      "elapsedMs": 0.4660030000000006,
-      "perOpMs": 0.011650075000000015
-      "elapsedMs": 0.4990829999999846,
-      "perOpMs": 0.012477074999999616
+      "elapsedMs": 0.5433770000000209,
+      "perOpMs": 0.013584425000000521
     },
     {
       "name": "order_book",
       "iterations": 40,
-      "elapsedMs": 0.20799599999998009,
-      "perOpMs": 0.0051998999999995025
-      "elapsedMs": 0.22209300000000098,
-      "perOpMs": 0.005552325000000025
+      "elapsedMs": 0.22433700000001977,
+      "perOpMs": 0.005608425000000495
     },
     {
       "name": "order_preview",
       "iterations": 20,
-      "elapsedMs": 0.5569340000000125,
-      "perOpMs": 0.027846700000000623
-      "elapsedMs": 0.6149190000000146,
-      "perOpMs": 0.030745950000000733
+      "elapsedMs": 0.9501630000000034,
+      "perOpMs": 0.04750815000000017
     },
     {
       "name": "order_submission_matching_settlement",
       "iterations": 1,
-      "elapsedMs": 2.028907000000004,
-      "perOpMs": 2.028907000000004
-      "elapsedMs": 1.2417320000000132,
-      "perOpMs": 1.2417320000000132
+      "elapsedMs": 1.4326659999999833,
+      "perOpMs": 1.4326659999999833
     },
     {
       "name": "wallet_read",
       "iterations": 40,
-      "elapsedMs": 0.43492299999999773,
-      "perOpMs": 0.010873074999999944
-      "elapsedMs": 0.6273040000000094,
-      "perOpMs": 0.015682600000000234
+      "elapsedMs": 0.3977309999999932,
+      "perOpMs": 0.00994327499999983
     },
     {
       "name": "chain_rpc_and_explorer",
       "iterations": 20,
-      "elapsedMs": 0.5179650000000038,
-      "perOpMs": 0.02589825000000019
-      "elapsedMs": 0.5110790000000236,
-      "perOpMs": 0.02555395000000118
+      "elapsedMs": 0.4222440000000063,
+      "perOpMs": 0.021112200000000313
     },
     {
       "name": "transaction_submission",
       "iterations": 1,
-      "elapsedMs": 0.14361000000002377,
-      "perOpMs": 0.14361000000002377
-      "elapsedMs": 0.12459700000002272,
-      "perOpMs": 0.12459700000002272
+      "elapsedMs": 0.1079520000000116,
+      "perOpMs": 0.1079520000000116
     },
     {
       "name": "market_stream_connections:8",
       "iterations": 8,
-      "elapsedMs": 0.027452000000010912,
-      "perOpMs": 0.003431500000001364
-      "elapsedMs": 0.020951999999994086,
-      "perOpMs": 0.002618999999999261
+      "elapsedMs": 0.022195000000010623,
+      "perOpMs": 0.002774375000001328
     },
     {
       "name": "rpc_reads:16",
       "iterations": 16,
-      "elapsedMs": 0.02631500000001097,
-      "perOpMs": 0.0016446875000006855
-      "elapsedMs": 0.02145500000000311,
-      "perOpMs": 0.0013409375000001944
+      "elapsedMs": 0.01923999999999637,
+      "perOpMs": 0.0012024999999997732
     }
   ]
 }

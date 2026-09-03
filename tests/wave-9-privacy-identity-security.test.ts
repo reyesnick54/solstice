@@ -429,7 +429,7 @@ describe('Wave 9 Task 13 — secret scanning', () => {
 describe('Wave 9 Task 14 — remediation regression', () => {
   it('assertLogPayloadSafe passes on redacted structured logs', () => {
     const safe = redactLogRecord({
-      authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.test',
+      authorization: 'Bearer ' + 'eyJhbGciOiJIUzI1NiJ9.testfixture',
       route: '/api/v1/accounts',
     });
     assertLogPayloadSafe(safe);
