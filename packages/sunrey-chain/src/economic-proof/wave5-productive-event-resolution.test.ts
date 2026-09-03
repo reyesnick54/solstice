@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { asUtcInstant } from '../../../domain/src/time.ts';
+
 import {
   EconomicClaimRegistry,
   assertMonetizationLockForReconciliation,
@@ -51,6 +53,12 @@ function registerEnergyObservation(
   },
 ) {
   const quantity = input.quantity ?? WAVE5_ENERGY_500_MWH;
+  const validFromUtc = input.validFromUtc ? asUtcInstant(input.validFromUtc) : WAVE5_FIXTURE_NOW;
+  const validUntilUtc = input.validUntilUtc === null
+    ? null
+    : input.validUntilUtc
+      ? asUtcInstant(input.validUntilUtc)
+      : WAVE5_FIXTURE_HOUR_END;
   return registry.registerObservation({
     observationId: input.id,
     economy: 'PRODUCTIVE',
@@ -58,7 +66,7 @@ function registerEnergyObservation(
     sourceClass: input.sourceClass,
     providerRecordId: input.recordId,
     payloadDigest: wave5EnergyDigest(input.sourceClass, quantity),
-    observedAtUtc: input.validFromUtc ?? WAVE5_FIXTURE_NOW,
+    observedAtUtc: validFromUtc,
     entityMaterial: {
       economy: 'PRODUCTIVE',
       entityKind: 'POWER_PLANT',
@@ -68,8 +76,8 @@ function registerEnergyObservation(
       economicAction: 'ENERGY_GENERATED',
       quantity,
       unit: WAVE5_ENERGY_UNIT,
-      validFromUtc: input.validFromUtc ?? WAVE5_FIXTURE_NOW,
-      validUntilUtc: input.validUntilUtc ?? WAVE5_FIXTURE_HOUR_END,
+      validFromUtc,
+      validUntilUtc,
       locationCommitment: 'geo:us-tx-wave5',
     },
   });

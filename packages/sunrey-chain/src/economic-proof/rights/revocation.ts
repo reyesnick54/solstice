@@ -1,6 +1,7 @@
 import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type { ConsentGrantId, RightsGrantId, RightsRevocationId } from './ids.ts';
-import type { RightsGrant, RightsGrantState, RightsRevocation } from './types.ts';
+import type { RightsGrant, RightsRevocation } from './types.ts';
+import type { RightsGrantState } from './taxonomy.ts';
 
 export function isInstantBefore(left: UtcInstant, right: UtcInstant): boolean {
   return left < right;

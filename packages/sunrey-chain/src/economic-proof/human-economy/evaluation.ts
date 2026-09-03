@@ -112,9 +112,11 @@ export function evaluateHumanEconomyRights(
     consentGrant: consent.baseConsentGrant,
     requestedPurpose: purpose,
     at: request.at,
-    contributionClass: request.contributionClass,
-    revocations: request.revocations,
-    historicalEvaluation: request.historicalEvaluation,
+    ...(request.contributionClass !== undefined ? { contributionClass: request.contributionClass } : {}),
+    ...(request.revocations !== undefined ? { revocations: request.revocations } : {}),
+    ...(request.historicalEvaluation !== undefined
+      ? { historicalEvaluation: request.historicalEvaluation }
+      : {}),
   });
 
   if (rightsResult.decision === 'DENY') {

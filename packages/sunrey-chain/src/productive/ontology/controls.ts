@@ -5,7 +5,11 @@
  * as productive events or claims.
  */
 
-import type { ProductiveEventMaterial, ProductiveOntologyResult } from './types.ts';
+import type {
+  ProductiveControlRejectionCode,
+  ProductiveEventMaterial,
+  ProductiveOntologyResult,
+} from './types.ts';
 import { eventTypeDefinition } from './events.ts';
 import { entityClassDefinition, isKnownEntityClass } from './entities.ts';
 import { classifyMetric, metricDefinition } from './metrics.ts';
@@ -40,7 +44,7 @@ function ok<T>(value: T): ProductiveOntologyResult<T> {
   return Object.freeze({ ok: true, value });
 }
 
-function fail<T>(code: ProductiveOntologyResult<T> extends { ok: false; code: infer C } ? C : never, message: string): ProductiveOntologyResult<T> {
+function fail<T>(code: ProductiveControlRejectionCode, message: string): ProductiveOntologyResult<T> {
   return Object.freeze({ ok: false, code, message });
 }
 

@@ -11,6 +11,7 @@ import {
   ECONOMIC_EVIDENCE_SCHEMA_VERSION,
   ECONOMIC_OBSERVATION_SCHEMA_VERSION,
   VERIFIED_ECONOMIC_FACT_SCHEMA_VERSION,
+  type ProofFreshnessState,
 } from './constants.ts';
 import { duplicateClaimFingerprint } from './ids.ts';
 import { evidenceCommitment } from './serialization.ts';
@@ -91,7 +92,7 @@ export function fromEconomyDataObservation(
       notesRef: null,
     },
     freshness: {
-      state: source.freshness.state,
+      state: source.freshness.state as ProofFreshnessState,
       observedAtUtc: source.timestampUtc,
       receivedAtUtc: source.timestampUtc,
       maxAgeSeconds: source.freshness.ageSeconds,
@@ -126,7 +127,7 @@ export function fromOracleVerifiedFact(
     verifiers: [
       {
         verifierId: 'oracle-quorum',
-        verifierClass: 'ORACLE_QUORUM',
+        verifierClass: 'ORACLE_QUORUM' as const,
         signatureRef: null,
       },
     ],
@@ -162,7 +163,7 @@ export function buildEvidenceFromObservation(
     observationIds: [observation.observationId],
     materials: [
       {
-        kind: 'MEASUREMENT',
+        kind: 'MEASUREMENT' as const,
         materialDigest: observation.provenanceRef.provenanceId,
         externalRef: null,
         attestationRef: null,
@@ -307,7 +308,7 @@ export function buildVerifiedFactFromEvidence(
     verifiers: [
       {
         verifierId: 'policy-engine',
-        verifierClass: 'POLICY_ENGINE',
+        verifierClass: 'POLICY_ENGINE' as const,
         signatureRef: null,
       },
     ],

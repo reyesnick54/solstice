@@ -154,19 +154,17 @@ describe('Wave 3 economic proof — core invariants', () => {
     assert.equal(claim1.ok, true);
 
     const claim2 = registry.registerClaim({
-      ...claim1.ok ? {
-        claimId: 'claim-energy-dup',
-        economy: 'PRODUCTIVE' as const,
-        entityMaterial,
-        eventMaterial,
-        economicAction: 'ENERGY_GENERATED',
-        validFromUtc: PRODUCTIVE_FIXTURE_NOW,
-        validUntilUtc: PRODUCTIVE_FIXTURE_END,
-        categoryCommitment: 'ENERGY',
-        observationIds: ['obs-meter-1'],
-        lineageEdges: [],
-        methodologyVersion: 'wave3-energy-v1',
-      } : {},
+      claimId: 'claim-energy-dup',
+      economy: 'PRODUCTIVE',
+      entityMaterial,
+      eventMaterial,
+      economicAction: 'ENERGY_GENERATED',
+      validFromUtc: PRODUCTIVE_FIXTURE_NOW,
+      validUntilUtc: PRODUCTIVE_FIXTURE_END,
+      categoryCommitment: 'ENERGY',
+      observationIds: ['obs-meter-1'],
+      lineageEdges: [],
+      methodologyVersion: 'wave3-energy-v1',
     });
     assert.equal(claim2.ok, false);
     if (!claim2.ok) {
@@ -779,7 +777,7 @@ describe('Wave 3 economic proof domain', () => {
     const bad = {
       ...observation,
       authority: { ...observation.authority, mintsNativeAsset: true as const },
-    } as EconomicObservation;
+    } as unknown as EconomicObservation;
     assert.notEqual(observationCannotAuthorizeIssuance(bad), null);
   });
 
@@ -887,7 +885,12 @@ describe('Wave 3 economic proof domain', () => {
         },
         verification: 'SINGLE_SOURCE_VERIFIED',
         confidenceBps: 9_000n,
-        freshness: productiveObservation.freshness,
+        freshness: {
+          state: 'FRESH',
+          ageSeconds: 60n,
+          expiresAtUtc: '2026-01-01T02:00:00.000Z',
+          usableForTimeSensitiveValuation: true,
+        },
         license: 'SANDBOX_FIXTURE',
         integrity: 'INTACT',
         status: 'NORMALIZED',

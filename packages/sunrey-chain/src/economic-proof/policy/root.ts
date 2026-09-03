@@ -9,6 +9,8 @@ import { POLICY_ROOT_DOMAIN } from './taxonomy.ts';
 import { verifyPolicyCommitment } from './commitment.ts';
 import type { PolicyCommitment, PolicyRoot, PolicyRootInput } from './types.ts';
 
+export type { PolicyCommitment } from './types.ts';
+
 const DOMAIN_POLICY_LEAF = 'sunrey.policy.leaf.v1' as const;
 const DOMAIN_POLICY_ROOT = 'sunrey.policy.root.v1' as const;
 

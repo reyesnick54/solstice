@@ -20,6 +20,7 @@ import {
 } from './productive-event-key.ts';
 import type {
   CandidateProductiveEvent,
+  ProductiveEventKey,
   ProductiveEventReconciliationResult,
   QuantityReconciliation,
   ReconciliationFailure,
@@ -59,12 +60,16 @@ export function buildCandidateFromObservation(input: BuildCandidateInput): Candi
     validUntilUtc: input.validUntilUtc,
     domain,
     boundaryStrategy: input.boundaryStrategy ?? defaults.boundaryStrategy,
-    geographyCommitment: input.geographyCommitment,
-    batchRunJobId: input.batchRunJobId,
-    sourceIndependentEventId: input.sourceIndependentEventId,
-    resourceOutputType: input.resourceOutputType,
+    ...(input.geographyCommitment !== undefined ? { geographyCommitment: input.geographyCommitment } : {}),
+    ...(input.batchRunJobId !== undefined ? { batchRunJobId: input.batchRunJobId } : {}),
+    ...(input.sourceIndependentEventId !== undefined
+      ? { sourceIndependentEventId: input.sourceIndependentEventId }
+      : {}),
+    ...(input.resourceOutputType !== undefined ? { resourceOutputType: input.resourceOutputType } : {}),
     aggregationLevel: input.aggregationLevel ?? 'LEAF',
-    parentEntityCommitment: input.parentEntityCommitment,
+    ...(input.parentEntityCommitment !== undefined
+      ? { parentEntityCommitment: input.parentEntityCommitment }
+      : {}),
   });
 
   return Object.freeze({
@@ -81,9 +86,11 @@ export function buildCandidateFromObservation(input: BuildCandidateInput): Candi
     aggregationLevel: input.aggregationLevel ?? 'LEAF',
     observationIds: Object.freeze([input.observation.observationId]),
     sourceClasses: Object.freeze([input.observation.sourceClass]),
-    geographyCommitment: input.geographyCommitment,
-    batchRunJobId: input.batchRunJobId,
-    parentEntityCommitment: input.parentEntityCommitment,
+    ...(input.geographyCommitment !== undefined ? { geographyCommitment: input.geographyCommitment } : {}),
+    ...(input.batchRunJobId !== undefined ? { batchRunJobId: input.batchRunJobId } : {}),
+    ...(input.parentEntityCommitment !== undefined
+      ? { parentEntityCommitment: input.parentEntityCommitment }
+      : {}),
   });
 }
 
@@ -93,7 +100,7 @@ export function buildCandidateFromObservation(input: BuildCandidateInput): Candi
  */
 export function reconcileQuantity(
   candidates: readonly CandidateProductiveEvent[],
-  methodology = WAVE5_RECONCILIATION_METHODOLOGY,
+  methodology: string = WAVE5_RECONCILIATION_METHODOLOGY,
 ): QuantityReconciliation {
   const observedQuantities = candidates.flatMap((candidate) =>
     candidate.observationIds.map((observationId) =>
@@ -241,8 +248,12 @@ export function reconcileProductiveEvents(
       unit: canonical.unit,
       validFromUtc: canonical.validFromUtc,
       validUntilUtc: canonical.validUntilUtc,
-      locationCommitment: canonical.geographyCommitment,
-      domainIdentifierCommitment: canonical.batchRunJobId,
+      ...(canonical.geographyCommitment !== undefined
+        ? { locationCommitment: canonical.geographyCommitment }
+        : {}),
+      ...(canonical.batchRunJobId !== undefined
+        ? { domainIdentifierCommitment: canonical.batchRunJobId }
+        : {}),
     },
   );
 

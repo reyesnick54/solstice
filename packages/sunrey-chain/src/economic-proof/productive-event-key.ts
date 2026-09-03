@@ -1,5 +1,6 @@
 import { economicProofDigest } from './hash.ts';
 import { deriveCanonicalEventId } from './event-identity.ts';
+import { asUtcInstant } from '../../../domain/src/time.ts';
 import type { CanonicalEntityId, CanonicalEventId } from './types.ts';
 import type {
   AggregationLevel,
@@ -80,9 +81,11 @@ export function deriveCanonicalEventIdFromKey(
     economicAction: material.economicAction,
     quantity: material.quantity,
     unit: material.unit,
-    validFromUtc: material.validFromUtc,
-    validUntilUtc: material.validUntilUtc,
-    locationCommitment: material.locationCommitment,
+    validFromUtc: asUtcInstant(material.validFromUtc),
+    validUntilUtc: material.validUntilUtc ? asUtcInstant(material.validUntilUtc) : null,
+    ...(material.locationCommitment !== undefined
+      ? { locationCommitment: material.locationCommitment }
+      : {}),
     domainIdentifierCommitment: material.domainIdentifierCommitment ?? eventKey,
   });
 }

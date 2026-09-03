@@ -109,7 +109,7 @@ export class EconomicClaimRegistry {
   readonly #clusters = new Map<string, DuplicateCluster>();
   readonly #consumptionCommitments = new Set<string>();
   readonly #policy: MonetizationPolicy;
-  readonly #aliasResolver?: EntityAliasResolver;
+  readonly #aliasResolver: EntityAliasResolver | undefined;
 
   constructor(options?: { readonly policy?: MonetizationPolicy; readonly aliasResolver?: EntityAliasResolver }) {
     this.#policy = options?.policy ?? DEFAULT_MONETIZATION_POLICY;
@@ -173,7 +173,7 @@ export class EconomicClaimRegistry {
       providerRecordId: input.providerRecordId,
       observationFingerprint,
       payloadDigest: input.payloadDigest,
-      observedAtUtc: input.observedAtUtc,
+      observedAtUtc: asUtcInstant(input.observedAtUtc),
       canonicalEntityId,
       canonicalEventId,
     });
@@ -190,7 +190,6 @@ export class EconomicClaimRegistry {
         canonicalEventId,
         economy: input.economy,
         observations: [observation],
-        claimId: undefined,
       }));
     }
 
@@ -212,8 +211,10 @@ export class EconomicClaimRegistry {
       unit: input.eventMaterial.unit,
       validFromUtc: input.validFromUtc,
       validUntilUtc: input.validUntilUtc,
-      jurisdictionCommitment: input.jurisdictionCommitment,
-      categoryCommitment: input.categoryCommitment,
+      ...(input.jurisdictionCommitment !== undefined
+        ? { jurisdictionCommitment: input.jurisdictionCommitment }
+        : {}),
+      ...(input.categoryCommitment !== undefined ? { categoryCommitment: input.categoryCommitment } : {}),
     });
 
     if (this.#claimFingerprints.has(claimFingerprint)) {
@@ -254,7 +255,7 @@ export class EconomicClaimRegistry {
         ),
       ],
       methodologyVersion: input.methodologyVersion,
-      producedRefs: input.producedRefs,
+      ...(input.producedRefs !== undefined ? { producedRefs: input.producedRefs } : {}),
     });
     if (!lineageResult.ok) {
       return err({ code: 'LINEAGE_INVALID', message: lineageResult.error.message });

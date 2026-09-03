@@ -21,8 +21,8 @@ import type {
   RightsEvaluationDeny,
   RightsEvaluationRequest,
   RightsEvaluationResult,
-  RightsGrantState,
 } from './types.ts';
+import type { RightsGrantState } from './taxonomy.ts';
 
 function deny(
   reasonCode: RightsEvaluationDeny['reasonCode'],
@@ -225,7 +225,7 @@ export function buildHistoricalRightsProof(input: {
     evaluatedAt: input.evaluatedAt,
     commitment: input.commitment,
     reliedUponRevocationRef: semantics.reliedUponRevocationRef,
-    validAtExecutionTime: semantics.validAtExecutionTime,
+    validAtExecutionTime: semantics.validAtExecutionTime as true,
     blockedForFutureUse: semantics.blockedForFutureUse,
   });
 }

@@ -8,6 +8,7 @@ import { eventTypeDefinition } from './events.ts';
 import type {
   HumanAttributeClass,
   HumanContributionEventMaterial,
+  HumanControlRejectionCode,
   HumanOntologyResult,
 } from './types.ts';
 
@@ -46,10 +47,7 @@ function ok<T>(value: T): HumanOntologyResult<T> {
   return Object.freeze({ ok: true, value });
 }
 
-function fail<T>(
-  code: HumanOntologyResult<T> extends { ok: false; code: infer C } ? C : never,
-  message: string,
-): HumanOntologyResult<T> {
+function fail<T>(code: HumanControlRejectionCode, message: string): HumanOntologyResult<T> {
   return Object.freeze({ ok: false, code, message });
 }
 

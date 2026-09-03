@@ -1,9 +1,10 @@
 import { economicProofDigest } from '../hash.ts';
 import { entityCommitmentFromRefs } from '../entity-identity.ts';
+import { asUtcInstant } from '../../../../domain/src/time.ts';
 
-export const WAVE5_FIXTURE_NOW = '2026-09-01T06:00:00.000Z' as const;
-export const WAVE5_FIXTURE_HOUR_END = '2026-09-01T07:00:00.000Z' as const;
-export const WAVE5_FIXTURE_DAY_END = '2026-09-02T06:00:00.000Z' as const;
+export const WAVE5_FIXTURE_NOW = asUtcInstant('2026-09-01T06:00:00.000Z');
+export const WAVE5_FIXTURE_HOUR_END = asUtcInstant('2026-09-01T07:00:00.000Z');
+export const WAVE5_FIXTURE_DAY_END = asUtcInstant('2026-09-02T06:00:00.000Z');
 
 export const WAVE5_POWER_PLANT = entityCommitmentFromRefs(['power-plant:wave5-tx-main']);
 export const WAVE5_FACTORY = entityCommitmentFromRefs(['factory:wave5-acme-plant']);

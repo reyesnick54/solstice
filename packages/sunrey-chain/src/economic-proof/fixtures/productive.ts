@@ -1,8 +1,9 @@
 import { economicProofDigest } from '../hash.ts';
 import { entityCommitmentFromRefs } from '../entity-identity.ts';
+import { asUtcInstant } from '../../../../domain/src/time.ts';
 
-export const PRODUCTIVE_FIXTURE_NOW = '2026-09-01T06:00:00.000Z' as const;
-export const PRODUCTIVE_FIXTURE_END = '2026-09-01T07:00:00.000Z' as const;
+export const PRODUCTIVE_FIXTURE_NOW = asUtcInstant('2026-09-01T06:00:00.000Z');
+export const PRODUCTIVE_FIXTURE_END = asUtcInstant('2026-09-01T07:00:00.000Z');
 
 export const POWER_PLANT_ENTITY = entityCommitmentFromRefs(['power-plant:grid-node-wave3']);
 export const FACTORY_ENTITY = entityCommitmentFromRefs(['factory:acme-plant-7']);

@@ -6,8 +6,12 @@
 
 import type { HumanEconomyMonitoringSnapshot } from './types.ts';
 
+type MutableHumanEconomyMonitoringMetrics = {
+  -readonly [K in keyof HumanEconomyMonitoringSnapshot]: HumanEconomyMonitoringSnapshot[K];
+};
+
 export type HumanEconomyMonitoringStore = {
-  metrics: HumanEconomyMonitoringSnapshot;
+  metrics: MutableHumanEconomyMonitoringMetrics;
 };
 
 export function emptyHumanEconomyMonitoringStore(): HumanEconomyMonitoringStore {
@@ -46,5 +50,8 @@ export function snapshotMetrics(store: HumanEconomyMonitoringStore): HumanEconom
 }
 
 export function metricsExcludeSensitivePersonalData(snapshot: HumanEconomyMonitoringSnapshot): true {
-  return snapshot.containsSensitivePersonalInformation === false;
+  if (snapshot.containsSensitivePersonalInformation !== false) {
+    throw new Error('metrics snapshot must not contain sensitive personal information');
+  }
+  return true;
 }

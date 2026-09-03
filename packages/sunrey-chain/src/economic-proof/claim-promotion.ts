@@ -1,4 +1,5 @@
 import { err, ok, type Result } from '../../../domain/src/result.ts';
+import { asUtcInstant } from '../../../domain/src/time.ts';
 import { deriveClaimFingerprint } from './claim-fingerprint.ts';
 import { deriveDuplicateClusterId } from './duplicate-cluster.ts';
 import {
@@ -94,10 +95,14 @@ export function promoteReconciliationToClaim(
     economicAction: input.economicAction,
     quantity: reconciliation.quantityReconciliation.reconciledQuantity,
     unit: canonical.unit,
-    validFromUtc: input.validFromUtc,
-    validUntilUtc: input.validUntilUtc,
-    locationCommitment: canonical.geographyCommitment,
-    domainIdentifierCommitment: canonical.batchRunJobId,
+    validFromUtc: asUtcInstant(input.validFromUtc),
+    validUntilUtc: input.validUntilUtc ? asUtcInstant(input.validUntilUtc) : null,
+    ...(canonical.geographyCommitment !== undefined
+      ? { locationCommitment: canonical.geographyCommitment }
+      : {}),
+    ...(canonical.batchRunJobId !== undefined
+      ? { domainIdentifierCommitment: canonical.batchRunJobId }
+      : {}),
   };
 
   const claimFingerprint = deriveClaimFingerprint({
@@ -109,8 +114,10 @@ export function promoteReconciliationToClaim(
     unit: canonical.unit,
     validFromUtc: input.validFromUtc,
     validUntilUtc: input.validUntilUtc,
-    jurisdictionCommitment: input.jurisdictionCommitment,
-    categoryCommitment: input.categoryCommitment,
+    ...(input.jurisdictionCommitment !== undefined
+      ? { jurisdictionCommitment: input.jurisdictionCommitment }
+      : {}),
+    ...(input.categoryCommitment !== undefined ? { categoryCommitment: input.categoryCommitment } : {}),
   });
 
   const existing = registry.getClaimByFingerprint(claimFingerprint);
@@ -129,8 +136,10 @@ export function promoteReconciliationToClaim(
     economicAction: input.economicAction,
     validFromUtc: input.validFromUtc,
     validUntilUtc: input.validUntilUtc,
-    jurisdictionCommitment: input.jurisdictionCommitment,
-    categoryCommitment: input.categoryCommitment,
+    ...(input.jurisdictionCommitment !== undefined
+      ? { jurisdictionCommitment: input.jurisdictionCommitment }
+      : {}),
+    ...(input.categoryCommitment !== undefined ? { categoryCommitment: input.categoryCommitment } : {}),
     observationIds,
     lineageEdges: [
       ...(input.lineageEdges ?? []),

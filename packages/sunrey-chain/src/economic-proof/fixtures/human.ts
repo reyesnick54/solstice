@@ -1,8 +1,9 @@
 import { economicProofDigest } from '../hash.ts';
 import { entityCommitmentFromRefs } from '../entity-identity.ts';
 import type { EntityAliasRef, EntityAliasResolver } from '../types.ts';
+import { asUtcInstant } from '../../../../domain/src/time.ts';
 
-export const HUMAN_FIXTURE_NOW = '2026-09-01T12:00:00.000Z' as const;
+export const HUMAN_FIXTURE_NOW = asUtcInstant('2026-09-01T12:00:00.000Z');
 
 export const RESEARCH_PAPER_COMMITMENT = entityCommitmentFromRefs([
   'doi:10.1000/research-paper-wave3',

@@ -47,7 +47,7 @@ export function fixtureHumanObservation(observationId = 'obs_human_fixture'): Ec
     verificationStatus: 'PENDING',
     confidence: { scoreBps: 8_000, sampleCount: 1, notesRef: null },
     freshness: {
-      state: 'FRESH',
+      state: 'FRESH' as const,
       observedAtUtc: TEMPORAL.startUtc,
       receivedAtUtc: TEMPORAL.endUtc,
       maxAgeSeconds: 3_600n,
@@ -94,7 +94,7 @@ export function fixtureProductiveObservation(observationId = 'obs_productive_fix
     verificationStatus: 'PENDING',
     confidence: { scoreBps: 9_500, sampleCount: 3, notesRef: null },
     freshness: {
-      state: 'FRESH',
+      state: 'FRESH' as const,
       observedAtUtc: TEMPORAL.startUtc,
       receivedAtUtc: TEMPORAL.endUtc,
       maxAgeSeconds: 1_800n,
