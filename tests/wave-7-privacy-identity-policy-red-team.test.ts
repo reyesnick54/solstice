@@ -69,6 +69,8 @@ import { evaluateMainnetRuntimeGate } from '../packages/sunrey-chain/src/runtime
 import { findForbiddenPayloadField } from '../packages/personal-data-vault/src/product/minimization.ts';
 import { redactRecord } from '../services/api/src/logging.ts';
 import { InformationMarketService } from '../packages/information-market/src/service.ts';
+import { newAttestationId } from '../packages/information-market/src/ids.ts';
+import type { PurposeAuthorization } from '../packages/sunrey-chain/src/economic-proof/rights/types.ts';
 import { SUNREY_AGENT_ISOLATION } from '../packages/sunrey-agent/src/isolation.ts';
 
 const ROOT = join(import.meta.dirname, '..');
@@ -106,7 +108,7 @@ function productiveRightsGrant(): RightsGrant {
     controllerRef: 'controller:oracle',
     dataScopeCommitment: scopeCommitmentFromLabels(['oracle-fact']),
     evidenceScopeCommitment: scopeCommitmentFromLabels(['bundle']),
-    permittedPurposes: [newPurposeAuthorizationId('PROVIDER_QUERY', 1)],
+    permittedPurposes: [newPurposeAuthorizationId('DATA_OBSERVATION', 1)],
     prohibitedPurposes: [],
     jurisdiction: 'US',
     effectiveFrom: asUtcInstant('2025-01-01T00:00:00.000Z'),
@@ -121,18 +123,21 @@ function productiveRightsGrant(): RightsGrant {
 }
 
 function restrictiveLicense(): LicenseAuthorization {
+  const licenseId = newLicenseAuthorizationId('lic-1');
   return Object.freeze({
     schemaVersion: 1,
-    licenseAuthorizationId: newLicenseAuthorizationId('lic-1'),
+    licenseId,
     providerRef: 'provider:fixture',
+    sourceScopeCommitment: scopeCommitmentFromLabels(['fixture-scope']),
     commercialUse: 'FORBIDDEN',
     persistence: 'FORBIDDEN',
     derivedUse: 'RESTRICTED',
     redistribution: 'FORBIDDEN',
     attributionRequired: true,
     effectiveFrom: asUtcInstant('2025-01-01T00:00:00.000Z'),
-    effectiveUntil: EXPIRES,
-    agreementVersion: 'fixture-v1',
+    expiresAt: EXPIRES,
+    configurationRef: 'config:fixture-v1',
+    authorizesMonetaryIssuance: false as const,
   });
 }
 
@@ -164,24 +169,24 @@ describe('Wave 7 Task 1 — policy bypass red team', () => {
         currency: 'USD',
       },
     };
-    const missingPack = empty.evaluate(intent, { actor: { id: 'op_1' }, customer, jurisdiction: asJurisdiction('GB') } as never, NOW);
+    const missingPack = empty.evaluate(intent, { actor: { id: 'op_1', capabilities: [] }, customer, jurisdiction: asJurisdiction('GB') } as never, NOW);
     assert.notEqual(missingPack.decision, 'ALLOW');
     assert.ok(missingPack.reasonCodes.includes('POLICY_PACK_MISSING'));
 
     const engine = createSimulationPolicyEngine();
     const unknownVersion = engine.evaluateFacts(
       {
-        actor: { id: 'op_1' },
+        actor: { id: 'op_1', capabilities: [] },
         customer,
-        jurisdiction: 'GB',
+        jurisdiction: asJurisdiction('GB'),
         policyPin: { packId: 'GB', versionId: 'does-not-exist' },
-      },
+      } as never,
       NOW,
     );
     assert.notEqual(unknownVersion.decision, 'ALLOW');
     assert.ok(unknownVersion.reasonCodes.includes('POLICY_VERSION_MISSING'));
 
-    const unresolved = engine.evaluateFacts({ actor: { id: 'op_1' }, jurisdiction: null }, NOW);
+    const unresolved = engine.evaluateFacts({ actor: { id: 'op_1', capabilities: [] } } as never, NOW);
     assert.equal(unresolved.decision, 'DEFER');
     assert.ok(unresolved.reasonCodes.includes('JURISDICTION_UNRESOLVED'));
   });
@@ -190,7 +195,7 @@ describe('Wave 7 Task 1 — policy bypass red team', () => {
     const clock = new FrozenClock(NOW);
     const evidence = new EvidenceVault(clock);
     const keys = createSimulationKeyProvider({ clock: { now: () => clock.now() } });
-    const issuer = new AuthorityIssuer(keys, clock);
+    const issuer = new AuthorityIssuer('wave7-red-team');
     const kernel = new ComplianceKernel(issuer, evidence, clock, undefined, createSimulationPolicyEngine());
     const customer = createProspect({
       id: asCustomerId('cust_client'),
@@ -253,6 +258,7 @@ describe('Wave 7 Task 2 — authorization red team', () => {
       id: 'acct_victim',
       ownerCustomerId: 'cust_victim',
       ownerSubjectId: 'subj_victim' as never,
+      ownerActorId: null,
     });
     const stolen = registry.assertOwnedBySubject('account', 'acct_victim', 'subj_attacker' as never);
     assert.equal(stolen.ok, false);
@@ -279,14 +285,14 @@ describe('Wave 7 Task 2 — authorization red team', () => {
         subjectId: 'subj_human' as never,
         actorId: 'agent_runtime',
         authenticationStrength: 'STANDARD',
-        riskState: 'NORMAL',
+        riskState: 'CLEAR',
         expiresAt: EXPIRES,
       },
       device: null,
       kyc: null,
       customerId: 'cust_1',
       jurisdiction: 'GB',
-      capabilities: ['AGENT_PROPOSE'],
+      capabilities: ['AGENT_PROPOSE'] as never,
       actorContext: {
         actorId: 'agent_runtime',
         subjectId: 'subj_human',
@@ -327,7 +333,12 @@ describe('Wave 7 Task 2 — authorization red team', () => {
     const expired: ServiceIdentity = Object.freeze({
       serviceId: 'payments',
       serviceRole: 'PAYMENTS_SERVICE',
-      credentialRef: { providerId: 'sim', purpose: 'SERVICE_AUTH', version: 1, locator: 'sec://payments' },
+      credentialRef: {
+        scheme: 'secret',
+        provider: 'sim',
+        path: 'payments',
+        href: 'secret://sim/payments',
+      },
       allowedCapabilities: ['SUBMIT_INTENT'],
       expiresAt: '2020-01-01T00:00:00.000Z',
       keyVersion: 1,
@@ -345,7 +356,12 @@ describe('Wave 7 Task 2 — authorization red team', () => {
     const ledgerOnly: ServiceIdentity = Object.freeze({
       serviceId: 'ledger',
       serviceRole: 'LEDGER_WRITER',
-      credentialRef: { providerId: 'sim', purpose: 'SERVICE_AUTH', version: 1, locator: 'sec://ledger' },
+      credentialRef: {
+        scheme: 'secret',
+        provider: 'sim',
+        path: 'ledger',
+        href: 'secret://sim/ledger',
+      },
       allowedCapabilities: ['VERIFY_AUTHORITY'],
       expiresAt: EXPIRES,
       keyVersion: 1,
@@ -405,13 +421,13 @@ describe('Wave 7 Task 4/5/6/7 — privacy, purpose, license, jurisdiction red te
   it('enforces provider license restrictions and no-persist datasets', () => {
     const license = restrictiveLicense();
     const grant = productiveRightsGrant();
-    const purpose = {
+    const purpose: PurposeAuthorization = Object.freeze({
       schemaVersion: 1 as const,
-      purposeId: newPurposeAuthorizationId('PROVIDER_QUERY', 1),
+      purposeId: newPurposeAuthorizationId('DATA_OBSERVATION', 1),
       purposeVersion: 1,
-      code: 'PROVIDER_QUERY',
+      code: 'DATA_OBSERVATION',
       description: 'fixture',
-    };
+    });
     for (const operation of ['PERSISTENCE', 'REDISTRIBUTION', 'COMMERCIAL_USE'] as const) {
       const denied = evaluateRights({
         rightsGrant: grant,
@@ -442,13 +458,13 @@ describe('Wave 7 Task 4/5/6/7 — privacy, purpose, license, jurisdiction red te
         ...productiveRightsGrant(),
         jurisdiction: 'UNRESOLVED',
       }),
-      requestedPurpose: {
+      requestedPurpose: Object.freeze({
         schemaVersion: 1,
-        purposeId: newPurposeAuthorizationId('PROVIDER_QUERY', 1),
+        purposeId: newPurposeAuthorizationId('DATA_OBSERVATION', 1),
         purposeVersion: 1,
-        code: 'PROVIDER_QUERY',
+        code: 'DATA_OBSERVATION',
         description: 'fixture',
-      },
+      }) as PurposeAuthorization,
       at: NOW,
     });
     assert.equal(unresolved.decision, 'DENY');
@@ -476,11 +492,11 @@ describe('Wave 7 Task 8 — selective disclosure / minimization red team', () =>
         legalStatus: () => ({ mode: 'SIMULATION_ONLY' }),
       } as never,
       fiat: {
-        compensate: async () => ({ ok: true, value: { receiptId: 'rcpt' } }),
+        creditParticipant: () => ({ outcome: 'OK', intentId: 'intent_fixture', journalId: 'journal_fixture' }),
       },
     });
     const vc = service.vcPort.issueSimulationCredential({
-      attestationId: 'att_1',
+      attestationId: newAttestationId(),
       subjectRef: 'subj_1',
       claims: Object.freeze({ over18: true }),
     });
@@ -563,7 +579,7 @@ describe('Wave 7 Task 13 — failure mode red team', () => {
     const unavailable = new UnavailableKeyProvider('kms-down');
     assert.equal(unavailable.environmentLabel.includes('fail closed'), true);
     const engine = new PolicyEngine({ registry: new PolicyRegistry() });
-    const result = engine.evaluateFacts({ actor: { id: 'op' }, jurisdiction: 'GB' }, NOW);
+    const result = engine.evaluateFacts({ actor: { id: 'op', capabilities: [] }, jurisdiction: asJurisdiction('GB') }, NOW);
     assert.notEqual(result.decision, 'ALLOW');
   });
 });

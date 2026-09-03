@@ -29,6 +29,9 @@ import {
   countIndependentForQuorum,
 } from '../packages/sunrey-chain/src/oracle/production/independence.ts';
 import { evaluateProductionQuorum } from '../packages/sunrey-chain/src/oracle/production/quorum.ts';
+import { sandboxFeed } from '../packages/sunrey-chain/src/oracle/production/sandbox-fixture.ts';
+import type { EconomicDataSource } from '../packages/sunrey-chain/src/oracle/production/types.ts';
+import { createFrozenConnectorClock } from '../packages/sunrey-chain/src/oracle/production/runtime.ts';
 import { ConnectorCircuitBreaker, DEFAULT_CIRCUIT_BREAKER_POLICY } from '../packages/sunrey-chain/src/oracle/production/circuit-breaker.ts';
 import {
   ENERGY_CAPACITY_UNIT_CONSTITUTION_EXTENDED,
@@ -147,38 +150,20 @@ describe('Wave 5 Task 2 — oracle red team', () => {
       { sourceId: 's1', providerId: 'p1', controllerId: 'ctrl-a', upstreamOrganizationId: 'upstream-x' },
       { sourceId: 's2', providerId: 'p2', controllerId: 'ctrl-a', upstreamOrganizationId: 'upstream-x' },
       { sourceId: 's3', providerId: 'p3', controllerId: 'ctrl-b', upstreamOrganizationId: 'upstream-y' },
-    ] as const;
+    ] as unknown as EconomicDataSource[];
     assert.equal(countIndependentForQuorum([...sources], true), 2);
-    const shared = analyzeIndependence([...sources], true).find((c) => c.providerIds.length > 1);
+    const shared = analyzeIndependence(sources, true).find((c) => c.providerIds.length > 1);
     assert.ok(shared);
     assert.equal(shared.independent, false);
   });
 
   it('fails closed on insufficient quorum', () => {
     const quorum = evaluateProductionQuorum({
-      feed: {
-        feedId: 'feed-1',
-        minimumProviders: 3,
-        minimumIndependentControllers: 2,
-        schemaId: 'ENERGY_INTERVAL_V1',
-        aggregationPolicy: 'MEDIAN',
-        freshnessSeconds: 3600n,
-        subjectKind: 'METER',
-        unit: 'kWh',
-        factType: 'ENERGY_PRODUCTION',
-        productiveCategory: 'ENERGY',
-        claimType: 'OUTPUT',
-        sourceClass: 'GENERATOR_METER',
-        admissionMode: 'FIXTURE_ONLY',
-        certificationRequired: true,
-        rightsRequired: false,
-        lineageRequired: true,
-        independenceRequired: true,
-      },
+      feed: sandboxFeed(),
       observations: [
-        { observationId: 'o1', oracleId: 'p1', feedId: 'feed-1', subject: 'meter-1', value: { mantissa: 100n, scale: 0, unit: 'kWh' }, observedAtUnix: 1n, signature: 'sig', signerKeyId: 'k1' },
+        { observationId: 'o1', oracleId: 'p1', feedId: 'feed-1', subject: 'meter-1', value: { schemaVersion: 1, mantissa: 100n, scale: 0, unit: 'kWh' }, observedAtUnix: 1n, signature: 'sig', signerKeyId: 'k1' },
       ],
-      sources: [{ sourceId: 's1', providerId: 'p1', controllerId: 'c1', upstreamOrganizationId: 'u1' }],
+      sources: [{ sourceId: 's1', providerId: 'p1', controllerId: 'c1', upstreamOrganizationId: 'u1' }] as unknown as EconomicDataSource[],
       requireIndependence: true,
     });
     assert.equal(quorum.ok, false);
@@ -275,8 +260,13 @@ describe('Wave 5 Task 5 — information consensus red team', () => {
 
 describe('Wave 5 Task 6 — GPUV red team', () => {
   it('refuses standalone GPUV and oracle artifacts from minting', () => {
-    for (const kind of ['GPUV_QUANTITY', 'PRODUCTIVE_VALUE_RESULT', 'ORACLE_OBSERVATION', 'VERIFIED_ECONOMIC_FACT'] as const) {
-      assert.equal(refuseStandaloneAttempt({ kind }).ok, false, kind);
+    for (const attempt of [
+      { kind: 'GPUV_QUANTITY', quantity: 1n },
+      { kind: 'PRODUCTIVE_VALUE_RESULT', productiveValueId: 'pv-1' },
+      { kind: 'ORACLE_OBSERVATION', observationId: 'obs-1' },
+      { kind: 'VERIFIED_ECONOMIC_FACT', factId: 'fact-1' },
+    ] as const) {
+      assert.equal(refuseStandaloneAttempt(attempt).ok, false, attempt.kind);
     }
     assert.equal(PRODUCTIVE_VALUE_FUNCTION_DOES_NOT_MINT, true);
     assert.equal(PRODUCTIVE_ECONOMIC_VALUE_IS_NOT_MOONREY_COIN_QUANTITY, true);
@@ -285,7 +275,7 @@ describe('Wave 5 Task 6 — GPUV red team', () => {
 
   it('rejects negative GPUV basis quantities', () => {
     const negative = evaluateProductiveValue(
-      engineValueInput('ENERGY', { contribution: { quantity: -5n } }),
+      engineValueInput('ENERGY', { contribution: { quantity: -5n } as never }),
       { policy: VALUE_POLICY, schedule: VALUE_SCHEDULE },
     );
     assert.equal(negative.state, 'VALUE_REJECTED');
@@ -325,7 +315,7 @@ describe('Wave 5 Task 7 — MoonRey monetary red team', () => {
       actorKind: 'AI' as const,
     };
     assert.equal(authorizeIssuance(constitution, book, aiDraft).ok, false);
-    assert.equal(refuseStandaloneAttempt({ kind: 'PRODUCTIVE_CLAIM' }).ok, false);
+    assert.equal(refuseStandaloneAttempt({ kind: 'PRODUCTIVE_CLAIM', claimId: 'claim-1' }).ok, false);
   });
 });
 
@@ -373,7 +363,7 @@ describe('Wave 5 Task 9 — challenge / correction red team', () => {
 
 describe('Wave 5 Task 10 — failure / recovery red team', () => {
   it('opens connector circuit without mutating monetary state', () => {
-    const clock = { nowMs: () => 0n };
+    const clock = createFrozenConnectorClock(0n);
     const breaker = new ConnectorCircuitBreaker(DEFAULT_CIRCUIT_BREAKER_POLICY, clock);
     breaker.recordFailure('prov', 'src');
     breaker.recordFailure('prov', 'src');

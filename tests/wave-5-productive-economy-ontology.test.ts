@@ -5,6 +5,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { asUtcInstant } from '../packages/domain/src/time.ts';
 import { EconomicKnowledgeGraphService } from '../packages/economic-asset-registry/src/knowledge-graph/service.ts';
 import {
   WAVE5_DOMAIN_FIXTURES,
@@ -16,7 +17,7 @@ import { PRODUCTIVE_ONTOLOGY_INVARIANTS } from '../packages/sunrey-chain/src/pro
 
 describe('Wave 5 productive economy integration', () => {
   it('integrates ontology with knowledge graph without monetary authority', () => {
-    const graph = new EconomicKnowledgeGraphService({ nowUtc: '2026-09-02T12:00:00.000Z' });
+    const graph = new EconomicKnowledgeGraphService({ nowUtc: asUtcInstant('2026-09-02T12:00:00.000Z') });
     const event = WAVE5_DOMAIN_FIXTURES[0]!;
     const projection = projectProductiveEventToGraph({
       event,
@@ -24,7 +25,7 @@ describe('Wave 5 productive economy integration', () => {
       eventLabel: 'Solar generation',
       sourceRefs: ['provider:fixture-a'],
       claimId: 'cec_integration_solar',
-      createdAt: '2026-09-02T12:00:00.000Z',
+      createdAt: asUtcInstant('2026-09-02T12:00:00.000Z'),
     });
     graph.registerNode({
       nodeClass: projection.entityNode.nodeClass,
