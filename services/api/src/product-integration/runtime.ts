@@ -12,19 +12,25 @@ import { ConsentStore } from '../../../../packages/consent/src/store.ts';
 import { ConsentService } from '../../../../packages/consent/src/service.ts';
 import { EvidenceVault } from '../../../../packages/evidence/src/vault.ts';
 import { DomainEventLog } from '../../../../packages/events/src/events.ts';
-import { isPersistenceTestEnabled } from '../../../../packages/persistence/src/env.ts';
 import { InMemoryEncryptedPayloadStore } from '../../../../packages/personal-data-vault/src/encryption.ts';
 import { PersonalDataVaultStore } from '../../../../packages/personal-data-vault/src/store.ts';
 import { PersonalDataVault } from '../../../../packages/personal-data-vault/src/service.ts';
 import { createSimulationKeyProvider } from '../../../../packages/security/src/simulation.ts';
 import { InMemoryAgentMandateStore } from '../../../../packages/sunrey-agent/src/store.ts';
 import {
+  createPostgresSimulationRuntime,
+  isProductIntegrationDurableModeEnabled,
+  loadProductAgentRuntimeState,
+  persistProductAgentRuntimeState,
+  persistProductConsentState,
+  persistenceEnvFromProcess,
+  type DurableSimulationRuntime,
+} from '../../../accounts/src/product-durable-adapters.ts';
+import {
   createSimulationRuntime,
   type SimulationRuntime,
   type SimulationRuntimeOptions,
 } from '../../../accounts/src/runtime.ts';
-
-type DurableSimulationRuntime = import('../../../accounts/src/postgres-runtime.ts').DurableSimulationRuntime;
 
 export type ProductIntegrationMode = 'IN_MEMORY' | 'DURABLE';
 
@@ -52,7 +58,7 @@ export function resolveProductIntegrationMode(
   if (options.forceMode) {
     return options.forceMode;
   }
-  return isPersistenceTestEnabled() ? 'DURABLE' : 'IN_MEMORY';
+  return isProductIntegrationDurableModeEnabled() ? 'DURABLE' : 'IN_MEMORY';
 }
 
 export async function createProductIntegrationRuntime(
@@ -74,20 +80,15 @@ export async function createProductIntegrationRuntime(
   let accounts: SimulationRuntime;
 
   if (mode === 'DURABLE') {
-    const { createPostgresSimulationRuntime } = await import('../../../accounts/src/postgres-runtime.ts');
-    const { persistenceEnvFromProcess } = await import('../../../../packages/persistence/src/env.ts');
-    const { loadAgentRuntimeState } = await import(
-      '../../../../packages/persistence/src/agent/pg-agent-runtime-store.ts'
-    );
-    durableAccounts = await createPostgresSimulationRuntime(persistenceEnvFromProcess(), {
+    durableAccounts = await createPostgresSimulationRuntime(await persistenceEnvFromProcess(), {
       clock,
       keyProvider: keys,
       ...options.accounts,
     });
     accounts = durableAccounts.runtime;
-    const agentSnapshot = await loadAgentRuntimeState(durableAccounts.session.pools.customer);
+    const agentSnapshot = await loadProductAgentRuntimeState(durableAccounts.session.pools.customer);
     if (agentSnapshot) {
-      agentStore.hydrate(agentSnapshot);
+      agentStore.hydrate(agentSnapshot as Parameters<InMemoryAgentMandateStore['hydrate']>[0]);
     }
   } else {
     accounts = createSimulationRuntime({
@@ -119,15 +120,9 @@ export async function createProductIntegrationRuntime(
       if (!durableAccounts) {
         return;
       }
-      const { persistConsentState } = await import(
-        '../../../../packages/persistence/src/consent/pg-consent-store.ts'
-      );
-      const { persistAgentRuntimeState } = await import(
-        '../../../../packages/persistence/src/agent/pg-agent-runtime-store.ts'
-      );
       await Promise.all([
-        persistConsentState(durableAccounts.session.pools.customer, consentStore.snapshot()),
-        persistAgentRuntimeState(durableAccounts.session.pools.customer, agentStore.snapshot()),
+        persistProductConsentState(durableAccounts.session.pools.customer, consentStore.snapshot()),
+        persistProductAgentRuntimeState(durableAccounts.session.pools.customer, agentStore.snapshot()),
         durableAccounts.persistProductState(),
       ]);
     },

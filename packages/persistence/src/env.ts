@@ -8,6 +8,7 @@
  */
 
 import {
+  isPersistenceTestEnabled as configIsPersistenceTestEnabled,
   PERSISTENCE_ENV_ALIASES,
   resolveCanonicalEnv,
   type EnvResolution,
@@ -132,7 +133,5 @@ export function persistenceEnvFromProcess(
 }
 
 export function isPersistenceTestEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
-  const flag = resolveCanonicalEnv(alias('SUNREY_PERSISTENCE_TEST'), env);
-  const host = resolveCanonicalEnv(alias('SUNREY_PG_HOST'), env);
-  return flag.value === '1' || host.source === 'CANONICAL' || host.source === 'LEGACY_ALIAS';
+  return configIsPersistenceTestEnabled(env);
 }

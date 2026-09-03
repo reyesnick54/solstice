@@ -171,9 +171,7 @@ fn native_asset_conflicting_same_nonce_admits_only_one() {
             "bob",
             AssetQuantity::new(NativeAssetId::SunReyCoin, 40).unwrap(),
         );
-        guard
-            .sign_dev_tx(unsigned(1, xfer.encode(), "left"), &secret)
-            .unwrap()
+        guard.sign_dev_tx(unsigned(1, xfer.encode(), "left"), &secret).unwrap()
     };
     let right = {
         let guard = node.lock().unwrap();
@@ -182,9 +180,7 @@ fn native_asset_conflicting_same_nonce_admits_only_one() {
             "carol",
             AssetQuantity::new(NativeAssetId::SunReyCoin, 40).unwrap(),
         );
-        guard
-            .sign_dev_tx(unsigned(1, xfer.encode(), "right"), &secret)
-            .unwrap()
+        guard.sign_dev_tx(unsigned(1, xfer.encode(), "right"), &secret).unwrap()
     };
     let a = {
         let node = Arc::clone(&node);
@@ -253,12 +249,11 @@ fn moonrey_transfer_requires_moonrey_balance_not_sunrey() {
     let mut node = LocalNode::init(dir("asset-iso")).unwrap();
     let secret = development_fixture_secret();
     node.submit_signed(
-        node
-            .sign_dev_tx(
-                unsigned(0, faucet_bytes(NativeAssetId::SunReyCoin, "alice", 50, "w9-sun"), "sun"),
-                &secret,
-            )
-            .unwrap(),
+        node.sign_dev_tx(
+            unsigned(0, faucet_bytes(NativeAssetId::SunReyCoin, "alice", 50, "w9-sun"), "sun"),
+            &secret,
+        )
+        .unwrap(),
     )
     .unwrap();
     node.produce_block().unwrap();
@@ -268,10 +263,15 @@ fn moonrey_transfer_requires_moonrey_balance_not_sunrey() {
         "bob",
         AssetQuantity::new(NativeAssetId::MoonReyCoin, 10).unwrap(),
     );
-    node.submit_signed(node.sign_dev_tx(unsigned(1, moon_xfer.encode(), "moon-x"), &secret).unwrap())
-        .unwrap();
+    node.submit_signed(
+        node.sign_dev_tx(unsigned(1, moon_xfer.encode(), "moon-x"), &secret).unwrap(),
+    )
+    .unwrap();
     node.produce_block().unwrap();
-    assert_eq!(node.native_assets().unwrap().available("alice", NativeAssetId::MoonReyCoin), moon_before);
+    assert_eq!(
+        node.native_assets().unwrap().available("alice", NativeAssetId::MoonReyCoin),
+        moon_before
+    );
     assert_eq!(node.native_assets().unwrap().available("bob", NativeAssetId::MoonReyCoin), 0);
 }
 

@@ -168,3 +168,17 @@ export function requireResolvedEnvValue(
   }
   return resolved.value;
 }
+
+function persistenceEnvAlias(canonicalName: string) {
+  const found = PERSISTENCE_ENV_ALIASES.find((item) => item.canonicalName === canonicalName);
+  if (!found) {
+    throw new Error(`unknown persistence env alias ${canonicalName}`);
+  }
+  return found;
+}
+
+export function isPersistenceTestEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
+  const flag = resolveCanonicalEnv(persistenceEnvAlias('SUNREY_PERSISTENCE_TEST'), env);
+  const host = resolveCanonicalEnv(persistenceEnvAlias('SUNREY_PG_HOST'), env);
+  return flag.value === '1' || host.source === 'CANONICAL' || host.source === 'LEGACY_ALIAS';
+}

@@ -4,7 +4,6 @@
 
 import { consumerContractManifest, deprecationForPath } from './api-contract.ts';
 import { CONSUMER_API_DOMAINS } from './domains.ts';
-import { authorizeConsumerRoute } from './authorization.ts';
 import { listUnifiedActions, type ActionCenterSources } from './action-center-unified.ts';
 import { createSunReyApiSurface } from './sunrey-api.ts';
 import { createMoonReyApiSurface } from './moonrey-api.ts';
@@ -41,12 +40,13 @@ export function dispatchWave8(
   principal: BffPrincipal,
   requestId: string,
 ): Wave8DispatchResponse {
-  const authFailure = authorizeConsumerRoute(principal, request.method, request.path, requestId);
-  if (authFailure) {
-    return { status: statusForError(authFailure), body: authFailure };
+  const { method, path, query } = request;
+
+  if (!isWave8OwnedRoute(method, path)) {
+    return null;
   }
 
-  const deprecation = deprecationForPath(request.method, request.path);
+  const deprecation = deprecationForPath(method, path);
   const deprecationHeaders = deprecation
     ? Object.freeze({
         deprecation: 'true',
@@ -54,8 +54,6 @@ export function dispatchWave8(
         link: `<${deprecation.replacement}>; rel="successor-version"`,
       })
     : undefined;
-
-  const { method, path, query } = request;
 
   if (path === '/api/v1/catalog/contract' && method === 'GET') {
     return respond(200, consumerContractManifest(), deprecationHeaders);
@@ -191,6 +189,19 @@ export function dispatchWave8(
       requestId,
     }),
   };
+}
+
+function isWave8OwnedRoute(method: string, path: string): boolean {
+  if (path.startsWith('/api/v1/catalog/')) {
+    return method === 'GET';
+  }
+  if (path.startsWith('/api/v1/sunrey') || path.startsWith('/api/v1/moonrey')) {
+    return method === 'GET';
+  }
+  if (path === '/api/v1/actions' || path === '/api/v1/actions/stream' || path === '/api/v1/events/stream') {
+    return method === 'GET';
+  }
+  return false;
 }
 
 function respond(status: number, body: unknown, extraHeaders?: Readonly<Record<string, string>>): Wave8DispatchResponse {

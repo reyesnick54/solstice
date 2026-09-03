@@ -31,7 +31,7 @@ const ROUTE_AUTH: Readonly<Record<string, RouteAuthRequirement>> = Object.freeze
   'POST /api/v1/wallets/withdrawals': Object.freeze({ capabilities: ['POST_WITHDRAWAL_REQUEST'], requireVerified: true, denyRestricted: true, regulated: true }),
   'GET /api/v1/grow': Object.freeze({ capabilities: ['VIEW_GROWTH_PLAN'], requireVerified: false, denyRestricted: true, regulated: false }),
   'GET /api/v1/exchange': Object.freeze({ capabilities: ['EXCHANGE_VIEW'], requireVerified: true, denyRestricted: true, regulated: true }),
-  'POST /api/v1/exchange/orders': Object.freeze({ capabilities: ['EXCHANGE_TRADE'], requireVerified: true, denyRestricted: true, regulated: true }),
+  'POST /api/v1/exchange/orders': Object.freeze({ capabilities: ['EXCHANGE_OPERATE_REQUEST'], requireVerified: true, denyRestricted: true, regulated: true }),
   'GET /api/v1/data/vault': Object.freeze({ capabilities: ['VAULT_VIEW_OWN'], requireVerified: true, denyRestricted: true, regulated: true }),
   'GET /api/v1/sunrey/peve': Object.freeze({ capabilities: ['VIEW_ECONOMIC_GRAPH'], requireVerified: true, denyRestricted: true, regulated: true }),
   'GET /api/v1/actions': DEFAULT_READ,
@@ -49,6 +49,9 @@ function requirementFor(method: string, path: string): RouteAuthRequirement {
   const domain = domainForPath(path);
   if (domain?.domain === 'sunrey' || domain?.domain === 'moonrey') {
     return Object.freeze({ capabilities: ['VIEW_ECONOMIC_GRAPH'], requireVerified: false, denyRestricted: true, regulated: false });
+  }
+  if (domain?.domain === 'claims' || path.startsWith('/api/v1/hin/')) {
+    return Object.freeze({ capabilities: [], requireVerified: false, denyRestricted: false, regulated: false });
   }
   if (domain?.domain === 'vault' || domain?.domain === 'consent') {
     return Object.freeze({ capabilities: ['VAULT_VIEW_OWN'], requireVerified: true, denyRestricted: true, regulated: true });
