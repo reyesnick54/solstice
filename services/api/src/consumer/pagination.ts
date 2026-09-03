@@ -68,6 +68,21 @@ export function paginate<T>(
   });
 }
 
+export type OmitUndefined<T extends Record<string, unknown>> = {
+  [K in keyof T as T[K] extends undefined ? never : K]: Exclude<T[K], undefined>;
+};
+
+export function omitUndefined<T extends Record<string, unknown>>(value: T): OmitUndefined<T> {
+  const result: Record<string, unknown> = {};
+  for (const key of Object.keys(value) as (keyof T)[]) {
+    const entry = value[key];
+    if (entry !== undefined) {
+      result[key as string] = entry;
+    }
+  }
+  return result as OmitUndefined<T>;
+}
+
 export function pageSizeOf(raw: string | undefined): number {
   if (raw === undefined || raw === '') {
     return DEFAULT_PAGE_SIZE;

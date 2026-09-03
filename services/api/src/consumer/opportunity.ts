@@ -2,80 +2,116 @@
  * Consumer BFF opportunity intelligence dispatch — read-only opportunity resources.
  */
 
+import { omitUndefined } from './pagination.ts';
 import type { OpportunityIntelligenceBff } from './opportunity-adapter.ts';
 
+type OpportunityDispatchRequest = {
+  readonly method: string;
+  readonly path: string;
+  readonly query?: Readonly<Record<string, string | undefined>>;
+};
+
+type OpportunityDispatchResponse = {
+  readonly status: number;
+  readonly body: unknown;
+  readonly headers: Readonly<Record<string, string>>;
+};
+
+function json(status: number, body: unknown, headers: Record<string, string>): OpportunityDispatchResponse {
+  return { status, body, headers };
+}
+
 export function dispatchOpportunity(
-  request: { readonly method: string; readonly url: string },
+  request: OpportunityDispatchRequest,
   requestId: string,
   headers: Record<string, string>,
   bff: OpportunityIntelligenceBff | undefined,
-): Response | null {
+): OpportunityDispatchResponse | null {
   if (!bff) return null;
-  const url = new URL(request.url, 'http://localhost');
-  const path = url.pathname;
-  const method = request.method;
+  const { method, path, query = {} } = request;
 
   if (!path.startsWith('/api/v1/opportunities') && !path.startsWith('/api/v1/world/opportunities')) {
     return null;
   }
 
-  const json = (body: unknown, status = 200) =>
-    new Response(JSON.stringify(body), {
-      status,
-      headers: { ...headers, 'content-type': 'application/json', 'x-request-id': requestId },
-    });
-
   if (path === '/api/v1/opportunities/jobs' && method === 'GET') {
-    const keywords = url.searchParams.get('keywords') ?? undefined;
-    const location = url.searchParams.get('location') ?? undefined;
-    return json({
-      schema: 'sunrey.bff.opportunity-jobs.v1',
-      availability: 'AVAILABLE_SIMULATION',
-      promise: bff.searchJobs({ keywords, location }),
-    });
+    return json(
+      200,
+      {
+        schema: 'sunrey.bff.opportunity-jobs.v1',
+        availability: 'AVAILABLE_SIMULATION',
+        promise: bff.searchJobs(
+          omitUndefined({
+            keywords: query.keywords,
+            location: query.location,
+          }),
+        ),
+      },
+      headers,
+    );
   }
 
   if (path === '/api/v1/opportunities/skills' && method === 'GET') {
-    const query = url.searchParams.get('q') ?? '';
-    return json({
-      schema: 'sunrey.bff.opportunity-skills.v1',
-      availability: 'AVAILABLE_SIMULATION',
-      promise: bff.searchSkills(query),
-    });
+    const q = query.q ?? '';
+    return json(
+      200,
+      {
+        schema: 'sunrey.bff.opportunity-skills.v1',
+        availability: 'AVAILABLE_SIMULATION',
+        promise: bff.searchSkills(q),
+      },
+      headers,
+    );
   }
 
   if (path === '/api/v1/opportunities/occupations' && method === 'GET') {
-    const query = url.searchParams.get('q') ?? '';
-    return json({
-      schema: 'sunrey.bff.opportunity-occupations.v1',
-      availability: 'AVAILABLE_SIMULATION',
-      promise: bff.searchOccupations(query),
-    });
+    const q = query.q ?? '';
+    return json(
+      200,
+      {
+        schema: 'sunrey.bff.opportunity-occupations.v1',
+        availability: 'AVAILABLE_SIMULATION',
+        promise: bff.searchOccupations(q),
+      },
+      headers,
+    );
   }
 
   if (path === '/api/v1/opportunities/intelligence' && method === 'GET') {
-    return json({
-      schema: 'sunrey.bff.opportunity-intelligence.v1',
-      availability: 'AVAILABLE_SIMULATION',
-      promise: bff.getPublicIntelligence(),
-    });
+    return json(
+      200,
+      {
+        schema: 'sunrey.bff.opportunity-intelligence.v1',
+        availability: 'AVAILABLE_SIMULATION',
+        promise: bff.getPublicIntelligence(),
+      },
+      headers,
+    );
   }
 
   if (path === '/api/v1/world/opportunities' && method === 'GET') {
-    return json({
-      schema: 'sunrey.bff.world-opportunities.v1',
-      availability: 'AVAILABLE_SIMULATION',
-      promise: bff.worldSnapshot(),
-    });
+    return json(
+      200,
+      {
+        schema: 'sunrey.bff.world-opportunities.v1',
+        availability: 'AVAILABLE_SIMULATION',
+        promise: bff.worldSnapshot(),
+      },
+      headers,
+    );
   }
 
   if (path === '/api/v1/opportunities/coverage' && method === 'GET') {
-    return json({
-      schema: 'sunrey.bff.opportunity-coverage.v1',
-      coverage: bff.coverage(),
-      availability: 'AVAILABLE_SIMULATION',
-    });
+    return json(
+      200,
+      {
+        schema: 'sunrey.bff.opportunity-coverage.v1',
+        coverage: bff.coverage(),
+        availability: 'AVAILABLE_SIMULATION',
+      },
+      headers,
+    );
   }
 
-  return json({ error: 'NOT_FOUND', path }, 404);
+  return json(404, { error: 'NOT_FOUND', path }, headers);
 }

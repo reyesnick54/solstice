@@ -28,6 +28,7 @@ import { cachePolicyForPath } from './cache.ts';
 import { CONSUMER_RESOURCE_CATALOG } from './resources.ts';
 import type { ConsumerBff } from './orchestrator.ts';
 import { resolvePrincipal, type SessionDirectory } from './session.ts';
+import type { BffPrincipal } from './ports.ts';
 import { listSandboxPersonas } from './sandbox-personas.ts';
 import type { IdentityService } from '../../../../packages/identity/src/service.ts';
 import type { PaymentPlatform } from '../../../../packages/payments/src/platform/orchestrator.ts';
@@ -189,7 +190,7 @@ const STUB_GROUPS = [
   'notifications',
 ] as const;
 
-export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffRequest): BffResponse {
+export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffRequest): BffResponse | Promise<BffResponse> {
   const requestId = request.requestId ?? `req_${randomUUID()}`;
   const headers = {
     'cache-control': cachePolicyForPath(request.path).cacheControl,
@@ -333,7 +334,17 @@ function dispatchAuthenticated(
   const { method, path, query, body } = request;
   const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
 
-  const wave8 = dispatchWave8(runtime, { method, path, query, accept: request.accept }, principal, requestId);
+  const wave8 = dispatchWave8(
+    runtime,
+    {
+      method,
+      path,
+      query,
+      ...(request.accept !== undefined ? { accept: request.accept } : {}),
+    },
+    principal,
+    requestId,
+  );
   if (wave8) {
     const mergedHeaders = Object.freeze({
       ...headers,
@@ -362,12 +373,12 @@ function dispatchAuthenticated(
       return result(homeBase, headers);
     }
     let home = enrichHomeResource(homeBase, {
-      wallets: runtime.wallets,
-      worldExternalData: runtime.worldExternalData,
-      nativeEconomy: runtime.nativeEconomy,
       actionCenterDeps: actionCenterDepsFrom(runtime),
       principal,
       now: new Date().toISOString(),
+      ...(runtime.wallets !== undefined ? { wallets: runtime.wallets } : {}),
+      ...(runtime.worldExternalData !== undefined ? { worldExternalData: runtime.worldExternalData } : {}),
+      ...(runtime.nativeEconomy !== undefined ? { nativeEconomy: runtime.nativeEconomy } : {}),
     });
     if (runtime.access) {
       const actor = Object.freeze({
@@ -394,7 +405,7 @@ function dispatchAuthenticated(
               actionRequired: summary.actionRequired,
             }),
           }),
-        });
+        }) as unknown as typeof home;
       }
     }
     const sandbox = buildSandboxModeMetadata(principal);
@@ -409,7 +420,7 @@ function dispatchAuthenticated(
       principal,
       capabilities,
       sandbox,
-      providerDown: runtime.providerDown,
+      ...(runtime.providerDown !== undefined ? { providerDown: runtime.providerDown } : {}),
     });
     return json(200, Object.freeze({ ...bootstrap, sandbox, applicationState }), headers);
   }
@@ -423,7 +434,7 @@ function dispatchAuthenticated(
         principal,
         capabilities,
         sandbox,
-        providerDown: runtime.providerDown,
+        ...(runtime.providerDown !== undefined ? { providerDown: runtime.providerDown } : {}),
       }),
       headers,
     );
@@ -587,13 +598,40 @@ function dispatchAuthenticated(
     return environmental;
   }
 
-  const opportunity = dispatchOpportunity(request, requestId, headers, runtime.opportunity);
+  const opportunity = dispatchOpportunity(
+    { method: request.method, path: request.path, query: request.query },
+    requestId,
+    headers,
+    runtime.opportunity,
+  );
   if (opportunity) {
-    return opportunity;
+    return json(opportunity.status, opportunity.body, { ...headers, ...opportunity.headers });
   }
 
   if (runtime.subscriptions && request.path.startsWith('/api/v1/subscriptions')) {
-    return dispatchSubscriptions(request, requestId, headers, runtime.subscriptions, principal);
+    return dispatchSubscriptions(
+      { method: request.method, url: `http://localhost${request.path}`, body: request.body },
+      requestId,
+      headers,
+      runtime.subscriptions,
+      principal,
+    ).then(async (response) => {
+      if (!response) {
+        return json(
+          404,
+          bffError({
+            errorCode: 'NOT_FOUND',
+            category: 'NOT_FOUND',
+            message: 'subscription resource not found',
+            retryable: false,
+            requestId,
+          }),
+          headers,
+        );
+      }
+      const body = await response.json();
+      return json(response.status, body, headers);
+    });
   }
   if (runtime.hin && isRightsMarketplace(runtime.hin)) {
     const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);
@@ -1574,9 +1612,9 @@ async function handleTravelOverviewRoute(
   const body = await travel.overview({
     originLat: q.originLat != null ? Number(q.originLat) : null,
     originLon: q.originLon != null ? Number(q.originLon) : null,
-    destLat: q.destLat != null ? Number(q.destLat) : undefined,
-    destLon: q.destLon != null ? Number(q.destLon) : undefined,
-    destinationLabel: q.destinationLabel,
+    ...(q.destLat != null ? { destLat: Number(q.destLat) } : {}),
+    ...(q.destLon != null ? { destLon: Number(q.destLon) } : {}),
+    ...(q.destinationLabel !== undefined ? { destinationLabel: q.destinationLabel } : {}),
   });
   return json(200, body, headers);
 }

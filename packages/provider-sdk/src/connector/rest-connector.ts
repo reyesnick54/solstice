@@ -64,9 +64,9 @@ export class RestGovernedConnector implements GovernedConnector {
   readonly #fixturesDir: string;
   readonly #fixtureMap: ReadonlyMap<string, string>;
   readonly #reliability: ProviderReliabilityControlPlane;
-  readonly #secrets?: SecretProvider;
+  readonly #secrets: SecretProvider | undefined;
   readonly #authStrategy: ProviderAuthStrategy;
-  readonly #fetchFn?: FetchLike;
+  readonly #fetchFn: FetchLike | undefined;
   readonly #simulationOnly: boolean;
   readonly #lineage: ProviderLineageRecord | null;
   readonly #pathForOperation?: RestConnectorOptions['pathForOperation'];
@@ -236,7 +236,7 @@ export class RestGovernedConnector implements GovernedConnector {
         const response = await transport.request<unknown>({
           providerId: this.definition.providerId,
           requestId: context.requestId,
-          method: request.method === 'GET' || request.method === 'HEAD' ? request.method : 'GET',
+          method: request.method === 'GET' || request.method === 'HEAD' ? 'GET' : 'GET',
           path: request.path,
           headers: request.headers ?? { Accept: 'application/json' },
         });
@@ -315,13 +315,13 @@ export class RestGovernedConnector implements GovernedConnector {
     });
   }
 
-  #fail(
+  #fail<T>(
     code: string,
     message: string,
     context: ConnectorRequestContext,
     started: number,
     attemptCount: number,
-  ): ConnectorFetchResult {
+  ): ConnectorFetchResult<T> {
     return Object.freeze({
       ok: false,
       code,
@@ -332,13 +332,13 @@ export class RestGovernedConnector implements GovernedConnector {
     });
   }
 
-  #failAndUpdateHealth(
+  #failAndUpdateHealth<T>(
     code: string,
     message: string,
     context: ConnectorRequestContext,
     started: number,
     attemptCount: number,
-  ): ConnectorFetchResult {
+  ): ConnectorFetchResult<T> {
     this.#consecutiveFailures += 1;
     const state = mapTransportErrorToHealth(code);
     this.#health = createOperationalHealth({
@@ -351,7 +351,7 @@ export class RestGovernedConnector implements GovernedConnector {
       lastSuccessAt: this.#lastSuccessAt,
       lastErrorCode: code,
     });
-    return this.#fail(code, message, context, started, attemptCount);
+    return this.#fail<T>(code, message, context, started, attemptCount);
   }
 
   #recordSuccess(nowUtc: string, latencyMs: number): void {
@@ -408,7 +408,7 @@ export function createConnectorRequestContext(input: {
       providerId: input.providerId,
       operation: input.operation,
       correlationId,
-      paramsDigest,
+      ...(paramsDigest !== undefined ? { paramsDigest } : {}),
     }),
   });
 }

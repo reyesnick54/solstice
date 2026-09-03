@@ -67,7 +67,7 @@ export class ExternalDataTrustEngine {
     const reasons: TrustReason[] = [];
 
     if (input.contexts.length === 0) {
-      return this.#emptyResult(input.policyProfile, policy.version, inputIds, generatedAt, [
+      return this.#emptyResult<T>(input.policyProfile, policy.version, inputIds, generatedAt, [
         trustReason('NO_ELIGIBLE_OBSERVATIONS'),
         trustReason('INSUFFICIENT_SOURCES'),
       ]);
@@ -86,7 +86,7 @@ export class ExternalDataTrustEngine {
     const unitCheck = checkUnitCompatibility(semanticFilter.eligible, input.unit ?? null);
     if (!unitCheck.ok) {
       reasons.push(trustReason('UNIT_MISMATCH'));
-      return this.#buildResult({
+      return this.#buildResult<T>({
         policyProfile: input.policyProfile,
         policyVersion: policy.version,
         status: 'UNAVAILABLE',
@@ -111,7 +111,7 @@ export class ExternalDataTrustEngine {
     const timeCheck = checkTimeAlignment(semanticFilter.eligible, policy.maxTimeSkewMs);
     if (!timeCheck.ok) {
       reasons.push(trustReason('TIME_MISMATCH'));
-      return this.#buildResult({
+      return this.#buildResult<T>({
         policyProfile: input.policyProfile,
         policyVersion: policy.version,
         status: 'CONFLICTED',
@@ -152,7 +152,7 @@ export class ExternalDataTrustEngine {
       if (onlyStale) {
         reasons.push(trustReason('ALL_SOURCES_STALE'));
       }
-      return this.#buildResult({
+      return this.#buildResult<T>({
         policyProfile: input.policyProfile,
         policyVersion: policy.version,
         status: onlyStale ? 'STALE' : 'INSUFFICIENT_DATA',
@@ -184,7 +184,7 @@ export class ExternalDataTrustEngine {
     if (onlyExpired) {
       reasons.push(trustReason('SOURCE_EXPIRED'));
       reasons.push(trustReason('ALL_SOURCES_STALE'));
-      return this.#buildResult({
+      return this.#buildResult<T>({
         policyProfile: input.policyProfile,
         policyVersion: policy.version,
         status: 'INSUFFICIENT_DATA',
@@ -208,7 +208,7 @@ export class ExternalDataTrustEngine {
 
     if (onlyStaleEligible && !policy.allowStaleCanonical) {
       reasons.push(trustReason('ALL_SOURCES_STALE'));
-      return this.#buildResult({
+      return this.#buildResult<T>({
         policyProfile: input.policyProfile,
         policyVersion: policy.version,
         status: 'STALE',
@@ -231,19 +231,19 @@ export class ExternalDataTrustEngine {
     }
 
     if (input.policyProfile === 'CHAIN_STATE') {
-      return this.#assessChainState(input, eligible, allExcluded, reasons, generatedAt);
+      return this.#assessChainState<T>(input, eligible as readonly TrustObservationContext<T>[], allExcluded, reasons, generatedAt);
     }
 
     if (input.policyProfile === 'COMPLIANCE_EVIDENCE') {
-      return this.#assessComplianceEvidence(input, eligible, allExcluded, reasons, generatedAt);
+      return this.#assessComplianceEvidence<T>(input, eligible as readonly TrustObservationContext<T>[], allExcluded, reasons, generatedAt);
     }
 
     if (input.policyProfile === 'RESEARCH') {
-      return this.#assessResearch(input, eligible, allExcluded, reasons, generatedAt);
+      return this.#assessResearch<T>(input, eligible as readonly TrustObservationContext<T>[], allExcluded, reasons, generatedAt);
     }
 
     if (input.policyProfile === 'WEATHER' && policy.selectionMethod === 'RETAIN_ALL') {
-      return this.#assessRetainAll(input, eligible, allExcluded, reasons, generatedAt, freshness);
+      return this.#assessRetainAll<T>(input, eligible as readonly TrustObservationContext<T>[], allExcluded, reasons, generatedAt, freshness);
     }
 
     const outlierResults = policy.numericConsensus
@@ -298,9 +298,9 @@ export class ExternalDataTrustEngine {
           reasons.push(trustReason('AUTHORITY_OVERRIDE', [official.observation.observationId]));
           reasons.push(trustReason('OFFICIAL_SOURCE_SELECTED', [official.observation.observationId]));
           const canonicalValue = input.mapCanonicalValue
-            ? input.mapCanonicalValue([official], officialVal)
+            ? input.mapCanonicalValue([official] as readonly TrustObservationContext<T>[], officialVal)
             : (official.observation.data as T);
-          return this.#buildResult({
+          return this.#buildResult<T>({
             policyProfile: input.policyProfile,
             policyVersion: policy.version,
             status: 'TRUSTED',
@@ -323,7 +323,7 @@ export class ExternalDataTrustEngine {
         }
       }
       reasons.push(trustReason('PROVIDER_CONFLICT', consensusEligible.map((c) => c.observation.observationId)));
-      return this.#buildResult({
+      return this.#buildResult<T>({
         policyProfile: input.policyProfile,
         policyVersion: policy.version,
         status: 'CONFLICTED',
@@ -403,7 +403,7 @@ export class ExternalDataTrustEngine {
     }
 
     const canonicalValue = input.mapCanonicalValue
-      ? input.mapCanonicalValue(eligible, consensusResult.value)
+      ? input.mapCanonicalValue(eligible as readonly TrustObservationContext<T>[], consensusResult.value)
       : consensusResult.value !== null
         ? (eligible.find((c) => c.observation.observationId === consensusResult.selectedObservationIds[0])?.observation.data as T)
         : null;
@@ -418,7 +418,7 @@ export class ExternalDataTrustEngine {
         ? 'SUSPECTED_OUTLIER'
         : 'NONE';
 
-    return this.#buildResult({
+    return this.#buildResult<T>({
       policyProfile: input.policyProfile,
       policyVersion: policy.version,
       status,
@@ -531,7 +531,7 @@ export class ExternalDataTrustEngine {
     if (uniqueHashes.size > 1) {
       reasons.push(trustReason('CHAIN_STATE_CONFLICT', eligible.map((c) => c.observation.observationId)));
       reasons.push(trustReason('PROVIDER_CONFLICT', eligible.map((c) => c.observation.observationId)));
-      return this.#buildResult({
+      return this.#buildResult<T>({
         policyProfile: 'CHAIN_STATE',
         policyVersion: policy.version,
         status: 'CONFLICTED',
@@ -553,7 +553,7 @@ export class ExternalDataTrustEngine {
       });
     }
     const selected = eligible[0];
-    return this.#buildResult({
+    return this.#buildResult<T>({
       policyProfile: 'CHAIN_STATE',
       policyVersion: policy.version,
       status: eligible.length >= 2 ? 'TRUSTED' : 'SUPPORTED',
@@ -585,7 +585,7 @@ export class ExternalDataTrustEngine {
     const policy = getTrustPolicy('COMPLIANCE_EVIDENCE');
     reasons.push(trustReason('COMPLIANCE_EVIDENCE_INDEPENDENT'));
     const inputIds = Object.freeze(input.contexts.map((c) => c.observation.observationId));
-    return this.#buildResult({
+    return this.#buildResult<T>({
       policyProfile: 'COMPLIANCE_EVIDENCE',
       policyVersion: policy.version,
       status: 'SUPPORTED',
@@ -617,7 +617,7 @@ export class ExternalDataTrustEngine {
     const policy = getTrustPolicy('RESEARCH');
     reasons.push(trustReason('RESEARCH_QUALITY_METADATA_ONLY'));
     const inputIds = Object.freeze(input.contexts.map((c) => c.observation.observationId));
-    return this.#buildResult({
+    return this.#buildResult<T>({
       policyProfile: 'RESEARCH',
       policyVersion: policy.version,
       status: 'SUPPORTED',
@@ -654,7 +654,7 @@ export class ExternalDataTrustEngine {
     if (corroborationCount >= 2) {
       reasons.push(trustReason('MULTI_SOURCE_CORROBORATION', eligible.map((c) => c.observation.observationId)));
     }
-    return this.#buildResult({
+    return this.#buildResult<T>({
       policyProfile: input.policyProfile,
       policyVersion: policy.version,
       status: corroborationCount >= 2 ? 'SUPPORTED' : 'LOW_CONFIDENCE',
@@ -676,13 +676,13 @@ export class ExternalDataTrustEngine {
     });
   }
 
-  #emptyResult(
+  #emptyResult<T = unknown>(
     profile: TrustPolicyProfile,
     version: string,
     inputIds: readonly string[],
     generatedAt: string,
     reasons: readonly TrustReason[],
-  ): CanonicalTrustResult<unknown> {
+  ): CanonicalTrustResult<T> {
     return Object.freeze({
       canonicalValue: null,
       canonicalUnit: null,
