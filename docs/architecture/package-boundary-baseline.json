@@ -48008,7 +48008,7 @@
     },
     {
       "file": "services/api/src/product-integration/durable-human-economic-state.ts",
-      "line": 32,
+      "line": 34,
       "rule": "service-deep-import",
       "message": "'services/api/src/product-integration/durable-human-economic-state.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/economics/proof-bound/claims.ts'",
       "sourcePackage": "api",

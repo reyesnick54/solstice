@@ -181,12 +181,15 @@ describePersistence('Human economic state idempotency (Prompt 5)', () => {
     const env = await preparePersistence();
     const { pool } = await createService(env);
 
-    await assert.rejects(async () => {
-      await withHumanEconomicReservation(pool, async (client) => {
-        await reserveMonetizationKey(client, 'bypass-key', 'claim-a');
-        await reserveMonetizationKey(client, 'bypass-key', 'claim-b');
-      });
+    const duplicate = await withHumanEconomicReservation(pool, async (client) => {
+      const first = await reserveMonetizationKey(client, 'bypass-key', 'claim-a');
+      assert.equal(first.ok, true);
+      return reserveMonetizationKey(client, 'bypass-key', 'claim-b');
     });
+    assert.equal(duplicate.ok, false);
+    if (!duplicate.ok) {
+      assert.equal(duplicate.code, 'DUPLICATE_MONETIZATION_KEY');
+    }
 
     const client = new Client({
       host: env.host,

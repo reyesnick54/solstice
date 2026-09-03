@@ -23,13 +23,13 @@ import type {
   RecordContributionInput,
   VerifyContributionInput,
 } from '../../../../packages/human-economic-contribution/src/types.ts';
-import type { CanonicalEconomicClaim } from '../../../../packages/sunrey-chain/src/economics/proof-bound/types.ts';
 import {
   deserializeClaimRegistry,
   emptyClaimRegistry,
   getClaim,
   markClaimMonetized,
   registerEconomicClaim,
+  serializeClaimRegistry,
   type ClaimRegistry,
 } from '../../../../packages/sunrey-chain/src/economics/proof-bound/claims.ts';
 import type { HumanEconomicPersistencePort } from '../../../accounts/src/human-economic-persistence.ts';
@@ -45,46 +45,20 @@ export type DurableHumanEconomicStateOptions = {
   readonly requireDurable?: boolean;
 };
 
-type SerializedClaimRegistry = {
-  readonly claims: ReadonlyArray<readonly [string, CanonicalEconomicClaim]>;
-  readonly fingerprints: ReadonlyArray<readonly [string, string]>;
-  readonly monetizedClaimIds: ReadonlyArray<string>;
-};
-
 export type DurableHumanEconomicSnapshot = {
   readonly registry: HumanContributionRegistrySnapshot;
   readonly resolution: HumanContributionResolutionSnapshot;
-  readonly proofBoundClaims: SerializedClaimRegistry;
+  readonly proofBoundClaims: unknown;
 };
 
-function serializeProofBoundClaims(registry: ClaimRegistry): SerializedClaimRegistry {
-  return Object.freeze({
-    claims: [...registry.claims.entries()],
-    fingerprints: [...registry.fingerprints.entries()],
-    monetizedClaimIds: [...registry.monetizedClaimIds],
-  });
-}
-
-function deserializeProofBoundClaims(raw: unknown): ClaimRegistry {
+function proofBoundClaimsFromPersistence(raw: unknown): ClaimRegistry {
+  if (raw == null) {
+    return emptyClaimRegistry();
+  }
   if (typeof raw === 'string') {
     return deserializeClaimRegistry(raw);
   }
-  if (raw && typeof raw === 'object') {
-    const candidate = raw as Partial<SerializedClaimRegistry> & ClaimRegistry;
-    if (candidate.claims instanceof Map) {
-      return {
-        claims: new Map(candidate.claims),
-        fingerprints: new Map(candidate.fingerprints),
-        monetizedClaimIds: new Set(candidate.monetizedClaimIds),
-      };
-    }
-    return {
-      claims: new Map(Array.isArray(candidate.claims) ? candidate.claims : []),
-      fingerprints: new Map(Array.isArray(candidate.fingerprints) ? candidate.fingerprints : []),
-      monetizedClaimIds: new Set(Array.isArray(candidate.monetizedClaimIds) ? candidate.monetizedClaimIds : []),
-    };
-  }
-  return emptyClaimRegistry();
+  return deserializeClaimRegistry(JSON.stringify(raw));
 }
 
 /**
@@ -144,7 +118,7 @@ export class DurableHumanEconomicStateService {
   }
 
   private hydrateProofBoundClaims(raw: unknown): void {
-    const claims = deserializeProofBoundClaims(raw);
+    const claims = proofBoundClaimsFromPersistence(raw);
     for (const [, claim] of claims.claims) {
       registerEconomicClaim(this.proofBoundClaims, {
         economicClaimId: claim.economicClaimId,
@@ -165,7 +139,7 @@ export class DurableHumanEconomicStateService {
     return Object.freeze({
       registry: this.registry.snapshot(),
       resolution: this.resolution.snapshot(),
-      proofBoundClaims: serializeProofBoundClaims(this.proofBoundClaims),
+      proofBoundClaims: JSON.parse(serializeClaimRegistry(this.proofBoundClaims)),
     });
   }
 
