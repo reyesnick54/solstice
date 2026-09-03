@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-03T11:10:34.181966+00:00",
+  "generatedAt": "2026-09-03T12:52:14.969359+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -538,14 +538,14 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 4688,
+      "packageDeepImport": 4687,
       "serviceDeepImport": 663,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 4688,
+      "relativeCrossPackage": 4687,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5351
+      "total": 5350
     }
   },
   "violations": [
@@ -569,7 +569,7 @@
     },
     {
       "file": "packages/access-economy/src/allocation-engine/engine.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/allocation-engine/engine.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -605,7 +605,7 @@
     },
     {
       "file": "packages/access-economy/src/chaos/access-chaos.test.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/chaos/access-chaos.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -614,7 +614,7 @@
     },
     {
       "file": "packages/access-economy/src/chaos/access-chaos.test.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/chaos/access-chaos.test.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/ssrf.ts'",
       "sourcePackage": "access-economy",
@@ -623,7 +623,7 @@
     },
     {
       "file": "packages/access-economy/src/chaos/access-chaos.test.ts",
-      "line": 19,
+      "line": 20,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/chaos/access-chaos.test.ts' deep-imports 'human-access-economy' internals via '../../../human-access-economy/src/access.ts'",
       "sourcePackage": "access-economy",
@@ -650,7 +650,7 @@
     },
     {
       "file": "packages/access-economy/src/checkout/access-34-coverage-engine.test.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/checkout/access-34-coverage-engine.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -659,7 +659,7 @@
     },
     {
       "file": "packages/access-economy/src/checkout/coverage-engine.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/checkout/coverage-engine.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -668,7 +668,7 @@
     },
     {
       "file": "packages/access-economy/src/checkout/coverage-policy.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/checkout/coverage-policy.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -686,7 +686,7 @@
     },
     {
       "file": "packages/access-economy/src/domain/fixtures.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/domain/fixtures.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -794,7 +794,7 @@
     },
     {
       "file": "packages/access-economy/src/funding-solvency/entitlement-ledger.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/funding-solvency/entitlement-ledger.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -812,7 +812,7 @@
     },
     {
       "file": "packages/access-economy/src/funding-solvency/funding-ledger.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/funding-solvency/funding-ledger.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -821,7 +821,7 @@
     },
     {
       "file": "packages/access-economy/src/funding-solvency/funding-pool.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/funding-solvency/funding-pool.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -830,7 +830,7 @@
     },
     {
       "file": "packages/access-economy/src/funding-solvency/funding-reservation.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/funding-solvency/funding-reservation.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -839,7 +839,7 @@
     },
     {
       "file": "packages/access-economy/src/funding-solvency/solvency-service.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/funding-solvency/solvency-service.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -857,7 +857,7 @@
     },
     {
       "file": "packages/access-economy/src/funding-solvency/wave1.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/funding-solvency/wave1.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -875,7 +875,7 @@
     },
     {
       "file": "packages/access-economy/src/hin-access/engine.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/hin-access/engine.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -884,7 +884,7 @@
     },
     {
       "file": "packages/access-economy/src/hin-access/engine.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/hin-access/engine.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
       "sourcePackage": "access-economy",
@@ -956,7 +956,7 @@
     },
     {
       "file": "packages/access-economy/src/providers/commercial/activation.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/providers/commercial/activation.ts' deep-imports 'config' internals via '../../../../config/src/flags.ts'",
       "sourcePackage": "access-economy",
@@ -1001,7 +1001,7 @@
     },
     {
       "file": "packages/access-economy/src/regulatory-controls/access-40.test.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/regulatory-controls/access-40.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -1046,7 +1046,7 @@
     },
     {
       "file": "packages/access-economy/src/regulatory-controls/gl-mapping.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/regulatory-controls/gl-mapping.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -1064,7 +1064,7 @@
     },
     {
       "file": "packages/access-economy/src/regulatory-controls/treasury-exposure.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/regulatory-controls/treasury-exposure.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -1100,7 +1100,7 @@
     },
     {
       "file": "packages/access-economy/src/settlement/access-35.test.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/settlement/access-35.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -1127,7 +1127,7 @@
     },
     {
       "file": "packages/access-economy/src/settlement/orchestrator.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/settlement/orchestrator.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -1163,7 +1163,7 @@
     },
     {
       "file": "packages/access-economy/src/settlement/restricted-virtual-card-rail.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/settlement/restricted-virtual-card-rail.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -1172,7 +1172,7 @@
     },
     {
       "file": "packages/access-economy/src/settlement/types.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/settlement/types.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -1190,7 +1190,7 @@
     },
     {
       "file": "packages/access-economy/src/transaction/coverage-engine.ts",
-      "line": 16,
+      "line": 17,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/transaction/coverage-engine.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -1199,7 +1199,7 @@
     },
     {
       "file": "packages/access-economy/src/transaction/orchestrator.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/transaction/orchestrator.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -1217,7 +1217,7 @@
     },
     {
       "file": "packages/access-economy/src/transaction/reconciliation.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/access-economy/src/transaction/reconciliation.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "access-economy",
@@ -1289,7 +1289,7 @@
     },
     {
       "file": "packages/access-fabric/src/authorize.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/authorize.ts' deep-imports 'domain' internals via '../../domain/src/result.ts'",
       "sourcePackage": "access-fabric",
@@ -1298,7 +1298,7 @@
     },
     {
       "file": "packages/access-fabric/src/authorize.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/authorize.ts' deep-imports 'config' internals via '../../config/src/clock.ts'",
       "sourcePackage": "access-fabric",
@@ -1307,7 +1307,7 @@
     },
     {
       "file": "packages/access-fabric/src/authorize.ts",
-      "line": 3,
+      "line": 4,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/authorize.ts' deep-imports 'domain' internals via '../../domain/src/customer.ts'",
       "sourcePackage": "access-fabric",
@@ -1316,7 +1316,7 @@
     },
     {
       "file": "packages/access-fabric/src/authorize.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/authorize.ts' deep-imports 'domain' internals via '../../domain/src/jurisdiction.ts'",
       "sourcePackage": "access-fabric",
@@ -1325,7 +1325,7 @@
     },
     {
       "file": "packages/access-fabric/src/authorize.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/authorize.ts' deep-imports 'domain' internals via '../../domain/src/time.ts'",
       "sourcePackage": "access-fabric",
@@ -1334,7 +1334,7 @@
     },
     {
       "file": "packages/access-fabric/src/authorize.ts",
-      "line": 6,
+      "line": 7,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/authorize.ts' deep-imports 'evidence' internals via '../../evidence/src/vault.ts'",
       "sourcePackage": "access-fabric",
@@ -1343,7 +1343,7 @@
     },
     {
       "file": "packages/access-fabric/src/authorize.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/authorize.ts' deep-imports 'events' internals via '../../events/src/events.ts'",
       "sourcePackage": "access-fabric",
@@ -1352,7 +1352,7 @@
     },
     {
       "file": "packages/access-fabric/src/authorize.ts",
-      "line": 11,
+      "line": 12,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/authorize.ts' deep-imports 'identity' internals via '../../identity/src/index.ts'",
       "sourcePackage": "access-fabric",
@@ -1361,7 +1361,7 @@
     },
     {
       "file": "packages/access-fabric/src/authorize.ts",
-      "line": 12,
+      "line": 13,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/authorize.ts' deep-imports 'kernel' internals via '../../kernel/src/kernel.ts'",
       "sourcePackage": "access-fabric",
@@ -1370,7 +1370,7 @@
     },
     {
       "file": "packages/access-fabric/src/authorize.ts",
-      "line": 13,
+      "line": 14,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/authorize.ts' deep-imports 'kernel' internals via '../../kernel/src/proofs.ts'",
       "sourcePackage": "access-fabric",
@@ -1379,7 +1379,7 @@
     },
     {
       "file": "packages/access-fabric/src/authorize.ts",
-      "line": 14,
+      "line": 15,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/authorize.ts' deep-imports 'permissions' internals via '../../permissions/src/action-intent.ts'",
       "sourcePackage": "access-fabric",
@@ -1388,7 +1388,7 @@
     },
     {
       "file": "packages/access-fabric/src/authorize.ts",
-      "line": 15,
+      "line": 16,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/authorize.ts' deep-imports 'permissions' internals via '../../permissions/src/decision.ts'",
       "sourcePackage": "access-fabric",
@@ -1397,7 +1397,7 @@
     },
     {
       "file": "packages/access-fabric/src/authorize.ts",
-      "line": 16,
+      "line": 17,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/authorize.ts' deep-imports 'permissions' internals via '../../permissions/src/execution-authority.ts'",
       "sourcePackage": "access-fabric",
@@ -1406,7 +1406,7 @@
     },
     {
       "file": "packages/access-fabric/src/authorize.ts",
-      "line": 17,
+      "line": 18,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/authorize.ts' deep-imports 'permissions' internals via '../../permissions/src/structural.ts'",
       "sourcePackage": "access-fabric",
@@ -1415,7 +1415,7 @@
     },
     {
       "file": "packages/access-fabric/src/authorize.ts",
-      "line": 21,
+      "line": 22,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/authorize.ts' deep-imports 'sunrey-coin' internals via '../../sunrey-coin/src/simulation-catalog.ts'",
       "sourcePackage": "access-fabric",
@@ -1424,7 +1424,7 @@
     },
     {
       "file": "packages/access-fabric/src/capacity-reservation.test.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/capacity-reservation.test.ts' deep-imports 'config' internals via '../../config/src/clock.ts'",
       "sourcePackage": "access-fabric",
@@ -1433,7 +1433,7 @@
     },
     {
       "file": "packages/access-fabric/src/capacity-reservation.test.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/capacity-reservation.test.ts' deep-imports 'domain' internals via '../../domain/src/jurisdiction.ts'",
       "sourcePackage": "access-fabric",
@@ -1442,7 +1442,7 @@
     },
     {
       "file": "packages/access-fabric/src/capacity-reservation.test.ts",
-      "line": 6,
+      "line": 7,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/capacity-reservation.test.ts' deep-imports 'domain' internals via '../../domain/src/time.ts'",
       "sourcePackage": "access-fabric",
@@ -1451,7 +1451,7 @@
     },
     {
       "file": "packages/access-fabric/src/capacity-reservation.test.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/capacity-reservation.test.ts' deep-imports 'evidence' internals via '../../evidence/src/vault.ts'",
       "sourcePackage": "access-fabric",
@@ -1460,7 +1460,7 @@
     },
     {
       "file": "packages/access-fabric/src/capacity-reservation.test.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/capacity-reservation.test.ts' deep-imports 'events' internals via '../../events/src/events.ts'",
       "sourcePackage": "access-fabric",
@@ -1469,7 +1469,7 @@
     },
     {
       "file": "packages/access-fabric/src/capacity-reservation.test.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/capacity-reservation.test.ts' deep-imports 'identity' internals via '../../identity/src/simulation.ts'",
       "sourcePackage": "access-fabric",
@@ -1478,7 +1478,7 @@
     },
     {
       "file": "packages/access-fabric/src/capacity-reservation.test.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/capacity-reservation.test.ts' deep-imports 'kernel' internals via '../../kernel/src/kernel.ts'",
       "sourcePackage": "access-fabric",
@@ -1487,7 +1487,7 @@
     },
     {
       "file": "packages/access-fabric/src/capacity-reservation.test.ts",
-      "line": 11,
+      "line": 12,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/capacity-reservation.test.ts' deep-imports 'permissions' internals via '../../permissions/src/execution-authority.ts'",
       "sourcePackage": "access-fabric",
@@ -1496,7 +1496,7 @@
     },
     {
       "file": "packages/access-fabric/src/capacity-reservation.test.ts",
-      "line": 12,
+      "line": 13,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/capacity-reservation.test.ts' deep-imports 'security' internals via '../../security/src/simulation.ts'",
       "sourcePackage": "access-fabric",
@@ -1514,7 +1514,7 @@
     },
     {
       "file": "packages/access-fabric/src/demo.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/demo.ts' deep-imports 'domain' internals via '../../domain/src/time.ts'",
       "sourcePackage": "access-fabric",
@@ -1523,7 +1523,7 @@
     },
     {
       "file": "packages/access-fabric/src/engine.ts",
-      "line": 3,
+      "line": 4,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/engine.ts' deep-imports 'config' internals via '../../config/src/clock.ts'",
       "sourcePackage": "access-fabric",
@@ -1532,7 +1532,7 @@
     },
     {
       "file": "packages/access-fabric/src/engine.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/engine.ts' deep-imports 'domain' internals via '../../domain/src/result.ts'",
       "sourcePackage": "access-fabric",
@@ -1541,7 +1541,7 @@
     },
     {
       "file": "packages/access-fabric/src/engine.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/engine.ts' deep-imports 'evidence' internals via '../../evidence/src/vault.ts'",
       "sourcePackage": "access-fabric",
@@ -1550,7 +1550,7 @@
     },
     {
       "file": "packages/access-fabric/src/engine.ts",
-      "line": 6,
+      "line": 7,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/engine.ts' deep-imports 'events' internals via '../../events/src/events.ts'",
       "sourcePackage": "access-fabric",
@@ -1559,7 +1559,7 @@
     },
     {
       "file": "packages/access-fabric/src/engine.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/engine.ts' deep-imports 'identity' internals via '../../identity/src/index.ts'",
       "sourcePackage": "access-fabric",
@@ -1568,7 +1568,7 @@
     },
     {
       "file": "packages/access-fabric/src/engine.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/engine.ts' deep-imports 'kernel' internals via '../../kernel/src/kernel.ts'",
       "sourcePackage": "access-fabric",
@@ -1577,7 +1577,7 @@
     },
     {
       "file": "packages/access-fabric/src/engine.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/engine.ts' deep-imports 'permissions' internals via '../../permissions/src/action-intent.ts'",
       "sourcePackage": "access-fabric",
@@ -1586,7 +1586,7 @@
     },
     {
       "file": "packages/access-fabric/src/engine.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/engine.ts' deep-imports 'permissions' internals via '../../permissions/src/action-types.ts'",
       "sourcePackage": "access-fabric",
@@ -1595,7 +1595,7 @@
     },
     {
       "file": "packages/access-fabric/src/engine.ts",
-      "line": 11,
+      "line": 12,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/engine.ts' deep-imports 'permissions' internals via '../../permissions/src/decision.ts'",
       "sourcePackage": "access-fabric",
@@ -1604,7 +1604,7 @@
     },
     {
       "file": "packages/access-fabric/src/engine.ts",
-      "line": 12,
+      "line": 13,
       "rule": "package-deep-import",
       "message": "'packages/access-fabric/src/engine.ts' deep-imports 'permissions' internals via '../../permissions/src/execution-authority.ts'",
       "sourcePackage": "access-fabric",
@@ -1703,7 +1703,7 @@
     },
     {
       "file": "packages/agent/src/access-fabric/validation.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/agent/src/access-fabric/validation.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
       "sourcePackage": "agent",
@@ -1712,7 +1712,7 @@
     },
     {
       "file": "packages/agent/src/access-fabric/validation.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/agent/src/access-fabric/validation.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "agent",
@@ -1739,7 +1739,7 @@
     },
     {
       "file": "packages/agent/src/access-intent.ts",
-      "line": 3,
+      "line": 4,
       "rule": "package-deep-import",
       "message": "'packages/agent/src/access-intent.ts' deep-imports 'domain' internals via '../../domain/src/result.ts'",
       "sourcePackage": "agent",
@@ -1748,7 +1748,7 @@
     },
     {
       "file": "packages/agent/src/access-intent.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/agent/src/access-intent.ts' deep-imports 'domain' internals via '../../domain/src/time.ts'",
       "sourcePackage": "agent",
@@ -2585,7 +2585,7 @@
     },
     {
       "file": "packages/ai-runtime/src/certification/harness.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/ai-runtime/src/certification/harness.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
       "sourcePackage": "ai-runtime",
@@ -2594,7 +2594,7 @@
     },
     {
       "file": "packages/ai-runtime/src/certification/harness.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/ai-runtime/src/certification/harness.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
       "sourcePackage": "ai-runtime",
@@ -2603,7 +2603,7 @@
     },
     {
       "file": "packages/ai-runtime/src/certification/harness.ts",
-      "line": 3,
+      "line": 4,
       "rule": "package-deep-import",
       "message": "'packages/ai-runtime/src/certification/harness.ts' deep-imports 'security' internals via '../../../security/src/secrets.ts'",
       "sourcePackage": "ai-runtime",
@@ -2612,7 +2612,7 @@
     },
     {
       "file": "packages/ai-runtime/src/certification/harness.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/ai-runtime/src/certification/harness.ts' deep-imports 'security' internals via '../../../security/src/secrets.ts'",
       "sourcePackage": "ai-runtime",
@@ -2621,7 +2621,7 @@
     },
     {
       "file": "packages/ai-runtime/src/certification/safety.test.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/ai-runtime/src/certification/safety.test.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
       "sourcePackage": "ai-runtime",
@@ -2630,7 +2630,7 @@
     },
     {
       "file": "packages/ai-runtime/src/certification/safety.test.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/ai-runtime/src/certification/safety.test.ts' deep-imports 'domain' internals via '../../../domain/src/customer.ts'",
       "sourcePackage": "ai-runtime",
@@ -2639,7 +2639,7 @@
     },
     {
       "file": "packages/ai-runtime/src/certification/safety.test.ts",
-      "line": 6,
+      "line": 7,
       "rule": "package-deep-import",
       "message": "'packages/ai-runtime/src/certification/safety.test.ts' deep-imports 'domain' internals via '../../../domain/src/jurisdiction.ts'",
       "sourcePackage": "ai-runtime",
@@ -2648,7 +2648,7 @@
     },
     {
       "file": "packages/ai-runtime/src/certification/safety.test.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/ai-runtime/src/certification/safety.test.ts' deep-imports 'events' internals via '../../../events/src/events.ts'",
       "sourcePackage": "ai-runtime",
@@ -2657,7 +2657,7 @@
     },
     {
       "file": "packages/ai-runtime/src/certification/safety.test.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/ai-runtime/src/certification/safety.test.ts' deep-imports 'identity' internals via '../../../identity/src/simulation.ts'",
       "sourcePackage": "ai-runtime",
@@ -2666,7 +2666,7 @@
     },
     {
       "file": "packages/ai-runtime/src/certification/safety.test.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/ai-runtime/src/certification/safety.test.ts' deep-imports 'model-registry' internals via '../../../model-registry/src/registry.ts'",
       "sourcePackage": "ai-runtime",
@@ -2675,7 +2675,7 @@
     },
     {
       "file": "packages/ai-runtime/src/certification/safety.test.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/ai-runtime/src/certification/safety.test.ts' deep-imports 'security' internals via '../../../security/src/simulation.ts'",
       "sourcePackage": "ai-runtime",
@@ -2684,7 +2684,7 @@
     },
     {
       "file": "packages/ai-runtime/src/certification/safety.test.ts",
-      "line": 11,
+      "line": 12,
       "rule": "package-deep-import",
       "message": "'packages/ai-runtime/src/certification/safety.test.ts' deep-imports 'security' internals via '../../../security/src/secrets.ts'",
       "sourcePackage": "ai-runtime",
@@ -5744,7 +5744,7 @@
     },
     {
       "file": "packages/clean-room/src/privacy/computation-in-place.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/clean-room/src/privacy/computation-in-place.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
       "sourcePackage": "clean-room",
@@ -5753,7 +5753,7 @@
     },
     {
       "file": "packages/clean-room/src/privacy/computation-in-place.ts",
-      "line": 29,
+      "line": 30,
       "rule": "package-deep-import",
       "message": "'packages/clean-room/src/privacy/computation-in-place.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
       "sourcePackage": "clean-room",
@@ -8498,7 +8498,7 @@
     },
     {
       "file": "packages/economic-asset-registry/src/knowledge-graph.test.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/economic-asset-registry/src/knowledge-graph.test.ts' deep-imports 'domain' internals via '../../domain/src/time.ts'",
       "sourcePackage": "economic-asset-registry",
@@ -8525,7 +8525,7 @@
     },
     {
       "file": "packages/economic-asset-registry/src/knowledge-graph/ids.ts",
-      "line": 3,
+      "line": 4,
       "rule": "package-deep-import",
       "message": "'packages/economic-asset-registry/src/knowledge-graph/ids.ts' deep-imports 'domain' internals via '../../../domain/src/brand.ts'",
       "sourcePackage": "economic-asset-registry",
@@ -8534,7 +8534,7 @@
     },
     {
       "file": "packages/economic-asset-registry/src/knowledge-graph/productive-relationships.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/economic-asset-registry/src/knowledge-graph/productive-relationships.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "economic-asset-registry",
@@ -8705,7 +8705,7 @@
     },
     {
       "file": "packages/economic-awareness-fabric/src/normalization/envelope.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/economic-awareness-fabric/src/normalization/envelope.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/observation.ts'",
       "sourcePackage": "economic-awareness-fabric",
@@ -8714,7 +8714,7 @@
     },
     {
       "file": "packages/economic-awareness-fabric/src/normalization/envelope.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/economic-awareness-fabric/src/normalization/envelope.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/types.ts'",
       "sourcePackage": "economic-awareness-fabric",
@@ -8723,7 +8723,7 @@
     },
     {
       "file": "packages/economic-awareness-fabric/src/normalization/envelope.ts",
-      "line": 3,
+      "line": 4,
       "rule": "package-deep-import",
       "message": "'packages/economic-awareness-fabric/src/normalization/envelope.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "economic-awareness-fabric",
@@ -8948,7 +8948,7 @@
     },
     {
       "file": "packages/external-data/src/agent-evidence-catalog.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/agent-evidence-catalog.ts' deep-imports 'provider-sdk' internals via '../../provider-sdk/src/agent-evidence.ts'",
       "sourcePackage": "external-data",
@@ -8957,7 +8957,7 @@
     },
     {
       "file": "packages/external-data/src/certification/opportunity-runner.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/certification/opportunity-runner.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "external-data",
@@ -8993,7 +8993,7 @@
     },
     {
       "file": "packages/external-data/src/product-data-state.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/product-data-state.ts' deep-imports 'config' internals via '../../config/src/data-mode.ts'",
       "sourcePackage": "external-data",
@@ -9002,7 +9002,7 @@
     },
     {
       "file": "packages/external-data/src/product-data-state.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/product-data-state.ts' deep-imports 'provider-sdk' internals via '../../provider-sdk/src/types.ts'",
       "sourcePackage": "external-data",
@@ -9056,7 +9056,7 @@
     },
     {
       "file": "packages/external-data/src/trust-engine/service.ts",
-      "line": 22,
+      "line": 23,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/trust-engine/service.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/trust/index.ts'",
       "sourcePackage": "external-data",
@@ -9065,7 +9065,7 @@
     },
     {
       "file": "packages/external-data/src/trust-engine/service.ts",
-      "line": 23,
+      "line": 24,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/trust-engine/service.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/types.ts'",
       "sourcePackage": "external-data",
@@ -9074,7 +9074,7 @@
     },
     {
       "file": "packages/external-data/src/trust-engine/service.ts",
-      "line": 137,
+      "line": 138,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/trust-engine/service.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/trust/types.ts'",
       "sourcePackage": "external-data",
@@ -9092,7 +9092,7 @@
     },
     {
       "file": "packages/external-data/src/wave4/adapters.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave4/adapters.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/index.ts'",
       "sourcePackage": "external-data",
@@ -9101,7 +9101,7 @@
     },
     {
       "file": "packages/external-data/src/wave4/adapters.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave4/adapters.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "external-data",
@@ -9137,7 +9137,7 @@
     },
     {
       "file": "packages/external-data/src/wave4/provenance/fabric.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave4/provenance/fabric.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "external-data",
@@ -9146,7 +9146,7 @@
     },
     {
       "file": "packages/external-data/src/wave4/provenance/fabric.ts",
-      "line": 18,
+      "line": 19,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave4/provenance/fabric.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/economic-events.ts'",
       "sourcePackage": "external-data",
@@ -9155,7 +9155,7 @@
     },
     {
       "file": "packages/external-data/src/wave4/provenance/fabric.ts",
-      "line": 19,
+      "line": 20,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave4/provenance/fabric.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/types.ts'",
       "sourcePackage": "external-data",
@@ -9164,7 +9164,7 @@
     },
     {
       "file": "packages/external-data/src/wave4/provenance/fabric.ts",
-      "line": 20,
+      "line": 21,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave4/provenance/fabric.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/deduplication.ts'",
       "sourcePackage": "external-data",
@@ -9182,7 +9182,7 @@
     },
     {
       "file": "packages/external-data/src/wave4/services.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave4/services.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/index.ts'",
       "sourcePackage": "external-data",
@@ -9191,7 +9191,7 @@
     },
     {
       "file": "packages/external-data/src/wave5-adapters.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave5-adapters.ts' deep-imports 'sunrey-chain' internals via '../../sunrey-chain/src/provider-runtime/data-delivery/service.ts'",
       "sourcePackage": "external-data",
@@ -9200,7 +9200,7 @@
     },
     {
       "file": "packages/external-data/src/wave5-adapters.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave5-adapters.ts' deep-imports 'provider-sdk' internals via '../../provider-sdk/src/index.ts'",
       "sourcePackage": "external-data",
@@ -9209,7 +9209,7 @@
     },
     {
       "file": "packages/external-data/src/wave5-adapters.ts",
-      "line": 11,
+      "line": 12,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave5-adapters.ts' deep-imports 'domain' internals via '../../domain/src/time.ts'",
       "sourcePackage": "external-data",
@@ -9227,7 +9227,7 @@
     },
     {
       "file": "packages/external-data/src/wave5-services.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave5-services.ts' deep-imports 'provider-sdk' internals via '../../provider-sdk/src/index.ts'",
       "sourcePackage": "external-data",
@@ -9236,7 +9236,7 @@
     },
     {
       "file": "packages/external-data/src/wave6/adapters.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave6/adapters.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/index.ts'",
       "sourcePackage": "external-data",
@@ -9245,7 +9245,7 @@
     },
     {
       "file": "packages/external-data/src/wave6/adapters.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave6/adapters.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "external-data",
@@ -9254,7 +9254,7 @@
     },
     {
       "file": "packages/external-data/src/wave6/adapters/base.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave6/adapters/base.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "external-data",
@@ -9263,7 +9263,7 @@
     },
     {
       "file": "packages/external-data/src/wave6/adapters/base.ts",
-      "line": 11,
+      "line": 12,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave6/adapters/base.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/types.ts'",
       "sourcePackage": "external-data",
@@ -9272,7 +9272,7 @@
     },
     {
       "file": "packages/external-data/src/wave6/adapters/index.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave6/adapters/index.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "external-data",
@@ -9299,7 +9299,7 @@
     },
     {
       "file": "packages/external-data/src/wave6/http/client.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave6/http/client.ts' deep-imports 'config' internals via '../../../../config/src/data-mode.ts'",
       "sourcePackage": "external-data",
@@ -9308,7 +9308,7 @@
     },
     {
       "file": "packages/external-data/src/wave6/http/client.ts",
-      "line": 15,
+      "line": 16,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave6/http/client.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/index.ts'",
       "sourcePackage": "external-data",
@@ -9371,7 +9371,7 @@
     },
     {
       "file": "packages/external-data/src/wave6/service.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave6/service.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "external-data",
@@ -9380,7 +9380,7 @@
     },
     {
       "file": "packages/external-data/src/wave6/services.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave6/services.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/index.ts'",
       "sourcePackage": "external-data",
@@ -9497,7 +9497,7 @@
     },
     {
       "file": "packages/external-data/src/wave7/trust-engine.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave7/trust-engine.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/confidence.ts'",
       "sourcePackage": "external-data",
@@ -9506,7 +9506,7 @@
     },
     {
       "file": "packages/external-data/src/wave7/trust-engine.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/external-data/src/wave7/trust-engine.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/types.ts'",
       "sourcePackage": "external-data",
@@ -9569,7 +9569,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-orchestrator.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-orchestrator.ts' deep-imports 'access-fabric' internals via '../../access-fabric/src/authorize.ts'",
       "sourcePackage": "human-access-economy",
@@ -9578,7 +9578,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-orchestrator.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-orchestrator.ts' deep-imports 'domain' internals via '../../domain/src/jurisdiction.ts'",
       "sourcePackage": "human-access-economy",
@@ -9587,7 +9587,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-orchestrator.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-orchestrator.ts' deep-imports 'permissions' internals via '../../permissions/src/action-intent.ts'",
       "sourcePackage": "human-access-economy",
@@ -9596,7 +9596,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-orchestrator.ts",
-      "line": 11,
+      "line": 12,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-orchestrator.ts' deep-imports 'permissions' internals via '../../permissions/src/action-types.ts'",
       "sourcePackage": "human-access-economy",
@@ -9605,7 +9605,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-orchestrator.ts",
-      "line": 12,
+      "line": 13,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-orchestrator.ts' deep-imports 'sunrey-exchange' internals via '../../sunrey-exchange/src/ids.ts'",
       "sourcePackage": "human-access-economy",
@@ -9614,7 +9614,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-orchestrator.ts",
-      "line": 13,
+      "line": 14,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-orchestrator.ts' deep-imports 'sunrey-exchange' internals via '../../sunrey-exchange/src/access-fabric/offers.ts'",
       "sourcePackage": "human-access-economy",
@@ -9623,7 +9623,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-orchestrator.ts",
-      "line": 14,
+      "line": 15,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-orchestrator.ts' deep-imports 'sunrey-exchange' internals via '../../sunrey-exchange/src/access-fabric/sandbox.ts'",
       "sourcePackage": "human-access-economy",
@@ -9632,7 +9632,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-orchestrator.ts",
-      "line": 18,
+      "line": 19,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-orchestrator.ts' deep-imports 'sunrey-chain' internals via '../../sunrey-chain/src/access/fixtures.ts'",
       "sourcePackage": "human-access-economy",
@@ -9641,7 +9641,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-orchestrator.ts",
-      "line": 22,
+      "line": 23,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-orchestrator.ts' deep-imports 'sunrey-coin' internals via '../../sunrey-coin/src/simulation-catalog.ts'",
       "sourcePackage": "human-access-economy",
@@ -9650,7 +9650,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-orchestrator.ts",
-      "line": 26,
+      "line": 27,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-orchestrator.ts' deep-imports 'access-economy' internals via '../../access-economy/src/registry-ids.ts'",
       "sourcePackage": "human-access-economy",
@@ -9659,7 +9659,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-orchestrator.ts",
-      "line": 27,
+      "line": 28,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-orchestrator.ts' deep-imports 'access-economy' internals via '../../access-economy/src/providers/gateway.ts'",
       "sourcePackage": "human-access-economy",
@@ -9668,7 +9668,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-orchestrator.ts",
-      "line": 31,
+      "line": 32,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-orchestrator.ts' deep-imports 'access-economy' internals via '../../access-economy/src/providers/funding-router.ts'",
       "sourcePackage": "human-access-economy",
@@ -9677,7 +9677,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-orchestrator.ts",
-      "line": 32,
+      "line": 33,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-orchestrator.ts' deep-imports 'access-economy' internals via '../../access-economy/src/providers/redemption/entitlement-store.ts'",
       "sourcePackage": "human-access-economy",
@@ -9686,7 +9686,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-orchestrator.ts",
-      "line": 33,
+      "line": 34,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-orchestrator.ts' deep-imports 'access-economy' internals via '../../access-economy/src/providers/redemption/engine.ts'",
       "sourcePackage": "human-access-economy",
@@ -9695,7 +9695,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-orchestrator.ts",
-      "line": 46,
+      "line": 47,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-orchestrator.ts' deep-imports 'access-economy' internals via '../../access-economy/src/providers/redemption/types.ts'",
       "sourcePackage": "human-access-economy",
@@ -9704,7 +9704,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-orchestrator.ts",
-      "line": 47,
+      "line": 48,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-orchestrator.ts' deep-imports 'access-economy' internals via '../../access-economy/src/providers/types.ts'",
       "sourcePackage": "human-access-economy",
@@ -9713,7 +9713,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-world.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-world.ts' deep-imports 'config' internals via '../../config/src/clock.ts'",
       "sourcePackage": "human-access-economy",
@@ -9722,7 +9722,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-world.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-world.ts' deep-imports 'domain' internals via '../../domain/src/jurisdiction.ts'",
       "sourcePackage": "human-access-economy",
@@ -9731,7 +9731,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-world.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-world.ts' deep-imports 'domain' internals via '../../domain/src/time.ts'",
       "sourcePackage": "human-access-economy",
@@ -9740,7 +9740,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-world.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-world.ts' deep-imports 'evidence' internals via '../../evidence/src/vault.ts'",
       "sourcePackage": "human-access-economy",
@@ -9749,7 +9749,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-world.ts",
-      "line": 11,
+      "line": 12,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-world.ts' deep-imports 'events' internals via '../../events/src/events.ts'",
       "sourcePackage": "human-access-economy",
@@ -9758,7 +9758,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-world.ts",
-      "line": 12,
+      "line": 13,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-world.ts' deep-imports 'identity' internals via '../../identity/src/simulation.ts'",
       "sourcePackage": "human-access-economy",
@@ -9767,7 +9767,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-world.ts",
-      "line": 13,
+      "line": 14,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-world.ts' deep-imports 'kernel' internals via '../../kernel/src/kernel.ts'",
       "sourcePackage": "human-access-economy",
@@ -9776,7 +9776,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-world.ts",
-      "line": 14,
+      "line": 15,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-world.ts' deep-imports 'permissions' internals via '../../permissions/src/execution-authority.ts'",
       "sourcePackage": "human-access-economy",
@@ -9785,7 +9785,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-world.ts",
-      "line": 15,
+      "line": 16,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-world.ts' deep-imports 'security' internals via '../../security/src/simulation.ts'",
       "sourcePackage": "human-access-economy",
@@ -9794,7 +9794,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-world.ts",
-      "line": 23,
+      "line": 24,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-world.ts' deep-imports 'access-fabric' internals via '../../access-fabric/src/index.ts'",
       "sourcePackage": "human-access-economy",
@@ -9803,7 +9803,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-world.ts",
-      "line": 24,
+      "line": 25,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-world.ts' deep-imports 'access-economy' internals via '../../access-economy/src/service.ts'",
       "sourcePackage": "human-access-economy",
@@ -9812,7 +9812,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-world.ts",
-      "line": 25,
+      "line": 26,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-world.ts' deep-imports 'sunrey-access' internals via '../../sunrey-access/src/service.ts'",
       "sourcePackage": "human-access-economy",
@@ -9821,7 +9821,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-world.ts",
-      "line": 26,
+      "line": 27,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-world.ts' deep-imports 'sunrey-exchange' internals via '../../sunrey-exchange/src/access-fabric/sandbox.ts'",
       "sourcePackage": "human-access-economy",
@@ -9830,7 +9830,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-world.ts",
-      "line": 33,
+      "line": 34,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-world.ts' deep-imports 'sunrey-chain' internals via '../../sunrey-chain/src/access/fixtures.ts'",
       "sourcePackage": "human-access-economy",
@@ -9839,7 +9839,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-world.ts",
-      "line": 37,
+      "line": 38,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-world.ts' deep-imports 'access-economy' internals via '../../access-economy/src/providers/gateway.ts'",
       "sourcePackage": "human-access-economy",
@@ -9848,7 +9848,7 @@
     },
     {
       "file": "packages/human-access-economy/src/canonical-redemption-world.ts",
-      "line": 38,
+      "line": 39,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/canonical-redemption-world.ts' deep-imports 'access-economy' internals via '../../access-economy/src/providers/funding-router.ts'",
       "sourcePackage": "human-access-economy",
@@ -9911,7 +9911,7 @@
     },
     {
       "file": "packages/human-access-economy/src/consumer-bff/surface.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/consumer-bff/surface.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "human-access-economy",
@@ -9920,7 +9920,7 @@
     },
     {
       "file": "packages/human-access-economy/src/consumer-bff/surface.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/consumer-bff/surface.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
       "sourcePackage": "human-access-economy",
@@ -9929,7 +9929,7 @@
     },
     {
       "file": "packages/human-access-economy/src/consumer-bff/surface.ts",
-      "line": 606,
+      "line": 607,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/consumer-bff/surface.ts' deep-imports 'access-economy' internals via '../../../access-economy/src/providers/redemption/types.ts'",
       "sourcePackage": "human-access-economy",
@@ -9938,7 +9938,7 @@
     },
     {
       "file": "packages/human-access-economy/src/consumer-bff/surface.ts",
-      "line": 707,
+      "line": 708,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/consumer-bff/surface.ts' deep-imports 'access-economy' internals via '../../../access-economy/src/providers/redemption/types.ts'",
       "sourcePackage": "human-access-economy",
@@ -9974,7 +9974,7 @@
     },
     {
       "file": "packages/human-access-economy/src/discovery-bridge.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/discovery-bridge.ts' deep-imports 'access-economy' internals via '../../access-economy/src/discovery/service.ts'",
       "sourcePackage": "human-access-economy",
@@ -9983,7 +9983,7 @@
     },
     {
       "file": "packages/human-access-economy/src/discovery-bridge.ts",
-      "line": 18,
+      "line": 19,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/discovery-bridge.ts' deep-imports 'access-economy' internals via '../../access-economy/src/discovery/ports.ts'",
       "sourcePackage": "human-access-economy",
@@ -9992,7 +9992,7 @@
     },
     {
       "file": "packages/human-access-economy/src/discovery-bridge.ts",
-      "line": 19,
+      "line": 20,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/discovery-bridge.ts' deep-imports 'access-economy' internals via '../../access-economy/src/discovery/types.ts'",
       "sourcePackage": "human-access-economy",
@@ -10001,7 +10001,7 @@
     },
     {
       "file": "packages/human-access-economy/src/discovery-bridge.ts",
-      "line": 23,
+      "line": 24,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/discovery-bridge.ts' deep-imports 'sunrey-chain' internals via '../../sunrey-chain/src/access-discovery/service.ts'",
       "sourcePackage": "human-access-economy",
@@ -10010,7 +10010,7 @@
     },
     {
       "file": "packages/human-access-economy/src/discovery-bridge.ts",
-      "line": 27,
+      "line": 28,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/discovery-bridge.ts' deep-imports 'sunrey-chain' internals via '../../sunrey-chain/src/travel-intelligence/service.ts'",
       "sourcePackage": "human-access-economy",
@@ -10028,7 +10028,7 @@
     },
     {
       "file": "packages/human-access-economy/src/hin-access.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/hin-access.ts' deep-imports 'access-economy' internals via '../../access-economy/src/hin-access/types.ts'",
       "sourcePackage": "human-access-economy",
@@ -10037,16 +10037,7 @@
     },
     {
       "file": "packages/human-access-economy/src/hin-access.ts",
-      "line": 11,
-      "rule": "package-deep-import",
-      "message": "'packages/human-access-economy/src/hin-access.ts' deep-imports 'access-economy' internals via '../../access-economy/src/hin-access/engine.ts'",
-      "sourcePackage": "human-access-economy",
-      "targetPackage": "access-economy",
-      "spec": "../../access-economy/src/hin-access/engine.ts"
-    },
-    {
-      "file": "packages/human-access-economy/src/hin-access.ts",
-      "line": 136,
+      "line": 12,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/hin-access.ts' deep-imports 'access-economy' internals via '../../access-economy/src/hin-access/engine.ts'",
       "sourcePackage": "human-access-economy",
@@ -10056,6 +10047,15 @@
     {
       "file": "packages/human-access-economy/src/hin-access.ts",
       "line": 137,
+      "rule": "package-deep-import",
+      "message": "'packages/human-access-economy/src/hin-access.ts' deep-imports 'access-economy' internals via '../../access-economy/src/hin-access/engine.ts'",
+      "sourcePackage": "human-access-economy",
+      "targetPackage": "access-economy",
+      "spec": "../../access-economy/src/hin-access/engine.ts"
+    },
+    {
+      "file": "packages/human-access-economy/src/hin-access.ts",
+      "line": 138,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/hin-access.ts' deep-imports 'access-economy' internals via '../../access-economy/src/ids.ts'",
       "sourcePackage": "human-access-economy",
@@ -10127,7 +10127,7 @@
     },
     {
       "file": "packages/human-access-economy/src/service.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/service.ts' deep-imports 'domain' internals via '../../domain/src/time.ts'",
       "sourcePackage": "human-access-economy",
@@ -10136,7 +10136,7 @@
     },
     {
       "file": "packages/human-access-economy/src/service.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/service.ts' deep-imports 'domain' internals via '../../domain/src/result.ts'",
       "sourcePackage": "human-access-economy",
@@ -10145,7 +10145,7 @@
     },
     {
       "file": "packages/human-access-economy/src/service.ts",
-      "line": 415,
+      "line": 416,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/service.ts' deep-imports 'access-economy' internals via '../../access-economy/src/providers/types.ts'",
       "sourcePackage": "human-access-economy",
@@ -10154,7 +10154,7 @@
     },
     {
       "file": "packages/human-access-economy/src/service.ts",
-      "line": 686,
+      "line": 687,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/service.ts' deep-imports 'access-economy' internals via '../../access-economy/src/providers/types.ts'",
       "sourcePackage": "human-access-economy",
@@ -10163,7 +10163,7 @@
     },
     {
       "file": "packages/human-access-economy/src/service.ts",
-      "line": 688,
+      "line": 689,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/service.ts' deep-imports 'access-economy' internals via '../../access-economy/src/providers/types.ts'",
       "sourcePackage": "human-access-economy",
@@ -10172,7 +10172,7 @@
     },
     {
       "file": "packages/human-access-economy/src/service.ts",
-      "line": 816,
+      "line": 817,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/service.ts' deep-imports 'access-economy' internals via '../../access-economy/src/providers/types.ts'",
       "sourcePackage": "human-access-economy",
@@ -10181,7 +10181,7 @@
     },
     {
       "file": "packages/human-access-economy/src/service.ts",
-      "line": 862,
+      "line": 863,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/service.ts' deep-imports 'access-economy' internals via '../../access-economy/src/providers/types.ts'",
       "sourcePackage": "human-access-economy",
@@ -10190,7 +10190,7 @@
     },
     {
       "file": "packages/human-access-economy/src/service.ts",
-      "line": 901,
+      "line": 902,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/service.ts' deep-imports 'access-economy' internals via '../../access-economy/src/providers/types.ts'",
       "sourcePackage": "human-access-economy",
@@ -10199,7 +10199,7 @@
     },
     {
       "file": "packages/human-access-economy/src/service.ts",
-      "line": 948,
+      "line": 949,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/service.ts' deep-imports 'access-economy' internals via '../../access-economy/src/providers/types.ts'",
       "sourcePackage": "human-access-economy",
@@ -10208,7 +10208,7 @@
     },
     {
       "file": "packages/human-access-economy/src/service.ts",
-      "line": 1044,
+      "line": 1045,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/service.ts' deep-imports 'access-economy' internals via '../../access-economy/src/providers/types.ts'",
       "sourcePackage": "human-access-economy",
@@ -10217,7 +10217,7 @@
     },
     {
       "file": "packages/human-access-economy/src/service.ts",
-      "line": 1060,
+      "line": 1061,
       "rule": "package-deep-import",
       "message": "'packages/human-access-economy/src/service.ts' deep-imports 'access-economy' internals via '../../access-economy/src/providers/redemption/types.ts'",
       "sourcePackage": "human-access-economy",
@@ -10226,7 +10226,7 @@
     },
     {
       "file": "packages/human-economic-contribution/src/attestation-mesh.test.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/human-economic-contribution/src/attestation-mesh.test.ts' deep-imports 'domain' internals via '../../domain/src/time.ts'",
       "sourcePackage": "human-economic-contribution",
@@ -10415,7 +10415,7 @@
     },
     {
       "file": "packages/human-economic-contribution/src/identity/identity.test.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/human-economic-contribution/src/identity/identity.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "human-economic-contribution",
@@ -10478,7 +10478,7 @@
     },
     {
       "file": "packages/human-economic-contribution/src/identity/service.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/human-economic-contribution/src/identity/service.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
       "sourcePackage": "human-economic-contribution",
@@ -10487,7 +10487,7 @@
     },
     {
       "file": "packages/human-economic-contribution/src/identity/service.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/human-economic-contribution/src/identity/service.ts' deep-imports 'domain' internals via '../../../domain/src/customer.ts'",
       "sourcePackage": "human-economic-contribution",
@@ -10496,7 +10496,7 @@
     },
     {
       "file": "packages/human-economic-contribution/src/identity/service.ts",
-      "line": 3,
+      "line": 4,
       "rule": "package-deep-import",
       "message": "'packages/human-economic-contribution/src/identity/service.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "human-economic-contribution",
@@ -10505,7 +10505,7 @@
     },
     {
       "file": "packages/human-economic-contribution/src/identity/sybil.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/human-economic-contribution/src/identity/sybil.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "human-economic-contribution",
@@ -10667,7 +10667,7 @@
     },
     {
       "file": "packages/human-economic-contribution/src/resolution/canonical-event.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/human-economic-contribution/src/resolution/canonical-event.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "human-economic-contribution",
@@ -10676,7 +10676,7 @@
     },
     {
       "file": "packages/human-economic-contribution/src/resolution/claim-generation.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/human-economic-contribution/src/resolution/claim-generation.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
       "sourcePackage": "human-economic-contribution",
@@ -10685,7 +10685,7 @@
     },
     {
       "file": "packages/human-economic-contribution/src/resolution/claim-generation.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/human-economic-contribution/src/resolution/claim-generation.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "human-economic-contribution",
@@ -10703,7 +10703,7 @@
     },
     {
       "file": "packages/human-economic-contribution/src/resolution/engine.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/human-economic-contribution/src/resolution/engine.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
       "sourcePackage": "human-economic-contribution",
@@ -10712,7 +10712,7 @@
     },
     {
       "file": "packages/human-economic-contribution/src/resolution/engine.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/human-economic-contribution/src/resolution/engine.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "human-economic-contribution",
@@ -10730,7 +10730,7 @@
     },
     {
       "file": "packages/human-economic-contribution/src/resolution/ids.ts",
-      "line": 3,
+      "line": 4,
       "rule": "package-deep-import",
       "message": "'packages/human-economic-contribution/src/resolution/ids.ts' deep-imports 'domain' internals via '../../../domain/src/brand.ts'",
       "sourcePackage": "human-economic-contribution",
@@ -11279,7 +11279,7 @@
     },
     {
       "file": "packages/identity/src/fine-grained-authorization.test.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/identity/src/fine-grained-authorization.test.ts' deep-imports 'domain' internals via '../../domain/src/time.ts'",
       "sourcePackage": "identity",
@@ -11288,7 +11288,7 @@
     },
     {
       "file": "packages/identity/src/fine-grained-authorization.test.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/identity/src/fine-grained-authorization.test.ts' deep-imports 'security' internals via '../../security/src/identity.ts'",
       "sourcePackage": "identity",
@@ -13007,7 +13007,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/demo.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/demo.ts' deep-imports 'config' internals via '../../../../config/src/clock.ts'",
       "sourcePackage": "information-market",
@@ -13016,7 +13016,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/demo.ts",
-      "line": 6,
+      "line": 7,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/demo.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "information-market",
@@ -13025,7 +13025,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/demo.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/demo.ts' deep-imports 'evidence' internals via '../../../../evidence/src/vault.ts'",
       "sourcePackage": "information-market",
@@ -13034,7 +13034,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/demo.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/demo.ts' deep-imports 'events' internals via '../../../../events/src/events.ts'",
       "sourcePackage": "information-market",
@@ -13043,7 +13043,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/demo.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/demo.ts' deep-imports 'consent' internals via '../../../../consent/src/authorization.ts'",
       "sourcePackage": "information-market",
@@ -13052,7 +13052,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/demo.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/demo.ts' deep-imports 'consent' internals via '../../../../consent/src/service.ts'",
       "sourcePackage": "information-market",
@@ -13061,7 +13061,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/demo.ts",
-      "line": 11,
+      "line": 12,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/demo.ts' deep-imports 'clean-room' internals via '../../../../clean-room/src/service.ts'",
       "sourcePackage": "information-market",
@@ -13070,7 +13070,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/demo.ts",
-      "line": 12,
+      "line": 13,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/demo.ts' deep-imports 'personal-data-vault' internals via '../../../../personal-data-vault/src/service.ts'",
       "sourcePackage": "information-market",
@@ -13079,7 +13079,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/demo.ts",
-      "line": 13,
+      "line": 14,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/demo.ts' deep-imports 'security' internals via '../../../../security/src/simulation.ts'",
       "sourcePackage": "information-market",
@@ -13088,7 +13088,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/demo.ts",
-      "line": 16,
+      "line": 17,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/demo.ts' deep-imports 'access-economy' internals via '../../../../access-economy/src/hin-access/engine.ts'",
       "sourcePackage": "information-market",
@@ -13097,7 +13097,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/demo.ts",
-      "line": 17,
+      "line": 18,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/demo.ts' deep-imports 'access-economy' internals via '../../../../access-economy/src/ids.ts'",
       "sourcePackage": "information-market",
@@ -13106,7 +13106,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/demo.ts",
-      "line": 18,
+      "line": 19,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/demo.ts' deep-imports 'access-economy' internals via '../../../../access-economy/src/participation/types.ts'",
       "sourcePackage": "information-market",
@@ -13115,7 +13115,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'config' internals via '../../../../config/src/clock.ts'",
       "sourcePackage": "information-market",
@@ -13124,7 +13124,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 6,
+      "line": 7,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "information-market",
@@ -13133,7 +13133,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'domain' internals via '../../../../domain/src/result.ts'",
       "sourcePackage": "information-market",
@@ -13142,7 +13142,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'money' internals via '../../../../money/src/money.ts'",
       "sourcePackage": "information-market",
@@ -13151,7 +13151,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'money' internals via '../../../../money/src/asset-quantity.ts'",
       "sourcePackage": "information-market",
@@ -13160,7 +13160,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'sunrey-coin' internals via '../../../../sunrey-coin/src/ids.ts'",
       "sourcePackage": "information-market",
@@ -13169,7 +13169,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 11,
+      "line": 12,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'sunrey-coin' internals via '../../../../sunrey-coin/src/service.ts'",
       "sourcePackage": "information-market",
@@ -13178,7 +13178,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 12,
+      "line": 13,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'consent' internals via '../../../../consent/src/authorization.ts'",
       "sourcePackage": "information-market",
@@ -13187,7 +13187,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 13,
+      "line": 14,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'consent' internals via '../../../../consent/src/service.ts'",
       "sourcePackage": "information-market",
@@ -13196,7 +13196,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 14,
+      "line": 15,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'clean-room' internals via '../../../../clean-room/src/service.ts'",
       "sourcePackage": "information-market",
@@ -13205,7 +13205,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 15,
+      "line": 16,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'personal-data-vault' internals via '../../../../personal-data-vault/src/service.ts'",
       "sourcePackage": "information-market",
@@ -13214,7 +13214,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 16,
+      "line": 17,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'evidence' internals via '../../../../evidence/src/vault.ts'",
       "sourcePackage": "information-market",
@@ -13223,7 +13223,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 17,
+      "line": 18,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'events' internals via '../../../../events/src/events.ts'",
       "sourcePackage": "information-market",
@@ -13232,7 +13232,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 18,
+      "line": 19,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'security' internals via '../../../../security/src/simulation.ts'",
       "sourcePackage": "information-market",
@@ -13241,7 +13241,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 24,
+      "line": 25,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'access-economy' internals via '../../../../access-economy/src/hin-access/engine.ts'",
       "sourcePackage": "information-market",
@@ -13250,7 +13250,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 28,
+      "line": 29,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'access-economy' internals via '../../../../access-economy/src/hin-access/contract.ts'",
       "sourcePackage": "information-market",
@@ -13259,7 +13259,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 29,
+      "line": 30,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'access-economy' internals via '../../../../access-economy/src/hin-access/types.ts'",
       "sourcePackage": "information-market",
@@ -13268,7 +13268,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 30,
+      "line": 31,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'access-economy' internals via '../../../../access-economy/src/ids.ts'",
       "sourcePackage": "information-market",
@@ -13277,7 +13277,7 @@
     },
     {
       "file": "packages/information-market/src/network/access-integration/factory.ts",
-      "line": 31,
+      "line": 32,
       "rule": "package-deep-import",
       "message": "'packages/information-market/src/network/access-integration/factory.ts' deep-imports 'access-economy' internals via '../../../../access-economy/src/participation/types.ts'",
       "sourcePackage": "information-market",
@@ -16004,7 +16004,7 @@
     },
     {
       "file": "packages/kernel/src/compliance-intelligence/adapters/base.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/kernel/src/compliance-intelligence/adapters/base.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "kernel",
@@ -16040,7 +16040,7 @@
     },
     {
       "file": "packages/kernel/src/compliance-intelligence/bridge.ts",
-      "line": 6,
+      "line": 7,
       "rule": "package-deep-import",
       "message": "'packages/kernel/src/compliance-intelligence/bridge.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "kernel",
@@ -16049,7 +16049,7 @@
     },
     {
       "file": "packages/kernel/src/compliance-intelligence/bridge.ts",
-      "line": 116,
+      "line": 117,
       "rule": "package-deep-import",
       "message": "'packages/kernel/src/compliance-intelligence/bridge.ts' deep-imports 'permissions' internals via '../../../permissions/src/decision.ts'",
       "sourcePackage": "kernel",
@@ -16085,7 +16085,7 @@
     },
     {
       "file": "packages/kernel/src/compliance-intelligence/service.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/kernel/src/compliance-intelligence/service.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "kernel",
@@ -16094,7 +16094,7 @@
     },
     {
       "file": "packages/kernel/src/compliance-intelligence/service.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/kernel/src/compliance-intelligence/service.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "kernel",
@@ -17633,7 +17633,7 @@
     },
     {
       "file": "packages/kernel/src/regulatory-controls/provider-license.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/kernel/src/regulatory-controls/provider-license.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "kernel",
@@ -17669,7 +17669,7 @@
     },
     {
       "file": "packages/kernel/src/regulatory-controls/residency.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/kernel/src/regulatory-controls/residency.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "kernel",
@@ -18713,7 +18713,7 @@
     },
     {
       "file": "packages/payments/src/fx-reference/fx-reference.test.ts",
-      "line": 24,
+      "line": 25,
       "rule": "package-deep-import",
       "message": "'packages/payments/src/fx-reference/fx-reference.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "payments",
@@ -18749,7 +18749,7 @@
     },
     {
       "file": "packages/payments/src/fx-reference/service.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/payments/src/fx-reference/service.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "payments",
@@ -21772,15 +21772,6 @@
       "spec": "../../../personal-economic-graph/src/taxonomy.ts"
     },
     {
-      "file": "packages/persistence/src/env.ts",
-      "line": 15,
-      "rule": "package-deep-import",
-      "message": "'packages/persistence/src/env.ts' deep-imports 'config' internals via '../../config/src/env.ts'",
-      "sourcePackage": "persistence",
-      "targetPackage": "config",
-      "spec": "../../config/src/env.ts"
-    },
-    {
       "file": "packages/persistence/src/exchange/durable-core-store.ts",
       "line": 12,
       "rule": "package-deep-import",
@@ -24635,7 +24626,7 @@
     },
     {
       "file": "packages/platform/src/grow/lifecycle/execution-adapter.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/platform/src/grow/lifecycle/execution-adapter.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "platform",
@@ -26102,7 +26093,7 @@
     },
     {
       "file": "packages/platform/src/subscription-intelligence/attribution.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/platform/src/subscription-intelligence/attribution.ts' deep-imports 'money' internals via '../../../money/src/money.ts'",
       "sourcePackage": "platform",
@@ -26111,7 +26102,7 @@
     },
     {
       "file": "packages/platform/src/subscription-intelligence/attribution.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/platform/src/subscription-intelligence/attribution.ts' deep-imports 'personal-economic-graph' internals via '../../../personal-economic-graph/src/taxonomy.ts'",
       "sourcePackage": "platform",
@@ -26129,7 +26120,7 @@
     },
     {
       "file": "packages/platform/src/subscription-intelligence/authorization.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/platform/src/subscription-intelligence/authorization.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "platform",
@@ -26201,7 +26192,7 @@
     },
     {
       "file": "packages/platform/src/subscription-intelligence/price-change.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/platform/src/subscription-intelligence/price-change.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "platform",
@@ -26210,7 +26201,7 @@
     },
     {
       "file": "packages/platform/src/subscription-intelligence/price-change.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/platform/src/subscription-intelligence/price-change.ts' deep-imports 'personal-economic-graph' internals via '../../../personal-economic-graph/src/store.ts'",
       "sourcePackage": "platform",
@@ -26219,7 +26210,7 @@
     },
     {
       "file": "packages/platform/src/subscription-intelligence/savings.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/platform/src/subscription-intelligence/savings.ts' deep-imports 'money' internals via '../../../money/src/money.ts'",
       "sourcePackage": "platform",
@@ -26228,7 +26219,7 @@
     },
     {
       "file": "packages/platform/src/subscription-intelligence/savings.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/platform/src/subscription-intelligence/savings.ts' deep-imports 'personal-economic-graph' internals via '../../../personal-economic-graph/src/taxonomy.ts'",
       "sourcePackage": "platform",
@@ -26237,7 +26228,7 @@
     },
     {
       "file": "packages/platform/src/subscription-intelligence/service.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/platform/src/subscription-intelligence/service.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
       "sourcePackage": "platform",
@@ -26246,7 +26237,7 @@
     },
     {
       "file": "packages/platform/src/subscription-intelligence/service.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/platform/src/subscription-intelligence/service.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
       "sourcePackage": "platform",
@@ -26255,7 +26246,7 @@
     },
     {
       "file": "packages/platform/src/subscription-intelligence/service.ts",
-      "line": 3,
+      "line": 4,
       "rule": "package-deep-import",
       "message": "'packages/platform/src/subscription-intelligence/service.ts' deep-imports 'personal-economic-graph' internals via '../../../personal-economic-graph/src/store.ts'",
       "sourcePackage": "platform",
@@ -26264,7 +26255,7 @@
     },
     {
       "file": "packages/platform/src/subscription-intelligence/subscription-intelligence.test.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/platform/src/subscription-intelligence/subscription-intelligence.test.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
       "sourcePackage": "platform",
@@ -26273,7 +26264,7 @@
     },
     {
       "file": "packages/platform/src/subscription-intelligence/subscription-intelligence.test.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/platform/src/subscription-intelligence/subscription-intelligence.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "platform",
@@ -26282,7 +26273,7 @@
     },
     {
       "file": "packages/platform/src/subscription-intelligence/subscription-intelligence.test.ts",
-      "line": 6,
+      "line": 7,
       "rule": "package-deep-import",
       "message": "'packages/platform/src/subscription-intelligence/subscription-intelligence.test.ts' deep-imports 'personal-economic-graph' internals via '../../../personal-economic-graph/src/store.ts'",
       "sourcePackage": "platform",
@@ -26291,7 +26282,7 @@
     },
     {
       "file": "packages/platform/src/subscription-intelligence/subscription-intelligence.test.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/platform/src/subscription-intelligence/subscription-intelligence.test.ts' deep-imports 'personal-economic-graph' internals via '../../../personal-economic-graph/src/ids.ts'",
       "sourcePackage": "platform",
@@ -26705,7 +26696,7 @@
     },
     {
       "file": "packages/provider-sdk/src/auth.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/provider-sdk/src/auth.ts' deep-imports 'security' internals via '../../security/src/secrets.ts'",
       "sourcePackage": "provider-sdk",
@@ -26714,7 +26705,7 @@
     },
     {
       "file": "packages/provider-sdk/src/certification/engine.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/provider-sdk/src/certification/engine.ts' deep-imports 'config' internals via '../../../config/src/flags.ts'",
       "sourcePackage": "provider-sdk",
@@ -26723,7 +26714,7 @@
     },
     {
       "file": "packages/provider-sdk/src/connector/connector-registry.ts",
-      "line": 18,
+      "line": 19,
       "rule": "package-deep-import",
       "message": "'packages/provider-sdk/src/connector/connector-registry.ts' deep-imports 'security' internals via '../../../security/src/secrets.ts'",
       "sourcePackage": "provider-sdk",
@@ -26732,7 +26723,7 @@
     },
     {
       "file": "packages/provider-sdk/src/connector/rest-connector.ts",
-      "line": 32,
+      "line": 33,
       "rule": "package-deep-import",
       "message": "'packages/provider-sdk/src/connector/rest-connector.ts' deep-imports 'security' internals via '../../../security/src/secrets.ts'",
       "sourcePackage": "provider-sdk",
@@ -26804,7 +26795,7 @@
     },
     {
       "file": "packages/provider-sdk/src/observation.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/provider-sdk/src/observation.ts' deep-imports 'domain' internals via '../../domain/src/time.ts'",
       "sourcePackage": "provider-sdk",
@@ -26813,7 +26804,7 @@
     },
     {
       "file": "packages/provider-sdk/src/provider-sdk.test.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/provider-sdk/src/provider-sdk.test.ts' deep-imports 'domain' internals via '../../domain/src/time.ts'",
       "sourcePackage": "provider-sdk",
@@ -26822,7 +26813,7 @@
     },
     {
       "file": "packages/provider-sdk/src/provider-sdk.test.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/provider-sdk/src/provider-sdk.test.ts' deep-imports 'security' internals via '../../security/src/hash.ts'",
       "sourcePackage": "provider-sdk",
@@ -26840,7 +26831,7 @@
     },
     {
       "file": "packages/provider-sdk/src/types.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/provider-sdk/src/types.ts' deep-imports 'domain' internals via '../../domain/src/time.ts'",
       "sourcePackage": "provider-sdk",
@@ -26849,7 +26840,7 @@
     },
     {
       "file": "packages/provider-sdk/src/types.ts",
-      "line": 16,
+      "line": 17,
       "rule": "package-deep-import",
       "message": "'packages/provider-sdk/src/types.ts' deep-imports 'domain' internals via '../../domain/src/time.ts'",
       "sourcePackage": "provider-sdk",
@@ -28577,7 +28568,7 @@
     },
     {
       "file": "packages/sunrey-access-fabric/src/orchestration/saga.ts",
-      "line": 3,
+      "line": 4,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-access-fabric/src/orchestration/saga.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-access-fabric",
@@ -28586,7 +28577,7 @@
     },
     {
       "file": "packages/sunrey-access-fabric/src/orchestration/saga.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-access-fabric/src/orchestration/saga.ts' deep-imports 'evidence' internals via '../../../evidence/src/vault.ts'",
       "sourcePackage": "sunrey-access-fabric",
@@ -28739,7 +28730,7 @@
     },
     {
       "file": "packages/sunrey-access/src/allocation/engine.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-access/src/allocation/engine.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
       "sourcePackage": "sunrey-access",
@@ -28766,7 +28757,7 @@
     },
     {
       "file": "packages/sunrey-access/src/scarcity/engine.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-access/src/scarcity/engine.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
       "sourcePackage": "sunrey-access",
@@ -28784,7 +28775,7 @@
     },
     {
       "file": "packages/sunrey-access/src/service.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-access/src/service.ts' deep-imports 'config' internals via '../../config/src/clock.ts'",
       "sourcePackage": "sunrey-access",
@@ -28793,7 +28784,7 @@
     },
     {
       "file": "packages/sunrey-access/src/service.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-access/src/service.ts' deep-imports 'domain' internals via '../../domain/src/result.ts'",
       "sourcePackage": "sunrey-access",
@@ -28874,7 +28865,7 @@
     },
     {
       "file": "packages/sunrey-agent/src/access/demand-engine.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-agent/src/access/demand-engine.ts' deep-imports 'agent' internals via '../../../agent/src/service.ts'",
       "sourcePackage": "sunrey-agent",
@@ -28883,7 +28874,7 @@
     },
     {
       "file": "packages/sunrey-agent/src/access/demand-engine.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-agent/src/access/demand-engine.ts' deep-imports 'agent' internals via '../../../agent/src/access-fabric/index.ts'",
       "sourcePackage": "sunrey-agent",
@@ -28892,7 +28883,7 @@
     },
     {
       "file": "packages/sunrey-agent/src/access/demand-engine.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-agent/src/access/demand-engine.ts' deep-imports 'permissions' internals via '../../../permissions/src/action-intent.ts'",
       "sourcePackage": "sunrey-agent",
@@ -28901,7 +28892,7 @@
     },
     {
       "file": "packages/sunrey-agent/src/access/demand-engine.ts",
-      "line": 6,
+      "line": 7,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-agent/src/access/demand-engine.ts' deep-imports 'agent' internals via '../../../agent/src/ports.ts'",
       "sourcePackage": "sunrey-agent",
@@ -28910,7 +28901,7 @@
     },
     {
       "file": "packages/sunrey-agent/src/access/demand-engine.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-agent/src/access/demand-engine.ts' deep-imports 'agent' internals via '../../../agent/src/access-fabric/index.ts'",
       "sourcePackage": "sunrey-agent",
@@ -28919,7 +28910,7 @@
     },
     {
       "file": "packages/sunrey-agent/src/access/demand-engine.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-agent/src/access/demand-engine.ts' deep-imports 'agent' internals via '../../../agent/src/access-fabric/types.ts'",
       "sourcePackage": "sunrey-agent",
@@ -28928,7 +28919,7 @@
     },
     {
       "file": "packages/sunrey-agent/src/access/domain-intent-bridge.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-agent/src/access/domain-intent-bridge.ts' deep-imports 'agent' internals via '../../../agent/src/access-fabric/types.ts'",
       "sourcePackage": "sunrey-agent",
@@ -28937,7 +28928,7 @@
     },
     {
       "file": "packages/sunrey-agent/src/access/domain-intent-bridge.ts",
-      "line": 6,
+      "line": 7,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-agent/src/access/domain-intent-bridge.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-agent",
@@ -29891,7 +29882,7 @@
     },
     {
       "file": "packages/sunrey-agent/src/tools/handlers.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-agent/src/tools/handlers.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
       "sourcePackage": "sunrey-agent",
@@ -29900,7 +29891,7 @@
     },
     {
       "file": "packages/sunrey-agent/src/tools/handlers.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-agent/src/tools/handlers.ts' deep-imports 'sunrey-chain' internals via '../../../sunrey-chain/src/travel-intelligence/index.ts'",
       "sourcePackage": "sunrey-agent",
@@ -29909,7 +29900,7 @@
     },
     {
       "file": "packages/sunrey-agent/src/tools/handlers.ts",
-      "line": 3,
+      "line": 4,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-agent/src/tools/handlers.ts' deep-imports 'sunrey-chain' internals via '../../../sunrey-chain/src/travel-intelligence/agent-evidence.ts'",
       "sourcePackage": "sunrey-agent",
@@ -29981,7 +29972,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/access-fabric/engine.ts",
-      "line": 11,
+      "line": 12,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/access-fabric/engine.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
       "sourcePackage": "sunrey-chain",
@@ -29990,7 +29981,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/access-fabric/engine.ts",
-      "line": 12,
+      "line": 13,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/access-fabric/engine.ts' deep-imports 'evidence' internals via '../../../evidence/src/vault.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30179,7 +30170,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/chain-intelligence/adapters/btcglobe.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/chain-intelligence/adapters/btcglobe.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30197,7 +30188,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/chain-intelligence/agent-evidence.ts",
-      "line": 11,
+      "line": 12,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/chain-intelligence/agent-evidence.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/agent-evidence.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30206,7 +30197,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/chain-intelligence/agent-evidence.ts",
-      "line": 12,
+      "line": 13,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/chain-intelligence/agent-evidence.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/observation.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30215,7 +30206,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/chain-intelligence/agent-evidence.ts",
-      "line": 13,
+      "line": 14,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/chain-intelligence/agent-evidence.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/types.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30224,7 +30215,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/chain-intelligence/agent-evidence.ts",
-      "line": 16,
+      "line": 17,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/chain-intelligence/agent-evidence.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30233,7 +30224,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/chain-intelligence/catalog-entries.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/chain-intelligence/catalog-entries.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/catalog/types.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30260,7 +30251,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/chain-intelligence/registry.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/chain-intelligence/registry.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/catalog/types.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30269,7 +30260,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/chain-intelligence/registry.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/chain-intelligence/registry.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/catalog/loader.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30467,7 +30458,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/economic-awareness-fabric/information-consensus/verified-fact.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/economic-awareness-fabric/information-consensus/verified-fact.ts' deep-imports 'security' internals via '../../../../security/src/hash.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30485,7 +30476,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/economic-proof/claim-promotion.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/economic-proof/claim-promotion.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30494,7 +30485,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/economic-proof/event-reconciliation.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/economic-proof/event-reconciliation.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30503,7 +30494,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/economic-proof/event-reconciliation.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/economic-proof/event-reconciliation.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30548,7 +30539,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/economic-proof/human-economy/evaluation.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/economic-proof/human-economy/evaluation.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30611,7 +30602,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/economic-proof/monetization-lock.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/economic-proof/monetization-lock.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30629,7 +30620,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/economic-proof/registry.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/economic-proof/registry.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30638,7 +30629,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/economic-proof/registry.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/economic-proof/registry.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30647,7 +30638,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/economic-proof/rights/evaluation.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/economic-proof/rights/evaluation.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30665,7 +30656,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/economic-proof/rights/revocation.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/economic-proof/rights/revocation.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30701,7 +30692,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/economic-proof/types.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/economic-proof/types.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30845,7 +30836,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/economics/observation/normalize.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/economics/observation/normalize.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-chain",
@@ -30854,7 +30845,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/economics/observation/normalize.ts",
-      "line": 11,
+      "line": 12,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/economics/observation/normalize.ts' deep-imports 'security' internals via '../../../../security/src/hash.ts'",
       "sourcePackage": "sunrey-chain",
@@ -31052,7 +31043,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/environmental/adapters/index.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/environmental/adapters/index.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-chain",
@@ -31070,7 +31061,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/environmental/catalog-entries.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/environmental/catalog-entries.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/catalog/types.ts'",
       "sourcePackage": "sunrey-chain",
@@ -31097,7 +31088,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/environmental/registry.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/environmental/registry.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/catalog/types.ts'",
       "sourcePackage": "sunrey-chain",
@@ -31106,7 +31097,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/environmental/registry.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/environmental/registry.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/catalog/loader.ts'",
       "sourcePackage": "sunrey-chain",
@@ -31358,7 +31349,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/human/ontology/actor.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/human/ontology/actor.ts' deep-imports 'human-economic-contribution' internals via '../../../../human-economic-contribution/src/taxonomy.ts'",
       "sourcePackage": "sunrey-chain",
@@ -31376,7 +31367,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/human/ontology/controls.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/human/ontology/controls.ts' deep-imports 'human-economic-contribution' internals via '../../../../human-economic-contribution/src/taxonomy.ts'",
       "sourcePackage": "sunrey-chain",
@@ -31430,7 +31421,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/human/ontology/types.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/human/ontology/types.ts' deep-imports 'human-economic-contribution' internals via '../../../../human-economic-contribution/src/taxonomy.ts'",
       "sourcePackage": "sunrey-chain",
@@ -31790,7 +31781,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/macro/catalog-entries.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/macro/catalog-entries.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/catalog/types.ts'",
       "sourcePackage": "sunrey-chain",
@@ -32726,7 +32717,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/oracle/production/economic-data-fabric/federation/fixtures.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/oracle/production/economic-data-fabric/federation/fixtures.ts' deep-imports 'security' internals via '../../../../../../security/src/hash.ts'",
       "sourcePackage": "sunrey-chain",
@@ -33023,7 +33014,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/oracle/production/oracle-mesh/adapter.ts",
-      "line": 15,
+      "line": 16,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/oracle/production/oracle-mesh/adapter.ts' deep-imports 'security' internals via '../../../../../security/src/hash.ts'",
       "sourcePackage": "sunrey-chain",
@@ -34607,7 +34598,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/productive-economy-providers/catalog-entries.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/productive-economy-providers/catalog-entries.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/catalog/types.ts'",
       "sourcePackage": "sunrey-chain",
@@ -34715,7 +34706,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/productive/asset-identity/fingerprint.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/productive/asset-identity/fingerprint.ts' deep-imports 'security' internals via '../../../../security/src/hash.ts'",
       "sourcePackage": "sunrey-chain",
@@ -34877,7 +34868,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/productive/operations/circuit-breaker.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/productive/operations/circuit-breaker.ts' deep-imports 'domain' internals via '../../../../domain/src/result.ts'",
       "sourcePackage": "sunrey-chain",
@@ -34886,7 +34877,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/productive/operations/circuit-breaker.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/productive/operations/circuit-breaker.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-chain",
@@ -34913,7 +34904,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/productive/operations/platform.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/productive/operations/platform.ts' deep-imports 'domain' internals via '../../../../domain/src/result.ts'",
       "sourcePackage": "sunrey-chain",
@@ -34922,7 +34913,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/productive/operations/platform.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/productive/operations/platform.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-chain",
@@ -35111,7 +35102,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/productive/policy-governance/value-function/wave5/valuation-result.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/productive/policy-governance/value-function/wave5/valuation-result.ts' deep-imports 'security' internals via '../../../../../../security/src/hash.ts'",
       "sourcePackage": "sunrey-chain",
@@ -35138,7 +35129,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/protocol/account.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/protocol/account.ts' deep-imports 'security' internals via '../../../security/src/hash.ts'",
       "sourcePackage": "sunrey-chain",
@@ -35165,7 +35156,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/protocol/lifecycle.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/protocol/lifecycle.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
       "sourcePackage": "sunrey-chain",
@@ -35309,7 +35300,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/provider-runtime/data-delivery/data-delivery.test.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/provider-runtime/data-delivery/data-delivery.test.ts' deep-imports 'events' internals via '../../../../events/src/jobs.ts'",
       "sourcePackage": "sunrey-chain",
@@ -35318,7 +35309,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/provider-runtime/data-delivery/scheduler.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/provider-runtime/data-delivery/scheduler.ts' deep-imports 'events' internals via '../../../../events/src/jobs.ts'",
       "sourcePackage": "sunrey-chain",
@@ -35327,7 +35318,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/provider-runtime/data-delivery/scheduler.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/provider-runtime/data-delivery/scheduler.ts' deep-imports 'events' internals via '../../../../events/src/jobs.ts'",
       "sourcePackage": "sunrey-chain",
@@ -36128,7 +36119,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/validators/signed-envelope.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/validators/signed-envelope.ts' deep-imports 'security' internals via '../../../security/src/algorithm-ids.ts'",
       "sourcePackage": "sunrey-chain",
@@ -36137,7 +36128,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/validators/signed-envelope.ts",
-      "line": 13,
+      "line": 14,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/validators/signed-envelope.ts' deep-imports 'security' internals via '../../../security/src/crypto-descriptors.ts'",
       "sourcePackage": "sunrey-chain",
@@ -36146,7 +36137,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/validators/signed-envelope.ts",
-      "line": 14,
+      "line": 15,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/validators/signed-envelope.ts' deep-imports 'security' internals via '../../../security/src/crypto-suite.ts'",
       "sourcePackage": "sunrey-chain",
@@ -36155,7 +36146,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/validators/signed-envelope.ts",
-      "line": 15,
+      "line": 16,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/validators/signed-envelope.ts' deep-imports 'security' internals via '../../../security/src/errors.ts'",
       "sourcePackage": "sunrey-chain",
@@ -36164,7 +36155,7 @@
     },
     {
       "file": "packages/sunrey-chain/src/validators/signed-envelope.ts",
-      "line": 16,
+      "line": 17,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-chain/src/validators/signed-envelope.ts' deep-imports 'security' internals via '../../../security/src/signature-domains.ts'",
       "sourcePackage": "sunrey-chain",
@@ -37892,7 +37883,7 @@
     },
     {
       "file": "packages/sunrey-exchange/src/crypto-market/adapters/index.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-exchange/src/crypto-market/adapters/index.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-exchange",
@@ -38639,7 +38630,7 @@
     },
     {
       "file": "packages/sunrey-exchange/src/merchant-exchange/merchant-exchange.test.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-exchange/src/merchant-exchange/merchant-exchange.test.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
       "sourcePackage": "sunrey-exchange",
@@ -38648,7 +38639,7 @@
     },
     {
       "file": "packages/sunrey-exchange/src/merchant-exchange/merchant-exchange.test.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-exchange/src/merchant-exchange/merchant-exchange.test.ts' deep-imports 'events' internals via '../../../events/src/events.ts'",
       "sourcePackage": "sunrey-exchange",
@@ -38657,7 +38648,7 @@
     },
     {
       "file": "packages/sunrey-exchange/src/merchant-exchange/merchant-exchange.test.ts",
-      "line": 6,
+      "line": 7,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-exchange/src/merchant-exchange/merchant-exchange.test.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
       "sourcePackage": "sunrey-exchange",
@@ -38666,7 +38657,7 @@
     },
     {
       "file": "packages/sunrey-exchange/src/merchant-exchange/ports.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-exchange/src/merchant-exchange/ports.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-exchange",
@@ -38684,7 +38675,7 @@
     },
     {
       "file": "packages/sunrey-exchange/src/merchant-exchange/sandbox.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-exchange/src/merchant-exchange/sandbox.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
       "sourcePackage": "sunrey-exchange",
@@ -38693,7 +38684,7 @@
     },
     {
       "file": "packages/sunrey-exchange/src/merchant-exchange/sandbox.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-exchange/src/merchant-exchange/sandbox.ts' deep-imports 'events' internals via '../../../events/src/events.ts'",
       "sourcePackage": "sunrey-exchange",
@@ -38702,7 +38693,7 @@
     },
     {
       "file": "packages/sunrey-exchange/src/merchant-exchange/service.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-exchange/src/merchant-exchange/service.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
       "sourcePackage": "sunrey-exchange",
@@ -38711,7 +38702,7 @@
     },
     {
       "file": "packages/sunrey-exchange/src/merchant-exchange/service.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-exchange/src/merchant-exchange/service.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-exchange",
@@ -38720,7 +38711,7 @@
     },
     {
       "file": "packages/sunrey-exchange/src/merchant-exchange/service.ts",
-      "line": 3,
+      "line": 4,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-exchange/src/merchant-exchange/service.ts' deep-imports 'events' internals via '../../../events/src/events.ts'",
       "sourcePackage": "sunrey-exchange",
@@ -38729,7 +38720,7 @@
     },
     {
       "file": "packages/sunrey-exchange/src/merchant-exchange/service.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-exchange/src/merchant-exchange/service.ts' deep-imports 'money' internals via '../../../money/src/money.ts'",
       "sourcePackage": "sunrey-exchange",
@@ -40502,7 +40493,7 @@
     },
     {
       "file": "packages/sunrey-range/src/scenarios/compound-production.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-range/src/scenarios/compound-production.ts' deep-imports 'payments' internals via '../../../payments/src/rail-retry.ts'",
       "sourcePackage": "sunrey-range",
@@ -40511,7 +40502,7 @@
     },
     {
       "file": "packages/sunrey-range/src/scenarios/compound-production.ts",
-      "line": 2,
+      "line": 3,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-range/src/scenarios/compound-production.ts' deep-imports 'sunrey-chain' internals via '../../../sunrey-chain/src/oracle/production/independence.ts'",
       "sourcePackage": "sunrey-range",
@@ -40520,7 +40511,7 @@
     },
     {
       "file": "packages/sunrey-range/src/scenarios/compound-production.ts",
-      "line": 3,
+      "line": 4,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-range/src/scenarios/compound-production.ts' deep-imports 'sunrey-chain' internals via '../../../sunrey-chain/src/economics/issuance.ts'",
       "sourcePackage": "sunrey-range",
@@ -40529,7 +40520,7 @@
     },
     {
       "file": "packages/sunrey-range/src/scenarios/compound-production.ts",
-      "line": 4,
+      "line": 5,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-range/src/scenarios/compound-production.ts' deep-imports 'sunrey-chain' internals via '../../../sunrey-chain/src/economics/supply.ts'",
       "sourcePackage": "sunrey-range",
@@ -40538,7 +40529,7 @@
     },
     {
       "file": "packages/sunrey-range/src/scenarios/compound-production.ts",
-      "line": 5,
+      "line": 6,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-range/src/scenarios/compound-production.ts' deep-imports 'sunrey-chain' internals via '../../../sunrey-chain/src/economics/production-activation/index.ts'",
       "sourcePackage": "sunrey-range",
@@ -40547,7 +40538,7 @@
     },
     {
       "file": "packages/sunrey-range/src/scenarios/compound-production.ts",
-      "line": 6,
+      "line": 7,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-range/src/scenarios/compound-production.ts' deep-imports 'sunrey-chain' internals via '../../../sunrey-chain/src/ops/snapshots.ts'",
       "sourcePackage": "sunrey-range",
@@ -40556,7 +40547,7 @@
     },
     {
       "file": "packages/sunrey-range/src/scenarios/compound-production.ts",
-      "line": 7,
+      "line": 8,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-range/src/scenarios/compound-production.ts' deep-imports 'sunrey-chain' internals via '../../../sunrey-chain/src/genesis-execution/control-room.ts'",
       "sourcePackage": "sunrey-range",
@@ -40565,7 +40556,7 @@
     },
     {
       "file": "packages/sunrey-range/src/scenarios/compound-production.ts",
-      "line": 8,
+      "line": 9,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-range/src/scenarios/compound-production.ts' deep-imports 'kernel' internals via '../../../kernel/src/compliance/provider-candidate/review.ts'",
       "sourcePackage": "sunrey-range",
@@ -40574,7 +40565,7 @@
     },
     {
       "file": "packages/sunrey-range/src/scenarios/compound-production.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-range/src/scenarios/compound-production.ts' deep-imports 'kernel' internals via '../../../kernel/src/compliance/provider-candidate/normalization.ts'",
       "sourcePackage": "sunrey-range",
@@ -40583,7 +40574,7 @@
     },
     {
       "file": "packages/sunrey-range/src/scenarios/compound-production.ts",
-      "line": 10,
+      "line": 11,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-range/src/scenarios/compound-production.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-range",
@@ -40592,7 +40583,7 @@
     },
     {
       "file": "packages/sunrey-range/src/scenarios/compound-production.ts",
-      "line": 15,
+      "line": 16,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-range/src/scenarios/compound-production.ts' deep-imports 'sunrey-chain' internals via '../../../sunrey-chain/src/oracle/production/types.ts'",
       "sourcePackage": "sunrey-range",
@@ -40601,7 +40592,7 @@
     },
     {
       "file": "packages/sunrey-range/src/scenarios/compound-production.ts",
-      "line": 16,
+      "line": 17,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-range/src/scenarios/compound-production.ts' deep-imports 'kernel' internals via '../../../kernel/src/compliance/ports.ts'",
       "sourcePackage": "sunrey-range",
@@ -41402,7 +41393,7 @@
     },
     {
       "file": "packages/sunrey-range/src/scenarios/persistence-attack.ts",
-      "line": 1,
+      "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-range/src/scenarios/persistence-attack.ts' deep-imports 'sunrey-chain' internals via '../../../sunrey-chain/src/ops/snapshots.ts'",
       "sourcePackage": "sunrey-range",
@@ -45128,7 +45119,7 @@
     },
     {
       "file": "services/api/src/consumer-hin.test.ts",
-      "line": 4,
+      "line": 5,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer-hin.test.ts' deep-imports 'config' internals via '../../../packages/config/src/clock.ts'",
       "sourcePackage": "api",
@@ -45137,7 +45128,7 @@
     },
     {
       "file": "services/api/src/consumer-hin.test.ts",
-      "line": 5,
+      "line": 6,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer-hin.test.ts' deep-imports 'domain' internals via '../../../packages/domain/src/time.ts'",
       "sourcePackage": "api",
@@ -45146,7 +45137,7 @@
     },
     {
       "file": "services/api/src/consumer-hin.test.ts",
-      "line": 6,
+      "line": 7,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer-hin.test.ts' deep-imports 'information-market' internals via '../../../packages/information-market/src/rights-marketplace/index.ts'",
       "sourcePackage": "api",
@@ -45173,7 +45164,7 @@
     },
     {
       "file": "services/api/src/consumer.test.ts",
-      "line": 7,
+      "line": 8,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer.test.ts' deep-imports 'domain' internals via '../../../packages/domain/src/result.ts'",
       "sourcePackage": "api",
@@ -45182,7 +45173,7 @@
     },
     {
       "file": "services/api/src/consumer.test.ts",
-      "line": 14,
+      "line": 15,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer.test.ts' deep-imports 'domain' internals via '../../../packages/domain/src/account.ts'",
       "sourcePackage": "api",
@@ -45209,7 +45200,7 @@
     },
     {
       "file": "services/api/src/consumer/access.ts",
-      "line": 7,
+      "line": 8,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/access.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/service.ts'",
       "sourcePackage": "api",
@@ -45218,7 +45209,7 @@
     },
     {
       "file": "services/api/src/consumer/access.ts",
-      "line": 8,
+      "line": 9,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/access.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/access.ts'",
       "sourcePackage": "api",
@@ -45227,7 +45218,7 @@
     },
     {
       "file": "services/api/src/consumer/access.ts",
-      "line": 9,
+      "line": 10,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/access.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/taxonomy.ts'",
       "sourcePackage": "api",
@@ -45236,7 +45227,7 @@
     },
     {
       "file": "services/api/src/consumer/access.ts",
-      "line": 13,
+      "line": 14,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/access.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/consumer-bff/index.ts'",
       "sourcePackage": "api",
@@ -45245,7 +45236,7 @@
     },
     {
       "file": "services/api/src/consumer/access.ts",
-      "line": 318,
+      "line": 319,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/access.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/product/taxonomy.ts'",
       "sourcePackage": "api",
@@ -45299,7 +45290,7 @@
     },
     {
       "file": "services/api/src/consumer/action-center-unified.ts",
-      "line": 10,
+      "line": 11,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/action-center-unified.ts' deep-imports 'sunrey-agent' internals via '../../../../packages/sunrey-agent/src/conversation/taxonomy.ts'",
       "sourcePackage": "api",
@@ -45308,7 +45299,7 @@
     },
     {
       "file": "services/api/src/consumer/action-center.ts",
-      "line": 11,
+      "line": 12,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/action-center.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/service.ts'",
       "sourcePackage": "api",
@@ -45380,7 +45371,7 @@
     },
     {
       "file": "services/api/src/consumer/agent-mandates.ts",
-      "line": 7,
+      "line": 8,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/agent-mandates.ts' deep-imports 'sunrey-agent' internals via '../../../../packages/sunrey-agent/src/runtime.ts'",
       "sourcePackage": "api",
@@ -45389,7 +45380,7 @@
     },
     {
       "file": "services/api/src/consumer/agent-mandates.ts",
-      "line": 8,
+      "line": 9,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/agent-mandates.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/time.ts'",
       "sourcePackage": "api",
@@ -45542,7 +45533,7 @@
     },
     {
       "file": "services/api/src/consumer/crypto-market.ts",
-      "line": 15,
+      "line": 16,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/crypto-market.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/crypto-market/index.ts'",
       "sourcePackage": "api",
@@ -45551,7 +45542,7 @@
     },
     {
       "file": "services/api/src/consumer/crypto-market.ts",
-      "line": 16,
+      "line": 17,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/crypto-market.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/crypto-market/types.ts'",
       "sourcePackage": "api",
@@ -45560,7 +45551,7 @@
     },
     {
       "file": "services/api/src/consumer/crypto-market.ts",
-      "line": 17,
+      "line": 18,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/crypto-market.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/time.ts'",
       "sourcePackage": "api",
@@ -45596,7 +45587,7 @@
     },
     {
       "file": "services/api/src/consumer/environmental-adapter.ts",
-      "line": 18,
+      "line": 19,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/environmental-adapter.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/environmental/index.ts'",
       "sourcePackage": "api",
@@ -45659,7 +45650,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 7,
+      "line": 8,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'config' internals via '../../../../packages/config/src/clock.ts'",
       "sourcePackage": "api",
@@ -45668,7 +45659,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 8,
+      "line": 9,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/account.ts'",
       "sourcePackage": "api",
@@ -45677,7 +45668,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 9,
+      "line": 10,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/account-class.ts'",
       "sourcePackage": "api",
@@ -45686,7 +45677,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 16,
+      "line": 17,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/customer.ts'",
       "sourcePackage": "api",
@@ -45695,7 +45686,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 17,
+      "line": 18,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/currency.ts'",
       "sourcePackage": "api",
@@ -45704,7 +45695,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 18,
+      "line": 19,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/jurisdiction.ts'",
       "sourcePackage": "api",
@@ -45713,7 +45704,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 19,
+      "line": 20,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/legal-entity.ts'",
       "sourcePackage": "api",
@@ -45722,7 +45713,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 20,
+      "line": 21,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/product.ts'",
       "sourcePackage": "api",
@@ -45731,7 +45722,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 21,
+      "line": 22,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/result.ts'",
       "sourcePackage": "api",
@@ -45740,7 +45731,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 22,
+      "line": 23,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/time.ts'",
       "sourcePackage": "api",
@@ -45749,7 +45740,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 23,
+      "line": 24,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/hold.ts'",
       "sourcePackage": "api",
@@ -45758,7 +45749,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 24,
+      "line": 25,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'identity' internals via '../../../../packages/identity/src/capability.ts'",
       "sourcePackage": "api",
@@ -45767,7 +45758,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 25,
+      "line": 26,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'money' internals via '../../../../packages/money/src/money.ts'",
       "sourcePackage": "api",
@@ -45776,7 +45767,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 26,
+      "line": 27,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'permissions' internals via '../../../../packages/permissions/src/action-intent.ts'",
       "sourcePackage": "api",
@@ -45785,7 +45776,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 27,
+      "line": 28,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'permissions' internals via '../../../../packages/permissions/src/action-types.ts'",
       "sourcePackage": "api",
@@ -45794,7 +45785,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 28,
+      "line": 29,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'payments' internals via '../../../../packages/payments/src/service.ts'",
       "sourcePackage": "api",
@@ -45803,7 +45794,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 29,
+      "line": 30,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'payments' internals via '../../../../packages/payments/src/platform/orchestrator.ts'",
       "sourcePackage": "api",
@@ -45812,7 +45803,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 34,
+      "line": 35,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/provider-runtime/universal/index.ts'",
       "sourcePackage": "api",
@@ -45821,7 +45812,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 35,
+      "line": 36,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'security' internals via '../../../../packages/security/src/secrets.ts'",
       "sourcePackage": "api",
@@ -45830,7 +45821,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 36,
+      "line": 37,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'cards' internals via '../../../../packages/cards/src/service.ts'",
       "sourcePackage": "api",
@@ -45839,7 +45830,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 37,
+      "line": 38,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'cards' internals via '../../../../packages/cards/src/program.ts'",
       "sourcePackage": "api",
@@ -45848,7 +45839,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 41,
+      "line": 42,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'personal-economic-graph' internals via '../../../../packages/personal-economic-graph/src/service.ts'",
       "sourcePackage": "api",
@@ -45857,7 +45848,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 42,
+      "line": 43,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'platform' internals via '../../../../packages/platform/src/service.ts'",
       "sourcePackage": "api",
@@ -45866,7 +45857,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 60,
+      "line": 61,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'sunrey-agent' internals via '../../../../packages/sunrey-agent/src/runtime.ts'",
       "sourcePackage": "api",
@@ -45875,7 +45866,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 74,
+      "line": 75,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'platform' internals via '../../../../packages/platform/src/growth/product/service.ts'",
       "sourcePackage": "api",
@@ -45884,7 +45875,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 76,
+      "line": 77,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'custody' internals via '../../../../packages/custody/src/product/sandbox.ts'",
       "sourcePackage": "api",
@@ -45893,7 +45884,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 77,
+      "line": 78,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'custody' internals via '../../../../packages/custody/src/product/service.ts'",
       "sourcePackage": "api",
@@ -45902,21 +45893,12 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 80,
+      "line": 81,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/native-clearing/engine.ts'",
       "sourcePackage": "api",
       "targetPackage": "sunrey-exchange",
       "spec": "../../../../packages/sunrey-exchange/src/native-clearing/engine.ts"
-    },
-    {
-      "file": "services/api/src/consumer/fixtures.ts",
-      "line": 82,
-      "rule": "service-deep-import",
-      "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'information-market' internals via '../../../../packages/information-market/src/rights-marketplace/index.ts'",
-      "sourcePackage": "api",
-      "targetPackage": "information-market",
-      "spec": "../../../../packages/information-market/src/rights-marketplace/index.ts"
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
@@ -45929,7 +45911,16 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 86,
+      "line": 84,
+      "rule": "service-deep-import",
+      "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'information-market' internals via '../../../../packages/information-market/src/rights-marketplace/index.ts'",
+      "sourcePackage": "api",
+      "targetPackage": "information-market",
+      "spec": "../../../../packages/information-market/src/rights-marketplace/index.ts"
+    },
+    {
+      "file": "services/api/src/consumer/fixtures.ts",
+      "line": 87,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'external-data' internals via '../../../../packages/external-data/src/index.ts'",
       "sourcePackage": "api",
@@ -45938,7 +45929,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 96,
+      "line": 97,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'platform' internals via '../../../../packages/platform/src/subscription-intelligence/index.ts'",
       "sourcePackage": "api",
@@ -45947,7 +45938,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 97,
+      "line": 98,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'personal-economic-graph' internals via '../../../../packages/personal-economic-graph/src/ids.ts'",
       "sourcePackage": "api",
@@ -45956,7 +45947,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 98,
+      "line": 99,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'personal-economic-graph' internals via '../../../../packages/personal-economic-graph/src/store.ts'",
       "sourcePackage": "api",
@@ -45965,7 +45956,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 99,
+      "line": 100,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/service.ts'",
       "sourcePackage": "api",
@@ -45974,7 +45965,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 104,
+      "line": 105,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'information-market' internals via '../../../../packages/information-market/src/network/access-integration/index.ts'",
       "sourcePackage": "api",
@@ -45983,7 +45974,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 105,
+      "line": 106,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/hin-access.ts'",
       "sourcePackage": "api",
@@ -45992,7 +45983,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 107,
+      "line": 108,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'consent' internals via '../../../../packages/consent/src/service.ts'",
       "sourcePackage": "api",
@@ -46001,7 +45992,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 108,
+      "line": 109,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'consent' internals via '../../../../packages/consent/src/product/engine.ts'",
       "sourcePackage": "api",
@@ -46010,7 +46001,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 109,
+      "line": 110,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'personal-data-vault' internals via '../../../../packages/personal-data-vault/src/service.ts'",
       "sourcePackage": "api",
@@ -46019,7 +46010,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 113,
+      "line": 114,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'personal-data-vault' internals via '../../../../packages/personal-data-vault/src/product/index.ts'",
       "sourcePackage": "api",
@@ -46361,7 +46352,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 23,
+      "line": 24,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'payments' internals via '../../../../packages/payments/src/platform/lifecycle.ts'",
       "sourcePackage": "api",
@@ -46370,7 +46361,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 32,
+      "line": 33,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'identity' internals via '../../../../packages/identity/src/service.ts'",
       "sourcePackage": "api",
@@ -46379,7 +46370,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 33,
+      "line": 34,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'payments' internals via '../../../../packages/payments/src/platform/orchestrator.ts'",
       "sourcePackage": "api",
@@ -46388,7 +46379,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 36,
+      "line": 37,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'sunrey-agent' internals via '../../../../packages/sunrey-agent/src/tools/catalog.ts'",
       "sourcePackage": "api",
@@ -46397,7 +46388,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 44,
+      "line": 45,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'sunrey-agent' internals via '../../../../packages/sunrey-agent/src/runtime.ts'",
       "sourcePackage": "api",
@@ -46406,7 +46397,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 56,
+      "line": 57,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'platform' internals via '../../../../packages/platform/src/growth/product/index.ts'",
       "sourcePackage": "api",
@@ -46415,7 +46406,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 58,
+      "line": 59,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'sunrey-agent' internals via '../../../../packages/sunrey-agent/src/conversation/taxonomy.ts'",
       "sourcePackage": "api",
@@ -46424,7 +46415,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 59,
+      "line": 60,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'custody' internals via '../../../../packages/custody/src/product/index.ts'",
       "sourcePackage": "api",
@@ -46433,7 +46424,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 65,
+      "line": 66,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'custody' internals via '../../../../packages/custody/src/product/taxonomy.ts'",
       "sourcePackage": "api",
@@ -46442,7 +46433,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 70,
+      "line": 71,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'information-market' internals via '../../../../packages/information-market/src/rights-marketplace/index.ts'",
       "sourcePackage": "api",
@@ -46451,7 +46442,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 80,
+      "line": 81,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'human-economic-contribution' internals via '../../../../packages/human-economic-contribution/src/hin-value/index.ts'",
       "sourcePackage": "api",
@@ -46460,7 +46451,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 93,
+      "line": 94,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'consent' internals via '../../../../packages/consent/src/product/engine.ts'",
       "sourcePackage": "api",
@@ -46469,7 +46460,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 94,
+      "line": 95,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'personal-data-vault' internals via '../../../../packages/personal-data-vault/src/product/index.ts'",
       "sourcePackage": "api",
@@ -46478,7 +46469,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 97,
+      "line": 98,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/consumer-bff/index.ts'",
       "sourcePackage": "api",
@@ -46487,7 +46478,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 100,
+      "line": 101,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/service.ts'",
       "sourcePackage": "api",
@@ -46496,7 +46487,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 160,
+      "line": 161,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/hin-access.ts'",
       "sourcePackage": "api",
@@ -46505,7 +46496,7 @@
     },
     {
       "file": "services/api/src/consumer/health-reference.ts",
-      "line": 9,
+      "line": 10,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/health-reference.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/health-reference/index.ts'",
       "sourcePackage": "api",
@@ -46658,7 +46649,7 @@
     },
     {
       "file": "services/api/src/consumer/merchant-exchange.ts",
-      "line": 8,
+      "line": 9,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/merchant-exchange.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/merchant-exchange/index.ts'",
       "sourcePackage": "api",
@@ -46838,7 +46829,7 @@
     },
     {
       "file": "services/api/src/consumer/opportunity-adapter.ts",
-      "line": 15,
+      "line": 16,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/opportunity-adapter.ts' deep-imports 'external-data' internals via '../../../../packages/external-data/src/wave6/index.ts'",
       "sourcePackage": "api",
@@ -46847,7 +46838,7 @@
     },
     {
       "file": "services/api/src/consumer/opportunity-adapter.ts",
-      "line": 16,
+      "line": 17,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/opportunity-adapter.ts' deep-imports 'external-data' internals via '../../../../packages/external-data/src/wave6/types.ts'",
       "sourcePackage": "api",
@@ -46856,7 +46847,7 @@
     },
     {
       "file": "services/api/src/consumer/opportunity-adapter.ts",
-      "line": 17,
+      "line": 18,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/opportunity-adapter.ts' deep-imports 'external-data' internals via '../../../../packages/external-data/src/wave6/opportunity-coverage.ts'",
       "sourcePackage": "api",
@@ -46865,7 +46856,7 @@
     },
     {
       "file": "services/api/src/consumer/orchestrator.ts",
-      "line": 1,
+      "line": 2,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/orchestrator.ts' deep-imports 'config' internals via '../../../../packages/config/src/flags.ts'",
       "sourcePackage": "api",
@@ -46874,7 +46865,7 @@
     },
     {
       "file": "services/api/src/consumer/orchestrator.ts",
-      "line": 2,
+      "line": 3,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/orchestrator.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/account-class.ts'",
       "sourcePackage": "api",
@@ -46883,7 +46874,7 @@
     },
     {
       "file": "services/api/src/consumer/orchestrator.ts",
-      "line": 3,
+      "line": 4,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/orchestrator.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/provider-runtime/universal/runtime.ts'",
       "sourcePackage": "api",
@@ -46892,7 +46883,7 @@
     },
     {
       "file": "services/api/src/consumer/orchestrator.ts",
-      "line": 10,
+      "line": 11,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/orchestrator.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/time.ts'",
       "sourcePackage": "api",
@@ -46901,7 +46892,7 @@
     },
     {
       "file": "services/api/src/consumer/orchestrator.ts",
-      "line": 27,
+      "line": 28,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/orchestrator.ts' deep-imports 'payments' internals via '../../../../packages/payments/src/fx-valuation.ts'",
       "sourcePackage": "api",
@@ -46910,7 +46901,7 @@
     },
     {
       "file": "services/api/src/consumer/orchestrator.ts",
-      "line": 28,
+      "line": 29,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/orchestrator.ts' deep-imports 'payments' internals via '../../../../packages/payments/src/fx-currency.ts'",
       "sourcePackage": "api",
@@ -46919,7 +46910,7 @@
     },
     {
       "file": "services/api/src/consumer/orchestrator.ts",
-      "line": 155,
+      "line": 156,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/orchestrator.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/product/projections.ts'",
       "sourcePackage": "api",
@@ -46928,7 +46919,7 @@
     },
     {
       "file": "services/api/src/consumer/orchestrator.ts",
-      "line": 217,
+      "line": 218,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/orchestrator.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/product/projections.ts'",
       "sourcePackage": "api",
@@ -46937,7 +46928,7 @@
     },
     {
       "file": "services/api/src/consumer/orchestrator.ts",
-      "line": 1428,
+      "line": 1429,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/orchestrator.ts' deep-imports 'payments' internals via '../../../../packages/payments/src/service.ts'",
       "sourcePackage": "api",
@@ -47486,7 +47477,7 @@
     },
     {
       "file": "services/api/src/consumer/risk-evidence-adapter.ts",
-      "line": 15,
+      "line": 16,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/risk-evidence-adapter.ts' deep-imports 'risk-evidence' internals via '../../../../packages/risk-evidence/src/index.ts'",
       "sourcePackage": "api",
@@ -47513,7 +47504,7 @@
     },
     {
       "file": "services/api/src/consumer/subscription-intelligence-adapter.ts",
-      "line": 5,
+      "line": 6,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/subscription-intelligence-adapter.ts' deep-imports 'personal-economic-graph' internals via '../../../../packages/personal-economic-graph/src/store.ts'",
       "sourcePackage": "api",
@@ -47522,7 +47513,7 @@
     },
     {
       "file": "services/api/src/consumer/subscription-intelligence-adapter.ts",
-      "line": 11,
+      "line": 12,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/subscription-intelligence-adapter.ts' deep-imports 'platform' internals via '../../../../packages/platform/src/subscription-intelligence/index.ts'",
       "sourcePackage": "api",
@@ -47612,7 +47603,7 @@
     },
     {
       "file": "services/api/src/consumer/world-external-data-adapter.ts",
-      "line": 7,
+      "line": 8,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/world-external-data-adapter.ts' deep-imports 'external-data' internals via '../../../../packages/external-data/src/plane.ts'",
       "sourcePackage": "api",
@@ -47621,7 +47612,7 @@
     },
     {
       "file": "services/api/src/consumer/world-external-data-adapter.ts",
-      "line": 17,
+      "line": 18,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/world-external-data-adapter.ts' deep-imports 'external-data' internals via '../../../../packages/external-data/src/bridges.ts'",
       "sourcePackage": "api",
@@ -47630,7 +47621,7 @@
     },
     {
       "file": "services/api/src/consumer/world-external-data-adapter.ts",
-      "line": 18,
+      "line": 19,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/world-external-data-adapter.ts' deep-imports 'external-data' internals via '../../../../packages/external-data/src/world-snapshot.ts'",
       "sourcePackage": "api",
@@ -47639,7 +47630,7 @@
     },
     {
       "file": "services/api/src/consumer/world-external-data-adapter.ts",
-      "line": 22,
+      "line": 23,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/world-external-data-adapter.ts' deep-imports 'external-data' internals via '../../../../packages/external-data/src/productive-economy-snapshot.ts'",
       "sourcePackage": "api",
@@ -47648,7 +47639,7 @@
     },
     {
       "file": "services/api/src/consumer/world-external-data-adapter.ts",
-      "line": 23,
+      "line": 24,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/world-external-data-adapter.ts' deep-imports 'config' internals via '../../../../packages/config/src/data-mode.ts'",
       "sourcePackage": "api",
@@ -47657,7 +47648,7 @@
     },
     {
       "file": "services/api/src/consumer/world-external-data-adapter.ts",
-      "line": 27,
+      "line": 28,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/world-external-data-adapter.ts' deep-imports 'external-data' internals via '../../../../packages/external-data/src/product-data-state.ts'",
       "sourcePackage": "api",
@@ -47666,7 +47657,7 @@
     },
     {
       "file": "services/api/src/consumer/world-external-data-adapter.ts",
-      "line": 28,
+      "line": 29,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/world-external-data-adapter.ts' deep-imports 'external-data' internals via '../../../../packages/external-data/src/bridges.ts'",
       "sourcePackage": "api",
@@ -47675,7 +47666,7 @@
     },
     {
       "file": "services/api/src/consumer/world-external-data-adapter.ts",
-      "line": 36,
+      "line": 37,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/world-external-data-adapter.ts' deep-imports 'external-data' internals via '../../../../packages/external-data/src/wave5-bridges.ts'",
       "sourcePackage": "api",
@@ -47684,7 +47675,7 @@
     },
     {
       "file": "services/api/src/consumer/world-external-data-adapter.ts",
-      "line": 37,
+      "line": 38,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/world-external-data-adapter.ts' deep-imports 'external-data' internals via '../../../../packages/external-data/src/wave5-peg.ts'",
       "sourcePackage": "api",
@@ -47720,7 +47711,7 @@
     },
     {
       "file": "services/api/src/operations/collectors.ts",
-      "line": 7,
+      "line": 8,
       "rule": "service-deep-import",
       "message": "'services/api/src/operations/collectors.ts' deep-imports 'config' internals via '../../../../packages/config/src/clock.ts'",
       "sourcePackage": "api",
@@ -47729,7 +47720,7 @@
     },
     {
       "file": "services/api/src/operations/collectors.ts",
-      "line": 8,
+      "line": 9,
       "rule": "service-deep-import",
       "message": "'services/api/src/operations/collectors.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/time.ts'",
       "sourcePackage": "api",
@@ -47738,7 +47729,7 @@
     },
     {
       "file": "services/api/src/operations/collectors.ts",
-      "line": 9,
+      "line": 10,
       "rule": "service-deep-import",
       "message": "'services/api/src/operations/collectors.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/economics/supply.ts'",
       "sourcePackage": "api",
@@ -47747,7 +47738,7 @@
     },
     {
       "file": "services/api/src/operations/collectors.ts",
-      "line": 10,
+      "line": 11,
       "rule": "service-deep-import",
       "message": "'services/api/src/operations/collectors.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/ops/control-room/control-room.ts'",
       "sourcePackage": "api",
@@ -47756,7 +47747,7 @@
     },
     {
       "file": "services/api/src/operations/collectors.ts",
-      "line": 11,
+      "line": 12,
       "rule": "service-deep-import",
       "message": "'services/api/src/operations/collectors.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/ops/control-room/fixtures.ts'",
       "sourcePackage": "api",
@@ -47765,7 +47756,7 @@
     },
     {
       "file": "services/api/src/operations/collectors.ts",
-      "line": 12,
+      "line": 13,
       "rule": "service-deep-import",
       "message": "'services/api/src/operations/collectors.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/ops/control-room/readiness.ts'",
       "sourcePackage": "api",
@@ -47774,7 +47765,7 @@
     },
     {
       "file": "services/api/src/operations/collectors.ts",
-      "line": 13,
+      "line": 14,
       "rule": "service-deep-import",
       "message": "'services/api/src/operations/collectors.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/ops/control-room/alerts.ts'",
       "sourcePackage": "api",
@@ -47783,7 +47774,7 @@
     },
     {
       "file": "services/api/src/operations/collectors.ts",
-      "line": 14,
+      "line": 15,
       "rule": "service-deep-import",
       "message": "'services/api/src/operations/collectors.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/productive/operations/fixtures.ts'",
       "sourcePackage": "api",
@@ -47792,7 +47783,7 @@
     },
     {
       "file": "services/api/src/operations/collectors.ts",
-      "line": 19,
+      "line": 20,
       "rule": "service-deep-import",
       "message": "'services/api/src/operations/collectors.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/provider-runtime/universal/observability/index.ts'",
       "sourcePackage": "api",
@@ -47801,7 +47792,7 @@
     },
     {
       "file": "services/api/src/operations/collectors.ts",
-      "line": 23,
+      "line": 24,
       "rule": "service-deep-import",
       "message": "'services/api/src/operations/collectors.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/provider-runtime/universal/index.ts'",
       "sourcePackage": "api",
@@ -47810,7 +47801,7 @@
     },
     {
       "file": "services/api/src/operations/collectors.ts",
-      "line": 24,
+      "line": 25,
       "rule": "service-deep-import",
       "message": "'services/api/src/operations/collectors.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/simulation.ts'",
       "sourcePackage": "api",
@@ -47819,7 +47810,7 @@
     },
     {
       "file": "services/api/src/operations/collectors.ts",
-      "line": 29,
+      "line": 30,
       "rule": "service-deep-import",
       "message": "'services/api/src/operations/collectors.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/ids.ts'",
       "sourcePackage": "api",
@@ -47828,7 +47819,7 @@
     },
     {
       "file": "services/api/src/operations/feature-gates.ts",
-      "line": 15,
+      "line": 16,
       "rule": "service-deep-import",
       "message": "'services/api/src/operations/feature-gates.ts' deep-imports 'config' internals via '../../../../packages/config/src/flags.ts'",
       "sourcePackage": "api",
@@ -47837,7 +47828,7 @@
     },
     {
       "file": "services/api/src/operations/feature-gates.ts",
-      "line": 16,
+      "line": 17,
       "rule": "service-deep-import",
       "message": "'services/api/src/operations/feature-gates.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/protocol/assets.ts'",
       "sourcePackage": "api",
@@ -47846,7 +47837,7 @@
     },
     {
       "file": "services/api/src/operations/governance-routes.ts",
-      "line": 16,
+      "line": 17,
       "rule": "service-deep-import",
       "message": "'services/api/src/operations/governance-routes.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/governance-ops/engine.ts'",
       "sourcePackage": "api",
@@ -47855,7 +47846,7 @@
     },
     {
       "file": "services/api/src/operations/governance-routes.ts",
-      "line": 20,
+      "line": 21,
       "rule": "service-deep-import",
       "message": "'services/api/src/operations/governance-routes.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/governance-ops/types.ts'",
       "sourcePackage": "api",
@@ -47927,7 +47918,7 @@
     },
     {
       "file": "services/api/src/product-integration/durable-human-economic-state.ts",
-      "line": 1,
+      "line": 2,
       "rule": "service-deep-import",
       "message": "'services/api/src/product-integration/durable-human-economic-state.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/result.ts'",
       "sourcePackage": "api",
@@ -47936,7 +47927,7 @@
     },
     {
       "file": "services/api/src/product-integration/durable-human-economic-state.ts",
-      "line": 2,
+      "line": 3,
       "rule": "service-deep-import",
       "message": "'services/api/src/product-integration/durable-human-economic-state.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/time.ts'",
       "sourcePackage": "api",
@@ -47945,7 +47936,7 @@
     },
     {
       "file": "services/api/src/product-integration/durable-human-economic-state.ts",
-      "line": 3,
+      "line": 4,
       "rule": "service-deep-import",
       "message": "'services/api/src/product-integration/durable-human-economic-state.ts' deep-imports 'human-economic-contribution' internals via '../../../../packages/human-economic-contribution/src/event.ts'",
       "sourcePackage": "api",
@@ -47954,7 +47945,7 @@
     },
     {
       "file": "services/api/src/product-integration/durable-human-economic-state.ts",
-      "line": 4,
+      "line": 5,
       "rule": "service-deep-import",
       "message": "'services/api/src/product-integration/durable-human-economic-state.ts' deep-imports 'human-economic-contribution' internals via '../../../../packages/human-economic-contribution/src/record.ts'",
       "sourcePackage": "api",
@@ -47963,7 +47954,7 @@
     },
     {
       "file": "services/api/src/product-integration/durable-human-economic-state.ts",
-      "line": 5,
+      "line": 6,
       "rule": "service-deep-import",
       "message": "'services/api/src/product-integration/durable-human-economic-state.ts' deep-imports 'human-economic-contribution' internals via '../../../../packages/human-economic-contribution/src/registry.ts'",
       "sourcePackage": "api",
@@ -47972,7 +47963,7 @@
     },
     {
       "file": "services/api/src/product-integration/durable-human-economic-state.ts",
-      "line": 10,
+      "line": 11,
       "rule": "service-deep-import",
       "message": "'services/api/src/product-integration/durable-human-economic-state.ts' deep-imports 'human-economic-contribution' internals via '../../../../packages/human-economic-contribution/src/resolution/engine.ts'",
       "sourcePackage": "api",
@@ -47981,7 +47972,7 @@
     },
     {
       "file": "services/api/src/product-integration/durable-human-economic-state.ts",
-      "line": 11,
+      "line": 12,
       "rule": "service-deep-import",
       "message": "'services/api/src/product-integration/durable-human-economic-state.ts' deep-imports 'human-economic-contribution' internals via '../../../../packages/human-economic-contribution/src/resolution/ids.ts'",
       "sourcePackage": "api",
@@ -47990,7 +47981,7 @@
     },
     {
       "file": "services/api/src/product-integration/durable-human-economic-state.ts",
-      "line": 18,
+      "line": 19,
       "rule": "service-deep-import",
       "message": "'services/api/src/product-integration/durable-human-economic-state.ts' deep-imports 'human-economic-contribution' internals via '../../../../packages/human-economic-contribution/src/resolution/types.ts'",
       "sourcePackage": "api",
@@ -47999,7 +47990,7 @@
     },
     {
       "file": "services/api/src/product-integration/durable-human-economic-state.ts",
-      "line": 25,
+      "line": 26,
       "rule": "service-deep-import",
       "message": "'services/api/src/product-integration/durable-human-economic-state.ts' deep-imports 'human-economic-contribution' internals via '../../../../packages/human-economic-contribution/src/types.ts'",
       "sourcePackage": "api",
@@ -48008,7 +47999,7 @@
     },
     {
       "file": "services/api/src/product-integration/durable-human-economic-state.ts",
-      "line": 32,
+      "line": 35,
       "rule": "service-deep-import",
       "message": "'services/api/src/product-integration/durable-human-economic-state.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/economics/proof-bound/claims.ts'",
       "sourcePackage": "api",
