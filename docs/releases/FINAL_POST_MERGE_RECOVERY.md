@@ -9,7 +9,7 @@ Post-merge stabilization repair for integration corruption introduced when stale
 | | SHA |
 |---|---|
 | **Starting** | `12b583e61e086c671e8535e7e8209d64b5630c4a` |
-| **Ending** | `9b70fc83` (HEC persistence round-trip + integration test fixes) |
+| **Ending** | `66451d79` (HEC persistence + CI green except typecheck) |
 
 ## Files repaired
 
@@ -51,19 +51,20 @@ Concurrent merges landed overlapping durable-runtime, RC1 qualification, and arc
 | Rust fmt/clippy/tests | Passed in local full CI run | N/A | Dockerfile fix unblocks tail | **PASS** (local `ci.sh` through Rust) |
 | Testnet manifests | **FAIL** — watcher Dockerfile | Missing HEALTHCHECK | Added HEALTHCHECK line | **PASS** |
 | OpenAPI / migrations | Passed in integrity stage | N/A | — | **PASS** |
-| Persistence integration | **FAIL** on `a349f037` — ClaimRegistry JSON round-trip + pool lifecycle | Maps/Sets serialized as `{}`; tests closed pools mid-run | Serialize proof-bound claims; fix TEST 3/4/6/7 | **PENDING** — GitHub `[DATABASE]` job on `9b70fc83` |
-| TypeScript typecheck | **FAIL** — ~1689 errors on `main` | Post-`d919aa69` merge type drift (not JSON/runtime) | Not fully repaired in this prompt | **FAIL** — `tsc` exit 2 |
-| Full `scripts/ci.sh` | **FAIL** at JSON then Dockerfile | Above | Partial | **BLOCKED** at typecheck until TS errors addressed |
+| Persistence integration | **FAIL** on `a349f037` | ClaimRegistry JSON + pool lifecycle + TEST 6 | Serialize claims; fix tests | **PASS** — all 8 HEC tests on `66451d79` |
+| Authority-map / kernel / posture | **FAIL** on `314c5935` (new deep-import) | Line shift + `types.ts` import | `serializeClaimRegistry` only; baseline line update | **PASS** on `66451d79` |
+| TypeScript typecheck | **FAIL** — ~1678 errors on branch | Post-`d919aa69` merge type drift (not JSON/runtime) | Not repaired in Prompt 1 | **FAIL** — sole remaining CI failure |
+| Full `scripts/ci.sh` | **FAIL** at JSON then Dockerfile | Above | Partial | **BLOCKED** at typecheck (Prompt 2) |
 | Production flags | Simulation | N/A | Verified unchanged | **PASS** — `ENVIRONMENT=simulation`, `LIVE_*` false |
 
 ## Remaining warnings / blockers
 
-### Blocker: TypeScript typecheck (~1689 errors)
+### Blocker: TypeScript typecheck (~1678 errors)
 
 - Last fully green CI on `main`: `d919aa69a8152d24631efc5eaa865830976472fe` (0 `tsc` errors).
-- Current `main` after merges #443–#447: ~1689 errors (`tsc --noEmit` exit 2).
-- GitHub CI has not reached the typecheck stage recently because JSON integrity failed first.
-- **Do not merge** until typecheck is green or a follow-up stabilization pass repairs the type drift.
+- Branch `66451d79`: ~1678 errors (`tsc --noEmit` exit 2). Concentrated in wave-9 red-team tests and merged package API drift.
+- **5 of 6 CI checks pass** on `66451d79`; only the main job fails at `[TYPECHECK]`.
+- **Do not merge** until typecheck is green (Prompt 2 stabilization).
 
 ### Non-blocker
 
