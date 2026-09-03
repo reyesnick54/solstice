@@ -100,6 +100,18 @@ export {
 } from './operations-control/pg-store.ts';
 export { persistCleanRoomState } from './clean-room/pg-clean-room-store.ts';
 export { persistInformationMarketState } from './information-market/pg-information-market-store.ts';
+export {
+  loadHumanEconomicState,
+  persistHumanEconomicState,
+  reserveActiveFingerprint,
+  reserveMonetizationKey,
+  reserveObservationReplayKey,
+  reserveProofBoundClaimFingerprint,
+  reserveVerifiedFingerprint,
+  withHumanEconomicReservation,
+  type HumanEconomicStateSnapshot,
+  type ReservationResult,
+} from './human-economic-contribution/pg-store.ts';
 export { persistSunReyChainState } from './sunrey-chain/pg-sunrey-chain-store.ts';
 export {
   insertCoordinate,

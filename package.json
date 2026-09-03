@@ -264,6 +264,7 @@
     "lint:architecture": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/architectural-linter/src/cli.ts",
     "lint:invariants": "python3 scripts/lint-architectural-invariants.py",
     "check:extraction": "python3 scripts/extraction-dryrun.py",
+    "check:package-boundaries": "python3 scripts/check-package-boundaries.py",
     "check:posture": "python3 scripts/check-deployment-posture.py",
     "scan:secrets": "python3 scripts/secret-scan.py && python3 scripts/secret-scan.py --self-test",
     "security:test": "node scripts/security-assurance.mjs",

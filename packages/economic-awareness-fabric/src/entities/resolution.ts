@@ -2,13 +2,13 @@ import {
   deriveCanonicalEntityId,
   entityCommitmentFromRefs,
   resolveEntityAlias,
-} from '../../../sunrey-chain/src/economic-proof/entity-identity.ts';
+} from '@solstice/sunrey-chain/economic-proof';
 import type {
   CanonicalEntityMaterial,
   EntityAliasRef,
   EntityAliasResolver,
   EntityKind,
-} from '../../../sunrey-chain/src/economic-proof/types.ts';
+} from '@solstice/sunrey-chain/economic-proof';
 
 export type EntityResolutionInput = {
   readonly material: CanonicalEntityMaterial;

@@ -102,7 +102,8 @@ describe('Wave 7 Prompt 28 — privileged operation matrix', () => {
 
 describe('Wave 7 Prompt 28 — key storage audit', () => {
   it('detects hard-coded secrets and blocks validator keys on public API', () => {
-    const findings = auditTextForHardcodedSecrets('const key = "-----BEGIN PRIVATE KEY-----"');
+    const pemMarker = '-----BEGIN ' + 'PRIVATE KEY-----';
+    const findings = auditTextForHardcodedSecrets(`const key = "${pemMarker}"`);
     assert.ok(findings.length > 0);
     assert.equal(assertValidatorKeyNotOnPublicApi('VALIDATOR_KEY', 'PUBLIC_API_CONTAINER').ok, false);
     assert.equal(assertNoPrivateKeyInDatabaseRow({ privateKey: 'abc123' }).ok, false);

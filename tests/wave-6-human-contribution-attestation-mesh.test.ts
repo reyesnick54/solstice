@@ -17,10 +17,10 @@ import {
 import {
   createInformationVerifiedEconomicFact,
   informationConsensusCreatesMoney,
-} from '../packages/sunrey-chain/src/economic-awareness-fabric/information-consensus/verified-fact.ts';
-import { HUMAN_CONTRIBUTION_CANDIDATE } from '../packages/sunrey-chain/src/economic-awareness-fabric/information-consensus/fixtures.ts';
-import { HUMAN_CONTRIBUTION_METHODOLOGY } from '../packages/sunrey-chain/src/economic-awareness-fabric/information-consensus/methodology.ts';
-import { buildHumanEconomicClaim } from '../packages/sunrey-chain/src/economic-proof/adapters.ts';
+  HUMAN_CONTRIBUTION_CANDIDATE,
+  HUMAN_CONTRIBUTION_METHODOLOGY,
+} from '@solstice/sunrey-chain/economic-awareness-fabric';
+import { buildHumanEconomicClaim } from '@solstice/sunrey-chain/economic-proof';
 
 describe('Wave 6 — Attestation Mesh ↔ Information Consensus integration', () => {
   it('verified attestation mesh receipt can produce VerifiedEconomicFact without mint authority', () => {

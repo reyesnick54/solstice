@@ -36,8 +36,6 @@ import {
   AI_INFORMATION_CONSENSUS_ROLE,
   validateAiAssistanceBoundary,
   assessProductiveSourceClasses,
-} from '../packages/sunrey-chain/src/economic-awareness-fabric/information-consensus/index.ts';
-import {
   buildConsensusInput,
   CONFLICTING_OBSERVATIONS,
   PRODUCTIVE_ENERGY_CANDIDATE,
@@ -46,7 +44,7 @@ import {
   THREE_INDEPENDENT_SOURCES,
   THREE_PROVIDERS_ONE_UPSTREAM,
   UNVERIFIED_PROVIDER_OBSERVATION,
-} from '../packages/sunrey-chain/src/economic-awareness-fabric/information-consensus/fixtures.ts';
+} from '@solstice/sunrey-chain/economic-awareness-fabric';
 import {
   authorizeIssuance,
   developmentMoonReyAuthority,

@@ -8,14 +8,21 @@ import {
   harness,
   authority,
   corroboration,
+  informationConsensus,
   entities,
   normalization,
 } from './index.ts';
-import { fixtureHumanObservation, fixtureProductiveObservation } from '../../sunrey-chain/src/economic-proof/fixtures.ts';
-import { buildEvidenceFromObservation } from '../../sunrey-chain/src/economic-proof/adapters.ts';
+import { fixtureHumanObservation } from '@solstice/sunrey-chain/economic-proof';
+import { buildEvidenceFromObservation } from '@solstice/sunrey-chain/economic-proof';
 import { proposeEvidenceFromObservations } from './evidence/builder.ts';
 import { loadFabricConfig, DEFAULT_FABRIC_CONFIG } from './config/loader.ts';
 import { materialFromRefs, resolveEntity } from './entities/resolution.ts';
+import {
+  PRODUCTIVE_ENERGY_CANDIDATE,
+  THREE_INDEPENDENT_SOURCES,
+  THREE_PROVIDERS_ONE_UPSTREAM,
+  PRODUCTIVE_ENERGY_METHODOLOGY,
+} from './consensus/index.ts';
 
 describe('Wave 4 Economic Awareness Fabric', () => {
   it('blocks monetary mutation at capability boundary', () => {
@@ -64,22 +71,20 @@ describe('Wave 4 Economic Awareness Fabric', () => {
     assert.ok(resolved.canonicalEntityId.startsWith('ep_') || resolved.canonicalEntityId.length > 10);
   });
 
-  it('corroborates observations with quorum', () => {
-    const obs1 = fixtureProductiveObservation('obs_a');
-    const obs2 = fixtureProductiveObservation('obs_b');
-    const result = corroboration.corroborateObservations({
-      observations: [obs1, obs2],
-      quorumRequired: 2,
-    });
-    assert.equal(result.status, 'corroborated');
+  it('satisfies lineage-aware corroboration with independent sources', () => {
+    const policy = informationConsensus.resolveMethodologyPolicy(PRODUCTIVE_ENERGY_METHODOLOGY.methodology);
+    const independence = corroboration.analyzeSourceIndependence(THREE_INDEPENDENT_SOURCES);
+    const result = corroboration.evaluateCorroboration(policy, THREE_INDEPENDENT_SOURCES, independence);
+    assert.equal(result.satisfied, true);
+    assert.equal(independence.independentLineageRootCount, 3);
   });
 
-  it('fails corroboration below quorum', () => {
-    const result = corroboration.corroborateObservations({
-      observations: [fixtureHumanObservation()],
-      quorumRequired: 2,
-    });
-    assert.equal(result.status, 'insufficient');
+  it('fails corroboration when providers share upstream lineage', () => {
+    const policy = informationConsensus.resolveMethodologyPolicy(PRODUCTIVE_ENERGY_METHODOLOGY.methodology);
+    const independence = corroboration.analyzeSourceIndependence(THREE_PROVIDERS_ONE_UPSTREAM);
+    const result = corroboration.evaluateCorroboration(policy, THREE_PROVIDERS_ONE_UPSTREAM, independence);
+    assert.equal(result.satisfied, false);
+    assert.equal(independence.independentLineageRootCount, 1);
   });
 
   it('proposes evidence without minting', () => {
