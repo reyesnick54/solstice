@@ -23,7 +23,9 @@ import type {
   RecordContributionInput,
   VerifyContributionInput,
 } from '../../../../packages/human-economic-contribution/src/types.ts';
+import type { CanonicalEconomicClaim } from '../../../../packages/sunrey-chain/src/economics/proof-bound/types.ts';
 import {
+  deserializeClaimRegistry,
   emptyClaimRegistry,
   getClaim,
   markClaimMonetized,
@@ -43,11 +45,47 @@ export type DurableHumanEconomicStateOptions = {
   readonly requireDurable?: boolean;
 };
 
+type SerializedClaimRegistry = {
+  readonly claims: ReadonlyArray<readonly [string, CanonicalEconomicClaim]>;
+  readonly fingerprints: ReadonlyArray<readonly [string, string]>;
+  readonly monetizedClaimIds: ReadonlyArray<string>;
+};
+
 export type DurableHumanEconomicSnapshot = {
   readonly registry: HumanContributionRegistrySnapshot;
   readonly resolution: HumanContributionResolutionSnapshot;
-  readonly proofBoundClaims: ClaimRegistry;
+  readonly proofBoundClaims: SerializedClaimRegistry;
 };
+
+function serializeProofBoundClaims(registry: ClaimRegistry): SerializedClaimRegistry {
+  return Object.freeze({
+    claims: [...registry.claims.entries()],
+    fingerprints: [...registry.fingerprints.entries()],
+    monetizedClaimIds: [...registry.monetizedClaimIds],
+  });
+}
+
+function deserializeProofBoundClaims(raw: unknown): ClaimRegistry {
+  if (typeof raw === 'string') {
+    return deserializeClaimRegistry(raw);
+  }
+  if (raw && typeof raw === 'object') {
+    const candidate = raw as Partial<SerializedClaimRegistry> & ClaimRegistry;
+    if (candidate.claims instanceof Map) {
+      return {
+        claims: new Map(candidate.claims),
+        fingerprints: new Map(candidate.fingerprints),
+        monetizedClaimIds: new Set(candidate.monetizedClaimIds),
+      };
+    }
+    return {
+      claims: new Map(Array.isArray(candidate.claims) ? candidate.claims : []),
+      fingerprints: new Map(Array.isArray(candidate.fingerprints) ? candidate.fingerprints : []),
+      monetizedClaimIds: new Set(Array.isArray(candidate.monetizedClaimIds) ? candidate.monetizedClaimIds : []),
+    };
+  }
+  return emptyClaimRegistry();
+}
 
 /**
  * Coordinates Human Contribution registry and resolution with PostgreSQL-backed
@@ -105,7 +143,8 @@ export class DurableHumanEconomicStateService {
     }
   }
 
-  private hydrateProofBoundClaims(claims: ClaimRegistry): void {
+  private hydrateProofBoundClaims(raw: unknown): void {
+    const claims = deserializeProofBoundClaims(raw);
     for (const [, claim] of claims.claims) {
       registerEconomicClaim(this.proofBoundClaims, {
         economicClaimId: claim.economicClaimId,
@@ -126,7 +165,7 @@ export class DurableHumanEconomicStateService {
     return Object.freeze({
       registry: this.registry.snapshot(),
       resolution: this.resolution.snapshot(),
-      proofBoundClaims: this.proofBoundClaims,
+      proofBoundClaims: serializeProofBoundClaims(this.proofBoundClaims),
     });
   }
 

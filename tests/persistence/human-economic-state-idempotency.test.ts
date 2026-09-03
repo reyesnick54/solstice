@@ -23,6 +23,7 @@ import {
 import { DATABASES } from '../../packages/persistence/src/index.ts';
 import { reserveMonetizationKey, withHumanEconomicReservation } from '../../packages/persistence/src/human-economic-contribution/pg-store.ts';
 import { createHumanEconomicPersistencePort } from '../../services/accounts/src/human-economic-persistence.ts';
+import type { DurableSimulationRuntime } from '../../services/accounts/src/postgres-runtime.ts';
 import { DurableHumanEconomicStateService } from '../../services/api/src/product-integration/durable-human-economic-state.ts';
 import { createDurableRuntime, persistenceAvailable, preparePersistence } from './helpers.ts';
 
@@ -125,10 +126,9 @@ describePersistence('Human economic state idempotency (Prompt 5)', () => {
 
   it('TEST 3 — CONCURRENCY: concurrent monetization attempts create exactly one effect', async () => {
     const env = await preparePersistence();
-    const { runtime, pool, persistence, service: setup } = await createService(env);
+    const { pool, persistence, service: setup } = await createService(env);
     const claim = await setupClaim(setup);
     await setup.persist();
-    await closeTracked(runtime);
 
     const instanceA = await DurableHumanEconomicStateService.create(persistence, { requireDurable: true });
     const instanceB = await DurableHumanEconomicStateService.create(
@@ -150,10 +150,9 @@ describePersistence('Human economic state idempotency (Prompt 5)', () => {
 
   it('TEST 4 — MULTI-INSTANCE: two instances cannot independently monetize the same claim', async () => {
     const env = await preparePersistence();
-    const { runtime, pool, service: setup } = await createService(env);
+    const { pool, service: setup } = await createService(env);
     const claim = await setupClaim(setup);
     await setup.persist();
-    await closeTracked(runtime);
 
     const left = await DurableHumanEconomicStateService.create(createHumanEconomicPersistencePort(pool), {
       requireDurable: true,
@@ -188,8 +187,7 @@ describePersistence('Human economic state idempotency (Prompt 5)', () => {
 
   it('TEST 6 — DATABASE CONSTRAINT: uniqueness enforced when application pre-check is bypassed', async () => {
     const env = await preparePersistence();
-    const { runtime, pool } = await createService(env);
-    await closeTracked(runtime);
+    const { pool } = await createService(env);
 
     await assert.rejects(async () => {
       await withHumanEconomicReservation(pool, async (client) => {
@@ -234,14 +232,8 @@ describePersistence('Human economic state idempotency (Prompt 5)', () => {
       assert.equal(first.value.contributionId, retry.value.contributionId);
     }
     const duplicate = await service.submitContribution({
-      ...fixtureContribution('RESEARCH_PARTICIPATION', 'retry-boundary-dup'),
-      eventReference: input.eventReference,
-      evidenceReferences: input.evidenceReferences,
-      consentReferences: input.consentReferences,
-      purposeReferences: input.purposeReferences,
-      rightsReferences: input.rightsReferences,
-      provenanceReferences: input.provenanceReferences,
-      attestationReferences: input.attestationReferences,
+      ...fixtureContribution('RESEARCH_PARTICIPATION', 'retry-boundary'),
+      createdAt: asUtcInstant('2026-08-19T12:10:00.000Z'),
     });
     assert.equal(duplicate.ok, false);
     if (!duplicate.ok) {
