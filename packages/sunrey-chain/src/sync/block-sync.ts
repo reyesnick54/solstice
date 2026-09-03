@@ -8,6 +8,7 @@
 
 import { opsErr, opsOk } from '../ops/types.ts';
 import type { BlockSyncInput, BlockSyncReport, ChainIdentity, CommitCertificateRef, SyncBlockHeader, SyncResult } from './types.ts';
+export type { BlockSyncInput } from './types.ts';
 
 function twoThirdsPlus(total: bigint): bigint {
   return (total * 2n) / 3n + 1n;

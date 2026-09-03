@@ -68,7 +68,7 @@ function chainProvider(
       notes: null,
     }),
     sunrey: Object.freeze({
-      domain: Object.freeze(['blockchain_intelligence', 'world', 'exchange', 'financial_agent']),
+      domain: ['blockchain_intelligence', 'world', 'exchange', 'financial_agent'] as const,
       canonical_provider_interface: 'BlockchainIntelligenceProvider',
       priority: 'high',
       launch_tier: 'production_candidate',
@@ -108,7 +108,7 @@ export const CHAIN_INTELLIGENCE_CATALOG_ENTRIES: readonly CatalogProviderEntry[]
       status_url: 'https://mempool.space/status',
     }),
     sunrey: Object.freeze({
-      domain: Object.freeze(['blockchain_intelligence', 'world', 'exchange', 'financial_agent']),
+      domain: ['blockchain_intelligence', 'world', 'exchange', 'financial_agent'] as const,
       canonical_provider_interface: 'BlockchainIntelligenceProvider',
       priority: 'critical',
       launch_tier: 'production_candidate',
@@ -137,7 +137,7 @@ export const CHAIN_INTELLIGENCE_CATALOG_ENTRIES: readonly CatalogProviderEntry[]
       status_url: null,
     }),
     sunrey: Object.freeze({
-      domain: Object.freeze(['blockchain_intelligence', 'world', 'exchange', 'financial_agent']),
+      domain: ['blockchain_intelligence', 'world', 'exchange', 'financial_agent'] as const,
       canonical_provider_interface: 'BlockchainIntelligenceProvider',
       priority: 'high',
       launch_tier: 'secondary_source',
@@ -165,7 +165,7 @@ export const CHAIN_INTELLIGENCE_CATALOG_ENTRIES: readonly CatalogProviderEntry[]
       status_url: null,
     }),
     sunrey: Object.freeze({
-      domain: Object.freeze(['blockchain_intelligence', 'world', 'financial_agent']),
+      domain: ['blockchain_intelligence', 'world', 'financial_agent'] as const,
       canonical_provider_interface: 'BlockchainIntelligenceProvider',
       priority: 'high',
       launch_tier: 'production_candidate',
@@ -193,7 +193,7 @@ export const CHAIN_INTELLIGENCE_CATALOG_ENTRIES: readonly CatalogProviderEntry[]
       status_url: null,
     }),
     sunrey: Object.freeze({
-      domain: Object.freeze(['blockchain_intelligence', 'world']),
+      domain: ['blockchain_intelligence', 'world'] as const,
       canonical_provider_interface: 'BlockchainIntelligenceProvider',
       priority: 'medium',
       launch_tier: 'fallback_source',

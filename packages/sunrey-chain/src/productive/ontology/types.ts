@@ -15,6 +15,7 @@ export const PRODUCTIVE_METRIC_DERIVATION_CLASSES = [
   'SATELLITE_DERIVED',
   'MODEL_DERIVED',
   'MARKET_REFERENCE',
+  'SENSOR_NETWORK',
   'OTHER',
 ] as const;
 export type ProductiveMetricDerivationClass = (typeof PRODUCTIVE_METRIC_DERIVATION_CLASSES)[number];

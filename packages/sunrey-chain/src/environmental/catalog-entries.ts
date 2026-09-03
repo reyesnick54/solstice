@@ -77,7 +77,7 @@ function envProvider(
       notes: null,
     }),
     sunrey: Object.freeze({
-      domain: Object.freeze(['world', 'grow', 'financial_agent', 'research', 'moonrey', 'travel', 'infrastructure']),
+      domain: ['world', 'grow', 'financial_agent', 'research', 'moonrey', 'travel', 'infrastructure'] as const,
       canonical_provider_interface: 'EnvironmentalOracleProvider',
       priority: 'high',
       launch_tier: 'production_candidate',
@@ -110,7 +110,7 @@ export const ENVIRONMENTAL_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Ob
       status_url: null,
     }),
     sunrey: Object.freeze({
-      domain: Object.freeze(['world', 'grow', 'financial_agent', 'research', 'moonrey', 'travel']),
+      domain: ['world', 'grow', 'financial_agent', 'research', 'moonrey', 'travel'] as const,
       canonical_provider_interface: 'EnvironmentalOracleProvider',
       priority: 'critical',
       launch_tier: 'production_candidate',
@@ -163,7 +163,7 @@ export const ENVIRONMENTAL_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Ob
       notes: 'United States coverage only.',
     }),
     sunrey: Object.freeze({
-      domain: Object.freeze(['world', 'travel', 'financial_agent', 'research']),
+      domain: ['world', 'travel', 'financial_agent', 'research'] as const,
       canonical_provider_interface: 'EnvironmentalOracleProvider',
       priority: 'critical',
       launch_tier: 'production_candidate',
@@ -194,7 +194,7 @@ export const ENVIRONMENTAL_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Ob
       notes: 'Aviation-focused weather; global airport coverage.',
     }),
     sunrey: Object.freeze({
-      domain: Object.freeze(['travel', 'world', 'financial_agent']),
+      domain: ['travel', 'world', 'financial_agent'] as const,
       canonical_provider_interface: 'EnvironmentalOracleProvider',
       priority: 'high',
       launch_tier: 'production_candidate',
@@ -252,7 +252,7 @@ export const ENVIRONMENTAL_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Ob
       notes: 'Global forecast; Norwegian official authority.',
     }),
     sunrey: Object.freeze({
-      domain: Object.freeze(['world', 'travel', 'research']),
+      domain: ['world', 'travel', 'research'] as const,
       canonical_provider_interface: 'EnvironmentalOracleProvider',
       priority: 'high',
       launch_tier: 'production_candidate',
@@ -297,7 +297,7 @@ export const ENVIRONMENTAL_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Ob
       notes: 'United States water gauge coverage only; sub-daily gauge updates.',
     }),
     sunrey: Object.freeze({
-      domain: Object.freeze(['world', 'moonrey', 'research', 'infrastructure']),
+      domain: ['world', 'moonrey', 'research', 'infrastructure'] as const,
       canonical_provider_interface: 'EnvironmentalOracleProvider',
       priority: 'critical',
       launch_tier: 'production_candidate',
@@ -328,7 +328,7 @@ export const ENVIRONMENTAL_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Ob
       notes: 'United States air quality monitoring network; hourly aggregation cadence.',
     }),
     sunrey: Object.freeze({
-      domain: Object.freeze(['world', 'research', 'financial_agent']),
+      domain: ['world', 'research', 'financial_agent'] as const,
       canonical_provider_interface: 'EnvironmentalOracleProvider',
       priority: 'high',
       launch_tier: 'production_candidate',
@@ -373,7 +373,7 @@ export const ENVIRONMENTAL_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Ob
       notes: 'Global seismic event observations; not predictions.',
     }),
     sunrey: Object.freeze({
-      domain: Object.freeze(['world', 'research', 'financial_agent', 'infrastructure']),
+      domain: ['world', 'research', 'financial_agent', 'infrastructure'] as const,
       canonical_provider_interface: 'EnvironmentalOracleProvider',
       priority: 'critical',
       launch_tier: 'production_candidate',
@@ -431,7 +431,7 @@ export const ENVIRONMENTAL_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Ob
       notes: 'Community sensor data.',
     }),
     sunrey: Object.freeze({
-      domain: Object.freeze(['world', 'research']),
+      domain: ['world', 'research'] as const,
       canonical_provider_interface: 'EnvironmentalOracleProvider',
       priority: 'medium',
       launch_tier: 'secondary_source',

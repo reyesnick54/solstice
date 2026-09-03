@@ -21,10 +21,10 @@ import {
 } from './base.ts';
 
 abstract class WeatherProviderAdapter extends BaseEnvironmentalAdapter implements EnvironmentalOracleProvider {
-  abstract readonly providerId: string;
-  abstract readonly capabilities: readonly EnvironmentalCapability[];
-  abstract readonly priority: 'primary' | 'secondary' | 'fallback';
-  abstract readonly geographicScope: readonly string[];
+  abstract override readonly providerId: string;
+  abstract override readonly capabilities: readonly EnvironmentalCapability[];
+  abstract override readonly priority: 'primary' | 'secondary' | 'fallback';
+  abstract override readonly geographicScope: readonly string[];
   abstract readonly currentFixture: string;
   abstract readonly forecastFixture: string | null;
   abstract readonly authorityClass: 'reference_data' | 'authoritative_official';
@@ -157,12 +157,12 @@ export class UsgsWaterAdapter extends BaseEnvironmentalAdapter implements Enviro
 }
 
 abstract class AirQualityProviderAdapter extends BaseEnvironmentalAdapter implements EnvironmentalOracleProvider {
-  abstract readonly providerId: string;
-  abstract readonly priority: 'primary' | 'secondary' | 'fallback';
-  abstract readonly geographicScope: readonly string[];
+  abstract override readonly providerId: string;
+  abstract override readonly priority: 'primary' | 'secondary' | 'fallback';
+  abstract override readonly geographicScope: readonly string[];
   abstract readonly fixtureFile: string;
   abstract readonly authorityClass: 'authoritative_official' | 'reference_data' | 'community_data';
-  readonly capabilities = ['air_quality', 'environmental'] as const;
+  override readonly capabilities = ['air_quality', 'environmental'] as const;
   readonly productionAuthorized = false as const;
   readonly liveProviderConnected = false as const;
 
