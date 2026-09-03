@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { asUtcInstant } from '../packages/domain/src/time.ts';
-import { evaluateSybilControls } from '../packages/human-economic-contribution/src/identity/index.ts';
+import { evaluateSybilControls, type SybilEvaluationInput } from '../packages/human-economic-contribution/src/identity/index.ts';
 import { asHumanEconomicIdentityId } from '../packages/human-economic-contribution/src/identity/ids.ts';
 import {
   HumanContributionResolutionEngine,
@@ -22,6 +22,7 @@ import {
   asMonetizationContextId,
   deriveActorCommitment,
   humanEconomicIdentityIdFor,
+  evidenceObservationIdFor,
 } from '../packages/human-economic-contribution/src/resolution/index.ts';
 import {
   PEVE_AI_ROLE,
@@ -75,6 +76,11 @@ import { emptyHumanEconomyMonitoringStore } from '../packages/sunrey-chain/src/e
 import { analyzeIndependence, countIndependentForQuorum } from '../packages/sunrey-chain/src/oracle/production/independence.ts';
 import { evaluateProductionQuorum } from '../packages/sunrey-chain/src/oracle/production/quorum.ts';
 import { ConnectorCircuitBreaker, DEFAULT_CIRCUIT_BREAKER_POLICY } from '../packages/sunrey-chain/src/oracle/production/circuit-breaker.ts';
+import { developmentProductionFeed } from '../packages/sunrey-chain/src/oracle/production/plane.ts';
+import { sandboxSource } from '../packages/sunrey-chain/src/oracle/production/sandbox-fixture.ts';
+import { createFrozenConnectorClock } from '../packages/sunrey-chain/src/oracle/production/runtime.ts';
+import type { EconomicDataSource } from '../packages/sunrey-chain/src/oracle/production/types.ts';
+import type { OracleObservation } from '../packages/sunrey-chain/src/oracle/types.ts';
 import { refuseFakeConsensus, verifyObservation } from '../packages/sunrey-chain/src/productive/economy-data/verification.ts';
 import { SINGLE_SOURCE_IS_NOT_CONSENSUS } from '../packages/sunrey-chain/src/productive/economy-data/types.ts';
 import { contributionFingerprint } from '../packages/sunrey-chain/src/productive/fingerprint.ts';
@@ -103,7 +109,7 @@ import {
   evaluateProductiveValue,
   simulationBaseValueSchedule,
 } from '../packages/sunrey-chain/src/productive/policy-governance/value-function/index.ts';
-import { engineValueInput } from '../packages/sunrey-chain/src/productive/policy-governance/value-function/fixtures.ts';
+import { engineValueInput, engineContribution } from '../packages/sunrey-chain/src/productive/policy-governance/value-function/fixtures.ts';
 import { refuseStandaloneAttempt } from '../packages/sunrey-chain/src/productive/policy-governance/value-settlement/bridge.ts';
 import { restrictionPlanFor } from '../packages/sunrey-chain/src/governance-ops/launch-abort/restrictions.ts';
 import { createCollisionFixtureBundle } from '../packages/sunrey-chain/src/productive/asset-identity/fixtures.ts';
@@ -163,7 +169,9 @@ function baseHumanIssuance(seed: string) {
 function resolutionObservation(overrides: Record<string, unknown> = {}) {
   const actor = deriveActorCommitment(['orcid:wave9-attacker']);
   const identity = humanEconomicIdentityIdFor({ actorCommitment: actor });
+  const providerRecordId = (overrides.providerRecordId as string | undefined) ?? 'pmid:wave9';
   return {
+    observationId: evidenceObservationIdFor(`wave9:${providerRecordId}`),
     sourceClass: 'VERIFIED_RESEARCH_ATTESTATION' as const,
     providerId: 'pubmed',
     providerRecordId: 'pmid:wave9',
@@ -183,11 +191,11 @@ function resolutionObservation(overrides: Record<string, unknown> = {}) {
 
 describe('Wave 9 Task 1 — MoonRey oracle manipulation', () => {
   it('rejects one provider masquerading as many via shared upstream', () => {
-    const sources = [
-      { sourceId: 's1', providerId: 'alias-a', controllerId: 'ctrl-x', upstreamOrganizationId: 'upstream-same' },
-      { sourceId: 's2', providerId: 'alias-b', controllerId: 'ctrl-x', upstreamOrganizationId: 'upstream-same' },
-      { sourceId: 's3', providerId: 'alias-c', controllerId: 'ctrl-x', upstreamOrganizationId: 'upstream-same' },
-    ] as const;
+    const sources: readonly EconomicDataSource[] = [
+      sandboxSource({ sourceId: 's1', providerId: 'alias-a', controllerId: 'ctrl-x', upstreamOrganizationId: 'upstream-same' }),
+      sandboxSource({ sourceId: 's2', providerId: 'alias-b', controllerId: 'ctrl-x', upstreamOrganizationId: 'upstream-same' }),
+      sandboxSource({ sourceId: 's3', providerId: 'alias-c', controllerId: 'ctrl-x', upstreamOrganizationId: 'upstream-same' }),
+    ];
     assert.equal(countIndependentForQuorum([...sources], true), 1);
     const shared = analyzeIndependence([...sources], true).find((row) => row.providerIds.length > 1);
     assert.ok(shared);
@@ -267,38 +275,17 @@ describe('Wave 9 Task 1 — MoonRey oracle manipulation', () => {
 
   it('fails production quorum on insufficient independent observations', () => {
     const quorum = evaluateProductionQuorum({
-      feed: {
-        feedId: 'feed-wave9',
-        minimumProviders: 3,
-        minimumIndependentControllers: 2,
-        schemaId: 'ENERGY_INTERVAL_V1',
-        aggregationPolicy: 'MEDIAN',
-        freshnessSeconds: 3600n,
-        subjectKind: 'METER',
-        unit: 'kWh',
-        factType: 'ENERGY_PRODUCTION',
-        productiveCategory: 'ENERGY',
-        claimType: 'OUTPUT',
-        sourceClass: 'GENERATOR_METER',
-        admissionMode: 'FIXTURE_ONLY',
-        certificationRequired: true,
-        rightsRequired: false,
-        lineageRequired: true,
-        independenceRequired: true,
-      },
+      feed: developmentProductionFeed('feed-wave9'),
       observations: [
         {
           observationId: 'o1',
           oracleId: 'p1',
           feedId: 'feed-wave9',
           subject: 'meter-1',
-          value: { mantissa: 100n, scale: 0, unit: 'kWh' },
-          observedAtUnix: 1n,
-          signature: 'sig',
-          signerKeyId: 'k1',
-        },
+          value: { schemaVersion: 1, mantissa: 100n, scale: 0, unit: 'kWh' },
+        } as OracleObservation,
       ],
-      sources: [{ sourceId: 's1', providerId: 'p1', controllerId: 'c1', upstreamOrganizationId: 'u1' }],
+      sources: [sandboxSource({ sourceId: 's1', providerId: 'p1', controllerId: 'c1', upstreamOrganizationId: 'u1' })],
       requireIndependence: true,
     });
     assert.equal(quorum.ok, false);
@@ -392,8 +379,13 @@ describe('Wave 9 Task 3 — productive identity fraud', () => {
 
 describe('Wave 9 Task 4 — GPUV manipulation', () => {
   it('refuses standalone GPUV and oracle artifacts from minting', () => {
-    for (const kind of ['GPUV_QUANTITY', 'PRODUCTIVE_VALUE_RESULT', 'ORACLE_OBSERVATION', 'VERIFIED_ECONOMIC_FACT'] as const) {
-      assert.equal(refuseStandaloneAttempt({ kind }).ok, false, kind);
+    for (const attempt of [
+      { kind: 'GPUV_QUANTITY' as const, quantity: 1n },
+      { kind: 'PRODUCTIVE_VALUE_RESULT' as const, productiveValueId: 'pvr.1' },
+      { kind: 'ORACLE_OBSERVATION' as const, observationId: 'obs.1' },
+      { kind: 'VERIFIED_ECONOMIC_FACT' as const, factId: 'fact.1' },
+    ]) {
+      assert.equal(refuseStandaloneAttempt(attempt).ok, false, attempt.kind);
     }
     assert.equal(PRODUCTIVE_VALUE_FUNCTION_DOES_NOT_MINT, true);
     assert.equal(PRODUCTIVE_ECONOMIC_VALUE_IS_NOT_MOONREY_COIN_QUANTITY, true);
@@ -402,7 +394,7 @@ describe('Wave 9 Task 4 — GPUV manipulation', () => {
 
   it('rejects negative and duplicate GPUV basis quantities', () => {
     const negative = evaluateProductiveValue(
-      engineValueInput('ENERGY', { contribution: { quantity: -1n } }),
+      engineValueInput('ENERGY', { contribution: engineContribution('ENERGY', { quantity: -1n }) }),
       { policy: VALUE_POLICY, schedule: VALUE_SCHEDULE },
     );
     assert.equal(negative.state, 'VALUE_REJECTED');
@@ -438,7 +430,7 @@ describe('Wave 9 Task 5 — human Sybil attack', () => {
       credentialCommitments: [credential],
       relatedActorIds: [],
       deviceAbuseSignals: [],
-      aiPatternSuggestions: [],
+      aiPatternSuggestions: [] as unknown as SybilEvaluationInput['aiPatternSuggestions'],
       existingUniquenessOwners: new Map(),
       existingExternalOwners: new Map([[external, actorA]]),
       existingCredentialOwners: new Map([[credential, actorA]]),
@@ -452,7 +444,9 @@ describe('Wave 9 Task 5 — human Sybil attack', () => {
   });
 
   it('requires review for AI-only Sybil hints without autonomous ban', () => {
-    const actor = humanEconomicIdentityIdFor({ actorCommitment: deriveActorCommitment(['ai-only']) });
+    const actor = asHumanEconomicIdentityId(
+      String(humanEconomicIdentityIdFor({ actorCommitment: deriveActorCommitment(['ai-only']) })),
+    );
     const sybil = evaluateSybilControls({
       humanActorId: actor,
       evaluatedAt: NOW,
@@ -471,7 +465,7 @@ describe('Wave 9 Task 5 — human Sybil attack', () => {
           evidenceCommitment: 'ai:hint:wave9',
           relatedActorIds: [],
         },
-      ],
+      ] as unknown as SybilEvaluationInput['aiPatternSuggestions'],
       existingUniquenessOwners: new Map(),
       existingExternalOwners: new Map(),
       existingCredentialOwners: new Map(),
@@ -799,7 +793,7 @@ describe('Wave 9 Task 12 — economic circuit breakers', () => {
   });
 
   it('opens oracle connector circuit without rewriting supply', () => {
-    const clock = { nowMs: () => 0n };
+    const clock = createFrozenConnectorClock(0n);
     const breaker = new ConnectorCircuitBreaker(DEFAULT_CIRCUIT_BREAKER_POLICY, clock);
     for (let i = 0; i < 3; i++) {
       breaker.recordFailure('malicious-provider', 'source-1');
@@ -844,11 +838,11 @@ describe('Wave 9 Task 13 — property / invariant tests', () => {
   });
 
   it('shared upstream reduces effective oracle independence', () => {
-    const colluding = [
-      { sourceId: 's1', providerId: 'p1', controllerId: 'ctrl-x', upstreamOrganizationId: 'upstream-same' },
-      { sourceId: 's2', providerId: 'p2', controllerId: 'ctrl-x', upstreamOrganizationId: 'upstream-same' },
-      { sourceId: 's3', providerId: 'p3', controllerId: 'ctrl-y', upstreamOrganizationId: 'upstream-other' },
-    ] as const;
+    const colluding: readonly EconomicDataSource[] = [
+      sandboxSource({ sourceId: 's1', providerId: 'p1', controllerId: 'ctrl-x', upstreamOrganizationId: 'upstream-same' }),
+      sandboxSource({ sourceId: 's2', providerId: 'p2', controllerId: 'ctrl-x', upstreamOrganizationId: 'upstream-same' }),
+      sandboxSource({ sourceId: 's3', providerId: 'p3', controllerId: 'ctrl-y', upstreamOrganizationId: 'upstream-other' }),
+    ];
     assert.equal(countIndependentForQuorum([...colluding], true), 2);
     const shared = analyzeIndependence([...colluding], true).find((cluster) => cluster.providerIds.length > 1);
     assert.ok(shared);
@@ -878,7 +872,7 @@ describe('Wave 9 Task 13 — property / invariant tests', () => {
     );
     assert.equal(evaluation.receipt.result, 'VERIFIED');
     assert.equal(informationConsensusCreatesMoney(), false);
-    assert.equal(refuseStandaloneAttempt({ kind: 'VERIFIED_ECONOMIC_FACT' }).ok, false);
+    assert.equal(refuseStandaloneAttempt({ kind: 'VERIFIED_ECONOMIC_FACT', factId: 'fact.1' }).ok, false);
     const book = moonreyBook();
     const before = book.circulating;
     assert.equal(
