@@ -38,5 +38,5 @@ export interface CatalogValidationResult {
 
 export function validateCatalog(catalog: unknown): CatalogValidationResult;
 export function computeCatalogStats(catalog: unknown): CatalogValidationStats;
-export function loadCatalog(root?: string): { catalog: { providers: readonly unknown[]; population_status?: string }; text: string };
+export function loadCatalog(root?: string): { catalog: unknown; text: string };
 export function formatValidationReport(result: CatalogValidationResult): string;

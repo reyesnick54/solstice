@@ -329,8 +329,8 @@ describe('Wave 5 Prompt 15 — Grow My Money lifecycle', () => {
     if (!command1.ok) throw new Error('command');
     const execution = grow.store.executionForCommand(command1.value.commandId);
     if (!execution) throw new Error('execution');
-    const submitted = adapter.submitExecution(command1.value, execution, NOW);
-    assert.equal(submitted.ok, true);
+    const submitted = await Promise.resolve(adapter.submitExecution(command1.value, execution, NOW));
+    assert.equal('ok' in submitted && submitted.ok, true);
     const reconciled = adapter.reconcile(execution.executionId, {
       kind: 'TIMEOUT',
       requestedMinorUnits: command1.value.financialResource.amount.minorUnits,
@@ -363,7 +363,11 @@ describe('Wave 5 Prompt 15 — Grow My Money lifecycle', () => {
     if (!refused.ok) {
       assert.equal(refused.code, 'AGENT_CANNOT_EXECUTE');
     }
-    assert.equal(refusePrivilegedGrowExecution().code, 'AGENT_CANNOT_EXECUTE');
+    assert.equal(refusePrivilegedGrowExecution().ok, false);
+    const refusedPrivileged = refusePrivilegedGrowExecution();
+    if (!refusedPrivileged.ok) {
+      assert.equal(refusedPrivileged.code, 'AGENT_CANNOT_EXECUTE');
+    }
   });
 
   it('SCENARIO F: revoked recurring mandate prevents future action', async () => {

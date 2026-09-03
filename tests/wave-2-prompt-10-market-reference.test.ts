@@ -6,7 +6,7 @@ import type { CatalogProviderEntry } from '../packages/provider-sdk/src/catalog/
 import { createFixtureCatalog, FIXTURE_CATALOG_ENTRIES } from '../packages/provider-sdk/src/test-fixtures/catalog.ts';
 import { buildCatalogIndex } from '../packages/provider-sdk/src/catalog/loader.ts';
 import { handleConsumerBff, handleConsumerBffSync } from '../services/api/src/consumer/bff-test-utils.ts';
-import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
+import { createSandboxWorld, consumerBffRuntimeFromWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
 import {
   COMMODITY_CODES,
   convertMassPrice,
@@ -233,9 +233,8 @@ describe('Wave 2 Prompt 10 — market reference layer', () => {
 
   it('20. BFF sanitized output hides raw provider payloads', () => {
     const world = createSandboxWorld();
-    const { marketReference: _omit, ...worldRuntime } = world;
     const response = handleConsumerBffSync(
-      worldRuntime,
+      consumerBffRuntimeFromWorld(world),
       {
         method: 'GET',
         path: '/api/v1/world/resources/gold',

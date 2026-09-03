@@ -20,6 +20,8 @@
     "services/**/*.ts",
     "tools/**/*.ts",
     "tests/**/*.ts",
-    "scripts/lib/**/*.d.ts"
+    "tests/**/*.d.ts",
+    "types/**/*.d.ts",
+    "scripts/**/*.d.ts"
   ]
 }

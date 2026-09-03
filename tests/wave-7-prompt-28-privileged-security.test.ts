@@ -170,7 +170,16 @@ describe('Wave 7 Prompt 28 — governance signing', () => {
     assert.equal(insufficient.ok, false);
 
     const expired = assertExpiredApprovalRejected(
-      { ...approvals[0], expiresAt: '2026-08-22T00:00:00.000Z' },
+      {
+        approvalId: approvals[0]!.approvalId,
+        proposalHash: approvals[0]!.proposalHash,
+        policyVersion: approvals[0]!.policyVersion,
+        role: approvals[0]!.role,
+        approverId: approvals[0]!.approverId,
+        approvedAt: approvals[0]!.approvedAt,
+        expiresAt: '2026-08-22T00:00:00.000Z',
+        signatureRef: approvals[0]!.signatureRef,
+      },
       '2026-08-23T01:00:00.000Z',
     );
     assert.equal(expired.ok, false);

@@ -53,6 +53,7 @@ export const LOVABLE_COMPONENT_HINTS = [
   'TRADE_PROPOSAL',
   'APPROVAL_CARD',
   'TRANSACTION_STATUS',
+  'TRAVEL_PLANNING_CARD',
 ] as const;
 export type LovableComponentHint = (typeof LOVABLE_COMPONENT_HINTS)[number];
 

@@ -110,17 +110,22 @@ describe('free API provider catalog', () => {
   });
 
   it('repository catalog passes framework validation', () => {
-    const { catalog } = loadCatalog(ROOT);
-    const result = validateCatalog(catalog);
+    const { catalog: rawCatalog } = loadCatalog(ROOT);
+    const catalog = rawCatalog as { readonly population_status: string };
+    const result = validateCatalog(rawCatalog);
     assert.equal(result.ok, true, result.errors.join('\n'));
     assert.equal(catalog.population_status, 'partial');
+    assert.ok(result.stats);
+    if (!result.stats) {
+      return;
+    }
     assert.equal(result.stats.total, 102);
-    assert.ok(result.stats.byCategory.foreign_exchange >= 8);
-    assert.ok(result.stats.byCategory.cryptocurrency >= 6);
-    assert.ok(result.stats.byCategory.aviation >= 3);
-    assert.ok(result.stats.byCategory.travel >= 1);
-    assert.ok(result.stats.byCategory.transportation >= 5);
-    assert.ok(result.stats.byCategory.energy >= 3);
+    assert.ok((result.stats.byCategory.foreign_exchange ?? 0) >= 8);
+    assert.ok((result.stats.byCategory.cryptocurrency ?? 0) >= 6);
+    assert.ok((result.stats.byCategory.aviation ?? 0) >= 3);
+    assert.ok((result.stats.byCategory.travel ?? 0) >= 1);
+    assert.ok((result.stats.byCategory.transportation ?? 0) >= 5);
+    assert.ok((result.stats.byCategory.energy ?? 0) >= 3);
   });
 
   it('requires unique provider_id values', () => {

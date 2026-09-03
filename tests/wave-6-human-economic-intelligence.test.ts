@@ -5,6 +5,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { asUtcInstant } from '../packages/domain/src/time.ts';
 import { EconomicKnowledgeGraphService } from '../packages/economic-asset-registry/src/knowledge-graph/service.ts';
 import { HUMAN_EVENT_TEMPLATES } from '../packages/economic-asset-registry/src/knowledge-graph/ontology.ts';
 import {
@@ -23,12 +24,12 @@ import { evaluateOracleSafety } from '../packages/sunrey-chain/src/native-assets
 
 describe('Wave 6 human economic intelligence integration', () => {
   it('integrates ontology with knowledge graph without monetary authority', () => {
-    const graph = new EconomicKnowledgeGraphService({ nowUtc: '2026-09-02T12:00:00.000Z' });
+    const graph = new EconomicKnowledgeGraphService({ nowUtc: asUtcInstant('2026-09-02T12:00:00.000Z') });
     const event = WAVE6_DOMAIN_FIXTURES[0]!;
     const projection = projectHumanContributionToGraph({
       event,
       claimId: 'cec_integration_work',
-      createdAt: '2026-09-02T12:00:00.000Z',
+      createdAt: asUtcInstant('2026-09-02T12:00:00.000Z'),
     });
     graph.registerNode({
       nodeClass: projection.actorNode.nodeClass,
@@ -86,7 +87,15 @@ describe('Wave 6 human economic intelligence integration', () => {
   it('does not change MoonRey issuance behavior', () => {
     assert.equal(PRODUCTIVE_ONTOLOGY_INVARIANTS.ORACLE_CANNOT_MINT, true);
     const oracleSafety = evaluateOracleSafety({
-      observations: [{ sourceCount: 1, quality: 'VERIFIED', stale: false, disputed: false }],
+      observations: [{
+        observationId: 'obs_fixture',
+        quality: 'VALID',
+        confidenceBps: 10_000,
+        provenance: 'fixture',
+        freshnessUtc: '2026-09-02T12:00:00.000Z',
+        stale: false,
+        disputed: false,
+      }],
     });
     assert.equal(oracleSafety.ok, false);
     assert.equal(HUMAN_ONTOLOGY_INVARIANTS.CLAIM_IS_NOT_SUNREY, true);

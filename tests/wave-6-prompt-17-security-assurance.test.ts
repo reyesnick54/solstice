@@ -83,10 +83,10 @@ function sampleProposal(overrides: Partial<FinancialProposal> = {}): FinancialPr
       whatCouldGoWrong: 'test',
       requiresConfirmation: true,
       canExecuteWithoutAuthority: false,
-      resultKind: 'UNCERTAIN_MARKET_OUTCOME',
+      resultKind: 'UNCERTAIN_MARKET_OUTCOME' as never,
     },
     scenario: {
-      kind: 'UNCERTAIN_MARKET_OUTCOME',
+      kind: 'UNCERTAIN_MARKET_OUTCOME' as never,
       label: 'test',
       low: { minorUnits: '0', currency: 'USD' },
       high: { minorUnits: '10000', currency: 'USD' },
@@ -315,7 +315,7 @@ describe('Wave 6 Prompt 17 — security assurance', () => {
       assert.equal(superseded.accepted, false);
 
       const agentApproval = recordApproval({
-        proposal: { ...proposal, state: 'PENDING' },
+        proposal: { ...proposal, state: 'PENDING' as never },
         actorId: 'agent_1',
         actorKind: 'AGENT' as never,
         now: NOW,

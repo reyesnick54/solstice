@@ -291,7 +291,7 @@ describe('Wave 2 transaction security', () => {
       unsignedTransferEnvelope({
         body: fixtureTransferBody({
           header: fixtureHeader({
-            actor: actors[0],
+            actor: actors[0]!,
             sequence: 1n,
             clientTxId: 'client.tx.one',
             idempotencyKey: 'idem.one',
@@ -306,7 +306,7 @@ describe('Wave 2 transaction security', () => {
       unsignedTransferEnvelope({
         body: fixtureTransferBody({
           header: fixtureHeader({
-            actor: actors[1],
+            actor: actors[1]!,
             sequence: 1n,
             clientTxId: 'client.tx.two',
             idempotencyKey: 'idem.two',

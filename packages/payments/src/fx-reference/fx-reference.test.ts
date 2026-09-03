@@ -1,3 +1,4 @@
+/// <reference path="../../../../scripts/lib/free-api-catalog-validator.mjs.d.ts" />
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -36,7 +37,11 @@ describe('fx reference network', () => {
   });
 
   it('catalog contains FX providers with partial population', () => {
-    const { catalog } = loadCatalog(ROOT);
+    const { catalog: rawCatalog } = loadCatalog(ROOT);
+    const catalog = rawCatalog as {
+      readonly population_status: string;
+      readonly providers: readonly { readonly primary_category: string }[];
+    };
     const result = validateCatalog(catalog);
     assert.equal(result.ok, true, result.errors.join('\n'));
     assert.equal(catalog.population_status, 'partial');

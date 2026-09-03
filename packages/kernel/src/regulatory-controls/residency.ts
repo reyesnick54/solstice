@@ -64,7 +64,7 @@ export const DEFAULT_RESIDENCY_CONSTRAINTS: readonly DataResidencyConstraint[] =
     effectiveFrom: '2026-01-01T00:00:00.000Z' as UtcInstant,
     legalStatus: LEGAL_REVIEW_STATUS,
   }),
-]);
+]) as readonly DataResidencyConstraint[];
 
 export type ResidencyEvaluationInput = {
   readonly jurisdiction: string;

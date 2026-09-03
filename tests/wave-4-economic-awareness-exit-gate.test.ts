@@ -38,7 +38,6 @@ import {
 } from '../packages/sunrey-chain/src/oracle/production/economic-data-fabric/index.ts';
 import { verifyObservation } from '../packages/sunrey-chain/src/productive/economy-data/verification.ts';
 import { HumanInformationNetworkEngine } from '../packages/information-market/src/network/engine.ts';
-import { HumanInformationNetworkStore } from '../packages/information-market/src/network/store.ts';
 
 const NOW = asUtcInstant('2026-09-02T12:00:00.000Z');
 const SOURCE = asUtcInstant('2026-09-02T11:55:00.000Z');
@@ -62,7 +61,7 @@ function energyCtx(
   return Object.freeze({
     observation: built.value!,
     numericValue: Number(quantityMwh),
-    lineage: lineage ? Object.freeze(lineage) : undefined,
+    ...(lineage ? { lineage: Object.freeze(lineage) } : {}),
   });
 }
 
@@ -88,7 +87,7 @@ describe('Wave 4 exit gate — TASK 1 Provider red team', () => {
             },
             fetch: async () => ({ ok: false, code: 'NOT_IMPLEMENTED', message: 'n/a' }),
           } as never,
-          { activationMode: 'simulation_fixture' },
+          { activationMode: 'simulation_fixture' as never },
         ),
       /catalog|unknown|not found/i,
     );
@@ -127,7 +126,7 @@ describe('Wave 4 exit gate — TASK 1 Provider red team', () => {
       mapper: { normalizationVersion: '1', map: () => ({ ok: true as const, value: {} }) },
       assembler: { assemble: () => ({ ok: false as const, code: 'UNREACHABLE', message: 'n/a' }) },
     };
-    const result = runNormalizationPipeline(pipeline, raw);
+    const result = runNormalizationPipeline(pipeline as never, raw);
     assert.equal(result.ok, false);
   });
 });
@@ -162,7 +161,7 @@ describe('Wave 4 exit gate — TASK 3 Normalization red team', () => {
   it('rejects observation without provider id', () => {
     const built = buildExternalObservation({
       providerId: '   ',
-      providerCategory: 'economic_data',
+      providerCategory: 'other' as const,
       capability: 'test',
       data: { value: 1 },
       source: { provider: 'x', dataset: 'd' },
@@ -249,7 +248,7 @@ describe('Wave 4 exit gate — TASK 7 Double-counting red team', () => {
         observedAt: NOW,
       }),
     ]);
-    const deduped = detectDuplicateJobs(jobs);
+    const deduped = detectDuplicateJobs(jobs as never);
     assert.equal(deduped.length, 1);
     assert.equal(deduped[0]!.mergedSourceIds?.length, 2);
   });
@@ -272,7 +271,7 @@ describe('Wave 4 exit gate — TASK 8 Information consensus red team', () => {
       semanticKey: 'energy.mwh',
       unit: 'MWh',
     });
-    assert.ok(result.status !== 'VERIFIED' || result.confidenceBand !== 'HIGH');
+    assert.ok(result.status !== 'TRUSTED' || result.confidenceBand !== 'HIGH');
   });
 
   it('single-source verified is not consensus and cannot claim consensus', () => {
@@ -335,7 +334,8 @@ describe('Wave 4 exit gate — TASK 11 Persistence / restart (simulation)', () =
     const second = ingestBatch([fixture], 'FIXTURE_ONLY', FABRIC_NOW_UNIX, store);
     assert.equal(first.accepted.length, 1);
     assert.equal(second.accepted.length, 1);
-    assert.equal(second.results[0]?.replay, true);
+    const replayResult = second.results[0];
+    assert.equal(replayResult?.ok === true && replayResult.replay, true);
     assert.equal(store.list().length, 1);
   });
 });
@@ -369,9 +369,8 @@ describe('Wave 4 exit gate — TASK 15 criteria spot checks', () => {
   });
 
   it('HIN path cannot mint from awareness-layer activity alone', () => {
-    const store = new HumanInformationNetworkStore();
-    const engine = new HumanInformationNetworkEngine({ store });
+    const engine = new HumanInformationNetworkEngine({ clock: { now: () => NOW } });
     assert.equal(typeof (engine as { authorizeIssuance?: unknown }).authorizeIssuance, 'undefined');
-    assert.equal(typeof (store as { mint?: unknown }).mint, 'undefined');
+    assert.equal(typeof (engine.store as { mint?: unknown }).mint, 'undefined');
   });
 });

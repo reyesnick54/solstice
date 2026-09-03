@@ -22,6 +22,7 @@ import { DomainEventLog } from '../packages/events/src/events.ts';
 import { ConsentService } from '../packages/consent/src/service.ts';
 import { RECIPIENT_EXTERNAL_RESEARCH, RECIPIENT_PERSONAL_AGENT } from '../packages/consent/src/recipients.ts';
 import { deriveAuthorizationContext } from '../packages/identity/src/authorization-context.ts';
+import type { IdentitySession } from '../packages/identity/src/auth.ts';
 import { capabilitiesForStaffRoles } from '../packages/identity/src/admin-roles.ts';
 import { SimulatedIdentityAdapter } from '../packages/identity/src/simulation.ts';
 import { ResourceOwnershipRegistry } from '../packages/identity/src/resource-ownership.ts';
@@ -285,9 +286,17 @@ describe('Wave 7 Task 2 — authorization red team', () => {
         subjectId: 'subj_human' as never,
         actorId: 'agent_runtime',
         authenticationStrength: 'STANDARD',
-        riskState: 'CLEAR',
+        factors: [],
+        issuedAt: NOW,
         expiresAt: EXPIRES,
-      },
+        lastUsedAt: NOW,
+        revokedAt: null,
+        deviceId: null,
+        riskState: 'CLEAR',
+        revocationState: 'ACTIVE',
+        ipHash: null,
+        userAgentHash: null,
+      } as IdentitySession,
       device: null,
       kyc: null,
       customerId: 'cust_1',
@@ -334,12 +343,12 @@ describe('Wave 7 Task 2 — authorization red team', () => {
       serviceId: 'payments',
       serviceRole: 'PAYMENTS_SERVICE',
       credentialRef: {
-        scheme: 'secret',
+        scheme: 'secret' as const,
         provider: 'sim',
         path: 'payments',
         href: 'secret://sim/payments',
       },
-      allowedCapabilities: ['SUBMIT_INTENT'],
+      allowedCapabilities: ['SUBMIT_INTENT'] as const,
       expiresAt: '2020-01-01T00:00:00.000Z',
       keyVersion: 1,
       status: 'EXPIRED',
@@ -357,12 +366,12 @@ describe('Wave 7 Task 2 — authorization red team', () => {
       serviceId: 'ledger',
       serviceRole: 'LEDGER_WRITER',
       credentialRef: {
-        scheme: 'secret',
+        scheme: 'secret' as const,
         provider: 'sim',
         path: 'ledger',
         href: 'secret://sim/ledger',
       },
-      allowedCapabilities: ['VERIFY_AUTHORITY'],
+      allowedCapabilities: ['VERIFY_AUTHORITY'] as const,
       expiresAt: EXPIRES,
       keyVersion: 1,
       status: 'ACTIVE',
@@ -498,7 +507,18 @@ describe('Wave 7 Task 8 — selective disclosure / minimization red team', () =>
     const vc = service.vcPort.issueSimulationCredential({
       attestationId: newAttestationId(),
       subjectRef: 'subj_1',
-      claims: Object.freeze({ over18: true }),
+      claimType: 'AGE_BAND',
+      claimResult: 'over18',
+      sourceRefs: ['source:fixture'],
+      purposeRef: 'purpose:fixture',
+      issuedAt: NOW,
+      expiresAt: EXPIRES,
+      issuer: 'simulation',
+      keyVersion: 1,
+      keyId: 'key_sim',
+      signatureHex: '00',
+      verificationState: 'SIGNED_SIMULATION',
+      sourceRecordRevealed: false,
     });
     assert.equal(vc.mode, 'SIMULATION_ONLY');
     const zk = service.zkPort.proveSimulation('over18');
@@ -579,7 +599,11 @@ describe('Wave 7 Task 13 — failure mode red team', () => {
     const unavailable = new UnavailableKeyProvider('kms-down');
     assert.equal(unavailable.environmentLabel.includes('fail closed'), true);
     const engine = new PolicyEngine({ registry: new PolicyRegistry() });
-    const result = engine.evaluateFacts({ actor: { id: 'op', capabilities: [] }, jurisdiction: asJurisdiction('GB') }, NOW);
+    const result = engine.evaluateFacts({
+      actor: { id: 'op', capabilities: [] },
+      actionType: 'SIMULATION_PROBE',
+      jurisdiction: asJurisdiction('GB'),
+    }, NOW);
     assert.notEqual(result.decision, 'ALLOW');
   });
 });

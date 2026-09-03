@@ -12,7 +12,7 @@ describe('repository case-collision detection', () => {
   it('detects paths that differ only by case', () => {
     const collisions = findCaseCollisions(['docs/build-status.md', 'docs/BUILD-STATUS.md', 'README.md']);
     assert.equal(collisions.length, 1);
-    assert.deepEqual(collisions[0].variants, ['docs/BUILD-STATUS.md', 'docs/build-status.md']);
+    assert.deepEqual(collisions[0]!.variants, ['docs/BUILD-STATUS.md', 'docs/build-status.md']);
     assert.match(formatCaseCollisionReport(collisions), /docs\/build-status\.md/);
   });
 });

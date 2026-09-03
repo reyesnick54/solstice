@@ -447,8 +447,13 @@ describe('fine-grained authorization', () => {
     const identity: ServiceIdentity = Object.freeze({
       serviceId: 'accounts_svc',
       serviceRole: 'ACCOUNTS_SERVICE',
-      credentialRef: { provider: 'SIMULATION', ref: 'cred_1' },
-      allowedCapabilities: ['READ_BALANCES', 'SUBMIT_INTENT'],
+      credentialRef: {
+        scheme: 'secret' as const,
+        provider: 'SIMULATION',
+        path: 'cred_1',
+        href: 'secret://SIMULATION/cred_1',
+      },
+      allowedCapabilities: ['READ_BALANCES', 'SUBMIT_INTENT'] as const,
       expiresAt: '2026-12-31T00:00:00.000Z',
       keyVersion: 1,
       status: 'ACTIVE',

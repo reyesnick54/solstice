@@ -76,6 +76,9 @@ import { emptyClaimChallengeRegistry } from '../packages/sunrey-chain/src/econom
 import { emptyHumanEconomyMonitoringStore } from '../packages/sunrey-chain/src/economics/human-economy/monitoring.ts';
 import { analyzeIndependence, countIndependentForQuorum } from '../packages/sunrey-chain/src/oracle/production/independence.ts';
 import { evaluateProductionQuorum } from '../packages/sunrey-chain/src/oracle/production/quorum.ts';
+import { sandboxFeed } from '../packages/sunrey-chain/src/oracle/production/sandbox-fixture.ts';
+import type { EconomicDataSource } from '../packages/sunrey-chain/src/oracle/production/types.ts';
+import { createFrozenConnectorClock } from '../packages/sunrey-chain/src/oracle/production/runtime.ts';
 import { ConnectorCircuitBreaker, DEFAULT_CIRCUIT_BREAKER_POLICY } from '../packages/sunrey-chain/src/oracle/production/circuit-breaker.ts';
 import { refuseFakeConsensus, verifyObservation } from '../packages/sunrey-chain/src/productive/economy-data/verification.ts';
 import { SINGLE_SOURCE_IS_NOT_CONSENSUS } from '../packages/sunrey-chain/src/productive/economy-data/types.ts';
@@ -189,9 +192,9 @@ describe('Wave 9 Task 1 — MoonRey oracle manipulation', () => {
       { sourceId: 's1', providerId: 'alias-a', controllerId: 'ctrl-x', upstreamOrganizationId: 'upstream-same' },
       { sourceId: 's2', providerId: 'alias-b', controllerId: 'ctrl-x', upstreamOrganizationId: 'upstream-same' },
       { sourceId: 's3', providerId: 'alias-c', controllerId: 'ctrl-x', upstreamOrganizationId: 'upstream-same' },
-    ] as const;
-    assert.equal(countIndependentForQuorum([...sources], true), 1);
-    const shared = analyzeIndependence([...sources], true).find((row) => row.providerIds.length > 1);
+    ] as unknown as EconomicDataSource[];
+    assert.equal(countIndependentForQuorum(sources, true), 1);
+    const shared = analyzeIndependence(sources, true).find((row) => row.providerIds.length > 1);
     assert.ok(shared);
     assert.equal(shared.independent, false);
   });
@@ -269,38 +272,20 @@ describe('Wave 9 Task 1 — MoonRey oracle manipulation', () => {
 
   it('fails production quorum on insufficient independent observations', () => {
     const quorum = evaluateProductionQuorum({
-      feed: {
-        feedId: 'feed-wave9',
-        minimumProviders: 3,
-        minimumIndependentControllers: 2,
-        schemaId: 'ENERGY_INTERVAL_V1',
-        aggregationPolicy: 'MEDIAN',
-        freshnessSeconds: 3600n,
-        subjectKind: 'METER',
-        unit: 'kWh',
-        factType: 'ENERGY_PRODUCTION',
-        productiveCategory: 'ENERGY',
-        claimType: 'OUTPUT',
-        sourceClass: 'GENERATOR_METER',
-        admissionMode: 'FIXTURE_ONLY',
-        certificationRequired: true,
-        rightsRequired: false,
-        lineageRequired: true,
-        independenceRequired: true,
-      },
+      feed: sandboxFeed(),
       observations: [
         {
           observationId: 'o1',
           oracleId: 'p1',
           feedId: 'feed-wave9',
           subject: 'meter-1',
-          value: { mantissa: 100n, scale: 0, unit: 'kWh' },
+          value: { mantissa: 100n, scale: 0, unit: 'kWh', schemaVersion: 1 },
           observedAtUnix: 1n,
           signature: 'sig',
           signerKeyId: 'k1',
         },
-      ],
-      sources: [{ sourceId: 's1', providerId: 'p1', controllerId: 'c1', upstreamOrganizationId: 'u1' }],
+      ] as never,
+      sources: [{ sourceId: 's1', providerId: 'p1', controllerId: 'c1', upstreamOrganizationId: 'u1' }] as unknown as EconomicDataSource[],
       requireIndependence: true,
     });
     assert.equal(quorum.ok, false);
@@ -394,8 +379,13 @@ describe('Wave 9 Task 3 — productive identity fraud', () => {
 
 describe('Wave 9 Task 4 — GPUV manipulation', () => {
   it('refuses standalone GPUV and oracle artifacts from minting', () => {
-    for (const kind of ['GPUV_QUANTITY', 'PRODUCTIVE_VALUE_RESULT', 'ORACLE_OBSERVATION', 'VERIFIED_ECONOMIC_FACT'] as const) {
-      assert.equal(refuseStandaloneAttempt({ kind }).ok, false, kind);
+    for (const attempt of [
+      { kind: 'GPUV_QUANTITY', quantity: 1n },
+      { kind: 'PRODUCTIVE_VALUE_RESULT', productiveValueId: 'pv-1' },
+      { kind: 'ORACLE_OBSERVATION', observationId: 'obs-1' },
+      { kind: 'VERIFIED_ECONOMIC_FACT', factId: 'fact-1' },
+    ] as const) {
+      assert.equal(refuseStandaloneAttempt(attempt).ok, false, attempt.kind);
     }
     assert.equal(PRODUCTIVE_VALUE_FUNCTION_DOES_NOT_MINT, true);
     assert.equal(PRODUCTIVE_ECONOMIC_VALUE_IS_NOT_MOONREY_COIN_QUANTITY, true);
@@ -404,7 +394,7 @@ describe('Wave 9 Task 4 — GPUV manipulation', () => {
 
   it('rejects negative and duplicate GPUV basis quantities', () => {
     const negative = evaluateProductiveValue(
-      engineValueInput('ENERGY', { contribution: { quantity: -1n } }),
+      engineValueInput('ENERGY', { contribution: { quantity: -1n } as never }),
       { policy: VALUE_POLICY, schedule: VALUE_SCHEDULE },
     );
     assert.equal(negative.state, 'VALUE_REJECTED');
@@ -454,7 +444,7 @@ describe('Wave 9 Task 5 — human Sybil attack', () => {
   });
 
   it('requires review for AI-only Sybil hints without autonomous ban', () => {
-    const actor = humanEconomicIdentityIdFor({ actorCommitment: deriveActorCommitment(['ai-only']) });
+    const actor = asHumanEconomicIdentityId(humanEconomicIdentityIdFor({ actorCommitment: deriveActorCommitment(['ai-only']) }));
     const sybil = evaluateSybilControls({
       humanActorId: actor,
       evaluatedAt: NOW,
@@ -542,7 +532,7 @@ describe('Wave 9 Task 7 — contribution splitting', () => {
         contentCommitment: contentCommitmentFromEvidence([`variant-${index}`]),
       }),
     );
-    const assessment = assessContributionSplitting('RESEARCH_PARTICIPATION', project, observations);
+    const assessment = assessContributionSplitting('RESEARCH_PARTICIPATION', project, observations as never);
     assert.equal(assessment.suspected, true);
     assert.ok(assessment.reason?.includes('authoritative research'));
   });
@@ -801,7 +791,7 @@ describe('Wave 9 Task 12 — economic circuit breakers', () => {
   });
 
   it('opens oracle connector circuit without rewriting supply', () => {
-    const clock = { nowMs: () => 0n };
+    const clock = createFrozenConnectorClock(0n);
     const breaker = new ConnectorCircuitBreaker(DEFAULT_CIRCUIT_BREAKER_POLICY, clock);
     for (let i = 0; i < 3; i++) {
       breaker.recordFailure('malicious-provider', 'source-1');
@@ -850,9 +840,9 @@ describe('Wave 9 Task 13 — property / invariant tests', () => {
       { sourceId: 's1', providerId: 'p1', controllerId: 'ctrl-x', upstreamOrganizationId: 'upstream-same' },
       { sourceId: 's2', providerId: 'p2', controllerId: 'ctrl-x', upstreamOrganizationId: 'upstream-same' },
       { sourceId: 's3', providerId: 'p3', controllerId: 'ctrl-y', upstreamOrganizationId: 'upstream-other' },
-    ] as const;
-    assert.equal(countIndependentForQuorum([...colluding], true), 2);
-    const shared = analyzeIndependence([...colluding], true).find((cluster) => cluster.providerIds.length > 1);
+    ] as unknown as EconomicDataSource[];
+    assert.equal(countIndependentForQuorum(colluding, true), 2);
+    const shared = analyzeIndependence(colluding, true).find((cluster) => cluster.providerIds.length > 1);
     assert.ok(shared);
     assert.equal(shared.independent, false);
   });
@@ -880,7 +870,7 @@ describe('Wave 9 Task 13 — property / invariant tests', () => {
     );
     assert.equal(evaluation.receipt.result, 'VERIFIED');
     assert.equal(informationConsensusCreatesMoney(), false);
-    assert.equal(refuseStandaloneAttempt({ kind: 'VERIFIED_ECONOMIC_FACT' }).ok, false);
+    assert.equal(refuseStandaloneAttempt({ kind: 'VERIFIED_ECONOMIC_FACT', factId: 'fact-1' }).ok, false);
     const book = moonreyBook();
     const before = book.circulating;
     assert.equal(

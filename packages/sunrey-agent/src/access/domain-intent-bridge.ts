@@ -87,5 +87,5 @@ export function agentAccessIntentToDomainInput(input: {
     purposeRef: input.intent.purpose,
     pegContextRef: input.intent.pegContextRefs[0] ?? null,
     proposedAt,
-  });
+  }) as DomainAccessIntentRegistration;
 }

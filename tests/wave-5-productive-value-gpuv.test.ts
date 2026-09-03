@@ -104,7 +104,7 @@ describe('Wave 5 — ProductiveEconomicContribution', () => {
 
   it('rejects stale or unverified contribution', () => {
     const stale = acceptProductiveEconomicContribution(acceptInput({
-      verifiedContribution: engineContribution('ENERGY', { status: 'REVIEW_REQUIRED' }),
+      verifiedContribution: engineContribution('ENERGY', { status: 'VALUE_REVIEW_REQUIRED' as never }),
     }));
     assert.equal(stale.ok, false);
     if (!stale.ok) {

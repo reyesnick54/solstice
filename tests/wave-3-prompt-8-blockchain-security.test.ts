@@ -71,7 +71,7 @@ function buildLifecycle(seedHex: string, keyIdValue: string) {
     metadata: validatorKeyMetadata({
       keyId: keyIdValue,
       purpose: 'VALIDATOR_CONSENSUS_SIGNING',
-      algorithm: 'Ed25519',
+      algorithm: 'Ed25519' as import('../packages/security/src/metadata.ts').KeyMetadata['algorithm'],
       version: 1,
       status: 'ACTIVE',
       provider: 'test',
@@ -277,7 +277,7 @@ describe('Wave 3 Prompt 8 — blockchain security', () => {
       metadata: validatorKeyMetadata({
         keyId: 'pending-key',
         purpose: 'VALIDATOR_CONSENSUS_SIGNING',
-        algorithm: 'Ed25519',
+        algorithm: 'Ed25519' as import('../packages/security/src/metadata.ts').KeyMetadata['algorithm'],
         version: 2,
         status: 'PENDING',
         provider: 'test',
@@ -303,7 +303,7 @@ describe('Wave 3 Prompt 8 — blockchain security', () => {
       metadata: validatorKeyMetadata({
         keyId: 'rotate-key',
         purpose: 'VALIDATOR_CONSENSUS_SIGNING',
-        algorithm: 'Ed25519',
+        algorithm: 'Ed25519' as import('../packages/security/src/metadata.ts').KeyMetadata['algorithm'],
         version: 1,
         status: 'ACTIVE',
         provider: 'test',
@@ -318,7 +318,7 @@ describe('Wave 3 Prompt 8 — blockchain security', () => {
         metadata: validatorKeyMetadata({
           keyId: 'rotate-key',
           purpose: 'VALIDATOR_CONSENSUS_SIGNING',
-          algorithm: 'Ed25519',
+          algorithm: 'Ed25519' as import('../packages/security/src/metadata.ts').KeyMetadata['algorithm'],
           version: 2,
           status: 'PENDING',
           provider: 'test',

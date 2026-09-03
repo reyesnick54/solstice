@@ -38,7 +38,8 @@ import { createPlatformApi } from '../services/api/src/app.ts';
 import { handleVerifiedCardWebhook } from '../services/api/src/consumer/card-webhook.ts';
 import { bffFailClosedInternal, statusForError } from '../services/api/src/consumer/errors.ts';
 import { handleConsumerBff, handleConsumerBffSync } from '../services/api/src/consumer/bff-test-utils.ts';
-import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
+import { createSandboxWorld, consumerBffRuntimeFromWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
+import type { ConsumerBffRuntime } from '../services/api/src/consumer/bff-test-utils.ts';
 import { startConsumerBff } from '../services/api/src/consumer/http.ts';
 import { createExchangeBffSurface } from '../services/api/src/consumer/exchange-bff.ts';
 import { createMemoryTokenStore } from '../packages/sunrey-sdk/src/consumer-platform/client.ts';
@@ -46,19 +47,8 @@ import { createMemoryTokenStore } from '../packages/sunrey-sdk/src/consumer-plat
 const ROOT = join(import.meta.dirname, '..');
 const NOW = asUtcInstant('2026-08-31T12:00:00.000Z');
 
-function bffRuntime(world: ReturnType<typeof createSandboxWorld>) {
-  return {
-    bff: world.bff,
-    sessions: world.sessions,
-    identity: world.runtime.identity.service,
-    payments: world.payments,
-    agent: world.agent,
-    grow: world.grow,
-    exchange: world.exchange,
-    wallets: world.wallets,
-    vault: world.vault,
-    conversation: world.conversation,
-  };
+function bffRuntime(world: ReturnType<typeof createSandboxWorld>): ConsumerBffRuntime {
+  return consumerBffRuntimeFromWorld(world);
 }
 
 function auth(persona: Parameters<typeof sandboxToken>[0]) {
@@ -84,16 +74,15 @@ describe('Wave 9 — application and Exchange security', () => {
 
     it('fails closed on unexpected handler errors without leaking stack traces', () => {
       const world = createSandboxWorld();
-      const runtime = {
-        ...bffRuntime(world),
+      const response = handleConsumerBffSync({
+        ...consumerBffRuntimeFromWorld(world),
         bff: {
           ...world.bff,
           profile() {
             throw new Error('secret internal path /var/lib/postgres connection refused');
           },
         },
-      };
-      const response = handleConsumerBffSync(runtime, {
+      } as unknown as ConsumerBffRuntime, {
         method: 'GET',
         path: '/api/v1/me',
         query: {},

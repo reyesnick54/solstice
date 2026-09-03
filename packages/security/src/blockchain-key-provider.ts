@@ -198,14 +198,16 @@ export class DevelopmentSoftwareBlockchainKeyProvider implements BlockchainKeyPr
     } catch (error) {
       return securityErr('KEY_NOT_USABLE', error instanceof Error ? error.message : 'illegal transition');
     }
-    active.metadata = Object.freeze({
+    const cacheKey = `${keyId}:${active.metadata.version}`;
+    const updatedMetadata = Object.freeze({
       ...active.metadata,
-      status: 'DEPRECATED',
+      status: 'DEPRECATED' as const,
       retiredAt: atUtc,
-    }) as typeof active.metadata;
+    });
+    this.#entries.set(cacheKey, { ...active, metadata: updatedMetadata });
     const event: BlockchainKeyRotationEvent = Object.freeze({
       keyId,
-      fromVersion: active.metadata.version,
+      fromVersion: updatedMetadata.version,
       toVersion: nextVersion,
       fromStatus: 'ACTIVE',
       toStatus: 'PENDING',

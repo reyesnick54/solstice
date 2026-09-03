@@ -27,6 +27,7 @@ import {
   traceClaimToProviderRecords,
   wouldCreateProvenanceCycle,
   type ProvenanceEdge,
+  type ProvenanceEnvelopeToolkit,
 } from '../packages/external-data/src/wave4/provenance/index.ts';
 import { asProvenanceNodeId } from '../packages/external-data/src/wave4/provenance/types.ts';
 
@@ -36,7 +37,7 @@ const clock = { now: () => NOW, nowMs: () => Date.parse(NOW) };
 const simulationEnvelopeToolkit = {
   newEventId: () => newEventId(),
   sealEnvelope: (input: Parameters<typeof sealEnvelope>[0], sequence: number) => sealEnvelope(input, sequence),
-};
+} as ProvenanceEnvelopeToolkit;
 
 function fabricSetup() {
   const outbox = new InMemoryOutboxStore();
@@ -289,7 +290,7 @@ describe('Wave 4 Prompt 18 — event and provenance fabric', () => {
       claimKind: 'compliance.screening.claim',
       parentNodeIds: [norm2.normalizedNodeId],
     });
-    const trace = traceClaimToProviderRecords(graph, chain.claimNodeId);
+    const trace = traceClaimToProviderRecords(graph, asProvenanceNodeId(chain.claimNodeId));
     assert.ok(trace);
     assert.ok(trace!.nodes.some((node) => node.kind === 'provider_record'));
     assert.ok(trace!.nodes.some((node) => node.kind === 'economic_claim'));
@@ -359,7 +360,7 @@ describe('Wave 4 Prompt 18 — event and provenance fabric', () => {
     });
     assert.equal(received.duplicate, false);
     assert.equal(duplicate.duplicate, true);
-    const trace = findClaimsForProviderRecord(graph, received.providerRecordNodeId);
+    const trace = findClaimsForProviderRecord(graph, asProvenanceNodeId(received.providerRecordNodeId));
     assert.deepEqual(trace, []);
   });
 
@@ -436,7 +437,7 @@ describe('Wave 4 Prompt 18 — event and provenance fabric', () => {
     await dispatcher.dispatchOnce();
     const types = transport.listPublished().map((event) => event.eventType);
     assert.ok(types.includes('ClaimCreated'));
-    const trace = traceClaimToProviderRecords(graph, chain.claimNodeId);
+    const trace = traceClaimToProviderRecords(graph, asProvenanceNodeId(chain.claimNodeId));
     assert.ok(trace);
     const payloads = transport.listPublished().map((event) => parseEnvelope(JSON.stringify(event)));
     assert.ok(payloads.every((envelope) => envelope.environment === 'simulation'));

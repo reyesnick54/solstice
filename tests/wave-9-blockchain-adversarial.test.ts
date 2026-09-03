@@ -227,11 +227,11 @@ function recordProtocol(
   attack: string,
   result: { ok: boolean; error?: { code: string } },
 ): void {
-  outcomes.push({
-    attack,
-    rejected: !result.ok,
-    code: result.ok ? undefined : result.error?.code,
-  });
+  outcomes.push(
+    result.ok || result.error?.code == null
+      ? { attack, rejected: !result.ok }
+      : { attack, rejected: !result.ok, code: result.error.code },
+  );
 }
 
 describe('Wave 9 Task 1 — transaction attacks', () => {
@@ -248,11 +248,13 @@ describe('Wave 9 Task 1 — transaction attacks', () => {
     recordProtocol(outcomes, 'replay', processTransaction(signedBytes, state, CONTEXT));
 
     const forgedBytes = Buffer.from(signedBytes);
-    forgedBytes[forgedBytes.length - 5] ^= 0x01;
+    const forgedByte = forgedBytes[forgedBytes.length - 5]!;
+    forgedBytes[forgedBytes.length - 5] = forgedByte ^ 0x01;
     recordProtocol(outcomes, 'forged-signature', processTransaction(new Uint8Array(forgedBytes), seededState(), CONTEXT));
 
     const mutated = Buffer.from(signedBytes);
-    mutated[mutated.length - 3] ^= 0x01;
+    const mutatedByte = mutated[mutated.length - 3]!;
+    mutated[mutated.length - 3] = mutatedByte ^ 0x01;
     recordProtocol(outcomes, 'modified-payload', processTransaction(new Uint8Array(mutated), seededState(), CONTEXT));
 
     recordProtocol(
@@ -506,19 +508,29 @@ describe('Wave 9 Task 8–9 — sync and snapshot attacks', () => {
       trustedFinalizedHeight: 2n,
       trustedStateRoot: 'aa'.repeat(32),
     };
-    assert.equal(verifyCanonicalSnapshot({ snapshot, trust }).value.ok, true);
+    const verified = verifyCanonicalSnapshot({ snapshot, trust });
+    assert.equal(verified.ok, true);
+    if (verified.ok) {
+      assert.equal(verified.value.ok, true);
+    }
 
     const tampered = verifyCanonicalSnapshot({
       snapshot: { ...snapshot, payload: '{"tampered":true}' },
       trust,
     });
-    assert.equal(tampered.value.ok, false);
+    assert.equal(tampered.ok, true);
+    if (tampered.ok) {
+      assert.equal(tampered.value.ok, false);
+    }
 
     const wrongNetwork = verifyCanonicalSnapshot({
       snapshot,
       trust: { ...trust, networkId: 'net_malicious' },
     });
-    assert.equal(wrongNetwork.value.ok, false);
+    assert.equal(wrongNetwork.ok, true);
+    if (wrongNetwork.ok) {
+      assert.equal(wrongNetwork.value.ok, false);
+    }
   });
 });
 

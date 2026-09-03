@@ -52,6 +52,20 @@ function humanStandalone(kind: HumanStandaloneAttempt['kind']): HumanStandaloneA
       return { kind, vaultRef: 'vault-1' };
     case 'HIN_USAGE_RECEIPT':
       return { kind, receiptId: 'receipt-1' };
+    case 'HIN_CONSENT':
+      return { kind, consentRef: 'consent-1' };
+    case 'CLEAN_ROOM_RESULT':
+      return { kind, resultId: 'result-1' };
+    case 'USER_DECLARATION':
+      return { kind, declaration: 'declaration-1' };
+    case 'FINANCIAL_AGENT_PROPOSAL':
+      return { kind, proposalId: 'proposal-1' };
+    case 'S3M_OUTPUT':
+      return { kind, outputDigest: 's3m-digest' };
+    case 'GROK_OUTPUT':
+      return { kind, outputDigest: 'grok-digest' };
+    case 'MODEL_OUTPUT':
+      return { kind, outputDigest: 'model-digest' };
     default: {
       const _exhaustive: never = kind;
       throw new Error(`unsupported human standalone kind: ${_exhaustive}`);
@@ -71,6 +85,12 @@ function productiveStandalone(kind: ProductiveStandaloneAttempt['kind']): Produc
       return { kind, quantity: 0n };
     case 'PRODUCTIVE_VALUE_RESULT':
       return { kind, productiveValueId: 'pv-1' };
+    case 'VERIFIED_PRODUCTIVE_CONTRIBUTION':
+      return { kind, contributionId: 'contrib-1' };
+    case 'PRODUCTIVE_ECONOMIC_EVENT':
+      return { kind, eventId: 'event-1' };
+    case 'ATTRIBUTION_DECISION':
+      return { kind, decisionId: 'decision-1' };
     default: {
       const _exhaustive: never = kind;
       throw new Error(`unsupported productive standalone kind: ${_exhaustive}`);

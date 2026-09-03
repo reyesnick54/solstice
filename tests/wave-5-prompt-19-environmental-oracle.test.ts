@@ -28,6 +28,7 @@ import {
   derivePhysicalRisks,
 } from '../packages/sunrey-chain/src/environmental/index.ts';
 import { loadEnvironmentalFixture, normalizeWeatherForecast } from '../packages/sunrey-chain/src/environmental/adapters/base.ts';
+import { asUtcInstant } from '../packages/domain/src/time.ts';
 import { createEnvironmentalOracleBff } from '../services/api/src/consumer/environmental-adapter.ts';
 import { dispatchEnvironmental } from '../services/api/src/consumer/environmental.ts';
 import { handleConsumerBff } from '../services/api/src/consumer/bff-test-utils.ts';
@@ -59,7 +60,7 @@ describe('Wave 5 Prompt 19 — environmental oracle', () => {
   it('3. forecast distinct from observation', async () => {
     const service = createEnvironmentalOracleService();
     const weather = await service.getCurrentWeather(SF, NOW);
-    const forecast = await service.getForecast(SF, { from: NOW, to: '2026-09-02T12:00:00.000Z', resolution: 'hourly' }, NOW);
+    const forecast = await service.getForecast(SF, { from: NOW, to: asUtcInstant('2026-09-02T12:00:00.000Z'), resolution: 'hourly' }, NOW);
     assert.equal(weather.ok, true);
     assert.equal(forecast.ok, true);
     if (!weather.ok || !forecast.ok) return;
@@ -70,7 +71,7 @@ describe('Wave 5 Prompt 19 — environmental oracle', () => {
 
   it('4. ensemble forecast retains model metadata', async () => {
     const service = createEnvironmentalOracleService();
-    const forecast = await service.getForecast(SF, { from: NOW, to: '2026-09-02T12:00:00.000Z', resolution: 'hourly' }, NOW);
+    const forecast = await service.getForecast(SF, { from: NOW, to: asUtcInstant('2026-09-02T12:00:00.000Z'), resolution: 'hourly' }, NOW);
     assert.equal(forecast.ok, true);
     if (!forecast.ok) return;
     const ensemble = forecast.value.find((f) => f.providerId === 'open-meteo-ensemble');
@@ -120,7 +121,7 @@ describe('Wave 5 Prompt 19 — environmental oracle', () => {
     const service = createEnvironmentalOracleService();
     const result = await service.getSeismicEvents(
       { latitude: 37.7749, longitude: -122.4194, radiusKm: 500 },
-      { from: NOW, to: '2026-09-02T12:00:00.000Z' },
+      { from: NOW, to: asUtcInstant('2026-09-02T12:00:00.000Z') },
       NOW,
     );
     assert.equal(result.ok, true);

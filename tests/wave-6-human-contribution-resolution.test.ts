@@ -56,7 +56,7 @@ describe('Wave 6 human contribution resolution integration', () => {
     }
     const entityId = deriveCanonicalEntityId({
       economy: 'HUMAN',
-      entityKind: 'PERSON',
+      entityKind: 'PSEUDONYMOUS_PERSON',
       entityCommitment: actor,
       jurisdiction: 'GB',
     });

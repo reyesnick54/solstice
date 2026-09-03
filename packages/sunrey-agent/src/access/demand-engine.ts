@@ -1,5 +1,6 @@
 import { PersonalEconomyAgent } from '../../../agent/src/service.ts';
 import type { AccessIntentFailure } from '../../../agent/src/access-fabric/index.ts';
+import type { AgentFailure } from '../../../agent/src/service.ts';
 import { agentAccessIntentToDomainInput } from './domain-intent-bridge.ts';
 import { refuseAgentConfirmReservation, refuseSelfIssuedExecutionAuthority, toProposeAccessActionIntent } from './gate.ts';
 import type { ActionIntent } from '../../../permissions/src/action-intent.ts';
@@ -25,6 +26,22 @@ export class AccessDemandEngine {
     this.agent = agent;
   }
 
+  private toAccessIntentFailure(error: AgentFailure): AccessIntentFailure {
+    if (
+      error.code === 'EMPTY_REQUEST'
+      || error.code === 'UNPARSEABLE_REQUEST'
+      || error.code === 'MALFORMED_INTENT'
+      || error.code === 'PROHIBITED_GRAPH_CONTEXT'
+      || error.code === 'PROHIBITED_CONFIRMATION'
+      || error.code === 'SELF_ISSUED_AUTHORITY'
+      || error.code === 'ACTOR_CONTEXT_REQUIRED'
+      || error.code === 'KERNEL_PATH_REQUIRED'
+    ) {
+      return error;
+    }
+    return { code: 'MALFORMED_INTENT', message: error.message };
+  }
+
   propose(input: {
     readonly actor: unknown;
     readonly ports: AgentRuntimePorts;
@@ -43,7 +60,7 @@ export class AccessDemandEngine {
       ...(input.requestedGraphLabels ? { requestedGraphLabels: input.requestedGraphLabels } : {}),
     });
     if (!composed.ok) {
-      return { ok: false, error: composed.error };
+      return { ok: false, error: this.toAccessIntentFailure(composed.error) };
     }
     const action = toProposeAccessActionIntent({
       intent: composed.value.intent,

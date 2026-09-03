@@ -10,7 +10,7 @@ import { deterministicActivityId } from '../packages/personal-economic-graph/src
 import type { EconomicActivity } from '../packages/personal-economic-graph/src/store.ts';
 
 const NOW = asUtcInstant('2026-08-31T12:00:00.000Z');
-const GRAPH_ID = 'egr_prompt13' as never;
+const GRAPH_ID = 'egr_prompt13' as EconomicActivity['graphId'];
 
 function netflixActivity(month: string, amount: string, index: number): EconomicActivity {
   return Object.freeze({
@@ -19,7 +19,7 @@ function netflixActivity(month: string, amount: string, index: number): Economic
     subjectId: 'id_prompt13',
     accountId: 'acct_checking',
     direction: 'OUTFLOW' as const,
-    amount: Object.freeze({ minorUnits: amount, currency: 'USD' }),
+    amount: Object.freeze({ minorUnits: amount, currency: 'USD' as const }),
     occurredAt: asUtcInstant(`2026-${month}-15T10:00:00.000Z`),
     counterpart: Object.freeze({
       kind: 'MERCHANT' as const,
@@ -31,7 +31,7 @@ function netflixActivity(month: string, amount: string, index: number): Economic
     sourceRef: `src_${index}`,
     sourceEventType: 'CustomerActivityRecorded',
     sourceEventId: `evt_${index}`,
-  });
+  }) as unknown as EconomicActivity;
 }
 
 describe('Wave 5 Prompt 13 — subscription intelligence', () => {

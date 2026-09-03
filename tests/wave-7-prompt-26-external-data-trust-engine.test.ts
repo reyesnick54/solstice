@@ -194,7 +194,7 @@ describe('Wave 7 Prompt 26 — External Data Trust Engine', () => {
     });
     assert.equal(result.status, 'TRUSTED');
     assert.ok(result.reasons.some((r) => r.code === 'AUTHORITY_OVERRIDE'));
-    assert.ok(result.conflictingObservationIds.includes(obs[1].observationId));
+    assert.ok(result.conflictingObservationIds.includes(obs[1]!.observationId));
   });
 
   it('6. stale provider excluded or reduced', () => {
@@ -223,7 +223,7 @@ describe('Wave 7 Prompt 26 — External Data Trust Engine', () => {
       providerRisk: { bad: { quarantined: true, state: 'DISABLED' } },
     });
     assert.ok(result.reasons.some((r) => r.code === 'SOURCE_QUARANTINED'));
-    assert.ok(!result.supportingObservationIds.includes(obs[1].observationId));
+    assert.ok(!result.supportingObservationIds.includes(obs[1]!.observationId));
   });
 
   it('8. unit mismatch', () => {
@@ -408,10 +408,13 @@ describe('Wave 7 Prompt 26 — External Data Trust Engine', () => {
       authorityClass: 'reference_data',
       provenance: { rawPayload: '{}', providerSchemaVersion: 'test/1' },
     });
+    assert.equal(c1.ok, true);
+    assert.equal(c2.ok, true);
+    if (!c1.ok || !c2.ok) throw new Error('fixture observation');
     const result = engine.assess({
       contexts: [
-        Object.freeze({ observation: c1.value!, semanticKey: 'eth:100' }),
-        Object.freeze({ observation: c2.value!, semanticKey: 'eth:100' }),
+        Object.freeze({ observation: c1.value, semanticKey: 'eth:100' }),
+        Object.freeze({ observation: c2.value, semanticKey: 'eth:100' }),
       ],
       policyProfile: 'CHAIN_STATE',
       semanticKey: 'eth:100',
@@ -431,8 +434,10 @@ describe('Wave 7 Prompt 26 — External Data Trust Engine', () => {
       authorityClass: 'regulated_provider',
       provenance: { rawPayload: '{}', providerSchemaVersion: 'test/1' },
     });
+    assert.equal(comp.ok, true);
+    if (!comp.ok) throw new Error('fixture observation');
     const result = engine.assess({
-      contexts: [Object.freeze({ observation: comp.value!, semanticKey: 'subj-1' })],
+      contexts: [Object.freeze({ observation: comp.value, semanticKey: 'subj-1' })],
       policyProfile: 'COMPLIANCE_EVIDENCE',
       semanticKey: 'subj-1',
     });
@@ -452,8 +457,10 @@ describe('Wave 7 Prompt 26 — External Data Trust Engine', () => {
       authorityClass: 'research_data',
       provenance: { rawPayload: '{}', providerSchemaVersion: 'test/1' },
     });
+    assert.equal(paper.ok, true);
+    if (!paper.ok) throw new Error('fixture observation');
     const result = engine.assess({
-      contexts: [Object.freeze({ observation: paper.value!, semanticKey: 'paper-1' })],
+      contexts: [Object.freeze({ observation: paper.value, semanticKey: 'paper-1' })],
       policyProfile: 'RESEARCH',
       semanticKey: 'paper-1',
     });

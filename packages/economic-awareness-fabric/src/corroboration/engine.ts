@@ -24,8 +24,8 @@ export function corroborateObservations(input: CorroborationInput): Corroboratio
     deriveObservationFingerprint({
       providerId: o.providerId,
       sourceClass: o.sourceClass,
-      providerRecordId: o.providerRecordId,
-      payloadDigest: o.payloadDigest,
+      providerRecordId: o.observationId,
+      payloadDigest: o.provenanceRef.provenanceId,
       observedAtUtc: o.observedAtUtc,
     }),
   );

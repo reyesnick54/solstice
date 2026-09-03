@@ -131,10 +131,10 @@ describe('Wave 7 — privacy-preserving data access', () => {
   it('6. fails credential proof verification on invalid fixture VC', async () => {
     const verifier = createFixtureVerifiableCredentialVerifier();
     const bad = await verifier.verify({
-      credential: {
-        ...sampleSimulationCredential(),
-        proof: undefined,
-      },
+      credential: (() => {
+        const { proof: _proof, ...credential } = sampleSimulationCredential();
+        return credential;
+      })(),
       purposeId: PURPOSE,
       requiredClaims: ['credentialStatus'],
     });
@@ -278,7 +278,7 @@ describe('Wave 7 — privacy-preserving data access', () => {
       'USAGE_RECEIPT',
       'POLICY_INPUT',
     ]) {
-      assert.ok(surfaces.has(required), `missing audit surface ${required}`);
+      assert.ok(surfaces.has(required as (typeof WAVE7_DATA_EXPOSURE_AUDIT)[number]['surface']), `missing audit surface ${required}`);
     }
   });
 

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { asJurisdiction } from '../packages/domain/src/jurisdiction.ts';
 import { asUtcInstant } from '../packages/domain/src/time.ts';
 import { subjectRefFor } from '../packages/human-economic-contribution/src/ids.ts';
 import { HumanEconomicIdentityService } from '../packages/human-economic-contribution/src/identity/index.ts';
@@ -13,7 +14,7 @@ describe('Wave 6 pseudonymous identity integration', () => {
     const subjectRef = subjectRefFor('integration');
     const registered = svc.registerIdentity({
       pseudonymousSubjectRef: subjectRef,
-      jurisdiction: 'US',
+      jurisdiction: asJurisdiction('US'),
       createdAt: NOW,
     });
     assert.equal(registered.ok, true);

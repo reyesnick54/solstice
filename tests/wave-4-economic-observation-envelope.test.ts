@@ -166,7 +166,6 @@ describe('Wave 4 EconomicObservationEnvelope', () => {
     const denied = normalizeGeography(
       {
         coordinates: { lat: 51.5, lon: -0.12 },
-        publicDisclosureAllowed: undefined,
         jurisdiction: 'GB',
       },
       { economicDomain: 'HUMAN_ECONOMY' },

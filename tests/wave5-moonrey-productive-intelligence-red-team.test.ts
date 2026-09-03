@@ -162,7 +162,7 @@ describe('Wave 5 Task 2 — oracle red team', () => {
       feed: sandboxFeed(),
       observations: [
         { observationId: 'o1', oracleId: 'p1', feedId: 'feed-1', subject: 'meter-1', value: { schemaVersion: 1, mantissa: 100n, scale: 0, unit: 'kWh' }, observedAtUnix: 1n, signature: 'sig', signerKeyId: 'k1' },
-      ],
+      ] as never,
       sources: [{ sourceId: 's1', providerId: 'p1', controllerId: 'c1', upstreamOrganizationId: 'u1' }] as unknown as EconomicDataSource[],
       requireIndependence: true,
     });
