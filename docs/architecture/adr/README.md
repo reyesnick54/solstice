@@ -75,6 +75,7 @@ not reused or silently changed.
 | 0032 | Evidence anchoring and audit | ACCEPTED_FOR_ENGINEERING | RESEARCH_REQUIRED | partial | legal + regulatory | no | [ADR-0032](./ADR-0032-sunrey-blockchain-evidence-anchoring.md) |
 | 0033 | Chain identity / network ID / genesis | ACCEPTED_FOR_ENGINEERING | RESEARCH_REQUIRED | partial | legal + regulatory | no | [ADR-0033](./ADR-0033-sunrey-blockchain-identity-genesis.md) |
 | 0034 | SunRey Access Fabric / Human Access Economy | ACCEPTED_FOR_ENGINEERING | RESEARCH_REQUIRED | partial | legal + provider + regulatory | no | [ADR-0034](./ADR-0034-sunrey-access-fabric.md) |
+| 0035 | Economic Awareness Fabric canonicalization | ACCEPTED_FOR_ENGINEERING | RESEARCH_REQUIRED | yes (simulation) | legal + regulatory | no | [ADR-0035](./ADR-0035-economic-awareness-fabric-canonicalization.md) |
 
 ## Notes on ADR-0007
 

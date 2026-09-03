@@ -1,5 +1,5 @@
-import type { EconomicEvidence, EconomicObservation } from '../../../sunrey-chain/src/economic-proof/types.ts';
-import { economicProofDigest } from '../../../sunrey-chain/src/economic-proof/hash.ts';
+import type { EconomicEvidence, EconomicObservation } from '@solstice/sunrey-chain/economic-proof';
+import { economicProofDigest } from '@solstice/sunrey-chain/economic-proof';
 
 export type EvidenceProposal = {
   readonly proposalId: string;

@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "description": "Wave 4 Economic Awareness Fabric — federated information processing between external sources and Wave 3 economic proof",
+  "dependencies": {
+    "@solstice/sunrey-chain": "0.1.0"
+  },
   "exports": {
     ".": "./src/index.ts"
   },
