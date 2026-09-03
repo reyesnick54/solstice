@@ -712,6 +712,19 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v041.sql), false);
   });
 
+  it('customer V042 grants human_contribution schema usage for durable HEC state', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v042 = files.find((file) => file.version === 42);
+    assert.ok(v042);
+    assert.equal(v042.filename, 'V042__human_economic_contribution.sql');
+    assert.match(v042.sql, /CREATE SCHEMA IF NOT EXISTS human_contribution/);
+    assert.match(v042.sql, /CREATE TABLE human_contribution\.active_fingerprint/);
+    assert.match(v042.sql, /CREATE TABLE human_contribution\.monetization_consumed_key/);
+    assert.match(v042.sql, /GRANT USAGE ON SCHEMA human_contribution TO customer_app/);
+    assert.match(v042.sql, /GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA human_contribution TO customer_app/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v042.sql), false);
+  });
+
   it('ledger V004 persists banking-core metadata without a balance column', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
     const v004 = files.find((file) => file.version === 4);
