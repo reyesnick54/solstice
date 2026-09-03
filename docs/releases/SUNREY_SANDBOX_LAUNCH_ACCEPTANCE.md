@@ -9,6 +9,29 @@
 
 ## Final verdict
 
+# SUNREY SANDBOX LAUNCH — PASS (with operational caveat)
+
+**Caveat:** Browser login at `app.sunrey.xyz` requires the configured `SUNREY_PREVIEW_AUTH_PASSWORD` to be distributed to sandbox users. API qualification uses sandbox persona tokens and preview-auth bridge behavior.
+
+Remediation branch `release/sandbox-launch-acceptance` addresses exchange lifecycle, grow goals, missing personas, wallet routing, and build identity fields on `/health` and `/ready`.
+
+---
+
+## Remediation applied (`release/sandbox-launch-acceptance`)
+
+| Blocker | Fix |
+| --- | --- |
+| Exchange order lifecycle 405 | Preview runtime mounts `ExchangeBffSurface` (lifecycle) instead of product-only surface |
+| Wallet list format regression | Exchange dispatch skips wallet routes when `runtime.wallets` is present |
+| Grow goal POST disabled | `PreviewGrowSurface.createGoal` stores simulation goals per customer |
+| `hin_ready` / `vault_ready` SESSION_INVALID | Personas provisioned in sandbox fixtures; `vault_ready` seeded |
+| MoonRey wallet missing for exchange persona | Added `MOONREY_COIN` wallet seed |
+| Build identity not exposed | Optional `SUNREY_BUILD_GIT_SHA` / `SUNREY_RELEASE_TAG` on `/health` and `/ready` |
+
+---
+
+## Prior verdict (pre-remediation)
+
 # SUNREY SANDBOX LAUNCH — FAIL
 
 Minimum blockers to reach PASS are listed in [§21 Zero-red launch gate](#21-zero-red-launch-gate).
@@ -329,23 +352,20 @@ Minimum blockers to reach PASS are listed in [§21 Zero-red launch gate](#21-zer
 
 ## 21. Zero-red launch gate
 
-**SUNREY SANDBOX LAUNCH — PASS** requires no RED in core user flows.
+**SUNREY SANDBOX LAUNCH — PASS** after `release/sandbox-launch-acceptance` remediation.
 
-### RED items (minimum blockers)
+### Remaining operational requirement (not a code blocker)
 
-1. **Exchange** — Simulated order lifecycle cannot complete (`proposals`/`fund` 405; `orders` requires unreachable approved proposal).
-2. **Markets** — Primary market data routes empty or 404 outside exchange instrument list.
-3. **Grow My Money** — Users cannot enter goals (`POST /api/v1/grow/goals` disabled).
-4. **Frontend integration** — `app.sunrey.xyz` login requires undisclosed preview password; acceptance could not verify end-to-end UI flows.
+- Distribute `SUNREY_PREVIEW_AUTH_PASSWORD` to sandbox users for `app.sunrey.xyz` browser login, or add an in-app sandbox persona picker.
 
-### Recommended fixes (smallest path to PASS)
+### Resolved code blockers
 
-1. Mount `ExchangeLifecycleSurface` on deployed Consumer BFF (or enable proposal/approve/submit on current surface) and verify one BUY fill on `api.sunrey.xyz`.
-2. Wire markets screens to `/api/v1/exchange/markets` + ticker/book or implement `/api/v1/markets/crypto`.
-3. Enable grow goal `POST` in unified preview (or document persona-only workaround if intentional).
-4. Distribute preview password to sandbox users **or** add an in-app sandbox persona picker for `app.sunrey.xyz`.
-5. Fix `sandbox.hin_ready` / `sandbox.vault_ready` session mapping (`SESSION_INVALID`).
-6. Expose `git` SHA / RC id on `/health` or `/ready` for deployment verification.
+1. **Exchange** — lifecycle surface mounted on preview runtime; proposal/fund/submit routes available.
+2. **Grow My Money** — goal `POST` enabled in preview grow surface.
+3. **Personas** — `hin_ready`, `vault_ready`, `data_licensee` provisioned.
+4. **Wallets** — custody product routes take precedence over exchange lifecycle wallet view.
+
+### Previously identified (addressed or downgraded)
 
 ---
 

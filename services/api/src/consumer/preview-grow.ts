@@ -17,6 +17,7 @@ export class PreviewGrowSurface {
   private readonly growth: ProductGrowthService;
   private readonly bff: ConsumerBff;
   private readonly opportunityPort: GrowOpportunityPort;
+  private readonly previewGoals = new Map<string, Record<string, unknown>[]>();
 
   constructor(growth: ProductGrowthService, bff: ConsumerBff, opportunityPort: GrowOpportunityPort) {
     this.growth = growth;
@@ -52,18 +53,46 @@ export class PreviewGrowSurface {
       ledgerWins: true,
       authoritativeBalance: null,
       liquidAssetsByCurrency,
-      goals: [],
+      goals: this.previewGoals.get(principal.customerId) ?? [],
       opportunities: [],
       note: 'Balances are ledger-derived. Mixed currencies are never silently combined.',
     };
   }
 
-  goals(_principal: BffPrincipal, _requestId: string): Record<string, unknown> {
-    return { items: [], environment: 'simulation' };
+  goals(principal: BffPrincipal, _requestId: string): Record<string, unknown> {
+    return {
+      items: this.previewGoals.get(principal.customerId) ?? [],
+      environment: 'simulation',
+    };
   }
 
-  createGoal(_principal: BffPrincipal, _body: Record<string, unknown>, requestId: string): BffErrorEnvelope {
-    return unavailable(requestId, 'Goal editing is not enabled in the unified preview yet');
+  createGoal(principal: BffPrincipal, body: Record<string, unknown>, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    const label = String(body.name ?? body.label ?? 'Goal');
+    const targetMinorUnits = String(
+      (body.targetAmount as { minorUnits?: string } | undefined)?.minorUnits ?? body.targetMinorUnits ?? '',
+    );
+    const currency = String((body.targetAmount as { currency?: string } | undefined)?.currency ?? body.currency ?? 'USD');
+    if (!/^\d+$/.test(targetMinorUnits) || targetMinorUnits === '0') {
+      return bffError({
+        errorCode: 'VALIDATION',
+        category: 'VALIDATION',
+        message: 'targetMinorUnits must be a positive integer string',
+        retryable: false,
+        requestId,
+      });
+    }
+    const goal = Object.freeze({
+      goalId: `goal_preview_${principal.customerId}_${this.previewGoals.get(principal.customerId)?.length ?? 0}`,
+      label,
+      targetMinorUnits,
+      currency,
+      environment: 'simulation',
+      achievementPromised: false,
+      productionMoneyMovement: false,
+    });
+    const items = [...(this.previewGoals.get(principal.customerId) ?? []), goal];
+    this.previewGoals.set(principal.customerId, items);
+    return goal;
   }
 
   opportunities(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {

@@ -117,6 +117,8 @@ export async function serve(
         productionReady: false,
         productionActive: false,
         liveConnectivityEnabled: false,
+        ...(process.env.SUNREY_BUILD_GIT_SHA ? { gitSha: process.env.SUNREY_BUILD_GIT_SHA } : {}),
+        ...(process.env.SUNREY_RELEASE_TAG ? { releaseTag: process.env.SUNREY_RELEASE_TAG } : {}),
         ...(runtime.previewDiagnostics ? runtime.previewDiagnostics() : {}),
       },
       cors.headers,
@@ -135,6 +137,8 @@ export async function serve(
         productionReady: false,
         productionActive: false,
         liveConnectivityEnabled: false,
+        ...(process.env.SUNREY_BUILD_GIT_SHA ? { gitSha: process.env.SUNREY_BUILD_GIT_SHA } : {}),
+        ...(process.env.SUNREY_RELEASE_TAG ? { releaseTag: process.env.SUNREY_RELEASE_TAG } : {}),
       },
       cors.headers,
     );
