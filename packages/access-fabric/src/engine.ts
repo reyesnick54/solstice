@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { addMs, isExpired, type Clock } from '../../config/src/clock.ts';
 import { isErr, err, ok, type Result } from '../../domain/src/result.ts';
+import type { UtcInstant } from '../../domain/src/time.ts';
 import type { EvidenceVault } from '../../evidence/src/vault.ts';
 import type { DomainEventLog } from '../../events/src/events.ts';
 import type { IdentityAuthorityPort } from '../../identity/src/index.ts';
@@ -748,13 +749,13 @@ export class CapacityReservationEngine {
 }
 
 type UsageSlice = {
-  readonly consumedAt: string;
+  readonly consumedAt: UtcInstant;
   readonly quantity: bigint;
 };
 
 type ReservationSlice = {
   readonly quantity: bigint;
-  readonly expiresAt: string;
+  readonly expiresAt: UtcInstant;
 };
 
 function failure(code: AccessFabricFailure['code'], message: string): AccessFabricFailure {

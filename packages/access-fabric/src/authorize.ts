@@ -2,6 +2,7 @@ import { isErr, isOk } from '../../domain/src/result.ts';
 import type { Clock } from '../../config/src/clock.ts';
 import { type Customer } from '../../domain/src/customer.ts';
 import { asJurisdiction, asResidency } from '../../domain/src/jurisdiction.ts';
+import { createProductCatalog } from '../../domain/src/product.ts';
 import type { UtcInstant } from '../../domain/src/time.ts';
 import type { EvidenceVault } from '../../evidence/src/vault.ts';
 import type { DomainEventLog } from '../../events/src/events.ts';
@@ -14,16 +15,16 @@ import type { KernelFacts } from '../../kernel/src/proofs.ts';
 import type { ActionIntent } from '../../permissions/src/action-intent.ts';
 import type { AuthorizationDecision } from '../../permissions/src/decision.ts';
 import { AuthorityIssuer, type VerifiedExecutionAuthority } from '../../permissions/src/execution-authority.ts';
-import { validateIntentStructure } from '../../permissions/src/structural.ts';
+import { validateIntentStructure, type StructuralCatalog } from '../../permissions/src/structural.ts';
 import {
   SIMULATION_DIGITAL_CUSTODY_GB,
   SIMULATION_SOLSTICE_UK,
 } from '../../sunrey-coin/src/simulation-catalog.ts';
 
-const EMPTY_CATALOG = {
-  products: new Map(),
-  legalEntities: new Map(),
-  accounts: { get: () => undefined, list: () => [] as const },
+const EMPTY_CATALOG: StructuralCatalog = {
+  products: createProductCatalog([]),
+  legalEntities: { get: () => undefined },
+  accounts: { get: () => undefined },
 };
 
 export type CapacityAuthorizeRefusal =
@@ -157,7 +158,7 @@ function simulationCustomer(
     residency: asResidency(jurisdiction),
     status: 'ACTIVE',
     verification: {
-      kycState: 'VERIFIED',
+      kycState: 'VERIFIED' as const,
       kycRecordVersion: 1,
       refreshBy: now,
     },

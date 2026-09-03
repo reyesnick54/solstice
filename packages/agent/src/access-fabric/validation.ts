@@ -1,5 +1,5 @@
 import { err, ok, type Result } from '../../../domain/src/result.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
 import {
   ACCESS_CATEGORIES,
   ACCESS_CONSTRAINT_KINDS,
@@ -73,8 +73,8 @@ function validateWindow(value: unknown): Result<AccessIntent['window'], AccessIn
   }
   return ok(
     Object.freeze({
-      ...(typeof value.startAt === 'string' ? { startAt: value.startAt } : {}),
-      ...(typeof value.endAt === 'string' ? { endAt: value.endAt } : {}),
+      ...(typeof value.startAt === 'string' ? { startAt: asUtcInstant(value.startAt) } : {}),
+      ...(typeof value.endAt === 'string' ? { endAt: asUtcInstant(value.endAt) } : {}),
       ...(typeof value.durationDays === 'number' ? { durationDays: value.durationDays } : {}),
       ...(typeof value.durationWeeks === 'number' ? { durationWeeks: value.durationWeeks } : {}),
       ...(value.recurrence ? { recurrence: value.recurrence as AccessIntent['window']['recurrence'] } : {}),

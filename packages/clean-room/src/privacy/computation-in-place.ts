@@ -31,24 +31,25 @@ export type PrivateComputationProvider = {
 };
 
 export function createSimulationCleanRoomComputationProvider(): PrivateComputationProvider {
-  return Object.freeze({
+  const provider: PrivateComputationProvider = {
     capability: CLEAN_ROOM_CAPABILITY,
-    async execute(request) {
+    async execute(request: ComputationInPlaceRequest) {
       const seed = request.inputCommitmentHashes.join(':');
       return ok(
         Object.freeze({
           verified: true,
           resultCommitmentHash: `cmp:${seed.slice(0, 32)}`,
-          rawDatasetCopied: false,
+          rawDatasetCopied: false as const,
           venue: request.venue,
         }),
       );
     },
-  });
+  };
+  return Object.freeze(provider);
 }
 
 export function createUnavailableTeeComputationProvider(): PrivateComputationProvider {
-  return Object.freeze({
+  const provider: PrivateComputationProvider = {
     capability: TEE_CAPABILITY,
     async execute() {
       return err({
@@ -56,5 +57,6 @@ export function createUnavailableTeeComputationProvider(): PrivateComputationPro
         message: 'trusted execution environment integration is not implemented',
       });
     },
-  });
+  };
+  return Object.freeze(provider);
 }

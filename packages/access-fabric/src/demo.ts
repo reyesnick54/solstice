@@ -60,7 +60,13 @@ const policyEligibility: AccessPolicyEligibilityDecision[] = [
 
 function run(input: Partial<AccessEntitlementEngineInput>): void {
   const baseEntitlement = entitlement();
-  policyEligibility[0] = { ...policyEligibility[0], entitlementId: baseEntitlement.entitlementId };
+  policyEligibility[0] = {
+    entitlementId: baseEntitlement.entitlementId,
+    eligible: policyEligibility[0]!.eligible,
+    policyRef: policyEligibility[0]!.policyRef,
+    evaluatedAt: policyEligibility[0]!.evaluatedAt,
+    reasonCode: policyEligibility[0]!.reasonCode,
+  };
   const engine = new AccessEntitlementEngine();
   const result = engine.evaluate({
     subjectId: SUBJECT,

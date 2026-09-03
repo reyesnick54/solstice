@@ -32,7 +32,7 @@ import {
 
 export const PRODUCTION_ACTIVATION_POLICY_ID = 'sunrey-adr-activation-gates/1' as const;
 
-export const REGULATED_FEATURE_FLAGS = Object.freeze({
+export const REGULATED_FEATURE_FLAGS: Readonly<Record<string, boolean>> = Object.freeze({
   LIVE_INTEROP_ENABLED,
   LIVE_INTEROP_RELAYERS_ENABLED,
   LIVE_INTEROP_WATCHERS_ENABLED,
@@ -191,7 +191,7 @@ export function listEnabledRegulatedFlags(): RegulatedFeatureFlag[] {
   const enabled: RegulatedFeatureFlag[] = [];
   for (const [name, value] of Object.entries(REGULATED_FEATURE_FLAGS)) {
     if (value === true) {
-      enabled.push(name as RegulatedFeatureFlag);
+      enabled.push(name as RegulatedFeatureFlag); // flags widen to boolean at runtime
     }
   }
   return enabled;

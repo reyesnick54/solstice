@@ -42,8 +42,8 @@ function spendingConstraintsFromMandates(mandates: readonly AgentMandateView[]):
   for (const mandate of mandates) {
     for (const summary of mandate.hardConstraintSummaries) {
       const amount = summary.match(/\$([\d,]+(?:\.\d+)?)/);
-      if (amount) {
-        const whole = amount[1].split('.')[0].replace(/,/g, '');
+      if (amount?.[1]) {
+        const whole = amount[1].split('.')[0]!.replace(/,/g, '');
         const minor = BigInt(whole) * 100n;
         constraints.push({
           kind: 'SPENDING_LIMIT',
@@ -69,7 +69,7 @@ function buildVehicleRentalIntent(input: {
   readonly sourceText: string;
   readonly now: UtcInstant;
   readonly graph: { readonly pegContextRefs: readonly string[]; readonly consentRefs: readonly string[] };
-  readonly constraints: readonly AccessIntent['constraints'];
+  readonly constraints: AccessIntent['constraints'];
   readonly mandateRef: string | null;
 }): Omit<AccessIntent, 'executable' | 'confirmsReservation'> {
   const weeks = parseDurationWeeks(input.sourceText) ?? 2;
@@ -116,7 +116,7 @@ function buildTravelExperienceIntent(input: {
   readonly sourceText: string;
   readonly now: UtcInstant;
   readonly graph: { readonly pegContextRefs: readonly string[]; readonly consentRefs: readonly string[] };
-  readonly constraints: readonly AccessIntent['constraints'];
+  readonly constraints: AccessIntent['constraints'];
   readonly mandateRef: string | null;
 }): Omit<AccessIntent, 'executable' | 'confirmsReservation'> {
   const weeks = parseDurationWeeks(input.sourceText) ?? 2;
@@ -159,7 +159,7 @@ function buildRecurringFoodIntent(input: {
   readonly sourceText: string;
   readonly now: UtcInstant;
   readonly graph: { readonly pegContextRefs: readonly string[]; readonly consentRefs: readonly string[] };
-  readonly constraints: readonly AccessIntent['constraints'];
+  readonly constraints: AccessIntent['constraints'];
   readonly mandateRef: string | null;
 }): Omit<AccessIntent, 'executable' | 'confirmsReservation'> {
   return {

@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 
 import { FrozenClock } from '../../config/src/clock.ts';
 import { asJurisdiction } from '../../domain/src/jurisdiction.ts';
+import { asCustomerId } from '../../domain/src/customer.ts';
 import { asUtcInstant } from '../../domain/src/time.ts';
 import { EvidenceVault } from '../../evidence/src/vault.ts';
 import { DomainEventLog } from '../../events/src/events.ts';
@@ -38,7 +39,7 @@ function harness(policy = new PermissiveSimulationPolicy()) {
     actorId: 'actor-1',
     jurisdiction: 'GB' as never,
     identityId: 'identity-1',
-    customerId: 'customer-1',
+    customerId: asCustomerId('customer-1'),
     capabilities: ['EXCHANGE_VIEW', 'EXCHANGE_OPERATE_REQUEST'] as never,
   });
   const capacitySource = new InMemoryCapacitySource();
@@ -104,7 +105,6 @@ describe('ACCESS-07 capacity reservation engine', () => {
       requestedUnits: 1,
       actorId: 'actor-1',
       accountId: 'acct-1',
-    jurisdiction: GB as string,
     });
     assert.equal(quote.outcome, 'OK');
     if (quote.outcome === 'OK') {
