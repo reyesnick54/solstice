@@ -25,6 +25,8 @@ import type {
 } from '../../../../packages/human-economic-contribution/src/types.ts';
 import {
   emptyClaimRegistry,
+  deserializeClaimRegistry,
+  serializeClaimRegistry,
   getClaim,
   markClaimMonetized,
   registerEconomicClaim,
@@ -101,12 +103,15 @@ export class DurableHumanEconomicStateService {
     this.registry.restore(snapshot.registry);
     this.resolution.restore(snapshot.resolution);
     if (snapshot.proofBoundClaims) {
-      this.hydrateProofBoundClaims(snapshot.proofBoundClaims);
+      this.restoreProofBoundClaims(snapshot.proofBoundClaims);
     }
   }
 
-  private hydrateProofBoundClaims(claims: ClaimRegistry): void {
-    for (const [, claim] of claims.claims) {
+  private restoreProofBoundClaims(data: unknown): void {
+    const registry = deserializeClaimRegistry(
+      typeof data === 'string' ? data : JSON.stringify(data),
+    );
+    for (const [economicClaimId, claim] of registry.claims) {
       registerEconomicClaim(this.proofBoundClaims, {
         economicClaimId: claim.economicClaimId,
         economicDomain: claim.economicDomain,
@@ -116,8 +121,8 @@ export class DurableHumanEconomicStateService {
         registeredAtUtc: claim.registeredAtUtc,
         lifecycleState: claim.lifecycleState,
       });
-      if (claims.monetizedClaimIds.has(claim.economicClaimId)) {
-        markClaimMonetized(this.proofBoundClaims, claim.economicClaimId);
+      if (registry.monetizedClaimIds.has(economicClaimId)) {
+        markClaimMonetized(this.proofBoundClaims, economicClaimId);
       }
     }
   }
@@ -126,7 +131,7 @@ export class DurableHumanEconomicStateService {
     return Object.freeze({
       registry: this.registry.snapshot(),
       resolution: this.resolution.snapshot(),
-      proofBoundClaims: this.proofBoundClaims,
+      proofBoundClaims: JSON.parse(serializeClaimRegistry(this.proofBoundClaims)),
     });
   }
 
