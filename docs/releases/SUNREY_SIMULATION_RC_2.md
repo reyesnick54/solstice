@@ -6,8 +6,8 @@
 | **Package identifier** | `sunrey-backend-v1.0.0-rc.2` |
 | **Qualification branch** | `release/sunrey-simulation-rc2` |
 | **Release base (main)** | `12b583e61e086c671e8535e7e8209d64b5630c4a` |
-| **Qualification commit** | `c5285805bc14bd336237e21ead9c1cee0f1f875a` |
-| **Release documentation commit** | `c5285805bc14bd336237e21ead9c1cee0f1f875a` |
+| **Qualification commit** | `bb419d72d0cc122ce4fc92b28c94f25f60f8eb82` |
+| **Release documentation commit** | `bb419d72d0cc122ce4fc92b28c94f25f60f8eb82` |
 | **Qualification date** | 2026-09-03 (UTC) |
 | **Intended environment** | Fully functional **simulation / sandbox** for `https://app.sunrey.xyz` (Consumer BFF at `/api/v1/*`) |
 | **Not** | Live regulated financial production, mainnet, or production authorization |
