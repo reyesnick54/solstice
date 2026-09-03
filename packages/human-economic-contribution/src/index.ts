@@ -360,6 +360,7 @@ export {
   type VerifiedHumanEconomicContributionInput,
   type VersionedValuationMethodology,
 } from './peve/index.ts';
+export {
   ATTESTATION_MESH_SCHEMA_VERSION,
   ATTESTATION_SOURCE_CLASSES,
   ATTESTATION_SOURCE_CLASS_WEIGHTS,
@@ -397,6 +398,7 @@ export {
   type HumanContributionVerificationResult,
   type HumanEconomicClaimPromotion,
 } from './attestation-mesh/index.ts';
+export {
   HumanEconomicIdentityService,
   HumanEconomicIdentityStore,
   HUMAN_ECONOMIC_IDENTITY_SCHEMA_VERSION,
@@ -410,12 +412,10 @@ export {
   assuranceMeetsContributionRequirement,
   evaluateSybilControls,
   humanEconomicIdentityCommitment,
-  humanEconomicIdentityIdFor,
   identityAssuranceAtLeast,
   isIdentityOperational,
   providerUniquenessCommitment,
   type HumanEconomicIdentity,
-  type HumanEconomicIdentityId,
   type HumanEconomicIdentitySnapshot,
   type HumanEconomicIdentityStatus,
   type IdentityAssuranceLevel,
