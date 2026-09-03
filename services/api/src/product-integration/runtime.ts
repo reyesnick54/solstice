@@ -98,10 +98,6 @@ export async function createProductIntegrationRuntime(
       createHumanEconomicPersistencePort(durableAccounts.session.pools.customer),
       { requireDurable: true },
     );
-    const agentSnapshot = await loadProductAgentRuntimeState(durableAccounts.session.pools.customer);
-    if (agentSnapshot) {
-      agentStore.hydrate(agentSnapshot as Parameters<InMemoryAgentMandateStore['hydrate']>[0]);
-    }
   } else {
     accounts = createSimulationRuntime({
       ...options.accounts,
