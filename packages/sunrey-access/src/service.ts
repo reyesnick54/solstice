@@ -1,5 +1,6 @@
 import type { Clock } from '../../config/src/clock.ts';
 import type { Result } from '../../domain/src/result.ts';
+import { asUtcInstant } from '../../domain/src/time.ts';
 import type { AccessResourceId } from './ids.ts';
 import { decideAllocation, type AllocationEngineInput, type AllocationEngineResult } from './allocation/engine.ts';
 import { DEFAULT_MECHANISM_POLICY } from './allocation/policy.ts';
@@ -50,9 +51,9 @@ export class AccessFabricService {
       },
       request: { ...input.request, now },
       policy: this.policy,
-      configuredMechanism: input.configuredMechanism,
-      forbiddenProbe: input.forbiddenProbe,
-      lotteryThresholdBps: input.lotteryThresholdBps,
+      ...(input.configuredMechanism !== undefined ? { configuredMechanism: input.configuredMechanism } : {}),
+      ...(input.forbiddenProbe !== undefined ? { forbiddenProbe: input.forbiddenProbe } : {}),
+      ...(input.lotteryThresholdBps !== undefined ? { lotteryThresholdBps: input.lotteryThresholdBps } : {}),
     };
     return decideAllocation(engineInput);
   }
@@ -71,7 +72,7 @@ export class AccessFabricService {
       resourceId: input.resourceId,
       availableUnits: input.availableUnits,
       totalUnits: input.totalUnits,
-      verifiedAt: input.verifiedAt ?? this.clock.now(),
+      verifiedAt: input.verifiedAt !== undefined ? asUtcInstant(input.verifiedAt) : this.clock.now(),
       evidenceRefs: input.evidenceRefs,
       utilizationBps: input.utilizationBps,
       qualityTier: input.qualityTier,

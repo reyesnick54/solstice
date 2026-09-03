@@ -445,7 +445,7 @@ describe('ACCESS V1 — performance (in-process simulation, 2026-08-31)', () => 
       coverageMs.push(performance.now() - start);
     }
 
-    const sort = (rows: number[]) => rows.toSorted((a, b) => a - b);
+    const sort = (rows: number[]) => [...rows].sort((a: number, b: number) => a - b);
     const metrics = {
       overview: { p50: percentile(sort(overviewMs), 50), p95: percentile(sort(overviewMs), 95), p99: percentile(sort(overviewMs), 99) },
       search: { p50: percentile(sort(searchMs), 50), p95: percentile(sort(searchMs), 95), p99: percentile(sort(searchMs), 99) },

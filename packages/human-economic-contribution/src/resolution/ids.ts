@@ -1,6 +1,5 @@
 import { createHash, createHmac } from 'node:crypto';
 
-import { type Brand, brandAs } from '../../../domain/src/brand.ts';
 import { RESOLUTION_ID_PREFIXES } from './types.ts';
 import type {
   AuthoritativeIdCommitment,
@@ -30,7 +29,7 @@ function keyedCommitment(domain: string, material: string): string {
   return createHmac('sha256', RESOLUTION_DOMAIN_SALT).update(`${domain}\n${material}`).digest('hex');
 }
 
-function asPrefixedHex<T extends string>(value: string, prefix: string, label: string): Brand<string, T> {
+function asPrefixedHex(value: string, prefix: string, label: string): string {
   if (!value.startsWith(prefix)) {
     throw new TypeError(`${label} must start with ${prefix}`);
   }
@@ -38,54 +37,54 @@ function asPrefixedHex<T extends string>(value: string, prefix: string, label: s
   if (!HEX_BODY.test(body)) {
     throw new TypeError(`${label} must be ${prefix} followed by 16-64 lowercase hex characters`);
   }
-  return brandAs<string, T>(value);
+  return value;
 }
 
 export function asHumanEconomicIdentityId(value: string): HumanEconomicIdentityId {
-  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.humanEconomicIdentity, 'HumanEconomicIdentityId');
+  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.humanEconomicIdentity, 'HumanEconomicIdentityId') as HumanEconomicIdentityId;
 }
 
 export function asCanonicalHumanContributionEventId(value: string): CanonicalHumanContributionEventId {
-  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.canonicalEvent, 'CanonicalHumanContributionEventId');
+  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.canonicalEvent, 'CanonicalHumanContributionEventId') as CanonicalHumanContributionEventId;
 }
 
 export function asContributionResolutionFingerprint(value: string): ContributionResolutionFingerprint {
-  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.resolutionFingerprint, 'ContributionResolutionFingerprint');
+  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.resolutionFingerprint, 'ContributionResolutionFingerprint') as ContributionResolutionFingerprint;
 }
 
 export function asAuthoritativeIdCommitment(value: string): AuthoritativeIdCommitment {
   if (value.startsWith(RESOLUTION_ID_PREFIXES.authoritativeId)) {
-    return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.authoritativeId, 'AuthoritativeIdCommitment');
+    return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.authoritativeId, 'AuthoritativeIdCommitment') as AuthoritativeIdCommitment;
   }
   return asPrefixedHex(
     `${RESOLUTION_ID_PREFIXES.authoritativeId}${digest(`authoritative-id:${value}`).slice(0, 32)}`,
     RESOLUTION_ID_PREFIXES.authoritativeId,
     'AuthoritativeIdCommitment',
-  );
+  ) as AuthoritativeIdCommitment;
 }
 
 export function asEvidenceObservationId(value: string): EvidenceObservationId {
-  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.evidenceObservation, 'EvidenceObservationId');
+  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.evidenceObservation, 'EvidenceObservationId') as EvidenceObservationId;
 }
 
 export function asResolutionClusterId(value: string): ResolutionClusterId {
-  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.resolutionCluster, 'ResolutionClusterId');
+  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.resolutionCluster, 'ResolutionClusterId') as ResolutionClusterId;
 }
 
 export function asHumanEconomicClaimId(value: string): HumanEconomicClaimId {
-  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.humanEconomicClaim, 'HumanEconomicClaimId');
+  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.humanEconomicClaim, 'HumanEconomicClaimId') as HumanEconomicClaimId;
 }
 
 export function asWalletBindingRef(value: string): WalletBindingRef {
-  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.walletBinding, 'WalletBindingRef');
+  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.walletBinding, 'WalletBindingRef') as WalletBindingRef;
 }
 
 export function asMonetizationContextId(value: string): MonetizationContextId {
-  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.monetizationContext, 'MonetizationContextId');
+  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.monetizationContext, 'MonetizationContextId') as MonetizationContextId;
 }
 
 export function asMonetizationConsumptionCommitment(value: string): MonetizationConsumptionCommitment {
-  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.consumptionCommitment, 'MonetizationConsumptionCommitment');
+  return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.consumptionCommitment, 'MonetizationConsumptionCommitment') as MonetizationConsumptionCommitment;
 }
 
 export function humanEconomicIdentityIdFor(material: { readonly actorCommitment: string; readonly jurisdiction?: string }): HumanEconomicIdentityId {

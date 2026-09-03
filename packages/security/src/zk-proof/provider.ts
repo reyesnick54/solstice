@@ -2,7 +2,7 @@ import { zkErr, type ZKProofProvider } from './types.ts';
 import { ZERO_KNOWLEDGE_PROOF_CAPABILITY } from './types.ts';
 
 export function createUnavailableZKProofProvider(): ZKProofProvider {
-  return Object.freeze({
+  const provider: ZKProofProvider = {
     capability: ZERO_KNOWLEDGE_PROOF_CAPABILITY,
     async prove() {
       return zkErr({
@@ -16,7 +16,8 @@ export function createUnavailableZKProofProvider(): ZKProofProvider {
         message: 'zero-knowledge proof verification is not configured',
       });
     },
-  });
+  };
+  return Object.freeze(provider);
 }
 
 export { zkErr, zkOk } from './types.ts';

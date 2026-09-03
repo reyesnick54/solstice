@@ -6,7 +6,7 @@ export const DEFAULT_MECHANISM_POLICY: MechanismSelectionPolicy = Object.freeze(
   regimeHint: 'ABUNDANT_DISCRETIONARY',
   abundantMechanism: 'FIXED_ACCESS_RATE',
   essentialMechanism: 'ENTITLEMENT',
-  scarceMechanisms: Object.freeze(['QUEUE', 'LOTTERY', 'AUCTION', 'MARKET', 'RFQ', 'PRIORITY_POLICY']),
+  scarceMechanisms: Object.freeze(['QUEUE', 'LOTTERY', 'AUCTION', 'MARKET', 'RFQ', 'PRIORITY_POLICY'] as const),
   denyWhenUnavailable: true,
   quoteTtlMs: 300_000,
   capacityMaxAgeMs: 600_000,

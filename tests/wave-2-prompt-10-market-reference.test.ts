@@ -2,9 +2,10 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { asUtcInstant } from '../packages/domain/src/time.ts';
+import type { CatalogProviderEntry } from '../packages/provider-sdk/src/catalog/types.ts';
 import { createFixtureCatalog, FIXTURE_CATALOG_ENTRIES } from '../packages/provider-sdk/src/test-fixtures/catalog.ts';
 import { buildCatalogIndex } from '../packages/provider-sdk/src/catalog/loader.ts';
-import { handleConsumerBff } from '../services/api/src/consumer/bff-test-utils.ts';
+import { handleConsumerBff, handleConsumerBffSync } from '../services/api/src/consumer/bff-test-utils.ts';
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
 import {
   COMMODITY_CODES,
@@ -31,7 +32,7 @@ import { listEligibleMarketReferenceProviders } from '../packages/sunrey-exchang
 
 const NOW = defaultMarketReferenceNow();
 
-function fixtureCatalogProvider(overrides: Record<string, unknown> = {}) {
+function fixtureCatalogProvider(overrides: Record<string, unknown> = {}): CatalogProviderEntry {
   return {
     ...FIXTURE_CATALOG_ENTRIES.healthy,
     provider_id: 'fixture-metals-api',
@@ -49,7 +50,7 @@ function fixtureCatalogProvider(overrides: Record<string, unknown> = {}) {
       existing_adapter: null,
     },
     ...overrides,
-  };
+  } as CatalogProviderEntry;
 }
 
 describe('Wave 2 Prompt 10 — market reference layer', () => {
@@ -232,8 +233,9 @@ describe('Wave 2 Prompt 10 — market reference layer', () => {
 
   it('20. BFF sanitized output hides raw provider payloads', () => {
     const world = createSandboxWorld();
+    const { marketReference: _omit, ...worldRuntime } = world;
     const response = handleConsumerBffSync(
-      { ...world, marketReference: undefined },
+      worldRuntime,
       {
         method: 'GET',
         path: '/api/v1/world/resources/gold',

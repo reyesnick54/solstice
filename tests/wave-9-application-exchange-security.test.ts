@@ -37,7 +37,7 @@ import { WalletSecurityEngine } from '../packages/sunrey-chain/src/wallet/securi
 import { createPlatformApi } from '../services/api/src/app.ts';
 import { handleVerifiedCardWebhook } from '../services/api/src/consumer/card-webhook.ts';
 import { bffFailClosedInternal, statusForError } from '../services/api/src/consumer/errors.ts';
-import { handleConsumerBff } from '../services/api/src/consumer/bff-test-utils.ts';
+import { handleConsumerBff, handleConsumerBffSync } from '../services/api/src/consumer/bff-test-utils.ts';
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
 import { startConsumerBff } from '../services/api/src/consumer/http.ts';
 import { createExchangeBffSurface } from '../services/api/src/consumer/exchange-bff.ts';

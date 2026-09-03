@@ -6,7 +6,7 @@ import {
 } from './handler.ts';
 
 export type { BffRequest, BffResponse, ConsumerBffRuntime } from './handler.ts';
-export { handleConsumerBff } from './handler.ts';
+export { handleConsumerBff, CONSUMER_BFF_ROUTES } from './handler.ts';
 
 /** Narrow sync BFF responses in unit tests (most routes are synchronous). */
 export function unwrapBff(response: BffResponse | Promise<BffResponse>): BffResponse {

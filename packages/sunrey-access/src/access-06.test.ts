@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { asUtcInstant } from '../../domain/src/time.ts';
 import {
   AccessFabricService,
   buildVerifiedCapacityState,
@@ -15,7 +16,7 @@ import { DEFAULT_MECHANISM_POLICY } from './allocation/policy.ts';
 import type { AllocationRequest, MechanismSelectionPolicy } from './scarcity/types.ts';
 import { asAccessResourceId } from './ids.ts';
 
-const NOW = '2026-08-29T10:00:00.000Z';
+const NOW = asUtcInstant('2026-08-29T10:00:00.000Z');
 const RESOURCE = asAccessResourceId('resource:compute:us-east-1');
 const EVIDENCE = Object.freeze(['evidence:capacity:verified:001']);
 
@@ -58,8 +59,8 @@ function decide(
       ...scarcityOverrides,
     },
     request: req,
-    policy,
-    configuredMechanism,
+    ...(policy !== undefined ? { policy } : {}),
+    ...(configuredMechanism !== undefined ? { configuredMechanism } : {}),
   });
 }
 
@@ -240,7 +241,7 @@ describe('ACCESS-06 scarcity engine', () => {
   });
 
   it('stale capacity is refused', () => {
-    const cap = capacity({ verifiedAt: '2026-08-29T08:00:00.000Z' });
+    const cap = capacity({ verifiedAt: asUtcInstant('2026-08-29T08:00:00.000Z') });
     const stale = validateCapacityState(cap, { now: NOW, maxAgeMs: 3_600_000 });
     assert.equal(stale.ok, false);
     if (stale.ok) return;

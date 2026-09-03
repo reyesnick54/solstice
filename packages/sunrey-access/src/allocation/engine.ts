@@ -1,4 +1,5 @@
 import { err, ok, type Result } from '../../../domain/src/result.ts';
+import { asUtcInstant } from '../../../domain/src/time.ts';
 import { asAllocationDecisionId } from '../ids.ts';
 import type { AllocationMechanism } from '../taxonomy.ts';
 import {
@@ -52,9 +53,8 @@ export function decideAllocation(input: AllocationEngineInput): Result<Allocatio
   }
 
   const scarcityResult = evaluateScarcity(input.scarcityInput, {
-    modelVersion: undefined,
     capacityMaxAgeMs: policy.capacityMaxAgeMs,
-    forbiddenProbe: input.forbiddenProbe,
+    ...(input.forbiddenProbe !== undefined ? { forbiddenProbe: input.forbiddenProbe } : {}),
   });
   if (!scarcityResult.ok) {
     return scarcityResult;
@@ -307,7 +307,7 @@ function buildDecision(input: {
     outcome: input.outcome,
     grantedUnits: input.grantedUnits,
     reasons: Object.freeze([...input.reasons]),
-    expiration: input.expiresAt,
+    expiration: asUtcInstant(input.expiresAt),
     evidenceReferences: Object.freeze([...input.quote.evidenceRefs]),
     quote: input.quote,
   });

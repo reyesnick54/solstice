@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 
 import { createSunReyConsumerBffClient } from '../packages/sunrey-sdk/src/consumer-bff/client.ts';
 import { createSunReyPreviewRuntime } from '../services/api/src/preview.ts';
-import { handleConsumerBff } from '../services/api/src/consumer/bff-test-utils.ts';
+import { handleConsumerBff, handleConsumerBffSync } from '../services/api/src/consumer/bff-test-utils.ts';
 import { sandboxToken } from '../services/api/src/consumer/sandbox-personas.ts';
 
 function call(

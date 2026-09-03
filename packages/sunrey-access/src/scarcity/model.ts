@@ -99,7 +99,7 @@ export const SCARCITY_MODEL_V1: ScarcityModelVersion = Object.freeze({
       ceilingBps: 8_000,
     },
   ]),
-});
+}) as ScarcityModelVersion;
 
 export const SCARCITY_MODEL_REGISTRY: Readonly<Record<string, ScarcityModelVersion>> = Object.freeze({
   [SCARCITY_MODEL_V1.version]: SCARCITY_MODEL_V1,

@@ -1,7 +1,7 @@
 import { asUtcInstant } from '../packages/domain/src/time.ts';
 import { ExchangeBffSurface } from '../services/api/src/consumer/exchange.ts';
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
-import { handleConsumerBffSync, type BffRequest, type BffResponse, type ConsumerBffRuntime } from '../services/api/src/consumer/bff-test-utils.ts';
+import { handleConsumerBff, handleConsumerBffSync, type BffRequest, type BffResponse, type ConsumerBffRuntime } from '../services/api/src/consumer/bff-test-utils.ts';
 import { createAgentConversationSurface } from '../services/api/src/consumer/conversation.ts';
 import { startConsumerBff } from '../services/api/src/consumer/http.ts';
 

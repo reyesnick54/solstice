@@ -51,7 +51,7 @@ describe('Wave 2 Prompt 6 — ADR governance and activation controls', () => {
 
   it('development interop engine still works under simulation gates', () => {
     const engine = new InteropEngine();
-    const chain = developmentExternalChain();
+    const chain = developmentExternalChain('interop_genesis_fixture');
     engine.registerChain(chain, 'GOVERNANCE');
     engine.activateChain(chain.externalChainId, 'GOVERNANCE');
     assert.equal(engine.chains.get(chain.externalChainId)?.status, 'ACTIVE_DEVELOPMENT');

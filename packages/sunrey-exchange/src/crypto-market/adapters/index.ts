@@ -11,6 +11,7 @@ import type {
   CryptoAssetSearchQuery,
   CryptoHistoryInterval,
   CryptoMarketCapability,
+  CryptoMarketReferenceQuote,
   CryptoMarketReferenceResult,
 } from '../types.ts';
 import { buildFixtureHistory, buildFixtureMetadata, normalizeFixtureQuote } from './normalize.ts';
@@ -32,7 +33,32 @@ function fail<T>(code: string, message: string, providerId: string): CryptoMarke
 }
 
 export function createFixtureCryptoMarketAdapter(config: AdapterConfig): CryptoMarketReferenceProvider {
-  return Object.freeze({
+  const getQuote = async (assetId: string, nowUtc: UtcInstant): Promise<CryptoMarketReferenceResult<CryptoMarketReferenceQuote>> => {
+    if (config.blocked) return fail('PROVIDER_BLOCKED', `provider ${config.providerId} is blocked`, config.providerId);
+    if (config.circuitOpen) return fail('CIRCUIT_OPEN', `circuit open for ${config.providerId}`, config.providerId);
+    if (config.simulateTimeout) return fail('PROVIDER_TIMEOUT', `provider ${config.providerId} timed out`, config.providerId);
+    if (config.simulateRateLimit) return fail('RATE_LIMITED', `provider ${config.providerId} rate limited`, config.providerId);
+    if (!resolveCryptoAsset(assetId)) {
+      return fail('UNKNOWN_ASSET', `unknown asset ${assetId}`, config.providerId);
+    }
+    const normalized = normalizeFixtureQuote(config.providerId, assetId, nowUtc);
+    if (!normalized.ok) {
+      const validation = normalized.validation;
+      if (!validation.ok) {
+        return fail(validation.code, validation.message, config.providerId);
+      }
+      return fail('VALIDATION_FAILED', 'quote validation failed', config.providerId);
+    }
+    const quote = config.stale
+      ? Object.freeze({ ...normalized.quote, freshness: Object.freeze({ status: 'stale' as const, ageMs: 180_000n, assessedAt: nowUtc }) })
+      : normalized.quote;
+    return Object.freeze({ ok: true, value: quote, fromCache: false, fallbackProviderId: null });
+  };
+
+  const supportsCapability = (capability: CryptoMarketCapability): boolean =>
+    (config.capabilities as readonly string[]).includes(capability);
+
+  const provider: CryptoMarketReferenceProvider = {
     providerId: config.providerId,
     capabilities: Object.freeze([...config.capabilities]),
     priority: config.priority,
@@ -40,8 +66,7 @@ export function createFixtureCryptoMarketAdapter(config: AdapterConfig): CryptoM
     liveProviderConnected: false as const,
     blocked: config.blocked ?? false,
 
-    health(nowUtc) {
-      void nowUtc;
+    health(nowUtc: UtcInstant) {
       return Object.freeze({
         providerId: config.providerId,
         status: config.circuitOpen || config.blocked ? 'unavailable' : config.simulateRateLimit ? 'degraded' : 'healthy',
@@ -53,43 +78,30 @@ export function createFixtureCryptoMarketAdapter(config: AdapterConfig): CryptoM
       });
     },
 
-    supportsCapability(capability) {
-      return (config.capabilities as readonly string[]).includes(capability);
-    },
+    supportsCapability,
 
-    async getQuote(assetId, nowUtc) {
-      if (config.blocked) return fail('PROVIDER_BLOCKED', `provider ${config.providerId} is blocked`, config.providerId);
-      if (config.circuitOpen) return fail('CIRCUIT_OPEN', `circuit open for ${config.providerId}`, config.providerId);
-      if (config.simulateTimeout) return fail('PROVIDER_TIMEOUT', `provider ${config.providerId} timed out`, config.providerId);
-      if (config.simulateRateLimit) return fail('RATE_LIMITED', `provider ${config.providerId} rate limited`, config.providerId);
-      if (!resolveCryptoAsset(assetId)) {
-        return fail('UNKNOWN_ASSET', `unknown asset ${assetId}`, config.providerId);
-      }
-      const normalized = normalizeFixtureQuote(config.providerId, assetId, nowUtc);
-      if (!normalized.ok) {
-        return fail(normalized.validation.code, normalized.validation.message, config.providerId);
-      }
-      const quote = config.stale
-        ? Object.freeze({ ...normalized.quote, freshness: Object.freeze({ status: 'stale' as const, ageMs: 180_000n, assessedAt: nowUtc }) })
-        : normalized.quote;
-      return Object.freeze({ ok: true, value: quote, fromCache: false, fallbackProviderId: null });
-    },
+    getQuote,
 
-    async getQuotes(assetIds, nowUtc) {
+    async getQuotes(assetIds: readonly string[], nowUtc: UtcInstant) {
       const quotes = [];
       for (const assetId of assetIds) {
-        const result = await this.getQuote(assetId, nowUtc);
+        const result = await getQuote(assetId, nowUtc);
         if (!result.ok) return result;
         quotes.push(result.value);
       }
       return Object.freeze({ ok: true, value: Object.freeze(quotes), fromCache: false, fallbackProviderId: null });
     },
 
-    async getHistory(assetId, interval, range, nowUtc) {
+    async getHistory(
+      assetId: string,
+      interval: CryptoHistoryInterval,
+      range: { readonly from: UtcInstant; readonly to: UtcInstant },
+      nowUtc: UtcInstant,
+    ) {
       if (config.blocked) return fail('PROVIDER_BLOCKED', `provider ${config.providerId} is blocked`, config.providerId);
       const asset = resolveCryptoAsset(assetId);
       if (!asset) return fail('UNKNOWN_ASSET', `unknown asset ${assetId}`, config.providerId);
-      if (!this.supportsCapability('crypto_market_history')) {
+      if (!supportsCapability('crypto_market_history')) {
         return fail('CAPABILITY_UNSUPPORTED', 'historical data not supported', config.providerId);
       }
       return Object.freeze({
@@ -100,8 +112,7 @@ export function createFixtureCryptoMarketAdapter(config: AdapterConfig): CryptoM
       });
     },
 
-    async searchAssets(query, nowUtc) {
-      void nowUtc;
+    async searchAssets(query: CryptoAssetSearchQuery, nowUtc: UtcInstant) {
       const assets = searchRegisteredCryptoAssets(query.query, query.limit ?? 20);
       return Object.freeze({
         ok: true,
@@ -111,7 +122,7 @@ export function createFixtureCryptoMarketAdapter(config: AdapterConfig): CryptoM
       });
     },
 
-    async getAssetMetadata(assetId, nowUtc) {
+    async getAssetMetadata(assetId: string, nowUtc: UtcInstant) {
       const asset = resolveCryptoAsset(assetId);
       if (!asset) return fail('UNKNOWN_ASSET', `unknown asset ${assetId}`, config.providerId);
       return Object.freeze({
@@ -121,7 +132,9 @@ export function createFixtureCryptoMarketAdapter(config: AdapterConfig): CryptoM
         fallbackProviderId: null,
       });
     },
-  });
+  };
+
+  return Object.freeze(provider);
 }
 
 export const COINGECKO_ADAPTER = createFixtureCryptoMarketAdapter({

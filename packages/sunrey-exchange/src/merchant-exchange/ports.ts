@@ -10,7 +10,7 @@ export type MerchantPaymentPort = {
     readonly intent: PurchaseIntent;
     readonly userId: string;
     readonly now: UtcInstant;
-  }): Promise<PaymentAuthorizationResult>;
+  }): PaymentAuthorizationResult;
 };
 
 export type PaymentAuthorizationResult =
@@ -45,12 +45,12 @@ export class SimulatedMerchantPaymentPort implements MerchantPaymentPort {
     this.providerAvailable = providerAvailable;
   }
 
-  async requestAuthorization(input: {
+  requestAuthorization(input: {
     readonly purchase: MerchantPurchase;
     readonly intent: PurchaseIntent;
     readonly userId: string;
     readonly now: UtcInstant;
-  }): Promise<PaymentAuthorizationResult> {
+  }): PaymentAuthorizationResult {
     if (!this.providerAvailable) {
       return { outcome: 'PROVIDER_UNAVAILABLE' };
     }

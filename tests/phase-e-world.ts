@@ -24,7 +24,7 @@ import { createSimulationRuntime, type SimulationRuntime } from '../services/acc
 import { activateCustomer, openIntent } from '../services/accounts/src/test-helpers.ts';
 import { createAccountsReadAdapter } from '../services/api/src/consumer/accounts-adapter.ts';
 import { GrowBffSurface } from '../services/api/src/consumer/grow.ts';
-import { handleConsumerBffSync, type BffRequest, type BffResponse, type ConsumerBffRuntime } from '../services/api/src/consumer/bff-test-utils.ts';
+import { handleConsumerBff, handleConsumerBffSync, type BffRequest, type BffResponse, type ConsumerBffRuntime } from '../services/api/src/consumer/bff-test-utils.ts';
 import { ConsumerBff, memoryPreferenceStore } from '../services/api/src/consumer/orchestrator.ts';
 import type { BffPrincipal, GrowPortfolioPort } from '../services/api/src/consumer/ports.ts';
 import { startConsumerBff } from '../services/api/src/consumer/http.ts';

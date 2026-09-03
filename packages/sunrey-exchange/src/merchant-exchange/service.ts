@@ -321,7 +321,7 @@ export class MerchantExchangeService {
 
     const validation = validateMerchantOffer({
       intent,
-      offer: { ...offerBase, status: 'SUBMITTED', submittedAt: now },
+      offer: offerBase,
       eligibility,
       now,
       existingOffersByMerchant: existingCount,
@@ -490,16 +490,12 @@ export class MerchantExchangeService {
       return reject('INVALID_STATE', 'purchase not awaiting authorization');
     }
 
-    const paymentResult = this.payment.requestAuthorization({
+    const resolved = this.payment.requestAuthorization({
       purchase,
       intent,
       userId,
       now,
     });
-    const resolved = paymentResult instanceof Promise ? null : paymentResult;
-    if (!resolved) {
-      return reject('ASYNC_PAYMENT', 'async payment port not supported in sync flow');
-    }
 
     let updated: MerchantPurchase;
     switch (resolved.outcome) {

@@ -35,7 +35,7 @@ import {
 import { normalizeCoingeckoBtc } from '../packages/sunrey-exchange/src/crypto-market/adapters/normalize.ts';
 import { buildCatalogIndex } from '../packages/provider-sdk/src/catalog/loader.ts';
 import { createFixtureCatalog } from '../packages/provider-sdk/src/test-fixtures/catalog.ts';
-import { handleConsumerBff } from '../services/api/src/consumer/bff-test-utils.ts';
+import { handleConsumerBff, handleConsumerBffSync } from '../services/api/src/consumer/bff-test-utils.ts';
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
 
 const NOW = defaultCryptoMarketNow();

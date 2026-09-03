@@ -59,5 +59,5 @@ export function assertMarketPriceDoesNotAlterSupply(input: {
 }
 
 export function sunreyTickerIsDistinctFromMoonrey(): boolean {
-  return SUNREY_COIN_NATIVE_ASSET_ID !== MOONREY_COIN_NATIVE_ASSET_ID;
+  return (SUNREY_COIN_NATIVE_ASSET_ID as string) !== (MOONREY_COIN_NATIVE_ASSET_ID as string);
 }

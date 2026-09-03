@@ -21,6 +21,7 @@ import type {
   CommodityCode,
   HistoryInterval,
   MarketReferenceCapability,
+  MarketHistoryCandle,
   MarketReferenceQuote,
   MarketReferenceResult,
 } from '../types.ts';
@@ -144,7 +145,7 @@ export class SimulationMarketReferenceAdapter implements MarketReferenceProvider
     interval: HistoryInterval,
     range: { readonly from: UtcInstant; readonly to: UtcInstant },
     nowUtc: UtcInstant,
-  ) {
+  ): Promise<MarketReferenceResult<readonly MarketHistoryCandle[]>> {
     const assetId = commodityAssetId(commodity);
     if (!assetId) {
       return { ok: false, code: 'UNKNOWN_COMMODITY', message: commodity, providerId: null };

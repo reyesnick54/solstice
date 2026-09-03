@@ -10,7 +10,7 @@ import { ACCESS_SOLVENCY_INVARIANT_IDS } from '../packages/access-economy/src/so
 
 describe('ACCESS-16 consumer BFF solvency integration', () => {
   it('exposes consumer posture without treasury detail', () => {
-    const product = createSandboxAccessEconomy();
+    const product = createSandboxAccessEconomy('cust_access16');
     const actor = Object.freeze({
       actorId: 'actor_access16',
       customerId: 'cust_access16',

@@ -4,8 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
-import { handleConsumerBff } from '../services/api/src/consumer/bff-test-utils.ts';
-import { CONSUMER_BFF_ROUTES } from '../services/api/src/consumer/bff-test-utils.ts';
+import { handleConsumerBff, handleConsumerBffSync, CONSUMER_BFF_ROUTES } from '../services/api/src/consumer/bff-test-utils.ts';
 import { buildWorldSnapshot } from '../packages/external-data/src/world-snapshot.ts';
 import { buildAgentEvidenceCatalog } from '../packages/external-data/src/agent-evidence-catalog.ts';
 import { createExternalDataPlane } from '../packages/external-data/src/plane.ts';

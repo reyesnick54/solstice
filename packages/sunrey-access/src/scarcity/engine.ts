@@ -1,4 +1,5 @@
 import { err, ok, type Result } from '../../../domain/src/result.ts';
+import { asUtcInstant } from '../../../domain/src/time.ts';
 import { asAccessQuoteId } from '../ids.ts';
 import type { ScarcityBand } from '../taxonomy.ts';
 import { validateCapacityState } from '../capacity.ts';
@@ -239,7 +240,7 @@ export function buildAccessQuote(input: {
     policyInputs: Object.freeze([...input.policyInputs]),
     methodologyVersion: input.scarcity.methodologyVersion,
     computedAt: input.scarcity.computedAt,
-    expiresAt: input.expiresAt,
+    expiresAt: asUtcInstant(input.expiresAt),
     evidenceRefs: Object.freeze([...(input.evidenceRefs ?? [])]),
   });
 }

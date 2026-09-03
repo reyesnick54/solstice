@@ -1,13 +1,15 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { systemClock } from '../../../config/src/clock.ts';
+import { Money } from '../../../money/src/money.ts';
 import { DomainEventLog } from '../../../events/src/events.ts';
 import { addMs } from '../../../config/src/clock.ts';
 
 import {
   assertMerchantPrivacyBoundary,
   assertSealedOfferBoundary,
+  asMerchantOfferId,
+  asPurchaseIntentId,
   checkSelfDealing,
   createMerchantExchangeSandbox,
   merchantOfferVisibility,
@@ -298,10 +300,10 @@ describe('Merchant Exchange — purchase intent marketplace', () => {
       offerVersion: 1,
       contentHash: 'tampered_hash',
       offer: {
-        offerId: 'off_test',
-        intentId: 'int_test',
+        offerId: asMerchantOfferId('off_test'),
+        intentId: asPurchaseIntentId('int_test'),
         merchantId: SANDBOX_MERCHANT_A,
-        price: { minorUnits: 100n, currency: 'USD' },
+        price: Money.fromMinorUnits(100n, 'USD'),
         discountMinorUnits: 0n,
         deliveryTerms: 'test',
         availability: 'in stock',
@@ -456,7 +458,7 @@ describe('Merchant Exchange — purchase intent marketplace', () => {
   it('25. AI cannot invent merchant offer terms in ranking explanation', () => {
     const ranked = rankOffers({
       intent: {
-        intentId: 'int_test',
+        intentId: asPurchaseIntentId('int_test'),
         userId: USER,
         required: { category: 'ELECTRONICS', productOrService: 'X', quantity: 1, currency: 'USD' },
         specifications: {},

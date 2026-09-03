@@ -33,14 +33,14 @@ function profile(
 ): MerchantExchangeProfile {
   return Object.freeze({
     merchantId,
-    businessIdentityId: `biz_${merchantId}`,
+    businessIdentityId: `biz_${merchantId}` as string,
     displayName,
     status,
     supportedCategories: categories,
     supportedRegions: regions,
     verificationState: verification,
     complianceRestricted: false,
-    offerPermissions: Object.freeze(['SUBMIT_OFFER', 'WITHDRAW_OFFER']),
+    offerPermissions: Object.freeze(['SUBMIT_OFFER', 'WITHDRAW_OFFER'] as const),
   });
 }
 

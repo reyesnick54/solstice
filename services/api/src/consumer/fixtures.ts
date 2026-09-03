@@ -885,7 +885,7 @@ function seedSandboxSubscriptionActivities(
   service: SubscriptionIntelligenceService,
   subjectId: string,
 ): void {
-  const graphId = asEconomicGraphId('egr_sandbox_sub');
+  const graphId = asEconomicGraphId(`peg_g_${subjectId}`);
   const months = ['03', '04', '05', '06', '07', '08'];
   const activities = months.map((month, index) => ({
     activityId: deterministicActivityId(`src_netflix_${index}`),
