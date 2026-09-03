@@ -1,0 +1,153 @@
+# SunRey Simulation RC2 — Hetzner sandbox stack (simulation only).
+#
+# Public surface: api.sunrey.xyz → Consumer BFF (reverse proxy)
+# PostgreSQL is internal-only. LIVE_* flags remain false.
+name: sunrey-sandbox-hetzner
+
+x-sunrey-app-env: &sunrey-app-env
+  ENVIRONMENT: simulation
+  SUNREY_DEPLOYMENT_TIER: ${SUNREY_DEPLOYMENT_TIER:-staging}
+  SUNREY_PUBLIC_APP_ORIGIN: ${SUNREY_PUBLIC_APP_ORIGIN:-https://app.sunrey.xyz}
+  SUNREY_PUBLIC_API_ORIGIN: ${SUNREY_PUBLIC_API_ORIGIN:-https://api.sunrey.xyz}
+  SUNREY_API_HOST: 0.0.0.0
+  SUNREY_API_PORT: "8443"
+  SUNREY_API_ALLOWED_ORIGINS: ${SUNREY_API_ALLOWED_ORIGINS:-https://app.sunrey.xyz}
+  SUNREY_PREVIEW_SANDBOX_PERSONAS: ${SUNREY_PREVIEW_SANDBOX_PERSONAS:-true}
+  SUNREY_PREVIEW_AUTH_ENABLED: ${SUNREY_PREVIEW_AUTH_ENABLED:-true}
+  SUNREY_PREVIEW_AUTH_EMAIL: ${SUNREY_PREVIEW_AUTH_EMAIL}
+  SUNREY_PREVIEW_AUTH_PASSWORD: ${SUNREY_PREVIEW_AUTH_PASSWORD}
+  SUNREY_PREVIEW_ALLOW_LOCAL_ORIGINS: "false"
+  SUNREY_FEATURE_REQUIRE_PERSISTENCE_FOR_READY: ${SUNREY_FEATURE_REQUIRE_PERSISTENCE_FOR_READY:-true}
+  SUNREY_PG_HOST: postgres
+  SUNREY_PG_PORT: "5432"
+  SUNREY_PG_BOOTSTRAP_USER: ${SUNREY_PG_BOOTSTRAP_USER}
+  SUNREY_PG_BOOTSTRAP_PASSWORD: ${SUNREY_PG_BOOTSTRAP_PASSWORD}
+  SUNREY_PG_MIGRATOR_USER: ${SUNREY_PG_MIGRATOR_USER}
+  SUNREY_PG_MIGRATOR_PASSWORD: ${SUNREY_PG_MIGRATOR_PASSWORD}
+  SUNREY_PG_CUSTOMER_USER: ${SUNREY_PG_CUSTOMER_USER}
+  SUNREY_PG_CUSTOMER_PASSWORD: ${SUNREY_PG_CUSTOMER_PASSWORD}
+  SUNREY_PG_LEDGER_USER: ${SUNREY_PG_LEDGER_USER}
+  SUNREY_PG_LEDGER_PASSWORD: ${SUNREY_PG_LEDGER_PASSWORD}
+  SUNREY_PG_EVIDENCE_USER: ${SUNREY_PG_EVIDENCE_USER}
+  SUNREY_PG_EVIDENCE_PASSWORD: ${SUNREY_PG_EVIDENCE_PASSWORD}
+  SUNREY_PG_SECURITY_USER: ${SUNREY_PG_SECURITY_USER}
+  SUNREY_PG_SECURITY_PASSWORD: ${SUNREY_PG_SECURITY_PASSWORD}
+  LIVE_CONNECTIVITY_ENABLED: "false"
+  PRODUCTION_ACTIVE: "false"
+  PRODUCTION_READY: "false"
+
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${SUNREY_PG_BOOTSTRAP_USER}
+      POSTGRES_PASSWORD: ${SUNREY_PG_BOOTSTRAP_PASSWORD}
+      POSTGRES_DB: postgres
+    command: ["postgres", "-c", "max_prepared_transactions=64"]
+    volumes:
+      - sunrey_sandbox_pg_data:/var/lib/postgresql/data
+    networks:
+      - sunrey_internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  db-bootstrap:
+    profiles: ["migrate"]
+    build:
+      context: ../..
+      dockerfile: deploy/sunrey-sandbox-hetzner/Dockerfile
+    command: ["scripts/postgres-bootstrap.mjs"]
+    environment:
+      <<: *sunrey-app-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - sunrey_internal
+    restart: "no"
+
+  db-migrate:
+    profiles: ["migrate"]
+    build:
+      context: ../..
+      dockerfile: deploy/sunrey-sandbox-hetzner/Dockerfile
+    command: ["scripts/postgres-migrate.mjs"]
+    environment:
+      <<: *sunrey-app-env
+    depends_on:
+      db-bootstrap:
+        condition: service_completed_successfully
+    networks:
+      - sunrey_internal
+    restart: "no"
+
+  consumer-bff:
+    build:
+      context: ../..
+      dockerfile: deploy/sunrey-sandbox-hetzner/Dockerfile
+      args:
+        SOURCE_COMMIT: ${SUNREY_SOURCE_COMMIT:-unknown}
+    restart: unless-stopped
+    environment:
+      <<: *sunrey-app-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - sunrey_internal
+    expose:
+      - "8443"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8443/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  reverse-proxy:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8443:8443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      consumer-bff:
+        condition: service_healthy
+    networks:
+      - sunrey_internal
+      - sunrey_edge
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    restart: unless-stopped
+    profiles: ["observability"]
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.enable-lifecycle
+    volumes:
+      - ../../packages/sunrey-chain/ops/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../../packages/sunrey-chain/ops/prometheus/alerts.json:/etc/prometheus/alerts.json:ro
+    networks:
+      - sunrey_internal
+    expose:
+      - "9090"
+
+networks:
+  sunrey_internal:
+    internal: true
+  sunrey_edge:
+    driver: bridge
+
+volumes:
+  sunrey_sandbox_pg_data:

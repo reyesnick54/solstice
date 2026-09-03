@@ -10,6 +10,7 @@ import { asSessionId } from '../../../../packages/identity/src/ids.ts';
 import { SECURITY_HEADERS } from '../security.ts';
 import { isBffError, statusForError } from './errors.ts';
 import { handleConsumerBff, type ConsumerBffRuntime } from './handler.ts';
+import { evaluateConsumerBffReadiness } from './readiness.ts';
 import { issuePreviewSession, type PreviewAuthConfig } from './preview-auth.ts';
 import { resolvePrincipal } from './session.ts';
 
@@ -125,19 +126,8 @@ export async function serve(
   }
 
   if (url.pathname === '/ready' && method === 'GET') {
-    write(
-      res,
-      200,
-      {
-        ready: true,
-        service: 'sunrey-consumer-bff',
-        environment: 'simulation',
-        productionReady: false,
-        productionActive: false,
-        liveConnectivityEnabled: false,
-      },
-      cors.headers,
-    );
+    const report = await evaluateConsumerBffReadiness();
+    write(res, report.ready ? 200 : 503, report, cors.headers);
     return;
   }
 
