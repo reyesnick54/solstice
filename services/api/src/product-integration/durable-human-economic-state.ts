@@ -31,7 +31,7 @@ import {
   markClaimMonetized,
   registerEconomicClaim,
   type ClaimRegistry,
-} from '../../../../packages/sunrey-chain/src/economics/proof-bound/claims.ts';
+} from '@solstice/sunrey-chain/economics/proof-bound';
 import type { HumanEconomicPersistencePort } from '../../../accounts/src/human-economic-persistence.ts';
 
 export class DurableStoreUnavailableError extends Error {
