@@ -6,7 +6,7 @@
 | **Package identifier** | `sunrey-backend-v1.0.0-rc.2` |
 | **Qualification branch** | `release/sunrey-simulation-rc2` |
 | **Release base (main)** | `12b583e61e086c671e8535e7e8209d64b5630c4a` |
-| **Qualification commit** | `PLACEHOLDER_COMMIT_SHA` |
+| **Qualification commit** | `e025aaf22a3689a097c018a34e6470eca02d4213` |
 | **Qualification date** | 2026-09-03 (UTC) |
 | **Intended environment** | Fully functional **simulation / sandbox** for `https://app.sunrey.xyz` (Consumer BFF at `/api/v1/*`) |
 | **Not** | Live regulated financial production, mainnet, or production authorization |
@@ -235,7 +235,7 @@ curl -s http://127.0.0.1:8443/ready
 After CI green on this branch:
 
 ```bash
-git tag -a sunrey-backend-v1.0.0-rc.2 PLACEHOLDER_COMMIT_SHA -m "SUNREY SIMULATION RC2"
+git tag -a sunrey-backend-v1.0.0-rc.2 e025aaf22a3689a097c018d34e6470eca02d4213 -m "SUNREY SIMULATION RC2"
 git push origin sunrey-backend-v1.0.0-rc.2
 ```
 
