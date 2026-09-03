@@ -995,22 +995,22 @@ function dispatchAuthenticated(
     return json(200, world.regulatory(), headers);
   }
   if (path === '/api/v1/world/snapshot' && method === 'GET') {
-    return handleWorldSnapshotRoute(runtime, requestId, headers) as unknown as BffResponse;
+    return handleWorldSnapshotRoute(runtime, requestId, headers);
   }
   if (path === '/api/v1/grow/context' && method === 'GET') {
-    return handleGrowContextRoute(runtime, requestId, headers) as unknown as BffResponse;
+    return handleGrowContextRoute(runtime, requestId, headers);
   }
   if (path === '/api/v1/agent/external-evidence' && method === 'GET') {
-    return handleAgentExternalEvidenceRoute(runtime, requestId, headers) as unknown as BffResponse;
+    return handleAgentExternalEvidenceRoute(runtime, requestId, headers);
   }
   if (path === '/api/v1/agent/external-events' && method === 'GET') {
     return handleAgentExternalEventsRoute(runtime, requestId, headers, principal);
   }
   if (path === '/api/v1/travel/overview' && method === 'GET') {
-    return handleTravelOverviewRoute(runtime, request, requestId, headers) as unknown as BffResponse;
+    return handleTravelOverviewRoute(runtime, request, requestId, headers);
   }
   if (path === '/api/v1/economy/productive/snapshot' && method === 'GET') {
-    return handleProductiveEconomySnapshotRoute(runtime, requestId, headers) as unknown as BffResponse;
+    return handleProductiveEconomySnapshotRoute(runtime, requestId, headers);
   }
   if (path === '/api/v1/world/physical-economy' && method === 'GET') {
     const world = runtime.worldExternalData;
@@ -1540,40 +1540,52 @@ function dispatchPayments(
   return null;
 }
 
-async function handleWorldSnapshotRoute(
+function handleWorldSnapshotRoute(
   runtime: ConsumerBffRuntime,
   requestId: string,
   headers: Record<string, string>,
-): Promise<BffResponse> {
+): BffResponse | Promise<BffResponse> {
   const world = runtime.worldExternalData;
   if (!world) {
     return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'World snapshot unavailable', requestId }), headers);
   }
-  return json(200, await world.worldSnapshot(), headers);
+  const snapshot = world.worldSnapshot();
+  if (snapshot instanceof Promise) {
+    return snapshot.then((body) => json(200, body, headers));
+  }
+  return json(200, snapshot, headers);
 }
 
-async function handleGrowContextRoute(
+function handleGrowContextRoute(
   runtime: ConsumerBffRuntime,
   requestId: string,
   headers: Record<string, string>,
-): Promise<BffResponse> {
+): BffResponse | Promise<BffResponse> {
   const world = runtime.worldExternalData;
   if (!world) {
     return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Grow external context unavailable', requestId }), headers);
   }
-  return json(200, await world.growContextAsync(), headers);
+  const context = world.growContextAsync();
+  if (context instanceof Promise) {
+    return context.then((body) => json(200, body, headers));
+  }
+  return json(200, context, headers);
 }
 
-async function handleAgentExternalEvidenceRoute(
+function handleAgentExternalEvidenceRoute(
   runtime: ConsumerBffRuntime,
   requestId: string,
   headers: Record<string, string>,
-): Promise<BffResponse> {
+): BffResponse | Promise<BffResponse> {
   const evidence = runtime.agentExternalEvidence;
   if (!evidence) {
     return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Agent external evidence unavailable', requestId }), headers);
   }
-  return json(200, await evidence.evidenceCatalog(), headers);
+  const catalog = evidence.evidenceCatalog();
+  if (catalog instanceof Promise) {
+    return catalog.then((body) => json(200, body, headers));
+  }
+  return json(200, catalog, headers);
 }
 
 function handleAgentExternalEventsRoute(
@@ -1598,37 +1610,44 @@ function handleAgentExternalEventsRoute(
   }), headers);
 }
 
-async function handleTravelOverviewRoute(
+function handleTravelOverviewRoute(
   runtime: ConsumerBffRuntime,
   request: BffRequest,
   requestId: string,
   headers: Record<string, string>,
-): Promise<BffResponse> {
+): BffResponse | Promise<BffResponse> {
   const travel = runtime.travel;
   if (!travel) {
     return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Travel overview unavailable', requestId }), headers);
   }
   const q = request.query ?? {};
-  const body = await travel.overview({
+  const overview = travel.overview({
     originLat: q.originLat != null ? Number(q.originLat) : null,
     originLon: q.originLon != null ? Number(q.originLon) : null,
     ...(q.destLat != null ? { destLat: Number(q.destLat) } : {}),
     ...(q.destLon != null ? { destLon: Number(q.destLon) } : {}),
     ...(q.destinationLabel !== undefined ? { destinationLabel: q.destinationLabel } : {}),
   });
-  return json(200, body, headers);
+  if (overview instanceof Promise) {
+    return overview.then((body) => json(200, body, headers));
+  }
+  return json(200, overview, headers);
 }
 
-async function handleProductiveEconomySnapshotRoute(
+function handleProductiveEconomySnapshotRoute(
   runtime: ConsumerBffRuntime,
   requestId: string,
   headers: Record<string, string>,
-): Promise<BffResponse> {
+): BffResponse | Promise<BffResponse> {
   const world = runtime.worldExternalData;
   if (!world) {
     return json(404, bffError({ errorCode: 'NOT_FOUND', message: 'Productive economy snapshot unavailable', requestId }), headers);
   }
-  return json(200, await world.productiveEconomySnapshot(), headers);
+  const snapshot = world.productiveEconomySnapshot();
+  if (snapshot instanceof Promise) {
+    return snapshot.then((body) => json(200, body, headers));
+  }
+  return json(200, snapshot, headers);
 }
 
 function hinContributionSurface(runtime: ConsumerBffRuntime): HinContributionSurface | undefined {

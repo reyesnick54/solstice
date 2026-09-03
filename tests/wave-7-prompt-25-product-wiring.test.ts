@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
-import { handleConsumerBff, handleConsumerBffSync, CONSUMER_BFF_ROUTES } from '../services/api/src/consumer/bff-test-utils.ts';
+import { invokeBff, CONSUMER_BFF_ROUTES } from '../services/api/src/consumer/bff-test-utils.ts';
 import { buildWorldSnapshot } from '../packages/external-data/src/world-snapshot.ts';
 import { buildAgentEvidenceCatalog } from '../packages/external-data/src/agent-evidence-catalog.ts';
 import { createExternalDataPlane } from '../packages/external-data/src/plane.ts';
@@ -31,17 +31,14 @@ function runtime() {
 }
 
 async function call(method: string, path: string, query: Record<string, string> = {}) {
-  const result = await Promise.resolve(
-    handleConsumerBffSync(runtime(), {
-      method,
-      path,
-      query,
-      body: {},
-      authorization: `Bearer ${sandboxToken('basic_verified')}`,
-      requestId: 'req_prompt25',
-    }),
-  );
-  return result;
+  return invokeBff(runtime(), {
+    method,
+    path,
+    query,
+    body: {},
+    authorization: `Bearer ${sandboxToken('basic_verified')}`,
+    requestId: 'req_prompt25',
+  });
 }
 
 describe('Wave 7 Prompt 25 — product wiring contract tests', () => {
