@@ -6,7 +6,6 @@
  */
 
 import { FrozenClock } from '../../../../packages/config/src/clock.ts';
-import { PERSISTENCE_ENV_ALIASES, resolveCanonicalEnv } from '../../../../packages/config/src/env.ts';
 import { ENVIRONMENT } from '../../../../packages/config/src/flags.ts';
 import { asUtcInstant } from '../../../../packages/domain/src/time.ts';
 import { ConsentStore } from '../../../../packages/consent/src/store.ts';
@@ -63,11 +62,6 @@ export function resolveProductIntegrationMode(
     return options.forceMode;
   }
   return isProductIntegrationDurableModeEnabled() ? 'DURABLE' : 'IN_MEMORY';
-  const persistenceTest = resolveCanonicalEnv(PERSISTENCE_ENV_ALIASES[0]!, process.env);
-  const pgHost = resolveCanonicalEnv(PERSISTENCE_ENV_ALIASES[1]!, process.env);
-  return persistenceTest.value === '1' || pgHost.source === 'CANONICAL' || pgHost.source === 'LEGACY_ALIAS'
-    ? 'DURABLE'
-    : 'IN_MEMORY';
 }
 
 export async function createProductIntegrationRuntime(
@@ -96,12 +90,11 @@ export async function createProductIntegrationRuntime(
       ...options.accounts,
     });
     accounts = durableAccounts.runtime;
-    const agentSnapshot = await loadProductAgentRuntimeState(durableAccounts.session.pools.customer);
     humanEconomicState = await DurableHumanEconomicStateService.create(
       createHumanEconomicPersistencePort(durableAccounts.session.pools.customer),
       { requireDurable: true },
     );
-    const agentSnapshot = await loadAgentRuntimeState(durableAccounts.session.pools.customer);
+    const agentSnapshot = await loadProductAgentRuntimeState(durableAccounts.session.pools.customer);
     if (agentSnapshot) {
       agentStore.hydrate(agentSnapshot as Parameters<InMemoryAgentMandateStore['hydrate']>[0]);
     }
@@ -139,8 +132,6 @@ export async function createProductIntegrationRuntime(
       await Promise.all([
         persistProductConsentState(durableAccounts.session.pools.customer, consentStore.snapshot()),
         persistProductAgentRuntimeState(durableAccounts.session.pools.customer, agentStore.snapshot()),
-        persistConsentState(durableAccounts.session.pools.customer, consentStore.snapshot()),
-        persistAgentRuntimeState(durableAccounts.session.pools.customer, agentStore.snapshot()),
         humanEconomicState?.persist(),
         durableAccounts.persistProductState(),
       ]);

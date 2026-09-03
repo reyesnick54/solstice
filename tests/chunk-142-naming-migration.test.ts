@@ -124,7 +124,7 @@ describe('CHUNK-142 SunRey runtime naming migration', () => {
     assert.equal(env.host, '127.0.0.1');
     assert.equal(env.port, 5432);
     const source = readFileSync(join(ROOT, 'packages/persistence/src/env.ts'), 'utf8');
-    assert.match(source, /from '\.\.\/\.\.\/config\/src\/env\.ts'/);
+    assert.match(source, /from '@solstice\/config'/);
     assert.equal(source.includes('env.SOLSTICE_PG_HOST ??'), false);
   });
 
