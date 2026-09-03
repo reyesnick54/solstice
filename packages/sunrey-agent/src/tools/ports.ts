@@ -356,8 +356,8 @@ export type HinContributionPort = {
   methodologies(): PortResult<readonly { readonly methodologyId: string; readonly isMintFormula: false }[]>;
 };
 
-import type { ActionIntent } from '../../permissions/src/action-intent.ts';
-import type { AccessIntent, AuthorizedGraphSlice } from '../../consent/src/access-fabric/index.ts';
+import type { ActionIntent } from '../../../permissions/src/action-intent.ts';
+import type { AccessIntent, AuthorizedGraphSlice } from '../../../agent/src/access-fabric/index.ts';
 
 export type AccessPort = {
   proposeIntent(input: {

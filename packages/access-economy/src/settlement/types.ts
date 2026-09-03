@@ -1,9 +1,5 @@
 /**
-<<<<<<< HEAD
- * ACCESS Wave 3 — Fiat settlement and restricted virtual-card settlement types.
-=======
  * ACCESS Wave 3 — Fiat settlement (Prompt 35) and restricted virtual-card (Prompt 36) types.
->>>>>>> b68e2af0 (Fix CI typecheck blockers: settlement types merge, BffResponse union, provider-sdk dedup)
  */
 
 import type { UtcInstant } from '../../../domain/src/time.ts';

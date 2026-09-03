@@ -2,7 +2,7 @@ import type { UtcInstant } from '../../../domain/src/time.ts';
 import { knowledgeEdgeIdFor, knowledgeNodeIdFor } from './ids.ts';
 import type { KnowledgeNodeId } from '../ids.ts';
 import type { KnowledgeEdge, KnowledgeNode } from '../types.ts';
-import type { KnowledgeRelationKind } from '../ontology.ts';
+import type { KnowledgeRelationKind } from './ontology.ts';
 
 export type ProductiveRelationshipInput = {
   readonly assetNodeId: KnowledgeNodeId;

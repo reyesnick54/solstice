@@ -89,6 +89,6 @@ export {
   type SubjectKind,
 } from './types.ts';
 export { VelocityEngine, type VelocityIncrement, type VelocityMetric, type VelocitySnapshot } from './velocity.ts';
-export * as complianceIntelligence from './compliance-intelligence/index.ts';
+export * as complianceIntelligence from '../compliance-intelligence/index.ts';
 export * as complianceProviderCandidate from './provider-candidate/index.ts';
 export * as complianceProductionCandidate from './production-candidate/index.ts';

@@ -17,11 +17,12 @@ import type {
   CanonicalEconomicClaim,
   EconomicEvidence,
   EconomicObservation,
+  ProofRejectionCode,
   ProofResult,
   VerifiedEconomicFact,
 } from './types.ts';
 
-function fail<T>(code: ProofResult<T> extends { ok: false; code: infer C } ? C : never, message: string): ProofResult<T> {
+function fail<T>(code: ProofRejectionCode, message: string): ProofResult<T> {
   return { ok: false, code, message };
 }
 

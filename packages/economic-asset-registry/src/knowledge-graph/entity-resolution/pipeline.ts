@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type { AliasRegistry } from '../alias-registry.ts';
 import type { EntityResolutionRecord } from '../types.ts';
 import { resolveDeterministic, type DeterministicResolutionInput } from './deterministic.ts';
