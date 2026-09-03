@@ -6,93 +6,35 @@
   "samples": [
     {
       "label": "vault_summary",
-      "ns": "988340"
+      "ns": "969434"
     },
     {
       "label": "permissions",
-      "ns": "819467"
+      "ns": "808419"
     },
     {
       "label": "access_history",
-      "ns": "666991"
+      "ns": "662476"
     },
     {
       "label": "hin_contribution_summary",
-      "ns": "529629"
+      "ns": "528413"
     },
     {
       "label": "aggregate_hin_metrics",
-      "ns": "438496"
+      "ns": "440399"
     },
     {
       "label": "earnings",
-      "ns": "353608"
+      "ns": "351881"
     },
     {
       "label": "productive_overview",
-      "ns": "270674"
+      "ns": "272241"
     },
     {
       "label": "category_metric_history",
-      "ns": "91585"
-      "ns": "1164566"
-    },
-    {
-      "label": "permissions",
-      "ns": "966981"
-    },
-    {
-      "label": "access_history",
-      "ns": "799445"
-    },
-    {
-      "label": "hin_contribution_summary",
-      "ns": "656865"
-    },
-    {
-      "label": "aggregate_hin_metrics",
-      "ns": "553128"
-    },
-    {
-      "label": "earnings",
-      "ns": "463595"
-    },
-    {
-      "label": "productive_overview",
-      "ns": "376754"
-    },
-    {
-      "label": "category_metric_history",
-      "ns": "108331"
-      "ns": "1229513"
-    },
-    {
-      "label": "permissions",
-      "ns": "1039684"
-    },
-    {
-      "label": "access_history",
-      "ns": "856577"
-    },
-    {
-      "label": "hin_contribution_summary",
-      "ns": "700632"
-    },
-    {
-      "label": "aggregate_hin_metrics",
-      "ns": "583899"
-    },
-    {
-      "label": "earnings",
-      "ns": "487143"
-    },
-    {
-      "label": "productive_overview",
-      "ns": "388631"
-    },
-    {
-      "label": "category_metric_history",
-      "ns": "118854"
+      "ns": "92129"
     }
   ]
 }
