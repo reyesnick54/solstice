@@ -283,7 +283,7 @@ describe('Wave 5 Task 6 — GPUV red team', () => {
 
   it('rejects negative GPUV basis quantities', () => {
     const negative = evaluateProductiveValue(
-      engineValueInput('ENERGY', { contribution: engineContribution('ENERGY', { quantity: -5n }) }),
+      engineValueInput('ENERGY', { contribution: engineContribution('ENERGY', { quantity: -5n, normalizedQuantity: -5n }) }),
       { policy: VALUE_POLICY, schedule: VALUE_SCHEDULE },
     );
     assert.equal(negative.state, 'VALUE_REJECTED');

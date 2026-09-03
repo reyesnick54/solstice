@@ -394,7 +394,7 @@ describe('Wave 9 Task 4 — GPUV manipulation', () => {
 
   it('rejects negative and duplicate GPUV basis quantities', () => {
     const negative = evaluateProductiveValue(
-      engineValueInput('ENERGY', { contribution: engineContribution('ENERGY', { quantity: -1n }) }),
+      engineValueInput('ENERGY', { contribution: engineContribution('ENERGY', { quantity: -1n, normalizedQuantity: -1n }) }),
       { policy: VALUE_POLICY, schedule: VALUE_SCHEDULE },
     );
     assert.equal(negative.state, 'VALUE_REJECTED');
@@ -444,9 +444,7 @@ describe('Wave 9 Task 5 — human Sybil attack', () => {
   });
 
   it('requires review for AI-only Sybil hints without autonomous ban', () => {
-    const actor = asHumanEconomicIdentityId(
-      String(humanEconomicIdentityIdFor({ actorCommitment: deriveActorCommitment(['ai-only']) })),
-    );
+    const actor = asHumanEconomicIdentityId(`heaid_${'c'.repeat(32)}`);
     const sybil = evaluateSybilControls({
       humanActorId: actor,
       evaluatedAt: NOW,
