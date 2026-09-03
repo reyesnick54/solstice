@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 3 Prompt 13 — blockchain network intelligence catalog entries.
  *

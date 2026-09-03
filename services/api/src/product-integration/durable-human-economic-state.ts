@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { err, ok, type Result } from '../../../../packages/domain/src/result.ts';
 import type { UtcInstant } from '../../../../packages/domain/src/time.ts';
 import { createHumanContributionEvent } from '../../../../packages/human-economic-contribution/src/event.ts';

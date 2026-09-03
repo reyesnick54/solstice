@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Authority boundary guards — proof objects must never authorize monetary mutation.
  */

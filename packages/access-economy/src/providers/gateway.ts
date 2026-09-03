@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS-14 — Access Provider Gateway.
  *

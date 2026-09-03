@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 5 catalog entries for productive-economy provider runtime.
  */

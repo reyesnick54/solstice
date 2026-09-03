@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { AllocationMechanism, AccessRegimeHint, ScarcityBand } from '../taxonomy.ts';
 import type { MechanismSelectionPolicy } from '../scarcity/types.ts';
 

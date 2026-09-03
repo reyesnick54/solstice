@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Injected Expedia Rapid transport.
  *

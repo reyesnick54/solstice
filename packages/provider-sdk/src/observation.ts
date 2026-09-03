@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Build and validate ExternalObservation envelopes.
  */

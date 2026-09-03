@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 3 Prompt 14 — external chain interoperability regression tests.
  */

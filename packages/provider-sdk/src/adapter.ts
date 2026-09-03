@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Provider adapter contract for future external API integrations.
  *

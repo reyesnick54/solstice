@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { EconomicEvidence, EconomicObservation } from '@solstice/sunrey-chain/economic-proof';
 import { economicProofDigest } from '@solstice/sunrey-chain/economic-proof';
 

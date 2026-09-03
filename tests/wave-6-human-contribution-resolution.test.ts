@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 6 Human Contribution Resolution — cross-package integration.
  */

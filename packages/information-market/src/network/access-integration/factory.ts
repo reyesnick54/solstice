@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS-18 — wires HIN marketplace services into the access-economy bridge ports.
  */

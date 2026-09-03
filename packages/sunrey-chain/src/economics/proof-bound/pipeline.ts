@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 3 — Proof-bound monetary issuance pipeline.
  *

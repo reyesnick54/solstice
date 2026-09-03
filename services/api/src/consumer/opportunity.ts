@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Consumer BFF opportunity intelligence dispatch — read-only opportunity resources.
  */

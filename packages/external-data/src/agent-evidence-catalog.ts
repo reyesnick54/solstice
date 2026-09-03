@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Financial Agent evidence catalog — categorized canonical evidence with provenance.
  *

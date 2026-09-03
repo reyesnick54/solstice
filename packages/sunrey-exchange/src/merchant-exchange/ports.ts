@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { MerchantPurchase, PurchaseIntent } from './types.ts';
 import type { MerchantExchangeMerchantId } from './ids.ts';

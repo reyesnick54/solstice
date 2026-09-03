@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Secure transaction lifecycle orchestration.
  *

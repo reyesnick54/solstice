@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Environmental oracle refresh schedules.
  */

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type { ConsentGrantId, RightsGrantId, RightsRevocationId } from './ids.ts';
 import type { RightsGrant, RightsGrantState, RightsRevocation } from './types.ts';

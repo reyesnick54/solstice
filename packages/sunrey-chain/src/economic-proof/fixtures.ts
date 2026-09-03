@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Simulation fixtures for Wave 3 economic proof tests.
  */

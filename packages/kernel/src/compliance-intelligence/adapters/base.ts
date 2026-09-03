@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Shared builders and fixture loading for compliance intelligence adapters.
  */

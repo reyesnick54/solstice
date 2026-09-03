@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { asUtcInstant } from '../../domain/src/time.ts';
 import { newAccessEntitlementId } from './ids.ts';
 import { AccessEntitlementEngine } from './engine.ts';

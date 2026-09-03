@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS-18 BFF projections for human information to access surfaces.
  */

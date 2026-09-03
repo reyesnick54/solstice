@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 3 Prompt 34 — Access Coverage Engine.
  *

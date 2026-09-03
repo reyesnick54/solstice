@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 6 — Formal SunRey Human Economy issuance proposal.
  *

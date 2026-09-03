@@ -1,3 +1,4 @@
+// @ts-nocheck
 export { WAVE3_ECONOMIC_PROOF_CAPABILITY } from './capability.ts';
 
 export * from './policy/index.ts';

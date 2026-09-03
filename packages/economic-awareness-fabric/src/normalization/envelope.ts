@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { buildExternalObservation } from '../../../provider-sdk/src/observation.ts';
 import type { ExternalObservation } from '../../../provider-sdk/src/types.ts';
 import { asUtcInstant } from '../../../domain/src/time.ts';

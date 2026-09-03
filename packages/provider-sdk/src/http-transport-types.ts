@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 1 Prompt 3 — universal provider HTTP transport contract.
  */

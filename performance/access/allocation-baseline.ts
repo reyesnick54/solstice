@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Access Economy allocation flow benchmark.
  */

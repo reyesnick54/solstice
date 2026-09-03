@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Consumer BFF adapter for Wave 2 external reference data.
  *

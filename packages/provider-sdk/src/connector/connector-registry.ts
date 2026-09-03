@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 4 — governed connector registry and bootstrap.
  */

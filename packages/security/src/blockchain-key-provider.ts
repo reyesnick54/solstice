@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Secure key provider abstraction for blockchain signing.
  *

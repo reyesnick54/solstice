@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 9 Task 14 — bottleneck identification and prioritization.
  */

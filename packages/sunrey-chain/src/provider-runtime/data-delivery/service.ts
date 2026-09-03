@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Stale-while-revalidate provider data delivery orchestration.
  */

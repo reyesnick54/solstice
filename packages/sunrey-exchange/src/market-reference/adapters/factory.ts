@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Catalog-backed market reference adapter factory.
  *

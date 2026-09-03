@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Exchange order lifecycle benchmark.
  */

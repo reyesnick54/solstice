@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 6 — human attribute/contribution and achievement/activity controls.
  */

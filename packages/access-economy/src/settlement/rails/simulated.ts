@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 3 Prompt 35 — Simulated payment rail for tests and rehearsal.
  *

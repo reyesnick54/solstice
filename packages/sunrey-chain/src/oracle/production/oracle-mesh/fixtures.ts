@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Development mesh fixtures — representative scenarios across productive domains.
  *

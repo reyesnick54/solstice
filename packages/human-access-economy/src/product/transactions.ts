@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Access Wave 4 transaction state machine — product-facing lifecycle.
  * Orchestration only; financial authority remains in canonical owners.

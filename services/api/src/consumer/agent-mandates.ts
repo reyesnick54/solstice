@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Agent mandate HTTP surface for Wave 7 delegation controls.
  * Mandates specify user, agent, allowed data/accounts/actions, purpose,

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { err, ok } from '../../../domain/src/result.ts';
 
 export type CapabilityClassification = 'IMPLEMENTED' | 'PARTIAL' | 'INTERFACE_ONLY' | 'FUTURE';

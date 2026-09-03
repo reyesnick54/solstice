@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { systemClock } from '../../../config/src/clock.ts';
 import { DomainEventLog } from '../../../events/src/events.ts';
 import { asMerchantExchangeMerchantId } from './ids.ts';

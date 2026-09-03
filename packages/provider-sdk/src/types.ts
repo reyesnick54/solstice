@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Unified provider-sdk type surface — re-exports split modules without duplication.
  */

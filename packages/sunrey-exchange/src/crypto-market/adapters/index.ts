@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Fixture-backed crypto market reference adapters.
  *

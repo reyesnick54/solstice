@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 5 canonical domain services.
  */

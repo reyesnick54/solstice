@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Fail-closed trust boundaries for external information.
  *

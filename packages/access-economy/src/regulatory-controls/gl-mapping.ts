@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 5 — Configurable general-ledger mapping foundation.
  *

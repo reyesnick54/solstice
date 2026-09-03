@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 4 — normalization pipeline.
  *

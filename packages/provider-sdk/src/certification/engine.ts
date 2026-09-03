@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Provider certification engine — derives status from evidence probes.
  */

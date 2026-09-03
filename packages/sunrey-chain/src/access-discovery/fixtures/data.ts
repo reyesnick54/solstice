@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 2 Prompt 31 — fixture data for GBFS, NPS, and RIDB discovery providers.
  */

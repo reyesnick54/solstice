@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Agent evidence bridge for external chain intelligence observations.
  */

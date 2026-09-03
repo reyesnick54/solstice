@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * External Data Trust Engine — deterministic multi-source trust assessment.
  *

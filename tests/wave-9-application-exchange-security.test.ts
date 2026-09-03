@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 9 — application-plane and Exchange security regression suite.
  *

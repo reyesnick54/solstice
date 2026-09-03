@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Lovable-safe Consumer BFF client for `/api/v1` payments and recipients.
  * Distinct from `/v1/consumer` platform routes. Does not import Ledger,

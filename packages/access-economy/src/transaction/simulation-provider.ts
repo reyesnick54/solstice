@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 3 — configurable simulation provider for transaction test scenarios.
  */

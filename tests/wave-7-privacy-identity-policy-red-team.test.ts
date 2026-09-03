@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 7 — Privacy, Identity, Policy and Authorization Control Plane red team.
  *

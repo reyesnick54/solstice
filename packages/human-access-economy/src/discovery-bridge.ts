@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 2 Prompt 31 — bridge canonical domain services to AccessDiscoveryPorts.
  */

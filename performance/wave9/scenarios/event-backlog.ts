@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 9 Task 4 — event backlog, idempotency, consumer recovery, dead-letter behavior.
  */

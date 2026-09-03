@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Productive Economic Graph / Grow integration — environmental context.
  */

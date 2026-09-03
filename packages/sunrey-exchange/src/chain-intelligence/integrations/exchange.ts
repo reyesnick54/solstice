@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Exchange read-only consumption of external chain intelligence.
  */

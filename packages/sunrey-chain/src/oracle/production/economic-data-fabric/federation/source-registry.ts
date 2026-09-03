@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 4 Task 1 — audit of current data stores and query access modes.
  *

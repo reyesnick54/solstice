@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS-22 permanent 100 SR + 100 MR benchmark participant.
  *

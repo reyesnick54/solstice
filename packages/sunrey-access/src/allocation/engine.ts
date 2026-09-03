@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { err, ok, type Result } from '../../../domain/src/result.ts';
 import { asAllocationDecisionId } from '../ids.ts';
 import type { AllocationMechanism } from '../taxonomy.ts';

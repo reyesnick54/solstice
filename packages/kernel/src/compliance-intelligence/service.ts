@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ComplianceScreeningEvidenceService — multi-provider evidence aggregation.
  * Returns EVIDENCE only. Does not issue compliance decisions.

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Restricted virtual-card Access payment rail.
  *

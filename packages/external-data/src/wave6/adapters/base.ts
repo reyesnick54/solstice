@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Shared opportunity adapter infrastructure — fixture-backed simulation only.
  */

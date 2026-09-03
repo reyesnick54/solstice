@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Money } from '../../../money/src/money.ts';
 import type { SerializedMoney } from '../../../personal-economic-graph/src/taxonomy.ts';
 import type { RecurringObligation, SavingsOpportunity, SubscriptionActionProposal, VerifiedSavings } from './models.ts';

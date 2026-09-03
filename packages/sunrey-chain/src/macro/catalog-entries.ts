@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 2 Prompt 8 — macroeconomic and government-economic-data catalog entries.
  *

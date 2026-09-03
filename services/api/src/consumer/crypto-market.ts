@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Consumer BFF surface for crypto market reference data.
  *

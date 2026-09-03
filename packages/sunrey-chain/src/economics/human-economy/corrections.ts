@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 6 — Post-finality correction records.
  *

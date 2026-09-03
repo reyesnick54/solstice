@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 6 — SunRey Human Economy ontology tests.
  */

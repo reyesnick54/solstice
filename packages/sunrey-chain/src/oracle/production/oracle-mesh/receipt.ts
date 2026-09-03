@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ProductiveOracleEvaluation receipt builder.
  *

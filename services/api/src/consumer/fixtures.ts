@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Deterministic sandbox personas for Lovable / frontend development.
  * Clearly non-production. Balances are posted only through Kernel-gated

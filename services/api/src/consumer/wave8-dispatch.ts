@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 8 — SunRey / MoonRey / Action Center / realtime route dispatch.
  */

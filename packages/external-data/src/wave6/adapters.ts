@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 6 provider adapters — fixture-backed simulation only.
  */

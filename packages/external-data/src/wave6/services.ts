@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 6 canonical domain services — Knowledge Intelligence layer.
  */

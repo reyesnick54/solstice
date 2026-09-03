@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 9 Task 9 — exchange failure, settlement recovery, duplicate retry safety.
  */

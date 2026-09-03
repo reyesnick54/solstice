@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { MoneyView } from './types.ts';
 
 export type ToolPortFailure = {

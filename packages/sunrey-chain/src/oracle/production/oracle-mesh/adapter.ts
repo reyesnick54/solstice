@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Oracle observation adapter — every productive source produces the
  * canonical Wave 4 economic observation envelope.

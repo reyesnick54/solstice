@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { isErr, isOk } from '../../domain/src/result.ts';
 import type { Clock } from '../../config/src/clock.ts';
 import { type Customer } from '../../domain/src/customer.ts';

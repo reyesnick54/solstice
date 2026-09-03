@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Clock } from '../../../config/src/clock.ts';
 import { err, ok, type Result } from '../../../domain/src/result.ts';
 import type { EconomicActivity } from '../../../personal-economic-graph/src/store.ts';

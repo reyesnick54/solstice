@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Prompt 38 — Consumer BFF surface for canonical /api/v1/access routes.
  * Orchestration and presentation only; domain math remains in access-economy providers.

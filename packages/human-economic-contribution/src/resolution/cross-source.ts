@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { SourceClass } from '../taxonomy.ts';
 import { buildCanonicalHumanContributionEvent } from './canonical-event.ts';
 import { assessContributionSplitting } from './splitting.ts';

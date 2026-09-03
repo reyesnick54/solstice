@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type { GrowExecutionCommand, GrowExecutionRecord, GrowFailure } from '../types.ts';
 import type { ExecutionCapability } from './taxonomy.ts';

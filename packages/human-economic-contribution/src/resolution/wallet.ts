@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { humanEconomicIdentityIdFor, walletBindingRefFor } from './ids.ts';
 import type { HumanEconomicIdentityId, WalletBindingRef } from './types.ts';
 

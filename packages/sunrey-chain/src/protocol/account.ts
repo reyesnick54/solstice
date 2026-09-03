@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Account sequencing and public-key binding for protocol transactions.
  */

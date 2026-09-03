@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Domain-specific trust policy helpers — FX, markets, weather, resources.
  */

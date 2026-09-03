@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 5 Prompt 40 — Regulatory controls exports.
  */

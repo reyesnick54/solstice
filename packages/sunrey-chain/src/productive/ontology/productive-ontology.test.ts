@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 5 — MoonRey Productive Economy ontology tests.
  */

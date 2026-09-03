@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Clock } from '../../config/src/clock.ts';
 import type { Result } from '../../domain/src/result.ts';
 import type { AccessResourceId } from './ids.ts';

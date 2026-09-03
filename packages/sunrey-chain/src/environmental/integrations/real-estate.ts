@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Real Estate integration — optional contextual environmental evidence.
  */

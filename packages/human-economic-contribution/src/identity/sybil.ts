@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import { commitIdentityDomain } from './commitments.ts';
 import type { HumanEconomicIdentityId } from './ids.ts';

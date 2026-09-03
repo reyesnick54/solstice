@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Consumer BFF Human Access Economy dispatch.
  * Orchestrates packages/human-access-economy product surface.

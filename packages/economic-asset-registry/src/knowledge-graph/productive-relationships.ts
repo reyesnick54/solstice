@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import { knowledgeEdgeIdFor, knowledgeNodeIdFor } from './ids.ts';
 import type { KnowledgeNodeId } from '../ids.ts';

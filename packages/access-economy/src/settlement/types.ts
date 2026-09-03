@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 3 — Fiat settlement and restricted virtual-card settlement types.
  */

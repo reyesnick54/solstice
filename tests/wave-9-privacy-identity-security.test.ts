@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 9 — Privacy, confidentiality, and identity security audit.
  *

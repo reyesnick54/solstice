@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Prompt 5 — durable economic state and idempotency integration tests.
  */

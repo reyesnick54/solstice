@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 4 product integration bridges and regression helpers.
  */

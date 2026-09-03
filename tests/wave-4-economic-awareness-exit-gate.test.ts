@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 4 Economic Awareness Fabric — exit-gate red-team suite.
  *

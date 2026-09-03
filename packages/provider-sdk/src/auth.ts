@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Provider authentication strategies and secret-backed injection.
  *

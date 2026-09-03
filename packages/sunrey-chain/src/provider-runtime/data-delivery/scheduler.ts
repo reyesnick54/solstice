@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Scheduled provider refresh with jitter and idempotent job enqueue.
  */

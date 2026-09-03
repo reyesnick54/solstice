@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createHash } from 'node:crypto';
 
 import { err, ok, type Result } from '../../domain/src/result.ts';

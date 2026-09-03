@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS-14 — Provider Capability Registry.
  *

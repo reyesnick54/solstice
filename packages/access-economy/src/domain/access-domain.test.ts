@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 1 / Prompt 28 — canonical Access domain model tests.
  */

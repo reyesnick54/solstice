@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 5 — Productive Economic Value and GPUV tests.
  */

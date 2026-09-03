@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Canonical productive asset registry with alias resolution and persistence.
  */

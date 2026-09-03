@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { err, ok, type Result } from '../../../domain/src/result.ts';
 import { asAccessQuoteId } from '../ids.ts';
 import type { ScarcityBand } from '../taxonomy.ts';

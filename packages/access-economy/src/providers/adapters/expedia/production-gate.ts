@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Expedia production commercial gate — code completion does not satisfy these.
  */

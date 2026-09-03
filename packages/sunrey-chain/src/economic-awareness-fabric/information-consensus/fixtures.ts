@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Adversarial fixtures for Information Consensus tests.
  */

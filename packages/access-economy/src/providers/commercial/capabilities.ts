@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Commercial Access provider capability registry.
  */

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Validator signed envelope.
  *

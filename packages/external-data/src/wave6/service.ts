@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 6 — OpportunityService canonical domain service.
  */

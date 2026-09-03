@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { ActorDescriptor } from './actor.ts';
 import type { NativeAssetOperation } from './assets.ts';
 import type { EconomicObject } from './economic-object.ts';

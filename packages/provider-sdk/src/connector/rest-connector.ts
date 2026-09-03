@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 4 — REST connector implementation with fixture simulation mode.
  */

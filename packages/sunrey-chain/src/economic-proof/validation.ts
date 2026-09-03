@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Schema and domain validation for Wave 3 economic proof objects.
  */

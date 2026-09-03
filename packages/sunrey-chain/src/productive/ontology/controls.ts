@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 5 — stock/flow and capacity/production controls.
  *

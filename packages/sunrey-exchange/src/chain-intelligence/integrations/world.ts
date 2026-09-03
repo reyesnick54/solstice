@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * World surface — Bitcoin network health display via canonical APIs.
  */

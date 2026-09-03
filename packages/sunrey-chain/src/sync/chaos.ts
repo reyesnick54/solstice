@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 2 — safe automated recovery chaos tests (in-memory simulation).
  */

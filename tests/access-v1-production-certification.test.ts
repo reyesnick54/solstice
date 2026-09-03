@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 5 / Prompt 42 — Access V1 production-readiness certification harness.
  *

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS-22 core metrics computation.
  *

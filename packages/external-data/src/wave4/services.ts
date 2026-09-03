@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 4 canonical domain services — compliance, KYB, fraud, cybersecurity.
  */

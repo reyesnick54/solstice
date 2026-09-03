@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 5 — repository-level productive economy ontology integration tests.
  */

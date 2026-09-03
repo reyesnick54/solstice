@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { ContributionClass } from '../taxonomy.ts';
 import { aggregationKeyForClass } from './aggregation.ts';

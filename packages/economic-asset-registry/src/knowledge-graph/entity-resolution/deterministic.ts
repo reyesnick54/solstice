@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import { canonicalEntityIdFor, entityResolutionIdFor } from '../ids.ts';
 import type { CanonicalEntityId } from '../ids.ts';

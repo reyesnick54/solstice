@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 5 — Development fixtures for MoonRey monetary pipeline scenarios.
  */

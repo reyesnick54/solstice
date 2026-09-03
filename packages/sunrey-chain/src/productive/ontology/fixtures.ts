@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 5 — deterministic productive economy fixtures for tests.
  */

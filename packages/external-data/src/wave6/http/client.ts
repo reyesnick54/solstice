@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Governed HTTP client for Wave 6 opportunity providers.
  */

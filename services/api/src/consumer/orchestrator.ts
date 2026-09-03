@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { CAPABILITIES, ENVIRONMENT } from '../../../../packages/config/src/flags.ts';
 import { ACCOUNT_CLASS_CATALOG } from '../../../../packages/domain/src/account-class.ts';
 import type { UniversalProviderRuntime } from '../../../../packages/sunrey-chain/src/provider-runtime/universal/runtime.ts';

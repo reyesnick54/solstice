@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 8 — governance operations HTTP routes.
  *

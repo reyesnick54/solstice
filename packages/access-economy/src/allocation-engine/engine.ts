@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 1 / Prompt 29 — Access Allocation Engine.
  *

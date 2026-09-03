@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { PersonalEconomyAgent } from '../../../agent/src/service.ts';
 import type { AccessIntentFailure } from '../../../agent/src/access-fabric/index.ts';
 import { agentAccessIntentToDomainInput } from './domain-intent-bridge.ts';

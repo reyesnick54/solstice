@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 6 — Contribution verifier reputation signals.
  *

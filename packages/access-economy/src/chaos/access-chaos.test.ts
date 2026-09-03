@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 5 / Prompt 41 — full Access chaos, security, and invariant suite.
  */

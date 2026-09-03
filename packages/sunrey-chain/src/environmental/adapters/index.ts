@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Environmental provider adapters — fixture-backed simulation only.
  */

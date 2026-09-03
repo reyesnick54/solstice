@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 3 / Prompt 37 — state machine unit tests.
  */

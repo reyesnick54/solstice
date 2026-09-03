@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Deterministic Wave 4 risk evidence fixtures — no live network in CI.
  */

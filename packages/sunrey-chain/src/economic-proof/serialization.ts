@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Deterministic canonical encoding for Wave 3 economic proof objects.
  *

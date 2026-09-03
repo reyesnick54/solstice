@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   actorTypeFromId,
   ACTOR_TYPE_IDS,

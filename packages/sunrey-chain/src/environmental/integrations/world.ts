@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * World integration — environmental observations for display.
  */

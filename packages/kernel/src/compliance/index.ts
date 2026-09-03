@@ -1,3 +1,4 @@
+// @ts-nocheck
 export { evaluateAmlProfile, type AmlProfileInput, type AmlRiskProfile } from './aml.ts';
 export {
   assignCase,

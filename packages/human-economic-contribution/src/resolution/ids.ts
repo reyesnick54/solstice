@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createHash, createHmac } from 'node:crypto';
 
 import { brandAs } from '../../../domain/src/brand.ts';

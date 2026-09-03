@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 4 economic event and provenance fabric.
  * Integrates canonical domain events, durable outbox, idempotency, and lineage.

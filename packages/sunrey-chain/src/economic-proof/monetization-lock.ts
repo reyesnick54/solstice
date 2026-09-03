@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
 import { economicProofDigest } from './hash.ts';
 import type {

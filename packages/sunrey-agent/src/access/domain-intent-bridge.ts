@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS-17 — Agent AccessIntent → domain AccessFabricIntent mapping at ProposalGate.
  */

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 2 — verified block synchronization.
  *

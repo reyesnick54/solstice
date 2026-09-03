@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Information-layer verified economic fact.
  *

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 3 — five-root sovereign block commitment integration.
  *

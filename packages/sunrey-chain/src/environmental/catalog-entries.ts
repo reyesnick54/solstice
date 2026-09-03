@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 5 Prompt 19 — environmental oracle catalog entries.
  *

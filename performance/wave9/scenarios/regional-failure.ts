@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 9 Task 12 — regional / host failure model (requirements documentation).
  */

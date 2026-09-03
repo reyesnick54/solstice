@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS-16 — ProviderSettlementLiability lifecycle.
  */

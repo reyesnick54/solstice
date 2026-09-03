@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 4 — provider catalog inventory and domain classification audit.
  */

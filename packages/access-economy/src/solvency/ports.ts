@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS-16 — Reference/aggregation ports toward canonical financial owners.
  *

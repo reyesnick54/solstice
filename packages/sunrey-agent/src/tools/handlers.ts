@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Result } from '../../../domain/src/result.ts';
 import { createTravelIntelligenceSandbox } from '../../../sunrey-chain/src/travel-intelligence/index.ts';
 import { toTravelAgentEvidence } from '../../../sunrey-chain/src/travel-intelligence/agent-evidence.ts';

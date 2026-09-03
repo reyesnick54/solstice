@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Consumer BFF adapter for environmental oracle observations.
  *

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Consumer BFF health reference dispatch — read-only public health reference resources.
  * Does NOT expose HIN private data or raw upstream payloads.

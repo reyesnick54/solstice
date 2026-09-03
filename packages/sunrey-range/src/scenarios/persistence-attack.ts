@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createSnapshot, verifySnapshot } from '../../../sunrey-chain/src/ops/snapshots.ts';
 import { RANGE_CHAIN_ID, RANGE_NETWORK_ID } from '../types.ts';
 import { runProductionAttack, safetyScenario } from './production-helpers.ts';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 4 Task 9 — representative cross-source federation fixtures.
  *

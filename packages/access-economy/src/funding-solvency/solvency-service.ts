@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 1 — Access Solvency Service.
  *

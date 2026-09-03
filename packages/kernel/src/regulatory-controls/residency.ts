@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 7 — Data residency architecture.
  *

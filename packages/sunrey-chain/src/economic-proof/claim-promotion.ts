@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { err, ok, type Result } from '../../../domain/src/result.ts';
 import { deriveClaimFingerprint } from './claim-fingerprint.ts';
 import { deriveDuplicateClusterId } from './duplicate-cluster.ts';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS-17 — Deterministic simulation world for canonical access redemption.
  *

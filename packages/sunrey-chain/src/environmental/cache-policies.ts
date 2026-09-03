@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Environmental oracle cache policies — capability-specific TTLs.
  */

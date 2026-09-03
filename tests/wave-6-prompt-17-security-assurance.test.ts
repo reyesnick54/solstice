@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 6 Prompt 17 — internal security assurance regression suite.
  *

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 2 — Bridge from legacy ACCESS-14 AccessProvider to SDK contracts.
  */

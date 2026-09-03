@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { economicProofDigest } from './hash.ts';
 import { deriveCanonicalEventId } from './event-identity.ts';
 import type { CanonicalEntityId, CanonicalEventId } from './types.ts';

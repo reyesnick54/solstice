@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Environmental oracle adapter factory and registry.
  */

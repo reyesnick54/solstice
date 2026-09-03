@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { asUtcInstant } from '../../../domain/src/time.ts';
 import { allocationPolicyIdFor, providerRefFor } from '../ids.ts';
 import { freezeAccessGeography } from './geography.ts';

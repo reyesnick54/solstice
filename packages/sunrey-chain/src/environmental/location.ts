@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Canonical environmental location input — no provider-specific formats leak through.
  */

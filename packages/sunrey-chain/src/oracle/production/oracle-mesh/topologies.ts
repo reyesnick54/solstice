@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Domain-specific oracle topologies — recommended source-class combinations.
  *

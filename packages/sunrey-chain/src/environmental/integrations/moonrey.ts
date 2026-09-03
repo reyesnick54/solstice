@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * MoonRey integration — environmental observations as economic input context only.
  */

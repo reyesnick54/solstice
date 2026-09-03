@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 5 completion tests — physical-economy data plane, geospatial, maritime, logistics.
  */

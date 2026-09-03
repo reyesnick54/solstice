@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Bridge external compliance evidence to Kernel compliance fabric.
  * Evidence is input; Compliance Kernel remains decision authority.

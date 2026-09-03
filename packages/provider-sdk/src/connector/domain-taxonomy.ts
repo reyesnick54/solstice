@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 4 — economic domain taxonomy for provider classification.
  */

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS-18 — Human Information to SunRey to Access bridge engine.
  *

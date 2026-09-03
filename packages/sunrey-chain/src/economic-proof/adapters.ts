@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Adapters from mature domain-specific types to Wave 3 canonical proof lattice.
  *

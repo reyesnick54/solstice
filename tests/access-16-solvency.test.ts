@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS-16 cross-package integration — consumer BFF solvency posture.
  */

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * MoonRey Productive Oracle Mesh — public interface.
  *

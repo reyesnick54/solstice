@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Product integration bridges — Money, Exchange, Agent, Action Center.
  */

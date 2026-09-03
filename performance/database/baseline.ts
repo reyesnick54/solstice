@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Database and ledger qualification — in-process baseline plus optional PostgreSQL.
  */

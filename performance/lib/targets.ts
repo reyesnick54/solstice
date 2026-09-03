@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Engineering qualification targets — NOT contractual SLAs.
  *

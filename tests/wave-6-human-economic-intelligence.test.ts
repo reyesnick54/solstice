@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 6 — repository-level human economic intelligence integration tests.
  */

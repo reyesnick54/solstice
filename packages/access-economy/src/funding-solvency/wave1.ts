@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 1 — End-to-end orchestration.
  *

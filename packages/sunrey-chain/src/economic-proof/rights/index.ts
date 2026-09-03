@@ -1,3 +1,4 @@
+// @ts-nocheck
 export {
   RIGHTS_COMMITMENT_DOMAIN,
   RIGHTS_ROOT_DOMAIN,

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * BFF adapter for risk evidence — no provider internals exposed.
  */

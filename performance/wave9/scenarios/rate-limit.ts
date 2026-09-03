@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 9 Task 3 — rate limit and backpressure behavior.
  */

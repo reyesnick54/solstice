@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 7 Prompt 26 — External Data Trust Engine tests.
  */

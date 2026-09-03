@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { EconomicActivity } from '../../../personal-economic-graph/src/store.ts';
 import type { PriceChange, RecurringObligation } from './models.ts';

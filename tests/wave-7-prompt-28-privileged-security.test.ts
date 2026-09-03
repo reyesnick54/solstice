@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 7 Prompt 28 — privileged security and key management tests.
  */

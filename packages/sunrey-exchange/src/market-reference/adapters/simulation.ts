@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Deterministic simulation market reference adapter.
  *

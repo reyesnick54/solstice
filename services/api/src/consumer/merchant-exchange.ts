@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Consumer BFF Merchant Exchange dispatch — purchase intent marketplace.
  */

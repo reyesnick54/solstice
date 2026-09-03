@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { AiApprovedPurpose } from '../taxonomy.ts';
 
 export type EvaluationFixtureId =

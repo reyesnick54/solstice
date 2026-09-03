@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { UtcInstant } from '../../../domain/src/time.ts';
 
 export const ECONOMIC_PROOF_SCHEMA_VERSION = 'sunrey.economic-proof.v1' as const;

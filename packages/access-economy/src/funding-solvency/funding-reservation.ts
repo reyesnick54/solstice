@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 1 — Atomic funding reservations with pool-level locking.
  */

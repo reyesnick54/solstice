@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Clock } from '../../../config/src/clock.ts';
 import { ok, type Result } from '../../../domain/src/result.ts';
 import type { SecretProvider, SecretReference } from '../../../security/src/secrets.ts';

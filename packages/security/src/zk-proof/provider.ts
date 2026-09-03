@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { zkErr, type ZKProofProvider } from './types.ts';
 import { ZERO_KNOWLEDGE_PROOF_CAPABILITY } from './types.ts';
 

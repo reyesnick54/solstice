@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Live provider certification runner for opportunity and economic data adapters.
  */

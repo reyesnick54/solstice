@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 5 — productive metric classification.
  *

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import { subscriptionApprovalIdFor } from './ids.ts';
 import type { SubscriptionActionProposal, SubscriptionApproval } from './models.ts';

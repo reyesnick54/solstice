@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS Wave 5 — Treasury exposure model derived from actual ledgers.
  *

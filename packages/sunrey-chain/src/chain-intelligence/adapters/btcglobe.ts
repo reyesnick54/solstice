@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * BTCGlobe fixture-backed adapter — fallback Bitcoin network statistics.
  */

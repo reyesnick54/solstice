@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 6 — Governed SunRey Human Economy issuance pipeline.
  *

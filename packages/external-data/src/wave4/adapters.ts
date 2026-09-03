@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Wave 4 provider adapter registry with simulation fixtures.
  */

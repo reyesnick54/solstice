@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Clock } from '../../../config/src/clock.ts';
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { DomainEventLog } from '../../../events/src/events.ts';

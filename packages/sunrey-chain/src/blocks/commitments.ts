@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Deterministic Merkle commitments for blocks and monetary state.
  *

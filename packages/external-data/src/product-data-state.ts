@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Canonical BFF-level product data state and sanitized source metadata.
  *

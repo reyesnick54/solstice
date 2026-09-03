@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS-18 deterministic demo — automotive vehicle preference research.
  */

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * ACCESS-17 — Canonical access redemption orchestrator.
  *

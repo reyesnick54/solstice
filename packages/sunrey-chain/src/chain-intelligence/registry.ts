@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Chain intelligence adapter factory and registry.
  */

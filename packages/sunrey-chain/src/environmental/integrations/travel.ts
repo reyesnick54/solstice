@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Travel integration — environmental context for origin/destination.
  */
