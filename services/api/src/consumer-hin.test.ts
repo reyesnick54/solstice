@@ -24,7 +24,7 @@ function principal(customerId: string, persona: 'basic_verified' | 'exchange'): 
     verification: 'VERIFIED',
     customerStatus: 'ACTIVE',
     identityStatus: 'ACTIVE',
-    capabilities: Object.freeze([]),
+    capabilities: Object.freeze(['VIEW_ACCOUNT']),
     risk: 'LOW',
     restricted: false,
     sandboxPersona: persona,

@@ -100,6 +100,50 @@ function definitionFor(code: AlertCode): AlertDefinition {
       severity: 'CRITICAL',
       description: 'A credential scope, leak-guard, or resolution failure was observed.',
     },
+    VALIDATOR_DOWN: {
+      severity: 'CRITICAL',
+      description: 'A validator health probe reported the node as unavailable.',
+    },
+    CONSENSUS_STALLED: {
+      severity: 'CRITICAL',
+      description: 'Consensus progression stalled beyond the engineering test target.',
+    },
+    CHAIN_STATE_MISMATCH: {
+      severity: 'CRITICAL',
+      description: 'Chain state roots or heights diverged across validator replicas.',
+    },
+    HIGH_CLAIM_CONFLICT: {
+      severity: 'HIGH',
+      description: 'Productive claim conflict rate exceeded the engineering threshold.',
+    },
+    DEAD_LETTER_GROWTH: {
+      severity: 'HIGH',
+      description: 'Dead-letter queue depth exceeded the engineering drain target.',
+    },
+    POLICY_SERVICE_UNAVAILABLE: {
+      severity: 'HIGH',
+      description: 'Policy evaluation service is unavailable for governed requests.',
+    },
+    AUTHORIZATION_SERVICE_UNAVAILABLE: {
+      severity: 'HIGH',
+      description: 'Authorization service is unavailable for protected routes.',
+    },
+    KMS_SECRET_ISSUE: {
+      severity: 'CRITICAL',
+      description: 'KMS or secret resolution health failed in the credential plane.',
+    },
+    DATABASE_UNAVAILABLE: {
+      severity: 'CRITICAL',
+      description: 'Operational persistence health probe reported database unavailable.',
+    },
+    EXCHANGE_SETTLEMENT_MISMATCH: {
+      severity: 'CRITICAL',
+      description: 'Exchange settlement reconciliation detected a mismatch.',
+    },
+    UNEXPECTED_PRODUCTION_FEATURE_ENABLEMENT: {
+      severity: 'CRITICAL',
+      description: 'A production feature flag or LIVE gate was enabled outside ceremony.',
+    },
   };
   const row = table[code];
   return Object.freeze({

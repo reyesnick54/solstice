@@ -36,6 +36,7 @@ export const CONSUMER_API_DOMAINS: readonly ConsumerApiDomain[] = Object.freeze(
   domain('economy', '/api/v1/economy', 'SIMULATION', 'packages/sunrey-chain economics', 'Combined native economy overview (legacy alias)', ['GET /api/v1/economy'], []),
   domain('providers', '/api/v1/world', 'SANDBOX', 'packages/external-data wave7', 'World external data, provider status', ['GET /api/v1/world/snapshot', 'GET /api/v1/world/provider-risk'], []),
   domain('claims', '/api/v1/hin/contributions', 'SIMULATION', 'packages/human-economic-contribution', 'HIN contributions and verification status', ['GET /api/v1/hin/contributions'], []),
+  domain('hin', '/api/v1/hin', 'SIMULATION', 'packages/information-market', 'HIN rights marketplace and participation', ['GET /api/v1/hin/rights', 'GET /api/v1/hin/licenses'], []),
   domain('evidence', '/api/v1/agent/external-evidence', 'SIMULATION', 'packages/external-data bridges', 'Agent-safe external evidence catalog', ['GET /api/v1/agent/external-evidence'], []),
   domain('consent', '/api/v1/data', 'SIMULATION', 'packages/consent', 'Consent, rights, permissions', ['GET /api/v1/data/consent', 'GET /api/v1/data/permissions'], []),
   domain('actions', '/api/v1/actions', 'SIMULATION', 'packages/sunrey-agent + orchestrator', 'Unified Action Center (durable backend state)', ['GET /api/v1/actions', 'GET /api/v1/actions/stream'], ['GET /api/v1/me/actions']),
