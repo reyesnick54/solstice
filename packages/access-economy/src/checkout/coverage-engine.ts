@@ -21,6 +21,7 @@ import {
   sumExcludedCost,
 } from './cost-classification.ts';
 import { AccessCheckoutQuoteStore } from './quote-store.ts';
+import type { AccessSolvencyService } from '../funding-solvency/solvency-service.ts';
 import type {
   AccessCheckoutQuote,
   AccessCheckoutQuoteFailureCode,

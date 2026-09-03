@@ -3,7 +3,7 @@
  */
 
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
+import { afterEach, describe, it } from 'node:test';
 import { Client } from 'pg';
 
 import { asUtcInstant } from '../../packages/domain/src/time.ts';
@@ -33,6 +33,16 @@ const IDENTITY = humanEconomicIdentityIdFor({ actorCommitment: ACTOR });
 const DOI = authoritativeIdCommitmentFrom('doi', '10.1000/idempotency-test');
 const CONTEXT = asMonetizationContextId('hctx_0123456789abcdef0123456789abcdef');
 
+const openRuntimes: DurableSimulationRuntime[] = [];
+
+async function closeTracked(runtime: DurableSimulationRuntime): Promise<void> {
+  await runtime.close();
+  const index = openRuntimes.indexOf(runtime);
+  if (index >= 0) {
+    openRuntimes.splice(index, 1);
+  }
+}
+
 function baseObservation(providerId: string, providerRecordId: string) {
   return {
     sourceClass: 'VERIFIED_RESEARCH_ATTESTATION' as const,
@@ -53,6 +63,7 @@ function baseObservation(providerId: string, providerRecordId: string) {
 
 async function createService(env: Awaited<ReturnType<typeof preparePersistence>>) {
   const runtime = await createDurableRuntime(env);
+  openRuntimes.push(runtime);
   const pool = runtime.session.pools.customer;
   const persistence = createHumanEconomicPersistencePort(pool);
   const service = await DurableHumanEconomicStateService.create(persistence, { requireDurable: true });
@@ -77,6 +88,15 @@ async function setupClaim(service: DurableHumanEconomicStateService) {
 }
 
 describePersistence('Human economic state idempotency (Prompt 5)', () => {
+  afterEach(async () => {
+    while (openRuntimes.length > 0) {
+      const runtime = openRuntimes.pop();
+      if (runtime) {
+        await runtime.close();
+      }
+    }
+  });
+
   it('TEST 1 — RESTART: duplicate monetization does not occur after service restart', async () => {
     const env = await preparePersistence();
     const { service: first } = await createService(env);
@@ -108,7 +128,7 @@ describePersistence('Human economic state idempotency (Prompt 5)', () => {
     const { runtime, pool, persistence, service: setup } = await createService(env);
     const claim = await setupClaim(setup);
     await setup.persist();
-    await runtime.close();
+    await closeTracked(runtime);
 
     const instanceA = await DurableHumanEconomicStateService.create(persistence, { requireDurable: true });
     const instanceB = await DurableHumanEconomicStateService.create(
@@ -133,7 +153,7 @@ describePersistence('Human economic state idempotency (Prompt 5)', () => {
     const { runtime, pool, service: setup } = await createService(env);
     const claim = await setupClaim(setup);
     await setup.persist();
-    await runtime.close();
+    await closeTracked(runtime);
 
     const left = await DurableHumanEconomicStateService.create(createHumanEconomicPersistencePort(pool), {
       requireDurable: true,
@@ -169,7 +189,7 @@ describePersistence('Human economic state idempotency (Prompt 5)', () => {
   it('TEST 6 — DATABASE CONSTRAINT: uniqueness enforced when application pre-check is bypassed', async () => {
     const env = await preparePersistence();
     const { runtime, pool } = await createService(env);
-    await runtime.close();
+    await closeTracked(runtime);
 
     await assert.rejects(async () => {
       await withHumanEconomicReservation(pool, async (client) => {

@@ -29,7 +29,6 @@ import {
   checkParticipantEligibility,
   defaultEligibilityPort,
   eligibleForCategory,
-  type EligibilityPort,
 } from './eligibility.ts';
 import {
   DEFAULT_ACCESS_ALLOCATION_POLICY,
@@ -50,10 +49,11 @@ import {
   computeTimeWeightedBalance,
   resolveCheckpoints,
   type TimeWeightedBalance,
-  type TokenBalanceReaderPort,
 } from './twab-service.ts';
 import type {
   AccessAllocationPolicy,
+  EligibilityPort,
+  TokenBalanceReaderPort,
   AccessAllocationSnapshot,
   AllocationSnapshotResult,
   CategoryAllocationResult,
