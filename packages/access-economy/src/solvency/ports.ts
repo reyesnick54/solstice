@@ -110,11 +110,10 @@ export class InMemorySettlementReservePort implements SettlementReserveReadPort 
 
 export function createSimulationSolvencyPorts(): SolvencyPorts {
   return Object.freeze({
-    ledger: new InMemorySettlementReservePort('packages/ledger') as LedgerReservePort,
-    treasury: new InMemorySettlementReservePort('packages/treasury') as TreasuryReservePort,
-    custody: new InMemorySettlementReservePort('packages/custody') as CustodyReservePort,
-    payments: new InMemorySettlementReservePort('packages/payments') as PaymentsReservePort &
-      Pick<InMemorySettlementReservePort, 'seed'>,
-    exchange: new InMemorySettlementReservePort('packages/sunrey-exchange') as ExchangeReservePort,
+    ledger: new InMemorySettlementReservePort('packages/ledger'),
+    treasury: new InMemorySettlementReservePort('packages/treasury'),
+    custody: new InMemorySettlementReservePort('packages/custody'),
+    payments: new InMemorySettlementReservePort('packages/payments'),
+    exchange: new InMemorySettlementReservePort('packages/sunrey-exchange'),
   });
 }

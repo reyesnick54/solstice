@@ -5,12 +5,12 @@
  * provider payment, canonical fiat ledger, evidence, and transaction state.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
 import {
   accessDomainSettlementIdFor,
   accessEvidenceRefFor,
   type AccessDomainSettlementId,
 } from '../domain/ids.ts';
+import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
 import type { AccessSolvencyService } from '../funding-solvency/solvency-service.ts';
 import { allocateProportionalRefund, settlementFailure, sourceOfFundsFromPlan, validateSettlementPlan } from './invariants.ts';
 import { assertRailCapability, type AccessPaymentRail } from './payment-rail.ts';
@@ -235,7 +235,6 @@ export class FiatAccessSettlementOrchestrator {
         }
       } else {
         updated = this.updateSettlement(updated, {
-          status: updated.status,
           entitlementReservationId: entResult.reservation.entitlementReservationId,
           evidence: {
             ...updated.evidence,
@@ -378,7 +377,6 @@ export class FiatAccessSettlementOrchestrator {
     }
 
     updated = this.updateSettlement(updated, {
-      status: updated.status,
       evidence: { ...updated.evidence, complianceRef: compliance.evidenceReference },
       updatedAt: input.now,
     });
@@ -727,7 +725,6 @@ export class FiatAccessSettlementOrchestrator {
       });
       if ('ok' in voidResult && voidResult.ok) {
         updated = this.updateSettlement(updated, {
-          status: updated.status,
           evidence: { ...updated.evidence, voidRef: voidResult.evidenceReference },
         });
       }

@@ -32,5 +32,19 @@ export * from './redemption/workflow.ts';
 export * from './redemption/entitlement-store.ts';
 export * from './redemption/metrics.ts';
 export * from './redemption/invariants.ts';
-export * as accessProviderSdk from './sdk/index.ts';
-export * as commercialAccess from './commercial/index.ts';
+export type {
+  AccessProvider as SdkAccessProvider,
+} from './sdk/contract.ts';
+export type {
+  AccessProviderQuote as SdkAccessProviderQuote,
+} from './sdk/interfaces.ts';
+export type { AccessProviderDescriptor } from './sdk/descriptor.ts';
+export {
+  bootstrapAccessProviderSdk,
+  createAccessProviderRegistry,
+  AccessProviderRegistry,
+} from './sdk/index.ts';
+export {
+  COMMERCIAL_PROVIDER_IDS,
+  type CommercialProviderRegistration,
+} from './commercial/index.ts';

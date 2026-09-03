@@ -31,7 +31,7 @@ export class AccessWebhookOrchestrator {
 
     const result = await this.orchestrator.applyWebhook(event);
     if (!result.ok) {
-      return { ok: false, code: result.code, message: result.message };
+      return result;
     }
     this.processed.add(event.idempotencyKey);
     return { ok: true };

@@ -31,9 +31,9 @@ export function assertCapacityCandidate(candidate: AccessCapacityCandidate): voi
 
 export function assertOpportunityNotCapacity(
   opportunity: AccessOpportunity,
-  capacityLike: Pick<CapacityOffer, 'capacityOfferId' | 'state'>,
+  capacityLike: Pick<CapacityOffer, 'offerId' | 'state'>,
 ): void {
-  if (opportunity.opportunityId === capacityLike.capacityOfferId) {
+  if (opportunity.opportunityId === capacityLike.offerId) {
     throw new Error('AccessOpportunity must not alias a CapacityOffer id');
   }
 }

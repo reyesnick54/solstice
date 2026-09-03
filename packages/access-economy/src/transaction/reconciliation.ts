@@ -122,14 +122,16 @@ export class AccessReconciliationService {
     }
 
     if (context.status === 'RECONCILIATION_REQUIRED' && this.provider && context.providerReservationReference) {
-      const status = this.provider.getBookingStatus({
-        ...(context.providerReservationReference != null
-          ? { reservationId: context.providerReservationReference }
-          : {}),
+      const statusInput: {
+        readonly reservationId?: string;
+        readonly idempotencyKey?: string;
+      } = {
+        reservationId: context.providerReservationReference,
         ...(context.idempotencyKeys['book'] !== undefined
           ? { idempotencyKey: context.idempotencyKeys['book'] }
           : {}),
-      });
+      };
+      const status = this.provider.getBookingStatus(statusInput);
       if (status.ok && status.value.state === 'CONFIRMED') {
         autoResolved.push(transactionId);
       } else if (!status.ok) {
@@ -152,8 +154,11 @@ export class AccessReconciliationService {
   }
 
   detectStaleReservations(now: UtcInstant): readonly string[] {
-    const expired = this.solvency.expireFundingReservations(now);
-    return Object.freeze(expired.map((row) => row.accessTransactionId));
+    const stale = this.solvency
+      .getFundingReservations()
+      .listStaleReservations(now)
+      .map((row) => row.accessTransactionId);
+    return Object.freeze(stale);
   }
 
   private issue(

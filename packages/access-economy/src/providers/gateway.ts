@@ -10,11 +10,10 @@ import { createSimulationAmazonProvider } from './adapters/amazon/simulation.ts'
 import { createSimulationDoorDashProvider } from './adapters/doordash/simulation.ts';
 import { createExpediaProvider } from './adapters/expedia/factory.ts';
 import { createSimulationTuroProvider } from './adapters/turo/simulation.ts';
-import { DISCOVERY_PROVIDER_IDS } from './types.ts';
-import { fail as providerFail } from './adapters/shared.ts';
 import { ProviderCapabilityRegistry, createProviderCapabilityRegistry } from './capabilities.ts';
 import type {
   AccessProvider,
+  CommercialAccessProviderId,
   AccessProviderId,
   AccessProviderOutcome,
   ProviderAvailabilityRequest,
@@ -33,35 +32,11 @@ import type {
   ProviderSearchResult,
 } from './types.ts';
 
-function createDiscoveryOnlyProvider(providerId: (typeof DISCOVERY_PROVIDER_IDS)[number]): AccessProvider {
-  const unsupported = () => providerFail('DISCOVERY_ONLY', `${providerId} is discovery-only`);
-  return Object.freeze({
-    providerId,
-    displayName: `${providerId} (discovery)`,
-    integrationState: 'DOCUMENTED_NOT_CONNECTED',
-    capabilities: Object.freeze([]),
-    health: () =>
-      Object.freeze({
-        providerId,
-        integrationState: 'DOCUMENTED_NOT_CONNECTED',
-        healthy: true,
-        lastCheckedAt: '2026-08-31T09:00:00.000Z',
-        message: 'discovery-only provider',
-      }),
-    search: unsupported,
-    availability: unsupported,
-    quote: unsupported,
-    reserve: unsupported,
-    book: unsupported,
-    cancel: unsupported,
-  });
-}
-
 export class AccessProviderGateway {
-  private readonly providers: Readonly<Record<AccessProviderId, AccessProvider>>;
+  private readonly providers: Readonly<Record<CommercialAccessProviderId, AccessProvider>>;
   readonly registry: ProviderCapabilityRegistry;
 
-  constructor(input?: { readonly providers?: Partial<Record<AccessProviderId, AccessProvider>> }) {
+  constructor(input?: { readonly providers?: Partial<Record<CommercialAccessProviderId, AccessProvider>> }) {
     this.registry = createProviderCapabilityRegistry();
     this.providers = Object.freeze({
       expedia: input?.providers?.expedia ?? createExpediaProvider(),
@@ -69,14 +44,6 @@ export class AccessProviderGateway {
       doordash: input?.providers?.doordash ?? createSimulationDoorDashProvider(),
       amazon: input?.providers?.amazon ?? createSimulationAmazonProvider(),
       airbnb: input?.providers?.airbnb ?? createSimulationAirbnbProvider(),
-      gbfs_mobility: input?.providers?.gbfs_mobility ?? createDiscoveryOnlyProvider('gbfs_mobility'),
-      travel_discovery: input?.providers?.travel_discovery ?? createDiscoveryOnlyProvider('travel_discovery'),
-      experiences_discovery:
-        input?.providers?.experiences_discovery ?? createDiscoveryOnlyProvider('experiences_discovery'),
-      hotels_discovery: input?.providers?.hotels_discovery ?? createDiscoveryOnlyProvider('hotels_discovery'),
-      transportation_discovery:
-        input?.providers?.transportation_discovery ?? createDiscoveryOnlyProvider('transportation_discovery'),
-      compute_discovery: input?.providers?.compute_discovery ?? createDiscoveryOnlyProvider('compute_discovery'),
     });
   }
 
@@ -85,11 +52,25 @@ export class AccessProviderGateway {
   }
 
   getProvider(providerId: AccessProviderId): AccessProvider | null {
-    return this.providers[providerId] ?? null;
+    if (!(providerId in this.providers)) {
+      return null;
+    }
+    return this.providers[providerId as CommercialAccessProviderId] ?? null;
   }
 
   health(providerId: AccessProviderId): ProviderHealth {
-    return this.providers[providerId].health();
+    const provider = this.getProvider(providerId);
+    if (!provider) {
+      return Object.freeze({
+        providerId,
+        integrationState: 'DOCUMENTED_NOT_CONNECTED',
+        reachable: false,
+        sandboxOnly: true,
+        simulationOnly: true,
+        notes: 'discovery-only provider; use SDK discovery adapters',
+      });
+    }
+    return provider.health();
   }
 
   private ensureCapability<T>(
@@ -97,7 +78,14 @@ export class AccessProviderGateway {
     capabilityId: ProviderCapabilityId,
     execute: () => AccessProviderOutcome<T>,
   ): AccessProviderOutcome<T> {
-    const provider = this.providers[providerId];
+    const provider = this.getProvider(providerId);
+    if (!provider) {
+      return Object.freeze({
+        ok: false,
+        code: 'CAPABILITY_UNAVAILABLE',
+        message: `${providerId} is discovery-only; use SDK discovery adapters`,
+      });
+    }
     const health = provider.health();
     if (health.integrationState === 'LIVE_ENABLED') {
       return execute();
@@ -126,10 +114,10 @@ export class AccessProviderGateway {
 
   search(request: ProviderSearchRequest & { readonly providerId?: AccessProviderId }): AccessProviderOutcome<ProviderSearchResult> {
     if (request.providerId) {
-      return this.ensureCapability(request.providerId, 'CATALOG_SEARCH', () => this.providers[request.providerId!].search(request));
+      return this.ensureCapability(request.providerId, 'CATALOG_SEARCH', () => this.getProvider(request.providerId!)!.search(request));
     }
     const merged: ProviderSearchResult['items'][number][] = [];
-    for (const providerId of Object.keys(this.providers) as AccessProviderId[]) {
+    for (const providerId of Object.keys(this.providers) as CommercialAccessProviderId[]) {
       const outcome = this.ensureCapability(providerId, 'CATALOG_SEARCH', () => this.providers[providerId].search(request));
       if (outcome.ok) {
         merged.push(...outcome.value.items);
@@ -150,23 +138,23 @@ export class AccessProviderGateway {
   }
 
   availability(request: ProviderAvailabilityRequest): AccessProviderOutcome<ProviderAvailabilityResult> {
-    return this.ensureCapability(request.providerId, 'AVAILABILITY', () => this.providers[request.providerId].availability(request));
+    return this.ensureCapability(request.providerId, 'AVAILABILITY', () => this.getProvider(request.providerId)!.availability(request));
   }
 
   quote(request: ProviderQuoteRequest): AccessProviderOutcome<ProviderQuote> {
-    return this.ensureCapability(request.providerId, 'QUOTE', () => this.providers[request.providerId].quote(request));
+    return this.ensureCapability(request.providerId, 'QUOTE', () => this.getProvider(request.providerId)!.quote(request));
   }
 
   reserve(request: ProviderReservationRequest): AccessProviderOutcome<ProviderReservation> {
-    return this.ensureCapability(request.providerId, 'RESERVE', () => this.providers[request.providerId].reserve(request));
+    return this.ensureCapability(request.providerId, 'RESERVE', () => this.getProvider(request.providerId)!.reserve(request));
   }
 
   book(request: ProviderBookingRequest): AccessProviderOutcome<ProviderBooking> {
-    return this.ensureCapability(request.providerId, 'BOOK', () => this.providers[request.providerId].book(request));
+    return this.ensureCapability(request.providerId, 'BOOK', () => this.getProvider(request.providerId)!.book(request));
   }
 
   cancel(request: ProviderCancellationRequest): AccessProviderOutcome<ProviderCancellation> {
-    return this.ensureCapability(request.providerId, 'CANCEL', () => this.providers[request.providerId].cancel(request));
+    return this.ensureCapability(request.providerId, 'CANCEL', () => this.getProvider(request.providerId)!.cancel(request));
   }
 }
 

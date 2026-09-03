@@ -93,7 +93,7 @@ function buildEngine(
   const { poolId } = seedFundingPool(solvency, fundingAmount, category, providerRestriction);
   const engine = createAccessCoverageEngine({
     solvencyService: solvency,
-    ...(fxPort !== undefined ? { fxReferencePort: fxPort } : {}),
+    fxReferencePort: fxPort,
   });
   return { engine, solvency, poolId };
 }

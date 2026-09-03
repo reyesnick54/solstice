@@ -7,6 +7,7 @@
 
 import type {
   AccessProviderId,
+  CommercialAccessProviderId,
   ProviderCapability,
   ProviderCapabilityId,
   ProviderIntegrationState,
@@ -62,13 +63,13 @@ function partnerGatedCapabilities(
   );
 }
 
-export const PROVIDER_CAPABILITY_REGISTRY: Readonly<Record<AccessProviderId, ProviderRegistration>> = Object.freeze({
+export const PROVIDER_CAPABILITY_REGISTRY: Readonly<Record<CommercialAccessProviderId, ProviderRegistration>> = Object.freeze({
   expedia: Object.freeze({
     providerId: 'expedia',
     displayName: 'Expedia Rapid (lodging sandbox)',
     integrationState: 'SANDBOX_AVAILABLE',
     capabilities: sandboxCapabilities(),
-    categories: Object.freeze(['HOUSING_ROOM_NIGHTS', 'TRAVEL', 'VEHICLE_HOURS'] as const),
+    categories: ['HOUSING_ROOM_NIGHTS', 'TRAVEL', 'VEHICLE_HOURS'],
   }),
   turo: Object.freeze({
     providerId: 'turo',
@@ -78,7 +79,7 @@ export const PROVIDER_CAPABILITY_REGISTRY: Readonly<Record<AccessProviderId, Pro
       ['CATALOG_SEARCH', 'AVAILABILITY', 'QUOTE', 'RESERVE', 'BOOK', 'CANCEL', 'FULFILLMENT_STATUS', 'WEBHOOKS'],
       'production booking requires partner approval',
     ),
-    categories: Object.freeze(['VEHICLE_HOURS'] as const),
+    categories: ['VEHICLE_HOURS'],
   }),
   doordash: Object.freeze({
     providerId: 'doordash',
@@ -88,7 +89,7 @@ export const PROVIDER_CAPABILITY_REGISTRY: Readonly<Record<AccessProviderId, Pro
       ['CATALOG_SEARCH', 'AVAILABILITY', 'QUOTE', 'FULFILLMENT_STATUS', 'WEBHOOKS'],
       'marketplace ordering scope not assumed; delivery fulfillment candidate only',
     ),
-    categories: Object.freeze(['FOOD'] as const),
+    categories: ['FOOD'],
   }),
   amazon: Object.freeze({
     providerId: 'amazon',
@@ -98,7 +99,7 @@ export const PROVIDER_CAPABILITY_REGISTRY: Readonly<Record<AccessProviderId, Pro
       ['CATALOG_SEARCH', 'AVAILABILITY', 'QUOTE', 'BOOK', 'FULFILLMENT_STATUS', 'WEBHOOKS'],
       'commerce integration requires scoped partner contract',
     ),
-    categories: Object.freeze(['GOODS', 'FOOD'] as const),
+    categories: ['GOODS', 'FOOD'],
   }),
   airbnb: Object.freeze({
     providerId: 'airbnb',
@@ -108,55 +109,13 @@ export const PROVIDER_CAPABILITY_REGISTRY: Readonly<Record<AccessProviderId, Pro
       ['CATALOG_SEARCH', 'AVAILABILITY', 'QUOTE', 'RESERVE', 'BOOK', 'CANCEL', 'WEBHOOKS'],
       'production connectivity requires partner-scoped access',
     ),
-    categories: Object.freeze(['HOUSING_ROOM_NIGHTS', 'EXPERIENCES'] as const),
-  }),
-  gbfs_mobility: Object.freeze({
-    providerId: 'gbfs_mobility',
-    displayName: 'GBFS Mobility (discovery)',
-    integrationState: 'DOCUMENTED_NOT_CONNECTED',
-    capabilities: partnerGatedCapabilities(['CATALOG_SEARCH'], 'discovery-only fixture'),
-    categories: Object.freeze(['VEHICLE_HOURS', 'TRANSPORTATION'] as const),
-  }),
-  travel_discovery: Object.freeze({
-    providerId: 'travel_discovery',
-    displayName: 'Travel Discovery (fixture)',
-    integrationState: 'DOCUMENTED_NOT_CONNECTED',
-    capabilities: partnerGatedCapabilities(['CATALOG_SEARCH'], 'discovery-only fixture'),
-    categories: Object.freeze(['TRAVEL'] as const),
-  }),
-  experiences_discovery: Object.freeze({
-    providerId: 'experiences_discovery',
-    displayName: 'Experiences Discovery (fixture)',
-    integrationState: 'DOCUMENTED_NOT_CONNECTED',
-    capabilities: partnerGatedCapabilities(['CATALOG_SEARCH'], 'discovery-only fixture'),
-    categories: Object.freeze(['EXPERIENCES'] as const),
-  }),
-  hotels_discovery: Object.freeze({
-    providerId: 'hotels_discovery',
-    displayName: 'Hotels Discovery (fixture)',
-    integrationState: 'DOCUMENTED_NOT_CONNECTED',
-    capabilities: partnerGatedCapabilities(['CATALOG_SEARCH'], 'discovery-only fixture'),
-    categories: Object.freeze(['HOUSING_ROOM_NIGHTS'] as const),
-  }),
-  transportation_discovery: Object.freeze({
-    providerId: 'transportation_discovery',
-    displayName: 'Transportation Discovery (fixture)',
-    integrationState: 'DOCUMENTED_NOT_CONNECTED',
-    capabilities: partnerGatedCapabilities(['CATALOG_SEARCH'], 'discovery-only fixture'),
-    categories: Object.freeze(['TRANSPORTATION', 'TRAVEL'] as const),
-  }),
-  compute_discovery: Object.freeze({
-    providerId: 'compute_discovery',
-    displayName: 'Compute Discovery (fixture)',
-    integrationState: 'DOCUMENTED_NOT_CONNECTED',
-    capabilities: partnerGatedCapabilities(['CATALOG_SEARCH'], 'discovery-only fixture'),
-    categories: Object.freeze(['COMPUTE'] as const),
+    categories: ['HOUSING_ROOM_NIGHTS', 'EXPERIENCES'],
   }),
 });
 
 export class ProviderCapabilityRegistry {
   get(providerId: AccessProviderId): ProviderRegistration | null {
-    return PROVIDER_CAPABILITY_REGISTRY[providerId] ?? null;
+    return (PROVIDER_CAPABILITY_REGISTRY as Partial<Record<AccessProviderId, ProviderRegistration>>)[providerId] ?? null;
   }
 
   list(): readonly ProviderRegistration[] {

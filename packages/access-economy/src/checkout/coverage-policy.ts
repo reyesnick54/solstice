@@ -5,7 +5,7 @@
  * hard-coded in the engine; policies are registered and versioned.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
 import type { AccessCostClassification } from './types.ts';
 import type { ProviderQuoteCostLine } from './types.ts';
 
@@ -49,7 +49,7 @@ function mobilityDefaultPolicy(): AccessCheckoutCoveragePolicy {
     version: 'v1',
     category: 'MOBILITY',
     enabled: true,
-    effectiveFrom: '2026-01-01T00:00:00.000Z' as UtcInstant,
+    effectiveFrom: asUtcInstant('2026-01-01T00:00:00.000Z'),
     eligibleCostTypes: DEFAULT_ELIGIBLE_COST_TYPES,
     taxPolicy: 'ACCESS_ELIGIBLE',
     mandatoryFeePolicy: 'ACCESS_ELIGIBLE',
@@ -72,7 +72,7 @@ function stayDefaultPolicy(): AccessCheckoutCoveragePolicy {
     version: 'v1',
     category: 'STAY',
     enabled: true,
-    effectiveFrom: '2026-01-01T00:00:00.000Z' as UtcInstant,
+    effectiveFrom: asUtcInstant('2026-01-01T00:00:00.000Z'),
     eligibleCostTypes: DEFAULT_ELIGIBLE_COST_TYPES,
     taxPolicy: 'ACCESS_ELIGIBLE',
     mandatoryFeePolicy: 'ACCESS_ELIGIBLE',
@@ -95,7 +95,7 @@ function foodDefaultPolicy(): AccessCheckoutCoveragePolicy {
     version: 'v1',
     category: 'FOOD',
     enabled: true,
-    effectiveFrom: '2026-01-01T00:00:00.000Z' as UtcInstant,
+    effectiveFrom: asUtcInstant('2026-01-01T00:00:00.000Z'),
     eligibleCostTypes: DEFAULT_ELIGIBLE_COST_TYPES,
     taxPolicy: 'ACCESS_ELIGIBLE',
     mandatoryFeePolicy: 'POLICY_EVALUATED',
@@ -118,7 +118,7 @@ function goodsDefaultPolicy(): AccessCheckoutCoveragePolicy {
     version: 'v1',
     category: 'GOODS',
     enabled: true,
-    effectiveFrom: '2026-01-01T00:00:00.000Z' as UtcInstant,
+    effectiveFrom: asUtcInstant('2026-01-01T00:00:00.000Z'),
     eligibleCostTypes: DEFAULT_ELIGIBLE_COST_TYPES,
     taxPolicy: 'ACCESS_ELIGIBLE',
     mandatoryFeePolicy: 'POLICY_EVALUATED',

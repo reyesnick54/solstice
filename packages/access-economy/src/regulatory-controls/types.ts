@@ -10,7 +10,6 @@ import type {
   AccessDisputeCategory,
   AccessEconomicClassification,
   AccessFundingSourceClassification,
-  ForbiddenAccessEconomicClassification,
   AccessGlAccountRole,
   AccessJurisdictionPolicyDimension,
   AccessLiabilityRecognitionStage,
@@ -21,8 +20,6 @@ import type {
   AccessTreasuryExposureStatus,
   AccessTreasuryOperationalState,
 } from './taxonomy.ts';
-
-export type { AccessGlAccountRole, AccessTreasuryExposureStatus } from './taxonomy.ts';
 
 export type AccessDisclosureId = string;
 export type AccessDisclosureVersion = string;
@@ -42,6 +39,9 @@ export type AccessEconomicPosture = {
   readonly isGuaranteedFiatRedemption: false;
   readonly isTokenRedemption: false;
 };
+
+export type ForbiddenAccessEconomicClassification =
+  import('./taxonomy.ts').ForbiddenAccessEconomicClassification;
 
 export type AccessAccountingEvent = {
   readonly eventId: AccessAccountingEventId;
@@ -251,3 +251,8 @@ export type AccessServiceFee = {
   readonly explicit: true;
   readonly waived: boolean;
 };
+
+export type {
+  AccessGlAccountRole,
+  AccessTreasuryExposureStatus,
+} from './taxonomy.ts';

@@ -182,8 +182,8 @@ export class AccessSolvencyService {
     return this.fundingReservations;
   }
 
-  expireFundingReservations(now: UtcInstant): readonly import('./types.ts').AccessFundingReservation[] {
-    return this.fundingReservations.listExpiredReservations(now);
+  expireFundingReservations(now: UtcInstant): void {
+    this.fundingReservations.expireReservations(now);
   }
 }
 

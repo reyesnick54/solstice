@@ -244,7 +244,7 @@ export class AccessFundingReservationStore {
     );
   }
 
-  listExpiredReservations(now: UtcInstant): readonly AccessFundingReservation[] {
+  listStaleReservations(now: UtcInstant): readonly AccessFundingReservation[] {
     return Object.freeze(
       [...this.reservations.values()].filter(
         (row) => row.status === 'RESERVED' && row.expiresAt <= now,

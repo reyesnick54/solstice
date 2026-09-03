@@ -20,7 +20,8 @@ export function evaluatePaymentProviderGate(input: {
       ? input.state === 'SANDBOX_ONLY' || input.state === 'APPROVED_FOR_PRODUCTION'
       : input.state === 'APPROVED_FOR_PRODUCTION' &&
         input.credentialsValid &&
-        input.complianceReady;
+        input.complianceReady &&
+        environment !== 'simulation';
 
   return Object.freeze({
     paymentProviderId: input.paymentProviderId,

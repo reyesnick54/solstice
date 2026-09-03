@@ -12,6 +12,7 @@ export {
 } from './state-machine.ts';
 
 export type {
+  AccessCheckoutQuote as AccessTransactionCheckoutQuote,
   AccessFulfillmentEvidence,
   AccessReconciliationIssue,
   AccessReconciliationIssueType,

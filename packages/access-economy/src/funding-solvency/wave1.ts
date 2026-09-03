@@ -15,7 +15,6 @@ import {
   runDualTokenAllocation,
 } from '../dual-token-allocation/engine.ts';
 import { TOKEN_CONVERSION_CONTRIBUTION } from './taxonomy.ts';
-import type { RunAllocationInput } from '../dual-token-allocation/engine.ts';
 import type { AccessWave1Result } from './types.ts';
 import type { AccessSolvencyService } from './solvency-service.ts';
 
@@ -50,9 +49,9 @@ export function runAccessWave1(input: RunAccessWave1Input): AccessWave1Result {
     participants: demoParticipants(),
     supply: demoSupply(),
     pools: demoPools(epoch.epochId),
-    categories: (input.categories ?? ['MOBILITY', 'STAY']) as NonNullable<
-      RunAllocationInput['categories']
-    >,
+    categories: (input.categories ?? ['MOBILITY', 'STAY']) as Parameters<
+      typeof runDualTokenAllocation
+    >[0]['categories'],
   });
 
   const entitlementLedger = input.service.getEntitlementLedger();
@@ -78,12 +77,7 @@ export function runAccessWave1(input: RunAccessWave1Input): AccessWave1Result {
     evidenceReferences.push(`evidence:allocation:${entitlement.entitlementId}`);
   }
 
-  const fundingPools: {
-    readonly category: string;
-    readonly fundingPoolId: string;
-    readonly availableFundingMinorUnits: bigint;
-    readonly currency: string;
-  }[] = [];
+  const fundingPools: Array<AccessWave1Result['fundingPools'][number]> = [];
   const categories = input.categories ?? ['MOBILITY', 'STAY'];
 
   for (const category of categories) {

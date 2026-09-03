@@ -15,14 +15,20 @@ import { AccessPaymentRail } from './payment-rail.ts';
 import { createAccessTransactionOrchestrator } from './orchestrator.ts';
 import type { OrchestratorOutcome } from './types.ts';
 
-export const WAVE3_NOW = asUtcInstant('2026-08-31T08:00:00.000Z');
-
 export function requireOrchestratorValue<T>(outcome: OrchestratorOutcome<T>): T {
   if (!outcome.ok) {
-    throw new Error(`expected orchestrator success: ${outcome.code} ${outcome.message}`);
+    throw new Error(`${outcome.code}: ${outcome.message}`);
   }
   return outcome.value;
 }
+
+export function isOrchestratorOk<T>(
+  outcome: OrchestratorOutcome<T>,
+): outcome is { readonly ok: true; readonly value: T; readonly idempotent?: true } {
+  return outcome.ok;
+}
+
+export const WAVE3_NOW = asUtcInstant('2026-08-31T08:00:00.000Z');
 export const WAVE3_USER = accessUserIdFor('mustang-user');
 export const WAVE3_EXPIRES = asUtcInstant('2026-09-01T12:00:00.000Z');
 

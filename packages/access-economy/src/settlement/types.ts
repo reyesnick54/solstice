@@ -1,7 +1,8 @@
 /**
- * ACCESS Wave 3 — Fiat settlement (Prompt 35) and restricted virtual-card (Prompt 36) types.
+ * ACCESS Wave 3 — Fiat settlement and restricted virtual-card settlement types.
  */
 
+import type { IssuerControlSupport } from './issuer-port.ts';
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import type {
   AccessDomainEntitlementId,
@@ -15,7 +16,6 @@ import type {
 import type { AccessCategoryId, AccessUnit } from '../domain/taxonomy.ts';
 import type { ProviderRef } from '../ids.ts';
 import type { AccessCardBufferPolicy } from './buffer-policy.ts';
-import type { IssuerControlSupport } from './issuer-port.ts';
 import type {
   AccessCardLifecycleEvent,
   AccessPaymentRailCapability,

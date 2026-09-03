@@ -25,8 +25,8 @@ export type AppendEntitlementEntryInput = {
   readonly direction: EntitlementDirection;
   readonly entryType: EntitlementLedgerEntryType;
   readonly transactionReference: string;
-  readonly allocationReference?: string | null;
-  readonly reservationReference?: string | null;
+  readonly allocationReference?: string;
+  readonly reservationReference?: string;
   readonly evidenceReference: string;
   readonly createdAt: UtcInstant;
   readonly idempotencyKey?: string;
@@ -179,7 +179,6 @@ export class AccessEntitlementLedger {
       ...input,
       direction: 'DEBIT',
       entryType: 'RESERVATION',
-      allocationReference: null,
       createdAt: input.createdAt ?? asUtcInstant(new Date().toISOString()),
     });
   }
@@ -200,7 +199,6 @@ export class AccessEntitlementLedger {
       ...input,
       direction: 'CREDIT',
       entryType: 'RESERVATION_RELEASE',
-      allocationReference: null,
       createdAt: input.createdAt ?? asUtcInstant(new Date().toISOString()),
     });
   }
@@ -221,7 +219,6 @@ export class AccessEntitlementLedger {
       ...input,
       direction: 'DEBIT',
       entryType: 'REDEMPTION',
-      allocationReference: null,
       createdAt: input.createdAt ?? asUtcInstant(new Date().toISOString()),
     });
   }
@@ -241,8 +238,6 @@ export class AccessEntitlementLedger {
       ...input,
       direction: 'CREDIT',
       entryType: 'REVERSAL',
-      reservationReference: null,
-      allocationReference: null,
       createdAt: input.createdAt ?? asUtcInstant(new Date().toISOString()),
     });
   }
@@ -262,8 +257,6 @@ export class AccessEntitlementLedger {
       ...input,
       direction: 'DEBIT',
       entryType: 'EXPIRATION',
-      reservationReference: null,
-      allocationReference: null,
       createdAt: input.createdAt ?? asUtcInstant(new Date().toISOString()),
     });
   }

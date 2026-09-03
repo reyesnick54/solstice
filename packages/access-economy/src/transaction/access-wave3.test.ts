@@ -11,8 +11,8 @@ import { AccessWebhookOrchestrator } from './webhook-orchestrator.ts';
 import { allocateRefund } from './refund-policy.ts';
 import {
   createWave3TestStack,
-  requireOrchestratorValue,
   mustangProviderQuote,
+  requireOrchestratorValue,
   seedMobilityEntitlement,
   seedMobilityFundingPool,
   WAVE3_NOW,
@@ -275,8 +275,7 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       now: WAVE3_NOW,
     });
     assert.equal(requireOrchestratorValue(start1).transactionId, requireOrchestratorValue(start2).transactionId);
-    assert.equal(start2.ok, true);
-    if (start2.ok) assert.equal(start2.idempotent, true);
+    assert.equal(start2.ok && start2.idempotent === true, true);
   });
 
   it('F: duplicate booking webhook is idempotent', async () => {
@@ -294,11 +293,10 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       occurredAt: WAVE3_NOW,
       payloadReference: 'payload:1',
     };
-    const first = await webhook.handle(event);
-    assert.equal(first.ok, true);
+    assert.equal((await webhook.handle(event)).ok, true);
     const dup = await webhook.handle(event);
     assert.equal(dup.ok, true);
-    if (dup.ok) assert.equal(dup.duplicate, true);
+    assert.equal(dup.ok && dup.duplicate === true, true);
   });
 
   it('G: duplicate capture webhook is idempotent', async () => {
@@ -343,7 +341,7 @@ describe('ACCESS Wave 3 failure scenarios', () => {
     });
     assert.equal(cap1.ok, true);
     assert.equal(cap2.ok, true);
-    assert.equal(cap2.idempotent, true);
+    assert.equal(cap2.ok && cap2.idempotent === true, true);
   });
 
   it('H: provider price increase triggers requote required', async () => {
@@ -595,7 +593,7 @@ describe('ACCESS Wave 3 failure scenarios', () => {
     });
     await stack.orchestrator.reserve({ transactionId: txId, userApproved: true, idempotencyKey: 'ooo-res', now: WAVE3_NOW });
     const webhook = new AccessWebhookOrchestrator(stack.orchestrator);
-    webhook.handle({
+    await webhook.handle({
       webhookEventId: 'wh-captured-first',
       source: 'PAYMENT',
       providerId: null,
@@ -606,7 +604,7 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       occurredAt: WAVE3_NOW,
       payloadReference: 'payload:captured',
     });
-    webhook.handle({
+    await webhook.handle({
       webhookEventId: 'wh-authorized-late',
       source: 'PAYMENT',
       providerId: null,

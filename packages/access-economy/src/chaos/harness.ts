@@ -5,7 +5,7 @@
 import { asUtcInstant } from '../../../domain/src/time.ts';
 import { buildQuote } from '../providers/adapters/shared.ts';
 import type { ProviderQuote } from '../providers/types.ts';
-import { createWave3TestStack, seedMobilityEntitlement, seedMobilityFundingPool, WAVE3_NOW, WAVE3_USER, withFutureQuoteExpiry } from '../transaction/test-harness.ts';
+import { createWave3TestStack, requireOrchestratorValue, seedMobilityEntitlement, seedMobilityFundingPool, WAVE3_NOW, WAVE3_USER, withFutureQuoteExpiry } from '../transaction/test-harness.ts';
 import type { AccessTransactionOrchestrator } from '../transaction/orchestrator.ts';
 import type { ConfigurableSimulationProvider } from '../transaction/simulation-provider.ts';
 import type { AccessSolvencyService } from '../funding-solvency/solvency-service.ts';
@@ -83,7 +83,7 @@ export async function startMobilityTx(
     throw new Error(`start failed: ${start.message}`);
   }
   return Object.freeze({
-    txId: start.value!.transactionId,
+    txId: requireOrchestratorValue(start).transactionId,
     entitlementId,
     poolId,
   });

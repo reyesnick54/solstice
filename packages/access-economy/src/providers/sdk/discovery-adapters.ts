@@ -6,7 +6,7 @@
  */
 
 import type { AccessCapacityCategory } from '../../taxonomy.ts';
-import type { AccessProviderId, AccessProviderOutcome } from '../types.ts';
+import type { AccessProviderId, DiscoveryAccessProviderId, AccessProviderOutcome } from '../types.ts';
 import type { AccessProvider, AccessProviderRuntimeContext } from './contract.ts';
 import { ACCESS_PROVIDER_DESCRIPTORS } from './descriptors.ts';
 import { createHealthSnapshot } from './health.ts';
@@ -34,7 +34,7 @@ type DiscoveryFixture = {
   readonly keywords: readonly string[];
 };
 
-const FIXTURES: Readonly<Record<AccessProviderId, readonly DiscoveryFixture[]>> = Object.freeze({
+const FIXTURES: Readonly<Record<DiscoveryAccessProviderId, readonly DiscoveryFixture[]>> = Object.freeze({
   gbfs_mobility: Object.freeze([
     {
       productId: 'gbfs_bike_miami',
@@ -134,7 +134,7 @@ const FIXTURES: Readonly<Record<AccessProviderId, readonly DiscoveryFixture[]>> 
   doordash: Object.freeze([]),
   amazon: Object.freeze([]),
   airbnb: Object.freeze([]),
-}) as Readonly<Record<AccessProviderId, readonly DiscoveryFixture[]>>;
+});
 
 function matchFixture(fixture: DiscoveryFixture, request: AccessInventorySearchRequest): boolean {
   if (fixture.category !== request.category) {

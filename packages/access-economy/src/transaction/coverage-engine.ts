@@ -5,16 +5,16 @@
  * to produce deterministic checkout quotes. Users cannot override splits.
  */
 
+import type { AccessSolvencyService } from '../funding-solvency/solvency-service.ts';
 import { accessEvidenceRefFor } from '../domain/ids.ts';
 import type { AccessCategoryId, AccessUnit } from '../domain/taxonomy.ts';
 import { providerRefFor } from '../ids.ts';
 import { resolveCoveragePolicy } from '../providers/coverage-policy.ts';
 import type { ProviderQuote } from '../providers/types.ts';
 import { TOKEN_CONVERSION_CONTRIBUTION } from '../funding-solvency/taxonomy.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
-import type { AccessSolvencyService } from '../funding-solvency/solvency-service.ts';
 import type { AccessCheckoutQuote } from './types.ts';
 import type { AccessDomainQuoteId, AccessDomainTransactionId } from '../domain/ids.ts';
+import type { UtcInstant } from '../../../domain/src/time.ts';
 
 export type CoverageEngineInput = {
   readonly transactionId: AccessDomainTransactionId;
@@ -103,7 +103,7 @@ export class AccessTransactionCoverageEngine {
       tokenConversionContributionMinorUnits: TOKEN_CONVERSION_CONTRIBUTION,
       entitlementUnitsReserved: policyDecision.entitlementUnitsConsumed,
       currency: input.providerQuote.currency,
-      expiresAt: input.providerQuote.expiresAt as UtcInstant,
+      expiresAt: input.providerQuote.expiresAt,
       providerQuoteReference: input.providerQuote.quoteId,
       coveragePolicyId: policy.policyId,
       coveragePolicyVersion: policy.version,

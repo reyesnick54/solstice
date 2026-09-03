@@ -315,7 +315,7 @@ export {
 export { AccessFabric } from './service.ts';
 export * from './productive-access-bridge/index.ts';
 export * from './providers/index.ts';
-export * as DiscoveryWave2 from './discovery/index.ts';
+export * from './discovery/index.ts';
 export * from './participation/index.ts';
 export * from './hin-access/index.ts';
 export * from './solvency/index.ts';
@@ -323,6 +323,7 @@ export * from './dual-token-allocation/index.ts';
 export * from './funding-solvency/index.ts';
 export * from './allocation-engine/index.ts';
 export * from './transaction/index.ts';
+export * from './settlement/index.ts';
 export * from './checkout/index.ts';
 export * as AccessDomain from './domain/index.ts';
 export * from './regulatory-controls/index.ts';

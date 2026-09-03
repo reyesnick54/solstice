@@ -651,14 +651,18 @@ export class AccessTransactionOrchestrator {
     }
 
     if (this.simulationProvider && context.status === 'RECONCILIATION_REQUIRED') {
-      const status = this.simulationProvider.getBookingStatus({
-        ...(context.providerReservationReference != null
+      const statusInput: {
+        readonly reservationId?: string;
+        readonly idempotencyKey?: string;
+      } = {
+        ...(context.providerReservationReference !== null
           ? { reservationId: context.providerReservationReference }
           : {}),
         ...(context.idempotencyKeys['book'] !== undefined
           ? { idempotencyKey: context.idempotencyKeys['book'] }
           : {}),
-      });
+      };
+      const status = this.simulationProvider.getBookingStatus(statusInput);
       if (status.ok && status.value.state === 'CONFIRMED') {
         const transitioned = await awaitTransition(this.store, context.transactionId, 'BOOKED', {
           providerBookingReference: status.value.bookingId,

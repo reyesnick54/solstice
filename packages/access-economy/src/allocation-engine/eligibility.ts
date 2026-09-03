@@ -10,7 +10,6 @@ import type {
   ParticipantAllocationInput,
   ParticipantWeightResult,
 } from './types.ts';
-export type { EligibilityPort } from './types.ts';
 import type { AccessAllocationCategory } from '../dual-token-allocation/types.ts';
 
 export type EligibilityCheckInput = {

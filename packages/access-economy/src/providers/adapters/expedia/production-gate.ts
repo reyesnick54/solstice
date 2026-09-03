@@ -45,6 +45,9 @@ export function expediaProductionGateChecklist(): ExpediaProductionGateChecklist
   });
 }
 
-export function canEnableExpediaLive(_checklist: ExpediaProductionGateChecklist): boolean {
-  return false;
+export function canEnableExpediaLive(checklist: ExpediaProductionGateChecklist): boolean {
+  if (checklist.liveEnabled !== false) {
+    return false;
+  }
+  return checklist.requirements.every((row) => row.satisfied === true);
 }

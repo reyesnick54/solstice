@@ -115,7 +115,7 @@ function availabilityBody(propertyId: string, nights: number, nightlyMinorUnits:
 }
 
 export class FixtureExpediaSandboxTransport implements ExpediaProviderTransport {
-  readonly kind: ExpediaProviderTransport['kind'] = 'FIXTURE_SANDBOX';
+  readonly kind = 'FIXTURE_SANDBOX' as const;
   readonly networkEnabled = false as const;
   private readonly idempotentBookings = new Map<string, ExpediaTransportResponse>();
 
@@ -190,7 +190,7 @@ export class FixtureExpediaSandboxTransport implements ExpediaProviderTransport 
 }
 
 export class ScriptedExpediaSandboxTransport extends FixtureExpediaSandboxTransport {
-  override readonly kind: ExpediaProviderTransport['kind'] = 'SCRIPTED_SANDBOX';
+  readonly kind = 'SCRIPTED_SANDBOX' as const;
   private readonly scripts = new Map<string, ScriptedExpediaOutcome>();
 
   script(key: string, outcome: ScriptedExpediaOutcome): void {

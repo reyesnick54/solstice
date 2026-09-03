@@ -23,14 +23,14 @@ import type {
 } from './taxonomy.ts';
 
 export type {
-  AccessFundingReservationStatus,
-  AccessFundingSourceType,
-  EntitlementDirection,
   EntitlementLedgerEntryType,
+  EntitlementDirection,
+  FundingLedgerEntryType,
+  FundingDirection,
+  AccessFundingSourceType,
+  AccessFundingReservationStatus,
   FundedCapacityState,
   FundingCategoryPolicy,
-  FundingDirection,
-  FundingLedgerEntryType,
   SolvencyStatus,
 } from './taxonomy.ts';
 
