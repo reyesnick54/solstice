@@ -6,7 +6,8 @@
  */
 
 import type { AccessCapacityCategory } from '../../taxonomy.ts';
-import type { AccessProviderId, DiscoveryAccessProviderId, AccessProviderOutcome } from '../types.ts';
+import type { AccessProviderId, AccessProviderOutcome } from '../types.ts';
+import type { DiscoveryAccessProviderId } from '../types.ts';
 import type { AccessProvider, AccessProviderRuntimeContext } from './contract.ts';
 import { ACCESS_PROVIDER_DESCRIPTORS } from './descriptors.ts';
 import { createHealthSnapshot } from './health.ts';
@@ -175,7 +176,7 @@ function fixtureToOpportunity(providerId: AccessProviderId, fixture: DiscoveryFi
 }
 
 export class DiscoveryAccessProvider implements AccessInventoryProvider {
-  readonly id: AccessProviderId;
+  readonly id: DiscoveryAccessProviderId;
   readonly descriptor;
   private healthy = true;
   private simulateDown = false;
@@ -221,8 +222,8 @@ export class DiscoveryAccessProvider implements AccessInventoryProvider {
     if (this.simulate429) {
       return fail('RATE_LIMITED', `${this.id} returned 429`);
     }
-    const fixtures = FIXTURES[this.id] ?? [];
-    const matched = fixtures.filter((fixture) => matchFixture(fixture, request)).slice(0, request.limit);
+    const fixtures = FIXTURES[this.id];
+    const matched = fixtures.filter((fixture: DiscoveryFixture) => matchFixture(fixture, request)).slice(0, request.limit);
     if (matched.length === 0) {
       return fail('NO_MATCH', 'no discovery items matched search');
     }
@@ -236,8 +237,8 @@ export class DiscoveryAccessProvider implements AccessInventoryProvider {
   }
 
   getAvailability(request: import('./interfaces.ts').AccessAvailabilityRequest): AccessProviderOutcome<import('./interfaces.ts').AccessAvailabilityResult> {
-    const fixtures = FIXTURES[this.id] ?? [];
-    const found = fixtures.find((fixture) => fixture.productId === request.productId);
+    const fixtures = FIXTURES[this.id];
+    const found = fixtures.find((fixture: DiscoveryFixture) => fixture.productId === request.productId);
     if (!found) {
       return fail('NOT_FOUND', 'product not found');
     }
@@ -265,10 +266,7 @@ export class DiscoveryAccessProvider implements AccessInventoryProvider {
   }
 }
 
-export type DiscoveryAccessProviderId = Extract<
-  AccessProviderId,
-  'gbfs_mobility' | 'travel_discovery' | 'experiences_discovery' | 'hotels_discovery' | 'transportation_discovery' | 'compute_discovery'
->;
+export type { DiscoveryAccessProviderId } from '../types.ts';
 
 export function createDiscoveryProvider(providerId: DiscoveryAccessProviderId): DiscoveryAccessProvider {
   return new DiscoveryAccessProvider(providerId);

@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { asUtcInstant } from '../../../domain/src/time.ts';
+import { asAccessDomainTransactionId } from '../domain/ids.ts';
 import { isLinkLocalOrMetadata, isLoopbackHostname, isPrivateIpv4, parseDestination } from '../../../provider-sdk/src/ssrf.ts';
 import { TOKEN_CONVERSION_CONTRIBUTION } from '../funding-solvency/taxonomy.ts';
 import { AccessReconciliationService } from '../transaction/reconciliation.ts';
@@ -223,7 +224,7 @@ describe('ACCESS Prompt 41 — failure compensation', () => {
     await quoteCheckout(stack, { txId, idempotencyKey: 'lost-q' });
     await stack.orchestrator.reserve({ transactionId: txId, userApproved: true, idempotencyKey: 'lost-r', now: CHAOS_NOW });
     const book = await stack.orchestrator.book({ transactionId: txId, idempotencyKey: 'lost-book', now: CHAOS_NOW });
-    assert.equal(book.value?.status, 'RECONCILIATION_REQUIRED');
+    assert.equal(requireOrchestratorValue(book).status, 'RECONCILIATION_REQUIRED');
     const reconciled = await stack.orchestrator.reconcile({ transactionId: txId, idempotencyKey: 'lost-recon', now: CHAOS_NOW });
     assert.equal(reconciled.ok, true);
     assert.equal(requireOrchestratorValue(reconciled).status, 'BOOKED');
@@ -274,7 +275,7 @@ describe('ACCESS Prompt 41 — webhooks', () => {
       webhookEventId: 'wh_cap',
       source: 'PAYMENT' as const,
       providerId: null,
-      transactionId: txId,
+      transactionId: asAccessDomainTransactionId(txId),
       kind: 'PAYMENT_CAPTURED' as const,
       idempotencyKey: 'dup-cap-wh',
       signatureVerified: true,
@@ -294,7 +295,7 @@ describe('ACCESS Prompt 41 — webhooks', () => {
       webhookEventId: 'wh_book',
       source: 'PROVIDER' as const,
       providerId: 'turo' as const,
-      transactionId: txId,
+      transactionId: asAccessDomainTransactionId(txId),
       kind: 'BOOKING_CONFIRMED' as const,
       idempotencyKey: 'dup-book-wh',
       signatureVerified: true,

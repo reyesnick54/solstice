@@ -235,6 +235,7 @@ export class FiatAccessSettlementOrchestrator {
         }
       } else {
         updated = this.updateSettlement(updated, {
+          status: updated.status,
           entitlementReservationId: entResult.reservation.entitlementReservationId,
           evidence: {
             ...updated.evidence,
@@ -377,6 +378,7 @@ export class FiatAccessSettlementOrchestrator {
     }
 
     updated = this.updateSettlement(updated, {
+      status: updated.status,
       evidence: { ...updated.evidence, complianceRef: compliance.evidenceReference },
       updatedAt: input.now,
     });
@@ -725,6 +727,7 @@ export class FiatAccessSettlementOrchestrator {
       });
       if ('ok' in voidResult && voidResult.ok) {
         updated = this.updateSettlement(updated, {
+          status: updated.status,
           evidence: { ...updated.evidence, voidRef: voidResult.evidenceReference },
         });
       }

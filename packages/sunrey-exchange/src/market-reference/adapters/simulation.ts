@@ -21,6 +21,7 @@ import type {
   CommodityCode,
   HistoryInterval,
   MarketReferenceCapability,
+  MarketReferenceQuote,
   MarketReferenceResult,
 } from '../types.ts';
 
@@ -90,7 +91,10 @@ export class SimulationMarketReferenceAdapter implements MarketReferenceProvider
     });
   }
 
-  async getQuotes(assetIds: readonly string[], nowUtc: UtcInstant) {
+  async getQuotes(
+    assetIds: readonly string[],
+    nowUtc: UtcInstant,
+  ): Promise<MarketReferenceResult<readonly MarketReferenceQuote[]>> {
     const quotes = [];
     for (const assetId of assetIds) {
       const result = await this.getQuote(assetId, nowUtc);

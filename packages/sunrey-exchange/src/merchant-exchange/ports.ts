@@ -45,12 +45,12 @@ export class SimulatedMerchantPaymentPort implements MerchantPaymentPort {
     this.providerAvailable = providerAvailable;
   }
 
-  requestAuthorization(input: {
+  async requestAuthorization(input: {
     readonly purchase: MerchantPurchase;
     readonly intent: PurchaseIntent;
     readonly userId: string;
     readonly now: UtcInstant;
-  }): PaymentAuthorizationResult | Promise<PaymentAuthorizationResult> {
+  }): Promise<PaymentAuthorizationResult> {
     if (!this.providerAvailable) {
       return { outcome: 'PROVIDER_UNAVAILABLE' };
     }

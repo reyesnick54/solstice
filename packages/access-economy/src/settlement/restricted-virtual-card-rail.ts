@@ -182,7 +182,9 @@ export class RestrictedVirtualCardAccessRail implements AccessPaymentRail {
       now: input.now,
       aggregateAuthorizedMinorUnits: aggregate,
       authorizationCount: approvedAuths.length,
-      securityDepositAttempt: input.securityDepositAttempt,
+      ...(input.securityDepositAttempt !== undefined
+        ? { securityDepositAttempt: input.securityDepositAttempt }
+        : {}),
     });
 
     const authorizationId = `auth_${randomUUID()}`;

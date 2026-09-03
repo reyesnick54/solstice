@@ -12,6 +12,7 @@ import {
   computeSolvencySlices,
   createQuotedLiability,
   createSimulationSolvencyPorts,
+  InMemorySettlementReservePort,
   evaluatePoolAdmission,
   projectConsumerAvailability,
   runAllStressScenarios,
@@ -60,7 +61,7 @@ function seedPaymentsReserve(
   ports: ReturnType<typeof createSimulationSolvencyPorts>,
   amount: bigint,
 ): void {
-  ports.payments.seed(
+  (ports.payments as InMemorySettlementReservePort).seed(
     Object.freeze({
       positionId: 'reserve_expedia_usd',
       currency: 'USD',

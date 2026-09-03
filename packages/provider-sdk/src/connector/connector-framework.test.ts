@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { asUtcInstant } from '../../../domain/src/time.ts';
 import {
   buildDeduplicationKey,
   buildExternalObservation,
@@ -161,8 +162,8 @@ describe('Wave 4 provider connector framework', () => {
       data: { value: 100 },
       source: { provider: 'national-grid-eso', dataset: 'grid' },
       time: {
-        retrievedAt: '2026-01-01T00:00:01.000Z',
-        sourceTimestamp: '2026-01-01T00:00:00.000Z',
+        retrievedAt: asUtcInstant('2026-01-01T00:00:01.000Z'),
+        sourceTimestamp: asUtcInstant('2026-01-01T00:00:00.000Z'),
       },
       authorityClass: 'authoritative_official',
       provenance: {

@@ -1,3 +1,4 @@
+import { asJurisdiction } from '../../../domain/src/jurisdiction.ts';
 import { asUtcInstant } from '../../../domain/src/time.ts';
 import { allocationPolicyIdFor, providerRefFor } from '../ids.ts';
 import { freezeAccessGeography } from './geography.ts';
@@ -97,7 +98,7 @@ export function fixtureAccessCapacity(overrides?: Partial<Parameters<typeof buil
     providerId: FIXTURE_PROVIDER,
     geography: freezeAccessGeography({
       scope: 'COUNTRY',
-      countryCode: 'US',
+      countryCode: asJurisdiction('US'),
       regionRef: null,
       cityRef: null,
       facilityRef: null,

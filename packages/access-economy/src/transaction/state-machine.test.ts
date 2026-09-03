@@ -29,7 +29,9 @@ describe('AccessTransactionStateMachine', () => {
       'SETTLED',
     ] as const;
     for (let index = 1; index < path.length; index += 1) {
-      assert.equal(canTransitionAccessTransaction(path[index - 1], path[index]), true);
+      const from = path[index - 1]!;
+      const to = path[index]!;
+      assert.equal(canTransitionAccessTransaction(from, to), true);
     }
   });
 

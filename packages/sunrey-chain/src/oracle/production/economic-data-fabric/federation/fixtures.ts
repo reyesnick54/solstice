@@ -59,20 +59,20 @@ function metric(
 
 export const RESEARCH_RIGHTS_CONTEXT: FederationRightsContext = Object.freeze({
   licenseId: 'license.research.sim',
-  permittedPurposes: Object.freeze(['RESEARCH', 'FEDERATED_CORRELATION']),
-  permittedMaterialization: Object.freeze(['QUERIED_ONLY', 'CACHED']),
+  permittedPurposes: ['RESEARCH', 'FEDERATED_CORRELATION'] as const,
+  permittedMaterialization: ['QUERIED_ONLY', 'CACHED'] as const,
 });
 
 export const ECONOMIC_AWARENESS_RIGHTS_CONTEXT: FederationRightsContext = Object.freeze({
   licenseId: 'license.economic-awareness.sim',
-  permittedPurposes: Object.freeze(['ECONOMIC_AWARENESS', 'FEDERATED_CORRELATION']),
-  permittedMaterialization: Object.freeze(['QUERIED_ONLY', 'CACHED', 'OBSERVATION']),
+  permittedPurposes: ['ECONOMIC_AWARENESS', 'FEDERATED_CORRELATION'] as const,
+  permittedMaterialization: ['QUERIED_ONLY', 'CACHED', 'OBSERVATION'] as const,
 });
 
 export const VALUATION_RIGHTS_CONTEXT: FederationRightsContext = Object.freeze({
   licenseId: 'license.valuation.sim',
-  permittedPurposes: Object.freeze(['ECONOMIC_VALUATION']),
-  permittedMaterialization: Object.freeze(['QUERIED_ONLY', 'OBSERVATION']),
+  permittedPurposes: ['ECONOMIC_VALUATION'] as const,
+  permittedMaterialization: ['QUERIED_ONLY', 'OBSERVATION'] as const,
 });
 
 function baseRequest(input: {
@@ -102,7 +102,7 @@ function baseRequest(input: {
     }),
     geography: GEO,
     rightsContext: input.rightsContext,
-    allowPartial: input.allowPartial,
+    ...(input.allowPartial !== undefined ? { allowPartial: input.allowPartial } : {}),
   });
 }
 

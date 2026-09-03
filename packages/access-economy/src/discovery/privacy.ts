@@ -2,7 +2,7 @@
  * ACCESS Wave 2 Prompt 31 — privacy-safe discovery request shaping.
  */
 
-import type { AccessSearchRequest } from './types.ts';
+import type { AccessSearchRequest, DiscoveryGeography } from './types.ts';
 
 const FORBIDDEN_FILTER_KEYS = Object.freeze([
   'balance',
@@ -48,10 +48,12 @@ export function generalizeLocationForProvider(geography: {
   readonly latitude: number;
   readonly longitude: number;
   readonly radiusKm: number | null;
-}): { readonly latitude: number; readonly longitude: number; readonly radiusKm: number } {
+}): DiscoveryGeography {
   return Object.freeze({
     latitude: Math.round(geography.latitude * 100) / 100,
     longitude: Math.round(geography.longitude * 100) / 100,
     radiusKm: geography.radiusKm ?? 10,
+    countryCode: null,
+    regionCode: null,
   });
 }

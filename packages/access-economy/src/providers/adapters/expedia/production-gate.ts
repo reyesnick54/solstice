@@ -49,5 +49,5 @@ export function canEnableExpediaLive(checklist: ExpediaProductionGateChecklist):
   if (checklist.liveEnabled !== false) {
     return false;
   }
-  return checklist.requirements.every((row) => row.satisfied === true);
+  return checklist.requirements.every((row) => row.satisfied);
 }

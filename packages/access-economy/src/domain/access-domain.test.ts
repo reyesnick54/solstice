@@ -37,6 +37,7 @@ import {
   validateAccessSettlement,
   validateCapacityUnits,
   validateEntitlementUnits,
+  type AccessEntitlement,
 } from './index.ts';
 
 describe('ACCESS Wave 1 / Prompt 28 domain models', () => {
@@ -154,7 +155,7 @@ describe('ACCESS Wave 1 / Prompt 28 domain models', () => {
       ...entitlement,
       nonCash: { ...ACCESS_ENTITLEMENT_NON_CASH_FLAGS, isCash: true as const },
     };
-    assert.equal(validateAccessEntitlement(cashEntitlement)?.code, 'ENTITLEMENT_IS_NOT_CASH');
+    assert.equal(validateAccessEntitlement(cashEntitlement as AccessEntitlement)?.code, 'ENTITLEMENT_IS_NOT_CASH');
   });
 
   it('keeps provider references vendor-independent', () => {

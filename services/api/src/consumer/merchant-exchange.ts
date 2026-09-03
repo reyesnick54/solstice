@@ -7,7 +7,7 @@ import {
   type MerchantExchangeService,
 } from '../../../../packages/sunrey-exchange/src/merchant-exchange/index.ts';
 import { asUtcInstant } from '../../../../packages/domain/src/time.ts';
-import { bffError, isBffError, type BffErrorCode, type BffErrorEnvelope } from './errors.ts';
+import { bffError, BFF_ERROR_CODES, isBffError, type BffErrorCode, type BffErrorEnvelope } from './errors.ts';
 
 type MerchantExchangeDispatchRequest = {
   readonly method: string;
@@ -42,9 +42,13 @@ function result(body: unknown, headers: Record<string, string>, okStatus = 200):
   return json(okStatus, body, headers);
 }
 
-function failure(requestId: string, message: string, code: BffErrorCode = 'VALIDATION'): BffErrorEnvelope {
+function merchantErrorCode(code: string): BffErrorCode {
+  return (BFF_ERROR_CODES as readonly string[]).includes(code) ? (code as BffErrorCode) : 'VALIDATION';
+}
+
+function failure(requestId: string, message: string, code: string = 'VALIDATION'): BffErrorEnvelope {
   return bffError({
-    errorCode: code,
+    errorCode: merchantErrorCode(code),
     category: 'VALIDATION',
     message,
     retryable: false,
@@ -94,7 +98,7 @@ export function dispatchMerchantExchange(
         deliveryConstraint: {
           method: (payload.deliveryMethod as never) ?? 'DELIVERY',
         },
-        budgetMinorUnits: payload.budgetMinorUnits ? String(payload.budgetMinorUnits) : undefined,
+        ...(payload.budgetMinorUnits ? { budgetMinorUnits: String(payload.budgetMinorUnits) } : {}),
         expiresAt: asUtcInstant(String(payload.expiresAt ?? new Date(Date.now() + 7 * 86400000).toISOString())),
         submit: payload.submit !== false,
       });
@@ -160,7 +164,7 @@ export function dispatchMerchantExchange(
         intentId: String(payload.intentId ?? ''),
         priceMinorUnits: String(payload.priceMinorUnits ?? ''),
         currency: String(payload.currency ?? 'USD'),
-        discountMinorUnits: payload.discountMinorUnits ? String(payload.discountMinorUnits) : undefined,
+        ...(payload.discountMinorUnits ? { discountMinorUnits: String(payload.discountMinorUnits) } : {}),
         deliveryTerms: String(payload.deliveryTerms ?? ''),
         availability: String(payload.availability ?? ''),
         warranty: payload.warranty ? String(payload.warranty) : null,

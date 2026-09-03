@@ -150,7 +150,6 @@ export function gpuvDigestOf(result: ProductiveValueResult): string {
     eventId: result.eventId,
     eventFingerprint: result.eventFingerprint,
     attributionDecisionId: result.attributionDecisionId,
-    normalizationReceiptId: result.normalizationReceiptId,
     valueFunctionPolicyId: result.valueFunctionPolicyId,
     valueFunctionPolicyVersion: result.valueFunctionPolicyVersion,
     productiveValueQuantity: result.productiveValueQuantity,

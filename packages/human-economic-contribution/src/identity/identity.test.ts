@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { asJurisdiction } from '../../../domain/src/jurisdiction.ts';
 import { asUtcInstant } from '../../../domain/src/time.ts';
 import { subjectRefFor } from '../ids.ts';
 import {
@@ -28,7 +29,7 @@ function registerAlice(service: HumanEconomicIdentityService, seed = 'alice') {
   const subjectRef = subjectRefFor(seed);
   const registered = service.registerIdentity({
     pseudonymousSubjectRef: subjectRef,
-    jurisdiction: 'US',
+    jurisdiction: asJurisdiction('US'),
     createdAt: NOW,
   });
   assert.equal(registered.ok, true);
@@ -112,7 +113,7 @@ describe('Wave 6 — Human Economic Identity and Sybil resistance', () => {
     const alice = registerAlice(svc, 'similar-alice');
     const bob = svc.registerIdentity({
       pseudonymousSubjectRef: subjectRefFor('similar-bob'),
-      jurisdiction: 'US',
+      jurisdiction: asJurisdiction('US'),
       createdAt: NOW,
     });
     assert.equal(bob.ok, true);
@@ -128,7 +129,7 @@ describe('Wave 6 — Human Economic Identity and Sybil resistance', () => {
       humanActorId: alice.identity.humanActorId,
       pseudonymousSubjectRef: alice.identity.pseudonymousSubjectRef,
       assuranceLevel: 'CREDENTIAL_VERIFIED',
-      jurisdiction: 'US',
+      jurisdiction: asJurisdiction('US'),
     });
     svc.store.identities.set(alice.identity.humanActorId, {
       ...alice.identity,
@@ -168,7 +169,7 @@ describe('Wave 6 — Human Economic Identity and Sybil resistance', () => {
       providerSubjectToken: 'opaque-provider-token-1234567890',
       saltRef: 'salt:fixture',
       evidenceCommitment: 'ev:fixture:alice',
-      jurisdiction: 'US' as const,
+      jurisdiction: asJurisdiction('US'),
       establishedAt: NOW,
     };
     const first = svc.recordUniquenessProof(proofInput);
@@ -194,7 +195,7 @@ describe('Wave 6 — Human Economic Identity and Sybil resistance', () => {
       providerSubjectToken: 'opaque-provider-token-wallet',
       saltRef: 'salt:fixture',
       evidenceCommitment: 'ev:wallet-recovery',
-      jurisdiction: 'US',
+      jurisdiction: asJurisdiction('US'),
       establishedAt: NOW,
     });
     assert.equal(proof.ok, true);
@@ -310,14 +311,14 @@ describe('Wave 6 — Human Economic Identity and Sybil resistance', () => {
       humanActorId: humanEconomicIdentityIdFor('chain-check'),
       pseudonymousSubjectRef: subjectRefFor('chain-check'),
       assuranceLevel: 'IDENTITY_VERIFIED',
-      jurisdiction: 'US',
+      jurisdiction: asJurisdiction('US'),
     });
     assert.equal(commitment.length, 64);
     assert.equal(commitment.includes('ada@example.com'), false);
     const uniqueness = providerUniquenessCommitment({
       providerRef: 'fixture-kyc',
       providerSubjectToken: 'opaque-token-abcdef0123456789',
-      jurisdiction: 'US',
+      jurisdiction: asJurisdiction('US'),
       saltRef: 'salt:fixture',
     });
     assert.equal(uniqueness.includes('@'), false);
@@ -328,7 +329,7 @@ describe('Wave 6 — Human Economic Identity and Sybil resistance', () => {
       providerSubjectToken: 'ada@example.com',
       saltRef: 'salt:fixture',
       evidenceCommitment: 'ev:bad',
-      jurisdiction: 'US',
+      jurisdiction: asJurisdiction('US'),
       establishedAt: NOW,
     });
     assert.equal(lowEntropy.ok, false);

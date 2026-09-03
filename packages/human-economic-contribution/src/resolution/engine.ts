@@ -216,7 +216,7 @@ export class HumanContributionResolutionEngine {
     const identity = resolveEconomicIdentity({
       walletCommitment: input.walletCommitment,
       actorCommitment: input.actorCommitment,
-      jurisdiction: input.jurisdiction,
+      ...(input.jurisdiction !== undefined ? { jurisdiction: input.jurisdiction } : {}),
       registry: this.identityRegistry,
     });
     return this.submitObservation({

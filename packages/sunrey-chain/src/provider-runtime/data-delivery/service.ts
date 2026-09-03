@@ -70,8 +70,8 @@ export class ProviderDataDeliveryService {
       if (nowMs < swrEnd) {
         this.triggerBackgroundRefresh(input, key, policy);
         return Object.freeze({
-          envelope: { ...cached, stale: true, freshness: 'STALE_USABLE' },
-          source: 'cache_stale',
+          envelope: { ...cached, stale: true, freshness: 'STALE_USABLE' as const },
+          source: 'cache_stale' as const,
           backgroundRefreshTriggered: true,
         });
       }
@@ -85,8 +85,8 @@ export class ProviderDataDeliveryService {
           });
         }
         return Object.freeze({
-          envelope: { ...cached, stale: true, freshness: 'STALE_USABLE' },
-          source: 'cache_retained_on_failure',
+          envelope: { ...cached, stale: true, freshness: 'STALE_USABLE' as const },
+          source: 'cache_retained_on_failure' as const,
           backgroundRefreshTriggered: false,
         });
       }

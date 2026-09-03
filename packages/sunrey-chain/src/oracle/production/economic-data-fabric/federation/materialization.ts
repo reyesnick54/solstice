@@ -27,15 +27,13 @@ const PURPOSE_DEFAULT_MATERIALIZATION: Readonly<Record<FederationQueryPurpose, M
     MONETARY_PROPOSAL: 'EVIDENCE_VAULT',
   });
 
-const LICENSE_MATERIALIZATION_CEILING: Readonly<
-  Record<MaterializationLevel, readonly MaterializationLevel[]>
-> = Object.freeze({
-  QUERIED_ONLY: Object.freeze(['QUERIED_ONLY']),
-  CACHED: Object.freeze(['QUERIED_ONLY', 'CACHED']),
-  OBSERVATION: Object.freeze(['QUERIED_ONLY', 'CACHED', 'OBSERVATION']),
-  EVIDENCE_VAULT: Object.freeze(['QUERIED_ONLY', 'CACHED', 'OBSERVATION', 'EVIDENCE_VAULT']),
-  GRAPH_PROJECTION: Object.freeze(['QUERIED_ONLY', 'CACHED', 'GRAPH_PROJECTION']),
-});
+const LICENSE_MATERIALIZATION_CEILING = Object.freeze({
+  QUERIED_ONLY: ['QUERIED_ONLY'] as const,
+  CACHED: ['QUERIED_ONLY', 'CACHED'] as const,
+  OBSERVATION: ['QUERIED_ONLY', 'CACHED', 'OBSERVATION'] as const,
+  EVIDENCE_VAULT: ['QUERIED_ONLY', 'CACHED', 'OBSERVATION', 'EVIDENCE_VAULT'] as const,
+  GRAPH_PROJECTION: ['QUERIED_ONLY', 'CACHED', 'GRAPH_PROJECTION'] as const,
+}) as Readonly<Record<MaterializationLevel, readonly MaterializationLevel[]>>;
 
 export function defaultMaterializationForPurpose(
   purpose: FederationQueryPurpose,

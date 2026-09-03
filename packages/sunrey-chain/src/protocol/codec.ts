@@ -956,7 +956,9 @@ function encodeCommitmentRoots(roots: BlockCommitmentRootsV1): Array<{ tag: numb
   ];
 }
 
-function encodeBlockHeaderBase(header: BlockHeaderV1): WireField[] {
+function encodeBlockHeaderBase(
+  header: Omit<BlockHeaderV1, 'schemaVersion'> & { readonly schemaVersion: number },
+): WireField[] {
   return [
     { tag: 1, kind: 'bytes', value: utf8(header.networkId) },
     { tag: 2, kind: 'bytes', value: utf8(header.chainId) },
@@ -1011,9 +1013,9 @@ function decodeBlockHeaderFields(bytes: Uint8Array): BlockHeader {
   });
   return Object.freeze({
     ...base,
-    schemaVersion: 2,
+    schemaVersion: 2 as const,
     commitmentRoots,
-  });
+  }) as BlockHeaderV2;
 }
 
 export function decodeBlockHeader(bytes: Uint8Array): BlockHeader {

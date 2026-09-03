@@ -182,9 +182,10 @@ export class HumanEconomicIdentityService {
     if (!session) {
       return fail('RECOVERY_NOT_FOUND', 'recovery session not found');
     }
-    const uniquenessProof = input.uniquenessProofRef
-      ? this.store.uniquenessProofs.get(input.uniquenessProofRef)
-      : null;
+    const uniquenessProof =
+      input.uniquenessProofRef !== undefined
+        ? this.store.uniquenessProofs.get(input.uniquenessProofRef) ?? null
+        : null;
     const completed = completeIdentityRecovery(session, input, uniquenessProof);
     if (!completed.ok) {
       return completed;

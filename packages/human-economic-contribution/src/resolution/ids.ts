@@ -1,6 +1,6 @@
 import { createHash, createHmac } from 'node:crypto';
 
-import { brandAs } from '../../../domain/src/brand.ts';
+import { type Brand, brandAs } from '../../../domain/src/brand.ts';
 import { RESOLUTION_ID_PREFIXES } from './types.ts';
 import type {
   AuthoritativeIdCommitment,
@@ -40,8 +40,6 @@ function asPrefixedHex<T extends string>(value: string, prefix: string, label: s
   }
   return brandAs<string, T>(value);
 }
-
-type Brand<T, B> = T & { readonly __brand: B };
 
 export function asHumanEconomicIdentityId(value: string): HumanEconomicIdentityId {
   return asPrefixedHex(value, RESOLUTION_ID_PREFIXES.humanEconomicIdentity, 'HumanEconomicIdentityId');

@@ -22,6 +22,9 @@ export {
 export type {
   MeshFixtureScenario,
   MeshFixturePack,
+} from './fixtures.ts';
+
+export type {
   OracleConflictReport,
   OracleDisagreementLevel,
   OracleMeshExplanationCode,

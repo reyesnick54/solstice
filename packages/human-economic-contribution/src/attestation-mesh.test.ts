@@ -150,6 +150,8 @@ describe('Wave 6 — Human Contribution Attestation Mesh', () => {
 
   it('10. rejects duplicate signed receipt across actors', () => {
     const [left, right] = fixtureDuplicateReceiptAttestations();
+    assert.ok(left);
+    assert.ok(right);
     const signals = detectFraudSignals({
       attestations: [left, right],
       expectedSubjectRef: String(left.subjectPseudonymousRef),
@@ -177,7 +179,6 @@ describe('Wave 6 — Human Contribution Attestation Mesh', () => {
   it('12. flags stale evidence', () => {
     const evaluation = mesh.verify(
       fixtureMeshInput('RESEARCH_PARTICIPATION', [fixtureStaleAttestation()]),
-      {},
     );
     assert.equal(evaluation.receipt.result, 'STALE');
     assert.ok(evaluation.receipt.explanationCodes.includes('EVIDENCE_STALE'));

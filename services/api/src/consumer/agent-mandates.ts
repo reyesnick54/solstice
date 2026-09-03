@@ -5,7 +5,7 @@
  */
 
 import type { AgentConversationRuntime } from '../../../../packages/sunrey-agent/src/runtime.ts';
-import type { AgentActionClass, AgentAssistScope } from '../../../../packages/sunrey-agent/src/types.ts';
+import type { AgentActionClass, AgentAssistScope } from '../../../../packages/sunrey-agent/src/taxonomy.ts';
 import { asUtcInstant } from '../../../../packages/domain/src/time.ts';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import { AGENT_AUTHORIZATION_POLICY } from './agent-authorization.ts';
@@ -73,11 +73,11 @@ function clientMandate(
       highRiskAlwaysHuman: mandate.policy.approval.highRiskAlwaysHuman,
     }),
     expiresAt: mandate.policy.expiry,
-    revocable: true,
-    executionSeparated: true,
+    revocable: true as const,
+    executionSeparated: true as const,
     adviceOnly,
     authorizationPolicy: AGENT_AUTHORIZATION_POLICY,
-  });
+  }) as ClientMandateResource;
 }
 
 export function getAgentMandate(

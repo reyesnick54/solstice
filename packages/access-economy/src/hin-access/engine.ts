@@ -429,11 +429,18 @@ export class HumanInformationAccessBridge {
     epochId: AccessEpochId,
     subjectRef: SubjectRef,
   ): Result<AccessParticipationSnapshot, HinAccessFailure> {
-    return this.participation.buildSnapshot({
+    const snapshot = this.participation.buildSnapshot({
       epochId,
       subjectRef,
       computedAt: this.nowUtc(),
     });
+    if (!snapshot.ok) {
+      return err({
+        code: 'COMPUTATION_FAILED',
+        message: snapshot.error.message,
+      });
+    }
+    return ok(snapshot.value);
   }
 }
 

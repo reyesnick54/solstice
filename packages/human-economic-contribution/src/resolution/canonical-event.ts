@@ -32,7 +32,9 @@ export function canonicalEventMaterialDigest(material: CanonicalHumanContributio
   const sortedAuthoritative = [...material.authoritativeIdCommitments].sort().join(',');
   const aggregationKey = aggregationKeyForClass(material.contributionClass, {
     authoritativeIdCommitments: material.authoritativeIdCommitments,
-    projectWorkIdentifier: material.projectWorkIdentifier,
+    ...(material.projectWorkIdentifier !== undefined
+      ? { projectWorkIdentifier: material.projectWorkIdentifier }
+      : {}),
     validFromUtc: material.validFromUtc,
     validUntilUtc: material.validUntilUtc,
     contentCommitment: material.contentCommitment,
@@ -68,7 +70,9 @@ export function buildCanonicalHumanContributionEvent(
   const digestMaterial = canonicalEventMaterialDigest(material);
   const aggregationKey = aggregationKeyForClass(material.contributionClass, {
     authoritativeIdCommitments: material.authoritativeIdCommitments,
-    projectWorkIdentifier: material.projectWorkIdentifier,
+    ...(material.projectWorkIdentifier !== undefined
+      ? { projectWorkIdentifier: material.projectWorkIdentifier }
+      : {}),
     validFromUtc: quantized.start,
     validUntilUtc: quantized.end,
     contentCommitment: material.contentCommitment,

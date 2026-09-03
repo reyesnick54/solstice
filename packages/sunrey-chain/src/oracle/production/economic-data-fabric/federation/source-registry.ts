@@ -7,7 +7,7 @@
 
 import type { FederationDataSourceRecord } from './types.ts';
 
-export const CANONICAL_FEDERATION_SOURCES: readonly FederationDataSourceRecord[] = Object.freeze([
+export const CANONICAL_FEDERATION_SOURCES = Object.freeze([
   Object.freeze({
     sourceId: 'db.solstice_customer',
     label: 'Solstice Customer PostgreSQL',

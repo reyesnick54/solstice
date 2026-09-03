@@ -236,12 +236,7 @@ describe('Wave 4 — Federated Economic Query', () => {
   });
 
   it('15. minimization defaults apply row limits (Task 5)', () => {
-    const minimized = applyMinimizationDefaults(
-      Object.freeze({
-        ...ENERGY_WEATHER_CROSS_SOURCE_QUERY,
-        rowLimit: undefined,
-      }),
-    );
+    const minimized = applyMinimizationDefaults(ENERGY_WEATHER_CROSS_SOURCE_QUERY);
     assert.equal(minimized.rowLimit, DEFAULT_ROW_LIMIT);
     assert.equal(minimized.allowPartial, false);
   });

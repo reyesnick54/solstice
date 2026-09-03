@@ -93,5 +93,5 @@ export function buildResolutionCluster(input: {
     resolutionStatus: input.resolutionStatus,
     humanEconomicIdentityId: input.canonicalEvent.humanEconomicIdentityId,
     claimId: input.claimId ?? null,
-  });
+  }) as ResolutionCluster;
 }

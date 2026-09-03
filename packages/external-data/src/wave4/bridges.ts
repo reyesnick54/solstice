@@ -3,7 +3,6 @@
  */
 
 import type { ExternalDataPlane } from '../plane.ts';
-import type { Wave4ServicesBundle } from './services.ts';
 import { createWave4Services } from './services.ts';
 
 export type ComplianceWorkflowSnapshot = {

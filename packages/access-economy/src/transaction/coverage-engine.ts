@@ -14,7 +14,7 @@ import type { ProviderQuote } from '../providers/types.ts';
 import { TOKEN_CONVERSION_CONTRIBUTION } from '../funding-solvency/taxonomy.ts';
 import type { AccessCheckoutQuote } from './types.ts';
 import type { AccessDomainQuoteId, AccessDomainTransactionId } from '../domain/ids.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
 
 export type CoverageEngineInput = {
   readonly transactionId: AccessDomainTransactionId;
@@ -103,7 +103,7 @@ export class AccessTransactionCoverageEngine {
       tokenConversionContributionMinorUnits: TOKEN_CONVERSION_CONTRIBUTION,
       entitlementUnitsReserved: policyDecision.entitlementUnitsConsumed,
       currency: input.providerQuote.currency,
-      expiresAt: input.providerQuote.expiresAt,
+      expiresAt: asUtcInstant(input.providerQuote.expiresAt),
       providerQuoteReference: input.providerQuote.quoteId,
       coveragePolicyId: policy.policyId,
       coveragePolicyVersion: policy.version,

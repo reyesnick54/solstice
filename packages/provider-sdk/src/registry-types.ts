@@ -37,6 +37,7 @@ export const PROVIDER_CATEGORIES = [
   'patents',
   'government_open_data',
   'artificial_intelligence',
+  'manufacturing',
   'other',
 ] as const;
 export type ProviderCategory = (typeof PROVIDER_CATEGORIES)[number];

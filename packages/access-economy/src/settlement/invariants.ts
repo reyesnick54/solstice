@@ -10,6 +10,7 @@ import type {
   AccessSettlementPlan,
   AccessSettlementSourceOfFunds,
 } from './types.ts';
+import { accessEvidenceRefFor, type AccessEvidenceRef } from '../domain/ids.ts';
 
 export function settlementFailure(
   code: AccessSettlementFailure['code'],
@@ -95,7 +96,7 @@ export function validateSettlementPlan(plan: AccessSettlementPlan): AccessSettle
 export function allocateProportionalRefund(input: {
   readonly totalRefundAmount: bigint;
   readonly original: AccessSettlementSourceOfFunds;
-  readonly evidenceReference: string;
+  readonly evidenceReference: AccessEvidenceRef;
 }): AccessRefundAllocation {
   const originalTotal = computeProviderSettlementAmount(input.original);
   if (originalTotal === 0n || input.totalRefundAmount === 0n) {

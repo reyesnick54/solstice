@@ -147,7 +147,7 @@ export function parseValidatorSignedEnvelope(value: unknown): SecurityResult<Val
       validatorSetVersion: validatorSetVersion.value,
       signBytesHash: row.signBytesHash,
       signatureHex: row.signatureHex,
-      hybrid: row.hybrid as HybridSignatureDescriptor | undefined,
+      ...(row.hybrid !== undefined ? { hybrid: row.hybrid as HybridSignatureDescriptor } : {}),
       createdAtUtc: String(row.createdAtUtc),
     }),
   );

@@ -136,8 +136,10 @@ export function resolveProductiveAssetIdentity(input: {
         coordinatesCommitment: input.hint.coordinatesCommitment ?? null,
         precision: input.hint.coordinatesCommitment ? 'COORDINATES' : 'JURISDICTION',
       },
-      technologyMetadata: input.hint.technology ? { technology: input.hint.technology } : undefined,
-      commissionedAtUtc: input.hint.commissionedYear ? `${input.hint.commissionedYear}-01-01T00:00:00.000Z` : null,
+      ...(input.hint.technology ? { technologyMetadata: { technology: input.hint.technology } } : {}),
+      ...(input.hint.commissionedYear
+        ? { commissionedAtUtc: `${input.hint.commissionedYear}-01-01T00:00:00.000Z` }
+        : {}),
       resolutionHint: input.hint,
     });
     for (const assetId of input.fingerprintIndex.get(fingerprint) ?? []) {
@@ -179,8 +181,8 @@ export function resolveProductiveAssetIdentity(input: {
     });
   }
 
-  const hasStrongAlias = matchedAliases.some((alias) =>
-    (['EIA_PLANT_ID', 'GOVERNMENT_REGISTRY_ID'] as const).includes(alias.aliasKind),
+  const hasStrongAlias = matchedAliases.some(
+    (alias) => alias.aliasKind === 'EIA_PLANT_ID' || alias.aliasKind === 'GOVERNMENT_REGISTRY_ID',
   );
   const hasWeakOnly = !hasStrongAlias && matchedAliases.length > 0;
   const confidence: IdentityConfidence =

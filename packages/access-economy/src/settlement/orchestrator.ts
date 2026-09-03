@@ -163,7 +163,6 @@ export function fixtureVirtualCardRequest(
     maximumAmount: 40_000n,
     currency: 'USD',
     merchantRestriction: 'merchant_turo_us',
-    merchantCategoryRestriction: undefined,
     countryRestriction: 'US',
     validFrom: now,
     expiresAt: expires,
@@ -177,6 +176,9 @@ export function fixtureVirtualCardRequest(
     accessPoolContributionMinorUnits: 30_000n,
     securityDepositRequired: false,
     tokenConversionContributionMinorUnits: 0n,
+    ...(overrides?.merchantCategoryRestriction !== undefined
+      ? { merchantCategoryRestriction: overrides.merchantCategoryRestriction }
+      : {}),
     ...overrides,
   });
 }

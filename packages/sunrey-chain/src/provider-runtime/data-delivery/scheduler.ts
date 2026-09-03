@@ -33,11 +33,11 @@ export class ProviderRefreshScheduler {
     readonly jobStore: JobStore;
     readonly clock: DataDeliveryClock;
     readonly workerId?: string | undefined;
-    readonly rng?: () => number | undefined;
+    readonly rng?: () => number;
   }) {
     this.schedules = input.schedules;
     this.clock = input.clock;
-    this.rng = input.rng ?? Math.random;
+    this.rng = input.rng ?? (() => Math.random());
     this.jobQueue = new PersistentJobQueue({
       store: input.jobStore,
       clock: {
@@ -96,7 +96,8 @@ export class ProviderRefreshScheduler {
   }
 
   async dispatch(limit = 8): Promise<number> {
-    return this.jobQueue.dispatchOnce(limit);
+    const result = await this.jobQueue.dispatchOnce(limit);
+    return result.succeeded;
   }
 
   recordFailure(record: RefreshFailureRecord): void {

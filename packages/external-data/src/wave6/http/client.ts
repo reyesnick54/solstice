@@ -60,12 +60,12 @@ export function resolveOpportunityAdapterMode(
 
 export class OpportunityHttpClient {
   readonly #mode: 'live' | 'simulation';
-  readonly #fetchFn?: FetchLike;
+  readonly #fetchFn: FetchLike;
   readonly #environment: ProviderTransportEnvironment;
 
   constructor(options: OpportunityHttpClientOptions = {}) {
     this.#mode = resolveOpportunityAdapterMode(options.mode);
-    this.#fetchFn = options.fetchFn;
+    this.#fetchFn = options.fetchFn ?? fetch.bind(globalThis);
     this.#environment = options.environment ?? (options.fetchFn ? 'test' : this.#mode === 'live' ? 'preview' : 'test');
   }
 

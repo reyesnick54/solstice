@@ -13,7 +13,7 @@ export type EconomicIdentityRegistry = {
 
 export function createEconomicIdentityRegistry(aliasResolver?: WalletAliasResolver): EconomicIdentityRegistry {
   const walletToIdentity = new Map<string, HumanEconomicIdentityId>();
-  const identityWallets = new Map<string, WalletBindingRef[]>();
+  const identityWallets = new Map<string, readonly WalletBindingRef[]>();
 
   return Object.freeze({
     bindWallet(walletCommitment: string, humanEconomicIdentityId: HumanEconomicIdentityId): WalletBindingRef {
@@ -53,7 +53,12 @@ export function resolveEconomicIdentity(input: {
   readonly registry: EconomicIdentityRegistry;
 }): { readonly humanEconomicIdentityId: HumanEconomicIdentityId; readonly walletBindingRef: WalletBindingRef } {
   const existing = input.registry.resolveIdentity(input.walletCommitment);
-  const humanEconomicIdentityId = existing ?? humanEconomicIdentityIdFor({ actorCommitment: input.actorCommitment, jurisdiction: input.jurisdiction });
+  const humanEconomicIdentityId =
+    existing ??
+    humanEconomicIdentityIdFor({
+      actorCommitment: input.actorCommitment,
+      ...(input.jurisdiction !== undefined ? { jurisdiction: input.jurisdiction } : {}),
+    });
   const walletBindingRef = input.registry.bindWallet(input.walletCommitment, humanEconomicIdentityId);
   return Object.freeze({ humanEconomicIdentityId, walletBindingRef });
 }

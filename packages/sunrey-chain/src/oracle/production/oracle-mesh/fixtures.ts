@@ -4,6 +4,7 @@
  * Simulation only. Not live provider integrations.
  */
 
+import type { UtcInstant } from '../../../../../domain/src/time.ts';
 import type {
   ProductiveCandidateEvent,
   ProductiveMeshAsset,
@@ -11,9 +12,9 @@ import type {
   ProductiveSourceRecord,
 } from './types.ts';
 
-const NOW = '2026-09-02T12:00:00.000Z';
-const START = '2026-09-02T11:00:00.000Z';
-const END = '2026-09-02T12:00:00.000Z';
+const NOW = '2026-09-02T12:00:00.000Z' as UtcInstant;
+const START = '2026-09-02T11:00:00.000Z' as UtcInstant;
+const END = '2026-09-02T12:00:00.000Z' as UtcInstant;
 
 const VALID_RIGHTS = Object.freeze({
   licenseId: 'sandbox.fixture.v1',

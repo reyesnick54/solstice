@@ -129,7 +129,7 @@ export class TransactionLifecycle {
         rejectionCode: admission.reason,
       });
       this.receipts.set(signed.transactionId, receipt);
-      return err<LifecycleRejection>({ code: admission.reason as ProtocolRejection['code'], stage: 'mempool' });
+      return err({ code: admission.reason as ProtocolRejection['code'], stage: 'mempool' } as LifecycleRejection);
     }
 
     const receipt = receiptForStage({
@@ -146,7 +146,7 @@ export class TransactionLifecycle {
   executeFromMempool(txId: string): Result<StateTransitionResult, LifecycleRejection> {
     const entry = this.mempool.get(txId);
     if (!entry) {
-      return err({ code: 'MALFORMED', stage: 'executeFromMempool' });
+      return err({ code: 'MALFORMED', stage: 'executeFromMempool' } as LifecycleRejection);
     }
     const issuance = this.consumeIssuanceOnExecution(entry.envelope);
     if (issuance === 'DUPLICATE_ISSUANCE') {

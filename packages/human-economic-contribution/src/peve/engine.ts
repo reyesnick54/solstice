@@ -10,6 +10,7 @@
  */
 
 import { PROTECTED_TRAIT_FIELDS } from '../taxonomy.ts';
+import type { UtcInstant } from '../../../domain/src/time.ts';
 import { HumanContributionValuationEngine } from '../valuation/engine.ts';
 import type { HumanContributionValuationPolicy, ValuationReferenceDataPort } from '../valuation/types.ts';
 import { refuseAiCanonicalPeveInput } from './ai-boundary.ts';
@@ -144,7 +145,7 @@ export class HumanEconomicValueEngine {
   evaluate(input: {
     readonly valuationInput: VerifiedHumanEconomicContributionInput;
     readonly policy: HumanContributionValuationPolicy;
-    readonly valuationTimestamp: string;
+    readonly valuationTimestamp: UtcInstant;
     readonly policyReference: string;
     readonly extra?: Readonly<Record<string, unknown>>;
   }): PeveEvaluateResult {
@@ -157,7 +158,6 @@ export class HumanEconomicValueEngine {
     }
     if (input.extra?.gpuvQuantity) {
       return {
-        ok: false,
         ...rejectGpuvAsPeveSubstitute(input.extra.gpuvQuantity as { gpuvMinorUnits: bigint; productiveClaimId: string }),
         message: 'MoonRey GPUV cannot substitute for PEVE',
       };

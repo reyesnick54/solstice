@@ -135,7 +135,7 @@ export class ProductiveValueEngine {
 
     const marketAudit = auditMarketPriceSeparation({
       valueInput: input.valueInput,
-      exchangeApiRequired: input.exchangeApiRequired,
+      ...(input.exchangeApiRequired !== undefined ? { exchangeApiRequired: input.exchangeApiRequired } : {}),
     });
     if (!marketAudit.ok) {
       return { ok: false, code: 'MARKET_PRICE_COUPLING', detail: marketAudit.detail };
@@ -143,8 +143,8 @@ export class ProductiveValueEngine {
 
     const evaluation = evaluateProductiveValue(input.valueInput, {
       policy,
-      schedule: context.schedule,
-      store: context.store,
+      ...(context.schedule !== undefined ? { schedule: context.schedule } : {}),
+      ...(context.store !== undefined ? { store: context.store } : {}),
     });
 
     if (evaluation.state === 'VALUE_REJECTED') {

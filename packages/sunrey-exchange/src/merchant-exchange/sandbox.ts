@@ -1,7 +1,7 @@
 import { systemClock } from '../../../config/src/clock.ts';
 import { DomainEventLog } from '../../../events/src/events.ts';
 import { asMerchantExchangeMerchantId } from './ids.ts';
-import type { MerchantRegistryPort } from './ports.ts';
+import type { MerchantRegistryPort, MerchantRegistryEntry } from './ports.ts';
 import { SimulatedMerchantPaymentPort } from './ports.ts';
 import { MerchantExchangeService } from './service.ts';
 import { MerchantExchangeStore } from './store.ts';
@@ -44,21 +44,35 @@ function profile(
   });
 }
 
+function toRegistryEntry(profile: MerchantExchangeProfile): MerchantRegistryEntry {
+  return Object.freeze({
+    merchantId: profile.merchantId,
+    ownerUserId: null,
+    businessIdentityId: profile.businessIdentityId,
+    displayName: profile.displayName,
+    status: profile.status,
+    supportedCategories: profile.supportedCategories,
+    supportedRegions: profile.supportedRegions,
+    verificationState: profile.verificationState,
+    complianceRestricted: profile.complianceRestricted,
+  });
+}
+
 export class InMemoryMerchantRegistry implements MerchantRegistryPort {
-  private readonly merchants = new Map<string, ReturnType<typeof profile>>();
+  private readonly merchants = new Map<string, MerchantRegistryEntry>();
 
   constructor(merchants: readonly MerchantExchangeProfile[] = sandboxMerchants()) {
-    for (const m of merchants) {
-      this.merchants.set(m.merchantId, m);
+    for (const merchant of merchants) {
+      this.merchants.set(merchant.merchantId, toRegistryEntry(merchant));
     }
   }
 
-  getMerchant(merchantId: ReturnType<typeof asMerchantExchangeMerchantId>) {
+  getMerchant(merchantId: ReturnType<typeof asMerchantExchangeMerchantId>): MerchantRegistryEntry | null {
     return this.merchants.get(merchantId) ?? null;
   }
 
-  listActiveMerchants() {
-    return Object.freeze([...this.merchants.values()].filter((m) => m.status === 'ACTIVE'));
+  listActiveMerchants(): readonly MerchantRegistryEntry[] {
+    return Object.freeze([...this.merchants.values()].filter((merchant) => merchant.status === 'ACTIVE'));
   }
 }
 

@@ -150,7 +150,7 @@ export type BlockHeaderV2 = BlockHeaderV1 & {
 export type BlockHeader = BlockHeaderV1 | BlockHeaderV2;
 
 export function isBlockHeaderV2(header: BlockHeader): header is BlockHeaderV2 {
-  return header.schemaVersion === 2;
+  return (header as { readonly schemaVersion: number }).schemaVersion === 2;
 }
 
 export function bodyHeaderOf(body: TransactionBodyV1): BodyHeader {

@@ -640,7 +640,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
           restricted: principal.restricted || principal.customerStatus === 'SUSPENDED',
         });
         if (!outcome.ok) {
-          const denied = outcome as { readonly ok: false; readonly error: { readonly message: string } };
+          const denied = outcome as unknown as { readonly ok: false; readonly error: { readonly message: string } };
           return Object.freeze({
             schema: 'sunrey.consumer.access.home-summary.v1' as const,
             productionReady: false as const,
@@ -887,7 +887,7 @@ function seedSandboxSubscriptionActivities(
 ): void {
   const graphId = asEconomicGraphId('egr_sandbox_sub');
   const months = ['03', '04', '05', '06', '07', '08'];
-  const activities: EconomicActivity[] = months.map((month, index) => ({
+  const activities = months.map((month, index) => ({
     activityId: deterministicActivityId(`src_netflix_${index}`),
     graphId,
     subjectId,
@@ -901,11 +901,11 @@ function seedSandboxSubscriptionActivities(
       label: 'NETFLIX.COM 866-579-7172',
     },
     classification: 'SUBSCRIPTION' as const,
-    sourceType: 'LEDGER' as const,
+    sourceType: 'CANONICAL_LEDGER' as const,
     sourceRef: `src_netflix_${index}`,
     sourceEventType: 'CustomerActivityRecorded',
     sourceEventId: `evt_netflix_${index}`,
-  }));
+  })) as EconomicActivity[];
   const spotifyMonths = ['04', '05', '06', '07', '08'];
   for (const [index, month] of spotifyMonths.entries()) {
     activities.push({
@@ -922,7 +922,7 @@ function seedSandboxSubscriptionActivities(
         label: 'SPOTIFY USA',
       },
       classification: 'SUBSCRIPTION' as const,
-      sourceType: 'LEDGER' as const,
+      sourceType: 'CANONICAL_LEDGER' as const,
       sourceRef: `src_spotify_${index}`,
       sourceEventType: 'CustomerActivityRecorded',
       sourceEventId: `evt_spotify_${index}`,

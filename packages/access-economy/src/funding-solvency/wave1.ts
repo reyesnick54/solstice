@@ -44,7 +44,7 @@ export function runAccessWave1(input: RunAccessWave1Input): AccessWave1Result {
   const evidenceReferences: string[] = [];
 
   const epoch = demoEpoch();
-  const allocation = runDualTokenAllocation({
+  const allocationInput: RunAllocationInput = {
     epoch,
     participants: demoParticipants(),
     supply: demoSupply(),
@@ -52,7 +52,8 @@ export function runAccessWave1(input: RunAccessWave1Input): AccessWave1Result {
     categories: (input.categories ?? ['MOBILITY', 'STAY']) as Parameters<
       typeof runDualTokenAllocation
     >[0]['categories'],
-  });
+  };
+  const allocation = runDualTokenAllocation(allocationInput);
 
   const entitlementLedger = input.service.getEntitlementLedger();
   const poolRegistry = input.service.getPoolRegistry();

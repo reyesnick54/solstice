@@ -248,13 +248,13 @@ describe('ACCESS-40 regulatory controls', () => {
       category: 'MOBILITY',
       geography: 'US',
       providerId: 'turo',
-      policy: DEFAULT_FUNDING_RESTRICTION_POLICIES[0],
+      policy: DEFAULT_FUNDING_RESTRICTION_POLICIES[0]!,
     });
     assert.equal(allowed.allowed, true);
   });
 
   it('10. enforces sponsor geography restrictions', () => {
-    const policy = DEFAULT_FUNDING_RESTRICTION_POLICIES[1];
+    const policy = DEFAULT_FUNDING_RESTRICTION_POLICIES[1]!;
     const denied = validateFundingRestriction({
       classification: 'SPONSOR_FUNDED',
       restrictions: {},
@@ -276,7 +276,7 @@ describe('ACCESS-40 regulatory controls', () => {
   });
 
   it('11. enforces employer category restrictions', () => {
-    const policy = DEFAULT_FUNDING_RESTRICTION_POLICIES[0];
+    const policy = DEFAULT_FUNDING_RESTRICTION_POLICIES[0]!;
     const allowed = validateFundingRestriction({
       classification: 'EMPLOYER_FUNDED',
       restrictions: {},

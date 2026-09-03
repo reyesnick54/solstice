@@ -492,7 +492,11 @@ test('failure cases: missing/tampered evidence, rights, policy, governance', () 
     evidence: base.evidence,
     rights: base.rights,
     policy: base.policy,
-    roots: base.roots,
+    roots: {
+      ...base.roots,
+      blockHeight: 1,
+      stateCommitment: 'state.fixture',
+    },
     valuation: {
       valuationId: 'val.ai',
       methodologyId: 'HIN_VALUATION',
