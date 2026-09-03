@@ -64,10 +64,9 @@ export class AccessProviderGateway {
       return Object.freeze({
         providerId,
         integrationState: 'DOCUMENTED_NOT_CONNECTED',
-        reachable: false,
-        sandboxOnly: true,
-        simulationOnly: true,
-        notes: 'discovery-only provider; use SDK discovery adapters',
+        healthy: false,
+        lastCheckedAt: new Date().toISOString(),
+        message: 'discovery-only provider; use SDK discovery adapters',
       });
     }
     return provider.health();

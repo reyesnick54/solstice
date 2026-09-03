@@ -14,6 +14,8 @@ import type {
   SettlementLiabilityState,
 } from './taxonomy.ts';
 
+export type { SettlementLiabilityState } from './taxonomy.ts';
+
 export type ProviderRef = string;
 export type ReservationRef = string;
 export type JurisdictionRef = string;

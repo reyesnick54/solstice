@@ -6,6 +6,8 @@
 
 import type { AccessCapacityCategory } from '../taxonomy.ts';
 
+export type { AccessCapacityCategory } from '../taxonomy.ts';
+
 export const ACCESS_DISCOVERY_PROVIDER_IDS = [
   'gbfs',
   'transitland',
