@@ -10,6 +10,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { fingerprintEconomicEvent } from '../packages/human-economic-contribution/src/fingerprint.ts';
+import { eventReferenceFor, subjectRefFor } from '../packages/human-economic-contribution/src/ids.ts';
 import { FrozenClock } from '../packages/config/src/clock.ts';
 import { asUtcInstant } from '../packages/domain/src/time.ts';
 import { EvidenceVault } from '../packages/evidence/src/vault.ts';
@@ -23,7 +24,6 @@ import {
   authorizeIssuance,
   developmentMoonReyAuthority,
   developmentSunReyAuthority,
-  moonreyProductiveEvidence,
   rejectFactOnlyMint,
   rejectOracleOnlyMint,
   rejectUnrestrictedMint,
@@ -50,27 +50,27 @@ describe('Wave 3 Task 1 — domain separation red team', () => {
     const alone = bridge.attempt({ recipient: 'alice', contribution }, sunreyBook());
     assert.equal(alone.ok, false);
 
-    for (const kind of [
-      'PEVE_SCORE',
-      'AI_OUTPUT',
-      'VALUATION_RESULT',
-      'CONSENT',
-      'PDV_RECORD',
-      'HIN_USAGE_RECEIPT',
-    ] as const) {
-      const refused = refuseStandaloneAttempt({ kind });
-      assert.equal(refused.ok, false, `expected ${kind} to fail closed`);
+    for (const attempt of [
+      { kind: 'PEVE_SCORE' as const, score: 1n },
+      { kind: 'AI_OUTPUT' as const, outputDigest: 'ai-output' },
+      { kind: 'VALUATION_RESULT' as const, valuationId: 'val.1' },
+      { kind: 'CONSENT' as const, consentRef: 'consent.1' },
+      { kind: 'PDV_RECORD' as const, vaultRef: 'pdv.1' },
+      { kind: 'HIN_USAGE_RECEIPT' as const, receiptId: 'hin.receipt.1' },
+    ]) {
+      const refused = refuseStandaloneAttempt(attempt);
+      assert.equal(refused.ok, false, `expected ${attempt.kind} to fail closed`);
     }
 
-    for (const kind of [
-      'ORACLE_OBSERVATION',
-      'VERIFIED_ECONOMIC_FACT',
-      'PRODUCTIVE_CLAIM',
-      'GPUV_QUANTITY',
-      'PRODUCTIVE_VALUE_RESULT',
-    ] as const) {
-      const refused = refuseProductiveStandalone({ kind });
-      assert.equal(refused.ok, false, `expected ${kind} to fail closed`);
+    for (const attempt of [
+      { kind: 'ORACLE_OBSERVATION' as const, observationId: 'obs.1' },
+      { kind: 'VERIFIED_ECONOMIC_FACT' as const, factId: 'fact.1' },
+      { kind: 'PRODUCTIVE_CLAIM' as const, claimId: 'claim.1' },
+      { kind: 'GPUV_QUANTITY' as const, quantity: 1n },
+      { kind: 'PRODUCTIVE_VALUE_RESULT' as const, productiveValueId: 'pvr.1' },
+    ]) {
+      const refused = refuseProductiveStandalone(attempt);
+      assert.equal(refused.ok, false, `expected ${attempt.kind} to fail closed`);
     }
   });
 
@@ -108,25 +108,25 @@ describe('Wave 3 Task 1 — domain separation red team', () => {
 describe('Wave 3 Task 5 — anti-double-counting red team', () => {
   it('maps identical human contribution material to the same fingerprint', () => {
     const material = {
-      subjectRef: 'subj:alice' as const,
+      subjectRef: subjectRefFor('alice'),
       contributionClass: 'INFORMATION_RIGHT_CONTRIBUTION' as const,
-      eventReference: 'evt:research-paper-2026' as const,
+      eventReference: eventReferenceFor('research-paper-2026'),
       validFrom: asUtcInstant('2026-01-01T00:00:00.000Z'),
       validUntil: null,
       measurementQuantity: 1n,
-      measurementUnit: 'CONTRIBUTION_EVENT' as const,
+      measurementUnit: 'CONSENT_SCOPED_INFORMATION_USE' as const,
       jurisdiction: 'US',
-      sourceClass: 'HIN_USAGE' as const,
+      sourceClass: 'HUMAN_INFORMATION_NETWORK' as const,
     };
     const fromSourceA = fingerprintEconomicEvent(material);
-    const fromSourceB = fingerprintEconomicEvent({ ...material, sourceClass: 'HIN_USAGE' });
+    const fromSourceB = fingerprintEconomicEvent({ ...material, sourceClass: 'HUMAN_INFORMATION_NETWORK' });
     const fromSourceC = fingerprintEconomicEvent({
       ...material,
-      eventReference: 'evt:research-paper-2026',
+      eventReference: eventReferenceFor('research-paper-2026'),
     });
     const fromSourceD = fingerprintEconomicEvent({
       ...material,
-      eventReference: 'evt:research-paper-2026-variant-id',
+      eventReference: eventReferenceFor('research-paper-2026-variant-id'),
     });
     assert.equal(fromSourceA, fromSourceB);
     assert.equal(fromSourceA, fromSourceC);
@@ -139,7 +139,7 @@ describe('Wave 3 Task 5 — anti-double-counting red team', () => {
       measurementPeriodEpoch: 202601,
       validFromUnixSeconds: 1_735_689_600n,
       validUntilUnixSeconds: 1_735_776_000n,
-      claimType: 'REALIZED_OUTPUT' as const,
+      claimType: 'OUTPUT' as const,
       category: 'ENERGY' as const,
       normalizedQuantity: 500_000_000_000n,
       baseUnitId: 'kwh',
@@ -212,7 +212,7 @@ describe('Wave 3 Task 5 — anti-double-counting red team', () => {
       measurementPeriodEpoch: 202601,
       validFromUnixSeconds: 1_735_689_600n,
       validUntilUnixSeconds: 1_735_776_000n,
-      claimType: 'REALIZED_OUTPUT',
+      claimType: 'OUTPUT',
       category: 'ENERGY',
       normalizedQuantity: 500_000_000_000n,
       baseUnitId: 'kwh',
@@ -253,9 +253,6 @@ describe('Wave 3 Task 6 — monetization replay red team', () => {
       recipient: 'alice',
       quantity: 10n,
       replayIdentifier: 'same-replay-key',
-      contributionId: 'hec.1',
-      fingerprint: 'ab'.repeat(32),
-      authorizationId: 'auth.1',
       actorKind: 'HUMAN',
     });
     const first = authorizeIssuance(constitution, book, evidence);
@@ -267,9 +264,6 @@ describe('Wave 3 Task 6 — monetization replay red team', () => {
         recipient: 'bob',
         quantity: 10n,
         replayIdentifier: 'same-replay-key',
-        contributionId: 'hec.2',
-        fingerprint: 'cd'.repeat(32),
-        authorizationId: 'auth.2',
         actorKind: 'HUMAN',
       }),
     );
@@ -302,21 +296,19 @@ describe('Wave 3 Task 7 — root determinism red team', () => {
 describe('Wave 3 Task 10 — monetary authority audit', () => {
   it('confirms non-mint authorities cannot change supply through authorizeIssuance', () => {
     const book = moonreyBook();
-    const unrestricted = authorizeIssuance(constitution, book, {
-      ...developmentMoonReyAuthority({
+    const unrestricted = authorizeIssuance(
+      constitution,
+      book,
+      developmentMoonReyAuthority({
         recipient: 'x',
         quantity: 1n,
         replayIdentifier: 'unrestricted',
-        economicEvidence: moonreyProductiveEvidence({
-          contributionId: 'c',
-          fingerprint: 'a'.repeat(64),
-          authorizationId: 'auth',
-          policyVersion: 'v1',
-        }),
-        actorKind: 'HUMAN',
+        contributionId: 'c',
+        fingerprint: 'a'.repeat(64),
+        authorizationId: 'auth',
+        authorized: false,
       }),
-      authorized: false,
-    });
+    );
     assert.equal(unrestricted.ok, false);
     assert.equal(rejectOracleOnlyMint(), 'ORACLE_OBSERVATION_CANNOT_MINT');
     assert.equal(rejectFactOnlyMint(), 'VERIFIED_FACT_ALONE_CANNOT_MINT');
