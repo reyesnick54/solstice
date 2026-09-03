@@ -7,7 +7,7 @@
 | **Qualification branch** | `release/sunrey-simulation-rc2` |
 | **Release base (main)** | `12b583e61e086c671e8535e7e8209d64b5630c4a` |
 | **Qualification commit** | `7dfa4b413d27a48609f1959aa9afcd2524147f60` |
-| **Release documentation commit** | `3d97496555d727e43b7a48478562316c56cc946c` |
+| **Release documentation commit** | See branch tip after merge (`git rev-parse HEAD` on `release/sunrey-simulation-rc2`) |
 | **Qualification date** | 2026-09-03 (UTC) |
 | **Intended environment** | Fully functional **simulation / sandbox** for `https://app.sunrey.xyz` (Consumer BFF at `/api/v1/*`) |
 | **Not** | Live regulated financial production, mainnet, or production authorization |
@@ -236,7 +236,7 @@ curl -s http://127.0.0.1:8443/ready
 After CI green on this branch:
 
 ```bash
-git tag -a sunrey-backend-v1.0.0-rc.2 3d97496555d727e43b7a48478562316c56cc946c -m "SUNREY SIMULATION RC2"
+git tag -a sunrey-backend-v1.0.0-rc.2 $(git rev-parse HEAD) -m "SUNREY SIMULATION RC2"
 git push origin sunrey-backend-v1.0.0-rc.2
 ```
 
