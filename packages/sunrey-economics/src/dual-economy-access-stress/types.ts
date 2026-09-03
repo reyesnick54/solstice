@@ -14,6 +14,8 @@ import type {
   Access22StabilityClassification,
 } from './ids.ts';
 
+export type { Access22ScenarioId, Access22StabilityClassification } from './ids.ts';
+
 export type TokenPricePath = Readonly<{
   readonly srPriceBps: bigint;
   readonly mrPriceBps: bigint;

@@ -79,9 +79,9 @@ export async function bridgeEvidenceToKernel(
   const evidence = await service.searchEntity({
     subjectType: input.subjectKind === 'BUSINESS' ? 'ORGANIZATION' : 'PERSON',
     name: input.name,
-    aliases: input.aliases,
-    dateOfBirth: input.dateOfBirth,
-    nationality: input.nationality,
+    ...(input.aliases !== undefined ? { aliases: input.aliases } : {}),
+    ...(input.dateOfBirth !== undefined ? { dateOfBirth: input.dateOfBirth } : {}),
+    ...(input.nationality !== undefined ? { nationality: input.nationality } : {}),
     canonicalSubjectId: input.subjectRef,
     nowUtc: input.now,
   });

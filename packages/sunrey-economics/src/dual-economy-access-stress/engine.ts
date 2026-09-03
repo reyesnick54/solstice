@@ -161,7 +161,7 @@ export function executeAccess22Scenario(
 ): Access22ScenarioResult {
   const participants = buildParticipants(scenario, scaleLevel, false);
   const macro = simulateScenario(scenario.macroScenarioId, { seed: scenario.seed, epochs: scenario.macroEpochs });
-  const macroScaleBps = macro.productive.output.compute > 0n ? 10_000n : 10_000n;
+  const macroScaleBps = (macro.productive.output.COMPUTE ?? 0n) > 0n ? 10_000n : 10_000n;
 
   const accessSimId = mapToAccessSimScenario(scenario.scenarioId);
   const accessResult = accessScenarioById(accessSimId)

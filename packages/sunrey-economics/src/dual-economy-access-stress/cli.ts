@@ -49,7 +49,7 @@ export function runAccess22Command(argv: readonly string[]): string {
       const seed = flag(rest, '--seed');
       const scale = flag(rest, '--scale') as import('./ids.ts').Access22ScaleLevel | undefined;
       const result = runAccess22Scenario(id, {
-        seed: seed ? Number(seed) : undefined,
+        ...(seed !== undefined ? { seed: Number(seed) } : {}),
         scaleLevel: scale ?? 'SCALE_1K',
       });
       return JSON.stringify(
@@ -71,7 +71,7 @@ export function runAccess22Command(argv: readonly string[]): string {
       const result = runAccess22Campaign({
         smoke: rest.includes('--smoke'),
         heavy: rest.includes('--heavy'),
-        seed: flag(rest, '--seed') ? Number(flag(rest, '--seed')) : undefined,
+        ...(flag(rest, '--seed') !== undefined ? { seed: Number(flag(rest, '--seed')) } : {}),
       });
       return JSON.stringify(
         {
