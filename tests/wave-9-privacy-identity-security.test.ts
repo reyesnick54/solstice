@@ -24,8 +24,7 @@ import { ConsentService } from '../packages/consent/src/service.ts';
 import { RECIPIENT_PERSONAL_AGENT } from '../packages/consent/src/recipients.ts';
 import { rejectArbitraryQuery } from '../packages/clean-room/src/index.ts';
 import { evaluateEgress } from '../packages/clean-room/src/egress.ts';
-import { createFederatedQueryEngine } from '../packages/economic-awareness-fabric/src/federation/query.ts';
-import { normalizeToEnvelope } from '../packages/economic-awareness-fabric/src/normalization/envelope.ts';
+import { federation, normalization } from '@solstice/economic-awareness-fabric';
 import { SimulatedIdentityAdapter } from '../packages/identity/src/simulation.ts';
 import { authorizeGraphRead } from '../packages/personal-economic-graph/src/access.ts';
 import { capabilitiesForStaffRoles } from '../packages/identity/src/admin-roles.ts';
@@ -235,7 +234,7 @@ describe('Wave 9 Task 5 — graph privacy', () => {
 
 describe('Wave 9 Task 6 — federated query privacy', () => {
   it('strips raw provider payloads from federation results', () => {
-    const envelope = normalizeToEnvelope({
+    const envelope = normalization.normalizeToEnvelope({
       envelopeId: 'env_1',
       providerId: 'prov_macro',
       economicDomain: 'macro',
@@ -245,7 +244,7 @@ describe('Wave 9 Task 6 — federated query privacy', () => {
       rawPayload: '{"secret":"provider-body"}',
       retrievedAtUtc: NOW,
     });
-    const engine = createFederatedQueryEngine();
+    const engine = federation.createFederatedQueryEngine();
     const store = new Map([[envelope.envelopeId, envelope]]);
     const result = engine.execute(
       {

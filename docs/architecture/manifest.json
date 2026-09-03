@@ -577,7 +577,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Wave 4 Economic Awareness Fabric — federated information processing between external sources and Wave 3 economic proof. Observes and proposes; does not mint or authorize monetary mutation."
+      "notes": "Wave 4 Economic Awareness Fabric — federated information orchestration between external sources and Wave 3 economic proof. Canonical Information Consensus semantics live in packages/sunrey-chain/src/economic-awareness-fabric (ADR-0035). This package is the public orchestration adapter; it re-exports consensus via @solstice/sunrey-chain/economic-awareness-fabric. Observes and proposes; does not mint or authorize monetary mutation."
     },
     {
       "id": "packages/risk-evidence",
@@ -1422,6 +1422,7 @@
         "packages/ai-runtime",
         "packages/model-registry",
         "packages/payments",
+        "packages/persistence",
         "packages/sunrey-chain",
         "packages/sunrey-agent",
         "packages/personal-economic-graph",

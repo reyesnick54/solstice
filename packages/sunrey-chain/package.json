@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./economic-awareness-fabric": "./src/economic-awareness-fabric/index.ts",
+    "./economic-proof": "./src/economic-proof/index.ts"
   },
   "files": [
     "src"

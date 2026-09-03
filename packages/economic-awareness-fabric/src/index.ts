@@ -12,12 +12,21 @@ export * as events from './events/index.ts';
 export * as federation from './federation/index.ts';
 export * as entities from './entities/index.ts';
 export * as graph from './graph/index.ts';
-export * as corroboration from './corroboration/index.ts';
 export * as reputation from './reputation/index.ts';
-export * as consensus from './consensus/index.ts';
 export * as evidence from './evidence/index.ts';
 export * as config from './config/index.ts';
 export * as harness from './harness/index.ts';
+
+/**
+ * Canonical Information Consensus semantics (authoritative implementation in sunrey-chain).
+ */
+export * as informationConsensus from './consensus/index.ts';
+
+/** @deprecated Use `informationConsensus` — corroboration is lineage-aware, not count-based. */
+export * as corroboration from './corroboration/index.ts';
+
+/** @deprecated Use `informationConsensus` — single semantic authority for consensus evaluation. */
+export * as consensus from './consensus/index.ts';
 
 export { FAIL_CLOSED_RULES } from './authority/fail-closed.ts';
 export { capabilityBlocksMonetaryMutation } from './authority/information-authority.ts';

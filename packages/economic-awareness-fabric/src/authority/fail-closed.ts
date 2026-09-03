@@ -4,12 +4,12 @@
  * Untrusted external data must never silently become VerifiedEconomicFact.
  */
 
-import type { ExternalObservation } from '../../../provider-sdk/src/types.ts';
+import type { ExternalObservation } from '@solstice/provider-sdk';
 import type {
   CanonicalEconomicClaim,
   EconomicObservation,
   VerifiedEconomicFact,
-} from '../../../sunrey-chain/src/economic-proof/types.ts';
+} from '@solstice/sunrey-chain/economic-proof';
 
 export type TrustBoundaryViolation =
   | 'UNKNOWN_PROVIDER'

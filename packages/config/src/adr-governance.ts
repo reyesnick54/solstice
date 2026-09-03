@@ -517,6 +517,21 @@ export const ADR_REGISTRY: readonly AdrRecord[] = Object.freeze([
     externalApprovalState: 'EXTERNAL_APPROVAL_REQUIRED',
     notes: 'ACCESS-01 foundation only',
   },
+  {
+    number: '0035',
+    title: 'Economic Awareness Fabric canonicalization',
+    file: 'ADR-0035-economic-awareness-fabric-canonicalization.md',
+    engineeringStatus: 'ACCEPTED_FOR_ENGINEERING',
+    legalConfidence: 'RESEARCH_REQUIRED',
+    implementationStatus: 'IMPLEMENTED',
+    referencedByProductionCode: true,
+    legalApprovalRequired: true,
+    externalProviderApprovalRequired: false,
+    regulatoryApprovalRequired: true,
+    productionActivation: 'NOT_ALLOWED',
+    externalApprovalState: 'RESEARCH_REQUIRED',
+    notes: 'Canonical Information Consensus in sunrey-chain; orchestration adapter in economic-awareness-fabric',
+  },
 ]);
 
 export function findAdrByFile(file: string): AdrRecord | undefined {

@@ -9,13 +9,13 @@ import {
   evaluateInformationConsensus,
   informationConsensusCreatesMoney,
   toOracleVerifiedEconomicFactCandidate,
-} from '../packages/sunrey-chain/src/economic-awareness-fabric/information-consensus/index.ts';
+} from '@solstice/sunrey-chain/economic-awareness-fabric';
 import {
   buildConsensusInput,
   PRODUCTIVE_ENERGY_CANDIDATE,
   THREE_INDEPENDENT_SOURCES,
   THREE_PROVIDERS_ONE_UPSTREAM,
-} from '../packages/sunrey-chain/src/economic-awareness-fabric/information-consensus/fixtures.ts';
+} from '@solstice/sunrey-chain/economic-awareness-fabric';
 
 describe('Wave 4 — Information Consensus integration', () => {
   it('exports a versioned evaluation boundary with zero monetary authority', () => {
