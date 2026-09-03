@@ -90,6 +90,10 @@ export async function createProductIntegrationRuntime(
       ...options.accounts,
     });
     accounts = durableAccounts.runtime;
+    const agentSnapshot = await loadProductAgentRuntimeState(durableAccounts.session.pools.customer);
+    if (agentSnapshot) {
+      agentStore.hydrate(agentSnapshot as Parameters<InMemoryAgentMandateStore['hydrate']>[0]);
+    }
     humanEconomicState = await DurableHumanEconomicStateService.create(
       createHumanEconomicPersistencePort(durableAccounts.session.pools.customer),
       { requireDurable: true },
