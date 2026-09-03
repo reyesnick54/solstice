@@ -1448,6 +1448,7 @@
         "packages/sunrey-exchange",
         "packages/external-data",
         "packages/risk-evidence",
+        "packages/persistence",
         "services/investments",
         "services/economic-graph"
       ],

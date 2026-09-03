@@ -6,13 +6,15 @@
  */
 
 import { FrozenClock } from '../../../../packages/config/src/clock.ts';
+import { PERSISTENCE_ENV_ALIASES, resolveCanonicalEnv } from '../../../../packages/config/src/env.ts';
 import { ENVIRONMENT } from '../../../../packages/config/src/flags.ts';
 import { asUtcInstant } from '../../../../packages/domain/src/time.ts';
 import { ConsentStore } from '../../../../packages/consent/src/store.ts';
 import { ConsentService } from '../../../../packages/consent/src/service.ts';
 import { EvidenceVault } from '../../../../packages/evidence/src/vault.ts';
 import { DomainEventLog } from '../../../../packages/events/src/events.ts';
-import { isPersistenceTestEnabled } from '../../../../packages/persistence/src/env.ts';
+import { DurableHumanEconomicStateService } from './durable-human-economic-state.ts';
+import { createHumanEconomicPersistencePort } from '../../../accounts/src/human-economic-persistence.ts';
 import { InMemoryEncryptedPayloadStore } from '../../../../packages/personal-data-vault/src/encryption.ts';
 import { PersonalDataVaultStore } from '../../../../packages/personal-data-vault/src/store.ts';
 import { PersonalDataVault } from '../../../../packages/personal-data-vault/src/service.ts';
@@ -36,6 +38,7 @@ export type ProductIntegrationRuntime = {
   readonly vault: PersonalDataVault;
   readonly agentStore: InMemoryAgentMandateStore;
   readonly durableAccounts: DurableSimulationRuntime | null;
+  readonly humanEconomicState: DurableHumanEconomicStateService | null;
   persist(): Promise<void>;
   close(): Promise<void>;
 };
@@ -52,7 +55,11 @@ export function resolveProductIntegrationMode(
   if (options.forceMode) {
     return options.forceMode;
   }
-  return isPersistenceTestEnabled() ? 'DURABLE' : 'IN_MEMORY';
+  const persistenceTest = resolveCanonicalEnv(PERSISTENCE_ENV_ALIASES[0]!, process.env);
+  const pgHost = resolveCanonicalEnv(PERSISTENCE_ENV_ALIASES[1]!, process.env);
+  return persistenceTest.value === '1' || pgHost.source === 'CANONICAL' || pgHost.source === 'LEGACY_ALIAS'
+    ? 'DURABLE'
+    : 'IN_MEMORY';
 }
 
 export async function createProductIntegrationRuntime(
@@ -71,6 +78,7 @@ export async function createProductIntegrationRuntime(
   const payloadStore = new InMemoryEncryptedPayloadStore();
 
   let durableAccounts: DurableSimulationRuntime | null = null;
+  let humanEconomicState: DurableHumanEconomicStateService | null = null;
   let accounts: SimulationRuntime;
 
   if (mode === 'DURABLE') {
@@ -85,6 +93,10 @@ export async function createProductIntegrationRuntime(
       ...options.accounts,
     });
     accounts = durableAccounts.runtime;
+    humanEconomicState = await DurableHumanEconomicStateService.create(
+      createHumanEconomicPersistencePort(durableAccounts.session.pools.customer),
+      { requireDurable: true },
+    );
     const agentSnapshot = await loadAgentRuntimeState(durableAccounts.session.pools.customer);
     if (agentSnapshot) {
       agentStore.hydrate(agentSnapshot);
@@ -115,6 +127,7 @@ export async function createProductIntegrationRuntime(
     vault,
     agentStore,
     durableAccounts,
+    humanEconomicState,
     async persist() {
       if (!durableAccounts) {
         return;
@@ -128,6 +141,7 @@ export async function createProductIntegrationRuntime(
       await Promise.all([
         persistConsentState(durableAccounts.session.pools.customer, consentStore.snapshot()),
         persistAgentRuntimeState(durableAccounts.session.pools.customer, agentStore.snapshot()),
+        humanEconomicState?.persist(),
         durableAccounts.persistProductState(),
       ]);
     },

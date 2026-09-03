@@ -247,4 +247,43 @@ export class HumanContributionResolutionEngine {
       consumedMonetizationKeys: Object.freeze(this.monetizationStore.listConsumedKeys()),
     });
   }
+
+  restore(snapshot: HumanContributionResolutionSnapshot): void {
+    this.observations.clear();
+    this.replayKeys.clear();
+    this.authoritativeReplay.clear();
+    this.clusters.clear();
+    this.claims.clear();
+    this.fingerprintToCluster.clear();
+    this.conflicts.length = 0;
+    for (const observation of snapshot.observations) {
+      const replayKey = observationReplayKey(
+        observation.providerId,
+        observation.providerRecordId,
+        observation.contentCommitment,
+      );
+      this.replayKeys.add(replayKey);
+      for (const tagged of commitmentKindFromObservation(observation)) {
+        if (tagged.kind === 'credential') {
+          this.authoritativeReplay.add(`${tagged.kind}:${String(tagged.commitment)}`);
+        }
+      }
+      this.observations.set(observation.observationId, observation);
+    }
+    for (const cluster of snapshot.clusters) {
+      this.clusters.set(cluster.clusterId, cluster);
+      this.fingerprintToCluster.set(cluster.resolutionFingerprint, cluster.clusterId);
+    }
+    for (const claim of snapshot.claims) {
+      this.claims.set(claim.claimId, claim);
+    }
+    this.conflicts.push(...snapshot.conflicts);
+    this.monetizationStore.restoreConsumedKeys(snapshot.consumedMonetizationKeys);
+    for (const claim of snapshot.claims) {
+      const lock = this.monetizationStore.getLock(claim.claimId);
+      if (snapshot.consumedMonetizationKeys.some((key) => key.startsWith(claim.resolutionFingerprint))) {
+        void lock;
+      }
+    }
+  }
 }
