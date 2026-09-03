@@ -25,8 +25,8 @@ export type AppendEntitlementEntryInput = {
   readonly direction: EntitlementDirection;
   readonly entryType: EntitlementLedgerEntryType;
   readonly transactionReference: string;
-  readonly allocationReference?: string;
-  readonly reservationReference?: string;
+  readonly allocationReference?: string | null;
+  readonly reservationReference?: string | null;
   readonly evidenceReference: string;
   readonly createdAt: UtcInstant;
   readonly idempotencyKey?: string;

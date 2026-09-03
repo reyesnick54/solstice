@@ -33,7 +33,9 @@ export class AccessReconciliationService {
     this.store = deps.store;
     this.solvency = deps.solvency;
     this.settlement = deps.settlement;
-    this.provider = deps.provider;
+    if (deps.provider !== undefined) {
+      this.provider = deps.provider;
+    }
   }
 
   reconcileTransaction(transactionId: string, now: UtcInstant): ReconciliationOutcome {
@@ -121,8 +123,12 @@ export class AccessReconciliationService {
 
     if (context.status === 'RECONCILIATION_REQUIRED' && this.provider && context.providerReservationReference) {
       const status = this.provider.getBookingStatus({
-        reservationId: context.providerReservationReference,
-        idempotencyKey: context.idempotencyKeys['book'] ?? undefined,
+        ...(context.providerReservationReference != null
+          ? { reservationId: context.providerReservationReference }
+          : {}),
+        ...(context.idempotencyKeys['book'] !== undefined
+          ? { idempotencyKey: context.idempotencyKeys['book'] }
+          : {}),
       });
       if (status.ok && status.value.state === 'CONFIRMED') {
         autoResolved.push(transactionId);

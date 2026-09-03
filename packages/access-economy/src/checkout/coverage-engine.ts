@@ -148,8 +148,12 @@ export class AccessCoverageEngine {
     const excludedAmount = sumExcludedCost(classified);
 
     const policyCappedEligible = applyCoverageCaps(eligibleCost, policy, {
-      programCoverageRemainingMinorUnits: request.programCoverageRemainingMinorUnits,
-      transactionCoverageCapMinorUnits: request.transactionCoverageCapMinorUnits,
+      ...(request.programCoverageRemainingMinorUnits !== undefined
+        ? { programCoverageRemainingMinorUnits: request.programCoverageRemainingMinorUnits }
+        : {}),
+      ...(request.transactionCoverageCapMinorUnits !== undefined
+        ? { transactionCoverageCapMinorUnits: request.transactionCoverageCapMinorUnits }
+        : {}),
     });
 
     const fundingCurrency = request.fundingCurrency;

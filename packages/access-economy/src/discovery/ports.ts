@@ -15,6 +15,13 @@ import type {
   DiscoveryReferencePrice,
 } from './types.ts';
 
+export type {
+  DiscoveryAvailabilityState,
+  DiscoveryFreshness,
+  DiscoveryGeography,
+  DiscoveryReferencePrice,
+} from './types.ts';
+
 export type DiscoveryTransitRouteObservation = {
   readonly routeId: string;
   readonly routeName: string;

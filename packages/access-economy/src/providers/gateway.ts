@@ -10,6 +10,8 @@ import { createSimulationAmazonProvider } from './adapters/amazon/simulation.ts'
 import { createSimulationDoorDashProvider } from './adapters/doordash/simulation.ts';
 import { createExpediaProvider } from './adapters/expedia/factory.ts';
 import { createSimulationTuroProvider } from './adapters/turo/simulation.ts';
+import { DISCOVERY_PROVIDER_IDS } from './types.ts';
+import { fail as providerFail } from './adapters/shared.ts';
 import { ProviderCapabilityRegistry, createProviderCapabilityRegistry } from './capabilities.ts';
 import type {
   AccessProvider,
@@ -31,6 +33,30 @@ import type {
   ProviderSearchResult,
 } from './types.ts';
 
+function createDiscoveryOnlyProvider(providerId: (typeof DISCOVERY_PROVIDER_IDS)[number]): AccessProvider {
+  const unsupported = () => providerFail('DISCOVERY_ONLY', `${providerId} is discovery-only`);
+  return Object.freeze({
+    providerId,
+    displayName: `${providerId} (discovery)`,
+    integrationState: 'DOCUMENTED_NOT_CONNECTED',
+    capabilities: Object.freeze([]),
+    health: () =>
+      Object.freeze({
+        providerId,
+        integrationState: 'DOCUMENTED_NOT_CONNECTED',
+        healthy: true,
+        lastCheckedAt: '2026-08-31T09:00:00.000Z',
+        message: 'discovery-only provider',
+      }),
+    search: unsupported,
+    availability: unsupported,
+    quote: unsupported,
+    reserve: unsupported,
+    book: unsupported,
+    cancel: unsupported,
+  });
+}
+
 export class AccessProviderGateway {
   private readonly providers: Readonly<Record<AccessProviderId, AccessProvider>>;
   readonly registry: ProviderCapabilityRegistry;
@@ -43,6 +69,14 @@ export class AccessProviderGateway {
       doordash: input?.providers?.doordash ?? createSimulationDoorDashProvider(),
       amazon: input?.providers?.amazon ?? createSimulationAmazonProvider(),
       airbnb: input?.providers?.airbnb ?? createSimulationAirbnbProvider(),
+      gbfs_mobility: input?.providers?.gbfs_mobility ?? createDiscoveryOnlyProvider('gbfs_mobility'),
+      travel_discovery: input?.providers?.travel_discovery ?? createDiscoveryOnlyProvider('travel_discovery'),
+      experiences_discovery:
+        input?.providers?.experiences_discovery ?? createDiscoveryOnlyProvider('experiences_discovery'),
+      hotels_discovery: input?.providers?.hotels_discovery ?? createDiscoveryOnlyProvider('hotels_discovery'),
+      transportation_discovery:
+        input?.providers?.transportation_discovery ?? createDiscoveryOnlyProvider('transportation_discovery'),
+      compute_discovery: input?.providers?.compute_discovery ?? createDiscoveryOnlyProvider('compute_discovery'),
     });
   }
 

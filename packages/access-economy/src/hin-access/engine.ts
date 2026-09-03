@@ -433,7 +433,7 @@ export class HumanInformationAccessBridge {
       epochId,
       subjectRef,
       computedAt: this.nowUtc(),
-    });
+    }) as Result<AccessParticipationSnapshot, HinAccessFailure>;
   }
 }
 

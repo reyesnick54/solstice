@@ -83,7 +83,7 @@ export function evaluateCommercialActivation(input: ActivationGateInput): Activa
     }
   }
 
-  if (!OPERATIONAL_STATES.has(input.activationState) && input.activationState !== 'DISCOVERY_ONLY') {
+  if (!OPERATIONAL_STATES.has(input.activationState)) {
     reasons.push('non_operational_activation_state');
   }
 

@@ -16,7 +16,7 @@ import type {
   DiscoveryReferencePrice,
   DiscoveryTransitRouteObservation,
 } from '../../access-economy/src/discovery/ports.ts';
-import type { AccessDiscoveryOutcome } from '../../access-economy/src/discovery/types.ts';
+import type { AccessDiscoveryFailure, AccessDiscoveryOutcome } from '../../access-economy/src/discovery/types.ts';
 import {
   createAccessDiscoveryDataSandbox,
   type AccessDiscoveryDataService,
@@ -59,8 +59,8 @@ function ok<T>(value: T): AccessDiscoveryOutcome<T> {
   return Object.freeze({ ok: true, value });
 }
 
-function fail(code: AccessDiscoveryOutcome<never> extends { ok: false; code: infer C } ? C : never, message: string) {
-  return Object.freeze({ ok: false, code, message });
+function fail(code: AccessDiscoveryFailure['code'], message: string): AccessDiscoveryOutcome<never> {
+  return Object.freeze({ ok: false as const, code, message });
 }
 
 export type AccessDiscoveryBridgeOptions = {

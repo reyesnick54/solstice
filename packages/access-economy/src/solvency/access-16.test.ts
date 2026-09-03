@@ -12,6 +12,7 @@ import {
   computeSolvencySlices,
   createQuotedLiability,
   createSimulationSolvencyPorts,
+  type InMemorySettlementReservePort,
   evaluatePoolAdmission,
   projectConsumerAvailability,
   runAllStressScenarios,
@@ -60,7 +61,7 @@ function seedPaymentsReserve(
   ports: ReturnType<typeof createSimulationSolvencyPorts>,
   amount: bigint,
 ): void {
-  ports.payments.seed(
+  (ports.payments as InMemorySettlementReservePort).seed(
     Object.freeze({
       positionId: 'reserve_expedia_usd',
       currency: 'USD',
@@ -310,7 +311,7 @@ describe('ACCESS-16 stress scenarios', () => {
       const scenarioPorts = createSimulationSolvencyPorts();
       return {
         engine: new AccessSolvencyEngine(scenarioPorts, { targetSolvencyRatioBps: 10_000n, simulationOnly: true }),
-        paymentsPort: scenarioPorts.payments,
+        paymentsPort: scenarioPorts.payments as InMemorySettlementReservePort,
         basePool: pool,
         baseReserveMinorUnits: 50_000n,
         currency: 'USD',

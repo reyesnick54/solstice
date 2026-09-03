@@ -11,6 +11,7 @@ import { AccessWebhookOrchestrator } from './webhook-orchestrator.ts';
 import { allocateRefund } from './refund-policy.ts';
 import {
   createWave3TestStack,
+  requireOrchestratorValue,
   mustangProviderQuote,
   seedMobilityEntitlement,
   seedMobilityFundingPool,
@@ -32,7 +33,7 @@ async function runMustangCheckout(stack: ReturnType<typeof createWave3TestStack>
     now: WAVE3_NOW,
   });
   assert.equal(start.ok, true);
-  const txId = start.value!.transactionId;
+  const txId = requireOrchestratorValue(start).transactionId;
 
   const quote = await stack.orchestrator.quote({
     transactionId: txId,
@@ -47,10 +48,10 @@ async function runMustangCheckout(stack: ReturnType<typeof createWave3TestStack>
     now: WAVE3_NOW,
   });
   assert.equal(quote.ok, true);
-  assert.equal(quote.value!.quote!.accessPoolContributionMinorUnits, 300_00n);
-  assert.equal(quote.value!.quote!.userContributionMinorUnits, 100_00n);
-  assert.equal(quote.value!.quote!.securityDepositMinorUnits, 500_00n);
-  assert.equal(quote.value!.quote!.tokenConversionContributionMinorUnits, TOKEN_CONVERSION_CONTRIBUTION);
+  assert.equal(requireOrchestratorValue(quote).quote!.accessPoolContributionMinorUnits, 300_00n);
+  assert.equal(requireOrchestratorValue(quote).quote!.userContributionMinorUnits, 100_00n);
+  assert.equal(requireOrchestratorValue(quote).quote!.securityDepositMinorUnits, 500_00n);
+  assert.equal(requireOrchestratorValue(quote).quote!.tokenConversionContributionMinorUnits, TOKEN_CONVERSION_CONTRIBUTION);
 
   await stack.orchestrator.approveEligibility({
     transactionId: txId,
@@ -89,7 +90,7 @@ async function runMustangCheckout(stack: ReturnType<typeof createWave3TestStack>
   });
   assert.equal(settle.ok, true);
 
-  return { txId, entitlementId, poolId, final: settle.value! };
+  return { txId, entitlementId, poolId, final: requireOrchestratorValue(settle) };
 }
 
 describe('ACCESS Wave 3 Mustang E2E', () => {
@@ -125,7 +126,7 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       idempotencyKey: 'fail-a-start',
       now: WAVE3_NOW,
     });
-    const txId = start.value!.transactionId;
+    const txId = requireOrchestratorValue(start).transactionId;
     await stack.orchestrator.quote({
       transactionId: txId,
       providerId: 'turo',
@@ -160,7 +161,7 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       idempotencyKey: 'fail-b-start',
       now: WAVE3_NOW,
     });
-    const txId = start.value!.transactionId;
+    const txId = requireOrchestratorValue(start).transactionId;
     await stack.orchestrator.quote({
       transactionId: txId,
       providerId: 'turo',
@@ -177,10 +178,10 @@ describe('ACCESS Wave 3 failure scenarios', () => {
     await stack.orchestrator.reserve({ transactionId: txId, userApproved: true, idempotencyKey: 'fail-b-res', now: WAVE3_NOW });
     const book = await stack.orchestrator.book({ transactionId: txId, idempotencyKey: 'fail-b-book', now: WAVE3_NOW });
     assert.equal(book.ok, true);
-    assert.equal(book.value!.status, 'RECONCILIATION_REQUIRED');
+    assert.equal(requireOrchestratorValue(book).status, 'RECONCILIATION_REQUIRED');
     const reconciled = await stack.orchestrator.reconcile({ transactionId: txId, idempotencyKey: 'fail-b-recon', now: WAVE3_NOW });
     assert.equal(reconciled.ok, true);
-    assert.equal(reconciled.value!.status, 'BOOKED');
+    assert.equal(requireOrchestratorValue(reconciled).status, 'BOOKED');
   });
 
   it('C: card authorization succeeds but provider booking fails', async () => {
@@ -197,7 +198,7 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       idempotencyKey: 'fail-c-start',
       now: WAVE3_NOW,
     });
-    const txId = start.value!.transactionId;
+    const txId = requireOrchestratorValue(start).transactionId;
     await stack.orchestrator.quote({
       transactionId: txId,
       providerId: 'turo',
@@ -231,7 +232,7 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       idempotencyKey: 'fail-d-start',
       now: WAVE3_NOW,
     });
-    const txId = start.value!.transactionId;
+    const txId = requireOrchestratorValue(start).transactionId;
     await stack.orchestrator.quote({
       transactionId: txId,
       providerId: 'turo',
@@ -273,8 +274,9 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       idempotencyKey: 'double-click',
       now: WAVE3_NOW,
     });
-    assert.equal(start1.value!.transactionId, start2.value!.transactionId);
-    assert.equal(start2.idempotent, true);
+    assert.equal(requireOrchestratorValue(start1).transactionId, requireOrchestratorValue(start2).transactionId);
+    assert.equal(start2.ok, true);
+    if (start2.ok) assert.equal(start2.idempotent, true);
   });
 
   it('F: duplicate booking webhook is idempotent', async () => {
@@ -292,10 +294,11 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       occurredAt: WAVE3_NOW,
       payloadReference: 'payload:1',
     };
-    assert.equal(webhook.handle(event).ok, true);
-    const dup = webhook.handle(event);
+    const first = await webhook.handle(event);
+    assert.equal(first.ok, true);
+    const dup = await webhook.handle(event);
     assert.equal(dup.ok, true);
-    assert.equal(dup.duplicate, true);
+    if (dup.ok) assert.equal(dup.duplicate, true);
   });
 
   it('G: duplicate capture webhook is idempotent', async () => {
@@ -311,7 +314,7 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       idempotencyKey: 'dup-cap-start',
       now: WAVE3_NOW,
     });
-    const txId = start.value!.transactionId;
+    const txId = requireOrchestratorValue(start).transactionId;
     await stack.orchestrator.quote({
       transactionId: txId,
       providerId: 'turo',
@@ -356,7 +359,7 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       idempotencyKey: 'price-start',
       now: WAVE3_NOW,
     });
-    const txId = start.value!.transactionId;
+    const txId = requireOrchestratorValue(start).transactionId;
     await stack.orchestrator.quote({
       transactionId: txId,
       providerId: 'turo',
@@ -404,7 +407,7 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       now: WAVE3_NOW,
     });
     assert.equal(refund.ok, true);
-    assert.equal(refund.value!.status, 'REFUNDED');
+    assert.equal(requireOrchestratorValue(refund).status, 'REFUNDED');
   });
 
   it('J: partial refund uses proportional allocation', () => {
@@ -433,7 +436,7 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       idempotencyKey: 'nonref-start',
       now: WAVE3_NOW,
     });
-    const txId = start.value!.transactionId;
+    const txId = requireOrchestratorValue(start).transactionId;
     await stack.orchestrator.quote({
       transactionId: txId,
       providerId: 'turo',
@@ -455,7 +458,7 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       providerNonRefundable: true,
     });
     assert.equal(cancel.ok, true);
-    assert.equal(cancel.value!.status, 'CANCELLED');
+    assert.equal(requireOrchestratorValue(cancel).status, 'CANCELLED');
   });
 
   it('L: user no-show records evidence without automatic restoration', async () => {
@@ -498,7 +501,7 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       now: WAVE3_NOW,
     });
     for (const start of [start1, start2]) {
-      const txId = start.value!.transactionId;
+      const txId = requireOrchestratorValue(start).transactionId;
       await stack.orchestrator.quote({
         transactionId: txId,
         providerId: 'turo',
@@ -513,14 +516,14 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       });
     }
     const res1 = await stack.orchestrator.reserve({
-      transactionId: start1.value!.transactionId,
+      transactionId: requireOrchestratorValue(start1).transactionId,
       userApproved: true,
       idempotencyKey: 'exhaust-res-1',
       now: WAVE3_NOW,
     });
     assert.equal(res1.ok, true);
     const res2 = await stack.orchestrator.reserve({
-      transactionId: start2.value!.transactionId,
+      transactionId: requireOrchestratorValue(start2).transactionId,
       userApproved: true,
       idempotencyKey: 'exhaust-res-2',
       now: WAVE3_NOW,
@@ -542,7 +545,7 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       idempotencyKey: 'quarantine-start',
       now: WAVE3_NOW,
     });
-    const txId = start.value!.transactionId;
+    const txId = requireOrchestratorValue(start).transactionId;
     await stack.orchestrator.quote({
       transactionId: txId,
       providerId: 'turo',
@@ -577,7 +580,7 @@ describe('ACCESS Wave 3 failure scenarios', () => {
       idempotencyKey: 'ooo-start',
       now: WAVE3_NOW,
     });
-    const txId = start.value!.transactionId;
+    const txId = requireOrchestratorValue(start).transactionId;
     await stack.orchestrator.quote({
       transactionId: txId,
       providerId: 'turo',
@@ -620,10 +623,10 @@ describe('ACCESS Wave 3 failure scenarios', () => {
 });
 
 describe('ACCESS Wave 3 security checks', () => {
-  it('rejects unsigned webhooks', () => {
+  it('rejects unsigned webhooks', async () => {
     const stack = createWave3TestStack();
     const webhook = new AccessWebhookOrchestrator(stack.orchestrator);
-    const result = webhook.handle({
+    const result = await webhook.handle({
       webhookEventId: 'wh-bad',
       source: 'PROVIDER',
       providerId: 'turo',
@@ -654,7 +657,7 @@ describe('ACCESS Wave 3 security checks', () => {
       idempotencyKey: 'illegal-start',
       now: WAVE3_NOW,
     });
-    const result = await stack.orchestrator.store.transition(start.value!.transactionId, 'SETTLED', {
+    const result = await stack.orchestrator.store.transition(requireOrchestratorValue(start).transactionId, 'SETTLED', {
       updatedAt: WAVE3_NOW,
     });
     assert.equal(result.ok, false);
@@ -680,13 +683,13 @@ describe('ACCESS Wave 3 reconciliation', () => {
       idempotencyKey: 'recon-start',
       now: WAVE3_NOW,
     });
-    const txId = start.value!.transactionId;
+    const txId = requireOrchestratorValue(start).transactionId;
     const patched = Object.freeze({
-      ...start.value!,
+      ...requireOrchestratorValue(start),
       status: 'BOOKED' as const,
       providerBookingReference: 'pbk_fake',
       capturedAmountMinorUnits: 0n,
-      version: start.value!.version + 1,
+      version: requireOrchestratorValue(start).version + 1,
       updatedAt: WAVE3_NOW,
     });
     await stack.orchestrator.store.save(patched);

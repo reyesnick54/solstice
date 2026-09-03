@@ -5,21 +5,21 @@
 import type { ProviderSettlementLiability, SettlementLiabilityState } from './types.ts';
 import { SETTLEMENT_LIABILITY_STATES } from './taxonomy.ts';
 
-const TRANSITIONS: Readonly<Record<SettlementLiabilityState, readonly SettlementLiabilityState[]>> = Object.freeze({
-  QUOTED: Object.freeze(['RESERVED', 'RELEASED']),
-  RESERVED: Object.freeze(['COMMITTED', 'RELEASED']),
-  COMMITTED: Object.freeze(['CAPTURED', 'RELEASED', 'DEFAULT_REVIEW']),
-  CAPTURED: Object.freeze(['REFUNDED']),
-  RELEASED: Object.freeze([]),
-  REFUNDED: Object.freeze([]),
-  DEFAULT_REVIEW: Object.freeze(['RELEASED', 'CAPTURED']),
-});
+const TRANSITIONS = {
+  QUOTED: ['RESERVED', 'RELEASED'] as const,
+  RESERVED: ['COMMITTED', 'RELEASED'] as const,
+  COMMITTED: ['CAPTURED', 'RELEASED', 'DEFAULT_REVIEW'] as const,
+  CAPTURED: ['REFUNDED'] as const,
+  RELEASED: [] as const,
+  REFUNDED: [] as const,
+  DEFAULT_REVIEW: ['RELEASED', 'CAPTURED'] as const,
+} satisfies Readonly<Record<SettlementLiabilityState, readonly SettlementLiabilityState[]>>;
 
 export function canTransitionLiability(
   from: SettlementLiabilityState,
   to: SettlementLiabilityState,
 ): boolean {
-  return TRANSITIONS[from].includes(to);
+  return (TRANSITIONS[from] as readonly SettlementLiabilityState[]).includes(to);
 }
 
 export function transitionLiability(

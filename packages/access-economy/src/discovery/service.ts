@@ -95,10 +95,16 @@ export class AccessDiscoveryService {
 
     if (!request.category || request.category === 'TRANSPORTATION' || request.category === 'VEHICLE_HOURS') {
       if (request.location) {
-        const geo = generalizeLocationForProvider({
+        const generalized = generalizeLocationForProvider({
           ...request.location,
           radiusKm: clampRadiusKm(request.location.radiusKm),
         });
+        const geo = {
+          ...request.location,
+          latitude: generalized.latitude,
+          longitude: generalized.longitude,
+          radiusKm: generalized.radiusKm,
+        };
         const gbfs = this.#ports.mobility.searchGbfsStations(geo, pageSize);
         if (gbfs.ok) {
           for (const row of gbfs.value) {
@@ -110,10 +116,16 @@ export class AccessDiscoveryService {
 
     if (!request.category || request.category === 'ENERGY' || request.category === 'VEHICLE_HOURS') {
       if (request.location) {
-        const geo = generalizeLocationForProvider({
+        const generalized = generalizeLocationForProvider({
           ...request.location,
           radiusKm: clampRadiusKm(request.location.radiusKm),
         });
+        const geo = {
+          ...request.location,
+          latitude: generalized.latitude,
+          longitude: generalized.longitude,
+          radiusKm: generalized.radiusKm,
+        };
         const charging = this.#ports.travel.findChargingLocations(geo, pageSize);
         if (charging.ok) {
           for (const row of charging.value) {

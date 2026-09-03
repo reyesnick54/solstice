@@ -131,7 +131,9 @@ export class AccessSolvencyService {
       allocatableUnits: input.allocatableUnits,
       allocationRightsUnits: input.allocationRightsUnits,
       balance,
-      providerContributedUnits: input.providerContributedUnits,
+      ...(input.providerContributedUnits !== undefined
+        ? { providerContributedUnits: input.providerContributedUnits }
+        : {}),
     });
   }
 
@@ -180,8 +182,8 @@ export class AccessSolvencyService {
     return this.fundingReservations;
   }
 
-  expireFundingReservations(now: UtcInstant): void {
-    this.fundingReservations.expireReservations(now);
+  expireFundingReservations(now: UtcInstant): readonly import('./types.ts').AccessFundingReservation[] {
+    return this.fundingReservations.listExpiredReservations(now);
   }
 }
 
@@ -202,6 +204,6 @@ export function createAccessSolvencyService(
     entitlementLedger,
     fundingReservations,
     entitlementReservations,
-    config,
+    ...(config !== undefined ? { config } : {}),
   });
 }

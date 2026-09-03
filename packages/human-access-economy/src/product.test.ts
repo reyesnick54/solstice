@@ -53,7 +53,7 @@ describe('Human Access Economy product', () => {
       category: 'MOBILITY',
       summary: 'Ford Mustang — Miami weekend',
       location: 'Miami, FL',
-      intentId: intent.ok ? intent.value.intentId : undefined,
+      ...(intent.ok ? { intentId: intent.value.intentId } : {}),
     });
     assert.equal(availability.ok, true);
     if (availability.ok) {
@@ -64,7 +64,7 @@ describe('Human Access Economy product', () => {
       category: 'MOBILITY',
       summary: 'Ford Mustang — Miami weekend',
       location: 'Miami, FL',
-      intentId: intent.ok ? intent.value.intentId : undefined,
+      ...(intent.ok ? { intentId: intent.value.intentId } : {}),
       idempotencyKey: 'mustang-quote',
     });
     assert.equal(quote.ok, true);

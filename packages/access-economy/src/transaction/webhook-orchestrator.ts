@@ -18,7 +18,7 @@ export class AccessWebhookOrchestrator {
     this.orchestrator = orchestrator;
   }
 
-  handle(event: AccessWebhookEvent): WebhookOutcome {
+  async handle(event: AccessWebhookEvent): Promise<WebhookOutcome> {
     if (!event.signatureVerified) {
       return { ok: false, code: 'SIGNATURE_INVALID', message: 'webhook signature verification failed' };
     }
@@ -29,9 +29,9 @@ export class AccessWebhookOrchestrator {
       return { ok: false, code: 'TRANSACTION_UNKNOWN', message: 'webhook missing transaction binding' };
     }
 
-    const result = this.orchestrator.applyWebhook(event);
+    const result = await this.orchestrator.applyWebhook(event);
     if (!result.ok) {
-      return result;
+      return { ok: false, code: result.code, message: result.message };
     }
     this.processed.add(event.idempotencyKey);
     return { ok: true };

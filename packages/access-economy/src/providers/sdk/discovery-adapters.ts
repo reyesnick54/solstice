@@ -134,7 +134,7 @@ const FIXTURES: Readonly<Record<AccessProviderId, readonly DiscoveryFixture[]>> 
   doordash: Object.freeze([]),
   amazon: Object.freeze([]),
   airbnb: Object.freeze([]),
-});
+}) as Readonly<Record<AccessProviderId, readonly DiscoveryFixture[]>>;
 
 function matchFixture(fixture: DiscoveryFixture, request: AccessInventorySearchRequest): boolean {
   if (fixture.category !== request.category) {

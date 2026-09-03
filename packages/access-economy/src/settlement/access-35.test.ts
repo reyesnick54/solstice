@@ -112,7 +112,7 @@ function seedSolvency(service: ReturnType<typeof createAccessSolvencyService>) {
     idempotencyKey: 'alloc:ent',
   });
 
-  seededPoolId = pool.fundingPoolId;
+  seededPoolId = accessFundingPoolIdFor(pool.fundingPoolId);
   seededEntitlementId = ENTITLEMENT_ID;
   return { poolId: pool.fundingPoolId, entitlementId: ENTITLEMENT_ID };
 }
@@ -256,7 +256,7 @@ describe('ACCESS-35 settlement orchestrator', () => {
 
     const orchestrator = createOrchestrator(service);
     const quote = fixtureCheckoutQuote({
-      fundingPoolId: smallPool.fundingPoolId,
+      fundingPoolId: accessFundingPoolIdFor(smallPool.fundingPoolId),
       accessPoolContribution: 30_000n,
       userContribution: 10_000n,
       providerAmount: 40_000n,

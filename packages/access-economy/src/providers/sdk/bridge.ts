@@ -67,7 +67,7 @@ export function bridgeLegacyProvider(
   descriptorOverride?: Partial<AccessProviderDescriptor>,
 ): AccessInventoryProvider & AccessFulfillmentProvider & AccessProvider {
   const baseDescriptor = ACCESS_PROVIDER_DESCRIPTORS[legacy.providerId];
-  const descriptor: AccessProviderDescriptor = Object.freeze({
+  const descriptor = Object.freeze({
   ...(baseDescriptor ?? {
       providerId: legacy.providerId,
       name: legacy.displayName,
@@ -88,7 +88,7 @@ export function bridgeLegacyProvider(
       metadata: Object.freeze({}),
     }),
     ...(descriptorOverride ?? {}),
-  });
+  }) as AccessProviderDescriptor;
 
   let lastSuccessAt: string | null = SIMULATION_NOW;
   let lastFailureAt: string | null = null;

@@ -88,11 +88,11 @@ export {
 } from './product/taxonomy.ts';
 export type {
   AccessProductEvent,
-  AccessProductEventType,
-  AccessEventPriority,
 } from './product/events.ts';
+export type { AccessProductEventType, AccessEventPriority } from './product/taxonomy.ts';
 export type { AccessReceipt, AccessRefundReceipt } from './product/receipts.ts';
-export type { AccessActivityItem, AccessHistoryFilter } from './product/activity.ts';
+export type { AccessActivityItem } from './product/activity.ts';
+export type { AccessHistoryFilter } from './product/taxonomy.ts';
 export type {
   AccessProductTransaction,
   AccessPriceChangeView,

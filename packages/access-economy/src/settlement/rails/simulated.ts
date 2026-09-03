@@ -32,6 +32,7 @@ import type {
   SettlementEvidencePort,
   UserFundingPort,
 } from '../ports.ts';
+import type { AccessPaymentRailCapability } from '../taxonomy.ts';
 import type {
   AccessPaymentAuthorizationResult,
   AccessPaymentCaptureResult,
@@ -60,7 +61,7 @@ export type SimulatedPaymentRailOptions = {
 };
 
 export class SimulatedAccessPaymentRail implements AccessPaymentRail {
-  readonly descriptor = Object.freeze({
+  readonly descriptor: AccessPaymentRail['descriptor'] = Object.freeze({
     railKind: 'SIMULATED' as const,
     capabilities: Object.freeze([
       'AUTHORIZE',
@@ -70,7 +71,7 @@ export class SimulatedAccessPaymentRail implements AccessPaymentRail {
       'PARTIAL_REFUND',
       'STATUS',
       'RECONCILE',
-    ] as const),
+    ] as readonly AccessPaymentRailCapability[]),
     settlementStrategy: 'AUTHORIZE_THEN_BOOK_THEN_CAPTURE' as const,
   });
 

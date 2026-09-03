@@ -6,26 +6,24 @@
 import type { AccessCategory } from '../taxonomy.ts';
 import type { AccessProductTransactionStatus, AccessUserActionType } from './taxonomy.ts';
 
-export const ACCESS_TRANSACTION_TRANSITIONS: Readonly<
-  Record<AccessProductTransactionStatus, readonly AccessProductTransactionStatus[]>
-> = Object.freeze({
-  DRAFT: Object.freeze(['QUOTED', 'FAILED']),
-  QUOTED: Object.freeze(['QUOTE_EXPIRED', 'PRICE_CHANGED', 'CHECKOUT_STARTED', 'FAILED']),
-  QUOTE_EXPIRED: Object.freeze(['QUOTED']),
-  PRICE_CHANGED: Object.freeze(['CHECKOUT_STARTED', 'QUOTED', 'FAILED']),
-  CHECKOUT_STARTED: Object.freeze(['PROCESSING_CONFIRMATION', 'BOOKING_CONFIRMED', 'FAILED']),
-  PROCESSING_CONFIRMATION: Object.freeze(['BOOKING_CONFIRMED', 'RECONCILIATION_REQUIRED', 'FAILED']),
-  RECONCILIATION_REQUIRED: Object.freeze(['BOOKING_CONFIRMED', 'FAILED']),
-  BOOKING_CONFIRMED: Object.freeze(['BOOKED', 'CANCELLED']),
-  BOOKED: Object.freeze(['FULFILLED', 'CANCELLED', 'REFUND_PENDING']),
-  FULFILLED: Object.freeze(['SETTLED', 'REFUND_PENDING']),
-  SETTLED: Object.freeze(['REFUND_PENDING']),
-  CANCELLED: Object.freeze(['REFUND_PENDING', 'REFUNDED']),
-  REFUND_PENDING: Object.freeze(['PARTIAL_REFUND', 'REFUNDED']),
-  PARTIAL_REFUND: Object.freeze(['REFUNDED']),
-  REFUNDED: Object.freeze([]),
-  FAILED: Object.freeze([]),
-});
+export const ACCESS_TRANSACTION_TRANSITIONS = Object.freeze({
+  DRAFT: ['QUOTED', 'FAILED'] as const,
+  QUOTED: ['QUOTE_EXPIRED', 'PRICE_CHANGED', 'CHECKOUT_STARTED', 'FAILED'] as const,
+  QUOTE_EXPIRED: ['QUOTED'] as const,
+  PRICE_CHANGED: ['CHECKOUT_STARTED', 'QUOTED', 'FAILED'] as const,
+  CHECKOUT_STARTED: ['PROCESSING_CONFIRMATION', 'BOOKING_CONFIRMED', 'FAILED'] as const,
+  PROCESSING_CONFIRMATION: ['BOOKING_CONFIRMED', 'RECONCILIATION_REQUIRED', 'FAILED'] as const,
+  RECONCILIATION_REQUIRED: ['BOOKING_CONFIRMED', 'FAILED'] as const,
+  BOOKING_CONFIRMED: ['BOOKED', 'CANCELLED'] as const,
+  BOOKED: ['FULFILLED', 'CANCELLED', 'REFUND_PENDING'] as const,
+  FULFILLED: ['SETTLED', 'REFUND_PENDING'] as const,
+  SETTLED: ['REFUND_PENDING'] as const,
+  CANCELLED: ['REFUND_PENDING', 'REFUNDED'] as const,
+  REFUND_PENDING: ['PARTIAL_REFUND', 'REFUNDED'] as const,
+  PARTIAL_REFUND: ['REFUNDED'] as const,
+  REFUNDED: [] as const,
+  FAILED: [] as const,
+}) satisfies Readonly<Record<AccessProductTransactionStatus, readonly AccessProductTransactionStatus[]>>;
 
 export type AccessProductTransaction = {
   readonly transactionId: string;
@@ -86,7 +84,7 @@ export type AccessQuoteExpiredView = {
 
 export class AccessTransactionStateMachine {
   canTransition(from: AccessProductTransactionStatus, to: AccessProductTransactionStatus): boolean {
-    return ACCESS_TRANSACTION_TRANSITIONS[from].includes(to);
+    return (ACCESS_TRANSACTION_TRANSITIONS[from] as readonly AccessProductTransactionStatus[]).includes(to);
   }
 
   transition(

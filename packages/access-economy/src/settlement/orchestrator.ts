@@ -163,7 +163,6 @@ export function fixtureVirtualCardRequest(
     maximumAmount: 40_000n,
     currency: 'USD',
     merchantRestriction: 'merchant_turo_us',
-    merchantCategoryRestriction: undefined,
     countryRestriction: 'US',
     validFrom: now,
     expiresAt: expires,

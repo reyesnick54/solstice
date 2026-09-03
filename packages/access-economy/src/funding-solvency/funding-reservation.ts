@@ -244,6 +244,14 @@ export class AccessFundingReservationStore {
     );
   }
 
+  listExpiredReservations(now: UtcInstant): readonly AccessFundingReservation[] {
+    return Object.freeze(
+      [...this.reservations.values()].filter(
+        (row) => row.status === 'RESERVED' && row.expiresAt <= now,
+      ),
+    );
+  }
+
   getReservation(id: string): AccessFundingReservation | undefined {
     return this.reservations.get(id);
   }

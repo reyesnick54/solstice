@@ -5,6 +5,8 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { requireOrchestratorValue } from '../transaction/test-harness.ts';
+import { asAccessDomainTransactionId } from '../domain/ids.ts';
 import { asUtcInstant } from '../../../domain/src/time.ts';
 import { isLinkLocalOrMetadata, isLoopbackHostname, isPrivateIpv4, parseDestination } from '../../../provider-sdk/src/ssrf.ts';
 import { TOKEN_CONVERSION_CONTRIBUTION } from '../funding-solvency/taxonomy.ts';
@@ -116,11 +118,11 @@ describe('ACCESS Prompt 41 — idempotency and races', () => {
       idempotencyKey: 'race-b',
       now: CHAOS_NOW,
     });
-    await quoteCheckout(stack, { txId: startA.value!.transactionId, idempotencyKey: 'race-a-q' });
-    await quoteCheckout(stack, { txId: startB.value!.transactionId, idempotencyKey: 'race-b-q' });
+    await quoteCheckout(stack, { txId: requireOrchestratorValue(startA).transactionId, idempotencyKey: 'race-a-q' });
+    await quoteCheckout(stack, { txId: requireOrchestratorValue(startB).transactionId, idempotencyKey: 'race-b-q' });
     const [res1, res2] = await Promise.all([
-      stack.orchestrator.reserve({ transactionId: startA.value!.transactionId, userApproved: true, idempotencyKey: 'race-a-r', now: CHAOS_NOW }),
-      stack.orchestrator.reserve({ transactionId: startB.value!.transactionId, userApproved: true, idempotencyKey: 'race-b-r', now: CHAOS_NOW }),
+      stack.orchestrator.reserve({ transactionId: requireOrchestratorValue(startA).transactionId, userApproved: true, idempotencyKey: 'race-a-r', now: CHAOS_NOW }),
+      stack.orchestrator.reserve({ transactionId: requireOrchestratorValue(startB).transactionId, userApproved: true, idempotencyKey: 'race-b-r', now: CHAOS_NOW }),
     ]);
     const okCount = [res1, res2].filter((r) => r.ok).length;
     assert.ok(okCount <= 1);
@@ -145,12 +147,12 @@ describe('ACCESS Prompt 41 — idempotency and races', () => {
       ),
     );
     for (const start of starts) {
-      await quoteCheckout(stack, { txId: start.value!.transactionId, idempotencyKey: `fq-${start.value!.transactionId}` });
+      await quoteCheckout(stack, { txId: requireOrchestratorValue(start).transactionId, idempotencyKey: `fq-${requireOrchestratorValue(start).transactionId}` });
     }
     const reserves = await Promise.all(
       starts.map((start, i) =>
         stack.orchestrator.reserve({
-          transactionId: start.value!.transactionId,
+          transactionId: requireOrchestratorValue(start).transactionId,
           userApproved: true,
           idempotencyKey: `fr-${i}`,
           now: CHAOS_NOW,
@@ -222,10 +224,11 @@ describe('ACCESS Prompt 41 — failure compensation', () => {
     await quoteCheckout(stack, { txId, idempotencyKey: 'lost-q' });
     await stack.orchestrator.reserve({ transactionId: txId, userApproved: true, idempotencyKey: 'lost-r', now: CHAOS_NOW });
     const book = await stack.orchestrator.book({ transactionId: txId, idempotencyKey: 'lost-book', now: CHAOS_NOW });
-    assert.equal(book.value?.status, 'RECONCILIATION_REQUIRED');
+    assert.equal(book.ok, true);
+    assert.equal(requireOrchestratorValue(book).status, 'RECONCILIATION_REQUIRED');
     const reconciled = await stack.orchestrator.reconcile({ transactionId: txId, idempotencyKey: 'lost-recon', now: CHAOS_NOW });
     assert.equal(reconciled.ok, true);
-    assert.equal(reconciled.value!.status, 'BOOKED');
+    assert.equal(requireOrchestratorValue(reconciled).status, 'BOOKED');
   });
 
   it('10 booking fails after auth releases exposure', async () => {
@@ -273,16 +276,19 @@ describe('ACCESS Prompt 41 — webhooks', () => {
       webhookEventId: 'wh_cap',
       source: 'PAYMENT' as const,
       providerId: null,
-      transactionId: txId,
+      transactionId: asAccessDomainTransactionId(txId),
       kind: 'PAYMENT_CAPTURED' as const,
       idempotencyKey: 'dup-cap-wh',
       signatureVerified: true,
       occurredAt: CHAOS_NOW,
       payloadReference: 'payload:cap',
     };
-    assert.equal(webhook.handle(event).ok, true);
-    assert.equal(webhook.handle(event).duplicate, true);
-    webhook.handle({
+    const firstCapture = await webhook.handle(event);
+    assert.equal(firstCapture.ok, true);
+    const duplicateCapture = await webhook.handle(event);
+    assert.equal(duplicateCapture.ok, true);
+    if (duplicateCapture.ok) assert.equal(duplicateCapture.duplicate, true);
+    await webhook.handle({
       ...event,
       webhookEventId: 'wh_auth_late',
       kind: 'PAYMENT_AUTHORIZED',
@@ -292,15 +298,17 @@ describe('ACCESS Prompt 41 — webhooks', () => {
       webhookEventId: 'wh_book',
       source: 'PROVIDER' as const,
       providerId: 'turo' as const,
-      transactionId: txId,
+      transactionId: asAccessDomainTransactionId(txId),
       kind: 'BOOKING_CONFIRMED' as const,
       idempotencyKey: 'dup-book-wh',
       signatureVerified: true,
       occurredAt: CHAOS_NOW,
       payloadReference: 'payload:book',
     };
-    webhook.handle(bookingEvent);
-    assert.equal(webhook.handle(bookingEvent).duplicate, true);
+    await webhook.handle(bookingEvent);
+    const duplicateBooking = await webhook.handle(bookingEvent);
+    assert.equal(duplicateBooking.ok, true);
+    if (duplicateBooking.ok) assert.equal(duplicateBooking.duplicate, true);
   });
 
   it('16 lost webhook resolved by scheduled reconciliation', async () => {
@@ -369,9 +377,9 @@ describe('ACCESS Prompt 41 — outages and treasury controls', () => {
       idempotencyKey: 'exhaust-first',
       now: CHAOS_NOW,
     });
-    await quoteCheckout(stack, { txId: first.value!.transactionId, idempotencyKey: 'exhaust-q1' });
+    await quoteCheckout(stack, { txId: requireOrchestratorValue(first).transactionId, idempotencyKey: 'exhaust-q1' });
     const firstReserve = await stack.orchestrator.reserve({
-      transactionId: first.value!.transactionId,
+      transactionId: requireOrchestratorValue(first).transactionId,
       userApproved: true,
       idempotencyKey: 'exhaust-r1',
       now: CHAOS_NOW,
@@ -694,14 +702,15 @@ describe('ACCESS Prompt 41 — security', () => {
       idempotencyKey: 'replay',
       now: CHAOS_NOW,
     });
-    assert.equal(start1.value!.transactionId, start2.value!.transactionId);
-    assert.equal(start2.idempotent, true);
+    assert.equal(requireOrchestratorValue(start1).transactionId, requireOrchestratorValue(start2).transactionId);
+    assert.equal(start2.ok, true);
+    if (start2.ok) assert.equal(start2.idempotent, true);
   });
 
-  it('38 webhook security rejects invalid signatures', () => {
+  it('38 webhook security rejects invalid signatures', async () => {
     const stack = createWave3TestStack();
     const webhook = new AccessWebhookOrchestrator(stack.orchestrator);
-    const bad = webhook.handle({
+    const bad = await webhook.handle({
       webhookEventId: 'bad',
       source: 'PROVIDER',
       providerId: 'turo',

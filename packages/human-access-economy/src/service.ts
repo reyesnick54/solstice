@@ -289,8 +289,8 @@ export class HumanAccessEconomyProduct {
     }
     const mustang = mustangMatch({
       category,
-      summary: input.summary,
-      location: input.location,
+      ...(input.summary !== undefined ? { summary: input.summary } : {}),
+      ...(input.location !== undefined ? { location: input.location } : {}),
     });
     const solvencyPosture = projectConsumerSolvencyPosture({
       poolSolvent: mustang,
@@ -306,7 +306,7 @@ export class HumanAccessEconomyProduct {
       customerId: actor.customerId,
       kind: 'AVAILABILITY_CHECKED',
       summary: `${category} availability checked`,
-      referenceId: input.intentId ?? null,
+      ...(input.intentId !== undefined ? { referenceId: input.intentId } : {}),
     });
     return ok(
       Object.freeze({
@@ -349,8 +349,8 @@ export class HumanAccessEconomyProduct {
     }
     const mustang = mustangMatch({
       category,
-      summary: input.summary,
-      location: input.location,
+      ...(input.summary !== undefined ? { summary: input.summary } : {}),
+      ...(input.location !== undefined ? { location: input.location } : {}),
     });
     if (!mustang) {
       return err({
@@ -361,8 +361,8 @@ export class HumanAccessEconomyProduct {
     const search = this.providerNetwork.search({
       query: input.summary,
       category,
-      location: input.location ?? undefined,
       providerId: 'turo',
+      ...(input.location !== undefined ? { location: input.location } : {}),
     });
     if (!search.ok || search.value.items.length === 0) {
       return err({ code: 'PROVIDER_UNAVAILABLE', message: 'provider search returned no catalog items' });
@@ -449,7 +449,7 @@ export class HumanAccessEconomyProduct {
       userContributionMinorUnits: userContribution,
       depositMinorUnits: '50000',
       unitsUsed: '1',
-      entitlementBefore: ent?.remainingUses !== null ? String(ent.remainingUses) : null,
+      entitlementBefore: ent !== undefined && ent.remainingUses !== null ? String(ent.remainingUses) : null,
       providerId: 'turo',
       location: quote.summary.includes('Miami') ? 'Miami, FL' : null,
       fundingAvailable: true,
@@ -504,7 +504,9 @@ export class HumanAccessEconomyProduct {
         entitlementClass: 'MOBILITY_STANDARD',
         requestedQuantity: 4,
         maxUserContributionMinorUnits: '0',
-        intentId: quote.intentId ?? undefined,
+        ...(quote.intentId !== undefined && quote.intentId !== null
+          ? { intentId: quote.intentId }
+          : {}),
       },
       input.idempotencyKey,
     );
@@ -578,8 +580,8 @@ export class HumanAccessEconomyProduct {
     if (txnId) {
       this.product.confirmBooking(actor, txnId, {
         reservationId: confirmed.reservationId,
-        redemptionId: redemptionId ?? undefined,
-        confirmationReference: redemptionId ? `bk_${redemptionId}` : null,
+        ...(redemptionId !== undefined && redemptionId !== null ? { redemptionId } : {}),
+        ...(redemptionId ? { confirmationReference: `bk_${redemptionId}` } : {}),
         serviceDate: confirmed.startsAt,
         entitlementAfter: entitlementAfterRemaining(this.store, actor.customerId, 'MOBILITY'),
       });

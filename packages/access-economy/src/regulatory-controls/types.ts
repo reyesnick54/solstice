@@ -22,6 +22,8 @@ import type {
   AccessTreasuryOperationalState,
 } from './taxonomy.ts';
 
+export type { AccessGlAccountRole, AccessTreasuryExposureStatus } from './taxonomy.ts';
+
 export type AccessDisclosureId = string;
 export type AccessDisclosureVersion = string;
 export type AccessAccountingEventId = string;

@@ -2,7 +2,7 @@
  * ACCESS Wave 3 — configurable simulation provider for transaction test scenarios.
  */
 
-import type { AccessProvider, AccessProviderId } from '../providers/types.ts';
+import type { AccessProvider, AccessProviderId, AccessProviderOutcome } from '../providers/types.ts';
 import type { ProviderBookingStatusResult } from './types.ts';
 import { bookingIdFor, reservationIdFor, ok, fail } from '../providers/adapters/shared.ts';
 
@@ -35,7 +35,9 @@ export class ConfigurableSimulationProvider implements AccessProvider {
   private readonly baseProvider?: AccessProvider;
 
   constructor(baseProvider?: AccessProvider) {
-    this.baseProvider = baseProvider;
+    if (baseProvider !== undefined) {
+      this.baseProvider = baseProvider;
+    }
   }
 
   setScenario(scenario: SimulationScenario): void {

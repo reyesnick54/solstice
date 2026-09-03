@@ -94,7 +94,9 @@ type WorkflowOutcome<T> =
   | { readonly ok: true; readonly value: T }
   | { readonly ok: false; readonly code: string; readonly message: string };
 
-type RedemptionDecisionView = { readonly decision: import('./types.ts').RedemptionDecision };
+type RedemptionDecisionView = {
+  readonly decision: import('../../access-economy/src/providers/redemption/types.ts').RedemptionDecision;
+};
 
 function ok<T>(value: T): WorkflowOutcome<T> {
   return Object.freeze({ ok: true, value });
@@ -383,7 +385,7 @@ export class CanonicalAccessRedemptionOrchestrator {
     if (trace?.clearingReservationId && !trace.clearingReservationId.endsWith('_entitlement_only')) {
       this.world.exchange.engine.cancelReservation({
         reservationId: trace.clearingReservationId,
-        reason: 'USER_CANCELLED',
+        reason: 'BUYER_CANCELLED',
         at: this.world.clock.now(),
         authority: null,
       });
@@ -413,7 +415,7 @@ export class CanonicalAccessRedemptionOrchestrator {
     readonly failurePolicy: BundleFailurePolicy;
     readonly components: readonly {
       readonly componentId: string;
-      readonly providerId: import('./types.ts').AccessProviderId;
+      readonly providerId: import('../../access-economy/src/providers/types.ts').AccessProviderId;
       readonly category: string;
       readonly quote: ProviderQuote;
     }[];
@@ -505,7 +507,9 @@ export class CanonicalAccessRedemptionOrchestrator {
       if (!record) {
         continue;
       }
-      const confirmed = this.confirm(redemptionId, { userApproved: input.userApproved });
+      const confirmed = this.confirm(redemptionId, {
+        ...(input.userApproved !== undefined ? { userApproved: input.userApproved } : {}),
+      });
       const componentId = redemptionId.slice(prefix.length);
       if (!confirmed.ok) {
         failed = true;
@@ -593,7 +597,7 @@ export class CanonicalAccessRedemptionOrchestrator {
         {
           kind: 'TIME',
           notBefore: CANONICAL_REDEMPTION_NOW,
-          notAfter: request.providerQuote.expiresAt,
+          notAfter: request.providerQuote.expiresAt as import('../../domain/src/time.ts').UtcInstant,
         },
       ],
       purposeRef: 'access_redemption',
@@ -676,7 +680,6 @@ export class CanonicalAccessRedemptionOrchestrator {
         ok: false,
         code: 'KERNEL_REFUSED',
         message: `kernel refused: ${authorized.outcome}`,
-        evidenceId: evidence.evidenceId,
       };
     }
     const evidence = this.world.evidence.seal('access.redemption.execution_authority', {
@@ -699,7 +702,12 @@ export class CanonicalAccessRedemptionOrchestrator {
     const terms = this.world.exchange.terms({ termsId: `terms:${reservationId}` });
     const unitPrice = this.world.exchange.unitPrice({ priceUnits: 100n });
     const quantity = userFiatMinorUnits > 0n ? 1n : 1n;
-    const due = fiatConsiderationFor({ unitPrice, quantity, terms });
+    const due = fiatConsiderationFor({
+      unitPrice,
+      quantity,
+      unit: terms.unit,
+      currency: 'USD',
+    });
     const result = this.world.exchange.engine.reserveCapacity({
       reservationId,
       marketId: CAPACITY_ACCESS_MARKET_ID,
@@ -710,7 +718,17 @@ export class CanonicalAccessRedemptionOrchestrator {
       providerAccountId: asExchangeAccountId('xacct_provider_capacity'),
       reservedQuantity: quantity,
       unitPrice,
-      consideration: [due],
+      consideration: [
+        {
+          kind: 'FIAT',
+          amount: due,
+          payerCashAccountId: 'acct_buyer_usd',
+          payerOwnerId: 'owner_buyer',
+          payeeCashAccountId: 'acct_provider_usd',
+          payeeOwnerId: 'owner_provider',
+          reservationCashAccountId: 'acct_reservation_pending_usd',
+        },
+      ],
       actor: this.world.exchange.actorContext(),
       height: 100n,
       authority,
@@ -818,7 +836,7 @@ export class CanonicalAccessRedemptionOrchestrator {
     if (trace.clearingReservationId && !trace.clearingReservationId.endsWith('_entitlement_only')) {
       this.world.exchange.engine.cancelReservation({
         reservationId: trace.clearingReservationId,
-        reason: 'COMPENSATING_FAILURE',
+        reason: 'CLEARING_COMPENSATION',
         at: this.world.clock.now(),
         authority: null,
       });

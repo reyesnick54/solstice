@@ -61,7 +61,9 @@ export class AccessTransactionOrchestrator {
     this.solvency = deps.solvency;
     this.gateway = deps.gateway;
     this.paymentRail = deps.paymentRail;
-    this.simulationProvider = deps.simulationProvider;
+    if (deps.simulationProvider !== undefined) {
+      this.simulationProvider = deps.simulationProvider;
+    }
     this.store = new AccessTransactionStore();
     this.coverageEngine = new AccessTransactionCoverageEngine(deps.solvency);
     this.settlementOrchestrator = new AccessSettlementOrchestrator(deps.paymentRail);
@@ -650,8 +652,12 @@ export class AccessTransactionOrchestrator {
 
     if (this.simulationProvider && context.status === 'RECONCILIATION_REQUIRED') {
       const status = this.simulationProvider.getBookingStatus({
-        reservationId: context.providerReservationReference ?? undefined,
-        idempotencyKey: context.idempotencyKeys['book'] ?? undefined,
+        ...(context.providerReservationReference != null
+          ? { reservationId: context.providerReservationReference }
+          : {}),
+        ...(context.idempotencyKeys['book'] !== undefined
+          ? { idempotencyKey: context.idempotencyKeys['book'] }
+          : {}),
       });
       if (status.ok && status.value.state === 'CONFIRMED') {
         const transitioned = await awaitTransition(this.store, context.transactionId, 'BOOKED', {
@@ -701,10 +707,10 @@ export class AccessTransactionOrchestrator {
     });
   }
 
-  applyWebhook(event: AccessWebhookEvent): OrchestratorOutcome<AccessTransactionContext> {
+  applyWebhook(event: AccessWebhookEvent): Promise<OrchestratorOutcome<AccessTransactionContext>> {
     const context = this.store.get(event.transactionId!);
     if (!context) {
-      return { ok: false, code: 'NOT_FOUND', message: 'transaction not found' };
+      return Promise.resolve({ ok: false, code: 'NOT_FOUND', message: 'transaction not found' });
     }
 
     if (event.kind === 'PAYMENT_CAPTURED' && context.status !== 'SETTLED') {
@@ -722,9 +728,9 @@ export class AccessTransactionOrchestrator {
       });
     }
     if (event.kind === 'PAYMENT_AUTHORIZED' && context.status === 'USER_PAYMENT_AUTHORIZED') {
-      return { ok: true, value: context, idempotent: true };
+      return Promise.resolve({ ok: true, value: context, idempotent: true });
     }
-    return { ok: true, value: context };
+    return Promise.resolve({ ok: true, value: context });
   }
 
   getContext(transactionId: string): AccessTransactionContext | null {

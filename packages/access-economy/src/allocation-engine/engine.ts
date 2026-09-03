@@ -276,7 +276,9 @@ export class AccessAllocationEngine {
 
   constructor(options: AccessAllocationEngineOptions = {}) {
     this.eligibilityPort = options.eligibilityPort ?? defaultEligibilityPort();
-    this.balanceReader = options.balanceReader;
+    if (options.balanceReader !== undefined) {
+      this.balanceReader = options.balanceReader;
+    }
     this.store = options.store ?? new AccessAllocationStore();
     this.basePolicy = options.basePolicy ?? DEFAULT_ACCESS_ALLOCATION_POLICY;
     validatePolicyCoefficients(this.basePolicy);

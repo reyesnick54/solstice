@@ -72,7 +72,7 @@ export class ExperienceBundleSaga {
 
   authorize(input: { readonly bundle: ExperienceBundle; readonly confirmedBy: string }): SagaStepResult {
     if (!input.bundle.confirmedBy || input.bundle.userApprovals.length === 0) {
-      let bundle = Object.freeze({
+      let bundle: ExperienceBundle = Object.freeze({
         ...input.bundle,
         completionState: 'FAILED' as const,
         updatedAt: this.now(),
@@ -85,7 +85,7 @@ export class ExperienceBundleSaga {
       return { outcome: 'FAILED', bundle, detail: 'bundle requires human confirmation before authorization' };
     }
     if (input.confirmedBy !== input.bundle.confirmedBy) {
-      let bundle = Object.freeze({
+      let bundle: ExperienceBundle = Object.freeze({
         ...input.bundle,
         completionState: 'FAILED' as const,
         updatedAt: this.now(),
@@ -97,7 +97,7 @@ export class ExperienceBundleSaga {
       });
       return { outcome: 'FAILED', bundle, detail: 'confirmedBy does not match bundle confirmation' };
     }
-    let bundle = Object.freeze({
+    let bundle: ExperienceBundle = Object.freeze({
       ...input.bundle,
       completionState: 'AWAITING_USER_APPROVAL' as const,
       updatedAt: this.now(),
@@ -130,7 +130,7 @@ export class ExperienceBundleSaga {
   }
 
   async reserveAll(bundle: ExperienceBundle): Promise<SagaStepResult> {
-    let current = Object.freeze({ ...bundle, completionState: 'RESERVING' as const, updatedAt: this.now() });
+    let current: ExperienceBundle = Object.freeze({ ...bundle, completionState: 'RESERVING' as const, updatedAt: this.now() });
     const failures: { readonly componentId: string; readonly detail: string }[] = [];
     const committedHolds: string[] = [];
 
@@ -204,7 +204,7 @@ export class ExperienceBundleSaga {
   }
 
   async commitAll(bundle: ExperienceBundle): Promise<SagaStepResult> {
-    let current = Object.freeze({ ...bundle, completionState: 'COMMITTING' as const, updatedAt: this.now() });
+    let current: ExperienceBundle = Object.freeze({ ...bundle, completionState: 'COMMITTING' as const, updatedAt: this.now() });
     const committed: string[] = [];
     for (const component of current.components) {
       if (component.state !== 'HELD' || !component.reservation) {
@@ -262,7 +262,7 @@ export class ExperienceBundleSaga {
       scope: 'PARTIAL_COMPLETION' as const,
       approvedComponentIds: Object.freeze([...input.approvedComponentIds]),
     });
-    let bundle = Object.freeze({
+    let bundle: ExperienceBundle = Object.freeze({
       ...input.bundle,
       userApprovals: Object.freeze([...input.bundle.userApprovals, approval]),
       updatedAt: this.now(),
@@ -299,7 +299,7 @@ export class ExperienceBundleSaga {
     holdIds: readonly string[],
     reason: string,
   ): Promise<ExperienceBundle> {
-    let current = Object.freeze({ ...bundle, completionState: 'COMPENSATING' as const, updatedAt: this.now() });
+    let current: ExperienceBundle = Object.freeze({ ...bundle, completionState: 'COMPENSATING' as const, updatedAt: this.now() });
     for (const reservationId of holdIds) {
       await this.capacity.releaseReservation(reservationId);
       current = sealWorkflow(current, this.vault, 'access.bundle.hold.released', {

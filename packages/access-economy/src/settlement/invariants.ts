@@ -2,6 +2,7 @@
  * ACCESS Wave 3 Prompt 35 — Settlement equation and plan invariants.
  */
 
+import type { AccessEvidenceRef } from '../domain/ids.ts';
 import { LAUNCH_TOKEN_CONVERSION_CONTRIBUTION } from './taxonomy.ts';
 import type {
   AccessCheckoutQuote,
@@ -107,7 +108,7 @@ export function allocateProportionalRefund(input: {
       otherProgramRefund: 0n,
       currency: input.original.currency,
       policy: 'PROPORTIONAL',
-      evidenceReference: input.evidenceReference,
+      evidenceReference: input.evidenceReference as AccessEvidenceRef,
     });
   }
 
@@ -128,7 +129,7 @@ export function allocateProportionalRefund(input: {
     otherProgramRefund,
     currency: input.original.currency,
     policy: 'PROPORTIONAL',
-    evidenceReference: input.evidenceReference,
+    evidenceReference: input.evidenceReference as AccessEvidenceRef,
   });
 }
 

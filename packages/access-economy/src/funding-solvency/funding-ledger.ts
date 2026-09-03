@@ -180,7 +180,7 @@ export class AccessFundingLedger {
       transactionReference: `${input.reserveKind}:${input.transactionReference}`,
       evidenceReference: input.evidenceReference,
       createdAt: input.createdAt ?? asUtcInstant(new Date().toISOString()),
-      idempotencyKey: input.idempotencyKey,
+      ...(input.idempotencyKey !== undefined ? { idempotencyKey: input.idempotencyKey } : {}),
     });
   }
 

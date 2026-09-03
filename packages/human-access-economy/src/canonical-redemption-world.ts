@@ -5,6 +5,7 @@
  */
 
 import { FrozenClock } from '../../config/src/clock.ts';
+import { asCustomerId } from '../../domain/src/customer.ts';
 import { asJurisdiction } from '../../domain/src/jurisdiction.ts';
 import { asUtcInstant } from '../../domain/src/time.ts';
 import { EvidenceVault } from '../../evidence/src/vault.ts';
@@ -69,7 +70,7 @@ export function createCanonicalRedemptionSimulationWorld(
     actorId: 'actor_access_consumer',
     jurisdiction: asJurisdiction('GB'),
     identityId: 'identity_access_consumer',
-    customerId: 'customer_access_consumer',
+    customerId: asCustomerId('customer_access_consumer'),
     capabilities: ['EXCHANGE_VIEW', 'EXCHANGE_OPERATE_REQUEST'] as never,
   });
   const capacitySource = new InMemoryCapacitySource();
