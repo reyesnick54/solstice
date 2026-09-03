@@ -11,7 +11,7 @@ import { describe, it } from 'node:test';
 
 import { asUtcInstant } from '../packages/domain/src/time.ts';
 import { evaluateSybilControls } from '../packages/human-economic-contribution/src/identity/index.ts';
-import { asHumanEconomicIdentityId } from '../packages/human-economic-contribution/src/identity/ids.ts';
+import { asHumanEconomicIdentityId, humanEconomicIdentityIdFor as identityActorIdFor } from '../packages/human-economic-contribution/src/identity/ids.ts';
 import {
   HumanContributionResolutionEngine,
   authoritativeIdCommitmentFrom,
@@ -444,7 +444,7 @@ describe('Wave 9 Task 5 — human Sybil attack', () => {
   });
 
   it('requires review for AI-only Sybil hints without autonomous ban', () => {
-    const actor = asHumanEconomicIdentityId(humanEconomicIdentityIdFor({ actorCommitment: deriveActorCommitment(['ai-only']) }));
+    const actor = identityActorIdFor(deriveActorCommitment(['ai-only']));
     const sybil = evaluateSybilControls({
       humanActorId: actor,
       evaluatedAt: NOW,

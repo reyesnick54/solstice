@@ -25,6 +25,7 @@ import { RECIPIENT_PERSONAL_AGENT } from '../packages/consent/src/recipients.ts'
 import { rejectArbitraryQuery } from '../packages/clean-room/src/index.ts';
 import { evaluateEgress } from '../packages/clean-room/src/egress.ts';
 import { asCleanRoomJobId, asPrivacyPolicyVersion } from '../packages/clean-room/src/ids.ts';
+import { SIMULATION_PRIVACY_POLICY_VERSION } from '../packages/clean-room/src/taxonomy.ts';
 import { createFederatedQueryEngine } from '../packages/economic-awareness-fabric/src/federation/query.ts';
 import { normalizeToEnvelope } from '../packages/economic-awareness-fabric/src/normalization/envelope.ts';
 import { SimulatedIdentityAdapter } from '../packages/identity/src/simulation.ts';
@@ -278,9 +279,9 @@ describe('Wave 9 Task 6 — federated query privacy', () => {
       cohortSize: 100,
       onwardSharing: false,
       onwardSharingAllowed: false,
-      privacyPolicyVersion: asPrivacyPolicyVersion('simulation-v1'),
+      privacyPolicyVersion: asPrivacyPolicyVersion(SIMULATION_PRIVACY_POLICY_VERSION),
       now: NOW,
-      jobId: asCleanRoomJobId('job_1'),
+      jobId: asCleanRoomJobId('crj_job_1'),
     });
     assert.equal(decision.decision, 'DENY');
     assert.equal(decision.reasonCode, 'RAW_ROW_EXPORT_DENIED');
