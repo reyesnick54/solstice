@@ -7,14 +7,24 @@ import { join } from 'node:path';
 import {
   RULE_ECONOMIC_AUTHORITY_DAG,
   RULE_PACKAGE_DEEP_IMPORT,
+  RULE_UNDECLARED_PACKAGE_EXPORT,
+  isDeclaredPublicExport,
   lintPackageBoundary,
   lintPackageBoundarySource,
+  loadPackageExportsMap,
   resolveImportSpec,
 } from './package-boundary-guards.ts';
 
 function scaffoldPackages(root: string): void {
   for (const pkg of ['alpha', 'beta', 'ledger']) {
     mkdirSync(join(root, 'packages', pkg, 'src'), { recursive: true });
+    writeFileSync(
+      join(root, 'packages', pkg, 'package.json'),
+      JSON.stringify({
+        name: `@solstice/${pkg}`,
+        exports: { '.': `./src/index.ts` },
+      }),
+    );
     writeFileSync(
       join(root, 'packages', pkg, 'src', 'index.ts'),
       `export const ${pkg}Public = true;\n`,
@@ -24,7 +34,30 @@ function scaffoldPackages(root: string): void {
       `export const ${pkg}Internal = true;\n`,
     );
   }
+  mkdirSync(join(root, 'packages', 'chain', 'src', 'economic-awareness-fabric'), { recursive: true });
+  writeFileSync(
+    join(root, 'packages', 'chain', 'package.json'),
+    JSON.stringify({
+      name: '@solstice/chain',
+      exports: {
+        '.': './src/index.ts',
+        './economic-awareness-fabric': './src/economic-awareness-fabric/index.ts',
+      },
+    }),
+  );
+  writeFileSync(join(root, 'packages', 'chain', 'src', 'index.ts'), 'export const chain = true;\n');
+  writeFileSync(
+    join(root, 'packages', 'chain', 'src', 'economic-awareness-fabric', 'index.ts'),
+    'export const eaf = true;\n',
+  );
   mkdirSync(join(root, 'packages', 'economic-awareness-fabric', 'src'), { recursive: true });
+  writeFileSync(
+    join(root, 'packages', 'economic-awareness-fabric', 'package.json'),
+    JSON.stringify({
+      name: '@solstice/economic-awareness-fabric',
+      exports: { '.': './src/index.ts' },
+    }),
+  );
   writeFileSync(
     join(root, 'packages', 'economic-awareness-fabric', 'src', 'index.ts'),
     'export const eaf = true;\n',
@@ -47,7 +80,7 @@ describe('package boundary guards', () => {
       file,
       "import { betaInternal } from '@solstice/beta/src/internal.ts';\n",
     );
-    const hits = lintPackageBoundarySource(root, file, read(file));
+    const hits = lintPackageBoundarySource(root, file, read(file), scanOptions(root));
     rmSync(root, { recursive: true, force: true });
     assert.ok(hits.some((h) => h.rule === RULE_PACKAGE_DEEP_IMPORT));
   });
@@ -57,7 +90,7 @@ describe('package boundary guards', () => {
     scaffoldPackages(root);
     const file = join(root, 'packages/alpha/src/consumer.ts');
     writeFileSync(file, "import { betaInternal } from '../../beta/src/internal.ts';\n");
-    const hits = lintPackageBoundarySource(root, file, read(file));
+    const hits = lintPackageBoundarySource(root, file, read(file), scanOptions(root));
     rmSync(root, { recursive: true, force: true });
     assert.ok(hits.some((h) => h.rule === RULE_PACKAGE_DEEP_IMPORT));
   });
@@ -68,7 +101,7 @@ describe('package boundary guards', () => {
     mkdirSync(join(root, 'packages/alpha/src/nested/deep'), { recursive: true });
     const file = join(root, 'packages/alpha/src/nested/deep/consumer.ts');
     writeFileSync(file, "import { betaInternal } from '../../../../beta/src/internal.ts';\n");
-    const hits = lintPackageBoundarySource(root, file, read(file));
+    const hits = lintPackageBoundarySource(root, file, read(file), scanOptions(root));
     rmSync(root, { recursive: true, force: true });
     assert.ok(hits.some((h) => h.rule === RULE_PACKAGE_DEEP_IMPORT));
   });
@@ -81,17 +114,17 @@ describe('package boundary guards', () => {
     const resolved = resolveImportSpec(file, spec, root);
     assert.ok(resolved?.endsWith('packages/beta/src/internal.ts'));
     writeFileSync(file, `import { betaInternal } from '${spec}';\n`);
-    const hits = lintPackageBoundarySource(root, file, read(file));
+    const hits = lintPackageBoundarySource(root, file, read(file), scanOptions(root));
     rmSync(root, { recursive: true, force: true });
     assert.ok(hits.some((h) => h.rule === RULE_PACKAGE_DEEP_IMPORT));
   });
 
-  it('E. allows public package import', () => {
+  it('E. allows root public package import', () => {
     const root = mkdtempSync(join(tmpdir(), 'pkg-boundary-e-'));
     scaffoldPackages(root);
     const file = join(root, 'packages/alpha/src/consumer.ts');
     writeFileSync(file, "import { betaPublic } from '@solstice/beta';\n");
-    const hits = lintPackageBoundarySource(root, file, read(file));
+    const hits = lintPackageBoundarySource(root, file, read(file), scanOptions(root));
     rmSync(root, { recursive: true, force: true });
     assert.equal(hits.length, 0);
   });
@@ -101,7 +134,7 @@ describe('package boundary guards', () => {
     scaffoldPackages(root);
     const file = join(root, 'packages/alpha/src/consumer.ts');
     writeFileSync(file, "import { alphaInternal } from './internal.ts';\n");
-    const hits = lintPackageBoundarySource(root, file, read(file));
+    const hits = lintPackageBoundarySource(root, file, read(file), scanOptions(root));
     rmSync(root, { recursive: true, force: true });
     assert.equal(hits.length, 0);
   });
@@ -111,9 +144,31 @@ describe('package boundary guards', () => {
     scaffoldPackages(root);
     const file = join(root, 'packages/economic-awareness-fabric/src/bridge.ts');
     writeFileSync(file, "import { journal } from '../../ledger/src/journal.ts';\n");
-    const hits = lintPackageBoundarySource(root, file, read(file));
+    const hits = lintPackageBoundarySource(root, file, read(file), scanOptions(root));
     rmSync(root, { recursive: true, force: true });
     assert.ok(hits.some((h) => h.rule === RULE_ECONOMIC_AUTHORITY_DAG));
+  });
+
+  it('H. allows declared package subpath export', () => {
+    const root = mkdtempSync(join(tmpdir(), 'pkg-boundary-h-'));
+    scaffoldPackages(root);
+    const file = join(root, 'packages/alpha/src/consumer.ts');
+    writeFileSync(file, "import { eaf } from '@solstice/chain/economic-awareness-fabric';\n");
+    const exportsMap = loadPackageExportsMap(root);
+    assert.ok(isDeclaredPublicExport('@solstice/chain/economic-awareness-fabric', exportsMap));
+    const hits = lintPackageBoundarySource(root, file, read(file), scanOptions(root));
+    rmSync(root, { recursive: true, force: true });
+    assert.equal(hits.length, 0);
+  });
+
+  it('I. catches undeclared package subpath export', () => {
+    const root = mkdtempSync(join(tmpdir(), 'pkg-boundary-i-'));
+    scaffoldPackages(root);
+    const file = join(root, 'packages/alpha/src/consumer.ts');
+    writeFileSync(file, "import { x } from '@solstice/beta/not-exported';\n");
+    const hits = lintPackageBoundarySource(root, file, read(file), scanOptions(root));
+    rmSync(root, { recursive: true, force: true });
+    assert.ok(hits.some((h) => h.rule === RULE_UNDECLARED_PACKAGE_EXPORT));
   });
 
   it('fails lintPackageBoundary when a new violation is introduced', () => {
@@ -131,4 +186,13 @@ describe('package boundary guards', () => {
 
 function read(path: string): string {
   return readFileSync(path, 'utf8');
+}
+
+function scanOptions(root: string) {
+  return {
+    sourceLabel: 'alpha',
+    deepImportRule: RULE_PACKAGE_DEEP_IMPORT,
+    isPackageSource: true,
+    exportsMap: loadPackageExportsMap(root),
+  };
 }

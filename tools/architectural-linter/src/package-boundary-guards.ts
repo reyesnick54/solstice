@@ -7,6 +7,8 @@ const SKIP_DIR = new Set(['node_modules', '.git', 'dist', 'coverage', '__pycache
 const CODE_SUFFIXES = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs']);
 
 export const RULE_PACKAGE_DEEP_IMPORT = 'package-deep-import';
+export const RULE_SERVICE_DEEP_IMPORT = 'service-deep-import';
+export const RULE_UNDECLARED_PACKAGE_EXPORT = 'package-undeclared-export';
 export const RULE_ECONOMIC_AUTHORITY_DAG = 'economic-authority-dag';
 export const RULE_PACKAGE_IMPORTS_SERVICE = 'package-imports-service';
 
@@ -66,6 +68,12 @@ function packageNameFromPath(filePath: string, packagesRoot: string): string | n
   return parts[0] ?? null;
 }
 
+function serviceNameFromPath(filePath: string, servicesRoot: string): string | null {
+  const rel = relative(servicesRoot, filePath).replaceAll('\\', '/');
+  const parts = rel.split('/');
+  return parts[0] ?? null;
+}
+
 function resolveFileCandidate(candidate: string): string | null {
   if (existsSync(candidate) && statSync(candidate).isFile()) {
     return candidate;
@@ -85,6 +93,58 @@ function resolveFileCandidate(candidate: string): string | null {
     }
   }
   return null;
+}
+
+export function loadPackageExportsMap(root: string): Record<string, Record<string, string>> {
+  const exportsMap: Record<string, Record<string, string>> = {};
+  const packagesRoot = join(root, 'packages');
+  if (!existsSync(packagesRoot)) {
+    return exportsMap;
+  }
+  for (const entry of readdirSync(packagesRoot)) {
+    const packageDir = join(packagesRoot, entry);
+    if (!statSync(packageDir).isDirectory()) {
+      continue;
+    }
+    const packageJsonPath = join(packageDir, 'package.json');
+    if (!existsSync(packageJsonPath)) {
+      continue;
+    }
+    const data = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as {
+      exports?: Record<string, string>;
+    };
+    if (data.exports && typeof data.exports === 'object') {
+      exportsMap[entry] = data.exports;
+    }
+  }
+  return exportsMap;
+}
+
+export function isDeclaredPublicExport(
+  spec: string,
+  exportsMap: Record<string, Record<string, string>>,
+): boolean {
+  if (!spec.startsWith('@solstice/')) {
+    return false;
+  }
+  const rest = spec.slice('@solstice/'.length);
+  if (`/${rest}/`.includes('/src/')) {
+    return false;
+  }
+  const parts = rest.split('/');
+  const pkg = parts[0];
+  if (!pkg) {
+    return false;
+  }
+  const pkgExports = exportsMap[pkg];
+  if (!pkgExports) {
+    return false;
+  }
+  if (parts.length === 1) {
+    return '.' in pkgExports;
+  }
+  const exportKey = `./${parts.slice(1).join('/')}`;
+  return exportKey in pkgExports;
 }
 
 export function resolveImportSpec(
@@ -123,6 +183,7 @@ export function resolveImportSpec(
   return null;
 }
 
+/** @deprecated use isDeclaredPublicExport */
 export function isPublicApiImport(spec: string): boolean {
   if (!spec.startsWith('@solstice/')) {
     return false;
@@ -170,16 +231,18 @@ export function lintPackageBoundarySource(
   root: string,
   fileAbs: string,
   source: string,
+  options: {
+    readonly sourceLabel: string;
+    readonly deepImportRule: string;
+    readonly isPackageSource: boolean;
+    readonly exportsMap: Record<string, Record<string, string>>;
+  },
 ): PackageBoundaryViolation[] {
   const packagesRoot = join(root, 'packages');
   const fileRel = relative(root, fileAbs).replaceAll('\\', '/');
-  const sourcePkg = packageNameFromPath(fileAbs, packagesRoot);
-  if (sourcePkg === null || !fileRel.startsWith('packages/')) {
-    return [];
-  }
-
   const violations: PackageBoundaryViolation[] = [];
   const isTest = isTestOrDemo(fileRel, fileAbs.split('/').pop() ?? '');
+  const { sourceLabel, deepImportRule, isPackageSource, exportsMap } = options;
 
   for (const match of source.matchAll(IMPORT_RE)) {
     const spec = (match[1] ?? match[2] ?? match[3] ?? '').replaceAll('\\', '/');
@@ -189,19 +252,53 @@ export function lintPackageBoundarySource(
     const index = match.index ?? 0;
     const line = source.slice(0, index).split('\n').length;
 
-    if (!isTest && (spec.startsWith('services/') || spec.includes('/services/'))) {
+    if (isPackageSource && !isTest && (spec.startsWith('services/') || spec.includes('/services/'))) {
       violations.push({
         file: fileRel,
         line,
         rule: RULE_PACKAGE_IMPORTS_SERVICE,
-        message: `package '${sourcePkg}' imports service module '${spec}'`,
-        sourcePackage: sourcePkg,
+        message: `package '${sourceLabel}' imports service module '${spec}'`,
+        sourcePackage: sourceLabel,
         targetPackage: null,
         spec,
       });
     }
 
-    if (isPublicApiImport(spec)) {
+    if (spec.startsWith('@solstice/')) {
+      const rest = spec.slice('@solstice/'.length);
+      if (`/${rest}/`.includes('/src/')) {
+        const targetAbs = resolveImportSpec(fileAbs, spec, root);
+        if (targetAbs !== null) {
+          const targetRel = relative(root, targetAbs).replaceAll('\\', '/');
+          if (isDeepPackageTarget(targetRel)) {
+            const targetPkg = packageNameFromPath(targetAbs, packagesRoot);
+            if (targetPkg && (!isPackageSource || targetPkg !== sourceLabel)) {
+              violations.push({
+                file: fileRel,
+                line,
+                rule: deepImportRule,
+                message: `'${fileRel}' deep-imports '${targetPkg}' internals via '${spec}'`,
+                sourcePackage: sourceLabel,
+                targetPackage: targetPkg,
+                spec,
+              });
+            }
+          }
+        }
+        continue;
+      }
+      if (!isDeclaredPublicExport(spec, exportsMap)) {
+        const pkg = rest.split('/')[0] ?? 'unknown';
+        violations.push({
+          file: fileRel,
+          line,
+          rule: RULE_UNDECLARED_PACKAGE_EXPORT,
+          message: `'${fileRel}' imports undeclared package export '${spec}'`,
+          sourcePackage: sourceLabel,
+          targetPackage: pkg,
+          spec,
+        });
+      }
       continue;
     }
 
@@ -217,7 +314,7 @@ export function lintPackageBoundarySource(
         line,
         rule: RULE_ECONOMIC_AUTHORITY_DAG,
         message: `information layer '${fileRel}' must not import execution authority target '${targetRel}'`,
-        sourcePackage: sourcePkg,
+        sourcePackage: sourceLabel,
         targetPackage: packageNameFromPath(targetAbs, packagesRoot),
         spec,
       });
@@ -228,16 +325,19 @@ export function lintPackageBoundarySource(
     }
 
     const targetPkg = packageNameFromPath(targetAbs, packagesRoot);
-    if (targetPkg === null || targetPkg === sourcePkg) {
+    if (targetPkg === null) {
+      continue;
+    }
+    if (isPackageSource && targetPkg === sourceLabel) {
       continue;
     }
 
     violations.push({
       file: fileRel,
       line,
-      rule: RULE_PACKAGE_DEEP_IMPORT,
-      message: `package '${sourcePkg}' deep-imports '${targetPkg}' internals via '${spec}'`,
-      sourcePackage: sourcePkg,
+      rule: deepImportRule,
+      message: `'${fileRel}' deep-imports '${targetPkg}' internals via '${spec}'`,
+      sourcePackage: sourceLabel,
       targetPackage: targetPkg,
       spec,
     });
@@ -252,12 +352,12 @@ export function lintPackageBoundarySource(
 }
 
 export function lintPackageBoundary(root: string): Finding[] {
-  const packagesRoot = join(root, 'packages');
-  if (!existsSync(packagesRoot)) {
-    return [];
-  }
+  const rootAbs = resolve(root);
+  const packagesRoot = join(rootAbs, 'packages');
+  const servicesRoot = join(rootAbs, 'services');
+  const exportsMap = loadPackageExportsMap(rootAbs);
 
-  const baselinePath = join(root, 'docs/architecture/package-boundary-baseline.json');
+  const baselinePath = join(rootAbs, 'docs/architecture/package-boundary-baseline.json');
   const baselineKeys = new Set<string>();
   if (existsSync(baselinePath)) {
     const baseline = JSON.parse(readFileSync(baselinePath, 'utf8')) as {
@@ -269,15 +369,25 @@ export function lintPackageBoundary(root: string): Finding[] {
   }
 
   const findings: Finding[] = [];
-  let nonDagKeys = new Set<string>();
+  const nonDagKeys = new Set<string>();
 
-  for (const file of walk(packagesRoot)) {
-    const fileRel = relative(root, file).replaceAll('\\', '/');
+  const scanFile = (
+    file: string,
+    sourceLabel: string,
+    deepImportRule: string,
+    isPackageSource: boolean,
+  ) => {
+    const fileRel = relative(rootAbs, file).replaceAll('\\', '/');
     if (fileRel.startsWith('tools/architectural-linter/')) {
-      continue;
+      return;
     }
     const source = readFileSync(file, 'utf8');
-    const violations = lintPackageBoundarySource(root, file, source);
+    const violations = lintPackageBoundarySource(rootAbs, file, source, {
+      sourceLabel,
+      deepImportRule,
+      isPackageSource,
+      exportsMap,
+    });
     for (const v of violations) {
       if (v.rule === RULE_ECONOMIC_AUTHORITY_DAG) {
         findings.push(toFinding(v));
@@ -288,6 +398,26 @@ export function lintPackageBoundary(root: string): Finding[] {
       if (!baselineKeys.has(key)) {
         findings.push(toFinding(v));
       }
+    }
+  };
+
+  if (existsSync(packagesRoot)) {
+    for (const file of walk(packagesRoot)) {
+      const sourcePkg = packageNameFromPath(file, packagesRoot);
+      if (sourcePkg === null) {
+        continue;
+      }
+      scanFile(file, sourcePkg, RULE_PACKAGE_DEEP_IMPORT, true);
+    }
+  }
+
+  if (existsSync(servicesRoot)) {
+    for (const file of walk(servicesRoot)) {
+      const sourceSvc = serviceNameFromPath(file, servicesRoot);
+      if (sourceSvc === null) {
+        continue;
+      }
+      scanFile(file, sourceSvc, RULE_SERVICE_DEEP_IMPORT, false);
     }
   }
 
