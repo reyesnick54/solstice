@@ -55,7 +55,7 @@ function healthFor(state: ProviderAdapterState, providerId: string): ProviderRis
   return 'healthy';
 }
 
-export class ProviderRiskMonitor {
+export class Wave5ProviderRiskMonitor {
   readonly #ctx: Wave5AdapterContext;
 
   constructor(ctx: Wave5AdapterContext) {

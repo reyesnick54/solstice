@@ -29,7 +29,7 @@ import type {
 } from './models.ts';
 import { ProviderRiskMonitor, type ProviderRiskInput, type ProviderRiskScore } from './provider-risk-monitor.ts';
 import {
-  ProviderRiskMonitor as Wave5ProviderRiskMonitor,
+  Wave5ProviderRiskMonitor,
   type ProviderRiskMonitorSnapshot,
 } from '../wave5-provider-risk.ts';
 

@@ -42,7 +42,7 @@ export const VERIFICATION_STATUSES = [
 export type ProofVerificationStatus = (typeof VERIFICATION_STATUSES)[number];
 
 export const CHALLENGE_STATUSES = ['NONE', 'OPEN', 'UNDER_REVIEW', 'UPHELD', 'REJECTED', 'WITHDRAWN'] as const;
-export type ChallengeStatus = (typeof CHALLENGE_STATUSES)[number];
+export type LatticeChallengeStatus = (typeof CHALLENGE_STATUSES)[number];
 
 export const MONETIZATION_STATUSES = [
   'NOT_ELIGIBLE',

@@ -10,6 +10,7 @@ import type {
   AccessDisputeCategory,
   AccessEconomicClassification,
   AccessFundingSourceClassification,
+  ForbiddenAccessEconomicClassification,
   AccessGlAccountRole,
   AccessJurisdictionPolicyDimension,
   AccessLiabilityRecognitionStage,
@@ -39,9 +40,6 @@ export type AccessEconomicPosture = {
   readonly isGuaranteedFiatRedemption: false;
   readonly isTokenRedemption: false;
 };
-
-export type ForbiddenAccessEconomicClassification =
-  import('./taxonomy.ts').ForbiddenAccessEconomicClassification;
 
 export type AccessAccountingEvent = {
   readonly eventId: AccessAccountingEventId;

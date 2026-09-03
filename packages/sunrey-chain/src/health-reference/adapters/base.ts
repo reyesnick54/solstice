@@ -31,8 +31,3 @@ export type HealthProvider = {
   searchPublicHealth?(query: string, limit: number): ProviderObservationEnvelope<readonly PublicHealthReference[]>;
   searchWellness?(query: string, limit: number): ProviderObservationEnvelope<readonly WellnessReference[]>;
 };
-
-export type HealthProviderBundle = {
-  readonly provider: HealthProvider;
-  readonly providerId: HealthAdapterId;
-};

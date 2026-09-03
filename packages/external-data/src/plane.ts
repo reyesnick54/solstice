@@ -37,7 +37,7 @@ import { buildWave6ConsumerSnapshots } from './wave6/bridges.ts';
 import { buildWave6CoverageReport } from './wave6/coverage.ts';
 import { createDefaultWave6AdapterStates, setWave6ProviderState } from './wave6/adapters.ts';
 import { WAVE6_IMPLEMENTED_PROVIDER_IDS } from './wave6/catalog-entries.ts';
-import { ProviderRiskMonitor as Wave5ProviderRiskMonitor } from './wave5-provider-risk.ts';
+import { Wave5ProviderRiskMonitor } from './wave5-provider-risk.ts';
 
 export type ExternalDataPlaneOptions = {
   readonly nowUtc?: string;
