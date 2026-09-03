@@ -118,6 +118,8 @@ export async function serve(
         productionReady: false,
         productionActive: false,
         liveConnectivityEnabled: false,
+        ...(process.env.SUNREY_BUILD_GIT_SHA ? { gitSha: process.env.SUNREY_BUILD_GIT_SHA } : {}),
+        ...(process.env.SUNREY_RELEASE_TAG ? { releaseTag: process.env.SUNREY_RELEASE_TAG } : {}),
         ...(runtime.previewDiagnostics ? runtime.previewDiagnostics() : {}),
       },
       cors.headers,
@@ -127,7 +129,16 @@ export async function serve(
 
   if (url.pathname === '/ready' && method === 'GET') {
     const report = await evaluateConsumerBffReadiness();
-    write(res, report.ready ? 200 : 503, report, cors.headers);
+    write(
+      res,
+      report.ready ? 200 : 503,
+      {
+        ...report,
+        ...(process.env.SUNREY_BUILD_GIT_SHA ? { gitSha: process.env.SUNREY_BUILD_GIT_SHA } : {}),
+        ...(process.env.SUNREY_RELEASE_TAG ? { releaseTag: process.env.SUNREY_RELEASE_TAG } : {}),
+      },
+      cors.headers,
+    );
     return;
   }
 

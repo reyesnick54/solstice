@@ -5,6 +5,7 @@ import {
   type ConsumerBffRuntime,
 } from './consumer/index.ts';
 import type { RunningConsumerBff } from './consumer/http.ts';
+import { ExchangeBffSurface } from './consumer/exchange.ts';
 import { PreviewGrowSurface } from './consumer/preview-grow.ts';
 
 export type SunReyPreviewOptions = {
@@ -32,6 +33,7 @@ export function createSunReyPreviewRuntime(
 ): ConsumerBffRuntime {
   const world = createSandboxWorld({ providerDown: options.providerDown === true });
   const previewGrow = new PreviewGrowSurface(world.grow, world.bff, world.growOpportunity);
+  const exchange = new ExchangeBffSurface(() => world.runtime.clock.now());
   return Object.freeze({
     bff: world.bff,
     sessions: world.sessions,
@@ -51,7 +53,7 @@ export function createSunReyPreviewRuntime(
     hinContributions: world.hinContributions,
     nativeEconomy: createNativeEconomySurface(),
     productiveEconomy: world.productiveEconomy,
-    exchange: world.exchange,
+    exchange,
     dataRights: world.dataRights,
     vault: world.vault,
     access: world.access,

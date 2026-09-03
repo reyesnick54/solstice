@@ -546,7 +546,9 @@ function dispatchAuthenticated(
     }
   }
   if (runtime.exchange) {
-    const exchange = dispatchExchange(runtime.exchange, request, principal, requestId, headers);
+    const exchange = dispatchExchange(runtime.exchange, request, principal, requestId, headers, {
+      skipWalletRoutes: Boolean(runtime.wallets),
+    });
     if (exchange) {
       return exchange;
     }
@@ -1623,6 +1625,7 @@ function dispatchExchange(
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
   headers: Record<string, string>,
+  options: { readonly skipWalletRoutes?: boolean } = {},
 ): BffResponse | null {
   const { method, path, query, body } = request;
   const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
@@ -1657,12 +1660,14 @@ function dispatchExchange(
     if (path === '/api/v1/exchange/orders' && method === 'GET') return result(exchange.orders(principal, requestId), headers);
     if (path === '/api/v1/exchange/fills' && method === 'GET') return result(exchange.fills(principal, requestId), headers);
     if (path === '/api/v1/exchange/stream' && method === 'GET') return result(exchange.stream(principal, requestId), headers);
-    if (path === '/api/v1/wallets' && method === 'GET') return result(exchange.wallets(principal, requestId), headers);
-    if (path === '/api/v1/wallets/deposit-address' && method === 'GET') return result(exchange.depositAddress(principal, requestId), headers);
-    if (path === '/api/v1/wallets/deposits/simulate' && method === 'POST') return result(exchange.simulateDeposit(principal, rec, requestId), headers);
-    if (path === '/api/v1/wallets/withdrawals/quote' && method === 'POST') return result(exchange.withdrawalQuote(principal, rec, requestId), headers);
-    if (path === '/api/v1/wallets/withdrawals' && method === 'POST') return result(exchange.withdraw(principal, rec, requestId), headers);
-    if (path === '/api/v1/wallets/transactions' && method === 'GET') return result(exchange.transactions(principal, requestId), headers);
+    if (!options.skipWalletRoutes) {
+      if (path === '/api/v1/wallets' && method === 'GET') return result(exchange.wallets(principal, requestId), headers);
+      if (path === '/api/v1/wallets/deposit-address' && method === 'GET') return result(exchange.depositAddress(principal, requestId), headers);
+      if (path === '/api/v1/wallets/deposits/simulate' && method === 'POST') return result(exchange.simulateDeposit(principal, rec, requestId), headers);
+      if (path === '/api/v1/wallets/withdrawals/quote' && method === 'POST') return result(exchange.withdrawalQuote(principal, rec, requestId), headers);
+      if (path === '/api/v1/wallets/withdrawals' && method === 'POST') return result(exchange.withdraw(principal, rec, requestId), headers);
+      if (path === '/api/v1/wallets/transactions' && method === 'GET') return result(exchange.transactions(principal, requestId), headers);
+    }
     if (path === '/api/v1/economy' && method === 'GET') return result(exchange.economy(principal, requestId), headers);
     if (path === '/api/v1/economy/sunrey-coin' && method === 'GET') return result(exchange.sunreyCoin(principal, requestId), headers);
     if (path === '/api/v1/economy/moonrey-coin' && method === 'GET') return result(exchange.moonreyCoin(principal, requestId), headers);

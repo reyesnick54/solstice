@@ -497,6 +497,59 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     void personaId;
   }
 
+  const phaseHPersonas: readonly {
+    readonly persona: SandboxPersonaId;
+    readonly customerId: string;
+    readonly identityId: string;
+    readonly accounts: readonly {
+      readonly id: string;
+      readonly currency: string;
+      readonly productId: string;
+      readonly accountClass: AccountClass;
+      readonly deposit: bigint;
+    }[];
+  }[] = [
+    {
+      persona: 'hin_ready',
+      customerId: 'cust_hin_alice',
+      identityId: 'idn_hin_alice',
+      accounts: [
+        {
+          id: 'acct_hin_alice_usd',
+          currency: 'USD',
+          productId: 'prod_demand_usd_gb',
+          accountClass: 'DEMAND_DEPOSIT',
+          deposit: 50_000n,
+        },
+      ],
+    },
+    {
+      persona: 'vault_ready',
+      customerId: 'cust_vault_bob',
+      identityId: 'idn_vault_bob',
+      accounts: [],
+    },
+    {
+      persona: 'data_licensee',
+      customerId: 'cust_data_licensee',
+      identityId: 'idn_data_licensee',
+      accounts: [],
+    },
+  ];
+  for (const entry of phaseHPersonas) {
+    const provisioned = provisionPersona(runtime, {
+      persona: entry.persona,
+      identityId: entry.identityId,
+      customerId: entry.customerId,
+      kyc: 'VERIFIED',
+      customerActive: true,
+      restricted: false,
+      accounts: entry.accounts,
+    });
+    personas[entry.persona] = provisioned.principal;
+    sessions.set(sandboxToken(entry.persona), provisioned.principal);
+  }
+
   const simulationPort = (reason: string, count = 0): OptionalDomainPort => ({
     summarize: () =>
       Object.freeze({
@@ -998,6 +1051,7 @@ function attachSandboxVault(
   const seeds: readonly { sandboxId: SandboxPersonaId; personaId: VaultPersonaId }[] = [
     { sandboxId: 'basic_verified', personaId: 'MINIMAL' },
     { sandboxId: 'vault_minimal', personaId: 'MINIMAL' },
+    { sandboxId: 'vault_ready', personaId: 'FINANCIAL' },
     { sandboxId: 'vault_financial', personaId: 'FINANCIAL' },
     { sandboxId: 'vault_employment', personaId: 'EMPLOYMENT_SKILLS' },
     { sandboxId: 'vault_multi_source', personaId: 'MULTI_SOURCE' },
@@ -1044,6 +1098,7 @@ function attachSandboxWallets(
     { persona: 'basic_verified', walletId: 'wal_sandbox_basic_sunrey', assetId: 'SUNREY_COIN', seed: 2_000_000n },
     { persona: 'basic_verified', walletId: 'wal_sandbox_basic_moonrey', assetId: 'MOONREY_COIN', seed: 1_000_000n },
     { persona: 'exchange', walletId: 'wal_sandbox_exchange_sunrey', assetId: 'SUNREY_COIN', seed: 1_500_000n },
+    { persona: 'exchange', walletId: 'wal_sandbox_exchange_moonrey', assetId: 'MOONREY_COIN', seed: 750_000n },
     { persona: 'agent_enabled', walletId: 'wal_sandbox_agent_sunrey', assetId: 'SUNREY_COIN', seed: 800_000n },
     { persona: 'restricted', walletId: 'wal_sandbox_restricted_sunrey', assetId: 'SUNREY_COIN', status: 'RESTRICTED', seed: 100_000n },
   ];
