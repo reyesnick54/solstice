@@ -5,7 +5,7 @@
  * Until then, only the simulation fallback adapter is available.
  */
 
-import type { CatalogProviderEntry } from '../../../provider-sdk/src/catalog/types.ts';
+import type { CatalogProviderEntry } from '../../../../provider-sdk/src/catalog/types.ts';
 import type { MarketReferenceProvider } from '../provider.ts';
 import { providerPriorityOf, type MarketReferenceCatalogMatch } from '../registry.ts';
 import { SimulationMarketReferenceAdapter } from './simulation.ts';

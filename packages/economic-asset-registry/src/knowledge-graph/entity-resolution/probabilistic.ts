@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import { matchSuggestionIdFor } from '../ids.ts';
 import {
   isHighImpactIdentifier,

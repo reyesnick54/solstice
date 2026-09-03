@@ -413,7 +413,7 @@ export class CanonicalAccessRedemptionOrchestrator {
     readonly failurePolicy: BundleFailurePolicy;
     readonly components: readonly {
       readonly componentId: string;
-      readonly providerId: import('../types.ts').AccessProviderId;
+      readonly providerId: import('./types.ts').AccessProviderId;
       readonly category: string;
       readonly quote: ProviderQuote;
     }[];
@@ -636,7 +636,7 @@ export class CanonicalAccessRedemptionOrchestrator {
   private obtainExecutionAuthority(
     redemptionId: string,
     record: RedemptionRecord,
-  ): { readonly ok: true; readonly evidenceId: string; readonly verified: import('../../../../permissions/src/execution-authority.ts').VerifiedExecutionAuthority } | { readonly ok: false; readonly code: string; readonly message: string } {
+  ): { readonly ok: true; readonly evidenceId: string; readonly verified: import('../../permissions/src/execution-authority.ts').VerifiedExecutionAuthority } | { readonly ok: false; readonly code: string; readonly message: string } {
     const intent = Object.freeze({
       id: asIntentId(`intent_confirm_${redemptionId}`),
       actionType: ACTION_TYPES.CONFIRM_CAPACITY_RESERVATION,
@@ -690,7 +690,7 @@ export class CanonicalAccessRedemptionOrchestrator {
     redemptionId: string,
     record: RedemptionRecord,
     userFiatMinorUnits: bigint,
-    authority: import('../../../../permissions/src/execution-authority.ts').VerifiedExecutionAuthority,
+    authority: import('../../permissions/src/execution-authority.ts').VerifiedExecutionAuthority,
   ): { readonly ok: true; readonly reservationId: string } | { readonly ok: false; readonly code: string; readonly message: string } {
     if (userFiatMinorUnits === 0n && (record.decision.coverage?.appliedCoverageMinorUnits ?? 0n) > 0n) {
       return { ok: true, reservationId: `clr_${redemptionId}_entitlement_only` };

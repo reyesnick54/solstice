@@ -9,7 +9,7 @@ import type {
   ParticipationHistoryEntry,
 } from '../../access-economy/src/hin-access/types.ts';
 import type { HumanInformationAccessBridge } from '../../access-economy/src/hin-access/engine.ts';
-import type { SubjectRef } from '../ids.ts';
+import type { SubjectRef } from './ids.ts';
 
 export type DataOpportunityBffView = Readonly<{
   readonly schema: 'sunrey.consumer.data.opportunity.v1';
