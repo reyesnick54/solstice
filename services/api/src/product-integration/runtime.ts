@@ -12,7 +12,7 @@ import { ConsentStore } from '../../../../packages/consent/src/store.ts';
 import { ConsentService } from '../../../../packages/consent/src/service.ts';
 import { EvidenceVault } from '../../../../packages/evidence/src/vault.ts';
 import { DomainEventLog } from '../../../../packages/events/src/events.ts';
-import { isPersistenceTestEnabled } from '../../../../packages/persistence/src/env.ts';
+import { isPersistenceTestEnabled } from '../../../accounts/src/product-persistence-bridge.ts';
 import { InMemoryEncryptedPayloadStore } from '../../../../packages/personal-data-vault/src/encryption.ts';
 import { PersonalDataVaultStore } from '../../../../packages/personal-data-vault/src/store.ts';
 import { PersonalDataVault } from '../../../../packages/personal-data-vault/src/service.ts';
@@ -75,9 +75,8 @@ export async function createProductIntegrationRuntime(
 
   if (mode === 'DURABLE') {
     const { createPostgresSimulationRuntime } = await import('../../../accounts/src/postgres-runtime.ts');
-    const { persistenceEnvFromProcess } = await import('../../../../packages/persistence/src/env.ts');
-    const { loadAgentRuntimeState } = await import(
-      '../../../../packages/persistence/src/agent/pg-agent-runtime-store.ts'
+    const { persistenceEnvFromProcess, loadAgentRuntimeState } = await import(
+      '../../../accounts/src/product-persistence-bridge.ts'
     );
     durableAccounts = await createPostgresSimulationRuntime(persistenceEnvFromProcess(), {
       clock,
@@ -119,11 +118,8 @@ export async function createProductIntegrationRuntime(
       if (!durableAccounts) {
         return;
       }
-      const { persistConsentState } = await import(
-        '../../../../packages/persistence/src/consent/pg-consent-store.ts'
-      );
-      const { persistAgentRuntimeState } = await import(
-        '../../../../packages/persistence/src/agent/pg-agent-runtime-store.ts'
+      const { persistConsentState, persistAgentRuntimeState } = await import(
+        '../../../accounts/src/product-persistence-bridge.ts'
       );
       await Promise.all([
         persistConsentState(durableAccounts.session.pools.customer, consentStore.snapshot()),
