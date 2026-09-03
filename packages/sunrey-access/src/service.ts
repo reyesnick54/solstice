@@ -74,9 +74,9 @@ export class AccessFabricService {
       totalUnits: input.totalUnits,
       verifiedAt: input.verifiedAt !== undefined ? asUtcInstant(input.verifiedAt) : this.clock.now(),
       evidenceRefs: input.evidenceRefs,
-      utilizationBps: input.utilizationBps,
-      qualityTier: input.qualityTier,
-      locationCode: input.locationCode,
+      ...(input.utilizationBps !== undefined ? { utilizationBps: input.utilizationBps } : {}),
+      ...(input.qualityTier !== undefined ? { qualityTier: input.qualityTier } : {}),
+      ...(input.locationCode !== undefined ? { locationCode: input.locationCode } : {}),
     });
   }
 }

@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 
 import { Money } from '../../../money/src/money.ts';
 import { DomainEventLog } from '../../../events/src/events.ts';
-import { addMs } from '../../../config/src/clock.ts';
+import { addMs, systemClock } from '../../../config/src/clock.ts';
 
 import {
   assertMerchantPrivacyBoundary,
