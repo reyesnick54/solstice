@@ -90,3 +90,7 @@ CREATE TABLE human_contribution.snapshot (
   body_canonical TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL
 );
+
+GRANT USAGE ON SCHEMA human_contribution TO customer_app;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA human_contribution TO customer_app;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA human_contribution TO customer_app;
