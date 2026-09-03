@@ -25,11 +25,8 @@ export {
 } from './migrate.ts';
 export { bootstrapPersistence, resetPersistedData } from './postgres/bootstrap.ts';
 export { loadEvidenceRecords, loadPersistedState } from './postgres/load.ts';
-export {
-  closePersistencePools,
-  createPersistencePools,
-  type PersistencePools,
-} from './postgres/pools.ts';
+export { createPersistencePools, closePersistencePools, withClient, type PersistencePools } from './postgres/pools.ts';
+export { probePostgresConnectivity, probePersistenceEnv } from './postgres/probe.ts';
 export type {
   AuthorityAudit,
   LoadedPersistence,

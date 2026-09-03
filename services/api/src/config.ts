@@ -142,10 +142,16 @@ export function loadPlatformApiConfigFromEnv(
     ...(ttlRaw !== undefined ? { idempotencyTtlSeconds: Number(ttlRaw) } : {}),
     ...(idempotencyBackend ? { idempotencyBackend } : {}),
     ...(authMode ? { authMode } : {}),
-    databaseConfigured: Boolean(readEnv('SUNREY_PG_HOST', env) ?? readEnv('SUNREY_API_DATABASE_CONFIGURED', env)),
+    databaseConfigured: Boolean(
+      readEnv('SUNREY_PG_HOST', env) ??
+        readEnv('SUNREY_DATABASE_URL', env) ??
+        readEnv('SUNREY_API_DATABASE_CONFIGURED', env),
+    ),
     featureFlags: {
       testRoutes: readEnv('SUNREY_API_TEST_ROUTES', env) === 'true',
-      requirePersistenceForReady: readEnv('SUNREY_API_REQUIRE_PERSISTENCE', env) === 'true',
+      requirePersistenceForReady:
+        readEnv('SUNREY_FEATURE_REQUIRE_PERSISTENCE_FOR_READY', env) === 'true' ||
+        readEnv('SUNREY_API_REQUIRE_PERSISTENCE', env) === 'true',
     },
   };
 }
