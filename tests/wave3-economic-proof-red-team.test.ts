@@ -10,6 +10,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { fingerprintEconomicEvent } from '../packages/human-economic-contribution/src/fingerprint.ts';
+import { eventReferenceFor, subjectRefFor } from '../packages/human-economic-contribution/src/ids.ts';
 import { FrozenClock } from '../packages/config/src/clock.ts';
 import { asUtcInstant } from '../packages/domain/src/time.ts';
 import { EvidenceVault } from '../packages/evidence/src/vault.ts';
@@ -34,6 +35,48 @@ import { contributionFingerprint } from '../packages/sunrey-chain/src/productive
 import { ProductiveEconomyEngine } from '../packages/sunrey-chain/src/productive/engine.ts';
 import { DEV_CLOCK, fixtureClaim, fixtureFacts, fixtureObject, fixtureRight, solarFacility } from '../packages/sunrey-chain/src/productive/fixtures.ts';
 import { MoonReyProductiveSettlementBridge, refuseStandaloneAttempt as refuseProductiveStandalone } from '../packages/sunrey-chain/src/productive/policy-governance/value-settlement/bridge.ts';
+import type { StandaloneMonetaryAttempt as HumanStandaloneAttempt } from '../packages/sunrey-chain/src/economics/human-contribution-bridge/types.ts';
+import type { StandaloneMonetaryAttempt as ProductiveStandaloneAttempt } from '../packages/sunrey-chain/src/productive/policy-governance/value-settlement/types.ts';
+
+function humanStandalone(kind: HumanStandaloneAttempt['kind']): HumanStandaloneAttempt {
+  switch (kind) {
+    case 'PEVE_SCORE':
+      return { kind, score: 0n };
+    case 'AI_OUTPUT':
+      return { kind, outputDigest: 'digest' };
+    case 'VALUATION_RESULT':
+      return { kind, valuationId: 'val-1' };
+    case 'CONSENT':
+      return { kind, consentRef: 'consent-1' };
+    case 'PDV_RECORD':
+      return { kind, vaultRef: 'vault-1' };
+    case 'HIN_USAGE_RECEIPT':
+      return { kind, receiptId: 'receipt-1' };
+    default: {
+      const _exhaustive: never = kind;
+      throw new Error(`unsupported human standalone kind: ${_exhaustive}`);
+    }
+  }
+}
+
+function productiveStandalone(kind: ProductiveStandaloneAttempt['kind']): ProductiveStandaloneAttempt {
+  switch (kind) {
+    case 'ORACLE_OBSERVATION':
+      return { kind, observationId: 'obs-1' };
+    case 'VERIFIED_ECONOMIC_FACT':
+      return { kind, factId: 'fact-1' };
+    case 'PRODUCTIVE_CLAIM':
+      return { kind, claimId: 'claim-1' };
+    case 'GPUV_QUANTITY':
+      return { kind, quantity: 0n };
+    case 'PRODUCTIVE_VALUE_RESULT':
+      return { kind, productiveValueId: 'pv-1' };
+    default: {
+      const _exhaustive: never = kind;
+      throw new Error(`unsupported productive standalone kind: ${_exhaustive}`);
+    }
+  }
+}
 
 const constitution = nativeAssetConstitution('DEVELOPMENT_ACTIVE');
 const sunreyBook = () => emptyBook('SUNREY_COIN', constitution.assets[0]!.policyVersion.versionId);
@@ -58,7 +101,7 @@ describe('Wave 3 Task 1 — domain separation red team', () => {
       'PDV_RECORD',
       'HIN_USAGE_RECEIPT',
     ] as const) {
-      const refused = refuseStandaloneAttempt({ kind });
+      const refused = refuseStandaloneAttempt(humanStandalone(kind));
       assert.equal(refused.ok, false, `expected ${kind} to fail closed`);
     }
 
@@ -69,7 +112,7 @@ describe('Wave 3 Task 1 — domain separation red team', () => {
       'GPUV_QUANTITY',
       'PRODUCTIVE_VALUE_RESULT',
     ] as const) {
-      const refused = refuseProductiveStandalone({ kind });
+      const refused = refuseProductiveStandalone(productiveStandalone(kind));
       assert.equal(refused.ok, false, `expected ${kind} to fail closed`);
     }
   });
@@ -108,25 +151,25 @@ describe('Wave 3 Task 1 — domain separation red team', () => {
 describe('Wave 3 Task 5 — anti-double-counting red team', () => {
   it('maps identical human contribution material to the same fingerprint', () => {
     const material = {
-      subjectRef: 'subj:alice' as const,
+      subjectRef: subjectRefFor('subj:alice'),
       contributionClass: 'INFORMATION_RIGHT_CONTRIBUTION' as const,
-      eventReference: 'evt:research-paper-2026' as const,
+      eventReference: eventReferenceFor('evt:research-paper-2026'),
       validFrom: asUtcInstant('2026-01-01T00:00:00.000Z'),
       validUntil: null,
       measurementQuantity: 1n,
-      measurementUnit: 'CONTRIBUTION_EVENT' as const,
+      measurementUnit: 'CONSENT_SCOPED_INFORMATION_USE' as const,
       jurisdiction: 'US',
-      sourceClass: 'HIN_USAGE' as const,
+      sourceClass: 'HUMAN_INFORMATION_NETWORK' as const,
     };
     const fromSourceA = fingerprintEconomicEvent(material);
-    const fromSourceB = fingerprintEconomicEvent({ ...material, sourceClass: 'HIN_USAGE' });
+    const fromSourceB = fingerprintEconomicEvent({ ...material, sourceClass: 'HUMAN_INFORMATION_NETWORK' });
     const fromSourceC = fingerprintEconomicEvent({
       ...material,
-      eventReference: 'evt:research-paper-2026',
+      eventReference: eventReferenceFor('evt:research-paper-2026'),
     });
     const fromSourceD = fingerprintEconomicEvent({
       ...material,
-      eventReference: 'evt:research-paper-2026-variant-id',
+      eventReference: eventReferenceFor('evt:research-paper-2026-variant-id'),
     });
     assert.equal(fromSourceA, fromSourceB);
     assert.equal(fromSourceA, fromSourceC);
@@ -139,7 +182,7 @@ describe('Wave 3 Task 5 — anti-double-counting red team', () => {
       measurementPeriodEpoch: 202601,
       validFromUnixSeconds: 1_735_689_600n,
       validUntilUnixSeconds: 1_735_776_000n,
-      claimType: 'REALIZED_OUTPUT' as const,
+      claimType: 'OUTPUT' as const,
       category: 'ENERGY' as const,
       normalizedQuantity: 500_000_000_000n,
       baseUnitId: 'kwh',
@@ -212,7 +255,7 @@ describe('Wave 3 Task 5 — anti-double-counting red team', () => {
       measurementPeriodEpoch: 202601,
       validFromUnixSeconds: 1_735_689_600n,
       validUntilUnixSeconds: 1_735_776_000n,
-      claimType: 'REALIZED_OUTPUT',
+      claimType: 'OUTPUT',
       category: 'ENERGY',
       normalizedQuantity: 500_000_000_000n,
       baseUnitId: 'kwh',
@@ -253,9 +296,6 @@ describe('Wave 3 Task 6 — monetization replay red team', () => {
       recipient: 'alice',
       quantity: 10n,
       replayIdentifier: 'same-replay-key',
-      contributionId: 'hec.1',
-      fingerprint: 'ab'.repeat(32),
-      authorizationId: 'auth.1',
       actorKind: 'HUMAN',
     });
     const first = authorizeIssuance(constitution, book, evidence);
@@ -267,9 +307,6 @@ describe('Wave 3 Task 6 — monetization replay red team', () => {
         recipient: 'bob',
         quantity: 10n,
         replayIdentifier: 'same-replay-key',
-        contributionId: 'hec.2',
-        fingerprint: 'cd'.repeat(32),
-        authorizationId: 'auth.2',
         actorKind: 'HUMAN',
       }),
     );
@@ -307,13 +344,9 @@ describe('Wave 3 Task 10 — monetary authority audit', () => {
         recipient: 'x',
         quantity: 1n,
         replayIdentifier: 'unrestricted',
-        economicEvidence: moonreyProductiveEvidence({
-          contributionId: 'c',
-          fingerprint: 'a'.repeat(64),
-          authorizationId: 'auth',
-          policyVersion: 'v1',
-        }),
-        actorKind: 'HUMAN',
+        contributionId: 'c',
+        fingerprint: 'a'.repeat(64),
+        authorizationId: 'auth',
       }),
       authorized: false,
     });
