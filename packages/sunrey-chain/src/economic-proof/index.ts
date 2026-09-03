@@ -50,7 +50,7 @@ export {
   type ClaimFingerprint,
   type DuplicateCluster,
   type EconomicClaim,
-  type EconomicObservation,
+  type RegisteredEconomicObservation,
   type EntityAliasRef,
   type EntityAliasResolver,
   type LineageEdge,

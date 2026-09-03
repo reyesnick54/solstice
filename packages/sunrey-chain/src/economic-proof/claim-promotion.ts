@@ -17,7 +17,7 @@ import {
   type RegisterClaimInput,
   type RegistryFailure,
 } from './registry.ts';
-import type { EconomicClaim, EconomicObservation } from './types.ts';
+import type { EconomicClaim, RegisteredEconomicObservation } from './types.ts';
 
 export type PromoteReconciliationInput = {
   readonly claimId: string;
@@ -143,7 +143,7 @@ export function promoteReconciliationToClaim(
 }
 
 export type ReconcileAndPromoteInput = {
-  readonly observations: readonly EconomicObservation[];
+  readonly observations: readonly RegisteredEconomicObservation[];
   readonly candidateInputs: readonly BuildCandidateInput[];
   readonly reconcileInput?: Omit<ReconcileEventsInput, 'candidates'>;
   readonly promoteInput: PromoteReconciliationInput;

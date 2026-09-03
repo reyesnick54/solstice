@@ -5,7 +5,7 @@ export {
   rightsRoot,
   verifyRightsCommitment,
 } from './commitment.ts';
-export type { RightsCommitment, RightsRoot, RightsRootInput } from './commitment.ts';
+export type { RightsRoot, RightsRootInput } from './commitment.ts';
 export {
   RIGHTS_COMMITMENT_DOMAINS,
   RIGHTS_COMMITMENT_SCHEMA_VERSION,

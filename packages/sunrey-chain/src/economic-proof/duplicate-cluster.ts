@@ -4,7 +4,7 @@ import type {
   DuplicateCluster,
   DuplicateClusterId,
   EconomicClaimId,
-  EconomicObservation,
+  RegisteredEconomicObservation,
   EconomicObservationId,
   EconomyKind,
   ClusterResolutionStatus,
@@ -44,7 +44,7 @@ export function clusterResolutionStatus(
 export function buildDuplicateCluster(input: {
   readonly canonicalEventId: CanonicalEventId;
   readonly economy: EconomyKind;
-  readonly observations: readonly EconomicObservation[];
+  readonly observations: readonly RegisteredEconomicObservation[];
   readonly claimId?: EconomicClaimId;
 }): DuplicateCluster {
   const observationIds = Object.freeze(
@@ -67,7 +67,7 @@ export function buildDuplicateCluster(input: {
 
 export function mergeClusterObservations(
   cluster: DuplicateCluster,
-  observations: readonly EconomicObservation[],
+  observations: readonly RegisteredEconomicObservation[],
 ): DuplicateCluster {
   const mergedIds = sortedJoin([...cluster.observationIds, ...observations.map((o) => o.observationId)]);
   const mergedSourceClasses = sortedJoin([

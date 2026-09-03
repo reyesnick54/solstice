@@ -27,7 +27,7 @@ import type {
   DuplicateCluster,
   EconomicClaim,
   EconomicClaimId,
-  EconomicObservation,
+  RegisteredEconomicObservation,
   EconomicObservationId,
   EntityAliasResolver,
   LineageEdge,
@@ -65,7 +65,7 @@ function asObservationId(value: string): EconomicObservationId {
 
 export type RegisterObservationInput = {
   readonly observationId: string;
-  readonly economy: EconomicObservation['economy'];
+  readonly economy: RegisteredEconomicObservation['economy'];
   readonly providerId: string;
   readonly sourceClass: string;
   readonly providerRecordId: string;
@@ -95,14 +95,14 @@ export type RegisterClaimInput = {
 };
 
 export type EconomicClaimRegistrySnapshot = {
-  readonly observations: readonly EconomicObservation[];
+  readonly observations: readonly RegisteredEconomicObservation[];
   readonly claims: readonly EconomicClaim[];
   readonly clusters: readonly DuplicateCluster[];
   readonly consumptionCommitments: readonly string[];
 };
 
 export class EconomicClaimRegistry {
-  readonly #observations = new Map<EconomicObservationId, EconomicObservation>();
+  readonly #observations = new Map<EconomicObservationId, RegisteredEconomicObservation>();
   readonly #observationFingerprints = new Map<string, EconomicObservationId>();
   readonly #claims = new Map<EconomicClaimId, EconomicClaim>();
   readonly #claimFingerprints = new Map<ClaimFingerprint, EconomicClaimId>();
@@ -125,7 +125,7 @@ export class EconomicClaimRegistry {
     });
   }
 
-  getObservation(observationId: string): EconomicObservation | undefined {
+  getObservation(observationId: string): RegisteredEconomicObservation | undefined {
     return this.#observations.get(asObservationId(observationId));
   }
 
@@ -142,7 +142,7 @@ export class EconomicClaimRegistry {
     return this.#clusters.get(deriveDuplicateClusterId(canonicalEventId as DuplicateCluster['canonicalEventId']));
   }
 
-  registerObservation(input: RegisterObservationInput): Result<EconomicObservation, RegistryFailure> {
+  registerObservation(input: RegisterObservationInput): Result<RegisteredEconomicObservation, RegistryFailure> {
     const canonicalEntityId = deriveCanonicalEntityId(input.entityMaterial);
     const canonicalEventId = deriveCanonicalEventId({
       ...input.eventMaterial,
@@ -164,7 +164,7 @@ export class EconomicClaimRegistry {
       });
     }
 
-    const observation: EconomicObservation = Object.freeze({
+    const observation: RegisteredEconomicObservation = Object.freeze({
       schemaVersion: ECONOMIC_PROOF_SCHEMA_VERSION,
       observationId: asObservationId(input.observationId),
       economy: input.economy,
@@ -232,7 +232,7 @@ export class EconomicClaimRegistry {
       });
     }
 
-    const observations: EconomicObservation[] = [];
+    const observations: RegisteredEconomicObservation[] = [];
     for (const observationId of input.observationIds) {
       const observation = this.#observations.get(asObservationId(observationId));
       if (!observation) {

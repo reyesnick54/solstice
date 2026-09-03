@@ -13,7 +13,6 @@ import type {
 import { aliasValueCommitment, type ProductiveAssetAliasRegistry } from './alias.ts';
 import { commitCoordinates, commitValue } from './commitment.ts';
 import { deriveAssetFingerprint } from './fingerprint.ts';
-import type { ProductiveAssetAliasRegistry } from './alias.ts';
 
 const AUTO_MERGE_CONFIDENCE: ReadonlySet<IdentityConfidence> = new Set(['EXACT']);
 

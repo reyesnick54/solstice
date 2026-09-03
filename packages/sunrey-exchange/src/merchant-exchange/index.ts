@@ -38,7 +38,6 @@ export type {
   MerchantExchangeProfile,
   MerchantOffer,
   MerchantPurchase,
-  MerchantVisibleIntent,
   NormalizedOfferView,
   PurchaseIntent,
   PurchaseIntentPreferences,

@@ -26,7 +26,7 @@ export class ProviderRefreshScheduler {
   private readonly clock: DataDeliveryClock;
   private readonly rng: () => number;
   private readonly recentJobIds = new Set<string>();
-  private readonly failures: RefreshFailureRecord[] = [];
+  private readonly failureRecords: RefreshFailureRecord[] = [];
 
   constructor(input: {
     readonly schedules: readonly RefreshScheduleEntry[];
@@ -100,11 +100,11 @@ export class ProviderRefreshScheduler {
   }
 
   recordFailure(record: RefreshFailureRecord): void {
-    this.failures.push(Object.freeze({ ...record }));
+    this.failureRecords.push(Object.freeze({ ...record }));
   }
 
   failures(): readonly RefreshFailureRecord[] {
-    return Object.freeze([...this.failures]);
+    return Object.freeze([...this.failureRecords]);
   }
 
   computeJitter(schedule: RefreshScheduleEntry): number {

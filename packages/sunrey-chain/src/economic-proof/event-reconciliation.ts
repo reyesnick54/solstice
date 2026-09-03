@@ -25,12 +25,12 @@ import type {
   ReconciliationFailure,
 } from './productive-event-types.ts';
 import { WAVE5_RECONCILIATION_SCHEMA_VERSION } from './productive-event-types.ts';
-import type { EconomicObservation, LineageEdge } from './types.ts';
+import type { RegisteredEconomicObservation, LineageEdge } from './types.ts';
 
 export const WAVE5_RECONCILIATION_METHODOLOGY = 'wave5-productive-event-reconciliation-v1' as const;
 
 export type BuildCandidateInput = {
-  readonly observation: EconomicObservation;
+  readonly observation: RegisteredEconomicObservation;
   readonly economicAction: string;
   readonly metric: string;
   readonly quantity: bigint;

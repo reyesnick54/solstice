@@ -108,7 +108,7 @@ export type CanonicalEventMaterial = {
   readonly domainIdentifierCommitment?: string;
 };
 
-export type EconomicObservation = {
+export type RegisteredEconomicObservation = {
   readonly schemaVersion: typeof ECONOMIC_PROOF_SCHEMA_VERSION;
   readonly observationId: EconomicObservationId;
   readonly economy: EconomyKind;

@@ -267,8 +267,6 @@ export {
   type HttpProviderTransportFailure,
   type HttpProviderTransportResult,
   type HttpProviderTransport,
-  type ProviderRequestContext,
-  type ProviderResponseMetadata,
   type ProviderTransportResponse,
   type ProviderTransportResult,
   type ProviderTransportSuccess,

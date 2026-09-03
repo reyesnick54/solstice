@@ -74,18 +74,6 @@ export type WorldExternalDataBff = {
   readonly exchangeReference: () => ReturnType<typeof exchangeReferenceSnapshot>;
   readonly moonReyContext: () => ReturnType<typeof moonReyResourceContext>;
   readonly moonReyContextAsync: () => Promise<ReturnType<typeof moonReyResourceContextAsync>>;
-  readonly energy: () => Promise<{
-    readonly schema: 'sunrey.bff.energy-observations.v1';
-    readonly dataState: ReturnType<typeof defaultDataStateForMode>;
-    readonly dataMode: typeof DATA_MODE;
-    readonly observations: readonly {
-      readonly measurementKind: string;
-      readonly value: number;
-      readonly unit: string;
-      readonly geography: string;
-      readonly source: { readonly displayName: string };
-    }[];
-  }>;
   readonly resources: () => Promise<{
     readonly schema: 'sunrey.bff.resource-observations.v1';
     readonly dataState: ReturnType<typeof defaultDataStateForMode>;
@@ -236,24 +224,6 @@ export function createWorldExternalDataBff(plane: ExternalDataPlane): WorldExter
     exchangeReference: () => exchangeReferenceSnapshot(plane),
     moonReyContext: () => moonReyResourceContext(plane),
     moonReyContextAsync: () => moonReyResourceContextAsync(plane),
-    energy: async () => {
-      const world = await worldEconomySnapshotAsync(plane);
-      const hasData = world.energy.length > 0;
-      return Object.freeze({
-        schema: 'sunrey.bff.energy-observations.v1',
-        dataState: defaultDataStateForMode(hasData),
-        dataMode: DATA_MODE,
-        observations: Object.freeze(
-          world.energy.map((o) => ({
-            measurementKind: o.measurementKind,
-            value: o.value,
-            unit: o.unit,
-            geography: o.geography,
-            source: Object.freeze({ displayName: o.providerId }),
-          })),
-        ),
-      });
-    },
     resources: async () => {
       const world = await worldEconomySnapshotAsync(plane);
       const availability = plane.productiveEconomy.runtime.index.resources.resourceAvailability();
