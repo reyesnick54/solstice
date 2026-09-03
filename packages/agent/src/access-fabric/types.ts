@@ -104,6 +104,7 @@ export type AccessIntentFailure = {
     | 'PROHIBITED_GRAPH_CONTEXT'
     | 'PROHIBITED_CONFIRMATION'
     | 'SELF_ISSUED_AUTHORITY'
-    | 'ACTOR_CONTEXT_REQUIRED';
+    | 'ACTOR_CONTEXT_REQUIRED'
+    | 'KERNEL_PATH_REQUIRED';
   readonly message: string;
 };

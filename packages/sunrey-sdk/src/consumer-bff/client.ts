@@ -802,10 +802,6 @@ export class SunReyConsumerBffClient {
     return this.request('POST', `/api/v1/data/records/${encodeURIComponent(recordId)}/dispute`, { reason }, options);
   }
 
-  async getAccessHistory(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/data/access-history', undefined, options);
-  }
-
   async grantDataPermission(input: Record<string, unknown>, options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('POST', '/api/v1/data/permissions', input, options);
   }

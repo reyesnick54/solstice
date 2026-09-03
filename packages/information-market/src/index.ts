@@ -1,5 +1,5 @@
 export { SubjectScopedInformationMarketTool } from './agent-tool.ts';
-export { createSimulationFiatPort, type SimulationFiatPortOptions } from './fiat.ts';
+export { createSimulationFiatPort, createSandboxSimulationFiatPort, type SimulationFiatPortOptions } from './fiat.ts';
 export {
   INFORMATION_MARKET_ID_PREFIXES,
   newAttestationId,

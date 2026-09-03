@@ -716,25 +716,15 @@ function travelPlanningContext(ctx: HandlerContext): Omit<AgentToolResult, 'dura
   });
   const evidence = toTravelAgentEvidence(context);
 
-  return {
-    status: 'SUCCESS',
-    toolId: ctx.tool.toolId,
-    version: ctx.tool.version,
-    executed: false,
-    payload: Object.freeze({
-      context,
-      evidence,
-      bookingConfirmed: false,
-      grantsBookingAuthority: false,
-      referenceOnly: true,
-      disclaimer:
-        'Travel reference information only. Entry requirements may change. No ticket or reservation has been booked.',
-    }),
-    component: 'TRAVEL_PLANNING_CARD',
-    authoritativeNumericPaths: Object.freeze([]),
-    modelMaySummarize: true as const,
-    modelMayAlterAuthoritativeNumbers: false as const,
-  };
+  return success(ctx, 'TRAVEL_PLANNING_CARD', {
+    context,
+    evidence,
+    bookingConfirmed: false,
+    grantsBookingAuthority: false,
+    referenceOnly: true,
+    disclaimer:
+      'Travel reference information only. Entry requirements may change. No ticket or reservation has been booked.',
+  }, []);
 }
 
 function accessIntentProposal(ctx: HandlerContext): Omit<AgentToolResult, 'durationMs' | 'correlationId'> {
@@ -780,7 +770,10 @@ function accessIntentProposal(ctx: HandlerContext): Omit<AgentToolResult, 'durat
 
 function accessReservationRefusal(ctx: HandlerContext): Omit<AgentToolResult, 'durationMs' | 'correlationId'> {
   const refused = ctx.ports.access.confirmReservation(ctx.session.ownerId);
-  return refuse(ctx, 'NOT_ELIGIBLE', refused.ok ? 'UNKNOWN' : refused.code, refused.message);
+  if (!refused.ok) {
+    return refuse(ctx, 'NOT_ELIGIBLE', refused.code, refused.message);
+  }
+  return refuse(ctx, 'NOT_ELIGIBLE', 'UNKNOWN', 'reservation confirmation refused');
 }
 
 function str(value: unknown): string {

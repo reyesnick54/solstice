@@ -47,7 +47,7 @@ export const DEFAULT_PROVIDER_LICENSES: readonly ProviderLicenseRestriction[] = 
     effectiveFrom: '2026-01-01T00:00:00.000Z' as UtcInstant,
     legalStatus: LEGAL_REVIEW_STATUS,
   }),
-]);
+]) as readonly ProviderLicenseRestriction[];
 
 export type ProviderLicenseEvaluationInput = {
   readonly providerId: string;

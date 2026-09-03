@@ -20,7 +20,15 @@ export type CorroborationResult =
   | { readonly status: 'conflict'; readonly conflictingFingerprints: readonly string[] };
 
 export function corroborateObservations(input: CorroborationInput): CorroborationResult {
-  const fingerprints = input.observations.map((o) => deriveObservationFingerprint(o));
+  const fingerprints = input.observations.map((o) =>
+    deriveObservationFingerprint({
+      providerId: o.providerId,
+      sourceClass: o.sourceClass,
+      providerRecordId: o.providerRecordId,
+      payloadDigest: o.payloadDigest,
+      observedAtUtc: o.observedAtUtc,
+    }),
+  );
   const unique = [...new Set(fingerprints)];
 
   if (unique.length > 1 && input.observations.length > 1) {
@@ -53,7 +61,7 @@ export function corroborateObservations(input: CorroborationInput): Corroboratio
   const cluster = buildDuplicateCluster({
     canonicalEventId,
     economy: first.economicDomain === 'HUMAN_ECONOMIC' ? 'HUMAN' : 'PRODUCTIVE',
-    observations: input.observations,
+    observations: input.observations as never,
   });
 
   return Object.freeze({

@@ -11,7 +11,7 @@ import { ConsentService } from '../../../../consent/src/service.ts';
 import { CleanRoomService } from '../../../../clean-room/src/service.ts';
 import { PersonalDataVault } from '../../../../personal-data-vault/src/service.ts';
 import { createSimulationKeyProvider } from '../../../../security/src/simulation.ts';
-import { createSimulationFiatPort } from '../../fiat.ts';
+import { createSandboxSimulationFiatPort } from '../../fiat.ts';
 import { InformationMarketService } from '../../service.ts';
 import { dataOpportunityIdFor } from '../../../../access-economy/src/hin-access/engine.ts';
 import { subjectRefFor } from '../../../../access-economy/src/ids.ts';
@@ -53,6 +53,7 @@ export function runAccess18HumanInformationToAccessDemo(): Access18DemoResult {
   });
   const cleanRoom = new CleanRoomService({ clock, keys, evidence, events, consent, vault });
   const coin = createMockSunReyTransferCoin();
+  const fiat = createSandboxSimulationFiatPort(clock);
   const market = new InformationMarketService({
     clock,
     keys,
@@ -61,9 +62,9 @@ export function runAccess18HumanInformationToAccessDemo(): Access18DemoResult {
     consent,
     cleanRoom,
     coin,
-    fiat: createSimulationFiatPort(),
+    fiat,
   });
-  const bridge = createHinAccessBridgeFromMarket({ clock, market, coin, fiat: createSimulationFiatPort() });
+  const bridge = createHinAccessBridgeFromMarket({ clock, market, coin, fiat });
 
   const opportunityId = dataOpportunityIdFor('automotive-vehicle-preference-2026');
   const subjectRef = subjectRefFor('participant_automotive_demo');

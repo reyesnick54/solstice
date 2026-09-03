@@ -16,11 +16,12 @@ export function proposeEvidenceFromObservations(
   if (observations.length === 0) return null;
 
   const evidence = buildEvidence(observations);
-  const proposalId = economicProofDigest('fabric-evidence-proposal', {
-    observationIds: observations.map((o) => o.observationId),
-    evidenceId: evidence.evidenceId,
+  const proposalId = economicProofDigest([
+    'fabric-evidence-proposal',
+    ...observations.map((o) => o.observationId),
+    evidence.evidenceId,
     proposedAtUtc,
-  });
+  ]);
 
   return Object.freeze({
     proposalId,

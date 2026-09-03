@@ -42,7 +42,7 @@ export function normalizeToEnvelope(input: NormalizeObservationInput): Canonical
       normalizationVersion: FABRIC_OBSERVATION_ENVELOPE_SCHEMA,
     },
     licensing: {
-      commercialUseStatus: 'research_only',
+      commercialUseStatus: 'restricted',
       redistributionStatus: 'prohibited',
     },
   });

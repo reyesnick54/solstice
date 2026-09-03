@@ -202,7 +202,7 @@ export class DevelopmentSoftwareBlockchainKeyProvider implements BlockchainKeyPr
       ...active.metadata,
       status: 'DEPRECATED',
       retiredAt: atUtc,
-    });
+    }) as typeof active.metadata;
     const event: BlockchainKeyRotationEvent = Object.freeze({
       keyId,
       fromVersion: active.metadata.version,

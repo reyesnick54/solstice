@@ -154,11 +154,11 @@ export class ComplianceScreeningEvidenceService {
     const query: ComplianceScreeningQuery = Object.freeze({
       subjectType,
       name: input.name,
-      aliases: input.aliases,
+      ...(input.aliases !== undefined ? { aliases: input.aliases } : {}),
       dateOfBirth: input.dateOfBirth ?? null,
       nationality: input.nationality ?? null,
       country: input.country ?? null,
-      organizationIdentifiers: input.organizationIdentifiers,
+      ...(input.organizationIdentifiers !== undefined ? { organizationIdentifiers: input.organizationIdentifiers } : {}),
       canonicalSubjectId: input.canonicalSubjectId ?? null,
       requestId,
       screenedAt: nowUtc,

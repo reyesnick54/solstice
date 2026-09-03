@@ -10,7 +10,7 @@ import { asProductId, freezeProduct, type Product } from '../../domain/src/produ
 import { isOk } from '../../domain/src/result.ts';
 import type { IdentityService } from '../../identity/src/service.ts';
 import { actionTypesFromCapabilities } from '../../identity/src/capability.ts';
-import type { ComplianceKernel } from '../../kernel/src/kernel.ts';
+import { ComplianceKernel } from '../../kernel/src/kernel.ts';
 import type { KernelFacts } from '../../kernel/src/proofs.ts';
 import { Ledger } from '../../ledger/src/journal.ts';
 import { SIMULATED_FUNDING_TO_DEMAND_DEPOSIT, SIMULATION_FUNDING_SOURCE_ID } from '../../ledger/src/types.ts';
@@ -18,6 +18,10 @@ import { asIntentId } from '../../permissions/src/action-intent.ts';
 import { ACTION_TYPES } from '../../permissions/src/action-types.ts';
 import { AuthorityIssuer } from '../../permissions/src/execution-authority.ts';
 import { validateIntentStructure } from '../../permissions/src/structural.ts';
+import { EvidenceVault } from '../../evidence/src/vault.ts';
+import { DomainEventLog } from '../../events/src/events.ts';
+import { SimulatedIdentityAdapter } from '../../identity/src/simulation.ts';
+import { createSimulationKeyProvider } from '../../security/src/simulation.ts';
 import type { FiatCompensationPort } from './types.ts';
 
 export const SIMULATION_SOLSTICE_UK = freezeLegalEntity({
@@ -165,4 +169,23 @@ export function createSimulationFiatPort(options: SimulationFiatPortOptions): Fi
       return { outcome: 'OK', intentId: gated.intent.id, journalId: journal.id };
     },
   };
+}
+
+export function createSandboxSimulationFiatPort(clock: Clock): FiatCompensationPort {
+  const keys = createSimulationKeyProvider({ clock: { now: () => clock.now() } });
+  const events = new DomainEventLog();
+  const evidence = new EvidenceVault(clock);
+  const issuer = new AuthorityIssuer('information-market-sandbox');
+  const kernel = new ComplianceKernel(issuer, evidence, clock);
+  const identity = new SimulatedIdentityAdapter({ clock, keys, events });
+  const ledger = new Ledger(issuer, clock);
+  const customers = new Map<string, Customer>();
+  return createSimulationFiatPort({
+    kernel,
+    issuer,
+    ledger,
+    identity: identity.service,
+    clock,
+    customers,
+  });
 }

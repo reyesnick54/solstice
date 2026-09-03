@@ -1,4 +1,4 @@
-import { createSnapshot, verifySnapshot } from '../../../sunrey-chain/src/ops/snapshots.ts';
+import { createSnapshot, developmentGenesisFingerprint, verifySnapshot } from '../../../sunrey-chain/src/ops/snapshots.ts';
 import { RANGE_CHAIN_ID, RANGE_NETWORK_ID } from '../types.ts';
 import { runProductionAttack, safetyScenario } from './production-helpers.ts';
 import type { AttackResult, AttackScenario } from '../types.ts';
@@ -9,6 +9,8 @@ const INVARIANTS = [
   'ASSET_SUPPLYBOOK_CANONICAL',
   'PRODUCTION_NOT_ACTIVE',
 ] as const;
+
+const RANGE_GENESIS_FINGERPRINT = developmentGenesisFingerprint();
 
 export const persistenceAttackScenarios: readonly AttackScenario[] = [
   'PERSIST-CORRUPT-CUSTODY',
@@ -38,6 +40,7 @@ export function runPersistenceAttack(env: RangeEnvironment, scenario: AttackScen
     const created = createSnapshot({
       networkId: RANGE_NETWORK_ID,
       chainId: RANGE_CHAIN_ID,
+      genesisFingerprint: RANGE_GENESIS_FINGERPRINT,
       height: 10n,
       blockId: 'blk_10',
       stateRoot: 'root_10',
@@ -57,6 +60,7 @@ export function runPersistenceAttack(env: RangeEnvironment, scenario: AttackScen
     const verified = verifySnapshot(tampered, {
       networkId: RANGE_NETWORK_ID,
       chainId: RANGE_CHAIN_ID,
+      genesisFingerprint: RANGE_GENESIS_FINGERPRINT,
       protocolVersion: 'sunrey.ops.v1',
       trustedFinalizedHeight: 10n,
       trustedStateRoot: 'root_10',
@@ -64,6 +68,7 @@ export function runPersistenceAttack(env: RangeEnvironment, scenario: AttackScen
     const staleHeight = verifySnapshot(created.value, {
       networkId: RANGE_NETWORK_ID,
       chainId: RANGE_CHAIN_ID,
+      genesisFingerprint: RANGE_GENESIS_FINGERPRINT,
       protocolVersion: 'sunrey.ops.v1',
       trustedFinalizedHeight: 9n,
       trustedStateRoot: 'root_9',

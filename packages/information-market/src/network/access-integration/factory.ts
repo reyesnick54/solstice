@@ -16,7 +16,7 @@ import { PersonalDataVault } from '../../../../personal-data-vault/src/service.t
 import { EvidenceVault } from '../../../../evidence/src/vault.ts';
 import { DomainEventLog } from '../../../../events/src/events.ts';
 import { createSimulationKeyProvider } from '../../../../security/src/simulation.ts';
-import { createSimulationFiatPort } from '../../fiat.ts';
+import { createSandboxSimulationFiatPort } from '../../fiat.ts';
 import {
   createHumanInformationAccessBridge,
   dataOpportunityIdFor,
@@ -127,7 +127,7 @@ export function createSandboxHinAccessBridge(clock: Clock, customerId: string): 
   });
   const cleanRoom = new CleanRoomService({ clock, keys, evidence, events, consent, vault });
   const coin = createMockSunReyTransferCoin();
-  const fiat = createSimulationFiatPort();
+  const fiat = createSandboxSimulationFiatPort(clock);
   const market = new InformationMarketService({ clock, keys, evidence, events, consent, cleanRoom, coin, fiat });
   const bridge = createHinAccessBridgeFromMarket({ clock, market, coin, fiat });
   const epochEnd = asUtcInstant('2026-12-31T23:59:59.000Z');

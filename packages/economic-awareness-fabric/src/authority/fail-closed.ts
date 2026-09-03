@@ -46,7 +46,7 @@ export function configuredProviderIsNotTrusted(trust: ProviderTrustState): Trust
 }
 
 export function apiResponseIsNotVerifiedFact(observation: ExternalObservation<unknown>): TrustBoundaryResult {
-  if (observation.quality.validationStatus === 'provider_validated') {
+  if (observation.quality.validationStatus === 'valid') {
     return { ok: true };
   }
   return {

@@ -227,7 +227,12 @@ export class FxReferenceService {
       if (outlier) {
         continue;
       }
-      observations.push(Object.freeze({ rate: result.value.rate, cacheSource: result.value.cacheSource }));
+      observations.push(
+        Object.freeze({
+          rate: result.value.rate,
+          ...(result.value.cacheSource !== undefined ? { cacheSource: result.value.cacheSource } : {}),
+        }),
+      );
       return Object.freeze({ ok: true, value: observations[0]! });
     }
     return Object.freeze({ ok: false, code: 'NO_PROVIDER_RATE', message: `no provider supplied ${base}/${quote}` });

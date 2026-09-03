@@ -54,6 +54,6 @@ export function materialFromRefs(
     economy,
     entityKind,
     entityCommitment: entityCommitmentFromRefs(refs),
-    jurisdiction,
+    ...(jurisdiction !== undefined ? { jurisdiction } : {}),
   });
 }

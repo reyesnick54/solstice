@@ -3,7 +3,7 @@ import { ZERO_KNOWLEDGE_PROOF_CAPABILITY } from './types.ts';
 
 export function createUnavailableZKProofProvider(): ZKProofProvider {
   const provider: ZKProofProvider = {
-    capability: ZERO_KNOWLEDGE_PROOF_CAPABILITY,
+    capability: 'INTERFACE_ONLY',
     async prove() {
       return zkErr({
         code: 'ZK_PROVIDER_UNAVAILABLE',

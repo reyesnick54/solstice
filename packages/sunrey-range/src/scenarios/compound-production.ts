@@ -3,7 +3,7 @@ import { analyzeIndependence } from '../../../sunrey-chain/src/oracle/production
 import { rejectOracleOnlyMint } from '../../../sunrey-chain/src/economics/issuance.ts';
 import { emptyBook, supplyReconciles } from '../../../sunrey-chain/src/economics/supply.ts';
 import { evaluateProductionEconomicActivation, currentRepositorySnapshot } from '../../../sunrey-chain/src/economics/production-activation/index.ts';
-import { createSnapshot, verifySnapshot } from '../../../sunrey-chain/src/ops/snapshots.ts';
+import { createSnapshot, developmentGenesisFingerprint, verifySnapshot } from '../../../sunrey-chain/src/ops/snapshots.ts';
 import { emptyControlRoom } from '../../../sunrey-chain/src/genesis-execution/control-room.ts';
 import { aiMayApproveCompliance, attemptComplianceHumanReview } from '../../../kernel/src/compliance/provider-candidate/review.ts';
 import { normalizeComplianceVendorResponse } from '../../../kernel/src/compliance/provider-candidate/normalization.ts';
@@ -13,6 +13,8 @@ import { runProductionAttack, safetyScenario } from './production-helpers.ts';
 import type { AttackResult, AttackScenario } from '../types.ts';
 import type { RangeEnvironment } from '../environment.ts';
 import type { EconomicDataSource } from '../../../sunrey-chain/src/oracle/production/types.ts';
+
+const RANGE_GENESIS_FINGERPRINT = developmentGenesisFingerprint();
 import type { ScreeningRequest } from '../../../kernel/src/compliance/ports.ts';
 
 const INVARIANTS = [
@@ -93,6 +95,7 @@ export function runCompoundProduction(env: RangeEnvironment, scenario: AttackSce
     const snapshot = createSnapshot({
       networkId: RANGE_NETWORK_ID,
       chainId: RANGE_CHAIN_ID,
+      genesisFingerprint: RANGE_GENESIS_FINGERPRINT,
       height: 3n,
       blockId: 'blk_3',
       stateRoot: 'root_3',
@@ -105,6 +108,7 @@ export function runCompoundProduction(env: RangeEnvironment, scenario: AttackSce
     const tampered = snapshot.ok ? verifySnapshot({ ...snapshot.value, payload: '{}' }, {
       networkId: RANGE_NETWORK_ID,
       chainId: RANGE_CHAIN_ID,
+      genesisFingerprint: RANGE_GENESIS_FINGERPRINT,
       protocolVersion: 'sunrey.ops.v1',
       trustedFinalizedHeight: 3n,
       trustedStateRoot: 'root_3',
