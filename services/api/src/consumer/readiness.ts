@@ -1,4 +1,4 @@
-import { probePostgresConnectivity } from '../../../../packages/persistence/src/index.ts';
+import { probePostgresConnectivity } from '@solstice/persistence';
 
 export type ConsumerBffReadinessReport = {
   readonly ready: boolean;
