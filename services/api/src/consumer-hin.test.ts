@@ -154,38 +154,38 @@ describe('Consumer BFF HIN contributions', () => {
 
   it('returns customer contributions and aggregate metrics without raw personal data', () => {
     const runtime = contributionRuntime();
-    const list = handleConsumerBff(runtime, {
+    const list = unwrapBff(handleConsumerBff(runtime, {
       method: 'GET',
       path: '/api/v1/hin/contributions',
       query: {},
       body: {},
       authorization: `Bearer ${TOKEN}`,
-    });
+    }));
     assert.equal(list.status, 200);
     const body = list.body as { items: readonly { containsRawPersonalData: boolean; issuancePromised: boolean }[] };
     assert.equal(body.items.length >= 1, true);
     assert.equal(body.items[0]?.containsRawPersonalData, false);
     assert.equal(body.items[0]?.issuancePromised, false);
 
-    const metrics = handleConsumerBff(runtime, {
+    const metrics = unwrapBff(handleConsumerBff(runtime, {
       method: 'GET',
       path: '/api/v1/hin/metrics',
       query: {},
       body: {},
       authorization: `Bearer ${TOKEN}`,
-    });
+    }));
     assert.equal(metrics.status, 200);
     const aggregate = metrics.body as { suppression: { individualRecordsExposed: boolean }; economicValueInputs: { isMintAmount: boolean } };
     assert.equal(aggregate.suppression.individualRecordsExposed, false);
     assert.equal(aggregate.economicValueInputs.isMintAmount, false);
 
-    const summary = handleConsumerBff(runtime, {
+    const summary = unwrapBff(handleConsumerBff(runtime, {
       method: 'GET',
       path: '/api/v1/hin/me/summary',
       query: {},
       body: {},
       authorization: `Bearer ${TOKEN}`,
-    });
+    }));
     assert.equal(summary.status, 200);
     const me = summary.body as { issuancePromised: boolean; compensation: { mintRequested: boolean } };
     assert.equal(me.issuancePromised, false);
@@ -194,21 +194,21 @@ describe('Consumer BFF HIN contributions', () => {
 
   it('rejects privileged verify and mint posts', () => {
     const runtime = contributionRuntime();
-    const verify = handleConsumerBff(runtime, {
+    const verify = unwrapBff(handleConsumerBff(runtime, {
       method: 'POST',
       path: '/api/v1/hin/contributions/hec_1/verify',
       query: {},
       body: {},
       authorization: `Bearer ${TOKEN}`,
-    });
+    }));
     assert.ok(verify.status === 404 || verify.status === 405);
-    const mint = handleConsumerBff(runtime, {
+    const mint = unwrapBff(handleConsumerBff(runtime, {
       method: 'POST',
       path: '/api/v1/hin/issuance',
       query: {},
       body: { amount: '1' },
       authorization: `Bearer ${TOKEN}`,
-    });
+    }));
     assert.ok(mint.status === 404 || mint.status === 405);
   });
 });

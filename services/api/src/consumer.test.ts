@@ -234,7 +234,7 @@ describe('Consumer BFF', () => {
     assert.equal(source.includes('AuthorityIssuer'), false);
     assert.equal(/reduce\(.*minorUnits/.test(source), false);
     const world = createSandboxWorld();
-    const posted = handleConsumerBff(
+    const posted = unwrapBff(handleConsumerBff(
       { bff: world.bff, sessions: world.sessions },
       {
         method: 'POST',
@@ -243,7 +243,7 @@ describe('Consumer BFF', () => {
         body: { balance: '999999' },
         authorization: auth('basic_verified'),
       },
-    );
+    ));
     assert.ok(posted.status === 404 || posted.status === 405);
   });
 
@@ -277,7 +277,7 @@ describe('Consumer BFF', () => {
     assert.ok(listed.some((row) => row.code === 'SAR'));
     assert.equal((currencies.body as { liveEnabled: boolean }).liveEnabled, false);
 
-    const created = handleConsumerBff(
+    const created = unwrapBff(handleConsumerBff(
       { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
       {
         method: 'POST',
@@ -292,14 +292,14 @@ describe('Consumer BFF', () => {
         },
         authorization: auth('multi_currency'),
       },
-    );
+    ));
     assert.equal(created.status, 201);
     const quote = created.body as { quoteId: string; destinationAmountMinorUnits: string; requiredApproval: string; provider: { live: boolean } };
     assert.equal(quote.destinationAmountMinorUnits, '374500');
     assert.equal(quote.requiredApproval, 'CUSTOMER_CONFIRMATION');
     assert.equal(quote.provider.live, false);
 
-    const accepted = handleConsumerBff(
+    const accepted = unwrapBff(handleConsumerBff(
       { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
       {
         method: 'POST',
@@ -308,10 +308,10 @@ describe('Consumer BFF', () => {
         body: { accountId: 'acct_sandbox_fx_usd' },
         authorization: auth('multi_currency'),
       },
-    );
+    ));
     assert.equal(accepted.status, 200);
 
-    const executed = handleConsumerBff(
+    const executed = unwrapBff(handleConsumerBff(
       { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
       {
         method: 'POST',
@@ -323,7 +323,7 @@ describe('Consumer BFF', () => {
         },
         authorization: auth('multi_currency'),
       },
-    );
+    ));
     assert.equal(executed.status, 200);
     assert.equal((executed.body as { status: string }).status, 'SETTLED');
   });
@@ -354,7 +354,7 @@ describe('Consumer BFF', () => {
 
   it('streams Agent conversation events and refuses raw public LLM routes', () => {
     const world = createSandboxWorld();
-    const posted = handleConsumerBff(
+    const posted = unwrapBff(handleConsumerBff(
       { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
       {
         method: 'POST',
@@ -363,7 +363,7 @@ describe('Consumer BFF', () => {
         body: { text: 'Explain my sandbox balance' },
         authorization: auth('agent_enabled'),
       },
-    );
+    ));
     assert.equal(posted.status, 200);
     const body = posted.body as {
       rawLlm: boolean;
@@ -377,7 +377,7 @@ describe('Consumer BFF', () => {
     assert.equal(body.events.every((event) => event.hiddenReasoning === false), true);
     assert.equal(body.sse.includes('event: message.completed'), true);
 
-    const sse = handleConsumerBff(
+    const sse = unwrapBff(handleConsumerBff(
       { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
       {
         method: 'POST',
@@ -387,7 +387,7 @@ describe('Consumer BFF', () => {
         authorization: auth('agent_enabled'),
         accept: 'text/event-stream',
       },
-    );
+    ));
     assert.equal(sse.status, 200);
     assert.equal(String(sse.headers['content-type']).startsWith('text/event-stream'), true);
     assert.equal(typeof sse.body, 'string');

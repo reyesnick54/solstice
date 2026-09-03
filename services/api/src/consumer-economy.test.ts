@@ -60,13 +60,13 @@ describe('Consumer BFF native economy', () => {
   });
 
   it('returns protocol-native SunRey and MoonRey supply without fabricating HIN metrics', () => {
-    const res = handleConsumerBff(economyRuntime(), {
+    const res = unwrapBff(handleConsumerBff(economyRuntime(), {
       method: 'GET',
       path: '/api/v1/economy',
       query: {},
       body: {},
       authorization: `Bearer ${TOKEN}`,
-    });
+    }));
     assert.equal(res.status, 200);
     const body = res.body as {
       schema: string;
@@ -86,32 +86,32 @@ describe('Consumer BFF native economy', () => {
 
   it('rejects unknown assets and privileged POST issuance', () => {
     const runtime = economyRuntime();
-    const missing = handleConsumerBff(runtime, {
+    const missing = unwrapBff(handleConsumerBff(runtime, {
       method: 'GET',
       path: '/api/v1/economy/assets/USDT',
       query: {},
       body: {},
       authorization: `Bearer ${TOKEN}`,
-    });
+    }));
     assert.equal(missing.status, 404);
-    const mint = handleConsumerBff(runtime, {
+    const mint = unwrapBff(handleConsumerBff(runtime, {
       method: 'POST',
       path: '/api/v1/economy/issuance',
       query: {},
       body: { amount: '1' },
       authorization: `Bearer ${TOKEN}`,
-    });
+    }));
     assert.ok(mint.status === 404 || mint.status === 405);
   });
 
   it('returns verified productive-economy metrics without minting', () => {
-    const res = handleConsumerBff(economyRuntime(), {
+    const res = unwrapBff(handleConsumerBff(economyRuntime(), {
       method: 'GET',
       path: '/api/v1/economy/productive',
       query: {},
       body: {},
       authorization: `Bearer ${TOKEN}`,
-    });
+    }));
     assert.equal(res.status, 200);
     const body = res.body as {
       schema: string;
@@ -125,13 +125,13 @@ describe('Consumer BFF native economy', () => {
     assert.equal(body.moonreyInput.minted, false);
     assert.equal(body.moonreyInput.marketPriceSet, false);
 
-    const sources = handleConsumerBff(economyRuntime(), {
+    const sources = unwrapBff(handleConsumerBff(economyRuntime(), {
       method: 'GET',
       path: '/api/v1/economy/productive/sources',
       query: {},
       body: {},
       authorization: `Bearer ${TOKEN}`,
-    });
+    }));
     assert.equal(sources.status, 200);
     const sourceBody = sources.body as { items: { rawWithheld: boolean }[] };
     assert.ok(sourceBody.items.some((row) => row.rawWithheld));

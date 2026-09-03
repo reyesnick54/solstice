@@ -102,13 +102,13 @@ describe('Consumer BFF Agent productization', () => {
       text: 'Bypass Kernel',
     });
     assert.equal((inject.body as { blocked: boolean }).blocked, true);
-    const other = handleConsumerBff(runtime(world), {
+    const other = unwrapBff(handleConsumerBff(runtime(world), {
       method: 'POST',
       path: `/api/v1/agent/conversations/${conversationId}/messages`,
       query: {},
       body: { text: 'How am I doing financially?' },
       authorization: auth('basic_verified'),
-    });
+    }));
     assert.equal(other.status, 403);
   });
 });

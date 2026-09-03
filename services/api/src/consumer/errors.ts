@@ -6,6 +6,7 @@ export const BFF_ERROR_CATEGORIES = [
   'NOT_FOUND',
   'TEMPORARY_UNAVAILABLE',
   'INTERNAL',
+  'UPSTREAM',
 ] as const;
 export type BffErrorCategory = (typeof BFF_ERROR_CATEGORIES)[number];
 
@@ -37,6 +38,10 @@ export const BFF_ERROR_CODES = [
   'PROVIDER_UNAVAILABLE',
   'REGULATED_FEATURE_DISABLED',
   'SANDBOX_ONLY',
+  'POLICY_REFUSED',
+  'NATIVE_ASSET_FORBIDDEN',
+  'QUOTE_UNAVAILABLE',
+  'INTERNAL',
 ] as const;
 export type BffErrorCode = (typeof BFF_ERROR_CODES)[number];
 

@@ -111,7 +111,7 @@ describe('Wave 8 consumer contract — SunRey', () => {
     assert.equal((ok.body as { isMintFormula: boolean }).isMintFormula, false);
 
     const sessions: SessionDirectory = new Map([[TOKEN, restrictedPrincipal()]]);
-    const denied = handleConsumerBff(
+    const denied = unwrapBff(handleConsumerBff(
       { ...runtime(), sessions },
       {
         method: 'GET',
@@ -121,7 +121,7 @@ describe('Wave 8 consumer contract — SunRey', () => {
         authorization: `Bearer ${TOKEN}`,
         requestId: 'req_peve_denied',
       },
-    );
+    ));
     assert.equal(denied.status, 403);
   });
 
@@ -172,7 +172,7 @@ describe('Wave 8 consumer contract — Action Center', () => {
   });
 
   it('supports SSE stream for actions', () => {
-    const res = handleConsumerBff(runtime(), {
+    const res = unwrapBff(handleConsumerBff(runtime(), {
       method: 'GET',
       path: '/api/v1/actions/stream',
       query: {},
@@ -180,7 +180,7 @@ describe('Wave 8 consumer contract — Action Center', () => {
       authorization: `Bearer ${TOKEN}`,
       accept: 'text/event-stream',
       requestId: 'req_sse',
-    });
+    }));
     assert.equal(res.status, 200);
     assert.ok(String(res.headers['content-type']).includes('text/event-stream'));
   });
@@ -189,7 +189,7 @@ describe('Wave 8 consumer contract — Action Center', () => {
 describe('Wave 8 consumer contract — policy failure', () => {
   it('denies restricted principals on regulated wallet routes', () => {
     const sessions: SessionDirectory = new Map([[TOKEN, restrictedPrincipal()]]);
-    const res = handleConsumerBff(
+    const res = unwrapBff(handleConsumerBff(
       { ...runtime(), sessions },
       {
         method: 'POST',
@@ -199,7 +199,7 @@ describe('Wave 8 consumer contract — policy failure', () => {
         authorization: `Bearer ${TOKEN}`,
         requestId: 'req_wallet_denied',
       },
-    );
+    ));
     assert.equal(res.status, 403);
     const body = res.body as { errorCode: string };
     assert.equal(body.errorCode, 'POLICY_DENIED');

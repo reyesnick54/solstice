@@ -76,14 +76,14 @@ describe('Consumer BFF exchange productization', () => {
 
   it('streams non-privileged market events', () => {
     const world = createSandboxWorld();
-    const streamed = handleConsumerBff(runtime(world), {
+    const streamed = unwrapBff(handleConsumerBff(runtime(world), {
       method: 'GET',
       path: '/api/v1/exchange/stream',
       query: { after: '0' },
       body: {},
       authorization: `Bearer ${sandboxToken('exchange')}`,
       accept: 'text/event-stream',
-    });
+    }));
     assert.equal(streamed.status, 200);
     assert.match(String(streamed.headers['content-type']), /text\/event-stream/);
   });
