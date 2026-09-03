@@ -235,7 +235,7 @@ curl -s http://127.0.0.1:8443/ready
 After CI green on this branch:
 
 ```bash
-git tag -a sunrey-backend-v1.0.0-rc.2 e025aaf22a3689a097c018d34e6470eca02d4213 -m "SUNREY SIMULATION RC2"
+git tag -a sunrey-backend-v1.0.0-rc.2 e025aaf22a3689a097c018a34e6470eca02d4213 -m "SUNREY SIMULATION RC2"
 git push origin sunrey-backend-v1.0.0-rc.2
 ```
 
