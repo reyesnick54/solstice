@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 
 import { handleConsumerBff } from './consumer/handler.ts';
 import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
+import { unwrapBff } from './consumer/bff-test-utils.ts';
 
 function auth(persona: Parameters<typeof sandboxToken>[0]) {
   return `Bearer ${sandboxToken(persona)}`;
@@ -16,7 +17,7 @@ function call(
   body: Record<string, unknown> = {},
   idempotencyKey?: string,
 ) {
-  return handleConsumerBff(
+  return unwrapBff(handleConsumerBff(
     { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments, agent: world.agent },
     {
       method,
@@ -26,7 +27,7 @@ function call(
       authorization: auth(persona),
       ...(idempotencyKey ? { idempotencyKey } : {}),
     },
-  );
+  ));
 }
 
 describe('Consumer BFF payments', () => {

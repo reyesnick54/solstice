@@ -12,6 +12,7 @@ import { FINANCIAL_CACHE, cachePolicyForPath } from './consumer/cache.ts';
 import { mapInternalActionStatus } from './consumer/action-status.ts';
 import { encodeCursor, paginate } from './consumer/pagination.ts';
 import type { Account } from '../../../packages/domain/src/account.ts';
+import { unwrapBff } from './consumer/bff-test-utils.ts';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -20,7 +21,7 @@ function auth(persona: Parameters<typeof sandboxToken>[0]) {
 }
 
 function get(world: ReturnType<typeof createSandboxWorld>, path: string, persona: Parameters<typeof sandboxToken>[0] | null, query: Record<string, string> = {}) {
-  return handleConsumerBff(
+  return unwrapBff(handleConsumerBff(
     { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments, agent: world.agent },
     {
       method: 'GET',
@@ -29,11 +30,11 @@ function get(world: ReturnType<typeof createSandboxWorld>, path: string, persona
       body: {},
       authorization: persona ? auth(persona) : undefined,
     },
-  );
+  ));
 }
 
 function patch(world: ReturnType<typeof createSandboxWorld>, path: string, persona: Parameters<typeof sandboxToken>[0], body: Record<string, unknown>) {
-  return handleConsumerBff(
+  return unwrapBff(handleConsumerBff(
     { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments, agent: world.agent },
     {
       method: 'PATCH',
@@ -42,7 +43,7 @@ function patch(world: ReturnType<typeof createSandboxWorld>, path: string, perso
       body,
       authorization: auth(persona),
     },
-  );
+  ));
 }
 
 describe('Consumer BFF', () => {

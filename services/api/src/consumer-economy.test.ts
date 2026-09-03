@@ -8,6 +8,7 @@ import { CONSUMER_RESOURCE_CATALOG } from './consumer/resources.ts';
 import type { ConsumerBff } from './consumer/orchestrator.ts';
 import type { BffPrincipal } from './consumer/ports.ts';
 import type { SessionDirectory } from './consumer/session.ts';
+import { unwrapBff } from './consumer/bff-test-utils.ts';
 
 const TOKEN = 'sandbox.basic_verified';
 

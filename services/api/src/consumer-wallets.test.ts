@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 
 import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
 import { handleConsumerBff, type ConsumerBffRuntime } from './consumer/handler.ts';
+import { unwrapBff } from './consumer/bff-test-utils.ts';
 
 function call(
   world: ReturnType<typeof createSandboxWorld>,
@@ -17,14 +18,14 @@ function call(
     identity: world.runtime.identity.service,
     wallets: world.wallets,
   };
-  return handleConsumerBff(runtime, {
+  return unwrapBff(handleConsumerBff(runtime, {
     method,
     path,
     query: {},
     body: body ?? {},
     authorization: `Bearer ${sandboxToken(persona)}`,
     requestId: `req_${method}_${path}`,
-  });
+  }));
 }
 
 describe('Consumer BFF wallets productization', () => {

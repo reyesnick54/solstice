@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 
 import { handleConsumerBff } from './consumer/handler.ts';
 import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
+import { unwrapBff } from './consumer/bff-test-utils.ts';
 
 function runtime(world: ReturnType<typeof createSandboxWorld>) {
   return {
@@ -22,13 +23,13 @@ function call(
   persona: Parameters<typeof sandboxToken>[0] | null,
   body: Record<string, unknown> = {},
 ) {
-  return handleConsumerBff(runtime(world), {
+  return unwrapBff(handleConsumerBff(runtime(world), {
     method,
     path,
     query: {},
     body,
     authorization: persona ? `Bearer ${sandboxToken(persona)}` : undefined,
-  });
+  }));
 }
 
 describe('Consumer BFF personal economy ACCESS-20', () => {

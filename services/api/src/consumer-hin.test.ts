@@ -11,6 +11,7 @@ import type { ConsumerBff } from './consumer/orchestrator.ts';
 import type { BffPrincipal } from './consumer/ports.ts';
 import { sandboxToken } from './consumer/sandbox-personas.ts';
 import type { SessionDirectory } from './consumer/session.ts';
+import { unwrapBff } from './consumer/bff-test-utils.ts';
 
 const NOW = asUtcInstant('2026-08-23T08:00:00.000Z');
 
@@ -47,14 +48,14 @@ function hinRuntime(): ConsumerBffRuntime {
 }
 
 function call(runtime: ConsumerBffRuntime, method: string, path: string, persona: 'basic_verified' | 'exchange') {
-  return handleConsumerBff(runtime, {
+  return unwrapBff(handleConsumerBff(runtime, {
     method,
     path,
     query: {},
     body: {},
     authorization: `Bearer ${sandboxToken(persona)}`,
     requestId: `req_${method}_${path}`,
-  });
+  }));
 }
 
 describe('Consumer BFF HIN rights marketplace', () => {

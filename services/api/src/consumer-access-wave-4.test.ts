@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 
 import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
 import { handleConsumerBff, type ConsumerBffRuntime } from './consumer/handler.ts';
+import { unwrapBff } from './consumer/bff-test-utils.ts';
 
 function call(
   world: ReturnType<typeof createSandboxWorld>,
@@ -18,14 +19,14 @@ function call(
     access: world.access,
     agentExternalEvidence: world.agentExternalEvidence,
   };
-  return handleConsumerBff(runtime, {
+  return unwrapBff(handleConsumerBff(runtime, {
     method,
     path,
     query: {},
     body: body ?? {},
     authorization: persona ? `Bearer ${sandboxToken(persona)}` : undefined,
     requestId: `req_${method}_${path.replace(/\//g, '_')}`,
-  });
+  }));
 }
 
 describe('Access Wave 4 BFF productization', () => {

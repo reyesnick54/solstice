@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 
 import { handleConsumerBff, type ConsumerBffRuntime } from './consumer/handler.ts';
 import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
+import { unwrapBff } from './consumer/bff-test-utils.ts';
 
 function runtime(world: ReturnType<typeof createSandboxWorld>): ConsumerBffRuntime {
   return {
@@ -38,14 +39,14 @@ function callProductization(
 ) {
   const persona = typeof personaOrBody === 'string' ? personaOrBody : 'agent_enabled';
   const actualBody = typeof personaOrBody === 'string' ? body : personaOrBody;
-  return handleConsumerBff(runtime(world), {
+  return unwrapBff(handleConsumerBff(runtime(world), {
     method,
     path,
     query: {},
     body: actualBody,
     authorization: auth(persona),
     requestId: `req_${method}_${path}`,
-  });
+  }));
 }
 
 function callConversation(
@@ -66,13 +67,13 @@ function call(
   body: unknown = {},
   query: Record<string, string> = {},
 ) {
-  return handleConsumerBff(runtimeWithAgent(world), {
+  return unwrapBff(handleConsumerBff(runtimeWithAgent(world), {
     method,
     path,
     query,
     body,
     authorization: auth(persona),
-  });
+  }));
 }
 
 describe('Consumer BFF Agent productization', () => {

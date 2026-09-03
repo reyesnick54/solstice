@@ -12,6 +12,7 @@ import { authorizeConsumerRoute } from './consumer/authorization.ts';
 import type { ConsumerBff } from './consumer/orchestrator.ts';
 import type { BffPrincipal } from './consumer/ports.ts';
 import type { SessionDirectory } from './consumer/session.ts';
+import { unwrapBff } from './consumer/bff-test-utils.ts';
 
 const TOKEN = 'sandbox.basic_verified';
 
@@ -65,14 +66,14 @@ function runtime(): ConsumerBffRuntime {
 }
 
 function get(path: string, token: string | null = TOKEN, query: Record<string, string> = {}) {
-  return handleConsumerBff(runtime(), {
+  return unwrapBff(handleConsumerBff(runtime(), {
     method: 'GET',
     path,
     query,
     body: {},
     authorization: token ? `Bearer ${token}` : undefined,
     requestId: 'req_wave8_contract',
-  });
+  }));
 }
 
 describe('Wave 8 consumer contract — Home', () => {
