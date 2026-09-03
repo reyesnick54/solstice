@@ -978,7 +978,12 @@ export function encodeBlockHeader(header: BlockHeaderV1): Uint8Array {
   return new Uint8Array(writeFields(encodeBlockHeaderBase(header)));
 }
 
-export function encodeBlockHeaderV2(header: BlockHeaderV2): Uint8Array {
+export function encodeBlockHeaderV2(
+  header: Omit<BlockHeaderV1, 'schemaVersion'> & {
+    readonly schemaVersion: 2;
+    readonly commitmentRoots: BlockCommitmentRootsV1;
+  },
+): Uint8Array {
   return new Uint8Array(
     writeFields([...encodeBlockHeaderBase(header), ...encodeCommitmentRoots(header.commitmentRoots)]),
   );

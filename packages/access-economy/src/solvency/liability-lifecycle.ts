@@ -5,7 +5,7 @@
 import type { ProviderSettlementLiability, SettlementLiabilityState } from './types.ts';
 import { SETTLEMENT_LIABILITY_STATES } from './taxonomy.ts';
 
-const TRANSITIONS = {
+const TRANSITIONS: Record<SettlementLiabilityState, readonly SettlementLiabilityState[]> = {
   QUOTED: ['RESERVED', 'RELEASED'],
   RESERVED: ['COMMITTED', 'RELEASED'],
   COMMITTED: ['CAPTURED', 'RELEASED', 'DEFAULT_REVIEW'],
@@ -13,7 +13,7 @@ const TRANSITIONS = {
   RELEASED: [],
   REFUNDED: [],
   DEFAULT_REVIEW: ['RELEASED', 'CAPTURED'],
-} as const satisfies Readonly<Record<SettlementLiabilityState, readonly SettlementLiabilityState[]>>;
+};
 
 export function canTransitionLiability(
   from: SettlementLiabilityState,

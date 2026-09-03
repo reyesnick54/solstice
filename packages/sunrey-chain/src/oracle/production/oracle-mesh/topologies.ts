@@ -13,7 +13,7 @@ export type DomainTopology = {
   readonly notes: string;
 };
 
-export const DOMAIN_TOPOLOGIES: Readonly<Record<ProductiveMeshDomain, DomainTopology>> = Object.freeze({
+export const DOMAIN_TOPOLOGIES = Object.freeze({
   ENERGY: Object.freeze({
     domain: 'ENERGY',
     recommendedClasses: Object.freeze([
@@ -99,7 +99,7 @@ export const DOMAIN_TOPOLOGIES: Readonly<Record<ProductiveMeshDomain, DomainTopo
     minimumIndependentSources: 2,
     notes: 'Producer + government/geological data + logistics/export evidence',
   }),
-});
+}) as Readonly<Record<ProductiveMeshDomain, DomainTopology>>;
 
 export function topologyFor(domain: ProductiveMeshDomain): DomainTopology {
   return DOMAIN_TOPOLOGIES[domain];

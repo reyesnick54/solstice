@@ -186,7 +186,7 @@ describe('Wave 5 productive graph projection', () => {
       eventLabel: 'Solar Generation 2026-09-02',
       sourceRefs: ['provider:grid-a', 'provider:grid-b'],
       claimId: 'cec_wave5_solar_graph',
-      createdAt: '2026-09-02T12:00:00.000Z',
+      createdAt: '2026-09-02T12:00:00.000Z' as import('../../../../domain/src/time.ts').UtcInstant,
     });
     assert.equal(projection.entityNode.domain, 'PRODUCTIVE_ECONOMY');
     assert.equal(projection.assetToEventEdge.kind, 'GENERATES');

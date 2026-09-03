@@ -17,6 +17,7 @@ import type {
   ToleranceAssessment,
 } from './types.ts';
 import { ORACLE_MESH_MINTS_MOONREY, ORACLE_MESH_SCHEMA } from './types.ts';
+import type { UtcInstant } from '../../../../../domain/src/time.ts';
 import type { EconomicObservation } from '../../../economic-proof/types.ts';
 
 export function buildProductiveOracleEvaluation(input: {
@@ -54,10 +55,10 @@ export function buildProductiveOracleEvaluation(input: {
     result: input.result,
     methodologyPolicyVersion: input.methodologyPolicyVersion,
     explanationCodes: Object.freeze([...input.explanationCodes]),
-    evaluatedAtUtc: input.evaluatedAtUtc,
-    mintsMoonRey: ORACLE_MESH_MINTS_MOONREY,
-    grantsExecutionAuthority: false,
-  });
+    evaluatedAtUtc: input.evaluatedAtUtc as UtcInstant,
+    mintsMoonRey: false as const,
+    grantsExecutionAuthority: false as const,
+  }) as ProductiveOracleEvaluation;
 }
 
 export function evaluationFeedsInformationConsensus(

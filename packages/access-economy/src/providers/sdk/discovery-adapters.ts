@@ -35,7 +35,7 @@ type DiscoveryFixture = {
   readonly keywords: readonly string[];
 };
 
-const FIXTURES: Readonly<Record<DiscoveryAccessProviderId, readonly DiscoveryFixture[]>> = Object.freeze({
+const FIXTURES = Object.freeze({
   gbfs_mobility: Object.freeze([
     {
       productId: 'gbfs_bike_miami',
@@ -129,13 +129,7 @@ const FIXTURES: Readonly<Record<DiscoveryAccessProviderId, readonly DiscoveryFix
       keywords: Object.freeze(['robot', 'robotics', 'warehouse']),
     },
   ]),
-  // Commercial providers are bridged separately; empty fixtures here.
-  expedia: Object.freeze([]),
-  turo: Object.freeze([]),
-  doordash: Object.freeze([]),
-  amazon: Object.freeze([]),
-  airbnb: Object.freeze([]),
-});
+}) as Readonly<Record<DiscoveryAccessProviderId, readonly DiscoveryFixture[]>>;
 
 function matchFixture(fixture: DiscoveryFixture, request: AccessInventorySearchRequest): boolean {
   if (fixture.category !== request.category) {

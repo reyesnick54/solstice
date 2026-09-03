@@ -16,7 +16,7 @@ const CATALOG_PATH = join(
 
 const WAVE5_YAML = parseYaml(readFileSync(CATALOG_PATH, 'utf8')) as { providers: CatalogProviderEntry[] };
 
-const FRED_COMMODITY_ENTRY: CatalogProviderEntry = Object.freeze({
+const FRED_COMMODITY_ENTRY = Object.freeze({
   provider_id: 'fred-commodity',
   name: 'FRED Commodity Prices',
   short_name: 'FRED Commodities',
@@ -78,7 +78,7 @@ const FRED_COMMODITY_ENTRY: CatalogProviderEntry = Object.freeze({
     last_verified: '2026-08-31',
     notes: 'Wave 2 commodity adapter extended for energy/resource normalization.',
   },
-});
+}) as CatalogProviderEntry;
 
 export const WAVE5_CATALOG_ENTRIES: readonly CatalogProviderEntry[] = Object.freeze(
   [...WAVE5_YAML.providers.map((entry) => Object.freeze({ ...entry })), FRED_COMMODITY_ENTRY],

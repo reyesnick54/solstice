@@ -146,7 +146,7 @@ export class TransactionLifecycle {
   executeFromMempool(txId: string): Result<StateTransitionResult, LifecycleRejection> {
     const entry = this.mempool.get(txId);
     if (!entry) {
-      return err({ code: 'MALFORMED', stage: 'executeFromMempool' } as LifecycleRejection);
+      return err({ code: 'MALFORMED', stage: 'executeFromMempool' } as unknown as LifecycleRejection);
     }
     const issuance = this.consumeIssuanceOnExecution(entry.envelope);
     if (issuance === 'DUPLICATE_ISSUANCE') {

@@ -15,6 +15,7 @@ import {
   runDualTokenAllocation,
 } from '../dual-token-allocation/engine.ts';
 import { TOKEN_CONVERSION_CONTRIBUTION } from './taxonomy.ts';
+import type { RunAllocationInput } from '../dual-token-allocation/engine.ts';
 import type { AccessWave1Result } from './types.ts';
 import type { AccessSolvencyService } from './solvency-service.ts';
 
@@ -44,16 +45,13 @@ export function runAccessWave1(input: RunAccessWave1Input): AccessWave1Result {
   const evidenceReferences: string[] = [];
 
   const epoch = demoEpoch();
-  const allocationInput: RunAllocationInput = {
+  const allocation = runDualTokenAllocation({
     epoch,
     participants: demoParticipants(),
     supply: demoSupply(),
     pools: demoPools(epoch.epochId),
-    categories: (input.categories ?? ['MOBILITY', 'STAY']) as Parameters<
-      typeof runDualTokenAllocation
-    >[0]['categories'],
-  };
-  const allocation = runDualTokenAllocation(allocationInput);
+    categories: (input.categories ?? ['MOBILITY', 'STAY']) as NonNullable<RunAllocationInput['categories']>,
+  });
 
   const entitlementLedger = input.service.getEntitlementLedger();
   const poolRegistry = input.service.getPoolRegistry();

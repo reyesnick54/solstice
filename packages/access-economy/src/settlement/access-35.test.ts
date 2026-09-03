@@ -554,7 +554,7 @@ describe('ACCESS-35 settlement orchestrator', () => {
         otherProgramContribution: 0n,
         currency: 'USD',
       },
-      evidenceReference: 'evidence:refund-full',
+      evidenceReference: accessEvidenceRefFor('evidence:refund-full'),
     });
     assert.equal(allocation.accessPoolRefund, 30_000n);
     assert.equal(allocation.userRefund, 10_000n);
@@ -571,7 +571,7 @@ describe('ACCESS-35 settlement orchestrator', () => {
         otherProgramContribution: 0n,
         currency: 'USD',
       },
-      evidenceReference: 'evidence:refund-partial',
+      evidenceReference: accessEvidenceRefFor('evidence:refund-partial'),
     });
     assert.equal(allocation.policy, 'PROPORTIONAL');
     assert.equal(allocation.accessPoolRefund, 15_000n);

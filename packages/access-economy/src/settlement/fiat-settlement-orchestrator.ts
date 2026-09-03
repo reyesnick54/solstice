@@ -789,7 +789,7 @@ export class FiatAccessSettlementOrchestrator {
     const allocation = allocateProportionalRefund({
       totalRefundAmount: input.refundAmount,
       original: current.sourceOfFunds,
-      evidenceReference: `evidence:refund-alloc:${input.idempotencyKey}`,
+      evidenceReference: accessEvidenceRefFor(`evidence:refund-alloc:${input.idempotencyKey}`),
     });
 
     const { plan } = current;

@@ -173,7 +173,7 @@ export const CANONICAL_FEDERATION_SOURCES = Object.freeze([
     connectorRequired: true,
     notes: 'Reserved for FederationAdapter / Trino boundary when operationally justified.',
   }),
-]);
+]) as readonly FederationDataSourceRecord[];
 
 export class FederationSourceRegistry {
   private readonly byId = new Map<string, FederationDataSourceRecord>();

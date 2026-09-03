@@ -199,7 +199,7 @@ describe('Wave 6 human contribution graph', () => {
     const projection = projectHumanContributionToGraph({
       event: EMPLOYMENT_WORK_EVENT,
       claimId: 'cec_wave6_work',
-      createdAt: '2026-09-02T12:00:00.000Z',
+      createdAt: '2026-09-02T12:00:00.000Z' as import('../../../../domain/src/time.ts').UtcInstant,
     });
     assert.equal(projection.actorNode.nodeClass, 'PSEUDONYMOUS_PERSON');
     assert.equal(projection.actorNode.domain, 'HUMAN_ECONOMY');

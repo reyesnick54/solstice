@@ -192,7 +192,9 @@ describe('Wave 1 Prompt 6 — provider data cache and refresh', () => {
     });
     assert.equal(result?.source, 'cache_retained_on_failure');
     assert.equal(service.failures().length, 1);
-    assert.equal(service.failures()[0].retainedCached, true);
+    const failure = service.failures()[0];
+    assert.ok(failure);
+    assert.equal(failure.retainedCached, true);
   });
 
   it('8. invalid provider payload does not overwrite good cache', async () => {
@@ -251,8 +253,10 @@ describe('Wave 1 Prompt 6 — provider data cache and refresh', () => {
     });
     const tick = await scheduler.tick();
     assert.equal(tick.enqueued.length, 1);
-    assert.equal(tick.enqueued[0].jobType, 'PROVIDER_DATA_REFRESH');
-    assert.equal(tick.enqueued[0].payload.providerId, 'mock-ecb');
+    const job = tick.enqueued[0];
+    assert.ok(job);
+    assert.equal(job.jobType, 'PROVIDER_DATA_REFRESH');
+    assert.equal(job.payload.providerId, 'mock-ecb');
   });
 
   it('12. schedule jitter', async () => {
