@@ -173,6 +173,19 @@ export class DurableHumanEconomicStateService {
     }
     const reserved = await this.persistence.reserveActiveFingerprint(record.fingerprint, record.contributionId);
     if (!reserved.ok) {
+      const holder = [...this.registry.snapshot().records].find(
+        (candidate) => candidate.fingerprint === record.fingerprint && candidate.contributionId !== record.contributionId,
+      );
+      if (holder) {
+        return err({
+          code: 'DUPLICATE_FINGERPRINT',
+          message: `active contribution fingerprint ${record.fingerprint} is already held in durable store`,
+        });
+      }
+      const idempotent = this.registry.getRecord(record.contributionId);
+      if (idempotent) {
+        return ok(idempotent);
+      }
       return err({
         code: 'DUPLICATE_FINGERPRINT',
         message: `active contribution fingerprint ${record.fingerprint} is already held in durable store`,

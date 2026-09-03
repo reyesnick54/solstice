@@ -20,7 +20,7 @@ import {
   evidenceBundleFromRecord,
   withExpectedDigest,
 } from '../../packages/human-economic-contribution/src/verification/index.ts';
-import { DATABASES } from '../../packages/persistence/src/index.ts';
+import { DATABASES, openPersistenceSession } from '../../packages/persistence/src/index.ts';
 import { reserveMonetizationKey, withHumanEconomicReservation } from '../../packages/persistence/src/human-economic-contribution/pg-store.ts';
 import { createHumanEconomicPersistencePort } from '../../services/accounts/src/human-economic-persistence.ts';
 import { DurableHumanEconomicStateService } from '../../services/api/src/product-integration/durable-human-economic-state.ts';
@@ -105,14 +105,17 @@ describePersistence('Human economic state idempotency (Prompt 5)', () => {
 
   it('TEST 3 — CONCURRENCY: concurrent monetization attempts create exactly one effect', async () => {
     const env = await preparePersistence();
-    const { runtime, pool, persistence, service: setup } = await createService(env);
+    const { service: setup } = await createService(env);
     const claim = await setupClaim(setup);
     await setup.persist();
-    await runtime.close();
 
-    const instanceA = await DurableHumanEconomicStateService.create(persistence, { requireDurable: true });
+    const session = openPersistenceSession(env);
+    const instanceA = await DurableHumanEconomicStateService.create(
+      createHumanEconomicPersistencePort(session.pools.customer),
+      { requireDurable: true },
+    );
     const instanceB = await DurableHumanEconomicStateService.create(
-      createHumanEconomicPersistencePort(pool),
+      createHumanEconomicPersistencePort(session.pools.customer),
       { requireDurable: true },
     );
     const results = await Promise.all([
@@ -130,20 +133,20 @@ describePersistence('Human economic state idempotency (Prompt 5)', () => {
 
   it('TEST 4 — MULTI-INSTANCE: two instances cannot independently monetize the same claim', async () => {
     const env = await preparePersistence();
-    const { runtime, pool, service: setup } = await createService(env);
+    const { service: setup } = await createService(env);
     const claim = await setupClaim(setup);
     await setup.persist();
-    await runtime.close();
 
-    const left = await DurableHumanEconomicStateService.create(createHumanEconomicPersistencePort(pool), {
+    const session = openPersistenceSession(env);
+    const left = await DurableHumanEconomicStateService.create(createHumanEconomicPersistencePort(session.pools.customer), {
       requireDurable: true,
     });
-    const right = await DurableHumanEconomicStateService.create(createHumanEconomicPersistencePort(pool), {
+    const right = await DurableHumanEconomicStateService.create(createHumanEconomicPersistencePort(session.pools.customer), {
       requireDurable: true,
     });
     assert.equal(await left.attemptMonetization({ claimId: claim.claimId, contextId: CONTEXT, now: NOW }).then((r) => r.ok), true);
     assert.equal(await right.attemptMonetization({ claimId: claim.claimId, contextId: CONTEXT, now: NOW }).then((r) => r.ok), false);
-    const reloaded = await DurableHumanEconomicStateService.create(createHumanEconomicPersistencePort(pool), {
+    const reloaded = await DurableHumanEconomicStateService.create(createHumanEconomicPersistencePort(session.pools.customer), {
       requireDurable: true,
     });
     assert.equal(reloaded.resolution.monetizationStore.listConsumedKeys().length, 1);
@@ -214,7 +217,8 @@ describePersistence('Human economic state idempotency (Prompt 5)', () => {
       assert.equal(first.value.contributionId, retry.value.contributionId);
     }
     const duplicate = await service.submitContribution({
-      ...fixtureContribution('RESEARCH_PARTICIPATION', 'retry-boundary-dup'),
+      ...fixtureContribution('RESEARCH_PARTICIPATION', 'retry-boundary'),
+      createdAt: asUtcInstant('2026-09-02T12:00:01.000Z'),
       eventReference: input.eventReference,
       evidenceReferences: input.evidenceReferences,
       consentReferences: input.consentReferences,
