@@ -113,6 +113,7 @@ export {
   isSecretEnvName,
   requireResolvedEnvValue,
   resolveCanonicalEnv,
+  isPersistenceTestEnabled,
   type EnvResolution,
   type EnvValueSource,
   type LegacyEnvAlias,

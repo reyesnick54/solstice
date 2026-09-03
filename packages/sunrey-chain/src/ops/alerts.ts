@@ -20,6 +20,10 @@ function definitionFor(code: AlertCode): AlertDefinition {
       severity: 'HIGH',
       description: 'A validator missed consecutive votes.',
     },
+    VALIDATOR_DOWN: {
+      severity: 'CRITICAL',
+      description: 'A validator process is unreachable or not participating.',
+    },
     VALIDATOR_SIGNER_UNAVAILABLE: {
       severity: 'CRITICAL',
       description: 'The active validator signer did not respond.',
@@ -99,6 +103,46 @@ function definitionFor(code: AlertCode): AlertDefinition {
     CREDENTIAL_MISUSE: {
       severity: 'CRITICAL',
       description: 'A credential scope, leak-guard, or resolution failure was observed.',
+    },
+    CONSENSUS_STALLED: {
+      severity: 'CRITICAL',
+      description: 'Consensus finalization has stalled beyond the engineering threshold.',
+    },
+    CHAIN_STATE_MISMATCH: {
+      severity: 'CRITICAL',
+      description: 'Observed chain state does not match the expected canonical state root.',
+    },
+    HIGH_CLAIM_CONFLICT: {
+      severity: 'HIGH',
+      description: 'Conflicting economic claims exceeded the engineering conflict threshold.',
+    },
+    DEAD_LETTER_GROWTH: {
+      severity: 'HIGH',
+      description: 'Event dead-letter backlog is growing beyond the engineering drain target.',
+    },
+    POLICY_SERVICE_UNAVAILABLE: {
+      severity: 'HIGH',
+      description: 'Policy evaluation service is unavailable for regulated requests.',
+    },
+    AUTHORIZATION_SERVICE_UNAVAILABLE: {
+      severity: 'HIGH',
+      description: 'Authorization service is unavailable for protected routes.',
+    },
+    KMS_SECRET_ISSUE: {
+      severity: 'CRITICAL',
+      description: 'KMS or secret resolution reported an engineering simulation issue.',
+    },
+    DATABASE_UNAVAILABLE: {
+      severity: 'CRITICAL',
+      description: 'A required persistence database is unavailable.',
+    },
+    EXCHANGE_SETTLEMENT_MISMATCH: {
+      severity: 'CRITICAL',
+      description: 'Exchange settlement records do not reconcile with ledger postings.',
+    },
+    UNEXPECTED_PRODUCTION_FEATURE_ENABLEMENT: {
+      severity: 'CRITICAL',
+      description: 'A production-only feature flag or capability was enabled in simulation.',
     },
   };
   const row = table[code];

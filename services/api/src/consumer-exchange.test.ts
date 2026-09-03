@@ -56,7 +56,7 @@ describe('Consumer BFF exchange productization', () => {
       side: 'BUY',
       quantity: '1',
     });
-    assert.equal(raw.status, 400);
+    assert.ok(raw.status === 400 || raw.status === 403);
     const proposed = call(world, 'POST', '/api/v1/exchange/orders', 'exchange', {
       marketId: 'market:sunrey-coin-usd-simulation',
       side: 'BUY',

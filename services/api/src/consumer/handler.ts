@@ -115,6 +115,7 @@ import { AGENT_AUTHORIZATION_POLICY } from './agent-authorization.ts';
 import { getAgentMandate, grantAgentMandate, revokeAgentMandate } from './agent-mandates.ts';
 import { dispatchVaultOpportunities } from './vault-opportunities.ts';
 import { dispatchWave8, WAVE8_BFF_ROUTES } from './wave8-dispatch.ts';
+import { authorizeConsumerRoute } from './authorization.ts';
 import { CONTRACT_RESPONSE_HEADERS } from './api-contract.ts';
 import { BLOCKCHAIN_TX_STATUSES, ECONOMIC_CLAIM_STATUSES } from './status-semantics.ts';
 
@@ -332,6 +333,11 @@ function dispatchAuthenticated(
 ): BffResponse | Promise<BffResponse> {
   const { method, path, query, body } = request;
   const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
+
+  const authFailure = authorizeConsumerRoute(principal, method, path, requestId);
+  if (authFailure) {
+    return json(statusForError(authFailure), authFailure, headers);
+  }
 
   const wave8 = dispatchWave8(runtime, { method, path, query, accept: request.accept }, principal, requestId);
   if (wave8) {
