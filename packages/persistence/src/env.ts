@@ -12,7 +12,7 @@ import {
   PERSISTENCE_ENV_ALIASES,
   resolveCanonicalEnv,
   type EnvResolution,
-} from '../../config/src/env.ts';
+} from '@solstice/config';
 
 export type PersistenceEnv = {
   readonly host: string;
