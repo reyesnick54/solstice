@@ -18,6 +18,7 @@ const STEPS = Object.freeze([
   { name: 'case-collisions', command: 'node', args: ['scripts/check-case-collisions.mjs'] },
   { name: 'architectural-invariants', command: 'python3', args: ['scripts/lint-architectural-invariants.py'] },
   { name: 'extraction-dryrun', command: 'python3', args: ['scripts/extraction-dryrun.py'] },
+  { name: 'package-boundaries', command: 'python3', args: ['scripts/check-package-boundaries.py'] },
   { name: 'architecture-linter', command: 'npm', args: ['run', 'lint:architecture'] },
   { name: 'kernel-gating', command: 'npm', args: ['run', 'gate'] },
   { name: 'deployment-posture', command: 'python3', args: ['scripts/check-deployment-posture.py'] },

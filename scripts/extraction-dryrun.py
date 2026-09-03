@@ -3,31 +3,28 @@
 
 Checks that each package under packages/ can be treated as an extractable
 unit: it must not import services, and it must not reach into another
-package's src internals.
+package's src internals via alias, relative, or resolvable deep paths.
+
+Legacy deep-import violations are tracked in
+docs/architecture/package-boundary-baseline.json and enforced by
+scripts/check-package-boundaries.py. This dry-run still fails immediately
+on service imports and economic-authority DAG violations.
 """
 
 from __future__ import annotations
 
-import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-IMPORT_RE = re.compile(
-    r"""(?:from\s+['"]([^'"]+)['"]|require\s*\(\s*['"]([^'"]+)['"]\s*\))"""
+sys.path.insert(0, str(ROOT / "scripts" / "lib"))
+
+from package_boundary import (  # noqa: E402
+    RULE_ECONOMIC_AUTHORITY_DAG,
+    RULE_PACKAGE_DEEP_IMPORT,
+    RULE_PACKAGE_IMPORTS_SERVICE,
+    scan_package_boundaries,
 )
-SKIP_DIR_NAMES = {".git", "node_modules", "dist", "build", "__pycache__"}
-
-
-def package_name_from_path(path: Path) -> str | None:
-    try:
-        rel = path.relative_to(ROOT / "packages")
-    except ValueError:
-        return None
-    parts = rel.parts
-    if not parts:
-        return None
-    return parts[0]
 
 
 def main() -> int:
@@ -37,43 +34,29 @@ def main() -> int:
         return 0
 
     package_dirs = sorted(p for p in packages_root.iterdir() if p.is_dir())
-    failures: list[str] = []
+    violations = scan_package_boundaries(ROOT)
 
-    for package_dir in package_dirs:
-        name = package_dir.name
+    immediate = [
+        v
+        for v in violations
+        if v.rule in {RULE_PACKAGE_IMPORTS_SERVICE, RULE_ECONOMIC_AUTHORITY_DAG}
+    ]
+
+    deep_count = sum(1 for v in violations if v.rule == RULE_PACKAGE_DEEP_IMPORT)
+
+    for name in (p.name for p in package_dirs):
         print(f"Extraction dry-run: {name}")
-        for path in package_dir.rglob("*"):
-            if not path.is_file() or path.suffix not in {".ts", ".tsx", ".js", ".mjs", ".cjs"}:
-                continue
-            if any(part in SKIP_DIR_NAMES for part in path.parts):
-                continue
-            text = path.read_text(encoding="utf-8")
-            rel = path.relative_to(ROOT).as_posix()
-            is_test_or_demo = path.name.endswith(".test.ts") or path.name == "demo.ts"
-            for match in IMPORT_RE.finditer(text):
-                spec = (match.group(1) or match.group(2) or "").replace("\\", "/")
-                line = text.count("\n", 0, match.start()) + 1
-                # Production packages must not import services. Tests and the
-                # Phase 1 demo (packages/domain/src/demo.ts) are runners, not
-                # extractable library surface.
-                if not is_test_or_demo and (
-                    spec.startswith("services/") or "/services/" in spec
-                ):
-                    failures.append(
-                        f"{rel}:{line}: package '{name}' imports service '{spec}'"
-                    )
-                if "/src/" in spec and spec.startswith("@solstice/") and f"@solstice/{name}" not in spec:
-                    failures.append(
-                        f"{rel}:{line}: package '{name}' imports another package's internals '{spec}'"
-                    )
 
-    if failures:
+    if immediate:
         print("Extraction dry-run failed:", file=sys.stderr)
-        for item in failures:
-            print(item, file=sys.stderr)
+        for item in immediate:
+            print(f"{item.file}:{item.line}: {item.message}", file=sys.stderr)
         return 1
 
-    print(f"Extraction dry-run: ok ({len(package_dirs)} package(s))")
+    print(
+        f"Extraction dry-run: ok ({len(package_dirs)} package(s), "
+        f"{deep_count} grandfathered deep-import(s) tracked in baseline)"
+    )
     return 0
 
 

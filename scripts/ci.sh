@@ -12,6 +12,7 @@ node scripts/check-case-collisions.mjs
 node scripts/validate-free-api-catalog.mjs
 python3 scripts/lint-architectural-invariants.py
 python3 scripts/extraction-dryrun.py
+python3 scripts/check-package-boundaries.py
 npm run lint:architecture
 npm run naming:audit
 
