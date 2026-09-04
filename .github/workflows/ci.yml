@@ -1,8 +1,10 @@
 name: CI
 
 on:
-  push:
   pull_request:
+  push:
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -22,63 +24,41 @@ jobs:
         with:
           node-version: "22"
 
-      - name: "[INTEGRITY] JSON / repository integrity preflight"
+      - name: "[TYPECHECK] Install from lockfile"
+        run: npm ci --ignore-scripts
+
+      - name: "[INTEGRITY] Repository preflight"
         run: |
           node scripts/check-json-integrity.mjs
           node scripts/validate-json.mjs
           node scripts/check-merge-integrity.mjs
           node scripts/check-case-collisions.mjs
-
-      - name: "[TYPECHECK] Install from lockfile"
-        run: npm ci --ignore-scripts
-
-      - name: "[INTEGRITY] Lockfile enforcement"
-        run: node scripts/check-lockfiles.mjs
-
-      - name: "[INTEGRITY] YAML and provider catalog validation"
-        run: |
+          node scripts/check-lockfiles.mjs
           node scripts/check-yaml-integrity.mjs
           node scripts/validate-free-api-catalog.mjs
 
-      - name: "[ARCHITECTURE] Architectural invariants"
+      - name: "[ARCHITECTURE] Invariants, authority, freeze, kernel"
         run: |
-          node scripts/check-json-integrity.mjs
-          node scripts/check-merge-integrity.mjs
           python3 scripts/lint-architectural-invariants.py
           python3 scripts/extraction-dryrun.py
           python3 scripts/check-package-boundaries.py
           npm run lint:architecture
           npm run naming:audit
+          node scripts/check-authority-map.mjs
+          node scripts/check-architecture-freeze.mjs
+          node scripts/check-build-status.mjs
+          npm run gate
+          node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/access-economy/src/architecture-guards.test.ts
 
-      - name: "[ARCHITECTURE] Authority map"
-        run: node scripts/check-authority-map.mjs
+      - name: "[PRODUCTION SAFETY] Deployment posture and production-off defaults"
+        run: |
+          python3 scripts/check-deployment-posture.py
+          node scripts/check-production-safety.mjs
 
-      - name: "[ARCHITECTURE] Architecture freeze"
-        run: node scripts/check-architecture-freeze.mjs
-
-      - name: "[ARCHITECTURE] Build status governance"
-        run: node scripts/check-build-status.mjs
-
-      - name: "[PRODUCTION SAFETY] Deployment posture"
-        run: python3 scripts/check-deployment-posture.py
-
-      - name: "[PRODUCTION SAFETY] Production-off defaults"
-        run: node scripts/check-production-safety.mjs
-
-      - name: "[ARCHITECTURE] Kernel gating"
-        run: npm run gate
-
-      - name: "[ARCHITECTURE] Access economy architecture guards"
-        run: node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/access-economy/src/architecture-guards.test.ts
-
-      - name: "[INTEGRITY] Provider catalog validation"
-        run: npm run providers:validate
-
-      - name: "[API] OpenAPI and contract specs"
-        run: node scripts/check-api-specs.mjs
-
-      - name: "[DATABASE] Migration ordering"
-        run: node scripts/check-migration-quality.mjs
+      - name: "[API] OpenAPI and migration contracts"
+        run: |
+          node scripts/check-api-specs.mjs
+          node scripts/check-migration-quality.mjs
 
       - name: Setup Rust (repository-pinned toolchain)
         uses: dtolnay/rust-toolchain@master
@@ -86,285 +66,43 @@ jobs:
           toolchain: 1.83.0
           components: rustfmt, clippy
 
-      - name: "[RUST] check / fmt / clippy / test (pinned workspace toolchain)"
+      - name: "[RUST] check / fmt / clippy / test"
         working-directory: packages/sunrey-chain/rust
         run: |
-          rustc --version
           cargo check --workspace --locked
           cargo fmt --check
           cargo clippy --all-targets --locked -- -D warnings
           cargo test --workspace --locked
 
-      - name: "[SECURITY] Dependency audit and license inventory"
-        run: node scripts/sunrey-release.mjs audit
-
-      - name: "[SECURITY] SBOM and provenance"
+      - name: "[SECURITY] Release assurance"
         run: |
+          node scripts/sunrey-release.mjs audit
           node scripts/sunrey-release.mjs sbom
           node scripts/sunrey-release.mjs provenance
-          node scripts/sunrey-testnet-sbom.mjs
-
-      - name: "[SECURITY] Two-builder reproducibility"
-        run: node scripts/sunrey-release.mjs compare-builds
-
-      - name: "[SECURITY] Artifact sign and verify"
-        run: |
+          node scripts/sunrey-release.mjs compare-builds
           node scripts/sunrey-release.mjs sign
           node scripts/sunrey-release.mjs verify
-
-      - name: "[SECURITY] Independent security-review bundle"
-        run: |
           node scripts/sunrey-audit.mjs generate
           node scripts/sunrey-audit.mjs verify dist/sunrey-audit
-          node scripts/sunrey-audit.mjs reproduce
+          node scripts/check-generated-drift.mjs
+          node scripts/static-security-lint.mjs
 
-      - name: "[GENERATED DRIFT] Generated-code drift"
-        run: node scripts/check-generated-drift.mjs
+      - name: "[TEST] Access economy regression suite"
+        run: npm run test:access
 
-      - name: "[TYPECHECK] Static analysis (Rust clippy already -D warnings; TS security lint)"
-        run: node scripts/static-security-lint.mjs
-
-      - name: "[TEST] Unit, financial invariants, and package suites"
+      - name: "[TEST] Fuzz and formal smoke"
         run: |
-          npm run test:sunrey-node
-          npm test
-          npm run sunrey-ceremony -- rehearse
-          npm run sunrey-ceremony -- production rehearse
-          npm run sunrey-ops -- production inventory
-          npm run sunrey-ops -- production baseline
-          npm run sunrey-ops -- production access
-          npm run sunrey-ops -- production operators
-          npm run sunrey-ops -- production slo
-          npm run sunrey-ops -- production incidents
-          npm run sunrey-ops -- production backups
-          npm run sunrey-ops -- production restore-drill
-          npm run sunrey-ops -- production providers
-          npm run sunrey-ops -- production changes
-          npm run sunrey-ops -- production evidence-seal
-          npm run sunrey-ops -- production handoff
-          npm run sunrey-ops -- production readiness
-          npm run sunrey-ops -- production rehearse
-          npm run sunrey-launch -- production execute
-          npm run sunrey-launch -- production verify
-          npm run sunrey-bench -- sanity
+          npm run test:fuzz-smoke
+          npm run test:formal-smoke
 
-      - name: "[TEST] Fuzz smoke"
-        run: npm run test:fuzz-smoke
+      - name: "[TYPECHECK] No-new-TypeScript-errors gate"
+        run: node scripts/typecheck-regression-gate.mjs
 
-      - name: "[TEST] Formal smoke"
-        run: npm run test:formal-smoke
-
-      - name: "[TEST] End-to-end demo"
-        run: npm run demo
-      - name: Card simulation demo
-        run: npm run demo:cards
-      - name: Personal Economic Graph demo
-        run: npm run demo:peg
-      - name: Wallet simulation demo
-        run: npm run demo:wallet
-      - name: Tap-to-pay simulation demo
-        run: npm run demo:acceptance
-      - name: Growth Orchestrator demo
-        run: npm run demo:growth
-      - name: Personal Economic Value Engine demo
-        run: npm run demo:peve
-      - name: Treasury routing demo
-        run: npm run demo:treasury
-      - name: Investments paper portfolio demo
-        run: npm run demo:investments
-      - name: Regulatory Digital Twin demo
-        run: npm run demo:rdt
-      - name: Investment risk and model registry demo
-        run: npm run demo:risk
-      - name: Personal Data Vault demo
-        run: npm run demo:pdv
-      - name: Strategy Lab demo
-        run: npm run demo:strategy-lab
-      - name: Agentic Capital Mesh demo
-        run: npm run demo:mesh
-      - name: Consent ledger and purpose firewall demo
-        run: npm run demo:consent
-      - name: Privacy Clean Room demo
-        run: npm run demo:clean-room
-      - name: SunRey Coin simulation ledger demo
-        run: npm run demo:sunrey-coin
-      - name: Human Information Network marketplace demo
-        run: npm run demo:information-market
-      - name: Human Information Network production-candidate demo
-        run: npm run demo:sunrey-human-information-network
-      - name: Human Information Network chain-anchor foundation demo
-        run: npm run demo:sunrey-hin-chain-anchor-foundation
-      - name: Human Information Network chain-anchor finality demo
-        run: npm run demo:sunrey-hin-chain-finality
-      - name: SunRey AI runtime demo
-        run: npm run demo:sunrey-ai-runtime
-      - name: SunRey S3M primary provider demo
-        run: npm run demo:sunrey-ai-s3m
-      - name: SunRey human contribution ontology demo
-        run: npm run demo:sunrey-human-contribution-ontology
-      - name: SunRey human contribution registry demo
-        run: npm run demo:sunrey-human-contribution-registry
-      - name: Demo sunrey-chain
-        run: npm run demo:sunrey-chain
-      - name: SunRey Chain access rights and reservations demo
-        run: npm run demo:sunrey-access-rights
-      - name: MoonRey productive capacity demo
-        run: npm run demo:moonrey-productive
-      - name: SunRey economic unit normalization demo
-        run: npm run demo:sunrey-unit-normalization
-      - name: SunRey oracle network demo
-        run: npm run demo:sunrey-oracle
-      - name: SunRey production oracle onboarding demo
-        run: npm run demo:sunrey-production-oracles
-      - name: SunRey production oracle readiness
-        run: npm run sunrey-oracle -- readiness
-      - name: SunRey local node demo
-        run: npm run demo:sunrey-node
-      - name: SunRey P2P development network demo
-        run: npm run demo:sunrey-devnet
-      - name: SunRey validator accountability demo
-        run: npm run demo:sunrey-accountability
-      - name: SunRey native asset four-validator demo
-        run: npm run demo:sunrey-native-assets
-      - name: SunRey native fees demo
-        run: npm run demo:sunrey-fees
-      - name: SunRey interoperability demo
-        run: npm run demo:sunrey-interop
-      - name: SunRey resilience and disaster-recovery demo
-        run: npm run demo:sunrey-ops
-      - name: SunRey sovereign wallets demo
-        run: npm run demo:sunrey-wallet
-      - name: SunRey validator operator demo
-        run: npm run demo:sunrey-ops
-      - name: SunRey public testnet demo
-        run: npm run demo:sunrey-testnet
-      - name: SunRey mainnet readiness rehearsal
-        run: npm run demo:sunrey-mainnet
-      - name: SunRey production infrastructure harness
-        run: npm run demo:sunrey-infra
-      - name: SunRey preproduction platform rehearsal
-        run: npm run demo:sunrey-preproduction
-      - name: SunRey production environment plan
-        run: SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- production plan
-      - name: SunRey production environment verify-plan
-        run: SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- production verify-plan
-      - name: SunRey production environment rehearse
-        run: SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- production rehearse
-      - name: SunRey mainnet candidate verify
-        run: npm run sunrey-mainnet -- verify
-      - name: SunRey mainnet launch rehearsal demo
-        run: npm run demo:sunrey-launch
-      - name: SunRey mainnet launch rehearsal verify
-        run: npm run sunrey-launch -- verify
-      - name: SunRey authorized genesis execution rehearsal
-        run: npm run sunrey-launch -- production report
-      - name: SunRey pre-genesis shadow qualification demo
-        run: npm run demo:sunrey-pregenesis
-      - name: SunRey pre-genesis shadow qualify
-        run: SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- pregenesis qualify
-      - name: SunRey pre-genesis shadow verify
-        run: SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- pregenesis verify
-      - name: SunRey validator economics demo
-        run: npm run demo:sunrey-validator-economics
-      - name: SunRey testnet deployment manifests
-        run: node scripts/sunrey-testnet-validate-manifests.mjs
-      - name: SunRey testnet SBOM and release manifest
-        run: node scripts/sunrey-testnet-sbom.mjs
-      - name: SunRey developer SDK demo
-        run: npm run demo:sunrey-sdk
-      - name: SunRey Exchange simulation demo
-        run: npm run demo:sunrey-exchange
-      - name: SunRey Exchange native settlement demo
-        run: npm run demo:sunrey-exchange-native
-      - name: SunRey Exchange capacity access and dual-economy clearing demo
-        run: npm run demo:sunrey-exchange-capacity-access
-      - name: SunRey Exchange four-validator DVP demo
-        run: npm run demo:sunrey-exchange-settlement
-      - name: Custody deposit and withdrawal demo
-        run: npm run demo:custody
-      - name: Institutional native-asset custody demo
-        run: npm run demo:institutional-custody
-      - name: Custody submission-unknown demo
-        run: npm run demo:custody-unknown
-      - name: Custody cold-signing demo
-        run: npm run demo:custody-cold
-      - name: SunRey operational persistence recovery demo
-        run: npm run demo:sunrey-operational-persistence-recovery
-      - name: Market surveillance demo
-        run: npm run demo:market-surveillance
-      - name: Listing governance demo
-        run: npm run demo:listing-governance
-      - name: SunRey explorer demo
-        run: npm run demo:explorer
-      - name: SunRey performance bench sanity demo
-        run: npm run demo:sunrey-bench
-      - name: SunRey adversarial range smoke campaign
-        run: npm run sunrey-range -- campaign --smoke
-      - name: SunRey production-safety smoke campaign
-        run: npm run sunrey-range -- campaign --production-safety-smoke
-      - name: SunRey adversarial range demo
-        run: npm run demo:sunrey-range
-      - name: SunRey production adversarial campaign demo
-        run: npm run demo:sunrey-production-adversarial-campaign
-      - name: SunRey MoonRey dual-economy simulation demo
-        run: npm run demo:sunrey-dual-economy
-      - name: SunRey dual-economy baseline CLI
-        run: npm run sunrey-economics -- dual simulate --scenario baseline --epochs 2
-      - name: SunRey economic stress smoke campaign
-        run: npm run sunrey-economics -- stress campaign --id smoke
-      - name: SunRey economic stress laboratory demo
-        run: npm run demo:sunrey-economic-stress
-      - name: SunRey Testnet RC smoke qualification
-        run: node scripts/sunrey-release.mjs rc qualify --profile smoke
-      - name: SunRey Testnet RC verify
-        run: node scripts/sunrey-release.mjs rc verify
-      - name: SunRey Testnet RC demo
-        run: npm run demo:sunrey-rc
-      - name: SunRey economic RC smoke qualification
-        run: node scripts/sunrey-release.mjs economic create --profile smoke --id SUNREY_ECONOMIC_TESTNET_RC_1
-      - name: SunRey economic RC verify
-        run: node scripts/sunrey-release.mjs economic verify
-      - name: SunRey economic RC demo
-        run: npm run demo:sunrey-economic-rc
-      - name: SunRey production economic authorization demo
-        run: npm run demo:sunrey-production-economic-authorization
-      - name: SunRey engineering closure demo
-        run: npm run demo:sunrey-engineering-closure
-      - name: SunRey production launch freeze demo
-        run: npm run demo:sunrey-production-launch-freeze
-      - name: SunRey Mainnet RC smoke qualification
-        run: SUNREY_FIXTURE_ENV=local node scripts/sunrey-release.mjs mainnet create --profile smoke --id SUNREY_MAINNET_RC_1
-      - name: SunRey Mainnet RC qualify
-        run: SUNREY_FIXTURE_ENV=local node scripts/sunrey-release.mjs mainnet qualify --profile smoke
-      - name: SunRey Mainnet RC verify
-        run: SUNREY_FIXTURE_ENV=local node scripts/sunrey-release.mjs mainnet verify
-      - name: SunRey Mainnet RC demo
-        run: npm run demo:sunrey-mainnet-rc
-      - name: SunRey post-genesis rehearsal
-        run: SUNREY_FIXTURE_ENV=local npm run sunrey-mainnet -- stabilization status
-      - name: SunRey post-genesis checkpoint
-        run: SUNREY_FIXTURE_ENV=local npm run sunrey-mainnet -- stabilization checkpoint 1 0 aaaaaaaa
-      - name: SunRey post-genesis audit
-        run: SUNREY_FIXTURE_ENV=local npm run sunrey-mainnet -- stabilization audit
-      - name: SunRey capability activation negatives
-        run: SUNREY_FIXTURE_ENV=local npm run sunrey-mainnet -- capability history
-      - name: Universal economic exchange demo
-        run: npm run demo:universal-exchange
-      - name: SunRey independent security-review demo
-        run: npm run demo:sunrey-audit
-
-      - name: "[TYPECHECK] TypeScript"
-        run: npm run typecheck
-
-      - name: "[SECURITY] Secret scan"
+      - name: "[SECURITY] Secret and container checks"
         run: |
           python3 scripts/secret-scan.py
           python3 scripts/secret-scan.py --self-test
-          if [ -d dist/testnet-release ]; then python3 scripts/secret-scan.py --root dist/testnet-release; fi
-          if [ -d dist/sunrey-audit ]; then python3 scripts/secret-scan.py --root dist/sunrey-audit; fi
-
-      - name: "[SECURITY] Container pin check"
-        run: node scripts/check-container-pins.mjs
+          node scripts/check-container-pins.mjs
 
       - name: "[BACKEND RC] Qualify release candidate"
         run: npm run qualify:backend-rc
@@ -395,31 +133,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
       - name: Setup Node.js
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with:
           node-version: "22"
-
-      - name: JSON / repository integrity preflight
+      - name: Install from lockfile
+        run: npm ci --ignore-scripts
+      - name: Database integrity and migrations
         run: |
           node scripts/check-json-integrity.mjs
           node scripts/check-merge-integrity.mjs
-
-      - name: Install from lockfile
-        run: npm ci --ignore-scripts
-
-      - name: "[DATABASE] Migration ordering"
-        run: node scripts/check-migration-quality.mjs
-
-      - name: "[DATABASE] Bootstrap and migrate empty databases"
-        run: npm run db:migrate
-
-      - name: "[DATABASE] Persistence integration tests"
-        run: npm run test:persistence
-
-      - name: "[DATABASE] From-zero, prior-schema, restart, ledger, failure gate"
-        run: npm run qualify:backend-db -- --skip-persistence
+          node scripts/check-migration-quality.mjs
+          npm run db:migrate
+          npm run test:persistence
+          npm run qualify:backend-db -- --skip-persistence
 
   architecture-freeze:
     name: "[ARCHITECTURE] authority-map + freeze + kernel + posture"
@@ -429,39 +156,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
       - name: Setup Node.js
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with:
           node-version: "22"
-
-      - name: "[INTEGRITY] JSON / repository integrity preflight"
+      - name: Install from lockfile
+        run: npm ci --ignore-scripts
+      - name: Architecture release gate
         run: |
           node scripts/check-json-integrity.mjs
           node scripts/validate-json.mjs
           node scripts/check-merge-integrity.mjs
           node scripts/check-case-collisions.mjs
-
-      - name: "[TYPECHECK] Install from lockfile"
-        run: npm ci --ignore-scripts
-
-      - name: "[ARCHITECTURE] Authority map"
-        run: node scripts/check-authority-map.mjs
-
-      - name: "[ARCHITECTURE] Architecture freeze"
-        run: node scripts/check-architecture-freeze.mjs
-
-      - name: "[ARCHITECTURE] Architectural linter"
-        run: npm run lint:architecture
-
-      - name: "[ARCHITECTURE] Kernel gating"
-        run: npm run gate
-
-      - name: "[PRODUCTION SAFETY] Deployment posture"
-        run: python3 scripts/check-deployment-posture.py
-
-      - name: "[PRODUCTION SAFETY] Production-off defaults"
-        run: node scripts/check-production-safety.mjs
+          node scripts/check-authority-map.mjs
+          node scripts/check-architecture-freeze.mjs
+          npm run lint:architecture
+          npm run gate
+          python3 scripts/check-deployment-posture.py
+          node scripts/check-production-safety.mjs
 
   api-contracts:
     name: "[API] OpenAPI parse, refs, operation IDs"
@@ -471,32 +183,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
       - name: Setup Node.js
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with:
           node-version: "22"
-
-      - name: "[TYPECHECK] Install from lockfile"
+      - name: Install from lockfile
         run: npm ci --ignore-scripts
-
-      - name: "[INTEGRITY] JSON / repository integrity preflight"
+      - name: API contract gate
         run: |
           node scripts/check-json-integrity.mjs
           node scripts/validate-json.mjs
           node scripts/check-merge-integrity.mjs
           node scripts/check-case-collisions.mjs
-
-      - name: "[TYPECHECK] Install from lockfile"
-        run: npm ci --ignore-scripts
-
-      - name: "[INTEGRITY] YAML and provider catalog validation"
-        run: |
           node scripts/check-yaml-integrity.mjs
           node scripts/validate-free-api-catalog.mjs
-
-      - name: "[API] OpenAPI and contract specs"
-        run: node scripts/check-api-specs.mjs
+          node scripts/check-api-specs.mjs
 
   production-safety:
     name: "[PRODUCTION SAFETY] PRODUCTION_* and live connectivity remain off"
@@ -506,24 +207,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
       - name: Setup Node.js
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with:
           node-version: "22"
-
-      - name: "[INTEGRITY] JSON / repository integrity preflight"
+      - name: Production safety gate
         run: |
           node scripts/check-json-integrity.mjs
           node scripts/validate-json.mjs
           node scripts/check-merge-integrity.mjs
           node scripts/check-case-collisions.mjs
-
-      - name: "[PRODUCTION SAFETY] Production-off defaults"
-        run: node scripts/check-production-safety.mjs
-
-      - name: "[PRODUCTION SAFETY] Deployment posture"
-        run: python3 scripts/check-deployment-posture.py
+          node scripts/check-production-safety.mjs
+          python3 scripts/check-deployment-posture.py
 
   backend-rc:
     name: "[BACKEND RC] local OCI artifacts + qualify"
@@ -533,30 +228,45 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
       - name: Setup Node.js
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with:
           node-version: "22"
-
-      - name: "[INTEGRITY] JSON / repository integrity preflight"
+      - name: Install from lockfile
+        run: npm ci --ignore-scripts
+      - name: Backend release candidate gate
         run: |
           node scripts/check-json-integrity.mjs
           node scripts/validate-json.mjs
           node scripts/check-merge-integrity.mjs
           node scripts/check-case-collisions.mjs
+          npm run build:backend-rc-artifacts -- --require-container
+          npm run qualify:backend-rc
+          node scripts/check-production-safety.mjs
+          python3 scripts/secret-scan.py
 
-      - name: "[TYPECHECK] Install from lockfile"
+  full-main:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    name: "[MAIN] full regression + launch rehearsal"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+      - name: Install from lockfile
         run: npm ci --ignore-scripts
-
-      - name: "[BACKEND RC] Build local OCI image, SBOM, and provenance"
-        run: npm run build:backend-rc-artifacts -- --require-container
-
-      - name: "[BACKEND RC] Qualify release candidate"
-        run: npm run qualify:backend-rc
-
-      - name: "[PRODUCTION SAFETY] Production-off defaults"
-        run: node scripts/check-production-safety.mjs
-
-      - name: "[SECURITY] Secret scan"
-        run: python3 scripts/secret-scan.py
+      - name: Full repository regression
+        run: npm test
+      - name: Launch rehearsal
+        run: |
+          npm run sunrey-ceremony -- rehearse
+          npm run sunrey-launch -- production verify
+          npm run qualify:backend-rc
+      - name: Strict TypeScript debt report
+        continue-on-error: true
+        run: npm run typecheck

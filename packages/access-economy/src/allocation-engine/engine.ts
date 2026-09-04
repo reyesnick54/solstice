@@ -29,7 +29,6 @@ import {
   checkParticipantEligibility,
   defaultEligibilityPort,
   eligibleForCategory,
-  type EligibilityPort,
 } from './eligibility.ts';
 import {
   DEFAULT_ACCESS_ALLOCATION_POLICY,
@@ -50,17 +49,18 @@ import {
   computeTimeWeightedBalance,
   resolveCheckpoints,
   type TimeWeightedBalance,
-  type TokenBalanceReaderPort,
 } from './twab-service.ts';
 import type {
   AccessAllocationPolicy,
   AccessAllocationSnapshot,
   AllocationSnapshotResult,
   CategoryAllocationResult,
+  EligibilityPort,
   GenerateSnapshotInput,
   ParticipantAllocationEvidence,
   ParticipantAllocationInput,
   ParticipantWeightResult,
+  TokenBalanceReaderPort,
   UserAllocationPreview,
 } from './types.ts';
 
@@ -276,7 +276,9 @@ export class AccessAllocationEngine {
 
   constructor(options: AccessAllocationEngineOptions = {}) {
     this.eligibilityPort = options.eligibilityPort ?? defaultEligibilityPort();
-    this.balanceReader = options.balanceReader;
+    if (options.balanceReader !== undefined) {
+      this.balanceReader = options.balanceReader;
+    }
     this.store = options.store ?? new AccessAllocationStore();
     this.basePolicy = options.basePolicy ?? DEFAULT_ACCESS_ALLOCATION_POLICY;
     validatePolicyCoefficients(this.basePolicy);
