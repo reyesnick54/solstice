@@ -116,11 +116,15 @@ describe('ACCESS Prompt 41 — idempotency and races', () => {
       idempotencyKey: 'race-b',
       now: CHAOS_NOW,
     });
-    await quoteCheckout(stack, { txId: startA.value!.transactionId, idempotencyKey: 'race-a-q' });
-    await quoteCheckout(stack, { txId: startB.value!.transactionId, idempotencyKey: 'race-b-q' });
+    assert.ok(startA.ok);
+    assert.ok(startB.ok);
+    const startAValue = startA.value;
+    const startBValue = startB.value;
+    await quoteCheckout(stack, { txId: startAValue.transactionId, idempotencyKey: 'race-a-q' });
+    await quoteCheckout(stack, { txId: startBValue.transactionId, idempotencyKey: 'race-b-q' });
     const [res1, res2] = await Promise.all([
-      stack.orchestrator.reserve({ transactionId: startA.value!.transactionId, userApproved: true, idempotencyKey: 'race-a-r', now: CHAOS_NOW }),
-      stack.orchestrator.reserve({ transactionId: startB.value!.transactionId, userApproved: true, idempotencyKey: 'race-b-r', now: CHAOS_NOW }),
+      stack.orchestrator.reserve({ transactionId: startAValue.transactionId, userApproved: true, idempotencyKey: 'race-a-r', now: CHAOS_NOW }),
+      stack.orchestrator.reserve({ transactionId: startBValue.transactionId, userApproved: true, idempotencyKey: 'race-b-r', now: CHAOS_NOW }),
     ]);
     const okCount = [res1, res2].filter((r) => r.ok).length;
     assert.ok(okCount <= 1);
@@ -144,13 +148,17 @@ describe('ACCESS Prompt 41 — idempotency and races', () => {
         }),
       ),
     );
-    for (const start of starts) {
-      await quoteCheckout(stack, { txId: start.value!.transactionId, idempotencyKey: `fq-${start.value!.transactionId}` });
+    const started = starts.map((start) => {
+      assert.ok(start.ok);
+      return start.value;
+    });
+    for (const startValue of started) {
+      await quoteCheckout(stack, { txId: startValue.transactionId, idempotencyKey: `fq-${startValue.transactionId}` });
     }
     const reserves = await Promise.all(
-      starts.map((start, i) =>
+      started.map((startValue, i) =>
         stack.orchestrator.reserve({
-          transactionId: start.value!.transactionId,
+          transactionId: startValue.transactionId,
           userApproved: true,
           idempotencyKey: `fr-${i}`,
           now: CHAOS_NOW,
@@ -222,10 +230,11 @@ describe('ACCESS Prompt 41 — failure compensation', () => {
     await quoteCheckout(stack, { txId, idempotencyKey: 'lost-q' });
     await stack.orchestrator.reserve({ transactionId: txId, userApproved: true, idempotencyKey: 'lost-r', now: CHAOS_NOW });
     const book = await stack.orchestrator.book({ transactionId: txId, idempotencyKey: 'lost-book', now: CHAOS_NOW });
-    assert.equal(book.value?.status, 'RECONCILIATION_REQUIRED');
+    assert.ok(book.ok);
+    assert.equal(book.value.status, 'RECONCILIATION_REQUIRED');
     const reconciled = await stack.orchestrator.reconcile({ transactionId: txId, idempotencyKey: 'lost-recon', now: CHAOS_NOW });
-    assert.equal(reconciled.ok, true);
-    assert.equal(reconciled.value!.status, 'BOOKED');
+    assert.ok(reconciled.ok);
+    assert.equal(reconciled.value.status, 'BOOKED');
   });
 
   it('10 booking fails after auth releases exposure', async () => {
@@ -269,19 +278,24 @@ describe('ACCESS Prompt 41 — webhooks', () => {
     const stack = createWave3TestStack();
     const { txId } = await fullCheckout(stack, 'wh');
     const webhook = new AccessWebhookOrchestrator(stack.orchestrator);
+    const context = stack.orchestrator.getContext(txId);
+    assert.ok(context);
+    const transactionId = context.transactionId;
     const event = {
       webhookEventId: 'wh_cap',
       source: 'PAYMENT' as const,
       providerId: null,
-      transactionId: txId,
+      transactionId,
       kind: 'PAYMENT_CAPTURED' as const,
       idempotencyKey: 'dup-cap-wh',
       signatureVerified: true,
       occurredAt: CHAOS_NOW,
       payloadReference: 'payload:cap',
-    };
+    } satisfies Parameters<typeof webhook.handle>[0];
     assert.equal(webhook.handle(event).ok, true);
-    assert.equal(webhook.handle(event).duplicate, true);
+    const duplicateCap = webhook.handle(event);
+    assert.ok(duplicateCap.ok);
+    assert.equal(duplicateCap.duplicate, true);
     webhook.handle({
       ...event,
       webhookEventId: 'wh_auth_late',
@@ -292,15 +306,17 @@ describe('ACCESS Prompt 41 — webhooks', () => {
       webhookEventId: 'wh_book',
       source: 'PROVIDER' as const,
       providerId: 'turo' as const,
-      transactionId: txId,
+      transactionId,
       kind: 'BOOKING_CONFIRMED' as const,
       idempotencyKey: 'dup-book-wh',
       signatureVerified: true,
       occurredAt: CHAOS_NOW,
       payloadReference: 'payload:book',
-    };
+    } satisfies Parameters<typeof webhook.handle>[0];
     webhook.handle(bookingEvent);
-    assert.equal(webhook.handle(bookingEvent).duplicate, true);
+    const duplicateBook = webhook.handle(bookingEvent);
+    assert.ok(duplicateBook.ok);
+    assert.equal(duplicateBook.duplicate, true);
   });
 
   it('16 lost webhook resolved by scheduled reconciliation', async () => {
@@ -369,9 +385,11 @@ describe('ACCESS Prompt 41 — outages and treasury controls', () => {
       idempotencyKey: 'exhaust-first',
       now: CHAOS_NOW,
     });
-    await quoteCheckout(stack, { txId: first.value!.transactionId, idempotencyKey: 'exhaust-q1' });
+    assert.ok(first.ok);
+    const firstValue = first.value;
+    await quoteCheckout(stack, { txId: firstValue.transactionId, idempotencyKey: 'exhaust-q1' });
     const firstReserve = await stack.orchestrator.reserve({
-      transactionId: first.value!.transactionId,
+      transactionId: firstValue.transactionId,
       userApproved: true,
       idempotencyKey: 'exhaust-r1',
       now: CHAOS_NOW,
@@ -694,7 +712,9 @@ describe('ACCESS Prompt 41 — security', () => {
       idempotencyKey: 'replay',
       now: CHAOS_NOW,
     });
-    assert.equal(start1.value!.transactionId, start2.value!.transactionId);
+    assert.ok(start1.ok);
+    assert.ok(start2.ok);
+    assert.equal(start1.value.transactionId, start2.value.transactionId);
     assert.equal(start2.idempotent, true);
   });
 
