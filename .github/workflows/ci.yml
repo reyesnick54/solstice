@@ -24,14 +24,17 @@ jobs:
         with:
           node-version: "22"
 
-      - name: "[TYPECHECK] Install from lockfile"
-        run: npm ci --ignore-scripts
-
-      - name: "[INTEGRITY] Repository preflight"
+      - name: "[INTEGRITY] Pre-install repository integrity"
         run: |
           node scripts/check-json-integrity.mjs
           node scripts/validate-json.mjs
           node scripts/check-merge-integrity.mjs
+
+      - name: "[TYPECHECK] Install from lockfile"
+        run: npm ci --ignore-scripts
+
+      - name: "[INTEGRITY] Dependency-backed repository integrity"
+        run: |
           node scripts/check-case-collisions.mjs
           node scripts/check-lockfiles.mjs
           node scripts/check-yaml-integrity.mjs
@@ -74,6 +77,9 @@ jobs:
           cargo clippy --all-targets --locked -- -D warnings
           cargo test --workspace --locked
 
+      - name: "[GENERATED DRIFT] Release artifact drift"
+        run: node scripts/check-generated-drift.mjs
+
       - name: "[SECURITY] Release assurance"
         run: |
           node scripts/sunrey-release.mjs audit
@@ -84,7 +90,6 @@ jobs:
           node scripts/sunrey-release.mjs verify
           node scripts/sunrey-audit.mjs generate
           node scripts/sunrey-audit.mjs verify dist/sunrey-audit
-          node scripts/check-generated-drift.mjs
           node scripts/static-security-lint.mjs
 
       - name: "[TEST] Access economy regression suite"
@@ -258,6 +263,11 @@ jobs:
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with:
           node-version: "22"
+      - name: "[INTEGRITY] Repository preflight"
+        run: |
+          node scripts/check-json-integrity.mjs
+          node scripts/validate-json.mjs
+          node scripts/check-merge-integrity.mjs
       - name: Install from lockfile
         run: npm ci --ignore-scripts
       - name: Full repository regression
