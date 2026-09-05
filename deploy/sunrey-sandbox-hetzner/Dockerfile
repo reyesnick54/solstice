@@ -15,6 +15,7 @@ COPY apps ./apps
 COPY tools ./tools
 COPY scripts ./scripts
 COPY db ./db
+COPY config ./config
 RUN npm ci --ignore-scripts
 RUN chown -R 65532:65532 /app
 USER 65532
