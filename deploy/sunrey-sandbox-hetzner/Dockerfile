@@ -11,8 +11,11 @@ RUN apt-get update \
 COPY package.json package-lock.json ./
 COPY packages ./packages
 COPY services ./services
+COPY apps ./apps
+COPY tools ./tools
 COPY scripts ./scripts
 COPY db ./db
+RUN npm ci --ignore-scripts
 RUN chown -R 65532:65532 /app
 USER 65532
 ENV ENVIRONMENT=simulation
