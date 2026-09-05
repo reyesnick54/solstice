@@ -24,18 +24,21 @@ jobs:
         with:
           node-version: "22"
 
-      - name: "[INTEGRITY] Repository preflight"
+      - name: "[INTEGRITY] Pre-install repository integrity"
         run: |
           node scripts/check-json-integrity.mjs
           node scripts/validate-json.mjs
           node scripts/check-merge-integrity.mjs
+
+      - name: "[TYPECHECK] Install from lockfile"
+        run: npm ci --ignore-scripts
+
+      - name: "[INTEGRITY] Dependency-backed repository integrity"
+        run: |
           node scripts/check-case-collisions.mjs
           node scripts/check-lockfiles.mjs
           node scripts/check-yaml-integrity.mjs
           node scripts/validate-free-api-catalog.mjs
-
-      - name: "[TYPECHECK] Install from lockfile"
-        run: npm ci --ignore-scripts
 
       - name: "[ARCHITECTURE] Invariants, authority, freeze, kernel"
         run: |
