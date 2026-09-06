@@ -111,6 +111,7 @@ services:
         condition: service_healthy
     networks:
       - sunrey_internal
+      - sunrey_egress
     expose:
       - "8443"
     healthcheck:
@@ -157,6 +158,8 @@ services:
 networks:
   sunrey_internal:
     internal: true
+  sunrey_egress:
+    driver: bridge
   sunrey_edge:
     driver: bridge
 
