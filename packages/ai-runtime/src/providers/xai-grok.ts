@@ -162,6 +162,9 @@ export class XaiGrokAiProvider implements AiInferenceProvider {
     if (maxOutputTokens !== null && maxOutputTokens !== undefined) {
       body.max_output_tokens = maxOutputTokens;
     }
+    if (this.config.reasoningEffort !== null) {
+      body.reasoning = Object.freeze({ effort: this.config.reasoningEffort });
+    }
     if (request.purpose === 'MARKET_OPPORTUNITY_RESEARCH') {
       const tools: { readonly type: string }[] = [];
       if (this.config.webSearchEnabled) tools.push({ type: 'web_search' });
