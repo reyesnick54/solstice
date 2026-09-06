@@ -60,6 +60,29 @@ describe('Prompt 4 xAI Grok provider binding', () => {
     assert.equal(JSON.stringify(transport.observed[0]).includes('xai-test-secret'), false);
   });
 
+  it('sends configured reasoning effort to the Responses API', () => {
+    const clock = new FrozenClock(AI_RUNTIME_NOW);
+    const credentialRef = secretRef('simulation', 'xai-api-key');
+    const secrets = new InMemorySecretProvider('simulation', { 'xai-api-key': 'xai-test-secret' });
+    const transport = new FixtureHttpsTransport([
+      {
+        host: 'api.x.ai',
+        path: '/v1/responses',
+        result: httpsOk({ output_text: 'ok' }, 4),
+      },
+    ]);
+    const provider = new XaiGrokAiProvider({
+      clock,
+      secrets,
+      transport,
+      config: { credentialRef, reasoningEffort: 'low' },
+    });
+
+    const result = provider.infer(request());
+    assert.equal(result.ok, true);
+    assert.deepEqual(transport.observed[0]?.body.reasoning, { effort: 'low' });
+  });
+
   it('requires HTTPS and a resolvable secret reference', () => {
     const clock = new FrozenClock(AI_RUNTIME_NOW);
     const missingSecrets = new XaiGrokAiProvider({

@@ -6,12 +6,15 @@ export const XAI_GROK_DEFAULT_RESPONSES_PATH = '/v1/responses';
 export const XAI_GROK_DEFAULT_MODEL = 'grok-4.6';
 export const XAI_GROK_DEFAULT_TIMEOUT_MS = 30_000;
 
+export type XaiGrokReasoningEffort = 'low' | 'medium' | 'high' | 'xhigh';
+
 export type XaiGrokProviderConfig = {
   readonly baseUrl: string;
   readonly responsesPath: string;
   readonly model: string;
   readonly timeoutMs: number;
   readonly maxOutputTokens: number | null;
+  readonly reasoningEffort: XaiGrokReasoningEffort | null;
   readonly credentialRef: SecretReference | null;
   readonly externalPreviewEnabled: boolean;
   readonly webSearchEnabled: boolean;
@@ -24,6 +27,7 @@ export type XaiGrokConfigInput = {
   readonly model?: string;
   readonly timeoutMs?: number;
   readonly maxOutputTokens?: number | null;
+  readonly reasoningEffort?: XaiGrokReasoningEffort | null;
   readonly credentialRef?: string | SecretReference | null;
   readonly env?: NodeJS.ProcessEnv;
 };
@@ -40,6 +44,12 @@ function optionalPositiveInteger(value: string | undefined): number | null {
     return null;
   }
   return Number(value);
+}
+
+function optionalReasoningEffort(value: string | undefined): XaiGrokReasoningEffort | null {
+  return value === 'low' || value === 'medium' || value === 'high' || value === 'xhigh'
+    ? value
+    : null;
 }
 
 function resolveCredentialRef(
@@ -62,6 +72,7 @@ export function resolveXaiGrokProviderConfig(input: XaiGrokConfigInput = {}): Xa
     model: input.model ?? env.XAI_MODEL ?? XAI_GROK_DEFAULT_MODEL,
     timeoutMs: input.timeoutMs ?? positiveInteger(env.XAI_TIMEOUT_MS, XAI_GROK_DEFAULT_TIMEOUT_MS),
     maxOutputTokens: input.maxOutputTokens ?? optionalPositiveInteger(env.XAI_MAX_OUTPUT_TOKENS),
+    reasoningEffort: input.reasoningEffort ?? optionalReasoningEffort(env.XAI_REASONING_EFFORT),
     credentialRef: resolveCredentialRef(input.credentialRef, env.XAI_CREDENTIAL_REF),
     externalPreviewEnabled: env.SUNREY_EXTERNAL_AI_PREVIEW_ENABLED === 'true',
     webSearchEnabled: env.XAI_WEB_SEARCH_ENABLED === 'true',
