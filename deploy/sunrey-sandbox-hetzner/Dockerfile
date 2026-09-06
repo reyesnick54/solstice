@@ -5,7 +5,8 @@ FROM ${NODE_IMAGE}
 ARG SOURCE_COMMIT=unknown
 WORKDIR /app
 RUN apt-get update \
-  && apt-get install --no-install-recommends --yes curl \
+  && apt-get install --no-install-recommends --yes curl ca-certificates \
+  && update-ca-certificates \
   && rm -rf /var/lib/apt/lists/* \
   && useradd --uid 65532 --create-home --shell /usr/sbin/nologin sunrey
 COPY package.json package-lock.json ./
