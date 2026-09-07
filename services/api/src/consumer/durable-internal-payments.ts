@@ -94,7 +94,7 @@ export class DurableInternalPaymentSurface {
       idempotencyKey: input.idempotencyKey,
       actorId: principal.actorId,
       requestedAt,
-      purpose: 'CUSTOMER_PAYMENT',
+      purpose: 'CUSTOMER_TRANSFER',
       payload: Object.freeze({
         sourceAccountId: source.id,
         destinationAccountId: destination.id,
