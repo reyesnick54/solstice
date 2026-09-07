@@ -38,12 +38,14 @@ describe('durable consumer financial read binding', () => {
     }
 
     const home = bound.home(principal, 'req_home');
+    const fixtureHome = fixture.bff.home(principal, 'req_fixture_home');
     assert.equal(isError(home), false);
-    if (!isError(home)) {
+    assert.equal(isError(fixtureHome), false);
+    if (!isError(home) && !isError(fixtureHome)) {
       const account = home.accounts.value?.find((row) => row.id === 'acct_sandbox_basic_usd');
       assert.ok(account);
       assert.equal(account.status, 'RESTRICTED');
-      assert.equal(home.grow.state, fixture.bff.home(principal, 'req_fixture_home').grow.state);
+      assert.equal(home.grow.state, fixtureHome.grow.state);
     }
   });
 });
