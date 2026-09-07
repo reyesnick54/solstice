@@ -8,6 +8,7 @@ import type { RunningConsumerBff } from './consumer/http.ts';
 import { ExchangeBffSurface } from './consumer/exchange.ts';
 import { PreviewGrowSurface } from './consumer/preview-grow.ts';
 import { bindDurableFinancialReadModel } from './consumer/durable-consumer-bff.ts';
+import type { DurableInternalPaymentSurface } from './consumer/durable-internal-payments.ts';
 import type { SimulationRuntime } from '../../accounts/src/runtime.ts';
 
 export type SunReyPreviewOptions = {
@@ -21,6 +22,7 @@ export type SunReyPreviewOptions = {
   readonly previewAuthPassword?: string;
   readonly providerDown?: boolean;
   readonly durableFinancialRuntime?: SimulationRuntime;
+  readonly durableInternalPayments?: DurableInternalPaymentSurface;
 };
 
 /**
@@ -81,6 +83,7 @@ export async function startSunReyPreview(
       providerDown: options.providerDown === true,
       ...(options.durableFinancialRuntime ? { durableFinancialRuntime: options.durableFinancialRuntime } : {}),
     }),
+    ...(options.durableInternalPayments ? { durableInternalPayments: options.durableInternalPayments } : {}),
     ...(options.host ? { host: options.host } : {}),
     ...(options.port !== undefined ? { port: options.port } : {}),
     allowedOrigins: options.allowedOrigins ?? [],

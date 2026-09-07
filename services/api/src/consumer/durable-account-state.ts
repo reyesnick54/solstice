@@ -248,7 +248,7 @@ export async function ensureDurableSandboxCoreState(
       identityChanged = true;
 
       if (!seed.verified) {
-        const recorded = runtime.identity.service.recordKyc({
+        runtime.identity.service.recordKyc({
           identityId: identityId as never,
           providerRef: 'sandbox:kyc',
           verificationState: 'IN_PROGRESS',
@@ -260,9 +260,6 @@ export async function ensureDurableSandboxCoreState(
           reasonCodes: Object.freeze(['SANDBOX_KYC_PENDING']),
           evidenceRefs: Object.freeze([]),
         });
-        if (!recorded.ok) {
-          throw new Error(`durable sandbox KYC seed failed for ${seed.persona}: ${recorded.error.message}`);
-        }
       }
       if (seed.restricted) {
         const suspended = runtime.identity.service.suspendIdentity(identityId as never);

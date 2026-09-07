@@ -13,6 +13,8 @@ import { handleConsumerBff, type ConsumerBffRuntime } from './handler.ts';
 import { evaluateConsumerBffReadiness } from './readiness.ts';
 import { issuePreviewSession, type PreviewAuthConfig } from './preview-auth.ts';
 import { resolvePrincipal } from './session.ts';
+import { authorizeConsumerRoute } from './authorization.ts';
+import type { DurableInternalPaymentSurface } from './durable-internal-payments.ts';
 
 const BODY_LIMIT = 64 * 1024;
 const LOCAL_ORIGIN = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
@@ -32,6 +34,7 @@ export type RunningConsumerBff = {
 
 export async function startConsumerBff(input: {
   readonly runtime: ConsumerBffRuntime;
+  readonly durableInternalPayments?: DurableInternalPaymentSurface;
   readonly host?: string;
   readonly port?: number;
   readonly allowedOrigins?: readonly string[];
@@ -49,7 +52,7 @@ export async function startConsumerBff(input: {
     previewAuth: input.previewAuth ?? {},
   };
   const server: Server = createServer(async (req, res) => {
-    await serve(input.runtime, req, res, options);
+    await serve(input.runtime, req, res, options, input.durableInternalPayments);
   });
   await new Promise<void>((resolve, reject) => {
     server.once('error', reject);
@@ -76,6 +79,7 @@ export async function serve(
   req: IncomingMessage,
   res: ServerResponse,
   options: ConsumerBffHttpOptions = {},
+  durableInternalPayments?: DurableInternalPaymentSurface,
 ): Promise<void> {
   const method = (req.method ?? 'GET').toUpperCase();
   const rawUrl = req.url ?? '/';
@@ -118,6 +122,7 @@ export async function serve(
         productionReady: false,
         productionActive: false,
         liveConnectivityEnabled: false,
+        durableInternalTransfersBound: Boolean(durableInternalPayments),
         ...(process.env.SUNREY_BUILD_GIT_SHA ? { gitSha: process.env.SUNREY_BUILD_GIT_SHA } : {}),
         ...(process.env.SUNREY_RELEASE_TAG ? { releaseTag: process.env.SUNREY_RELEASE_TAG } : {}),
         ...(runtime.previewDiagnostics ? runtime.previewDiagnostics() : {}),
@@ -134,6 +139,7 @@ export async function serve(
       report.ready ? 200 : 503,
       {
         ...report,
+        durableInternalTransfersBound: Boolean(durableInternalPayments),
         ...(process.env.SUNREY_BUILD_GIT_SHA ? { gitSha: process.env.SUNREY_BUILD_GIT_SHA } : {}),
         ...(process.env.SUNREY_RELEASE_TAG ? { releaseTag: process.env.SUNREY_RELEASE_TAG } : {}),
       },
@@ -263,12 +269,107 @@ export async function serve(
     return;
   }
 
+  const idempotencyKey =
+    typeof req.headers['idempotency-key'] === 'string' ? req.headers['idempotency-key'] : undefined;
+
+  if (durableInternalPayments && isDurableInternalPaymentRoute(method, url.pathname)) {
+    const requestId =
+      typeof req.headers['x-request-id'] === 'string' ? req.headers['x-request-id'] : 'req_durable_payment';
+    const principal = resolvePrincipal({
+      authorization,
+      requestId,
+      directory: runtime.sessions,
+      ...(runtime.identity ? { identity: runtime.identity } : {}),
+    });
+    if (isBffError(principal)) {
+      write(res, statusForError(principal), principal, cors.headers);
+      return;
+    }
+    const authFailure = authorizeConsumerRoute(principal, method, url.pathname, requestId);
+    if (authFailure) {
+      write(res, statusForError(authFailure), authFailure, cors.headers);
+      return;
+    }
+
+    if (method === 'GET' && url.pathname === '/api/v1/payments') {
+      const items = await durableInternalPayments.list(principal);
+      write(res, 200, { items }, { ...cors.headers, 'cache-control': 'no-store, no-cache, private' });
+      return;
+    }
+    if (method === 'GET') {
+      const paymentId = decodeURIComponent(url.pathname.slice('/api/v1/payments/'.length));
+      const payment = await durableInternalPayments.get(principal, paymentId);
+      if (!payment) {
+        write(
+          res,
+          404,
+          {
+            errorCode: 'NOT_FOUND',
+            category: 'NOT_FOUND',
+            message: 'payment does not exist',
+            retryable: false,
+            detailsSafeForClient: {},
+            requestId,
+            apiVersion: 'v1',
+          },
+          cors.headers,
+        );
+        return;
+      }
+      write(res, 200, payment, { ...cors.headers, 'cache-control': 'no-store, no-cache, private' });
+      return;
+    }
+
+    const rec = body && typeof body === 'object' && !Array.isArray(body)
+      ? (body as Record<string, unknown>)
+      : {};
+    const outcome = await durableInternalPayments.create(principal, {
+      sourceAccountId: typeof rec.sourceAccountId === 'string' ? rec.sourceAccountId : '',
+      destinationAccountId: typeof rec.destinationAccountId === 'string' ? rec.destinationAccountId : '',
+      amountMinorUnits: typeof rec.amountMinorUnits === 'string' ? rec.amountMinorUnits : String(rec.amountMinorUnits ?? ''),
+      currency: typeof rec.currency === 'string' ? rec.currency : 'USD',
+      idempotencyKey:
+        idempotencyKey ??
+        (typeof rec.idempotencyKey === 'string' ? rec.idempotencyKey : `idem_${requestId}`),
+      ...(typeof rec.paymentId === 'string' ? { paymentId: rec.paymentId } : {}),
+      ...(typeof rec.purpose === 'string' ? { purpose: rec.purpose } : {}),
+      ...(typeof rec.reference === 'string' ? { reference: rec.reference } : {}),
+    });
+    if (outcome.outcome === 'OK') {
+      write(
+        res,
+        outcome.replay ? 200 : 201,
+        outcome.value,
+        {
+          ...cors.headers,
+          'cache-control': 'no-store, no-cache, private',
+          'x-sunrey-authority': 'POSTGRES_LEDGER',
+          'x-sunrey-idempotent-replay': outcome.replay ? 'true' : 'false',
+        },
+      );
+      return;
+    }
+    write(
+      res,
+      statusForDurableTransferRejection(outcome.code),
+      {
+        errorCode: outcome.code,
+        category: outcome.code === 'RESOURCE_NOT_OWNED' ? 'AUTHORIZATION' : 'VALIDATION',
+        message: outcome.message,
+        retryable: false,
+        detailsSafeForClient: { code: outcome.code },
+        requestId,
+        apiVersion: 'v1',
+      },
+      cors.headers,
+    );
+    return;
+  }
+
   const query: Record<string, string> = {};
   for (const [key, value] of url.searchParams.entries()) {
     query[key] = value;
   }
-  const idempotencyKey =
-    typeof req.headers['idempotency-key'] === 'string' ? req.headers['idempotency-key'] : undefined;
   const accept = typeof req.headers.accept === 'string' ? req.headers.accept : undefined;
   const result = await handleConsumerBff(runtime, {
     method,
@@ -291,6 +392,32 @@ export async function serve(
     return;
   }
   write(res, result.status, result.body, responseHeaders);
+}
+
+function isDurableInternalPaymentRoute(method: string, path: string): boolean {
+  if (path === '/api/v1/payments') {
+    return method === 'GET' || method === 'POST';
+  }
+  if (method !== 'GET' || !path.startsWith('/api/v1/payments/')) {
+    return false;
+  }
+  const suffix = path.slice('/api/v1/payments/'.length);
+  return suffix.length > 0 && !suffix.includes('/') && suffix !== 'quote';
+}
+
+function statusForDurableTransferRejection(code: string): number {
+  switch (code) {
+    case 'ACCOUNT_NOT_FOUND':
+      return 404;
+    case 'RESOURCE_NOT_OWNED':
+      return 403;
+    case 'IDEMPOTENCY_CONFLICT':
+      return 409;
+    case 'KERNEL_REFUSED':
+      return 403;
+    default:
+      return 422;
+  }
 }
 
 function corsHeaders(

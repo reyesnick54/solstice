@@ -4,6 +4,8 @@ import {
   type ProductIntegrationRuntime,
 } from './product-integration/index.ts';
 import { ensureDurableSandboxCoreState } from './consumer/durable-account-state.ts';
+import { ensureDurableSandboxTransferCapability } from './consumer/durable-transfer-capability.ts';
+import { DurableInternalPaymentSurface } from './consumer/durable-internal-payments.ts';
 
 function parsePort(raw: string | undefined, fallback: number): number {
   if (!raw) return fallback;
@@ -43,12 +45,16 @@ const productIntegrationMode = requestedProductIntegrationMode(process.env.SUNRE
 
 let productIntegration: ProductIntegrationRuntime | null = null;
 let durableSeedReport: Awaited<ReturnType<typeof ensureDurableSandboxCoreState>> | null = null;
+let durableTransferCapabilityReport: Awaited<ReturnType<typeof ensureDurableSandboxTransferCapability>> | null = null;
+let durableInternalPayments: DurableInternalPaymentSurface | null = null;
 if (productIntegrationMode === 'DURABLE') {
   productIntegration = await createProductIntegrationRuntime({ forceMode: 'DURABLE' });
   if (productIntegration.mode !== 'DURABLE' || !productIntegration.durableAccounts) {
     throw new Error('durable product integration was requested but PostgreSQL durable runtime was not created');
   }
   durableSeedReport = await ensureDurableSandboxCoreState(productIntegration.durableAccounts);
+  durableTransferCapabilityReport = await ensureDurableSandboxTransferCapability(productIntegration.durableAccounts);
+  durableInternalPayments = new DurableInternalPaymentSurface(productIntegration.durableAccounts);
 }
 
 const api = await startSunReyPreview({
@@ -59,6 +65,7 @@ const api = await startSunReyPreview({
   allowPreviewAuth,
   allowLocalOrigins,
   ...(productIntegration ? { durableFinancialRuntime: productIntegration.accounts } : {}),
+  ...(durableInternalPayments ? { durableInternalPayments } : {}),
   ...(previewAuthEmail ? { previewAuthEmail } : {}),
   ...(previewAuthPassword ? { previewAuthPassword } : {}),
 });
@@ -78,10 +85,12 @@ console.log(
     productIntegrationMode,
     durableProductRuntimeAttached: productIntegration?.mode === 'DURABLE',
     durableFinancialReadModelBound: Boolean(productIntegration),
+    durableInternalTransfersBound: Boolean(durableInternalPayments),
     consumerStateAuthority: productIntegration
-      ? 'HYBRID_POSTGRES_ACCOUNT_LEDGER_FIXTURE_OTHER_DOMAINS'
+      ? 'HYBRID_POSTGRES_ACCOUNT_LEDGER_DURABLE_INTERNAL_TRANSFERS_FIXTURE_OTHER_DOMAINS'
       : 'SANDBOX_FIXTURE_NON_PRODUCTION',
     ...(durableSeedReport ? { durableSeedReport } : {}),
+    ...(durableTransferCapabilityReport ? { durableTransferCapabilityReport } : {}),
   }),
 );
 
