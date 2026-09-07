@@ -34,7 +34,11 @@ export type DurableInternalTransferOutcome =
  * has accepted and durably posted the INTERNAL_TRANSFER journal.
  */
 export class DurableInternalPaymentSurface {
-  constructor(private readonly durable: DurableSimulationRuntime) {}
+  private readonly durable: DurableSimulationRuntime;
+
+  constructor(durable: DurableSimulationRuntime) {
+    this.durable = durable;
+  }
 
   async create(
     principal: BffPrincipal,
