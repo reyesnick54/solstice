@@ -1,26 +1,27 @@
-import { asAccountId } from '../../../../packages/domain/src/account.ts';
-import type { AccountClass } from '../../../../packages/domain/src/account-class.ts';
 import {
+  asAccountId,
+  type AccountClass,
   asCustomerId,
   createProspect,
   notStartedVerification,
   transitionCustomerStatus,
   type Customer,
-} from '../../../../packages/domain/src/customer.ts';
-import { asCurrencyCode } from '../../../../packages/domain/src/currency.ts';
-import { asJurisdiction, asResidency } from '../../../../packages/domain/src/jurisdiction.ts';
-import { asLegalEntityId } from '../../../../packages/domain/src/legal-entity.ts';
-import { asProductId } from '../../../../packages/domain/src/product.ts';
-import { isOk } from '../../../../packages/domain/src/result.ts';
-import { asUtcInstant } from '../../../../packages/domain/src/time.ts';
-import { Money } from '../../../../packages/money/src/money.ts';
-import { asIntentId } from '../../../../packages/permissions/src/action-intent.ts';
+  asCurrencyCode,
+  asJurisdiction,
+  asResidency,
+  asLegalEntityId,
+  asProductId,
+  isOk,
+  asUtcInstant,
+} from '@solstice/domain';
+import { Money } from '@solstice/money';
 import {
   ACTION_TYPES,
+  asIntentId,
   type OpenAccountIntent,
   type PostDepositIntent,
-} from '../../../../packages/permissions/src/action-types.ts';
-import type { IdentityCapability } from '../../../../packages/identity/src/capability.ts';
+} from '@solstice/permissions';
+import type { IdentityCapability } from '@solstice/identity';
 import type { DurableSimulationRuntime } from '../../../accounts/src/product-durable-adapters.ts';
 import type { SandboxPersonaId } from './sandbox-personas.ts';
 
