@@ -6,7 +6,7 @@
 
 import { randomUUID } from 'node:crypto';
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import {
   accessDomainEntitlementIdFor,
   accessDomainQuoteIdFor,
@@ -67,7 +67,6 @@ export class SimulatedAccessPaymentRail implements AccessPaymentRail {
       'CAPTURE',
       'VOID',
       'REFUND',
-      'PARTIAL_REFUND',
       'STATUS',
       'RECONCILE',
     ] as const),
