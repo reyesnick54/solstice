@@ -7,19 +7,17 @@ import type { Pool } from 'pg';
 
 import { isPersistenceTestEnabled } from '../../../packages/config/src/env.ts';
 import {
-  loadAgentRuntimeState,
-  persistAgentRuntimeState,
-  persistConsentState,
-  persistenceEnvFromProcess as resolvePersistenceEnv,
-  type PersistenceEnv,
-} from '../../../packages/persistence/src/index.ts';
-import {
   listConsumerInternalPayments,
+  loadAgentRuntimeState,
   loadConsumerInternalPayment,
   loadConsumerInternalPaymentByIdempotency,
+  persistAgentRuntimeState,
+  persistConsentState,
   persistConsumerInternalPayment,
+  persistenceEnvFromProcess as resolvePersistenceEnv,
   type PersistedConsumerInternalPayment,
-} from '../../../packages/persistence/src/payments/pg-consumer-internal-payment-store.ts';
+  type PersistenceEnv,
+} from '../../../packages/persistence/src/index.ts';
 
 export { createPostgresSimulationRuntime, type DurableSimulationRuntime } from './postgres-runtime.ts';
 export type { PersistedConsumerInternalPayment };
