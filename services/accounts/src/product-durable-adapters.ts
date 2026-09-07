@@ -13,8 +13,16 @@ import {
   persistenceEnvFromProcess as resolvePersistenceEnv,
   type PersistenceEnv,
 } from '../../../packages/persistence/src/index.ts';
+import {
+  listConsumerInternalPayments,
+  loadConsumerInternalPayment,
+  loadConsumerInternalPaymentByIdempotency,
+  persistConsumerInternalPayment,
+  type PersistedConsumerInternalPayment,
+} from '../../../packages/persistence/src/payments/pg-consumer-internal-payment-store.ts';
 
 export { createPostgresSimulationRuntime, type DurableSimulationRuntime } from './postgres-runtime.ts';
+export type { PersistedConsumerInternalPayment };
 
 export async function persistenceEnvFromProcess(
   env: NodeJS.ProcessEnv = process.env,
@@ -54,4 +62,33 @@ export async function persistProductAgentRuntimeState(pool: Pool, state: unknown
 
 export async function persistProductConsentState(pool: Pool, state: unknown): Promise<void> {
   await persistConsentState(pool, state as never);
+}
+
+export async function persistProductInternalPayment(
+  pool: Pool,
+  payment: PersistedConsumerInternalPayment,
+): Promise<void> {
+  await persistConsumerInternalPayment(pool, payment);
+}
+
+export async function loadProductInternalPaymentByIdempotency(
+  pool: Pool,
+  idempotencyKey: string,
+): Promise<PersistedConsumerInternalPayment | null> {
+  return loadConsumerInternalPaymentByIdempotency(pool, idempotencyKey);
+}
+
+export async function loadProductInternalPayment(
+  pool: Pool,
+  customerId: string,
+  paymentId: string,
+): Promise<PersistedConsumerInternalPayment | null> {
+  return loadConsumerInternalPayment(pool, customerId, paymentId);
+}
+
+export async function listProductInternalPayments(
+  pool: Pool,
+  customerId: string,
+): Promise<readonly PersistedConsumerInternalPayment[]> {
+  return listConsumerInternalPayments(pool, customerId);
 }
