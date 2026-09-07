@@ -3,6 +3,7 @@ import {
   createProductIntegrationRuntime,
   type ProductIntegrationRuntime,
 } from './product-integration/index.ts';
+import { ensureDurableSandboxCoreState } from './consumer/durable-account-state.ts';
 
 function parsePort(raw: string | undefined, fallback: number): number {
   if (!raw) return fallback;
@@ -41,11 +42,13 @@ const previewAuthPassword = process.env.SUNREY_PREVIEW_AUTH_PASSWORD;
 const productIntegrationMode = requestedProductIntegrationMode(process.env.SUNREY_PRODUCT_INTEGRATION_MODE);
 
 let productIntegration: ProductIntegrationRuntime | null = null;
+let durableSeedReport: Awaited<ReturnType<typeof ensureDurableSandboxCoreState>> | null = null;
 if (productIntegrationMode === 'DURABLE') {
   productIntegration = await createProductIntegrationRuntime({ forceMode: 'DURABLE' });
   if (productIntegration.mode !== 'DURABLE' || !productIntegration.durableAccounts) {
     throw new Error('durable product integration was requested but PostgreSQL durable runtime was not created');
   }
+  durableSeedReport = await ensureDurableSandboxCoreState(productIntegration.durableAccounts);
 }
 
 const api = await startSunReyPreview({
@@ -55,6 +58,7 @@ const api = await startSunReyPreview({
   allowSandboxPersonas,
   allowPreviewAuth,
   allowLocalOrigins,
+  ...(productIntegration ? { durableFinancialRuntime: productIntegration.accounts } : {}),
   ...(previewAuthEmail ? { previewAuthEmail } : {}),
   ...(previewAuthPassword ? { previewAuthPassword } : {}),
 });
@@ -73,7 +77,11 @@ console.log(
     previewAuthEnabled: allowPreviewAuth,
     productIntegrationMode,
     durableProductRuntimeAttached: productIntegration?.mode === 'DURABLE',
-    consumerStateAuthority: 'SANDBOX_FIXTURE_PENDING_DURABLE_BINDING',
+    durableFinancialReadModelBound: Boolean(productIntegration),
+    consumerStateAuthority: productIntegration
+      ? 'HYBRID_POSTGRES_ACCOUNT_LEDGER_FIXTURE_OTHER_DOMAINS'
+      : 'SANDBOX_FIXTURE_NON_PRODUCTION',
+    ...(durableSeedReport ? { durableSeedReport } : {}),
   }),
 );
 

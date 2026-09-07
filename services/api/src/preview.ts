@@ -7,6 +7,8 @@ import {
 import type { RunningConsumerBff } from './consumer/http.ts';
 import { ExchangeBffSurface } from './consumer/exchange.ts';
 import { PreviewGrowSurface } from './consumer/preview-grow.ts';
+import { bindDurableFinancialReadModel } from './consumer/durable-consumer-bff.ts';
+import type { SimulationRuntime } from '../../accounts/src/runtime.ts';
 
 export type SunReyPreviewOptions = {
   readonly host?: string;
@@ -18,24 +20,29 @@ export type SunReyPreviewOptions = {
   readonly previewAuthEmail?: string;
   readonly previewAuthPassword?: string;
   readonly providerDown?: boolean;
+  readonly durableFinancialRuntime?: SimulationRuntime;
 };
 
 /**
  * Compose the existing canonical Consumer BFF surfaces into one deployable
  * simulation runtime for Lovable/mobile/web integration.
  *
- * This is preview glue only. It does not create a second ledger, Kernel,
- * Exchange, Agent runtime, or compliance plane, and it never enables live
- * financial connectivity.
+ * Hosted durable mode may replace account/ledger-derived reads with the
+ * PostgreSQL-backed runtime while the remaining preview domains stay isolated
+ * until their own durable stores are bound. This never enables live financial
+ * connectivity or creates a second ledger.
  */
 export function createSunReyPreviewRuntime(
-  options: Pick<SunReyPreviewOptions, 'providerDown'> = {},
+  options: Pick<SunReyPreviewOptions, 'providerDown' | 'durableFinancialRuntime'> = {},
 ): ConsumerBffRuntime {
   const world = createSandboxWorld({ providerDown: options.providerDown === true });
   const previewGrow = new PreviewGrowSurface(world.grow, world.bff, world.growOpportunity);
   const exchange = new ExchangeBffSurface(() => world.runtime.clock.now());
+  const bff = options.durableFinancialRuntime
+    ? bindDurableFinancialReadModel(world.bff, options.durableFinancialRuntime)
+    : world.bff;
   return Object.freeze({
-    bff: world.bff,
+    bff,
     sessions: world.sessions,
     identity: world.runtime.identity.service,
     payments: world.payments,
@@ -70,7 +77,10 @@ export async function startSunReyPreview(
   options: SunReyPreviewOptions = {},
 ): Promise<RunningConsumerBff> {
   return startConsumerBff({
-    runtime: createSunReyPreviewRuntime({ providerDown: options.providerDown === true }),
+    runtime: createSunReyPreviewRuntime({
+      providerDown: options.providerDown === true,
+      ...(options.durableFinancialRuntime ? { durableFinancialRuntime: options.durableFinancialRuntime } : {}),
+    }),
     ...(options.host ? { host: options.host } : {}),
     ...(options.port !== undefined ? { port: options.port } : {}),
     allowedOrigins: options.allowedOrigins ?? [],
