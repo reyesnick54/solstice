@@ -8,7 +8,7 @@ import type { RunningConsumerBff } from './consumer/http.ts';
 import { ExchangeBffSurface } from './consumer/exchange.ts';
 import { PreviewGrowSurface } from './consumer/preview-grow.ts';
 import { bindDurableFinancialReadModel } from './consumer/durable-consumer-bff.ts';
-import type { SimulationRuntime } from '../accounts/src/runtime.ts';
+import type { SimulationRuntime } from '../../accounts/src/runtime.ts';
 
 export type SunReyPreviewOptions = {
   readonly host?: string;
