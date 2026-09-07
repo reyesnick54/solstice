@@ -147,6 +147,13 @@ export { DurableExchangeCoreStore } from './exchange/durable-core-store.ts';
 export { persistExchangeCoreSnapshot } from './exchange/pg-exchange-core-store.ts';
 export { DurablePaymentStore } from './payments/durable-store.ts';
 export type { DurablePayment, DurableRailSubmission, PaymentDurableSnapshot } from './payments/durable-store.ts';
+export {
+  listConsumerInternalPayments,
+  loadConsumerInternalPayment,
+  loadConsumerInternalPaymentByIdempotency,
+  persistConsumerInternalPayment,
+  type PersistedConsumerInternalPayment,
+} from './payments/pg-consumer-internal-payment-store.ts';
 export { DurableAgentRuntimeStore } from './agent/durable-store.ts';
 export type { AgentDurableSnapshot } from './agent/durable-store.ts';
 export { loadAgentRuntimeState, persistAgentRuntimeState } from './agent/pg-agent-runtime-store.ts';
