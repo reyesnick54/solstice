@@ -17,7 +17,7 @@ import {
   persistenceEnvFromProcess as resolvePersistenceEnv,
   type PersistedConsumerInternalPayment,
   type PersistenceEnv,
-} from '../../../packages/persistence/src/index.ts';
+} from '@solstice/persistence';
 
 export { createPostgresSimulationRuntime, type DurableSimulationRuntime } from './postgres-runtime.ts';
 export type { PersistedConsumerInternalPayment };
