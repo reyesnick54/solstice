@@ -81,3 +81,15 @@ export * as travelRuleProviderCandidate from './provider-candidate/index.ts';
 export * as travelRuleProductionCandidate from './production-candidate/index.ts';
 export { CustodyWithdrawalRecovery, custodyDigest } from './operation-recovery.ts';
 export * as product from './product/index.ts';
+export {
+  WalletProductService,
+  createWalletProductFromKernel,
+  deriveDepositAddress,
+} from './product/index.ts';
+export type {
+  ConsumerWallet,
+  DepositAddress,
+  CustodyModel,
+  WalletStatus,
+  WalletProductOutcome,
+} from './product/index.ts';

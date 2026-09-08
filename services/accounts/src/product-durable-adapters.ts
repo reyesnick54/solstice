@@ -8,19 +8,25 @@ import type { Pool } from 'pg';
 import { isPersistenceTestEnabled } from '../../../packages/config/src/env.ts';
 import {
   listConsumerInternalPayments,
+  listConsumerWallets,
   loadAgentRuntimeState,
   loadConsumerInternalPayment,
   loadConsumerInternalPaymentByIdempotency,
+  loadConsumerWallet,
+  loadConsumerWalletByAsset,
+  loadConsumerWalletByIdempotency,
   persistAgentRuntimeState,
   persistConsentState,
   persistConsumerInternalPayment,
+  persistConsumerWallet,
   persistenceEnvFromProcess as resolvePersistenceEnv,
   type PersistedConsumerInternalPayment,
+  type PersistedConsumerWallet,
   type PersistenceEnv,
 } from '@solstice/persistence';
 
 export { createPostgresSimulationRuntime, type DurableSimulationRuntime } from './postgres-runtime.ts';
-export type { PersistedConsumerInternalPayment };
+export type { PersistedConsumerInternalPayment, PersistedConsumerWallet };
 
 export async function persistenceEnvFromProcess(
   env: NodeJS.ProcessEnv = process.env,
@@ -89,4 +95,41 @@ export async function listProductInternalPayments(
   customerId: string,
 ): Promise<readonly PersistedConsumerInternalPayment[]> {
   return listConsumerInternalPayments(pool, customerId);
+}
+
+export async function persistProductWallet(
+  pool: Pool,
+  wallet: PersistedConsumerWallet,
+): Promise<void> {
+  await persistConsumerWallet(pool, wallet);
+}
+
+export async function loadProductWalletByIdempotency(
+  pool: Pool,
+  idempotencyKey: string,
+): Promise<PersistedConsumerWallet | null> {
+  return loadConsumerWalletByIdempotency(pool, idempotencyKey);
+}
+
+export async function loadProductWallet(
+  pool: Pool,
+  customerId: string,
+  walletId: string,
+): Promise<PersistedConsumerWallet | null> {
+  return loadConsumerWallet(pool, customerId, walletId);
+}
+
+export async function loadProductWalletByAsset(
+  pool: Pool,
+  customerId: string,
+  assetId: PersistedConsumerWallet['assetId'],
+): Promise<PersistedConsumerWallet | null> {
+  return loadConsumerWalletByAsset(pool, customerId, assetId);
+}
+
+export async function listProductWallets(
+  pool: Pool,
+  customerId: string,
+): Promise<readonly PersistedConsumerWallet[]> {
+  return listConsumerWallets(pool, customerId);
 }

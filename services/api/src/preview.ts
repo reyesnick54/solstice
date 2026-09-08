@@ -9,6 +9,7 @@ import { ExchangeBffSurface } from './consumer/exchange.ts';
 import { PreviewGrowSurface } from './consumer/preview-grow.ts';
 import { bindDurableFinancialReadModel } from './consumer/durable-consumer-bff.ts';
 import type { DurableInternalPaymentSurface } from './consumer/durable-internal-payments.ts';
+import type { DurableWalletSurface } from './consumer/durable-wallets.ts';
 import type { SimulationRuntime } from '../../accounts/src/runtime.ts';
 
 export type SunReyPreviewOptions = {
@@ -23,19 +24,20 @@ export type SunReyPreviewOptions = {
   readonly providerDown?: boolean;
   readonly durableFinancialRuntime?: SimulationRuntime;
   readonly durableInternalPayments?: DurableInternalPaymentSurface;
+  readonly durableWallets?: DurableWalletSurface;
 };
 
 /**
  * Compose the existing canonical Consumer BFF surfaces into one deployable
  * simulation runtime for Lovable/mobile/web integration.
  *
- * Hosted durable mode may replace account/ledger-derived reads with the
- * PostgreSQL-backed runtime while the remaining preview domains stay isolated
- * until their own durable stores are bound. This never enables live financial
- * connectivity or creates a second ledger.
+ * Hosted durable mode may replace account/ledger-derived reads and the wallet
+ * product with PostgreSQL-backed state while remaining preview domains stay
+ * isolated until their own durable stores are bound. This never enables live
+ * financial connectivity, mainnet signing, or a second ledger.
  */
 export function createSunReyPreviewRuntime(
-  options: Pick<SunReyPreviewOptions, 'providerDown' | 'durableFinancialRuntime'> = {},
+  options: Pick<SunReyPreviewOptions, 'providerDown' | 'durableFinancialRuntime' | 'durableWallets'> = {},
 ): ConsumerBffRuntime {
   const world = createSandboxWorld({ providerDown: options.providerDown === true });
   const previewGrow = new PreviewGrowSurface(world.grow, world.bff, world.growOpportunity);
@@ -56,7 +58,7 @@ export function createSunReyPreviewRuntime(
     grow: previewGrow as unknown as NonNullable<ConsumerBffRuntime['grow']>,
     previewDiagnostics: world.previewDiagnostics,
     conversation: world.conversation,
-    wallets: world.wallets,
+    wallets: options.durableWallets?.product ?? world.wallets,
     moneyIntegration: world.moneyIntegration,
     hin: world.hin,
     hinContributions: world.hinContributions,
@@ -82,8 +84,10 @@ export async function startSunReyPreview(
     runtime: createSunReyPreviewRuntime({
       providerDown: options.providerDown === true,
       ...(options.durableFinancialRuntime ? { durableFinancialRuntime: options.durableFinancialRuntime } : {}),
+      ...(options.durableWallets ? { durableWallets: options.durableWallets } : {}),
     }),
     ...(options.durableInternalPayments ? { durableInternalPayments: options.durableInternalPayments } : {}),
+    ...(options.durableWallets ? { durableWallets: options.durableWallets } : {}),
     ...(options.host ? { host: options.host } : {}),
     ...(options.port !== undefined ? { port: options.port } : {}),
     allowedOrigins: options.allowedOrigins ?? [],

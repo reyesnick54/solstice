@@ -135,6 +135,14 @@ export {
 export * from './production/index.ts';
 export { DurableCustodyStore } from './custody/durable-store.ts';
 export type { CustodyDurableSnapshot, DurableVault, DurableWithdrawal } from './custody/durable-store.ts';
+export {
+  listConsumerWallets,
+  loadConsumerWallet,
+  loadConsumerWalletByAsset,
+  loadConsumerWalletByIdempotency,
+  persistConsumerWallet,
+  type PersistedConsumerWallet,
+} from './custody/pg-consumer-wallet-store.ts';
 export { DurableExchangeStore } from './exchange/durable-store.ts';
 export type {
   DurableOrder,
