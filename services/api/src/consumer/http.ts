@@ -15,6 +15,7 @@ import { issuePreviewSession, type PreviewAuthConfig } from './preview-auth.ts';
 import { resolvePrincipal } from './session.ts';
 import { authorizeConsumerRoute } from './authorization.ts';
 import type { DurableInternalPaymentSurface } from './durable-internal-payments.ts';
+import type { DurableWalletSurface } from './durable-wallets.ts';
 
 const BODY_LIMIT = 64 * 1024;
 const LOCAL_ORIGIN = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
@@ -35,6 +36,7 @@ export type RunningConsumerBff = {
 export async function startConsumerBff(input: {
   readonly runtime: ConsumerBffRuntime;
   readonly durableInternalPayments?: DurableInternalPaymentSurface;
+  readonly durableWallets?: DurableWalletSurface;
   readonly host?: string;
   readonly port?: number;
   readonly allowedOrigins?: readonly string[];
@@ -52,7 +54,7 @@ export async function startConsumerBff(input: {
     previewAuth: input.previewAuth ?? {},
   };
   const server: Server = createServer(async (req, res) => {
-    await serve(input.runtime, req, res, options, input.durableInternalPayments);
+    await serve(input.runtime, req, res, options, input.durableInternalPayments, input.durableWallets);
   });
   await new Promise<void>((resolve, reject) => {
     server.once('error', reject);
@@ -80,6 +82,7 @@ export async function serve(
   res: ServerResponse,
   options: ConsumerBffHttpOptions = {},
   durableInternalPayments?: DurableInternalPaymentSurface,
+  durableWallets?: DurableWalletSurface,
 ): Promise<void> {
   const method = (req.method ?? 'GET').toUpperCase();
   const rawUrl = req.url ?? '/';
@@ -123,6 +126,7 @@ export async function serve(
         productionActive: false,
         liveConnectivityEnabled: false,
         durableInternalTransfersBound: Boolean(durableInternalPayments),
+        durableWalletsBound: Boolean(durableWallets),
         ...(process.env.SUNREY_BUILD_GIT_SHA ? { gitSha: process.env.SUNREY_BUILD_GIT_SHA } : {}),
         ...(process.env.SUNREY_RELEASE_TAG ? { releaseTag: process.env.SUNREY_RELEASE_TAG } : {}),
         ...(runtime.previewDiagnostics ? runtime.previewDiagnostics() : {}),
@@ -140,6 +144,7 @@ export async function serve(
       {
         ...report,
         durableInternalTransfersBound: Boolean(durableInternalPayments),
+        durableWalletsBound: Boolean(durableWallets),
         ...(process.env.SUNREY_BUILD_GIT_SHA ? { gitSha: process.env.SUNREY_BUILD_GIT_SHA } : {}),
         ...(process.env.SUNREY_RELEASE_TAG ? { releaseTag: process.env.SUNREY_RELEASE_TAG } : {}),
       },
@@ -272,6 +277,64 @@ export async function serve(
   const idempotencyKey =
     typeof req.headers['idempotency-key'] === 'string' ? req.headers['idempotency-key'] : undefined;
 
+  if (durableWallets && url.pathname === '/api/v1/wallets' && method === 'POST') {
+    const requestId =
+      typeof req.headers['x-request-id'] === 'string' ? req.headers['x-request-id'] : 'req_durable_wallet';
+    const principal = resolvePrincipal({
+      authorization,
+      requestId,
+      directory: runtime.sessions,
+      ...(runtime.identity ? { identity: runtime.identity } : {}),
+    });
+    if (isBffError(principal)) {
+      write(res, statusForError(principal), principal, cors.headers);
+      return;
+    }
+    const authFailure = authorizeConsumerRoute(principal, method, url.pathname, requestId);
+    if (authFailure) {
+      write(res, statusForError(authFailure), authFailure, cors.headers);
+      return;
+    }
+    const rec = body && typeof body === 'object' && !Array.isArray(body)
+      ? (body as Record<string, unknown>)
+      : {};
+    const outcome = await durableWallets.createWallet(principal, {
+      assetId: typeof rec.assetId === 'string' ? rec.assetId : '',
+      idempotencyKey:
+        idempotencyKey ??
+        (typeof rec.idempotencyKey === 'string' ? rec.idempotencyKey : ''),
+    });
+    if (outcome.outcome === 'OK') {
+      write(
+        res,
+        outcome.replay ? 200 : 201,
+        outcome.value,
+        {
+          ...cors.headers,
+          'cache-control': 'no-store, no-cache, private',
+          'x-sunrey-authority': 'POSTGRES_CUSTODY_PRODUCT',
+          'x-sunrey-idempotent-replay': outcome.replay ? 'true' : 'false',
+        },
+      );
+      return;
+    }
+    write(
+      res,
+      statusForDurableWalletRejection(outcome.code),
+      {
+        errorCode: outcome.code,
+        category: outcome.code === 'WALLET_NOT_ELIGIBLE' ? 'AUTHORIZATION' : 'VALIDATION',
+        message: outcome.message,
+        retryable: false,
+        detailsSafeForClient: { code: outcome.code },
+        requestId,
+        apiVersion: 'v1',
+      },
+      cors.headers,
+    );
+    return;
+  }
+
   if (durableInternalPayments && isDurableInternalPaymentRoute(method, url.pathname)) {
     const requestId =
       typeof req.headers['x-request-id'] === 'string' ? req.headers['x-request-id'] : 'req_durable_payment';
@@ -403,6 +466,21 @@ function isDurableInternalPaymentRoute(method: string, path: string): boolean {
   }
   const suffix = path.slice('/api/v1/payments/'.length);
   return suffix.length > 0 && !suffix.includes('/') && suffix !== 'quote';
+}
+
+function statusForDurableWalletRejection(code: string): number {
+  switch (code) {
+    case 'WALLET_NOT_ELIGIBLE':
+      return 403;
+    case 'IDEMPOTENCY_CONFLICT':
+    case 'WALLET_ALREADY_EXISTS':
+      return 409;
+    case 'IDEMPOTENCY_KEY_REQUIRED':
+    case 'UNSUPPORTED_ASSET':
+      return 422;
+    default:
+      return 500;
+  }
 }
 
 function statusForDurableTransferRejection(code: string): number {
