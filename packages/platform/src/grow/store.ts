@@ -171,4 +171,28 @@ export class InMemoryGrowStore {
       evidence: Object.freeze([...this.evidence.values()]),
     });
   }
+
+  loadState(state: GrowStoreSnapshot): void {
+    this.proposals.clear();
+    this.approvals.clear();
+    this.commands.clear();
+    this.executions.clear();
+    this.activatedPlans.clear();
+    this.recurring.clear();
+    this.monitoring.clear();
+    this.performance.clear();
+    this.evidence.clear();
+    for (const proposal of state.proposals) this.putProposal(proposal);
+    for (const approval of state.approvals) this.putApproval(approval);
+    for (const command of state.commands) this.putCommand(command);
+    for (const execution of state.executions) this.putExecution(execution);
+    for (const plan of state.activatedPlans) this.putActivatedPlan(plan);
+    for (const mandate of state.recurring) this.putRecurring(mandate);
+    for (const cycle of state.monitoring) this.putMonitoring(cycle);
+    for (const model of state.performance) this.putPerformance(model);
+    for (const trace of state.evidence) {
+      const key = JSON.stringify(trace);
+      this.putEvidence(key, trace);
+    }
+  }
 }
