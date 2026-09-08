@@ -9,7 +9,7 @@ import {
   decodeSnapshot,
   encodeSnapshot,
   type ExchangeCoreSnapshot,
-} from '../../../sunrey-exchange/src/production-core/snapshot.ts';
+} from '@solstice/sunrey-exchange';
 import { withClient } from '../postgres/pools.ts';
 
 const SNAPSHOT_LOCK_KEY = 0x53524559;
