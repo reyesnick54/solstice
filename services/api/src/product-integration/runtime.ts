@@ -14,17 +14,23 @@ import { EvidenceVault } from '../../../../packages/evidence/src/vault.ts';
 import { DomainEventLog } from '../../../../packages/events/src/events.ts';
 import { DurableHumanEconomicStateService } from './durable-human-economic-state.ts';
 import { createHumanEconomicPersistencePort } from '../../../accounts/src/human-economic-persistence.ts';
-import { InMemoryEncryptedPayloadStore } from '../../../../packages/personal-data-vault/src/encryption.ts';
-import { PersonalDataVaultStore } from '../../../../packages/personal-data-vault/src/store.ts';
-import { PersonalDataVault } from '../../../../packages/personal-data-vault/src/service.ts';
-import { createSimulationKeyProvider } from '../../../../packages/security/src/simulation.ts';
-import { InMemoryAgentMandateStore } from '../../../../packages/sunrey-agent/src/store.ts';
+import {
+  InMemoryEncryptedPayloadStore,
+  PersonalDataVault,
+  PersonalDataVaultProduct,
+  PersonalDataVaultStore,
+  type ProductVaultSnapshot,
+} from '@solstice/personal-data-vault';
+import { createSimulationKeyProvider } from '@solstice/security';
+import { InMemoryAgentMandateStore } from '@solstice/sunrey-agent';
 import {
   createPostgresSimulationRuntime,
   isProductIntegrationDurableModeEnabled,
   loadProductAgentRuntimeState,
+  loadProductVaultState,
   persistProductAgentRuntimeState,
   persistProductConsentState,
+  persistProductVaultState,
   persistenceEnvFromProcess,
   type DurableSimulationRuntime,
 } from '../../../accounts/src/product-durable-adapters.ts';
@@ -42,6 +48,7 @@ export type ProductIntegrationRuntime = {
   readonly accounts: SimulationRuntime;
   readonly consent: ConsentService;
   readonly vault: PersonalDataVault;
+  readonly vaultProduct: PersonalDataVaultProduct;
   readonly agentStore: InMemoryAgentMandateStore;
   readonly durableAccounts: DurableSimulationRuntime | null;
   readonly humanEconomicState: DurableHumanEconomicStateService | null;
@@ -115,6 +122,12 @@ export async function createProductIntegrationRuntime(
     store: vaultStore,
     payloadStore,
   });
+  const vaultProduct = new PersonalDataVaultProduct({ clock, events, vault });
+
+  if (durableAccounts) {
+    const vaultSnapshot = await loadProductVaultState(durableAccounts.session.pools.customer);
+    vaultProduct.restore(vaultSnapshot as ProductVaultSnapshot);
+  }
 
   return Object.freeze({
     mode,
@@ -122,6 +135,7 @@ export async function createProductIntegrationRuntime(
     accounts,
     consent,
     vault,
+    vaultProduct,
     agentStore,
     durableAccounts,
     humanEconomicState,
@@ -132,6 +146,7 @@ export async function createProductIntegrationRuntime(
       await Promise.all([
         persistProductConsentState(durableAccounts.session.pools.customer, consentStore.snapshot()),
         persistProductAgentRuntimeState(durableAccounts.session.pools.customer, agentStore.snapshot()),
+        persistProductVaultState(durableAccounts.session.pools.customer, vaultProduct.snapshot()),
         humanEconomicState?.persist(),
         durableAccounts.persistProductState(),
       ]);

@@ -10,6 +10,7 @@ import { PreviewGrowSurface } from './consumer/preview-grow.ts';
 import { bindDurableFinancialReadModel } from './consumer/durable-consumer-bff.ts';
 import type { DurableInternalPaymentSurface } from './consumer/durable-internal-payments.ts';
 import type { DurableWalletSurface } from './consumer/durable-wallets.ts';
+import type { PersonalDataVaultProduct } from '@solstice/personal-data-vault';
 import type { SimulationRuntime } from '../../accounts/src/runtime.ts';
 
 export type SunReyPreviewOptions = {
@@ -25,19 +26,24 @@ export type SunReyPreviewOptions = {
   readonly durableFinancialRuntime?: SimulationRuntime;
   readonly durableInternalPayments?: DurableInternalPaymentSurface;
   readonly durableWallets?: DurableWalletSurface;
+  readonly durableVault?: PersonalDataVaultProduct;
 };
 
 /**
  * Compose the existing canonical Consumer BFF surfaces into one deployable
  * simulation runtime for Lovable/mobile/web integration.
  *
- * Hosted durable mode may replace account/ledger-derived reads and the wallet
- * product with PostgreSQL-backed state while remaining preview domains stay
- * isolated until their own durable stores are bound. This never enables live
- * financial connectivity, mainnet signing, or a second ledger.
+ * Hosted durable mode may replace account/ledger-derived reads, the wallet
+ * product, and the Personal Data Vault with PostgreSQL-backed state while
+ * remaining preview domains stay isolated until their own durable stores are
+ * bound. This never enables live financial connectivity, mainnet signing, or
+ * a second ledger.
  */
 export function createSunReyPreviewRuntime(
-  options: Pick<SunReyPreviewOptions, 'providerDown' | 'durableFinancialRuntime' | 'durableWallets'> = {},
+  options: Pick<
+    SunReyPreviewOptions,
+    'providerDown' | 'durableFinancialRuntime' | 'durableWallets' | 'durableVault'
+  > = {},
 ): ConsumerBffRuntime {
   const world = createSandboxWorld({ providerDown: options.providerDown === true });
   const previewGrow = new PreviewGrowSurface(world.grow, world.bff, world.growOpportunity);
@@ -66,7 +72,7 @@ export function createSunReyPreviewRuntime(
     productiveEconomy: world.productiveEconomy,
     exchange,
     dataRights: world.dataRights,
-    vault: world.vault,
+    vault: options.durableVault ?? world.vault,
     access: world.access,
     hinAccess: world.hinAccess,
     worldExternalData: world.worldExternalData,
@@ -85,6 +91,7 @@ export async function startSunReyPreview(
       providerDown: options.providerDown === true,
       ...(options.durableFinancialRuntime ? { durableFinancialRuntime: options.durableFinancialRuntime } : {}),
       ...(options.durableWallets ? { durableWallets: options.durableWallets } : {}),
+      ...(options.durableVault ? { durableVault: options.durableVault } : {}),
     }),
     ...(options.durableInternalPayments ? { durableInternalPayments: options.durableInternalPayments } : {}),
     ...(options.durableWallets ? { durableWallets: options.durableWallets } : {}),
