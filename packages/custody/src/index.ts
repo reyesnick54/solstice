@@ -85,7 +85,6 @@ export {
   WalletProductService,
   createWalletProductFromKernel,
   deriveDepositAddress,
-  isNativeCustodyAssetId as isNativeWalletAssetId,
 } from './product/index.ts';
 export type {
   ConsumerWallet,
