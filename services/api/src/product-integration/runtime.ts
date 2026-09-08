@@ -21,8 +21,8 @@ import {
   PersonalDataVaultStore,
   type ProductVaultSnapshot,
 } from '@solstice/personal-data-vault';
-import { createSimulationKeyProvider } from '../../../../packages/security/src/simulation.ts';
-import { InMemoryAgentMandateStore } from '../../../../packages/sunrey-agent/src/store.ts';
+import { createSimulationKeyProvider } from '@solstice/security';
+import { InMemoryAgentMandateStore } from '@solstice/sunrey-agent';
 import {
   createPostgresSimulationRuntime,
   isProductIntegrationDurableModeEnabled,
