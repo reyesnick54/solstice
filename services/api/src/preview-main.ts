@@ -6,6 +6,7 @@ import {
 import { ensureDurableSandboxCoreState } from './consumer/durable-account-state.ts';
 import { ensureDurableSandboxTransferCapability } from './consumer/durable-transfer-capability.ts';
 import { DurableInternalPaymentSurface } from './consumer/durable-internal-payments.ts';
+import { DurableWalletSurface } from './consumer/durable-wallets.ts';
 
 function parsePort(raw: string | undefined, fallback: number): number {
   if (!raw) return fallback;
@@ -47,6 +48,7 @@ let productIntegration: ProductIntegrationRuntime | null = null;
 let durableSeedReport: Awaited<ReturnType<typeof ensureDurableSandboxCoreState>> | null = null;
 let durableTransferCapabilityReport: Awaited<ReturnType<typeof ensureDurableSandboxTransferCapability>> | null = null;
 let durableInternalPayments: DurableInternalPaymentSurface | null = null;
+let durableWallets: DurableWalletSurface | null = null;
 if (productIntegrationMode === 'DURABLE') {
   productIntegration = await createProductIntegrationRuntime({ forceMode: 'DURABLE' });
   if (productIntegration.mode !== 'DURABLE' || !productIntegration.durableAccounts) {
@@ -55,6 +57,7 @@ if (productIntegrationMode === 'DURABLE') {
   durableSeedReport = await ensureDurableSandboxCoreState(productIntegration.durableAccounts);
   durableTransferCapabilityReport = await ensureDurableSandboxTransferCapability(productIntegration.durableAccounts);
   durableInternalPayments = new DurableInternalPaymentSurface(productIntegration.durableAccounts);
+  durableWallets = await DurableWalletSurface.create(productIntegration.durableAccounts);
 }
 
 const api = await startSunReyPreview({
@@ -66,6 +69,7 @@ const api = await startSunReyPreview({
   allowLocalOrigins,
   ...(productIntegration ? { durableFinancialRuntime: productIntegration.accounts } : {}),
   ...(durableInternalPayments ? { durableInternalPayments } : {}),
+  ...(durableWallets ? { durableWallets } : {}),
   ...(previewAuthEmail ? { previewAuthEmail } : {}),
   ...(previewAuthPassword ? { previewAuthPassword } : {}),
 });
@@ -80,17 +84,20 @@ console.log(
     PRODUCTION_READY: false,
     PRODUCTION_ACTIVE: false,
     LIVE_CONNECTIVITY_ENABLED: false,
+    MAINNET_ACTIVE: false,
     sandboxPersonasExposed: allowSandboxPersonas,
     previewAuthEnabled: allowPreviewAuth,
     productIntegrationMode,
     durableProductRuntimeAttached: productIntegration?.mode === 'DURABLE',
     durableFinancialReadModelBound: Boolean(productIntegration),
     durableInternalTransfersBound: Boolean(durableInternalPayments),
+    durableWalletsBound: Boolean(durableWallets),
     consumerStateAuthority: productIntegration
-      ? 'HYBRID_POSTGRES_ACCOUNT_LEDGER_DURABLE_INTERNAL_TRANSFERS_FIXTURE_OTHER_DOMAINS'
+      ? 'HYBRID_POSTGRES_ACCOUNT_LEDGER_INTERNAL_TRANSFERS_NATIVE_WALLETS_DURABLE_FIXTURE_OTHER_DOMAINS'
       : 'SANDBOX_FIXTURE_NON_PRODUCTION',
     ...(durableSeedReport ? { durableSeedReport } : {}),
     ...(durableTransferCapabilityReport ? { durableTransferCapabilityReport } : {}),
+    ...(durableWallets ? { durableWalletBinding: durableWallets.bindingReport } : {}),
   }),
 );
 
