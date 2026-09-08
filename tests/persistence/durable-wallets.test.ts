@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { ensureDurableSandboxCoreState } from '../../services/api/src/consumer/durable-account-state.ts';
+import {
+  asCustomerId,
+  asJurisdiction,
+  asLegalEntityId,
+  asResidency,
+  asUtcInstant,
+} from '@solstice/domain';
 import { DurableWalletSurface } from '../../services/api/src/consumer/durable-wallets.ts';
 import type { BffPrincipal } from '../../services/api/src/consumer/ports.ts';
 import {
@@ -26,13 +32,35 @@ const principal: BffPrincipal = Object.freeze({
   deviceSummary: Object.freeze({ deviceId: null, trustState: 'KNOWN' }),
 });
 
+const CUSTOMER_CREATED_AT = asUtcInstant('2026-01-15T09:00:00.000Z');
+const CUSTOMER_REFRESH_BY = asUtcInstant('2027-08-21T00:00:00.000Z');
+
 test(
   'durable SunRey native wallet survives restart and idempotent replay creates no duplicate',
   { skip: !persistenceAvailable() },
   async () => {
     const env = await preparePersistence();
     let durable = await createDurableRuntime(env);
-    await ensureDurableSandboxCoreState(durable);
+
+    // This test qualifies wallet persistence only. Seed the owning customer
+    // directly instead of coupling the wallet test to every sandbox persona,
+    // account, funding, and restriction fixture.
+    await durable.saveCustomer(
+      Object.freeze({
+        id: asCustomerId(principal.customerId),
+        legalEntityId: asLegalEntityId('le_solstice_uk_ltd'),
+        jurisdiction: asJurisdiction('GB'),
+        residency: asResidency('GB'),
+        status: 'ACTIVE' as const,
+        verification: Object.freeze({
+          kycState: 'VERIFIED' as const,
+          kycRecordVersion: 1,
+          refreshBy: CUSTOMER_REFRESH_BY,
+        }),
+        createdAt: CUSTOMER_CREATED_AT,
+        version: 1,
+      }),
+    );
 
     let surface = await DurableWalletSurface.create(durable);
     assert.equal(surface.bindingReport.hydratedWallets, 0);
