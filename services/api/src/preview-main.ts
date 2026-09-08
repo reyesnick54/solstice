@@ -70,6 +70,7 @@ const api = await startSunReyPreview({
   ...(productIntegration ? { durableFinancialRuntime: productIntegration.accounts } : {}),
   ...(durableInternalPayments ? { durableInternalPayments } : {}),
   ...(durableWallets ? { durableWallets } : {}),
+  ...(productIntegration ? { durableVault: productIntegration.vaultProduct } : {}),
   ...(previewAuthEmail ? { previewAuthEmail } : {}),
   ...(previewAuthPassword ? { previewAuthPassword } : {}),
 });
@@ -92,8 +93,9 @@ console.log(
     durableFinancialReadModelBound: Boolean(productIntegration),
     durableInternalTransfersBound: Boolean(durableInternalPayments),
     durableWalletsBound: Boolean(durableWallets),
+    durableVaultBound: Boolean(productIntegration),
     consumerStateAuthority: productIntegration
-      ? 'HYBRID_POSTGRES_ACCOUNT_LEDGER_INTERNAL_TRANSFERS_NATIVE_WALLETS_DURABLE_FIXTURE_OTHER_DOMAINS'
+      ? 'HYBRID_POSTGRES_ACCOUNT_LEDGER_INTERNAL_TRANSFERS_NATIVE_WALLETS_VAULT_DURABLE_FIXTURE_OTHER_DOMAINS'
       : 'SANDBOX_FIXTURE_NON_PRODUCTION',
     ...(durableSeedReport ? { durableSeedReport } : {}),
     ...(durableTransferCapabilityReport ? { durableTransferCapabilityReport } : {}),
