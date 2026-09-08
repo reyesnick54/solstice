@@ -167,3 +167,47 @@ export async function persistGrowExecutionState(pool: Pool, state: GrowStoreSnap
     }
   });
 }
+
+export async function loadGrowExecutionState(pool: Pool): Promise<GrowStoreSnapshot> {
+  return withClient(pool, async (client) => {
+    const [proposals, approvals, commands, executions, activatedPlans, recurring, monitoring, performance] =
+      await Promise.all([
+        client.query<{ body_canonical: string }>(
+          'SELECT body_canonical FROM growth.financial_proposal ORDER BY proposal_id, version',
+        ),
+        client.query<{ body_canonical: string }>(
+          'SELECT body_canonical FROM growth.proposal_approval ORDER BY approval_id',
+        ),
+        client.query<{ body_canonical: string }>(
+          'SELECT body_canonical FROM growth.execution_command ORDER BY command_id',
+        ),
+        client.query<{ body_canonical: string }>(
+          'SELECT body_canonical FROM growth.execution_record ORDER BY execution_id',
+        ),
+        client.query<{ body_canonical: string }>(
+          'SELECT body_canonical FROM growth.activated_plan ORDER BY activated_plan_id',
+        ),
+        client.query<{ body_canonical: string }>(
+          'SELECT body_canonical FROM growth.recurring_mandate ORDER BY recurring_mandate_id',
+        ),
+        client.query<{ body_canonical: string }>(
+          'SELECT body_canonical FROM growth.monitoring_cycle ORDER BY cycle_id',
+        ),
+        client.query<{ body_canonical: string }>(
+          'SELECT body_canonical FROM growth.performance_read_model ORDER BY subject_id, plan_id',
+        ),
+      ]);
+
+    return Object.freeze({
+      proposals: Object.freeze(proposals.rows.map((row) => JSON.parse(row.body_canonical))),
+      approvals: Object.freeze(approvals.rows.map((row) => JSON.parse(row.body_canonical))),
+      commands: Object.freeze(commands.rows.map((row) => JSON.parse(row.body_canonical))),
+      executions: Object.freeze(executions.rows.map((row) => JSON.parse(row.body_canonical))),
+      activatedPlans: Object.freeze(activatedPlans.rows.map((row) => JSON.parse(row.body_canonical))),
+      recurring: Object.freeze(recurring.rows.map((row) => JSON.parse(row.body_canonical))),
+      monitoring: Object.freeze(monitoring.rows.map((row) => JSON.parse(row.body_canonical))),
+      performance: Object.freeze(performance.rows.map((row) => JSON.parse(row.body_canonical))),
+      evidence: Object.freeze([]),
+    }) as GrowStoreSnapshot;
+  });
+}

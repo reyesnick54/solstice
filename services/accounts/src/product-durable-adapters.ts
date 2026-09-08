@@ -15,10 +15,14 @@ import {
   loadConsumerWallet,
   loadConsumerWalletByAsset,
   loadConsumerWalletByIdempotency,
+  loadGrowthState,
+  loadGrowExecutionState,
   persistAgentRuntimeState,
   persistConsentState,
   persistConsumerInternalPayment,
   persistConsumerWallet,
+  persistGrowthState,
+  persistGrowExecutionState,
   persistenceEnvFromProcess as resolvePersistenceEnv,
   type PersistedConsumerInternalPayment,
   type PersistedConsumerWallet,
@@ -66,6 +70,22 @@ export async function persistProductAgentRuntimeState(pool: Pool, state: unknown
 
 export async function persistProductConsentState(pool: Pool, state: unknown): Promise<void> {
   await persistConsentState(pool, state as never);
+}
+
+export async function loadProductGrowthPlanningState(pool: Pool): Promise<unknown> {
+  return loadGrowthState(pool);
+}
+
+export async function persistProductGrowthPlanningState(pool: Pool, state: unknown): Promise<void> {
+  await persistGrowthState(pool, state as never);
+}
+
+export async function loadProductGrowExecutionState(pool: Pool): Promise<unknown> {
+  return loadGrowExecutionState(pool);
+}
+
+export async function persistProductGrowExecutionState(pool: Pool, state: unknown): Promise<void> {
+  await persistGrowExecutionState(pool, state as never);
 }
 
 export async function persistProductInternalPayment(
