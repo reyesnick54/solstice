@@ -54,7 +54,7 @@ export type DurableMoneyMutationOutcome =
     };
 
 /**
- * Hosted internal-sandbox mutations for customer cash-account creation and
+ * Hosted internal-sandbox mutations for customer cash-account opening and
  * explicit simulated funding.
  *
  * Account opening uses the authenticated customer's actor through the
@@ -71,7 +71,7 @@ export class DurableMoneyAccountMutations {
     this.durable = durable;
   }
 
-  async createAccount(
+  async openCashAccount(
     principal: BffPrincipal,
     input: DurableAccountCreateInput,
   ): Promise<DurableMoneyMutationOutcome> {
@@ -104,7 +104,7 @@ export class DurableMoneyAccountMutations {
       return {
         outcome: 'OK',
         replay: true,
-        value: accountCreatedBody(existing.id, existing.currency, existing.productId, true),
+        value: accountOpenedBody(existing.id, existing.currency, existing.productId, true),
       };
     }
 
@@ -138,7 +138,7 @@ export class DurableMoneyAccountMutations {
     return {
       outcome: 'OK',
       replay: opened.replay,
-      value: accountCreatedBody(opened.account.id, opened.account.currency, opened.account.productId, opened.replay),
+      value: accountOpenedBody(opened.account.id, opened.account.currency, opened.account.productId, opened.replay),
     };
   }
 
@@ -221,7 +221,7 @@ export class DurableMoneyAccountMutations {
   }
 }
 
-function accountCreatedBody(accountId: string, currency: string, productId: string, replay: boolean) {
+function accountOpenedBody(accountId: string, currency: string, productId: string, replay: boolean) {
   return Object.freeze({
     schema: 'sunrey.consumer.account-created.v1',
     accountId,
