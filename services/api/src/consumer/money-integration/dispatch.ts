@@ -37,7 +37,7 @@ export function dispatchMoneyIntegration(
   const hosted = platform as HostedMoneyIntegrationPlatform;
 
   if (path === '/api/v1/accounts' && method === 'POST' && hosted.durableMoneyAccountMutations) {
-    return handleAccountCreation(hosted.durableMoneyAccountMutations, request, principal, headers);
+    return handleAccountOpening(hosted.durableMoneyAccountMutations, request, principal, headers);
   }
 
   if (path === '/api/v1/sandbox/funding' && method === 'POST' && hosted.durableMoneyAccountMutations) {
@@ -94,14 +94,14 @@ export function dispatchMoneyIntegration(
   return null;
 }
 
-async function handleAccountCreation(
+async function handleAccountOpening(
   mutations: DurableMoneyAccountMutations,
   request: MoneyDispatchRequest,
   principal: BffPrincipal,
   headers: Record<string, string>,
 ): Promise<MoneyDispatchResponse> {
   const rec = bodyRecord(request.body);
-  const outcome = await mutations.createAccount(principal, {
+  const outcome = await mutations.openCashAccount(principal, {
     ...(typeof rec.accountType === 'string' ? { accountType: rec.accountType } : {}),
     currency: typeof rec.currency === 'string' ? rec.currency : '',
     idempotencyKey:
