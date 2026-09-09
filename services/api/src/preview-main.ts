@@ -4,8 +4,10 @@ import {
   type ProductIntegrationRuntime,
 } from './product-integration/index.ts';
 import { ensureDurableSandboxCoreState } from './consumer/durable-account-state.ts';
+import { ensureDurableSandboxAccountCapability } from './consumer/durable-account-capability.ts';
 import { ensureDurableSandboxTransferCapability } from './consumer/durable-transfer-capability.ts';
 import { DurableInternalPaymentSurface } from './consumer/durable-internal-payments.ts';
+import { DurableMoneyAccountMutations } from './consumer/durable-money-account-mutations.ts';
 import { DurableWalletSurface } from './consumer/durable-wallets.ts';
 
 function parsePort(raw: string | undefined, fallback: number): number {
@@ -46,8 +48,10 @@ const productIntegrationMode = requestedProductIntegrationMode(process.env.SUNRE
 
 let productIntegration: ProductIntegrationRuntime | null = null;
 let durableSeedReport: Awaited<ReturnType<typeof ensureDurableSandboxCoreState>> | null = null;
+let durableAccountCapabilityReport: Awaited<ReturnType<typeof ensureDurableSandboxAccountCapability>> | null = null;
 let durableTransferCapabilityReport: Awaited<ReturnType<typeof ensureDurableSandboxTransferCapability>> | null = null;
 let durableInternalPayments: DurableInternalPaymentSurface | null = null;
+let durableMoneyAccountMutations: DurableMoneyAccountMutations | null = null;
 let durableWallets: DurableWalletSurface | null = null;
 if (productIntegrationMode === 'DURABLE') {
   productIntegration = await createProductIntegrationRuntime({ forceMode: 'DURABLE' });
@@ -55,8 +59,10 @@ if (productIntegrationMode === 'DURABLE') {
     throw new Error('durable product integration was requested but PostgreSQL durable runtime was not created');
   }
   durableSeedReport = await ensureDurableSandboxCoreState(productIntegration.durableAccounts);
+  durableAccountCapabilityReport = await ensureDurableSandboxAccountCapability(productIntegration.durableAccounts);
   durableTransferCapabilityReport = await ensureDurableSandboxTransferCapability(productIntegration.durableAccounts);
   durableInternalPayments = new DurableInternalPaymentSurface(productIntegration.durableAccounts);
+  durableMoneyAccountMutations = new DurableMoneyAccountMutations(productIntegration.durableAccounts);
   durableWallets = await DurableWalletSurface.create(productIntegration.durableAccounts);
 }
 
@@ -69,6 +75,7 @@ const api = await startSunReyPreview({
   allowLocalOrigins,
   ...(productIntegration ? { durableFinancialRuntime: productIntegration.accounts } : {}),
   ...(durableInternalPayments ? { durableInternalPayments } : {}),
+  ...(durableMoneyAccountMutations ? { durableMoneyAccountMutations } : {}),
   ...(durableWallets ? { durableWallets } : {}),
   ...(productIntegration ? { durableVault: productIntegration.vaultProduct } : {}),
   ...(previewAuthEmail ? { previewAuthEmail } : {}),
@@ -91,13 +98,16 @@ console.log(
     productIntegrationMode,
     durableProductRuntimeAttached: productIntegration?.mode === 'DURABLE',
     durableFinancialReadModelBound: Boolean(productIntegration),
+    durableAccountOpeningBound: Boolean(durableMoneyAccountMutations),
+    durableSandboxFundingBound: Boolean(durableMoneyAccountMutations),
     durableInternalTransfersBound: Boolean(durableInternalPayments),
     durableWalletsBound: Boolean(durableWallets),
     durableVaultBound: Boolean(productIntegration),
     consumerStateAuthority: productIntegration
-      ? 'HYBRID_POSTGRES_ACCOUNT_LEDGER_INTERNAL_TRANSFERS_NATIVE_WALLETS_VAULT_DURABLE_FIXTURE_OTHER_DOMAINS'
+      ? 'HYBRID_POSTGRES_ACCOUNT_LEDGER_ACCOUNT_OPEN_SANDBOX_FUNDING_INTERNAL_TRANSFERS_NATIVE_WALLETS_VAULT_DURABLE_FIXTURE_OTHER_DOMAINS'
       : 'SANDBOX_FIXTURE_NON_PRODUCTION',
     ...(durableSeedReport ? { durableSeedReport } : {}),
+    ...(durableAccountCapabilityReport ? { durableAccountCapabilityReport } : {}),
     ...(durableTransferCapabilityReport ? { durableTransferCapabilityReport } : {}),
     ...(durableWallets ? { durableWalletBinding: durableWallets.bindingReport } : {}),
   }),

@@ -9,6 +9,7 @@ import { ExchangeBffSurface } from './consumer/exchange.ts';
 import { PreviewGrowSurface } from './consumer/preview-grow.ts';
 import { bindDurableFinancialReadModel } from './consumer/durable-consumer-bff.ts';
 import type { DurableInternalPaymentSurface } from './consumer/durable-internal-payments.ts';
+import type { DurableMoneyAccountMutations } from './consumer/durable-money-account-mutations.ts';
 import type { DurableWalletSurface } from './consumer/durable-wallets.ts';
 import type { PersonalDataVaultProduct } from '@solstice/personal-data-vault';
 import type { SimulationRuntime } from '../../accounts/src/runtime.ts';
@@ -25,6 +26,7 @@ export type SunReyPreviewOptions = {
   readonly providerDown?: boolean;
   readonly durableFinancialRuntime?: SimulationRuntime;
   readonly durableInternalPayments?: DurableInternalPaymentSurface;
+  readonly durableMoneyAccountMutations?: DurableMoneyAccountMutations;
   readonly durableWallets?: DurableWalletSurface;
   readonly durableVault?: PersonalDataVaultProduct;
 };
@@ -42,7 +44,7 @@ export type SunReyPreviewOptions = {
 export function createSunReyPreviewRuntime(
   options: Pick<
     SunReyPreviewOptions,
-    'providerDown' | 'durableFinancialRuntime' | 'durableWallets' | 'durableVault'
+    'providerDown' | 'durableFinancialRuntime' | 'durableMoneyAccountMutations' | 'durableWallets' | 'durableVault'
   > = {},
 ): ConsumerBffRuntime {
   const world = createSandboxWorld({ providerDown: options.providerDown === true });
@@ -51,6 +53,12 @@ export function createSunReyPreviewRuntime(
   const bff = options.durableFinancialRuntime
     ? bindDurableFinancialReadModel(world.bff, options.durableFinancialRuntime)
     : world.bff;
+  const moneyIntegration = options.durableMoneyAccountMutations
+    ? Object.freeze({
+        ...world.moneyIntegration,
+        durableMoneyAccountMutations: options.durableMoneyAccountMutations,
+      })
+    : world.moneyIntegration;
   return Object.freeze({
     bff,
     sessions: world.sessions,
@@ -65,7 +73,7 @@ export function createSunReyPreviewRuntime(
     previewDiagnostics: world.previewDiagnostics,
     conversation: world.conversation,
     wallets: options.durableWallets?.product ?? world.wallets,
-    moneyIntegration: world.moneyIntegration,
+    moneyIntegration,
     hin: world.hin,
     hinContributions: world.hinContributions,
     nativeEconomy: createNativeEconomySurface(),
@@ -90,6 +98,9 @@ export async function startSunReyPreview(
     runtime: createSunReyPreviewRuntime({
       providerDown: options.providerDown === true,
       ...(options.durableFinancialRuntime ? { durableFinancialRuntime: options.durableFinancialRuntime } : {}),
+      ...(options.durableMoneyAccountMutations
+        ? { durableMoneyAccountMutations: options.durableMoneyAccountMutations }
+        : {}),
       ...(options.durableWallets ? { durableWallets: options.durableWallets } : {}),
       ...(options.durableVault ? { durableVault: options.durableVault } : {}),
     }),
