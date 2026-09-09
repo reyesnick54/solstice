@@ -102,7 +102,7 @@ async function handleAccountCreation(
 ): Promise<MoneyDispatchResponse> {
   const rec = bodyRecord(request.body);
   const outcome = await mutations.createAccount(principal, {
-    accountType: typeof rec.accountType === 'string' ? rec.accountType : undefined,
+    ...(typeof rec.accountType === 'string' ? { accountType: rec.accountType } : {}),
     currency: typeof rec.currency === 'string' ? rec.currency : '',
     idempotencyKey:
       request.idempotencyKey ??
