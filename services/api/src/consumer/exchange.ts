@@ -247,19 +247,25 @@ export class ExchangeBffSurface {
     return { ...(result as object), requestId };
   }
 
-  cancelOrderById(principal: BffPrincipal, orderId: string, requestId: string): Record<string, unknown> | BffErrorEnvelope {
-    const result = this.worldFor(principal).cancelOrderById(orderId);
+  async cancelOrderById(
+    principal: BffPrincipal,
+    orderId: string,
+    requestId: string,
+  ): Promise<Record<string, unknown> | BffErrorEnvelope> {
+    const world = await this.ensureWorldLoaded(principal);
+    const result = world.cancelOrderById(orderId);
     if ('ok' in result && result.ok === false) {
       return this.fail(requestId, 'POLICY', String(result.reason));
     }
+    await this.persistWorld(principal.customerId, 'READY', world);
     return { ...(result as object), requestId };
   }
 
-  submitConfirmedOrder(
+  async submitConfirmedOrder(
     principal: BffPrincipal,
     body: Record<string, unknown>,
     requestId: string,
-  ): Record<string, unknown> | BffErrorEnvelope {
+  ): Promise<Record<string, unknown> | BffErrorEnvelope> {
     if (principal.restricted) {
       return this.fail(requestId, 'POLICY', 'COMPLIANCE_BLOCKED');
     }
@@ -267,7 +273,13 @@ export class ExchangeBffSurface {
     if (quantity === null) {
       return this.fail(requestId, 'VALIDATION', 'INVALID_QUANTITY');
     }
-    const result = this.worldFor(principal).submitConfirmedOrder({
+    const idempotencyKey = readExchangeIdempotencyKey(body, requestId);
+    const replay = await this.loadIdempotentResponse(principal.customerId, idempotencyKey, 'ORDER');
+    if (replay) {
+      return { ...replay, requestId, replay: true };
+    }
+    const world = await this.ensureWorldLoaded(principal);
+    const result = world.submitConfirmedOrder({
       marketId: str(body.marketId) ?? 'SRC-USD',
       side: body.side === 'SELL' ? 'SELL' : 'BUY',
       quantity,
@@ -287,7 +299,16 @@ export class ExchangeBffSurface {
       }
       return this.fail(requestId, 'POLICY', reason);
     }
-    return { ...(result as object), requestId };
+    await this.persistWorld(principal.customerId, 'READY', world);
+    const response = { ...(result as object), requestId };
+    await this.saveIdempotentResponse({
+      idempotencyKey,
+      customerId: principal.customerId,
+      resourceType: 'ORDER',
+      resourceId: String((result as { orderId?: string }).orderId ?? idempotencyKey),
+      response,
+    });
+    return response;
   }
 
   walletForAsset(principal: BffPrincipal, assetAlias: 'SRC' | 'MRC', requestId: string): Record<string, unknown> {

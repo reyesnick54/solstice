@@ -1682,11 +1682,11 @@ function dispatchExchange(
     }
     if (path === '/api/v1/exchange/orders' && method === 'GET') return result(exchange.orders(principal, requestId), headers);
     if (path === '/api/v1/exchange/orders' && method === 'POST') {
-      return result(exchange.submitConfirmedOrder(principal, rec, requestId), headers, 201);
+      return (async () => result(await exchange.submitConfirmedOrder(principal, rec, requestId), headers, 201))();
     }
     if (path.startsWith('/api/v1/exchange/orders/') && path.endsWith('/cancel') && method === 'POST') {
       const id = path.slice('/api/v1/exchange/orders/'.length, -'/cancel'.length);
-      return result(exchange.cancelOrderById(principal, id, requestId), headers);
+      return (async () => result(await exchange.cancelOrderById(principal, id, requestId), headers))();
     }
     if (path.startsWith('/api/v1/exchange/orders/') && method === 'GET') {
       const id = path.slice('/api/v1/exchange/orders/'.length);
