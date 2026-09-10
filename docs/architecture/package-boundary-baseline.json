@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-10T04:22:03.752692+00:00",
+  "generatedAt": "2026-09-10T04:26:26.075811+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -538,10 +538,10 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 4694,
-      "serviceDeepImport": 657,
+      "packageDeepImport": 4695,
+      "serviceDeepImport": 656,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 4694,
+      "relativeCrossPackage": 4695,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
@@ -37693,6 +37693,78 @@
       "spec": "../../identity/src/actor-context.ts"
     },
     {
+      "file": "packages/sunrey-exchange/src/alpha/alpha.test.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/alpha/alpha.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/alpha/engine.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/alpha/engine.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/alpha/engine.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/alpha/engine.ts' deep-imports 'money' internals via '../../../money/src/asset-quantity.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "money",
+      "spec": "../../../money/src/asset-quantity.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/alpha/engine.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/alpha/engine.ts' deep-imports 'money' internals via '../../../money/src/money.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "money",
+      "spec": "../../../money/src/money.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/alpha/sandbox.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/alpha/sandbox.ts' deep-imports 'money' internals via '../../../money/src/money.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "money",
+      "spec": "../../../money/src/money.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/alpha/sandbox.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/alpha/sandbox.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/alpha/sandbox.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/alpha/sandbox.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/alpha/usd-ledger.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/alpha/usd-ledger.ts' deep-imports 'money' internals via '../../../money/src/money.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "money",
+      "spec": "../../../money/src/money.ts"
+    },
+    {
       "file": "packages/sunrey-exchange/src/consumer-demo.ts",
       "line": 1,
       "rule": "package-deep-import",
@@ -37882,26 +37954,17 @@
       "spec": "../../sunrey-coin/src/simulation-catalog.ts"
     },
     {
-      "file": "packages/sunrey-exchange/src/crypto-market/adapters/fixture-adapter.ts",
-      "line": 13,
+      "file": "packages/sunrey-exchange/src/crypto-market/adapters/index.ts",
+      "line": 7,
       "rule": "package-deep-import",
-      "message": "'packages/sunrey-exchange/src/crypto-market/adapters/fixture-adapter.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
-      "sourcePackage": "sunrey-exchange",
-      "targetPackage": "domain",
-      "spec": "../../../../domain/src/time.ts"
-    },
-    {
-      "file": "packages/sunrey-exchange/src/crypto-market/adapters/live-adapter.ts",
-      "line": 5,
-      "rule": "package-deep-import",
-      "message": "'packages/sunrey-exchange/src/crypto-market/adapters/live-adapter.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "message": "'packages/sunrey-exchange/src/crypto-market/adapters/index.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-exchange",
       "targetPackage": "domain",
       "spec": "../../../../domain/src/time.ts"
     },
     {
       "file": "packages/sunrey-exchange/src/crypto-market/adapters/normalize.ts",
-      "line": 9,
+      "line": 10,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-exchange/src/crypto-market/adapters/normalize.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-exchange",
@@ -37909,37 +37972,10 @@
       "spec": "../../../../domain/src/time.ts"
     },
     {
-      "file": "packages/sunrey-exchange/src/crypto-market/adapters/parsers.ts",
-      "line": 5,
-      "rule": "package-deep-import",
-      "message": "'packages/sunrey-exchange/src/crypto-market/adapters/parsers.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
-      "sourcePackage": "sunrey-exchange",
-      "targetPackage": "domain",
-      "spec": "../../../../domain/src/time.ts"
-    },
-    {
-      "file": "packages/sunrey-exchange/src/crypto-market/adapters/quote-builder.ts",
-      "line": 7,
-      "rule": "package-deep-import",
-      "message": "'packages/sunrey-exchange/src/crypto-market/adapters/quote-builder.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
-      "sourcePackage": "sunrey-exchange",
-      "targetPackage": "domain",
-      "spec": "../../../../domain/src/time.ts"
-    },
-    {
       "file": "packages/sunrey-exchange/src/crypto-market/bff-builders.ts",
-      "line": 5,
-      "rule": "package-deep-import",
-      "message": "'packages/sunrey-exchange/src/crypto-market/bff-builders.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
-      "sourcePackage": "sunrey-exchange",
-      "targetPackage": "domain",
-      "spec": "../../../domain/src/time.ts"
-    },
-    {
-      "file": "packages/sunrey-exchange/src/crypto-market/bff-sync.ts",
       "line": 9,
       "rule": "package-deep-import",
-      "message": "'packages/sunrey-exchange/src/crypto-market/bff-sync.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "message": "'packages/sunrey-exchange/src/crypto-market/bff-builders.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "sunrey-exchange",
       "targetPackage": "domain",
       "spec": "../../../domain/src/time.ts"
@@ -37961,33 +37997,6 @@
       "sourcePackage": "sunrey-exchange",
       "targetPackage": "sunrey-chain",
       "spec": "../../../sunrey-chain/src/provider-runtime/data-delivery/policies.ts"
-    },
-    {
-      "file": "packages/sunrey-exchange/src/crypto-market/http/cache.ts",
-      "line": 5,
-      "rule": "package-deep-import",
-      "message": "'packages/sunrey-exchange/src/crypto-market/http/cache.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
-      "sourcePackage": "sunrey-exchange",
-      "targetPackage": "domain",
-      "spec": "../../../../domain/src/time.ts"
-    },
-    {
-      "file": "packages/sunrey-exchange/src/crypto-market/http/client.ts",
-      "line": 16,
-      "rule": "package-deep-import",
-      "message": "'packages/sunrey-exchange/src/crypto-market/http/client.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/index.ts'",
-      "sourcePackage": "sunrey-exchange",
-      "targetPackage": "provider-sdk",
-      "spec": "../../../../provider-sdk/src/index.ts"
-    },
-    {
-      "file": "packages/sunrey-exchange/src/crypto-market/http/mode.ts",
-      "line": 5,
-      "rule": "package-deep-import",
-      "message": "'packages/sunrey-exchange/src/crypto-market/http/mode.ts' deep-imports 'config' internals via '../../../../config/src/data-mode.ts'",
-      "sourcePackage": "sunrey-exchange",
-      "targetPackage": "config",
-      "spec": "../../../../config/src/data-mode.ts"
     },
     {
       "file": "packages/sunrey-exchange/src/crypto-market/integrations/agent.ts",
@@ -39926,7 +39935,7 @@
     },
     {
       "file": "packages/sunrey-exchange/src/service.ts",
-      "line": 949,
+      "line": 950,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-exchange/src/service.ts' deep-imports 'money' internals via '../../money/src/money.ts'",
       "sourcePackage": "sunrey-exchange",
@@ -45587,7 +45596,7 @@
     },
     {
       "file": "services/api/src/consumer/crypto-market.ts",
-      "line": 16,
+      "line": 15,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/crypto-market.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/crypto-market/index.ts'",
       "sourcePackage": "api",
@@ -45596,7 +45605,7 @@
     },
     {
       "file": "services/api/src/consumer/crypto-market.ts",
-      "line": 17,
+      "line": 16,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/crypto-market.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/crypto-market/types.ts'",
       "sourcePackage": "api",
@@ -45605,21 +45614,12 @@
     },
     {
       "file": "services/api/src/consumer/crypto-market.ts",
-      "line": 18,
+      "line": 17,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/crypto-market.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/time.ts'",
       "sourcePackage": "api",
       "targetPackage": "domain",
       "spec": "../../../../packages/domain/src/time.ts"
-    },
-    {
-      "file": "services/api/src/consumer/crypto-market.ts",
-      "line": 19,
-      "rule": "service-deep-import",
-      "message": "'services/api/src/consumer/crypto-market.ts' deep-imports 'config' internals via '../../../../packages/config/src/data-mode.ts'",
-      "sourcePackage": "api",
-      "targetPackage": "config",
-      "spec": "../../../../packages/config/src/data-mode.ts"
     },
     {
       "file": "services/api/src/consumer/data-rights.ts",
@@ -45659,7 +45659,7 @@
     },
     {
       "file": "services/api/src/consumer/exchange-bff.ts",
-      "line": 6,
+      "line": 10,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/exchange-bff.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/ids.ts'",
       "sourcePackage": "api",
@@ -45668,7 +45668,7 @@
     },
     {
       "file": "services/api/src/consumer/exchange-bff.ts",
-      "line": 11,
+      "line": 15,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/exchange-bff.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/product/api.ts'",
       "sourcePackage": "api",
@@ -45677,12 +45677,12 @@
     },
     {
       "file": "services/api/src/consumer/exchange-bff.ts",
-      "line": 12,
+      "line": 16,
       "rule": "service-deep-import",
-      "message": "'services/api/src/consumer/exchange-bff.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/product/sandbox.ts'",
+      "message": "'services/api/src/consumer/exchange-bff.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/alpha/sandbox.ts'",
       "sourcePackage": "api",
       "targetPackage": "sunrey-exchange",
-      "spec": "../../../../packages/sunrey-exchange/src/product/sandbox.ts"
+      "spec": "../../../../packages/sunrey-exchange/src/alpha/sandbox.ts"
     },
     {
       "file": "services/api/src/consumer/exchange.ts",

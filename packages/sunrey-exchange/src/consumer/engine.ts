@@ -12,6 +12,8 @@ import {
 import { measureLiquidity } from '../ops/liquidity.ts';
 import { resolveReferencePrice } from '../ops/reference-price.ts';
 import { MarketOperationsEngine } from '../ops/engine.ts';
+import type { InternalAlphaMarketMaker } from '../alpha/internal-market-maker.ts';
+import { createInternalAlphaMarketMaker } from '../alpha/internal-market-maker.ts';
 import type { InstitutionalOrderRequest, TradingCredential, TradingSession } from '../ops/types.ts';
 import { createFavoriteMarket, createPriceAlert, alertTriggered } from './alerts.ts';
 import { evaluateConsumerAuthorization } from './authorization.ts';
@@ -108,6 +110,7 @@ export class ConsumerExchangeEngine {
     string,
     { readonly credential: TradingCredential; session: TradingSession }
   >();
+  alphaMarketMaker: InternalAlphaMarketMaker | null = null;
   private seq = 0n;
 
   constructor(input: { readonly now: UtcInstant; readonly policy?: ConsumerExchangePolicy; readonly ports?: ConsumerEnginePorts }) {
@@ -190,6 +193,28 @@ export class ConsumerExchangeEngine {
     );
   }
 
+  activateInternalAlphaLiquidity(now: UtcInstant): InternalAlphaMarketMaker {
+    const maker = createInternalAlphaMarketMaker();
+    maker.bootstrap(this.ops, now);
+    this.alphaMarketMaker = maker;
+    return maker;
+  }
+
+  getInternalAlphaLiquidity(): InternalAlphaMarketMaker | null {
+    return this.alphaMarketMaker;
+  }
+
+  fundAlphaSandboxUsd(
+    participantId: string,
+    usdMinor: bigint,
+  ): { readonly ok: true; readonly balanceMinor: bigint } | { readonly ok: false; readonly reason: 'ALPHA_LIQUIDITY_NOT_ACTIVATED' } {
+    const maker = this.alphaMarketMaker;
+    if (!maker?.accountId) {
+      return { ok: false, reason: 'ALPHA_LIQUIDITY_NOT_ACTIVATED' };
+    }
+    return maker.fundUserSandboxUsd(participantId, usdMinor);
+  }
+
   creditSimulationHolding(accountId: ExchangeAccountId, asset: ConsumerNativeAsset, quantity: bigint): void {
     this.ops.clearing.faucetToCustody(
       accountId,
@@ -214,7 +239,7 @@ export class ConsumerExchangeEngine {
       marketId: this.nativeMarketId(),
       orders: [...this.ops.orders.values()],
       trades: this.ops.trades,
-      marketMakerAccountIds: new Set(),
+      marketMakerAccountIds: this.alphaMarketMaker?.marketMakerAccountIds() ?? new Set(),
     });
     const tradeCount = BigInt(this.ops.trades.length);
     const statisticsValid = tradeCount >= this.policy.minTradesForStatistics;

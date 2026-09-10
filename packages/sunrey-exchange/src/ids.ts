@@ -133,7 +133,11 @@ export function newDisputeId(): DisputeId {
 export const SIMULATION_USD_CASH_ASSET_ID = 'asset:simulation-usd-cash';
 export const MOONREY_COIN_ASSET_ID = 'asset:moonrey-coin';
 export const SUNREY_COIN_USD_MARKET_ID = asExchangeMarketId('market:sunrey-coin-usd-simulation');
+export const MOONREY_COIN_USD_MARKET_ID = asExchangeMarketId('market:moonrey-coin-usd-simulation');
 export const SUNREY_MOONREY_MARKET_ID = asExchangeMarketId('market:sunrey-coin-moonrey-coin-native');
+export const SRC_USD_ALPHA_MARKET_ID = asExchangeMarketId('market:src-usd-alpha');
+export const MRC_USD_ALPHA_MARKET_ID = asExchangeMarketId('market:mrc-usd-alpha');
+export const SRC_MRC_ALPHA_MARKET_ID = asExchangeMarketId('market:src-mrc-alpha');
 export const GPU_COMPUTE_MARKET_ID = asExchangeMarketId('market:gpu-compute-simulation');
 export const MANUFACTURING_CAPACITY_MARKET_ID = asExchangeMarketId('market:manufacturing-capacity-simulation');
 export const INFORMATION_RIGHT_MARKET_ID = asExchangeMarketId('market:information-right-simulation');
@@ -144,3 +148,89 @@ export const MOONREY_COIN_NATIVE_LISTING_ID = asListingId('listing:moonrey-coin-
 export const AGGREGATE_RESEARCH_LISTING_ID = asListingId('listing:aggregate-consumer-research-cohort');
 export const EXCHANGE_FEE_BOOK = 'SUNREY.EXCHANGE.FEES';
 export const SIMULATION_FEE_SCHEDULE_ID = 'fees:simulation-v1' as FeeScheduleId;
+
+export const ALPHA_MARKET_INSTRUMENT_SRC_USD = 'SRC-USD';
+export const ALPHA_MARKET_INSTRUMENT_MRC_USD = 'MRC-USD';
+export const ALPHA_MARKET_INSTRUMENT_SRC_MRC = 'SRC-MRC';
+
+export type AlphaMarketInstrument =
+  | typeof ALPHA_MARKET_INSTRUMENT_SRC_USD
+  | typeof ALPHA_MARKET_INSTRUMENT_MRC_USD
+  | typeof ALPHA_MARKET_INSTRUMENT_SRC_MRC;
+
+export type AlphaMarketDefinition = {
+  readonly marketId: ExchangeMarketId;
+  readonly instrument: AlphaMarketInstrument;
+  readonly symbol: string;
+  readonly baseAssetId: typeof SUNREY_COIN_NATIVE_ASSET_ID | typeof MOONREY_COIN_NATIVE_ASSET_ID;
+  readonly quoteAssetId: 'USD' | typeof MOONREY_COIN_NATIVE_ASSET_ID;
+  readonly quoteKind: 'FIAT_MONEY' | 'ASSET';
+  readonly legacyMarketIds: readonly ExchangeMarketId[];
+  readonly legacyInstruments: readonly string[];
+  readonly state: 'OPEN';
+};
+
+const ALPHA_MARKETS: readonly AlphaMarketDefinition[] = Object.freeze([
+  Object.freeze({
+    marketId: SRC_USD_ALPHA_MARKET_ID,
+    instrument: ALPHA_MARKET_INSTRUMENT_SRC_USD,
+    symbol: 'SUNREY/USD',
+    baseAssetId: SUNREY_COIN_NATIVE_ASSET_ID,
+    quoteAssetId: 'USD',
+    quoteKind: 'FIAT_MONEY',
+    legacyMarketIds: Object.freeze([SUNREY_COIN_USD_MARKET_ID]),
+    legacyInstruments: Object.freeze(['SUNREY_COIN-USD', 'SUNREY/USD']),
+    state: 'OPEN',
+  }),
+  Object.freeze({
+    marketId: MRC_USD_ALPHA_MARKET_ID,
+    instrument: ALPHA_MARKET_INSTRUMENT_MRC_USD,
+    symbol: 'MOONREY/USD',
+    baseAssetId: MOONREY_COIN_NATIVE_ASSET_ID,
+    quoteAssetId: 'USD',
+    quoteKind: 'FIAT_MONEY',
+    legacyMarketIds: Object.freeze([MOONREY_COIN_USD_MARKET_ID]),
+    legacyInstruments: Object.freeze(['MOONREY_COIN-USD', 'MOONREY/USD']),
+    state: 'OPEN',
+  }),
+  Object.freeze({
+    marketId: SRC_MRC_ALPHA_MARKET_ID,
+    instrument: ALPHA_MARKET_INSTRUMENT_SRC_MRC,
+    symbol: 'SUNREY/MOONREY',
+    baseAssetId: SUNREY_COIN_NATIVE_ASSET_ID,
+    quoteAssetId: MOONREY_COIN_NATIVE_ASSET_ID,
+    quoteKind: 'ASSET',
+    legacyMarketIds: Object.freeze([SUNREY_MOONREY_MARKET_ID]),
+    legacyInstruments: Object.freeze(['SUNREY_COIN-MOONREY_COIN', 'SUNREY/MOONREY']),
+    state: 'OPEN',
+  }),
+]);
+
+export function canonicalAlphaMarkets(): readonly AlphaMarketDefinition[] {
+  return ALPHA_MARKETS;
+}
+
+export function resolveAlphaMarketRef(ref: string): AlphaMarketDefinition | undefined {
+  const normalized = ref.trim();
+  for (const market of ALPHA_MARKETS) {
+    if (
+      market.marketId === normalized ||
+      market.instrument === normalized ||
+      market.symbol === normalized ||
+      market.legacyMarketIds.some((legacy) => legacy === normalized) ||
+      market.legacyInstruments.includes(normalized)
+    ) {
+      return market;
+    }
+  }
+  const branded = asExchangeMarketId(normalized);
+  return ALPHA_MARKETS.find((market) => market.marketId === branded);
+}
+
+export function isAlphaUsdMarket(marketId: ExchangeMarketId): boolean {
+  return marketId === SRC_USD_ALPHA_MARKET_ID || marketId === MRC_USD_ALPHA_MARKET_ID;
+}
+
+export function isAlphaNativePairMarket(marketId: ExchangeMarketId): boolean {
+  return marketId === SRC_MRC_ALPHA_MARKET_ID;
+}

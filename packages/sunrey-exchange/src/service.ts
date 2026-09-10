@@ -93,6 +93,7 @@ import {
   INFORMATION_RIGHT_MARKET_ID,
   MANUFACTURING_CAPACITY_MARKET_ID,
   MOONREY_COIN_ASSET_ID,
+  MOONREY_COIN_USD_MARKET_ID,
   SUNREY_MOONREY_MARKET_ID,
 } from './ids.ts';
 import {
@@ -1541,6 +1542,23 @@ export class SunReyExchangeService {
         baseListingId: coinListing.listingId,
         quoteListingId: cashListing.listingId,
         baseAssetId: SUNREY_COIN_ASSET_ID,
+        quoteAssetId: 'USD',
+        quoteKind: 'FIAT_MONEY',
+        state: 'OPEN',
+        selfTradePolicy: 'CANCEL_INCOMING',
+        feeScheduleId: SIMULATION_FEE_SCHEDULE_ID,
+        maxSlippageUnits: 50n,
+        maxNotionalMinor: 1_000_000n,
+      }),
+    );
+    this.store.putMarket(
+      Object.freeze({
+        marketId: MOONREY_COIN_USD_MARKET_ID,
+        family: 'DIGITAL_ASSET',
+        bookId: 'book:moonrey-coin-usd' as ExchangeMarket['bookId'],
+        baseListingId: moonreyListing.listingId,
+        quoteListingId: cashListing.listingId,
+        baseAssetId: MOONREY_COIN_ASSET_ID,
         quoteAssetId: 'USD',
         quoteKind: 'FIAT_MONEY',
         state: 'OPEN',

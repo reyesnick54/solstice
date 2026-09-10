@@ -15,6 +15,8 @@ import {
   loadConsumerWallet,
   loadConsumerWalletByAsset,
   loadConsumerWalletByIdempotency,
+  loadConsumerAlphaIdempotency,
+  loadConsumerAlphaState,
   loadGrowthState,
   loadGrowExecutionState,
   loadPersonalDataVaultState,
@@ -22,7 +24,11 @@ import {
   persistConsentState,
   persistConsumerInternalPayment,
   persistConsumerWallet,
+  persistConsumerAlphaIdempotency,
+  persistConsumerAlphaState,
   persistGrowthState,
+  type ConsumerAlphaIdempotencyRecord,
+  type ConsumerAlphaSnapshot,
   persistGrowExecutionState,
   persistPersonalDataVaultState,
   persistenceEnvFromProcess as resolvePersistenceEnv,
@@ -162,4 +168,35 @@ export async function listProductWallets(
   customerId: string,
 ): Promise<readonly PersistedConsumerWallet[]> {
   return listConsumerWallets(pool, customerId);
+}
+
+export async function persistProductExchangeState(
+  pool: Pool,
+  customerId: string,
+  mode: string,
+  snapshot: ConsumerAlphaSnapshot,
+): Promise<void> {
+  await persistConsumerAlphaState(pool, customerId, mode, snapshot);
+}
+
+export async function loadProductExchangeState(
+  pool: Pool,
+  customerId: string,
+  mode: string,
+): Promise<ConsumerAlphaSnapshot | null> {
+  return loadConsumerAlphaState(pool, customerId, mode);
+}
+
+export async function persistProductExchangeIdempotency(
+  pool: Pool,
+  record: ConsumerAlphaIdempotencyRecord,
+): Promise<void> {
+  await persistConsumerAlphaIdempotency(pool, record);
+}
+
+export async function loadProductExchangeIdempotency(
+  pool: Pool,
+  idempotencyKey: string,
+): Promise<ConsumerAlphaIdempotencyRecord | null> {
+  return loadConsumerAlphaIdempotency(pool, idempotencyKey);
 }

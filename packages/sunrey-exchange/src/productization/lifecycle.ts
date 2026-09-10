@@ -7,7 +7,13 @@ import { createHash, randomUUID } from 'node:crypto';
 
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import {
+  ALPHA_MARKET_INSTRUMENT_MRC_USD,
+  ALPHA_MARKET_INSTRUMENT_SRC_MRC,
+  ALPHA_MARKET_INSTRUMENT_SRC_USD,
   MOONREY_COIN_NATIVE_ASSET_ID,
+  MRC_USD_ALPHA_MARKET_ID,
+  SRC_MRC_ALPHA_MARKET_ID,
+  SRC_USD_ALPHA_MARKET_ID,
   SUNREY_COIN_NATIVE_ASSET_ID,
   SUNREY_MOONREY_MARKET_ID,
 } from '../ids.ts';
@@ -56,6 +62,20 @@ function id(prefix: string): string {
   return `${prefix}_${randomUUID().replace(/-/g, '')}`;
 }
 
+function sandboxExecutableLimitPrice(
+  engine: ConsumerExchangeEngine,
+  side: 'BUY' | 'SELL',
+): bigint {
+  const maker = engine.getInternalAlphaLiquidity();
+  if (maker) {
+    const srcMrc = maker.getReferenceQuotes(engine.ops).find((quote) => quote.pair === 'SRC/MRC');
+    if (srcMrc) {
+      return side === 'BUY' ? srcMrc.askPriceUnits : srcMrc.bidPriceUnits;
+    }
+  }
+  return side === 'BUY' ? 2_600_000n : 2_400_000n;
+}
+
 function walletAuth(intentDisplay: string, origin: 'HUMAN' | 'AGENT' = 'HUMAN'): ConsumerAuthorization {
   return Object.freeze({
     sessionId: 'cses_phase_g',
@@ -92,20 +112,31 @@ export class DigitalAssetLifecycle {
   private snapshot: Record<string, unknown> | null = null;
   moonreyIssuanceAuthorized = false;
 
-  constructor(input: { readonly now: UtcInstant; readonly participantId?: string; readonly mode?: LifecycleMode }) {
+  constructor(input: {
+    readonly now: UtcInstant;
+    readonly participantId?: string;
+    readonly mode?: LifecycleMode;
+    readonly skipDefaultSeed?: boolean;
+    readonly engine?: ConsumerExchangeEngine;
+  }) {
     this.now = input.now;
     this.participantId = input.participantId ?? 'phase_g_user';
     this.mode = input.mode ?? 'READY';
-    this.engine = new ConsumerExchangeEngine({ now: input.now });
-    this.engine.registerConsumer({
-      participantId: this.participantId,
-      environment: 'SANDBOX',
-      jurisdiction: 'GB',
-      custodyReady: this.mode !== 'CUSTODY_UNAVAILABLE',
-      walletReady: this.mode !== 'CUSTODY_UNAVAILABLE',
-      complianceState: this.mode === 'COMPLIANCE_BLOCKED' ? 'BLOCKED' : 'CLEAR',
-      exchangeCapabilityActive: this.mode !== 'PROVIDER_KILL_SWITCH',
-    });
+    this.engine = input.engine ?? new ConsumerExchangeEngine({ now: input.now });
+    if (!input.skipDefaultSeed) {
+      this.engine.registerConsumer({
+        participantId: this.participantId,
+        environment: 'SANDBOX',
+        jurisdiction: 'GB',
+        custodyReady: this.mode !== 'CUSTODY_UNAVAILABLE',
+        walletReady: this.mode !== 'CUSTODY_UNAVAILABLE',
+        complianceState: this.mode === 'COMPLIANCE_BLOCKED' ? 'BLOCKED' : 'CLEAR',
+        exchangeCapabilityActive: this.mode !== 'PROVIDER_KILL_SWITCH',
+      });
+    }
+    if (input.skipDefaultSeed) {
+      return;
+    }
     if (this.mode === 'MARKET_CLOSED') {
       this.engine.ops.transitionMarket({
         marketId: SUNREY_MOONREY_MARKET_ID,
@@ -125,20 +156,7 @@ export class DigitalAssetLifecycle {
       });
     }
     if (this.mode !== 'NO_LIQUIDITY') {
-      this.engine.seedLiquidity({
-        participantId: `${this.participantId}_maker_sell`,
-        side: 'SELL',
-        quantity: 50n,
-        priceUnits: 2_500_000n,
-        now: input.now,
-      });
-      this.engine.seedLiquidity({
-        participantId: `${this.participantId}_maker_buy`,
-        side: 'BUY',
-        quantity: 50n,
-        priceUnits: 2_400_000n,
-        now: input.now,
-      });
+      this.engine.activateInternalAlphaLiquidity(input.now);
     }
     if (this.mode === 'PROVIDER_KILL_SWITCH') {
       engageExchangeKillSwitch({
@@ -156,7 +174,7 @@ export class DigitalAssetLifecycle {
       productionMoneyMovement: false,
       liveExchangeEnabled: false,
       screens: EXCHANGE_LOVABLE_SCREENS,
-      marketId: SUNREY_MOONREY_MARKET_ID,
+      marketId: SRC_MRC_ALPHA_MARKET_ID,
       eligibility: this.eligibility(),
       marketDataStatus: this.marketDataStatus(),
     };
@@ -175,25 +193,38 @@ export class DigitalAssetLifecycle {
     const market = this.engine.getConsumerMarket(this.now);
     return {
       schema: 'sunrey.consumer.exchange.markets.v1',
+      environment: 'INTERNAL_ALPHA',
       items: [
         {
-          marketId: market.marketId,
+          marketId: SRC_USD_ALPHA_MARKET_ID,
+          instrument: ALPHA_MARKET_INSTRUMENT_SRC_USD,
+          symbol: 'SUNREY/USD',
+          baseAsset: SUNREY_COIN_NATIVE_ASSET_ID,
+          quoteAsset: 'USD',
+          state: 'OPEN',
+          last: null,
+          marketDataStatus: this.marketDataStatus(),
+        },
+        {
+          marketId: MRC_USD_ALPHA_MARKET_ID,
+          instrument: ALPHA_MARKET_INSTRUMENT_MRC_USD,
+          symbol: 'MOONREY/USD',
+          baseAsset: MOONREY_COIN_NATIVE_ASSET_ID,
+          quoteAsset: 'USD',
+          state: 'OPEN',
+          last: null,
+          marketDataStatus: this.marketDataStatus(),
+        },
+        {
+          marketId: SRC_MRC_ALPHA_MARKET_ID,
+          instrument: ALPHA_MARKET_INSTRUMENT_SRC_MRC,
           symbol: 'SUNREY/MOONREY',
           baseAsset: market.baseAsset,
           quoteAsset: market.quoteAsset,
           state: market.marketState,
           last: market.lastEligibleTrade?.toString() ?? null,
           marketDataStatus: this.marketDataStatus(),
-        },
-        {
-          marketId: 'market:sunrey-coin-usd-simulation',
-          symbol: 'SUNREY/USD',
-          baseAsset: 'SUNREY_COIN',
-          quoteAsset: 'USD',
-          state: 'SANDBOX_INDICATIVE',
-          last: null,
-          marketDataStatus: 'SANDBOX',
-          informationalOnly: true,
+          legacyMarketId: SUNREY_MOONREY_MARKET_ID,
         },
       ],
     };
@@ -399,7 +430,7 @@ export class DigitalAssetLifecycle {
         side: proposal.side,
         orderType: 'LIMIT',
         quantity: proposal.quantity,
-        limitPriceUnits: proposal.side === 'BUY' ? 2_500_000n : 2_400_000n,
+        limitPriceUnits: sandboxExecutableLimitPrice(this.engine, proposal.side),
         priceProtectionBps: null,
         quoteId: null,
         previewId: proposal.previewId,

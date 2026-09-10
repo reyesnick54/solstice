@@ -549,6 +549,9 @@ function dispatchAuthenticated(
     const exchange = dispatchExchange(runtime.exchange, request, principal, requestId, headers, {
       skipWalletRoutes: Boolean(runtime.wallets),
     });
+    if (exchange instanceof Promise) {
+      return exchange;
+    }
     if (exchange) {
       return exchange;
     }
@@ -1552,7 +1555,7 @@ function handleAgentExternalEventsRoute(
   runtime: ConsumerBffRuntime,
   requestId: string,
   headers: Record<string, string>,
-  principal?: BffPrincipal,
+  principal?: import('./ports.ts').BffPrincipal,
 ): BffResponse {
   const evidence = runtime.agentExternalEvidence;
   if (!evidence) {
@@ -1628,7 +1631,7 @@ function dispatchExchange(
   requestId: string,
   headers: Record<string, string>,
   options: { readonly skipWalletRoutes?: boolean } = {},
-): BffResponse | null {
+): BffResponse | null | Promise<BffResponse | null> {
   const { method, path, query, body } = request;
   const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
   if (isLifecycleExchange(exchange)) {
@@ -1657,7 +1660,7 @@ function dispatchExchange(
     }
     if (path.startsWith('/api/v1/exchange/proposals/') && path.endsWith('/submit') && method === 'POST') {
       const id = path.slice('/api/v1/exchange/proposals/'.length, -'/submit'.length);
-      return result(exchange.submit(principal, id, rec, requestId), headers);
+      return (async () => result(await exchange.submit(principal, id, rec, requestId), headers))();
     }
     if (path === '/api/v1/exchange/orders' && method === 'GET') return result(exchange.orders(principal, requestId), headers);
     if (path === '/api/v1/exchange/fills' && method === 'GET') return result(exchange.fills(principal, requestId), headers);
@@ -1665,9 +1668,13 @@ function dispatchExchange(
     if (!options.skipWalletRoutes) {
       if (path === '/api/v1/wallets' && method === 'GET') return result(exchange.wallets(principal, requestId), headers);
       if (path === '/api/v1/wallets/deposit-address' && method === 'GET') return result(exchange.depositAddress(principal, requestId), headers);
-      if (path === '/api/v1/wallets/deposits/simulate' && method === 'POST') return result(exchange.simulateDeposit(principal, rec, requestId), headers);
+      if (path === '/api/v1/wallets/deposits/simulate' && method === 'POST') {
+        return (async () => result(await exchange.simulateDeposit(principal, rec, requestId), headers))();
+      }
       if (path === '/api/v1/wallets/withdrawals/quote' && method === 'POST') return result(exchange.withdrawalQuote(principal, rec, requestId), headers);
-      if (path === '/api/v1/wallets/withdrawals' && method === 'POST') return result(exchange.withdraw(principal, rec, requestId), headers);
+      if (path === '/api/v1/wallets/withdrawals' && method === 'POST') {
+        return (async () => result(await exchange.withdraw(principal, rec, requestId), headers))();
+      }
       if (path === '/api/v1/wallets/transactions' && method === 'GET') return result(exchange.transactions(principal, requestId), headers);
     }
     if (path === '/api/v1/economy' && method === 'GET') return result(exchange.economy(principal, requestId), headers);
@@ -1954,8 +1961,7 @@ function dispatchConversation(
   }
   if (path.startsWith('/api/v1/agent/conversations/') && path.endsWith('/events') && method === 'GET') {
     const id = path.slice('/api/v1/agent/conversations/'.length, -'/events'.length);
-    const after = Number(query.after ?? '0');
-    return result(surface.stream(principal, id, Number.isFinite(after) ? after : 0, requestId), headers);
+    return result(surface.stream(principal, id, Number.isFinite(Number(query.after ?? '0')) ? Number(query.after ?? '0') : 0, requestId), headers);
   }
   if (path.startsWith('/api/v1/agent/conversations/') && method === 'GET') {
     const id = path.slice('/api/v1/agent/conversations/'.length);
@@ -2049,6 +2055,7 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/action-center/{id}/dismiss',
   'GET /api/v1/agent/authorization-policy',
   'GET /api/v1/accounts',
+  'POST /api/v1/accounts',
   'GET /api/v1/accounts/{id}',
   'GET /api/v1/accounts/{id}/activity',
   'GET /api/v1/accounts/{id}/statement',
@@ -2284,6 +2291,7 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/money/settlements',
   'POST /api/v1/money/reconcile',
   'GET /api/v1/money/market-price-boundary',
+  'POST /api/v1/sandbox/funding',
   'GET /api/v1/assets',
   'GET /api/v1/assets/{assetId}',
   'GET /api/v1/hin/rights',
@@ -2402,6 +2410,12 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/access/checkout',
   'POST /api/v1/access/reservations',
   'GET /api/v1/access/providers',
+  'GET /api/v1/access/providers/{providerId}',
+  'GET /api/v1/access/providers/{providerId}/health',
+  'GET /api/v1/access/offers',
+  'GET /api/v1/access/search',
+  'GET /api/v1/access/recommendations',
+  'GET /api/v1/access/provider-status',
   'POST /api/v1/access/redemptions/preview',
   'POST /api/v1/access/redemptions',
   'POST /api/v1/access/transactions/{id}/confirm',

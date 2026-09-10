@@ -886,7 +886,17 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     hinContributions,
     productiveEconomy,
     vault,
-    exchange: createExchangeBffSurface(),
+    exchange: (() => {
+      const surface = createExchangeBffSurface();
+      surface.seedParticipant({
+        participantId: personas.exchange.customerId,
+        usdAccountId: 'acct_sandbox_exchange_usd',
+        usdMinor: 9_000n,
+        sunrey: 1_500_000n,
+        moonrey: 750_000n,
+      });
+      return surface;
+    })(),
     dataRights,
     access,
     personalEconomy,
