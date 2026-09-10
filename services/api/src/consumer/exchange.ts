@@ -442,7 +442,6 @@ export class ExchangeBffSurface {
     };
   }
 
-  private fail(requestId: string, category: 'VALIDATION' | 'POLICY' | 'AUTH' | 'TEMPORARY_UNAVAILABLE' | 'NOT_FOUND', code: string): BffErrorEnvelope {
   private async persistWorld(customerId: string, mode: LifecycleMode, world: DigitalAssetLifecycle): Promise<void> {
     if (!this.persistence) {
       return;
@@ -487,7 +486,7 @@ export class ExchangeBffSurface {
     );
   }
 
-  private fail(requestId: string, category: 'VALIDATION' | 'POLICY' | 'AUTH' | 'TEMPORARY_UNAVAILABLE', code: string): BffErrorEnvelope {
+  private fail(requestId: string, category: 'VALIDATION' | 'POLICY' | 'AUTH' | 'TEMPORARY_UNAVAILABLE' | 'NOT_FOUND', code: string): BffErrorEnvelope {
     const errorCode =
       code === 'STEP_UP_REQUIRED'
         ? 'STEP_UP_REQUIRED'

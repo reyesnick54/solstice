@@ -191,7 +191,6 @@ export class DigitalAssetLifecycle {
       alphaStatus: alphaExchangeHomeStatus(),
       environment: alphaExchangeEnvironment(),
       screens: EXCHANGE_LOVABLE_SCREENS,
-      marketId: SUNREY_MOONREY_MARKET_ID,
       markets: alphaMarketCatalog(this.now),
       marketId: SRC_MRC_ALPHA_MARKET_ID,
       eligibility: this.eligibility(),
@@ -222,7 +221,6 @@ export class DigitalAssetLifecycle {
       schema: 'sunrey.consumer.exchange.markets.v1',
       alphaStatus: alphaExchangeHomeStatus(),
       environment: alphaExchangeEnvironment(),
-      environment: 'INTERNAL_ALPHA',
       items: [
         ...alphaItems,
         {
