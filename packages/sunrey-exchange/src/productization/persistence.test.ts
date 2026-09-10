@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { asUtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant } from '@solstice/domain';
 import { DigitalAssetLifecycle } from './lifecycle.ts';
 import {
   captureConsumerAlphaSnapshot,
@@ -42,8 +42,8 @@ describe('consumer alpha exchange persistence snapshot', () => {
     assert.equal(restored.engine.ops.clearing.orders.size, world.engine.ops.clearing.orders.size);
     assert.equal(restored.engine.ops.clearing.trades.size, world.engine.ops.clearing.trades.size);
     assert.equal(
-      restored.engine.ops.clearing.chain.issued.get('asset:sunrey_coin')?.toString(),
-      world.engine.ops.clearing.chain.issued.get('asset:sunrey_coin')?.toString(),
+      restored.engine.ops.clearing.chain.issued.get('SUNREY_COIN')?.toString(),
+      world.engine.ops.clearing.chain.issued.get('SUNREY_COIN')?.toString(),
     );
   });
 

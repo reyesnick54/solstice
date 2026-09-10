@@ -1,12 +1,13 @@
 import type { Pool } from 'pg';
 
+import type { UtcInstant } from '@solstice/domain';
 import {
   captureConsumerAlphaSnapshot,
   hydrateConsumerAlphaLifecycle,
   type ConsumerAlphaIdempotencyRecord,
   type ConsumerAlphaIdempotencyResource,
   type LifecycleMode,
-} from '../../../../packages/sunrey-exchange/src/productization/index.ts';
+} from '@solstice/sunrey-exchange';
 import type { DurableSimulationRuntime } from '../../../accounts/src/product-durable-adapters.ts';
 import {
   loadProductExchangeIdempotency,
@@ -37,7 +38,7 @@ export type DurableExchangeSurface = ExchangeBffSurface & {
  */
 export async function createDurableExchangeSurface(
   durable: DurableSimulationRuntime,
-  now?: () => import('../../../../packages/domain/src/time.ts').UtcInstant,
+  now?: () => UtcInstant,
 ): Promise<DurableExchangeSurface> {
   const pool = durable.session.pools.customer;
   const clock = now ?? (() => durable.runtime.clock.now());

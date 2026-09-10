@@ -6,6 +6,8 @@ import {
   type ConsumerAlphaIdempotencyRecord,
   type ConsumerAlphaSnapshot,
 } from '@solstice/sunrey-exchange';
+
+export type { ConsumerAlphaIdempotencyRecord, ConsumerAlphaSnapshot };
 import { withClient } from '../postgres/pools.ts';
 import { isUniqueViolation } from '../postgres/write.ts';
 

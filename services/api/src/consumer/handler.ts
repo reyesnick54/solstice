@@ -318,19 +318,19 @@ export async function handleConsumerBff(runtime: ConsumerBffRuntime, request: Bf
   }
 
   try {
-    return dispatchAuthenticated(runtime, request, principal, requestId, headers);
+    return await dispatchAuthenticated(runtime, request, principal, requestId, headers);
   } catch {
     return json(500, bffFailClosedInternal(requestId), headers);
   }
 }
 
-function dispatchAuthenticated(
+async function dispatchAuthenticated(
   runtime: ConsumerBffRuntime,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
   headers: Record<string, string>,
-): BffResponse | Promise<BffResponse> {
+): Promise<BffResponse> {
   const { method, path, query, body } = request;
   const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
 

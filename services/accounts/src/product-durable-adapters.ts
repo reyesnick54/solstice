@@ -27,6 +27,8 @@ import {
   persistConsumerAlphaIdempotency,
   persistConsumerAlphaState,
   persistGrowthState,
+  type ConsumerAlphaIdempotencyRecord,
+  type ConsumerAlphaSnapshot,
   persistGrowExecutionState,
   persistPersonalDataVaultState,
   persistenceEnvFromProcess as resolvePersistenceEnv,
@@ -172,7 +174,7 @@ export async function persistProductExchangeState(
   pool: Pool,
   customerId: string,
   mode: string,
-  snapshot: import('@solstice/sunrey-exchange').ConsumerAlphaSnapshot,
+  snapshot: ConsumerAlphaSnapshot,
 ): Promise<void> {
   await persistConsumerAlphaState(pool, customerId, mode, snapshot);
 }
@@ -181,13 +183,13 @@ export async function loadProductExchangeState(
   pool: Pool,
   customerId: string,
   mode: string,
-): Promise<import('@solstice/sunrey-exchange').ConsumerAlphaSnapshot | null> {
+): Promise<ConsumerAlphaSnapshot | null> {
   return loadConsumerAlphaState(pool, customerId, mode);
 }
 
 export async function persistProductExchangeIdempotency(
   pool: Pool,
-  record: import('@solstice/sunrey-exchange').ConsumerAlphaIdempotencyRecord,
+  record: ConsumerAlphaIdempotencyRecord,
 ): Promise<void> {
   await persistConsumerAlphaIdempotency(pool, record);
 }
@@ -195,6 +197,6 @@ export async function persistProductExchangeIdempotency(
 export async function loadProductExchangeIdempotency(
   pool: Pool,
   idempotencyKey: string,
-): Promise<import('@solstice/sunrey-exchange').ConsumerAlphaIdempotencyRecord | null> {
+): Promise<ConsumerAlphaIdempotencyRecord | null> {
   return loadConsumerAlphaIdempotency(pool, idempotencyKey);
 }

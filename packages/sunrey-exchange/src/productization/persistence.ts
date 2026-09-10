@@ -3,7 +3,7 @@
  * Captures workflow state only — not a ledger, balance authority, or live venue.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { ConsumerOrderStatus, ConsumerPriceAlert, ConsumerTradeReceipt, ConsumerTradingProfile } from '../consumer/types.ts';
 import type { DigitalOrder, ImmutableTrade } from '../types.ts';
 import { InMemoryNativeChain, type SimulatedHolding, type SimulatedLock, type SimulatedTx } from '../native-clearing/chain.ts';
@@ -105,7 +105,7 @@ export function captureConsumerAlphaSnapshot(world: DigitalAssetLifecycle): Cons
   const clearing = ops.clearing;
   const chain = clearing.chain;
   return Object.freeze({
-    schema: 'sunrey-exchange-consumer-alpha/1',
+    schema: 'sunrey-exchange-consumer-alpha/1' as const,
     productionActive: false,
     liveTradingEnabled: false,
     participantId: world.participantId,
@@ -134,7 +134,7 @@ export function captureConsumerAlphaSnapshot(world: DigitalAssetLifecycle): Cons
         clearing: captureClearingSnapshot(clearing, chain),
       }),
     }),
-  });
+  }) as unknown as ConsumerAlphaSnapshot;
 }
 
 function captureClearingSnapshot(
@@ -182,7 +182,7 @@ function captureClearingSnapshot(
       usedNonces: [...chain.usedNonces],
       exchangeKeys: [...chain.exchangeKeys],
     }),
-  });
+  }) as unknown as ConsumerAlphaClearingSnapshot;
 }
 
 export function hydrateConsumerAlphaLifecycle(input: {
@@ -262,7 +262,9 @@ function hydrateEngineMaps(engine: ConsumerExchangeEngine, snapshot: ConsumerAlp
     engine.profiles.set(profile.participantId, profile);
   }
   for (const order of snapshot.orders) {
-    engine.orders.set(order.orderId, order);
+    if (order.orderId) {
+      engine.orders.set(order.orderId, order);
+    }
   }
   for (const [clientOrderId, orderId] of snapshot.ordersByClient) {
     engine.ordersByClient.set(clientOrderId, orderId);

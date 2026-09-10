@@ -3,10 +3,8 @@
  * Frontend-provided instructions are never trusted order or issuance state.
  */
 
-import type { UtcInstant } from '../../../../packages/domain/src/time.ts';
-import { asUtcInstant } from '../../../../packages/domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import {
-  captureConsumerAlphaSnapshot,
   DigitalAssetLifecycle,
   MARKET_DATA_CLIENT_STATUSES,
   moonreyCoinEconomyView,
@@ -14,7 +12,7 @@ import {
   type ConsumerAlphaIdempotencyRecord,
   type ConsumerAlphaIdempotencyResource,
   type LifecycleMode,
-} from '../../../../packages/sunrey-exchange/src/productization/index.ts';
+} from '@solstice/sunrey-exchange';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import type { BffPrincipal } from './ports.ts';
 
