@@ -202,6 +202,16 @@ export { exchangeUsage, runExchangeCommand } from './cli.ts';
 export * as marketData from './market-data/index.ts';
 export * as marketReference from './market-reference/index.ts';
 export * as cryptoMarket from './crypto-market/index.ts';
+export {
+  ALL_CRYPTO_MARKET_ADAPTERS,
+  buildBffCryptoHistoryAsync,
+  buildBffCryptoQuoteAsync,
+  createCryptoMarketReferenceService,
+  DEFAULT_CRYPTO_NOW,
+  isNativeSunReyAsset,
+  resolveCryptoAsset,
+} from './crypto-market/index.ts';
+export type { CryptoHistoryInterval } from './crypto-market/index.ts';
 export * from './regulated/index.ts';
 export {
   MarketOperationsEngine,
