@@ -160,6 +160,7 @@ export type ConsumerBffRuntime = {
   readonly hinAccess?: import('../../../../packages/human-access-economy/src/hin-access.ts').HumanInformationAccessBridge;
   readonly vault?: PersonalDataVaultProduct;
   readonly access?: HumanAccessEconomyProduct;
+  readonly accessLive?: import('./access-live-adapter.ts').AccessLiveBff;
   readonly personalEconomy?: PersonalEconomyBffSurface;
   readonly worldExternalData?: import('./world-external-data-adapter.ts').WorldExternalDataBff;
   readonly marketReference?: MarketReferenceBffSurface;
@@ -655,7 +656,9 @@ function dispatchAuthenticated(
     }
   }
   if (runtime.access) {
-    const access = dispatchAccess(runtime.access, request, principal, requestId, headers);
+    const access = dispatchAccess(runtime.access, request, principal, requestId, headers, {
+      ...(runtime.accessLive ? { accessLive: runtime.accessLive } : {}),
+    });
     if (access) {
       return access;
     }
