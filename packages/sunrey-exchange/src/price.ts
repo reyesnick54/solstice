@@ -89,6 +89,27 @@ export function quoteAssetQuantity(price: ExchangePrice, quantity: AssetQuantity
   return AssetQuantity.fromScaledUnits(quoteForQuantity(price, quantity), price.quoteAssetId);
 }
 
+/** Floor trade price so native clearing can reserve an exact quote for quantity. */
+export function nativeClearingExactPriceUnits(
+  priceUnits: bigint,
+  quantityScaled: bigint,
+  basePrecision: number,
+): bigint {
+  if (quantityScaled <= 0n) {
+    return priceUnits;
+  }
+  const divisor = 10n ** BigInt(basePrecision);
+  const raw = quantityScaled * priceUnits;
+  if (raw % divisor === 0n) {
+    return priceUnits;
+  }
+  const flooredRaw = (raw / divisor) * divisor;
+  if (flooredRaw === 0n) {
+    return priceUnits;
+  }
+  return flooredRaw / quantityScaled;
+}
+
 function assertCompatible(a: ExchangePrice, b: ExchangePrice): void {
   if (
     a.baseAssetId !== b.baseAssetId ||
