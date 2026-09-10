@@ -62,6 +62,20 @@ function id(prefix: string): string {
   return `${prefix}_${randomUUID().replace(/-/g, '')}`;
 }
 
+function sandboxExecutableLimitPrice(
+  engine: ConsumerExchangeEngine,
+  side: 'BUY' | 'SELL',
+): bigint {
+  const maker = engine.getInternalAlphaLiquidity();
+  if (maker) {
+    const srcMrc = maker.getReferenceQuotes(engine.ops).find((quote) => quote.pair === 'SRC/MRC');
+    if (srcMrc) {
+      return side === 'BUY' ? srcMrc.askPriceUnits : srcMrc.bidPriceUnits;
+    }
+  }
+  return side === 'BUY' ? 2_600_000n : 2_400_000n;
+}
+
 function walletAuth(intentDisplay: string, origin: 'HUMAN' | 'AGENT' = 'HUMAN'): ConsumerAuthorization {
   return Object.freeze({
     sessionId: 'cses_phase_g',
@@ -416,7 +430,7 @@ export class DigitalAssetLifecycle {
         side: proposal.side,
         orderType: 'LIMIT',
         quantity: proposal.quantity,
-        limitPriceUnits: proposal.side === 'BUY' ? 2_500_000n : 2_400_000n,
+        limitPriceUnits: sandboxExecutableLimitPrice(this.engine, proposal.side),
         priceProtectionBps: null,
         quoteId: null,
         previewId: proposal.previewId,
