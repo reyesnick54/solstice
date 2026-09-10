@@ -1075,13 +1075,15 @@ function dispatchAuthenticated(
   }
   if (path.startsWith('/api/v1/markets/crypto/') && path.endsWith('/history') && method === 'GET') {
     const assetId = path.slice('/api/v1/markets/crypto/'.length, -'/history'.length);
-    const body = cryptoMarket.history(principal, decodeURIComponent(assetId), request.query, requestId);
-    return json(isBffError(body) ? statusForError(body) : 200, body, headers);
+    return cryptoMarket
+      .history(principal, decodeURIComponent(assetId), request.query, requestId)
+      .then((body) => json(isBffError(body) ? statusForError(body) : 200, body, headers));
   }
   if (path.startsWith('/api/v1/markets/crypto/') && method === 'GET') {
     const assetId = path.slice('/api/v1/markets/crypto/'.length);
-    const body = cryptoMarket.asset(principal, decodeURIComponent(assetId), requestId);
-    return json(isBffError(body) ? statusForError(body) : 200, body, headers);
+    return cryptoMarket
+      .asset(principal, decodeURIComponent(assetId), requestId)
+      .then((body) => json(isBffError(body) ? statusForError(body) : 200, body, headers));
   }
   if (path === '/api/v1/world/resources' && method === 'GET') {
     return json(200, marketReference.worldResources(principal, requestId), headers);
@@ -1553,7 +1555,7 @@ function handleAgentExternalEventsRoute(
   runtime: ConsumerBffRuntime,
   requestId: string,
   headers: Record<string, string>,
-  principal?: BffPrincipal,
+  principal?: import('./ports.ts').BffPrincipal,
 ): BffResponse {
   const evidence = runtime.agentExternalEvidence;
   if (!evidence) {
@@ -1959,8 +1961,7 @@ function dispatchConversation(
   }
   if (path.startsWith('/api/v1/agent/conversations/') && path.endsWith('/events') && method === 'GET') {
     const id = path.slice('/api/v1/agent/conversations/'.length, -'/events'.length);
-    const after = Number(query.after ?? '0');
-    return result(surface.stream(principal, id, Number.isFinite(after) ? after : 0, requestId), headers);
+    return result(surface.stream(principal, id, Number.isFinite(Number(query.after ?? '0')) ? Number(query.after ?? '0') : 0, requestId), headers);
   }
   if (path.startsWith('/api/v1/agent/conversations/') && method === 'GET') {
     const id = path.slice('/api/v1/agent/conversations/'.length);
