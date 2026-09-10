@@ -6,7 +6,7 @@ import { buildFixtureHistory, normalizeFixtureQuote } from './adapters/normalize
 import { resolveCryptoAsset } from './assets.ts';
 import type { CryptoHistoryInterval } from './types.ts';
 import { defaultCryptoMarketNow } from './validation.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const DEFAULT_CRYPTO_NOW = defaultCryptoMarketNow();
 
