@@ -62,6 +62,15 @@ function id(prefix: string): string {
   return `${prefix}_${randomUUID().replace(/-/g, '')}`;
 }
 
+/** Cross the Internal Alpha book without leaving resting orders that self-trade later. */
+function crossingLimitPrice(engine: ConsumerExchangeEngine, side: 'BUY' | 'SELL'): bigint {
+  const snapshot = engine.ops.snapshot('DEPTH');
+  if (side === 'BUY') {
+    return snapshot.bestAsk ?? 2_500_000n;
+  }
+  return snapshot.bestBid ?? 2_400_000n;
+}
+
 function walletAuth(intentDisplay: string, origin: 'HUMAN' | 'AGENT' = 'HUMAN'): ConsumerAuthorization {
   return Object.freeze({
     sessionId: 'cses_phase_g',
@@ -416,7 +425,7 @@ export class DigitalAssetLifecycle {
         side: proposal.side,
         orderType: 'LIMIT',
         quantity: proposal.quantity,
-        limitPriceUnits: proposal.side === 'BUY' ? 2_500_000n : 2_400_000n,
+        limitPriceUnits: crossingLimitPrice(this.engine, proposal.side),
         priceProtectionBps: null,
         quoteId: null,
         previewId: proposal.previewId,
