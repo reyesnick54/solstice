@@ -46,8 +46,8 @@ function hinRuntime(): ConsumerBffRuntime {
   };
 }
 
-function call(runtime: ConsumerBffRuntime, method: string, path: string, persona: 'basic_verified' | 'exchange') {
-  return handleConsumerBff(runtime, {
+async function call(runtime: ConsumerBffRuntime, method: string, path: string, persona: 'basic_verified' | 'exchange') {
+  return await handleConsumerBff(runtime, {
     method,
     path,
     query: {},
@@ -58,9 +58,9 @@ function call(runtime: ConsumerBffRuntime, method: string, path: string, persona
 }
 
 describe('Consumer BFF HIN rights marketplace', () => {
-  it('lists subject-scoped information rights without ownership transfer', () => {
+  it('lists subject-scoped information rights without ownership transfer', async () => {
     const runtime = hinRuntime();
-    const listed = call(runtime, 'GET', '/api/v1/hin/rights', 'basic_verified');
+    const listed = await call(runtime, 'GET', '/api/v1/hin/rights', 'basic_verified');
     assert.equal(listed.status, 200);
     const body = listed.body as { items: { ownershipTransferred: boolean; usageRightOnly: boolean }[]; productionActivated: boolean };
     assert.equal(body.productionActivated, false);
@@ -69,34 +69,34 @@ describe('Consumer BFF HIN rights marketplace', () => {
     assert.equal(body.items[0]?.usageRightOnly, true);
   });
 
-  it('shows active licenses and does not guarantee earnings', () => {
+  it('shows active licenses and does not guarantee earnings', async () => {
     const runtime = hinRuntime();
-    const licenses = call(runtime, 'GET', '/api/v1/hin/licenses', 'basic_verified');
+    const licenses = await call(runtime, 'GET', '/api/v1/hin/licenses', 'basic_verified');
     assert.equal(licenses.status, 200);
-    const earnings = call(runtime, 'GET', '/api/v1/hin/earnings', 'basic_verified');
+    const earnings = await call(runtime, 'GET', '/api/v1/hin/earnings', 'basic_verified');
     assert.equal(earnings.status, 200);
     const body = earnings.body as { guaranteed: boolean; compensationGuaranteed: boolean };
     assert.equal(body.guaranteed, false);
     assert.equal(body.compensationGuaranteed, false);
-    const activity = call(runtime, 'GET', '/api/v1/hin/earnings/activity', 'basic_verified');
+    const activity = await call(runtime, 'GET', '/api/v1/hin/earnings/activity', 'basic_verified');
     assert.equal(activity.status, 200);
   });
 
-  it('denies cross-user rights and hides licensee controls', () => {
+  it('denies cross-user rights and hides licensee controls', async () => {
     const runtime = hinRuntime();
-    const other = call(runtime, 'GET', '/api/v1/hin/rights', 'exchange');
+    const other = await call(runtime, 'GET', '/api/v1/hin/rights', 'exchange');
     assert.equal(other.status, 200);
     const body = other.body as { items: unknown[] };
     assert.equal(body.items.length, 0);
-    const licensee = call(runtime, 'GET', '/api/v1/hin/licensee/credentials', 'basic_verified');
+    const licensee = await call(runtime, 'GET', '/api/v1/hin/licensee/credentials', 'basic_verified');
     assert.equal(licensee.status, 404);
   });
 
-  it('pauses HIN participation', () => {
+  it('pauses HIN participation', async () => {
     const runtime = hinRuntime();
-    const paused = call(runtime, 'POST', '/api/v1/hin/participation/pause', 'basic_verified');
+    const paused = await call(runtime, 'POST', '/api/v1/hin/participation/pause', 'basic_verified');
     assert.equal(paused.status, 200);
-    const participation = call(runtime, 'GET', '/api/v1/hin/participation', 'basic_verified');
+    const participation = await call(runtime, 'GET', '/api/v1/hin/participation', 'basic_verified');
     const body = participation.body as { status: string; compensationGuaranteed: boolean };
     assert.equal(body.status, 'PAUSED');
     assert.equal(body.compensationGuaranteed, false);
@@ -140,7 +140,7 @@ function contributionRuntime(): ConsumerBffRuntime {
 }
 
 describe('Consumer BFF HIN contributions', () => {
-  it('catalogs the read-only HIN resource and does not expose verification or issuance routes', () => {
+  it('catalogs the read-only HIN resource and does not expose verification or issuance routes', async () => {
     const hin = CONSUMER_RESOURCE_CATALOG.find((row) => row.group === 'HIN');
     assert.ok(hin);
     assert.deepEqual(hin?.methods, ['GET']);
@@ -151,9 +151,9 @@ describe('Consumer BFF HIN contributions', () => {
     assert.ok(!CONSUMER_BFF_ROUTES.some((row) => row.includes('hin') && (row.includes('verify') || row.includes('issuance') || row.includes('mint'))));
   });
 
-  it('returns customer contributions and aggregate metrics without raw personal data', () => {
+  it('returns customer contributions and aggregate metrics without raw personal data', async () => {
     const runtime = contributionRuntime();
-    const list = handleConsumerBff(runtime, {
+    const list = await handleConsumerBff(runtime, {
       method: 'GET',
       path: '/api/v1/hin/contributions',
       query: {},
@@ -166,7 +166,7 @@ describe('Consumer BFF HIN contributions', () => {
     assert.equal(body.items[0]?.containsRawPersonalData, false);
     assert.equal(body.items[0]?.issuancePromised, false);
 
-    const metrics = handleConsumerBff(runtime, {
+    const metrics = await handleConsumerBff(runtime, {
       method: 'GET',
       path: '/api/v1/hin/metrics',
       query: {},
@@ -178,7 +178,7 @@ describe('Consumer BFF HIN contributions', () => {
     assert.equal(aggregate.suppression.individualRecordsExposed, false);
     assert.equal(aggregate.economicValueInputs.isMintAmount, false);
 
-    const summary = handleConsumerBff(runtime, {
+    const summary = await handleConsumerBff(runtime, {
       method: 'GET',
       path: '/api/v1/hin/me/summary',
       query: {},
@@ -191,9 +191,9 @@ describe('Consumer BFF HIN contributions', () => {
     assert.equal(me.compensation.mintRequested, false);
   });
 
-  it('rejects privileged verify and mint posts', () => {
+  it('rejects privileged verify and mint posts', async () => {
     const runtime = contributionRuntime();
-    const verify = handleConsumerBff(runtime, {
+    const verify = await handleConsumerBff(runtime, {
       method: 'POST',
       path: '/api/v1/hin/contributions/hec_1/verify',
       query: {},
@@ -201,7 +201,7 @@ describe('Consumer BFF HIN contributions', () => {
       authorization: `Bearer ${TOKEN}`,
     });
     assert.ok(verify.status === 404 || verify.status === 405);
-    const mint = handleConsumerBff(runtime, {
+    const mint = await handleConsumerBff(runtime, {
       method: 'POST',
       path: '/api/v1/hin/issuance',
       query: {},

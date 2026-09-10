@@ -4,7 +4,7 @@ import { describe, it } from 'node:test';
 import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
 import { handleConsumerBff, type ConsumerBffRuntime } from './consumer/handler.ts';
 
-function call(
+async function call(
   world: ReturnType<typeof createSandboxWorld>,
   method: string,
   path: string,
@@ -17,7 +17,7 @@ function call(
     identity: world.runtime.identity.service,
     dataRights: world.dataRights,
   };
-  return handleConsumerBff(runtime, {
+  return await handleConsumerBff(runtime, {
     method,
     path,
     query: {},
@@ -28,9 +28,9 @@ function call(
 }
 
 describe('Consumer BFF consent and data rights', () => {
-  it('lists permissions without implicit monetization opt-in', () => {
+  it('lists permissions without implicit monetization opt-in', async () => {
     const world = createSandboxWorld();
-    const listed = call(world, 'GET', '/api/v1/data/permissions', 'basic_verified');
+    const listed = await call(world, 'GET', '/api/v1/data/permissions', 'basic_verified');
     assert.equal(listed.status, 200);
     const body = listed.body as {
       implicitMonetizationOptIn: boolean;
@@ -44,9 +44,9 @@ describe('Consumer BFF consent and data rights', () => {
     assert.equal(licensing.requiredForBasicAccount, false);
   });
 
-  it('grants a bundle, isolates users, and revokes immediately', () => {
+  it('grants a bundle, isolates users, and revokes immediately', async () => {
     const world = createSandboxWorld();
-    const granted = call(world, 'POST', '/api/v1/data/consents', 'basic_verified', {
+    const granted = await call(world, 'POST', '/api/v1/data/consents', 'basic_verified', {
       bundleId: 'AGENT_SPENDING_DATA',
       expiresAt: '2027-08-23T12:00:00.000Z',
       idempotencyKey: 'bff-agent',
@@ -55,10 +55,10 @@ describe('Consumer BFF consent and data rights', () => {
     const grant = granted.body as { consentId: string; dataCategories: string[]; purposeId: string };
     assert.equal(grant.purposeId, 'agent-assistance');
     assert.deepEqual(grant.dataCategories, ['TRANSACTION_DATA', 'PURCHASE_HISTORY']);
-    const other = call(world, 'GET', '/api/v1/data/consents', 'exchange');
+    const other = await call(world, 'GET', '/api/v1/data/consents', 'exchange');
     assert.equal(other.status, 200);
     assert.equal((other.body as { items: unknown[] }).items.length, 0);
-    const revoked = call(world, 'POST', `/api/v1/data/consents/${grant.consentId}/revoke`, 'basic_verified', {
+    const revoked = await call(world, 'POST', `/api/v1/data/consents/${grant.consentId}/revoke`, 'basic_verified', {
       reason: 'stop agent spending',
       idempotencyKey: 'bff-revoke',
     });
@@ -66,27 +66,27 @@ describe('Consumer BFF consent and data rights', () => {
     assert.equal((revoked.body as { revocation: { historicalProcessingErased: boolean } }).revocation.historicalProcessingErased, false);
   });
 
-  it('enrolls and withdraws HIN without closing financial services', () => {
+  it('enrolls and withdraws HIN without closing financial services', async () => {
     const world = createSandboxWorld();
-    const before = call(world, 'GET', '/api/v1/hin/participation', 'basic_verified');
+    const before = await call(world, 'GET', '/api/v1/hin/participation', 'basic_verified');
     assert.equal(before.status, 200);
     assert.equal((before.body as { state: string }).state, 'NOT_ENROLLED');
-    const enrolled = call(world, 'POST', '/api/v1/hin/participation/enroll', 'basic_verified', {
+    const enrolled = await call(world, 'POST', '/api/v1/hin/participation/enroll', 'basic_verified', {
       expiresAt: '2027-08-23T12:00:00.000Z',
       idempotencyKey: 'bff-hin',
     });
     assert.equal(enrolled.status, 201);
     assert.equal((enrolled.body as { state: string; financialServicesRemainOpen: boolean }).state, 'ENROLLED');
-    const withdrawn = call(world, 'POST', '/api/v1/hin/participation/withdraw', 'basic_verified', {});
+    const withdrawn = await call(world, 'POST', '/api/v1/hin/participation/withdraw', 'basic_verified', {});
     assert.equal(withdrawn.status, 200);
     const body = withdrawn.body as { state: string; financialServicesRemainOpen: boolean };
     assert.equal(body.state, 'WITHDRAWN');
     assert.equal(body.financialServicesRemainOpen, true);
   });
 
-  it('submits a rights request and records access history without raw values', () => {
+  it('submits a rights request and records access history without raw values', async () => {
     const world = createSandboxWorld();
-    const submitted = call(world, 'POST', '/api/v1/data/rights/requests', 'basic_verified', {
+    const submitted = await call(world, 'POST', '/api/v1/data/rights/requests', 'basic_verified', {
       type: 'EXPORT',
       idempotencyKey: 'bff-export',
     });
@@ -108,7 +108,7 @@ describe('Consumer BFF consent and data rights', () => {
       actorKind: 'FIRST_PARTY_SERVICE',
       recordId: 'pda_ref',
     });
-    const history = call(world, 'GET', '/api/v1/data/access-history', 'basic_verified');
+    const history = await call(world, 'GET', '/api/v1/data/access-history', 'basic_verified');
     assert.equal(history.status, 200);
     const text = JSON.stringify(history.body);
     assert.equal(text.includes('rawValueLogged":false') || text.includes('"rawValueLogged": false'), true);

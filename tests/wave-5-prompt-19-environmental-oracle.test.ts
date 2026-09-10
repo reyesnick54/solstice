@@ -37,7 +37,7 @@ const NOW = defaultEnvironmentalNow();
 const SF = Object.freeze({ latitude: 37.7749, longitude: -122.4194, city: 'San Francisco', country: 'US' });
 
 describe('Wave 5 Prompt 19 — environmental oracle', () => {
-  it('1. all selected provider adapters register from catalog', () => {
+  it('1. all selected provider adapters register from catalog', async () => {
     const index = buildCatalogIndex(createFixtureCatalog([...ENVIRONMENTAL_CATALOG_ENTRIES] as never[]));
     const matches = loadEnvironmentalCatalog(index);
     assert.equal(matches.length, 13);
@@ -80,12 +80,12 @@ describe('Wave 5 Prompt 19 — environmental oracle', () => {
     assert.ok(new Set(models).size >= 2);
   });
 
-  it('5. Celsius/Fahrenheit conversion', () => {
+  it('5. Celsius/Fahrenheit conversion', async () => {
     assert.equal(convertTemperature(0, 'celsius', 'fahrenheit'), 32);
     assert.equal(convertTemperature(32, 'fahrenheit', 'celsius'), 0);
   });
 
-  it('6. wind unit handling', () => {
+  it('6. wind unit handling', async () => {
     const ms = 10;
     const kmh = convertWindSpeed(ms, 'm/s', 'km/h');
     assert.ok(Math.abs(kmh - 36) < 0.1);
@@ -150,21 +150,21 @@ describe('Wave 5 Prompt 19 — environmental oracle', () => {
     assert.ok(earthquake);
   });
 
-  it('12. geolocation normalization', () => {
+  it('12. geolocation normalization', async () => {
     const loc = normalizeEnvironmentalLocation({ latitude: 37.7749, longitude: -122.4194, country: 'us' });
     assert.equal(loc.country, 'US');
     assert.throws(() => normalizeEnvironmentalLocation({ latitude: 91, longitude: 0 }));
     assert.equal(locationKey(loc), '37.7749,-122.4194');
   });
 
-  it('13. stale forecast freshness', () => {
+  it('13. stale forecast freshness', async () => {
     const loc = normalizeEnvironmentalLocation(SF);
     const raw = loadEnvironmentalFixture('open-meteo-forecast.json') as Record<string, unknown>;
     const forecast = normalizeWeatherForecast(raw, loc, 'open-meteo', 'reference_data', NOW, 'hourly', 'stale_forecast');
     assert.equal(forecast.freshness.status, 'stale');
   });
 
-  it('14. expired forecast marked expired', () => {
+  it('14. expired forecast marked expired', async () => {
     const loc = normalizeEnvironmentalLocation(SF);
     const raw = {
       generated_at: '2026-08-20T06:00:00.000Z',
@@ -291,7 +291,7 @@ describe('Wave 5 Prompt 19 — environmental oracle', () => {
     assert.equal(response.status, 200);
   });
 
-  it('26. cache policies differ by capability', () => {
+  it('26. cache policies differ by capability', async () => {
     const current = environmentalCachePolicy(ENVIRONMENTAL_CACHE_CAPABILITIES.currentWeather);
     const seismic = environmentalCachePolicy(ENVIRONMENTAL_CACHE_CAPABILITIES.seismicEvent);
     assert.notEqual(current.freshTtlMs, seismic.freshTtlMs);
@@ -305,7 +305,7 @@ describe('Wave 5 Prompt 19 — environmental oracle', () => {
     assert.equal(re.referenceOnly, true);
   });
 
-  it('28. each adapter responds to health check', () => {
+  it('28. each adapter responds to health check', async () => {
     for (const adapter of createAllEnvironmentalAdapters()) {
       const health = adapter.health(NOW);
       assert.equal(health.providerId, adapter.providerId);
