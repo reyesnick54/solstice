@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { providerNativeId, resolveCryptoAsset, type RegisteredCryptoAsset } from '../assets.ts';
 import { bpsFromPercent, parseDecimalToMinorUnits, validateQuote, type ValidationResult } from '../validation.ts';
 import type {
