@@ -830,7 +830,7 @@ export class MarketOperationsEngine {
       taker = applyFill(this.orders.get(taker.orderId) ?? taker, row.quantity);
       this.orders.set(makerFilled.orderId, makerFilled);
       this.orders.set(taker.orderId, taker);
-      this.forwardNative(row.maker, taker, row.quantity.scaledUnits, row.price.priceUnits, now);
+      this.forwardNative(row.maker, taker, row.quantity, row.price, now);
       this.marketData.publishIncrement({
         marketId: request.marketId,
         stream: 'TRADES',
@@ -851,8 +851,8 @@ export class MarketOperationsEngine {
   private forwardNative(
     maker: DigitalOrder,
     taker: DigitalOrder,
-    quantity: bigint,
-    priceUnits: bigint,
+    quantity: AssetQuantity,
+    price: ReturnType<typeof exchangePrice>,
     now: UtcInstant,
   ): void {
     try {
@@ -861,20 +861,23 @@ export class MarketOperationsEngine {
       if (!this.clearing.accounts.has(buyer.exchangeAccountId) || !this.clearing.accounts.has(seller.exchangeAccountId)) {
         return;
       }
-      this.clearing.faucetToCustody(seller.exchangeAccountId, 'SUNREY_COIN', quantity);
-      this.clearing.faucetToCustody(buyer.exchangeAccountId, 'MOONREY_COIN', quantity * priceUnits / 1_000_000n + 1n);
+      const quoteScaled = quoteForQuantity(price, quantity);
+      this.clearing.faucetToCustody(seller.exchangeAccountId, 'SUNREY_COIN', quantity.scaledUnits);
+      this.clearing.faucetToCustody(buyer.exchangeAccountId, 'MOONREY_COIN', quoteScaled);
       this.clearing.placeOrder({
         accountId: seller.exchangeAccountId,
         side: 'SELL',
-        quantity,
-        priceUnits,
+        quantity: quantity.scaledUnits,
+        priceUnits: price.priceUnits,
+        price,
         now,
       });
       this.clearing.placeOrder({
         accountId: buyer.exchangeAccountId,
         side: 'BUY',
-        quantity,
-        priceUnits,
+        quantity: quantity.scaledUnits,
+        priceUnits: price.priceUnits,
+        price,
         now,
       });
       for (const settlement of this.clearing.settlements.values()) {
