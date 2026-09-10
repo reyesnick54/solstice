@@ -1284,6 +1284,117 @@ export class HumanAccessEconomyProduct {
   }
 
   readonly productOrchestrator = () => this.product;
+
+  async liveAccessHome(actor: AccessActor, input: {
+    latitude?: number;
+    longitude?: number;
+    city?: string;
+    country?: string;
+    limit?: number;
+  } = {}) {
+    const auth = authorizeAccessView(actor, actor.customerId);
+    if (!auth.ok) return err(auth.error);
+    const feed = await this.providerNetwork.liveFabric.buildHomeFeed(input);
+    return ok(
+      Object.freeze({
+        schema: feed.schema,
+        ...ACCESS_POSTURE,
+        ...feed,
+        featuredOffers: feed.featuredOffers.map(serializeLiveOffer),
+        nearby: feed.nearby.map(serializeLiveOffer),
+        experiences: feed.experiences.map(serializeLiveOffer),
+        compute: feed.compute.map(serializeLiveOffer),
+        goods: feed.goods.map(serializeLiveOffer),
+        energy: feed.energy.map(serializeLiveOffer),
+      }),
+    );
+  }
+
+  async liveAccessSearch(actor: AccessActor, input: {
+    query?: string;
+    category?: string;
+    providerId?: string;
+    latitude?: number;
+    longitude?: number;
+    radiusKm?: number;
+    city?: string;
+    country?: string;
+    startDate?: string;
+    endDate?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    currency?: string;
+    limit?: number;
+  }) {
+    const auth = authorizeAccessView(actor, actor.customerId);
+    if (!auth.ok) return err(auth.error);
+    const result = await this.providerNetwork.liveFabric.search({
+      requestId: `live_search_${actor.customerId}_${Date.now()}`,
+      ...(input.query !== undefined ? { query: input.query } : {}),
+      ...(input.category !== undefined ? { category: input.category as import('../../external-data/src/access-live/taxonomy.ts').ConsumerAccessCategory } : {}),
+      ...(input.providerId !== undefined ? { providerId: input.providerId as import('../../external-data/src/access-live/types.ts').LiveAccessProviderId } : {}),
+      ...(input.latitude !== undefined ? { latitude: input.latitude } : {}),
+      ...(input.longitude !== undefined ? { longitude: input.longitude } : {}),
+      ...(input.radiusKm !== undefined ? { radiusKm: input.radiusKm } : {}),
+      ...(input.city !== undefined ? { city: input.city } : {}),
+      ...(input.country !== undefined ? { country: input.country } : {}),
+      ...(input.startDate !== undefined ? { startDate: input.startDate } : {}),
+      ...(input.endDate !== undefined ? { endDate: input.endDate } : {}),
+      ...(input.minPrice !== undefined ? { minPrice: input.minPrice } : {}),
+      ...(input.maxPrice !== undefined ? { maxPrice: input.maxPrice } : {}),
+      ...(input.currency !== undefined ? { currency: input.currency } : {}),
+      ...(input.limit !== undefined ? { limit: input.limit } : {}),
+    });
+    return ok(
+      Object.freeze({
+        schema: 'sunrey.consumer.access.live-search.v1',
+        ...ACCESS_POSTURE,
+        requestId: result.requestId,
+        retrievedAt: result.retrievedAt,
+        items: result.offers.map(serializeLiveOffer),
+        providerErrors: result.providerErrors,
+      }),
+    );
+  }
+
+  async liveProviderHealth(actor: AccessActor, providerId: string) {
+    const auth = authorizeAccessView(actor, actor.customerId);
+    if (!auth.ok) return err(auth.error);
+    const health = await this.providerNetwork.liveFabric.getProviderHealth(
+      providerId as import('../../external-data/src/access-live/types.ts').LiveAccessProviderId,
+    );
+    if (!health) {
+      return err({ code: 'NOT_FOUND', message: 'live provider not found' });
+    }
+    return ok(
+      Object.freeze({
+        schema: 'sunrey.consumer.access.provider-health.v1',
+        ...ACCESS_POSTURE,
+        ...health,
+      }),
+    );
+  }
+
+  async liveProviderStatus(actor: AccessActor) {
+    const auth = authorizeAccessView(actor, actor.customerId);
+    if (!auth.ok) return err(auth.error);
+    const status = await this.providerNetwork.liveFabric.providerStatusMatrix();
+    return ok(
+      Object.freeze({
+        schema: 'sunrey.consumer.access.provider-status.v1',
+        ...ACCESS_POSTURE,
+        items: status,
+        partnerGated: this.providerNetwork.liveFabric.listPartnerGatedProviders(),
+      }),
+    );
+  }
+}
+
+function serializeLiveOffer(offer: import('../../external-data/src/access-live/types.ts').AccessLiveOffer) {
+  return Object.freeze({
+    ...offer,
+    priceMinorUnits: offer.priceMinorUnits?.toString() ?? null,
+  });
 }
 
 export function createSandboxAccessEconomy(customerId: string): HumanAccessEconomyProduct {

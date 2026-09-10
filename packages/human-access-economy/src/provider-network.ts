@@ -3,8 +3,10 @@
  */
 
 import {
+  createAccessLiveProviderFabricService,
   createAccessProviderGateway,
   ProviderEconomicMetrics,
+  type AccessLiveProviderFabricService,
 } from '../../access-economy/src/providers/index.ts';
 import type { AccessProviderId } from '../../access-economy/src/providers/types.ts';
 import type { RedemptionRecord, RedemptionRequest } from '../../access-economy/src/providers/redemption/types.ts';
@@ -49,24 +51,54 @@ export class AccessProviderNetworkService {
   readonly gateway: ReturnType<typeof createAccessProviderGateway>;
   readonly orchestrator: CanonicalAccessRedemptionOrchestrator;
   readonly metrics: ProviderEconomicMetrics;
+  readonly liveFabric: AccessLiveProviderFabricService;
   private readonly quotes = new Map<string, import('../../access-economy/src/providers/types.ts').ProviderQuote>();
 
-  constructor(orchestrator: CanonicalAccessRedemptionOrchestrator = createCanonicalAccessRedemptionOrchestrator()) {
+  constructor(
+    orchestrator: CanonicalAccessRedemptionOrchestrator = createCanonicalAccessRedemptionOrchestrator(),
+    liveFabric: AccessLiveProviderFabricService = createAccessLiveProviderFabricService(),
+  ) {
     this.orchestrator = orchestrator;
     this.gateway = orchestrator.gateway;
     this.metrics = new ProviderEconomicMetrics();
+    this.liveFabric = liveFabric;
   }
 
   listProviders() {
-    return this.gateway.listProviders().map((row) =>
+    const commercial = this.gateway.listProviders().map((row) =>
       Object.freeze({
         providerId: row.providerId,
         displayName: row.displayName,
         integrationState: row.integrationState,
         categories: row.categories,
         liveEnabled: this.gateway.registry.isLiveEnabled(row.providerId),
+        source: 'commercial' as const,
       }),
     );
+    const live = this.liveFabric.listProviders().map((row) =>
+      Object.freeze({
+        providerId: row.providerId,
+        displayName: row.displayName,
+        integrationState: row.integrationState,
+        categories: row.categories,
+        liveEnabled: row.integrationState === 'LIVE_READ',
+        source: 'live_read' as const,
+        transactionalState: row.transactionalState,
+        credentialConfigured: row.credentialConfigured,
+        termsClassification: row.termsClassification,
+      }),
+    );
+    const partnerGated = this.liveFabric.listPartnerGatedProviders().map((row) =>
+      Object.freeze({
+        providerId: row.providerId,
+        displayName: row.displayName,
+        integrationState: row.integrationState,
+        categories: row.categories,
+        liveEnabled: false,
+        source: 'partner_gated' as const,
+      }),
+    );
+    return Object.freeze([...live, ...commercial, ...partnerGated]);
   }
 
   search(input: ProviderNetworkSearchInput) {
