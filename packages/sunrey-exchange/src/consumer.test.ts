@@ -661,7 +661,7 @@ describe('chunk 99 portfolio, settlement, sandbox, alerts, and privacy', () => {
     const engine = readyEngine();
     const deposit = engine.depositReference('alice');
     assert.equal(deposit.source, 'CANONICAL_CUSTODY');
-    assert.match(deposit.address, /^sr1ex_/);
+    assert.match(deposit.address, /^srtst1/);
     const bypass = engine.requestWithdrawal({
       participantId: 'alice',
       assetId: 'SUNREY_COIN',

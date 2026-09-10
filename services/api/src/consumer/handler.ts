@@ -2291,6 +2291,7 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/money/settlements',
   'POST /api/v1/money/reconcile',
   'GET /api/v1/money/market-price-boundary',
+  'POST /api/v1/sandbox/funding',
   'GET /api/v1/assets',
   'GET /api/v1/assets/{assetId}',
   'GET /api/v1/hin/rights',
