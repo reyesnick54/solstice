@@ -92,20 +92,31 @@ export class DigitalAssetLifecycle {
   private snapshot: Record<string, unknown> | null = null;
   moonreyIssuanceAuthorized = false;
 
-  constructor(input: { readonly now: UtcInstant; readonly participantId?: string; readonly mode?: LifecycleMode }) {
+  constructor(input: {
+    readonly now: UtcInstant;
+    readonly participantId?: string;
+    readonly mode?: LifecycleMode;
+    readonly skipDefaultSeed?: boolean;
+    readonly engine?: ConsumerExchangeEngine;
+  }) {
     this.now = input.now;
     this.participantId = input.participantId ?? 'phase_g_user';
     this.mode = input.mode ?? 'READY';
-    this.engine = new ConsumerExchangeEngine({ now: input.now });
-    this.engine.registerConsumer({
-      participantId: this.participantId,
-      environment: 'SANDBOX',
-      jurisdiction: 'GB',
-      custodyReady: this.mode !== 'CUSTODY_UNAVAILABLE',
-      walletReady: this.mode !== 'CUSTODY_UNAVAILABLE',
-      complianceState: this.mode === 'COMPLIANCE_BLOCKED' ? 'BLOCKED' : 'CLEAR',
-      exchangeCapabilityActive: this.mode !== 'PROVIDER_KILL_SWITCH',
-    });
+    this.engine = input.engine ?? new ConsumerExchangeEngine({ now: input.now });
+    if (!input.skipDefaultSeed) {
+      this.engine.registerConsumer({
+        participantId: this.participantId,
+        environment: 'SANDBOX',
+        jurisdiction: 'GB',
+        custodyReady: this.mode !== 'CUSTODY_UNAVAILABLE',
+        walletReady: this.mode !== 'CUSTODY_UNAVAILABLE',
+        complianceState: this.mode === 'COMPLIANCE_BLOCKED' ? 'BLOCKED' : 'CLEAR',
+        exchangeCapabilityActive: this.mode !== 'PROVIDER_KILL_SWITCH',
+      });
+    }
+    if (input.skipDefaultSeed) {
+      return;
+    }
     if (this.mode === 'MARKET_CLOSED') {
       this.engine.ops.transitionMarket({
         marketId: SUNREY_MOONREY_MARKET_ID,

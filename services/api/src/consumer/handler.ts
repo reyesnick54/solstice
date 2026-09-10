@@ -190,7 +190,7 @@ const STUB_GROUPS = [
   'notifications',
 ] as const;
 
-export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffRequest): BffResponse | Promise<BffResponse> {
+export async function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffRequest): Promise<BffResponse> {
   const requestId = request.requestId ?? `req_${randomUUID()}`;
   const headers = {
     'cache-control': cachePolicyForPath(request.path).cacheControl,
@@ -318,19 +318,19 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
   }
 
   try {
-    return dispatchAuthenticated(runtime, request, principal, requestId, headers);
+    return await dispatchAuthenticated(runtime, request, principal, requestId, headers);
   } catch {
     return json(500, bffFailClosedInternal(requestId), headers);
   }
 }
 
-function dispatchAuthenticated(
+async function dispatchAuthenticated(
   runtime: ConsumerBffRuntime,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
   headers: Record<string, string>,
-): BffResponse | Promise<BffResponse> {
+): Promise<BffResponse> {
   const { method, path, query, body } = request;
   const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
 
@@ -546,7 +546,7 @@ function dispatchAuthenticated(
     }
   }
   if (runtime.exchange) {
-    const exchange = dispatchExchange(runtime.exchange, request, principal, requestId, headers, {
+    const exchange = await dispatchExchange(runtime.exchange, request, principal, requestId, headers, {
       skipWalletRoutes: Boolean(runtime.wallets),
     });
     if (exchange) {
@@ -1619,14 +1619,14 @@ function isLifecycleExchange(
     && typeof (exchange as ExchangeLifecycleSurface).wallets === 'function';
 }
 
-function dispatchExchange(
+async function dispatchExchange(
   exchange: ExchangeLifecycleSurface | ExchangeProductSurface,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
   headers: Record<string, string>,
   options: { readonly skipWalletRoutes?: boolean } = {},
-): BffResponse | null {
+): Promise<BffResponse | null> {
   const { method, path, query, body } = request;
   const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
   if (isLifecycleExchange(exchange)) {
@@ -1655,7 +1655,7 @@ function dispatchExchange(
     }
     if (path.startsWith('/api/v1/exchange/proposals/') && path.endsWith('/submit') && method === 'POST') {
       const id = path.slice('/api/v1/exchange/proposals/'.length, -'/submit'.length);
-      return result(exchange.submit(principal, id, rec, requestId), headers);
+      return result(await exchange.submit(principal, id, rec, requestId), headers);
     }
     if (path === '/api/v1/exchange/orders' && method === 'GET') return result(exchange.orders(principal, requestId), headers);
     if (path === '/api/v1/exchange/fills' && method === 'GET') return result(exchange.fills(principal, requestId), headers);
@@ -1663,9 +1663,9 @@ function dispatchExchange(
     if (!options.skipWalletRoutes) {
       if (path === '/api/v1/wallets' && method === 'GET') return result(exchange.wallets(principal, requestId), headers);
       if (path === '/api/v1/wallets/deposit-address' && method === 'GET') return result(exchange.depositAddress(principal, requestId), headers);
-      if (path === '/api/v1/wallets/deposits/simulate' && method === 'POST') return result(exchange.simulateDeposit(principal, rec, requestId), headers);
+      if (path === '/api/v1/wallets/deposits/simulate' && method === 'POST') return result(await exchange.simulateDeposit(principal, rec, requestId), headers);
       if (path === '/api/v1/wallets/withdrawals/quote' && method === 'POST') return result(exchange.withdrawalQuote(principal, rec, requestId), headers);
-      if (path === '/api/v1/wallets/withdrawals' && method === 'POST') return result(exchange.withdraw(principal, rec, requestId), headers);
+      if (path === '/api/v1/wallets/withdrawals' && method === 'POST') return result(await exchange.withdraw(principal, rec, requestId), headers);
       if (path === '/api/v1/wallets/transactions' && method === 'GET') return result(exchange.transactions(principal, requestId), headers);
     }
     if (path === '/api/v1/economy' && method === 'GET') return result(exchange.economy(principal, requestId), headers);

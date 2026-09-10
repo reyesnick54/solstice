@@ -75,9 +75,9 @@ export class NativeClearingEngine {
     settlementId: string;
     transactionId: string | null;
   }> = [];
-  private nonce = 0n;
-  private orderSequence = 0;
-  private readonly exchangeSignature: string;
+  nonce = 0n;
+  orderSequence = 0;
+  readonly exchangeSignature: string;
 
   constructor(input?: { readonly chain?: ExchangeClearingChainPort; readonly fees?: NativeClearingFees }) {
     this.chain = input?.chain ?? createAlphaExchangeClearingChain();
@@ -86,6 +86,16 @@ export class NativeClearingEngine {
     this.networkId = this.chain.networkId;
     this.chainId = this.chain.chainId;
     this.exchangeSignature = `${EXCHANGE_SETTLEMENT_ISSUER}:${randomUUID().replace(/-/g, '')}`;
+  constructor(input?: {
+    readonly chain?: InMemoryNativeChain;
+    readonly fees?: NativeClearingFees;
+    readonly exchangeSignature?: string;
+  }) {
+    this.chain = input?.chain ?? new InMemoryNativeChain();
+    this.market = sunreyMoonreyMarket();
+    this.fees = input?.fees ?? ZERO_FEES;
+    this.exchangeSignature =
+      input?.exchangeSignature ?? `${EXCHANGE_SETTLEMENT_ISSUER}:${randomUUID().replace(/-/g, '')}`;
     this.chain.registerExchangeKey(this.exchangeSignature);
   }
 
