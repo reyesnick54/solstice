@@ -36,41 +36,39 @@ describe('Consumer BFF exchange productization', () => {
     const world = createSandboxWorld();
     const markets = call(world, 'GET', '/api/v1/exchange/markets', 'exchange');
     assert.equal(markets.status, 200);
-    const body = markets.body as { productionTradingEnabled: false; screens: readonly string[] };
-    assert.equal(body.productionTradingEnabled, false);
-    assert.ok(body.screens.includes('ORDER_PREVIEW'));
+    const body = markets.body as { alphaStatus: string; items: readonly { marketId: string }[] };
+    assert.equal(body.alphaStatus, 'LIVE_ALPHA');
+    assert.ok(body.items.some((row) => row.marketId === 'SRC-USD'));
     const preview = call(world, 'POST', '/api/v1/exchange/preview', 'exchange', {
-      marketId: 'market:sunrey-coin-usd-simulation',
-      instrument: 'SUNREY_COIN-USD',
       side: 'BUY',
       quantity: '1',
     });
     assert.equal(preview.status, 200);
-    assert.equal((preview.body as { guaranteedExecutionPrice: false }).guaranteedExecutionPrice, false);
   });
 
-  it('refuses raw agent-style order submission without an approved proposal', () => {
+  it('refuses raw agent-style order submission without confirmation and step-up', () => {
     const world = createSandboxWorld();
     const raw = call(world, 'POST', '/api/v1/exchange/orders', 'exchange', {
-      marketId: 'market:sunrey-coin-usd-simulation',
+      marketId: 'SRC-USD',
       side: 'BUY',
       quantity: '1',
     });
-    assert.ok(raw.status === 400 || raw.status === 403);
-    const proposed = call(world, 'POST', '/api/v1/exchange/orders', 'exchange', {
-      marketId: 'market:sunrey-coin-usd-simulation',
+    assert.ok(raw.status === 400 || raw.status === 401 || raw.status === 403);
+    const confirmed = call(world, 'POST', '/api/v1/exchange/orders', 'exchange', {
+      marketId: 'SRC-MRC',
       side: 'BUY',
       quantity: '1',
-      proposalId: 'prop_approved',
+      confirmed: true,
+      stepUpSatisfied: true,
     });
-    assert.equal(proposed.status, 201);
-    assert.equal((proposed.body as { requiresExecution: true }).requiresExecution, true);
+    assert.equal(confirmed.status, 201);
+    assert.equal((confirmed.body as { serverDerived: boolean }).serverDerived, true);
   });
 
   it('denies cross-user order reads', () => {
     const world = createSandboxWorld();
     const denied = call(world, 'GET', '/api/v1/exchange/orders/xord_someone_else', 'exchange');
-    assert.equal(denied.status, 403);
+    assert.equal(denied.status, 404);
   });
 
   it('streams non-privileged market events', () => {

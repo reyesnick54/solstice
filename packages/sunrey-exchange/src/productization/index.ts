@@ -26,6 +26,25 @@ export {
 export type { EconomyMetric, EconomyView, ProductiveEconomyCategory } from './economy.ts';
 export { DigitalAssetLifecycle } from './lifecycle.ts';
 export type { DigitalAssetProposal, LifecycleMode } from './lifecycle.ts';
+export {
+  ALPHA_EXCHANGE_STATUSES,
+  ALPHA_MARKET_ALIASES,
+  SANDBOX_USD_LABEL,
+  alphaExchangeEnvironment,
+  alphaExchangeHomeStatus,
+  alphaLiquiditySource,
+  alphaMarketCatalog,
+  alphaOrderEnvelope,
+  alphaPriceSource,
+  alphaQuoteEnvelope,
+  isAlphaMarketId,
+  mapOrderViewToAlphaStatus,
+  mapSettlementToAlphaStatus,
+  quantityFromSpendMinor,
+  resolveAlphaAssetAlias,
+  resolveAlphaMarketId,
+} from './internal-alpha.ts';
+export type { AlphaExchangeStatus } from './internal-alpha.ts';
 export { MARKET_FAILURE_MODES, runAllMarketFailures, runMarketFailure } from './failures.ts';
 export type { FailureCase } from './failures.ts';
 export { attempt, runExchangeRedTeam, unauthorizedMutations } from './red-team.ts';

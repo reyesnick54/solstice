@@ -923,9 +923,42 @@ export type ExchangeMarket = {
 
 export type ExchangeMarkets = {
   readonly schema: 'sunrey.consumer.exchange.markets.v1';
-  readonly productionTradingEnabled: false;
+  readonly productionTradingEnabled?: false;
+  readonly alphaStatus?: string;
+  readonly environment?: string;
   readonly items: readonly ExchangeMarket[];
   readonly screens?: readonly string[];
+};
+
+export type ExchangeQuote = {
+  readonly schema: 'sunrey.consumer.exchange.quote.v1';
+  readonly quoteId: string;
+  readonly marketId: string;
+  readonly side: 'BUY' | 'SELL';
+  readonly price: string;
+  readonly estimatedQuantity: string;
+  readonly fee: string;
+  readonly total: string;
+  readonly expiresAt: string;
+  readonly priceSource: string;
+  readonly liquiditySource: string;
+  readonly slippage: string | null;
+  readonly environment: string;
+  readonly quoteCurrencyLabel: string;
+};
+
+export type ExchangeAlphaOrder = {
+  readonly schema: 'sunrey.consumer.exchange.order.v1';
+  readonly orderId: string;
+  readonly status: string;
+  readonly filledQuantity: string;
+  readonly averagePrice: string | null;
+  readonly tradeIds: readonly string[];
+  readonly settlementIds: readonly string[];
+  readonly chainTransactionIds: readonly string[];
+  readonly createdAt: string;
+  readonly updatedAt: string;
+  readonly serverDerived: true;
 };
 
 export type ExchangeOrderPreview = {
@@ -940,7 +973,7 @@ export type ExchangeOrderPreview = {
   readonly humanReadableIntent?: string;
 };
 
-export type ExchangeOrderSubmit = {
+export type ExchangeOrderSubmit = ExchangeAlphaOrder | {
   readonly accepted: true;
   readonly requiresExecution: true;
   readonly proposalId: string | null;

@@ -14,6 +14,22 @@ export const BLOCKCHAIN_TX_STATUSES = [
 ] as const;
 export type BlockchainTxStatus = (typeof BLOCKCHAIN_TX_STATUSES)[number];
 
+/** Internal Alpha exchange order and settlement labels exposed to consumers. */
+export const ALPHA_EXCHANGE_CLIENT_STATUSES = [
+  'LIVE_ALPHA',
+  'LIVE_REFERENCE_DATA',
+  'ALPHA_INTERNAL_LIQUIDITY',
+  'PENDING',
+  'PARTIALLY_FILLED',
+  'FILLED',
+  'SETTLING',
+  'SETTLED',
+  'FINALIZED',
+  'FAILED',
+  'CANCELLED',
+] as const;
+export type AlphaExchangeClientStatus = (typeof ALPHA_EXCHANGE_CLIENT_STATUSES)[number];
+
 /** Economic claim lifecycle exposed to consumers. */
 export const ECONOMIC_CLAIM_STATUSES = [
   'OBSERVED',

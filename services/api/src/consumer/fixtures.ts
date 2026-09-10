@@ -55,7 +55,7 @@ import {
 import type { ActionStatusResource } from './action-status.ts';
 import { ConsumerBff, memoryPreferenceStore } from './orchestrator.ts';
 import { createAgentBffFacade, type AgentBffFacade } from './agent-dispatch.ts';
-import { createExchangeBffSurface } from './exchange-bff.ts';
+import { ExchangeBffSurface } from './exchange.ts';
 import { createSandboxAgentRuntime, provisionSandboxAgent } from './agent.ts';
 import type { AgentConversationRuntime } from '../../../../packages/sunrey-agent/src/runtime.ts';
 import type {
@@ -176,7 +176,7 @@ export type SandboxWorld = {
   readonly hin: InformationRightsMarketplace;
   readonly hinContributions: HinContributionSurface;
   readonly productiveEconomy: ProductiveEconomySurface;
-  readonly exchange: ReturnType<typeof createExchangeBffSurface>;
+  readonly exchange: ExchangeBffSurface;
   readonly dataRights: ConsentDataRightsEngine;
   readonly vault: PersonalDataVaultProduct;
   readonly access: HumanAccessEconomyProduct;
@@ -886,7 +886,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     hinContributions,
     productiveEconomy,
     vault,
-    exchange: createExchangeBffSurface(),
+    exchange: new ExchangeBffSurface(() => NOW),
     dataRights,
     access,
     personalEconomy,

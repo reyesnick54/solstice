@@ -17,6 +17,21 @@ import { depthFromOrders } from '../ops/market-data.ts';
 import { engageExchangeKillSwitch } from '../regulated/kill-switches.ts';
 import { EXCHANGE_LOVABLE_SCREENS } from './taxonomy.ts';
 import { marketDataClientStatus } from './economy.ts';
+import {
+  alphaExchangeEnvironment,
+  alphaExchangeHomeStatus,
+  alphaLiquiditySource,
+  alphaMarketCatalog,
+  alphaOrderEnvelope,
+  alphaPriceSource,
+  alphaQuoteEnvelope,
+  mapOrderViewToAlphaStatus,
+  mapSettlementToAlphaStatus,
+  quantityFromSpendMinor,
+  resolveAlphaMarketId,
+  SANDBOX_USD_LABEL,
+} from './internal-alpha.ts';
+import { SUNREY_COIN_USD_MARKET_ID } from '../ids.ts';
 
 export type LifecycleMode =
   | 'READY'
@@ -155,10 +170,15 @@ export class DigitalAssetLifecycle {
       schema: 'sunrey.consumer.exchange.home.v1',
       productionMoneyMovement: false,
       liveExchangeEnabled: false,
+      alphaStatus: alphaExchangeHomeStatus(),
+      environment: alphaExchangeEnvironment(),
       screens: EXCHANGE_LOVABLE_SCREENS,
       marketId: SUNREY_MOONREY_MARKET_ID,
+      markets: alphaMarketCatalog(this.now),
       eligibility: this.eligibility(),
       marketDataStatus: this.marketDataStatus(),
+      liquiditySource: alphaLiquiditySource(),
+      priceSource: alphaPriceSource(false),
     };
   }
 
@@ -173,9 +193,18 @@ export class DigitalAssetLifecycle {
 
   markets(): Record<string, unknown> {
     const market = this.engine.getConsumerMarket(this.now);
+    const alphaItems = alphaMarketCatalog(this.now).map((row) => ({
+      ...row,
+      last: market.lastEligibleTrade?.toString() ?? null,
+      marketDataStatus: this.marketDataStatus(),
+      liquiditySource: alphaLiquiditySource(),
+    }));
     return {
       schema: 'sunrey.consumer.exchange.markets.v1',
+      alphaStatus: alphaExchangeHomeStatus(),
+      environment: alphaExchangeEnvironment(),
       items: [
+        ...alphaItems,
         {
           marketId: market.marketId,
           symbol: 'SUNREY/MOONREY',
@@ -184,16 +213,18 @@ export class DigitalAssetLifecycle {
           state: market.marketState,
           last: market.lastEligibleTrade?.toString() ?? null,
           marketDataStatus: this.marketDataStatus(),
+          liquiditySource: alphaLiquiditySource(),
         },
         {
-          marketId: 'market:sunrey-coin-usd-simulation',
+          marketId: SUNREY_COIN_USD_MARKET_ID,
           symbol: 'SUNREY/USD',
           baseAsset: 'SUNREY_COIN',
-          quoteAsset: 'USD',
-          state: 'SANDBOX_INDICATIVE',
+          quoteAsset: SANDBOX_USD_LABEL,
+          state: 'LIVE_ALPHA',
           last: null,
-          marketDataStatus: 'SANDBOX',
-          informationalOnly: true,
+          marketDataStatus: this.marketDataStatus(),
+          informationalOnly: false,
+          quoteCurrencyIsRealUsd: false,
         },
       ],
     };
@@ -612,6 +643,251 @@ export class DigitalAssetLifecycle {
       transport: 'SNAPSHOT_THEN_INCREMENT',
       marketDataStatus: this.marketDataStatus(),
       productionStream: false,
+    };
+  }
+
+  quote(input: {
+    readonly marketId: string;
+    readonly side: 'BUY' | 'SELL';
+    readonly quantity?: bigint;
+    readonly spendMinorUnits?: bigint;
+  }): Record<string, unknown> | { readonly ok: false; readonly reason: string } {
+    void resolveAlphaMarketId(input.marketId);
+    const market = this.engine.getConsumerMarket(this.now);
+    const priceUnits = market.bestAsk ?? market.lastEligibleTrade ?? 2_500_000n;
+    const priceMinor = priceUnits / 10_000n > 0n ? priceUnits / 10_000n : 250n;
+    let quantity = input.quantity ?? 0n;
+    if (input.spendMinorUnits !== undefined) {
+      if (input.spendMinorUnits <= 0n) {
+        return { ok: false, reason: 'INVALID_SPEND' };
+      }
+      quantity = quantityFromSpendMinor(input.spendMinorUnits, priceMinor);
+      if (quantity <= 0n) {
+        return { ok: false, reason: 'INVALID_SPEND' };
+      }
+    }
+    if (quantity <= 0n) {
+      return { ok: false, reason: 'INVALID_QUANTITY' };
+    }
+    const engineQuote = this.engine.getConsumerQuote({
+      participantId: this.participantId,
+      side: input.side,
+      quantity,
+      notional: input.spendMinorUnits ?? null,
+      now: this.now,
+    });
+    if ('ok' in engineQuote && engineQuote.ok === false) {
+      return engineQuote;
+    }
+    const quote = engineQuote as import('../consumer/types.ts').ConsumerQuote;
+    const fee = quote.fees.exchangeFeeQuantity.toString();
+    const total =
+      input.spendMinorUnits?.toString() ??
+      ((quote.estimatedExecutionPriceUnits ?? priceUnits) * quantity / 1_000_000n).toString();
+    const expiresAt = quote.expiresAt;
+    return alphaQuoteEnvelope({
+      quoteId: quote.quoteId,
+      marketId: input.marketId,
+      side: input.side,
+      price: (quote.estimatedExecutionPriceUnits ?? priceUnits).toString(),
+      estimatedQuantity: quote.estimatedFilledQuantity.toString(),
+      fee,
+      total,
+      expiresAt,
+      priceSource: alphaPriceSource(false),
+      liquiditySource: alphaLiquiditySource(),
+      slippage: quote.estimatedPriceImpactBps?.toString() ?? null,
+      environment: alphaExchangeEnvironment(),
+    });
+  }
+
+  trades(): Record<string, unknown> {
+    const market = this.engine.getConsumerMarket(this.now);
+    const items = this.engine.ops.trades.map((trade) =>
+      Object.freeze({
+        tradeId: trade.tradeId,
+        marketId: trade.marketId,
+        priceUnits: trade.price.priceUnits.toString(),
+        quantity: trade.quantity.scaledUnits.toString(),
+        executedAt: trade.executedAt,
+      }),
+    );
+    return {
+      schema: 'sunrey.consumer.exchange.trades.v1',
+      marketId: market.marketId,
+      items,
+      marketDataStatus: this.marketDataStatus(),
+    };
+  }
+
+  portfolio(): Record<string, unknown> {
+    const holdings = this.holdings() as Record<string, unknown>;
+    const { schema: _holdingsSchema, ...rest } = holdings;
+    return {
+      schema: 'sunrey.consumer.exchange.portfolio.v1',
+      alphaStatus: alphaExchangeHomeStatus(),
+      environment: alphaExchangeEnvironment(),
+      ...rest,
+    };
+  }
+
+  exchangeTransactions(): Record<string, unknown> {
+    const chainItems = [...this.engine.ops.clearing.settlements.values()].map((settlement) =>
+      Object.freeze({
+        kind: 'SETTLEMENT',
+        settlementId: settlement.settlementId,
+        status: mapSettlementToAlphaStatus(settlement.status),
+        chainTransactionId: settlement.transactionId ?? null,
+        tradeIds: settlement.tradeIds,
+        serverDerived: true,
+      }),
+    );
+    return {
+      schema: 'sunrey.consumer.exchange.transactions.v1',
+      items: Object.freeze([...this.activity, ...chainItems]),
+      serverDerived: true,
+    };
+  }
+
+  orderById(orderId: string): Record<string, unknown> | { readonly ok: false; readonly reason: string } {
+    const order = this.engine.orders.get(orderId);
+    if (!order) {
+      return { ok: false, reason: 'NOT_FOUND' };
+    }
+    const receipt = order.orderId ? this.engine.receipts.get(order.orderId) : undefined;
+    const settlementIds = receipt?.settlementReference ? [receipt.settlementReference] : [];
+    const chainTransactionIds = receipt?.chainFinalityReference ? [receipt.chainFinalityReference] : [];
+    const tradeIds = receipt?.fills.map((fill) => fill.tradeId) ?? [];
+    const filled = order.quantity - (order.remaining ?? 0n);
+    return alphaOrderEnvelope({
+      orderId: order.orderId ?? orderId,
+      status: mapOrderViewToAlphaStatus(order.view),
+      filledQuantity: filled.toString(),
+      averagePrice: receipt?.fills[0]?.priceUnits.toString() ?? null,
+      tradeIds,
+      settlementIds,
+      chainTransactionIds,
+      createdAt: this.now,
+      updatedAt: this.now,
+    });
+  }
+
+  cancelOrderById(orderId: string): Record<string, unknown> | { readonly ok: false; readonly reason: string } {
+    const order = this.engine.orders.get(orderId);
+    if (!order?.clientOrderId) {
+      return { ok: false, reason: 'NOT_FOUND' };
+    }
+    const result = this.engine.cancelConsumerOrder({
+      participantId: this.participantId,
+      clientOrderId: order.clientOrderId,
+      authorization: walletAuth('Cancel order'),
+      now: this.now,
+    });
+    if ('ok' in result && result.ok === false) {
+      return result;
+    }
+    return alphaOrderEnvelope({
+      orderId: result.orderId ?? orderId,
+      status: 'CANCELLED',
+      filledQuantity: '0',
+      averagePrice: null,
+      tradeIds: [],
+      settlementIds: [],
+      chainTransactionIds: [],
+      createdAt: this.now,
+      updatedAt: this.now,
+    });
+  }
+
+  submitConfirmedOrder(input: {
+    readonly marketId: string;
+    readonly side: 'BUY' | 'SELL';
+    readonly quantity: bigint;
+    readonly quoteId?: string | null;
+    readonly previewId?: string | null;
+    readonly confirmed: boolean;
+    readonly stepUpSatisfied?: boolean;
+    readonly clientOrderId?: string | null;
+  }): Record<string, unknown> | { readonly ok: false; readonly reason: string } {
+    if (input.confirmed !== true) {
+      return { ok: false, reason: 'CONFIRMATION_REQUIRED' };
+    }
+    if (input.stepUpSatisfied !== true) {
+      return { ok: false, reason: 'STEP_UP_REQUIRED' };
+    }
+    if (this.mode === 'INSUFFICIENT_BALANCE') {
+      return { ok: false, reason: 'INSUFFICIENT_BALANCE' };
+    }
+    const resolvedMarket = resolveAlphaMarketId(input.marketId);
+    const preview = input.previewId
+      ? null
+      : this.engine.previewConsumerTrade({
+          participantId: this.participantId,
+          flow: input.side,
+          side: input.side,
+          orderType: 'LIMIT',
+          quantity: input.quantity,
+          quoteId: input.quoteId ?? null,
+          now: this.now,
+        });
+    if (preview && 'ok' in preview && preview.ok === false) {
+      return preview;
+    }
+    const previewReady = preview && !('ok' in preview) ? preview : null;
+    const result = this.engine.submitConsumerTrade({
+      participantId: this.participantId,
+      now: this.now,
+      authorization: walletAuth(previewReady?.humanReadableIntent ?? 'Confirm exchange order'),
+      request: {
+        clientOrderId: input.clientOrderId ?? id('clord'),
+        marketId: resolvedMarket as typeof SUNREY_MOONREY_MARKET_ID,
+        flow: input.side,
+        side: input.side,
+        orderType: 'LIMIT',
+        quantity: input.quantity,
+        limitPriceUnits: input.side === 'BUY' ? 2_500_000n : 2_400_000n,
+        priceProtectionBps: null,
+        quoteId: input.quoteId ?? null,
+        previewId: input.previewId ?? previewReady?.previewId ?? null,
+      },
+    });
+    if ('ok' in result && result.ok === false) {
+      return result;
+    }
+    const receipt = result.orderId ? this.engine.receipts.get(result.orderId) : undefined;
+    const filled = result.quantity - (result.remaining ?? 0n);
+    return alphaOrderEnvelope({
+      orderId: result.orderId ?? id('xord'),
+      status: mapOrderViewToAlphaStatus(result.view),
+      filledQuantity: filled.toString(),
+      averagePrice: receipt?.fills[0]?.priceUnits.toString() ?? null,
+      tradeIds: receipt?.fills.map((fill) => fill.tradeId) ?? [],
+      settlementIds: receipt?.settlementReference ? [receipt.settlementReference] : [],
+      chainTransactionIds: receipt?.chainFinalityReference ? [receipt.chainFinalityReference] : [],
+      createdAt: this.now,
+      updatedAt: this.now,
+    });
+  }
+
+  walletForAsset(assetAlias: 'SRC' | 'MRC'): Record<string, unknown> {
+    const assetId = assetAlias === 'SRC' ? 'SUNREY_COIN' : 'MOONREY_COIN';
+    const profile = this.engine.profiles.get(this.participantId);
+    if (!profile) {
+      return { ok: false, reason: 'UNKNOWN_CONSUMER' };
+    }
+    const position = this.engine.ops.clearing.position(profile.accountId, assetId);
+    return {
+      schema: 'sunrey.consumer.wallet.asset.v1',
+      walletId: `wal_${this.participantId}_${assetAlias.toLowerCase()}`,
+      assetAlias,
+      assetId,
+      available: position.available.toString(),
+      reserved: position.reserved.toString(),
+      pendingSettlement: position.pendingSettlement.toString(),
+      finalized: position.finalized.toString(),
+      depositAddress: this.engine.depositReference(this.participantId).address,
+      serverDerived: true,
+      productionSigning: false,
     };
   }
 

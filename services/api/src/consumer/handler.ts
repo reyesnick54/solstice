@@ -1616,7 +1616,7 @@ function isLifecycleExchange(
 ): exchange is ExchangeLifecycleSurface {
   return typeof (exchange as ExchangeLifecycleSurface).home === 'function'
     && typeof (exchange as ExchangeLifecycleSurface).createProposal === 'function'
-    && typeof (exchange as ExchangeLifecycleSurface).wallets === 'function';
+    && typeof (exchange as ExchangeLifecycleSurface).quote === 'function';
 }
 
 function dispatchExchange(
@@ -1638,7 +1638,22 @@ function dispatchExchange(
     if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/order-book') && method === 'GET') {
       return result(exchange.orderBook(principal, requestId), headers);
     }
-    if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/chart') && method === 'GET') {
+    if (
+      path.startsWith('/api/v1/exchange/markets/') &&
+      (path.endsWith('/orderbook') || path.endsWith('/order-book')) &&
+      method === 'GET'
+    ) {
+      return result(exchange.orderBook(principal, requestId), headers);
+    }
+    if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/trades') && method === 'GET') {
+      const marketId = path.slice('/api/v1/exchange/markets/'.length, -'/trades'.length);
+      return result(exchange.trades(principal, marketId, requestId), headers);
+    }
+    if (
+      path.startsWith('/api/v1/exchange/markets/') &&
+      (path.endsWith('/candles') || path.endsWith('/chart')) &&
+      method === 'GET'
+    ) {
       return result(exchange.chart(principal, requestId), headers);
     }
     if (path.startsWith('/api/v1/exchange/markets/') && method === 'GET') {
@@ -1646,6 +1661,9 @@ function dispatchExchange(
     }
     if (path === '/api/v1/exchange/eligibility' && method === 'GET') return result(exchange.eligibility(principal, requestId), headers);
     if (path === '/api/v1/exchange/holdings' && method === 'GET') return result(exchange.holdings(principal, requestId), headers);
+    if (path === '/api/v1/exchange/portfolio' && method === 'GET') return result(exchange.portfolio(principal, requestId), headers);
+    if (path === '/api/v1/exchange/transactions' && method === 'GET') return result(exchange.exchangeTransactions(principal, requestId), headers);
+    if (path === '/api/v1/exchange/quotes' && method === 'POST') return result(exchange.quote(principal, rec, requestId), headers, 201);
     if (path === '/api/v1/exchange/fund' && method === 'POST') return result(exchange.fund(principal, requestId), headers);
     if (path === '/api/v1/exchange/preview' && method === 'POST') return result(exchange.preview(principal, rec, requestId), headers);
     if (path === '/api/v1/exchange/proposals' && method === 'POST') return result(exchange.createProposal(principal, rec, requestId), headers, 201);
@@ -1658,8 +1676,39 @@ function dispatchExchange(
       return result(exchange.submit(principal, id, rec, requestId), headers);
     }
     if (path === '/api/v1/exchange/orders' && method === 'GET') return result(exchange.orders(principal, requestId), headers);
+    if (path === '/api/v1/exchange/orders' && method === 'POST') {
+      return result(exchange.submitConfirmedOrder(principal, rec, requestId), headers, 201);
+    }
+    if (path.startsWith('/api/v1/exchange/orders/') && path.endsWith('/cancel') && method === 'POST') {
+      const id = path.slice('/api/v1/exchange/orders/'.length, -'/cancel'.length);
+      return result(exchange.cancelOrderById(principal, id, requestId), headers);
+    }
+    if (path.startsWith('/api/v1/exchange/orders/') && method === 'GET') {
+      const id = path.slice('/api/v1/exchange/orders/'.length);
+      if (id.length > 0 && !id.includes('/')) {
+        return result(exchange.orderById(principal, id, requestId), headers);
+      }
+    }
     if (path === '/api/v1/exchange/fills' && method === 'GET') return result(exchange.fills(principal, requestId), headers);
-    if (path === '/api/v1/exchange/stream' && method === 'GET') return result(exchange.stream(principal, requestId), headers);
+    if (path === '/api/v1/exchange/stream' && method === 'GET') {
+      const stream = exchange.stream(principal, requestId);
+      if ((request.accept ?? '').includes('text/event-stream')) {
+        return Object.freeze({
+          status: 200,
+          body: (stream as { sse?: string }).sse ?? `data: ${JSON.stringify(stream)}\n\n`,
+          headers: Object.freeze({
+            ...headers,
+            'cache-control': 'no-store, no-cache, private',
+            'content-type': 'text/event-stream; charset=utf-8',
+          }),
+        });
+      }
+      return result(stream, headers);
+    }
+    if (path === '/api/v1/exchange/economy' && method === 'GET') return result(exchange.economy(principal, requestId), headers);
+    if (path === '/api/v1/exchange/economy/status' && method === 'GET') return result(exchange.economyStatus(principal, requestId), headers);
+    if (path === '/api/v1/wallets/SRC' && method === 'GET') return result(exchange.walletForAsset(principal, 'SRC', requestId), headers);
+    if (path === '/api/v1/wallets/MRC' && method === 'GET') return result(exchange.walletForAsset(principal, 'MRC', requestId), headers);
     if (!options.skipWalletRoutes) {
       if (path === '/api/v1/wallets' && method === 'GET') return result(exchange.wallets(principal, requestId), headers);
       if (path === '/api/v1/wallets/deposit-address' && method === 'GET') return result(exchange.depositAddress(principal, requestId), headers);

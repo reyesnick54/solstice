@@ -628,6 +628,54 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/exchange/holdings', undefined, options);
   }
 
+  async getExchangePortfolio(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/exchange/portfolio', undefined, options);
+  }
+
+  async getExchangeTransactions(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/exchange/transactions', undefined, options);
+  }
+
+  async getExchangeCandles(marketId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(marketId)}/candles`, undefined, options);
+  }
+
+  async createExchangeQuote(
+    input: {
+      readonly marketId: string;
+      readonly side: 'BUY' | 'SELL';
+      readonly quantity?: string;
+      readonly spendMinorUnits?: string;
+    },
+    options?: BffRequestOptions,
+  ): Promise<import('./types.ts').ExchangeQuote> {
+    return this.request('POST', '/api/v1/exchange/quotes', input, options);
+  }
+
+  async getExchangeOrder(orderId: string, options?: BffRequestOptions): Promise<import('./types.ts').ExchangeAlphaOrder> {
+    return this.request('GET', `/api/v1/exchange/orders/${encodeURIComponent(orderId)}`, undefined, options);
+  }
+
+  async cancelExchangeOrderPost(orderId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', `/api/v1/exchange/orders/${encodeURIComponent(orderId)}/cancel`, {}, options);
+  }
+
+  async getExchangeEconomy(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/exchange/economy', undefined, options);
+  }
+
+  async getExchangeEconomyStatus(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/exchange/economy/status', undefined, options);
+  }
+
+  async getSrcWallet(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/wallets/SRC', undefined, options);
+  }
+
+  async getMrcWallet(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/wallets/MRC', undefined, options);
+  }
+
   async fundExchangeSandbox(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('POST', '/api/v1/exchange/fund', {}, options);
   }
@@ -1083,6 +1131,11 @@ export class SunReyConsumerBffClient {
       readonly side: 'BUY' | 'SELL';
       readonly quantity: string;
       readonly proposalId?: string;
+      readonly quoteId?: string;
+      readonly previewId?: string;
+      readonly confirmed?: boolean;
+      readonly stepUpSatisfied?: boolean;
+      readonly clientOrderId?: string;
     },
     options?: BffRequestOptions,
   ): Promise<ExchangeOrderSubmit> {
