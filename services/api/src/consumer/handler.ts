@@ -2055,7 +2055,6 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/agent/authorization-policy',
   'GET /api/v1/accounts',
   'POST /api/v1/accounts',
-  'POST /api/v1/sandbox/funding',
   'GET /api/v1/accounts/{id}',
   'GET /api/v1/accounts/{id}/activity',
   'GET /api/v1/accounts/{id}/statement',
