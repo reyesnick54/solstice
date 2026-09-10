@@ -1072,13 +1072,15 @@ function dispatchAuthenticated(
   }
   if (path.startsWith('/api/v1/markets/crypto/') && path.endsWith('/history') && method === 'GET') {
     const assetId = path.slice('/api/v1/markets/crypto/'.length, -'/history'.length);
-    const body = cryptoMarket.history(principal, decodeURIComponent(assetId), request.query, requestId);
-    return json(isBffError(body) ? statusForError(body) : 200, body, headers);
+    return cryptoMarket
+      .history(principal, decodeURIComponent(assetId), request.query, requestId)
+      .then((body) => json(isBffError(body) ? statusForError(body) : 200, body, headers));
   }
   if (path.startsWith('/api/v1/markets/crypto/') && method === 'GET') {
     const assetId = path.slice('/api/v1/markets/crypto/'.length);
-    const body = cryptoMarket.asset(principal, decodeURIComponent(assetId), requestId);
-    return json(isBffError(body) ? statusForError(body) : 200, body, headers);
+    return cryptoMarket
+      .asset(principal, decodeURIComponent(assetId), requestId)
+      .then((body) => json(isBffError(body) ? statusForError(body) : 200, body, headers));
   }
   if (path === '/api/v1/world/resources' && method === 'GET') {
     return json(200, marketReference.worldResources(principal, requestId), headers);

@@ -96,9 +96,28 @@ export type { CryptoMarketReferenceServiceOptions } from './service.ts';
 
 export {
   buildBffCryptoHistory,
+  buildBffCryptoHistoryAsync,
   buildBffCryptoQuote,
+  buildBffCryptoQuoteAsync,
   DEFAULT_CRYPTO_NOW,
   DEFAULT_CRYPTO_PROVIDER_ID,
 } from './bff-builders.ts';
+
+export {
+  createCryptoMarketAdapter,
+  createAllCryptoMarketAdapters,
+  createLiveCoingeckoAdapter,
+  createLiveCoincapAdapter,
+  createLiveCoinloreAdapter,
+  createLiveCoinpaprikaAdapter,
+  createLiveCryptocompareAdapter,
+  LiveCryptoMarketAdapter,
+  normalizeProviderQuote,
+  loadCryptoFixture,
+} from './adapters/index.ts';
+
+export { clearCryptoMarketHttpCache } from './http/cache.ts';
+export { resolveCryptoMarketAdapterMode, type CryptoMarketAdapterMode } from './http/mode.ts';
+export type { CryptoMarketHttpClientOptions } from './http/client.ts';
 
 export * as integrations from './integrations/index.ts';
