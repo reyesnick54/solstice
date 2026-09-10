@@ -111,6 +111,10 @@ authentication foundation; the BFF only consumes a verified session.
 | BUY / SELL / PREVIEW | `/api/v1/exchange/preview` `/proposals` | POST | required | server-owned preview / proposal | DigitalAssetLifecycle | SANDBOX_FUNCTIONAL | client instructions untrusted |
 | ORDER CONFIRMATION | `/api/v1/exchange/proposals/{id}/approve` `/submit` | POST | required + owner + step-up | order / fill | matching + clearing + DVP | SANDBOX_FUNCTIONAL | Agent cannot self-approve |
 | OPEN ORDERS / HISTORY / FILLS | `/api/v1/exchange/orders` `/fills` `/stream` | GET | required | orders / fills / stream status | consumer engine | SANDBOX_FUNCTIONAL | stream is snapshot-then-increment |
+| INTERNAL ALPHA QUOTE | `/api/v1/exchange/quotes` | POST | required | `sunrey.consumer.exchange.quote.v1` | DigitalAssetLifecycle + market maker book | LIVE_ALPHA | accepts `quantity` or `spendMinorUnits`; quote currency is `SANDBOX_USD` |
+| INTERNAL ALPHA ORDER | `/api/v1/exchange/orders` | POST | required + owner + `confirmed` + step-up | `sunrey.consumer.exchange.order.v1` | matching + native clearing + Alpha chain | LIVE_ALPHA | returns `tradeIds`, `settlementIds`, `chainTransactionIds`; server-derived only |
+| PORTFOLIO / TX / ECONOMY | `/api/v1/exchange/portfolio` `/transactions` `/economy` `/economy/status` | GET | required | portfolio / chain tx / economy | lifecycle + clearing | LIVE_ALPHA | `/portfolio` aliases holdings; nested economy mirrors top-level economy |
+| SRC / MRC WALLETS | `/api/v1/wallets/SRC` `/api/v1/wallets/MRC` | GET | required | asset wallet aggregate | native clearing positions | LIVE_ALPHA | balances are server-derived; not frontend-supplied |
 | WALLETS | `/api/v1/wallets` | GET | required | wallet + holdings | native clearing + custody ports | SANDBOX_FUNCTIONAL | production signing disabled |
 | DEPOSIT | `/api/v1/wallets/deposit-address` `/deposits/simulate` | GET, POST | required | address / finalized deposit | simulation chain observe | SANDBOX_FUNCTIONAL | not a live chain deposit |
 | WITHDRAW | `/api/v1/wallets/withdrawals/quote` `/withdrawals` | POST | required + owner + approval | quote / withdrawal | Travel Rule + clearing | SANDBOX_FUNCTIONAL | Travel Rule pending refuses |
@@ -229,3 +233,20 @@ Phase C Prompt 2 account notes:
   (USD + SAR), `pending_activity` (hold), `restricted`
   (`COMPLIANCE_REVIEW`), `investment` (multiple accounts), and
   `zero_balance` (posted 0).
+
+## Access Live Provider Fabric (Internal Alpha)
+
+Lovable must call only SunRey BFF routes — never third-party provider APIs directly.
+
+| Screen | Route | Method | Auth | Response schema | Status |
+| --- | --- | --- | --- | --- | --- |
+| ACCESS home | `/api/v1/access` | GET | required | `sunrey.consumer.access.home.v2` | LIVE_READ when keys configured |
+| ACCESS legacy dashboard | `/api/v1/access?simulation=true` | GET | required | `sunrey.consumer.access.dashboard.v1` | simulation stub |
+| ACCESS search | `/api/v1/access/search` | GET/POST | required | `sunrey.consumer.access.live-search.v1` | LIVE_READ |
+| ACCESS offers | `/api/v1/access/offers` | GET | required | `sunrey.consumer.access.live-search.v1` | LIVE_READ |
+| ACCESS recommendations | `/api/v1/access/recommendations` | GET | required | `sunrey.consumer.access.home.v2` | LIVE_READ |
+| ACCESS providers | `/api/v1/access/providers` | GET | required | `sunrey.consumer.access.providers.v1` | mixed live/partner |
+| ACCESS provider health | `/api/v1/access/providers/{id}/health` | GET | required | `sunrey.consumer.access.provider-health.v1` | LIVE_READ |
+| ACCESS provider status | `/api/v1/access/provider-status` | GET | required | `sunrey.consumer.access.provider-status.v1` | LIVE_READ |
+
+See `docs/productization/SUNREY_ACCESS_LIVE_PROVIDER_FABRIC.md` for provider credentials and limitations.

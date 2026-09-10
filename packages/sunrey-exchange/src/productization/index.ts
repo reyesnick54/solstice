@@ -26,11 +26,42 @@ export {
 export type { EconomyMetric, EconomyView, ProductiveEconomyCategory } from './economy.ts';
 export { DigitalAssetLifecycle } from './lifecycle.ts';
 export type { DigitalAssetProposal, LifecycleMode } from './lifecycle.ts';
+export {
+  ALPHA_EXCHANGE_STATUSES,
+  ALPHA_MARKET_ALIASES,
+  SANDBOX_USD_LABEL,
+  alphaExchangeEnvironment,
+  alphaExchangeHomeStatus,
+  alphaLiquiditySource,
+  alphaMarketCatalog,
+  alphaOrderEnvelope,
+  alphaPriceSource,
+  alphaQuoteEnvelope,
+  isAlphaMarketId,
+  mapOrderViewToAlphaStatus,
+  mapSettlementToAlphaStatus,
+  quantityFromSpendMinor,
+  resolveAlphaAssetAlias,
+  resolveAlphaMarketId,
+} from './internal-alpha.ts';
+export type { AlphaExchangeStatus } from './internal-alpha.ts';
 export { MARKET_FAILURE_MODES, runAllMarketFailures, runMarketFailure } from './failures.ts';
 export type { FailureCase } from './failures.ts';
 export { attempt, runExchangeRedTeam, unauthorizedMutations } from './red-team.ts';
 export type { RedTeamAttempt } from './red-team.ts';
 export { runReconciliation, runRecoveryCases } from './recovery.ts';
 export type { ReconciliationReport, RecoveryCase } from './recovery.ts';
+export {
+  captureConsumerAlphaSnapshot,
+  decodeConsumerAlphaSnapshot,
+  encodeConsumerAlphaSnapshot,
+  hydrateConsumerAlphaLifecycle,
+} from './persistence.ts';
+export type {
+  ConsumerAlphaIdempotencyRecord,
+  ConsumerAlphaIdempotencyResource,
+  ConsumerAlphaPersistencePort,
+  ConsumerAlphaSnapshot,
+} from './persistence.ts';
 export { loadRead, measure, measurePhaseGPerformance } from './performance.ts';
 export type { PerformanceBaseline, PerformanceSample } from './performance.ts';

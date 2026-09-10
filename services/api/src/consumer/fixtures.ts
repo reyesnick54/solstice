@@ -55,7 +55,7 @@ import {
 import type { ActionStatusResource } from './action-status.ts';
 import { ConsumerBff, memoryPreferenceStore } from './orchestrator.ts';
 import { createAgentBffFacade, type AgentBffFacade } from './agent-dispatch.ts';
-import { createExchangeBffSurface } from './exchange-bff.ts';
+import { ExchangeBffSurface } from './exchange.ts';
 import { createSandboxAgentRuntime, provisionSandboxAgent } from './agent.ts';
 import type { AgentConversationRuntime } from '../../../../packages/sunrey-agent/src/runtime.ts';
 import type {
@@ -94,7 +94,7 @@ import {
   type SubscriptionIntelligenceBff,
 } from './subscription-intelligence-adapter.ts';
 import { SubscriptionIntelligenceService } from '../../../../packages/platform/src/subscription-intelligence/index.ts';
-import { asEconomicActivityId, deterministicActivityId } from '../../../../packages/personal-economic-graph/src/ids.ts';
+import { asEconomicActivityId, asEconomicGraphId, deterministicActivityId } from '../../../../packages/personal-economic-graph/src/ids.ts';
 import type { EconomicActivity } from '../../../../packages/personal-economic-graph/src/store.ts';
 import { createSandboxAccessEconomy, type HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
 import {
@@ -176,7 +176,7 @@ export type SandboxWorld = {
   readonly hin: InformationRightsMarketplace;
   readonly hinContributions: HinContributionSurface;
   readonly productiveEconomy: ProductiveEconomySurface;
-  readonly exchange: ReturnType<typeof createExchangeBffSurface>;
+  readonly exchange: ExchangeBffSurface;
   readonly dataRights: ConsentDataRightsEngine;
   readonly vault: PersonalDataVaultProduct;
   readonly access: HumanAccessEconomyProduct;
@@ -886,7 +886,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     hinContributions,
     productiveEconomy,
     vault,
-    exchange: createExchangeBffSurface(),
+    exchange: new ExchangeBffSurface(() => NOW),
     dataRights,
     access,
     personalEconomy,
@@ -937,7 +937,7 @@ function seedSandboxSubscriptionActivities(
   service: SubscriptionIntelligenceService,
   subjectId: string,
 ): void {
-  const graphId = 'egr_sandbox_sub' as never;
+  const graphId = asEconomicGraphId('peg_g_sandbox_sub');
   const months = ['03', '04', '05', '06', '07', '08'];
   const activities: EconomicActivity[] = months.map((month, index) =>
     Object.freeze({

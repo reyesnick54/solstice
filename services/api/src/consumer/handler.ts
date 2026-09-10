@@ -549,6 +549,9 @@ function dispatchAuthenticated(
     const exchange = dispatchExchange(runtime.exchange, request, principal, requestId, headers, {
       skipWalletRoutes: Boolean(runtime.wallets),
     });
+    if (exchange instanceof Promise) {
+      return exchange;
+    }
     if (exchange) {
       return exchange;
     }
@@ -1072,13 +1075,15 @@ function dispatchAuthenticated(
   }
   if (path.startsWith('/api/v1/markets/crypto/') && path.endsWith('/history') && method === 'GET') {
     const assetId = path.slice('/api/v1/markets/crypto/'.length, -'/history'.length);
-    const body = cryptoMarket.history(principal, decodeURIComponent(assetId), request.query, requestId);
-    return json(isBffError(body) ? statusForError(body) : 200, body, headers);
+    return cryptoMarket
+      .history(principal, decodeURIComponent(assetId), request.query, requestId)
+      .then((body) => json(isBffError(body) ? statusForError(body) : 200, body, headers));
   }
   if (path.startsWith('/api/v1/markets/crypto/') && method === 'GET') {
     const assetId = path.slice('/api/v1/markets/crypto/'.length);
-    const body = cryptoMarket.asset(principal, decodeURIComponent(assetId), requestId);
-    return json(isBffError(body) ? statusForError(body) : 200, body, headers);
+    return cryptoMarket
+      .asset(principal, decodeURIComponent(assetId), requestId)
+      .then((body) => json(isBffError(body) ? statusForError(body) : 200, body, headers));
   }
   if (path === '/api/v1/world/resources' && method === 'GET') {
     return json(200, marketReference.worldResources(principal, requestId), headers);
@@ -1550,7 +1555,7 @@ function handleAgentExternalEventsRoute(
   runtime: ConsumerBffRuntime,
   requestId: string,
   headers: Record<string, string>,
-  principal?: BffPrincipal,
+  principal?: import('./ports.ts').BffPrincipal,
 ): BffResponse {
   const evidence = runtime.agentExternalEvidence;
   if (!evidence) {
@@ -1616,7 +1621,7 @@ function isLifecycleExchange(
 ): exchange is ExchangeLifecycleSurface {
   return typeof (exchange as ExchangeLifecycleSurface).home === 'function'
     && typeof (exchange as ExchangeLifecycleSurface).createProposal === 'function'
-    && typeof (exchange as ExchangeLifecycleSurface).wallets === 'function';
+    && typeof (exchange as ExchangeLifecycleSurface).quote === 'function';
 }
 
 function dispatchExchange(
@@ -1626,7 +1631,7 @@ function dispatchExchange(
   requestId: string,
   headers: Record<string, string>,
   options: { readonly skipWalletRoutes?: boolean } = {},
-): BffResponse | null {
+): BffResponse | null | Promise<BffResponse | null> {
   const { method, path, query, body } = request;
   const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
   if (isLifecycleExchange(exchange)) {
@@ -1638,7 +1643,22 @@ function dispatchExchange(
     if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/order-book') && method === 'GET') {
       return result(exchange.orderBook(principal, requestId), headers);
     }
-    if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/chart') && method === 'GET') {
+    if (
+      path.startsWith('/api/v1/exchange/markets/') &&
+      (path.endsWith('/orderbook') || path.endsWith('/order-book')) &&
+      method === 'GET'
+    ) {
+      return result(exchange.orderBook(principal, requestId), headers);
+    }
+    if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/trades') && method === 'GET') {
+      const marketId = path.slice('/api/v1/exchange/markets/'.length, -'/trades'.length);
+      return result(exchange.trades(principal, marketId, requestId), headers);
+    }
+    if (
+      path.startsWith('/api/v1/exchange/markets/') &&
+      (path.endsWith('/candles') || path.endsWith('/chart')) &&
+      method === 'GET'
+    ) {
       return result(exchange.chart(principal, requestId), headers);
     }
     if (path.startsWith('/api/v1/exchange/markets/') && method === 'GET') {
@@ -1646,6 +1666,9 @@ function dispatchExchange(
     }
     if (path === '/api/v1/exchange/eligibility' && method === 'GET') return result(exchange.eligibility(principal, requestId), headers);
     if (path === '/api/v1/exchange/holdings' && method === 'GET') return result(exchange.holdings(principal, requestId), headers);
+    if (path === '/api/v1/exchange/portfolio' && method === 'GET') return result(exchange.portfolio(principal, requestId), headers);
+    if (path === '/api/v1/exchange/transactions' && method === 'GET') return result(exchange.exchangeTransactions(principal, requestId), headers);
+    if (path === '/api/v1/exchange/quotes' && method === 'POST') return result(exchange.quote(principal, rec, requestId), headers, 201);
     if (path === '/api/v1/exchange/fund' && method === 'POST') return result(exchange.fund(principal, requestId), headers);
     if (path === '/api/v1/exchange/preview' && method === 'POST') return result(exchange.preview(principal, rec, requestId), headers);
     if (path === '/api/v1/exchange/proposals' && method === 'POST') return result(exchange.createProposal(principal, rec, requestId), headers, 201);
@@ -1655,17 +1678,52 @@ function dispatchExchange(
     }
     if (path.startsWith('/api/v1/exchange/proposals/') && path.endsWith('/submit') && method === 'POST') {
       const id = path.slice('/api/v1/exchange/proposals/'.length, -'/submit'.length);
-      return result(exchange.submit(principal, id, rec, requestId), headers);
+      return (async () => result(await exchange.submit(principal, id, rec, requestId), headers))();
     }
     if (path === '/api/v1/exchange/orders' && method === 'GET') return result(exchange.orders(principal, requestId), headers);
+    if (path === '/api/v1/exchange/orders' && method === 'POST') {
+      return result(exchange.submitConfirmedOrder(principal, rec, requestId), headers, 201);
+    }
+    if (path.startsWith('/api/v1/exchange/orders/') && path.endsWith('/cancel') && method === 'POST') {
+      const id = path.slice('/api/v1/exchange/orders/'.length, -'/cancel'.length);
+      return result(exchange.cancelOrderById(principal, id, requestId), headers);
+    }
+    if (path.startsWith('/api/v1/exchange/orders/') && method === 'GET') {
+      const id = path.slice('/api/v1/exchange/orders/'.length);
+      if (id.length > 0 && !id.includes('/')) {
+        return result(exchange.orderById(principal, id, requestId), headers);
+      }
+    }
     if (path === '/api/v1/exchange/fills' && method === 'GET') return result(exchange.fills(principal, requestId), headers);
-    if (path === '/api/v1/exchange/stream' && method === 'GET') return result(exchange.stream(principal, requestId), headers);
+    if (path === '/api/v1/exchange/stream' && method === 'GET') {
+      const stream = exchange.stream(principal, requestId);
+      if ((request.accept ?? '').includes('text/event-stream')) {
+        return Object.freeze({
+          status: 200,
+          body: (stream as { sse?: string }).sse ?? `data: ${JSON.stringify(stream)}\n\n`,
+          headers: Object.freeze({
+            ...headers,
+            'cache-control': 'no-store, no-cache, private',
+            'content-type': 'text/event-stream; charset=utf-8',
+          }),
+        });
+      }
+      return result(stream, headers);
+    }
+    if (path === '/api/v1/exchange/economy' && method === 'GET') return result(exchange.economy(principal, requestId), headers);
+    if (path === '/api/v1/exchange/economy/status' && method === 'GET') return result(exchange.economyStatus(principal, requestId), headers);
+    if (path === '/api/v1/wallets/SRC' && method === 'GET') return result(exchange.walletForAsset(principal, 'SRC', requestId), headers);
+    if (path === '/api/v1/wallets/MRC' && method === 'GET') return result(exchange.walletForAsset(principal, 'MRC', requestId), headers);
     if (!options.skipWalletRoutes) {
       if (path === '/api/v1/wallets' && method === 'GET') return result(exchange.wallets(principal, requestId), headers);
       if (path === '/api/v1/wallets/deposit-address' && method === 'GET') return result(exchange.depositAddress(principal, requestId), headers);
-      if (path === '/api/v1/wallets/deposits/simulate' && method === 'POST') return result(exchange.simulateDeposit(principal, rec, requestId), headers);
+      if (path === '/api/v1/wallets/deposits/simulate' && method === 'POST') {
+        return (async () => result(await exchange.simulateDeposit(principal, rec, requestId), headers))();
+      }
       if (path === '/api/v1/wallets/withdrawals/quote' && method === 'POST') return result(exchange.withdrawalQuote(principal, rec, requestId), headers);
-      if (path === '/api/v1/wallets/withdrawals' && method === 'POST') return result(exchange.withdraw(principal, rec, requestId), headers);
+      if (path === '/api/v1/wallets/withdrawals' && method === 'POST') {
+        return (async () => result(await exchange.withdraw(principal, rec, requestId), headers))();
+      }
       if (path === '/api/v1/wallets/transactions' && method === 'GET') return result(exchange.transactions(principal, requestId), headers);
     }
     if (path === '/api/v1/economy' && method === 'GET') return result(exchange.economy(principal, requestId), headers);
@@ -1952,8 +2010,7 @@ function dispatchConversation(
   }
   if (path.startsWith('/api/v1/agent/conversations/') && path.endsWith('/events') && method === 'GET') {
     const id = path.slice('/api/v1/agent/conversations/'.length, -'/events'.length);
-    const after = Number(query.after ?? '0');
-    return result(surface.stream(principal, id, Number.isFinite(after) ? after : 0, requestId), headers);
+    return result(surface.stream(principal, id, Number.isFinite(Number(query.after ?? '0')) ? Number(query.after ?? '0') : 0, requestId), headers);
   }
   if (path.startsWith('/api/v1/agent/conversations/') && method === 'GET') {
     const id = path.slice('/api/v1/agent/conversations/'.length);
@@ -2047,6 +2104,7 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/action-center/{id}/dismiss',
   'GET /api/v1/agent/authorization-policy',
   'GET /api/v1/accounts',
+  'POST /api/v1/accounts',
   'GET /api/v1/accounts/{id}',
   'GET /api/v1/accounts/{id}/activity',
   'GET /api/v1/accounts/{id}/statement',
@@ -2282,6 +2340,7 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/money/settlements',
   'POST /api/v1/money/reconcile',
   'GET /api/v1/money/market-price-boundary',
+  'POST /api/v1/sandbox/funding',
   'GET /api/v1/assets',
   'GET /api/v1/assets/{assetId}',
   'GET /api/v1/hin/rights',
@@ -2400,6 +2459,12 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/access/checkout',
   'POST /api/v1/access/reservations',
   'GET /api/v1/access/providers',
+  'GET /api/v1/access/providers/{providerId}',
+  'GET /api/v1/access/providers/{providerId}/health',
+  'GET /api/v1/access/offers',
+  'GET /api/v1/access/search',
+  'GET /api/v1/access/recommendations',
+  'GET /api/v1/access/provider-status',
   'POST /api/v1/access/redemptions/preview',
   'POST /api/v1/access/redemptions',
   'POST /api/v1/access/transactions/{id}/confirm',

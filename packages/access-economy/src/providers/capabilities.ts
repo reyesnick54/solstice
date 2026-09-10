@@ -112,6 +112,17 @@ export const PROVIDER_CAPABILITY_REGISTRY: Readonly<Record<AccessProviderId, Pro
   }),
 });
 
+/** Live read provider IDs registered in packages/access-economy/src/providers/live/ */
+export const LIVE_READ_PROVIDER_IDS = [
+  'vast-ai',
+  'ticketmaster',
+  'eia',
+  'open-charge-map',
+  'ebay',
+  'google-places',
+  'yelp',
+] as const;
+
 export class ProviderCapabilityRegistry {
   get(providerId: AccessProviderId): ProviderRegistration | null {
     return PROVIDER_CAPABILITY_REGISTRY[providerId] ?? null;
