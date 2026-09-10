@@ -207,6 +207,93 @@ export class ExchangeBffSurface {
     return { ...this.worldFor(principal).stream(), requestId };
   }
 
+  quote(principal: BffPrincipal, body: Record<string, unknown>, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    const side = body.side === 'SELL' ? 'SELL' : 'BUY';
+    const marketId = str(body.marketId) ?? 'SRC-USD';
+    const quantity = parseQty(body.quantity);
+    const spendMinor = parseQty(body.spendMinorUnits);
+    if (quantity === null && spendMinor === null) {
+      return this.fail(requestId, 'VALIDATION', 'QUANTITY_OR_SPEND_REQUIRED');
+    }
+    const result = this.worldFor(principal).quote({
+      side,
+      marketId,
+      ...(quantity !== null ? { quantity } : {}),
+      ...(spendMinor !== null ? { spendMinorUnits: spendMinor } : {}),
+    });
+    if ('ok' in result && result.ok === false) {
+      return this.fail(requestId, 'VALIDATION', String(result.reason));
+    }
+    return { ...(result as object), requestId };
+  }
+
+  trades(principal: BffPrincipal, _marketId: string, requestId: string): Record<string, unknown> {
+    return { ...this.worldFor(principal).trades(), requestId };
+  }
+
+  portfolio(principal: BffPrincipal, requestId: string): Record<string, unknown> {
+    return { ...this.worldFor(principal).portfolio(), requestId };
+  }
+
+  exchangeTransactions(principal: BffPrincipal, requestId: string): Record<string, unknown> {
+    return { ...this.worldFor(principal).exchangeTransactions(), requestId };
+  }
+
+  orderById(principal: BffPrincipal, orderId: string, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    const result = this.worldFor(principal).orderById(orderId);
+    if ('ok' in result && result.ok === false) {
+      return this.fail(requestId, 'NOT_FOUND', String(result.reason));
+    }
+    return { ...(result as object), requestId };
+  }
+
+  cancelOrderById(principal: BffPrincipal, orderId: string, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    const result = this.worldFor(principal).cancelOrderById(orderId);
+    if ('ok' in result && result.ok === false) {
+      return this.fail(requestId, 'POLICY', String(result.reason));
+    }
+    return { ...(result as object), requestId };
+  }
+
+  submitConfirmedOrder(
+    principal: BffPrincipal,
+    body: Record<string, unknown>,
+    requestId: string,
+  ): Record<string, unknown> | BffErrorEnvelope {
+    if (principal.restricted) {
+      return this.fail(requestId, 'POLICY', 'COMPLIANCE_BLOCKED');
+    }
+    const quantity = parseQty(body.quantity);
+    if (quantity === null) {
+      return this.fail(requestId, 'VALIDATION', 'INVALID_QUANTITY');
+    }
+    const result = this.worldFor(principal).submitConfirmedOrder({
+      marketId: str(body.marketId) ?? 'SRC-USD',
+      side: body.side === 'SELL' ? 'SELL' : 'BUY',
+      quantity,
+      quoteId: str(body.quoteId) ?? null,
+      previewId: str(body.previewId) ?? null,
+      confirmed: body.confirmed === true,
+      stepUpSatisfied: body.stepUpSatisfied === true,
+      clientOrderId: str(body.clientOrderId) ?? null,
+    });
+    if ('ok' in result && result.ok === false) {
+      const reason = String(result.reason);
+      if (reason === 'STEP_UP_REQUIRED') {
+        return this.fail(requestId, 'AUTH', reason);
+      }
+      if (reason === 'CONFIRMATION_REQUIRED') {
+        return this.fail(requestId, 'VALIDATION', reason);
+      }
+      return this.fail(requestId, 'POLICY', reason);
+    }
+    return { ...(result as object), requestId };
+  }
+
+  walletForAsset(principal: BffPrincipal, assetAlias: 'SRC' | 'MRC', requestId: string): Record<string, unknown> {
+    return { ...this.worldFor(principal).walletForAsset(assetAlias), requestId };
+  }
+
   wallets(principal: BffPrincipal, requestId: string): Record<string, unknown> {
     return { ...this.worldFor(principal).wallet(), requestId };
   }
@@ -399,25 +486,29 @@ export class ExchangeBffSurface {
     );
   }
 
-  private fail(requestId: string, category: 'VALIDATION' | 'POLICY' | 'AUTH' | 'TEMPORARY_UNAVAILABLE', code: string): BffErrorEnvelope {
+  private fail(requestId: string, category: 'VALIDATION' | 'POLICY' | 'AUTH' | 'TEMPORARY_UNAVAILABLE' | 'NOT_FOUND', code: string): BffErrorEnvelope {
     const errorCode =
       code === 'STEP_UP_REQUIRED'
         ? 'STEP_UP_REQUIRED'
-        : category === 'VALIDATION'
-          ? 'VALIDATION'
-          : category === 'TEMPORARY_UNAVAILABLE'
-            ? 'FEATURE_UNAVAILABLE'
-            : 'KERNEL_REFUSED';
+        : category === 'NOT_FOUND'
+          ? 'NOT_FOUND'
+          : category === 'VALIDATION'
+            ? 'VALIDATION'
+            : category === 'TEMPORARY_UNAVAILABLE'
+              ? 'FEATURE_UNAVAILABLE'
+              : 'KERNEL_REFUSED';
     return bffError({
       errorCode,
       category:
         category === 'AUTH'
           ? 'AUTHENTICATION'
-          : category === 'TEMPORARY_UNAVAILABLE'
-            ? 'TEMPORARY_UNAVAILABLE'
-            : category === 'VALIDATION'
-              ? 'VALIDATION'
-              : 'POLICY',
+          : category === 'NOT_FOUND'
+            ? 'NOT_FOUND'
+            : category === 'TEMPORARY_UNAVAILABLE'
+              ? 'TEMPORARY_UNAVAILABLE'
+              : category === 'VALIDATION'
+                ? 'VALIDATION'
+                : 'POLICY',
       message: code,
       retryable: category === 'TEMPORARY_UNAVAILABLE',
       requestId,

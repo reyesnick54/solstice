@@ -1612,6 +1612,74 @@ paths:
       responses:
         "200":
           description: Candles
+  /api/v1/exchange/quotes:
+    post:
+      operationId: createExchangeQuote
+      summary: Internal Alpha executable quote
+      description: >
+        Accepts marketId, side, and either quantity or spendMinorUnits.
+        Sandbox USD is labeled SANDBOX_USD, never real USD. Settlement,
+        balances, and execution price are server-derived.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [marketId, side]
+              properties:
+                marketId: { type: string, example: SRC-USD }
+                side: { type: string, enum: [BUY, SELL] }
+                quantity: { type: string }
+                spendMinorUnits: { type: string }
+      responses:
+        "201":
+          description: Quote with quoteId, price, fee, total, expiresAt, priceSource, liquiditySource
+        "400":
+          description: Invalid quantity or spend
+  /api/v1/exchange/portfolio:
+    get:
+      operationId: getExchangePortfolio
+      summary: Exchange portfolio (alias of holdings with alpha envelope)
+      responses:
+        "200":
+          description: Portfolio projection
+  /api/v1/exchange/transactions:
+    get:
+      operationId: listExchangeTransactions
+      summary: Exchange and chain transaction history
+      description: Server-derived settlement and chain transaction identifiers only.
+      responses:
+        "200":
+          description: Transaction list
+  /api/v1/exchange/economy:
+    get:
+      operationId: getExchangeEconomy
+      summary: Exchange-scoped economy overview
+      responses:
+        "200":
+          description: SunRey and MoonRey economy views
+  /api/v1/exchange/economy/status:
+    get:
+      operationId: getExchangeEconomyStatus
+      summary: Exchange market-data and oracle freshness
+      responses:
+        "200":
+          description: Economy status
+  /api/v1/wallets/SRC:
+    get:
+      operationId: getSrcWallet
+      summary: SunRey Coin wallet aggregate
+      responses:
+        "200":
+          description: SRC wallet balances (server-derived)
+  /api/v1/wallets/MRC:
+    get:
+      operationId: getMrcWallet
+      summary: MoonRey Coin wallet aggregate
+      responses:
+        "200":
+          description: MRC wallet balances (server-derived)
   /api/v1/exchange/preview:
     post:
       operationId: previewExchangeOrder
@@ -1665,6 +1733,19 @@ paths:
         "403":
           description: Cross-user denied
   /api/v1/exchange/orders/{id}:
+    get:
+      operationId: getExchangeOrder
+      summary: Read one owned exchange order
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Order with server-derived status, fills, settlement and chain ids
+        "404":
+          description: Unknown or cross-user order
     delete:
       operationId: cancelExchangeOrder
       summary: Cancel an owned order
@@ -1675,7 +1756,19 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: Order / fill
+          description: Cancelled order
+  /api/v1/exchange/orders/{id}/cancel:
+    post:
+      operationId: cancelExchangeOrderPost
+      summary: Cancel an owned order (POST alias)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Cancelled order
   /api/v1/exchange/fills:
     get:
       operationId: listExchangeFills

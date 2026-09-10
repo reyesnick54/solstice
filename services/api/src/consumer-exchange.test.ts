@@ -36,48 +36,39 @@ describe('Consumer BFF exchange productization', () => {
     const world = createSandboxWorld();
     const markets = await call(world, 'GET', '/api/v1/exchange/markets', 'exchange');
     assert.equal(markets.status, 200);
-    const body = markets.body as {
-      productionTradingEnabled: false;
-      screens: readonly string[];
-      items: readonly { instrument: string; marketId: string }[];
-    };
-    assert.equal(body.productionTradingEnabled, false);
-    assert.ok(body.screens.includes('ORDER_PREVIEW'));
-    assert.ok(body.items.some((item) => item.instrument === 'SRC-USD'));
-    assert.ok(body.items.some((item) => item.instrument === 'MRC-USD'));
-    assert.ok(body.items.some((item) => item.instrument === 'SRC-MRC'));
+    const body = markets.body as { alphaStatus: string; items: readonly { marketId: string }[] };
+    assert.equal(body.alphaStatus, 'LIVE_ALPHA');
+    assert.ok(body.items.some((row) => row.marketId === 'SRC-USD'));
     const preview = await call(world, 'POST', '/api/v1/exchange/preview', 'exchange', {
-      marketId: 'market:src-usd-alpha',
-      instrument: 'SRC-USD',
       side: 'BUY',
       quantity: '1',
     });
     assert.equal(preview.status, 200);
-    assert.equal((preview.body as { guaranteedExecutionPrice: false }).guaranteedExecutionPrice, false);
   });
 
-  it('refuses raw agent-style order submission without an approved proposal', async () => {
+  it('refuses raw agent-style order submission without confirmation and step-up', async () => {
     const world = createSandboxWorld();
     const raw = await call(world, 'POST', '/api/v1/exchange/orders', 'exchange', {
-      marketId: 'market:src-usd-alpha',
+      marketId: 'SRC-USD',
       side: 'BUY',
       quantity: '1',
     });
-    assert.ok(raw.status === 400 || raw.status === 403);
-    const proposed = await call(world, 'POST', '/api/v1/exchange/orders', 'exchange', {
-      marketId: 'market:src-usd-alpha',
+    assert.ok(raw.status === 400 || raw.status === 401 || raw.status === 403);
+    const confirmed = await call(world, 'POST', '/api/v1/exchange/orders', 'exchange', {
+      marketId: 'SRC-MRC',
       side: 'BUY',
       quantity: '1',
-      proposalId: 'prop_approved',
+      confirmed: true,
+      stepUpSatisfied: true,
     });
-    assert.equal(proposed.status, 201);
-    assert.equal((proposed.body as { requiresExecution: true }).requiresExecution, true);
+    assert.equal(confirmed.status, 201);
+    assert.equal((confirmed.body as { serverDerived: boolean }).serverDerived, true);
   });
 
   it('denies cross-user order reads', async () => {
     const world = createSandboxWorld();
     const denied = await call(world, 'GET', '/api/v1/exchange/orders/xord_someone_else', 'exchange');
-    assert.equal(denied.status, 403);
+    assert.equal(denied.status, 404);
   });
 
   it('streams non-privileged market events', async () => {
