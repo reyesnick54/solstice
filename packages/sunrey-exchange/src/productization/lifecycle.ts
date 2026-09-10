@@ -7,7 +7,13 @@ import { createHash, randomUUID } from 'node:crypto';
 
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import {
+  ALPHA_MARKET_INSTRUMENT_MRC_USD,
+  ALPHA_MARKET_INSTRUMENT_SRC_MRC,
+  ALPHA_MARKET_INSTRUMENT_SRC_USD,
   MOONREY_COIN_NATIVE_ASSET_ID,
+  MRC_USD_ALPHA_MARKET_ID,
+  SRC_MRC_ALPHA_MARKET_ID,
+  SRC_USD_ALPHA_MARKET_ID,
   SUNREY_COIN_NATIVE_ASSET_ID,
   SUNREY_MOONREY_MARKET_ID,
 } from '../ids.ts';
@@ -167,7 +173,7 @@ export class DigitalAssetLifecycle {
       productionMoneyMovement: false,
       liveExchangeEnabled: false,
       screens: EXCHANGE_LOVABLE_SCREENS,
-      marketId: SUNREY_MOONREY_MARKET_ID,
+      marketId: SRC_MRC_ALPHA_MARKET_ID,
       eligibility: this.eligibility(),
       marketDataStatus: this.marketDataStatus(),
     };
@@ -186,25 +192,38 @@ export class DigitalAssetLifecycle {
     const market = this.engine.getConsumerMarket(this.now);
     return {
       schema: 'sunrey.consumer.exchange.markets.v1',
+      environment: 'INTERNAL_ALPHA',
       items: [
         {
-          marketId: market.marketId,
+          marketId: SRC_USD_ALPHA_MARKET_ID,
+          instrument: ALPHA_MARKET_INSTRUMENT_SRC_USD,
+          symbol: 'SUNREY/USD',
+          baseAsset: SUNREY_COIN_NATIVE_ASSET_ID,
+          quoteAsset: 'USD',
+          state: 'OPEN',
+          last: null,
+          marketDataStatus: this.marketDataStatus(),
+        },
+        {
+          marketId: MRC_USD_ALPHA_MARKET_ID,
+          instrument: ALPHA_MARKET_INSTRUMENT_MRC_USD,
+          symbol: 'MOONREY/USD',
+          baseAsset: MOONREY_COIN_NATIVE_ASSET_ID,
+          quoteAsset: 'USD',
+          state: 'OPEN',
+          last: null,
+          marketDataStatus: this.marketDataStatus(),
+        },
+        {
+          marketId: SRC_MRC_ALPHA_MARKET_ID,
+          instrument: ALPHA_MARKET_INSTRUMENT_SRC_MRC,
           symbol: 'SUNREY/MOONREY',
           baseAsset: market.baseAsset,
           quoteAsset: market.quoteAsset,
           state: market.marketState,
           last: market.lastEligibleTrade?.toString() ?? null,
           marketDataStatus: this.marketDataStatus(),
-        },
-        {
-          marketId: 'market:sunrey-coin-usd-simulation',
-          symbol: 'SUNREY/USD',
-          baseAsset: 'SUNREY_COIN',
-          quoteAsset: 'USD',
-          state: 'SANDBOX_INDICATIVE',
-          last: null,
-          marketDataStatus: 'SANDBOX',
-          informationalOnly: true,
+          legacyMarketId: SUNREY_MOONREY_MARKET_ID,
         },
       ],
     };

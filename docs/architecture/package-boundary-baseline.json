@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-03T11:10:34.181966+00:00",
+  "generatedAt": "2026-09-10T04:26:26.075811+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -538,10 +538,10 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 4688,
-      "serviceDeepImport": 663,
+      "packageDeepImport": 4695,
+      "serviceDeepImport": 656,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 4688,
+      "relativeCrossPackage": 4695,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
@@ -21772,15 +21772,6 @@
       "spec": "../../../personal-economic-graph/src/taxonomy.ts"
     },
     {
-      "file": "packages/persistence/src/env.ts",
-      "line": 15,
-      "rule": "package-deep-import",
-      "message": "'packages/persistence/src/env.ts' deep-imports 'config' internals via '../../config/src/env.ts'",
-      "sourcePackage": "persistence",
-      "targetPackage": "config",
-      "spec": "../../config/src/env.ts"
-    },
-    {
       "file": "packages/persistence/src/exchange/durable-core-store.ts",
       "line": 12,
       "rule": "package-deep-import",
@@ -37702,6 +37693,78 @@
       "spec": "../../identity/src/actor-context.ts"
     },
     {
+      "file": "packages/sunrey-exchange/src/alpha/alpha.test.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/alpha/alpha.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/alpha/engine.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/alpha/engine.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/alpha/engine.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/alpha/engine.ts' deep-imports 'money' internals via '../../../money/src/asset-quantity.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "money",
+      "spec": "../../../money/src/asset-quantity.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/alpha/engine.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/alpha/engine.ts' deep-imports 'money' internals via '../../../money/src/money.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "money",
+      "spec": "../../../money/src/money.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/alpha/sandbox.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/alpha/sandbox.ts' deep-imports 'money' internals via '../../../money/src/money.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "money",
+      "spec": "../../../money/src/money.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/alpha/sandbox.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/alpha/sandbox.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/alpha/sandbox.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/alpha/sandbox.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/alpha/usd-ledger.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/alpha/usd-ledger.ts' deep-imports 'money' internals via '../../../money/src/money.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "money",
+      "spec": "../../../money/src/money.ts"
+    },
+    {
       "file": "packages/sunrey-exchange/src/consumer-demo.ts",
       "line": 1,
       "rule": "package-deep-import",
@@ -39872,7 +39935,7 @@
     },
     {
       "file": "packages/sunrey-exchange/src/service.ts",
-      "line": 949,
+      "line": 950,
       "rule": "package-deep-import",
       "message": "'packages/sunrey-exchange/src/service.ts' deep-imports 'money' internals via '../../money/src/money.ts'",
       "sourcePackage": "sunrey-exchange",
@@ -44488,15 +44551,6 @@
       "spec": "../../../packages/config/src/env.ts"
     },
     {
-      "file": "services/accounts/src/product-durable-adapters.ts",
-      "line": 15,
-      "rule": "service-deep-import",
-      "message": "'services/accounts/src/product-durable-adapters.ts' deep-imports 'persistence' internals via '../../../packages/persistence/src/index.ts'",
-      "sourcePackage": "accounts",
-      "targetPackage": "persistence",
-      "spec": "../../../packages/persistence/src/index.ts"
-    },
-    {
       "file": "services/accounts/src/restriction-enforcement.ts",
       "line": 1,
       "rule": "service-deep-import",
@@ -45605,7 +45659,7 @@
     },
     {
       "file": "services/api/src/consumer/exchange-bff.ts",
-      "line": 6,
+      "line": 10,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/exchange-bff.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/ids.ts'",
       "sourcePackage": "api",
@@ -45614,7 +45668,7 @@
     },
     {
       "file": "services/api/src/consumer/exchange-bff.ts",
-      "line": 11,
+      "line": 15,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/exchange-bff.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/product/api.ts'",
       "sourcePackage": "api",
@@ -45623,12 +45677,12 @@
     },
     {
       "file": "services/api/src/consumer/exchange-bff.ts",
-      "line": 12,
+      "line": 16,
       "rule": "service-deep-import",
-      "message": "'services/api/src/consumer/exchange-bff.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/product/sandbox.ts'",
+      "message": "'services/api/src/consumer/exchange-bff.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/alpha/sandbox.ts'",
       "sourcePackage": "api",
       "targetPackage": "sunrey-exchange",
-      "spec": "../../../../packages/sunrey-exchange/src/product/sandbox.ts"
+      "spec": "../../../../packages/sunrey-exchange/src/alpha/sandbox.ts"
     },
     {
       "file": "services/api/src/consumer/exchange.ts",
@@ -48007,15 +48061,6 @@
       "spec": "../../../../packages/human-economic-contribution/src/types.ts"
     },
     {
-      "file": "services/api/src/product-integration/durable-human-economic-state.ts",
-      "line": 32,
-      "rule": "service-deep-import",
-      "message": "'services/api/src/product-integration/durable-human-economic-state.ts' deep-imports 'sunrey-chain' internals via '../../../../packages/sunrey-chain/src/economics/proof-bound/claims.ts'",
-      "sourcePackage": "api",
-      "targetPackage": "sunrey-chain",
-      "spec": "../../../../packages/sunrey-chain/src/economics/proof-bound/claims.ts"
-    },
-    {
       "file": "services/api/src/product-integration/runtime.ts",
       "line": 8,
       "rule": "service-deep-import",
@@ -48077,51 +48122,6 @@
       "sourcePackage": "api",
       "targetPackage": "events",
       "spec": "../../../../packages/events/src/events.ts"
-    },
-    {
-      "file": "services/api/src/product-integration/runtime.ts",
-      "line": 17,
-      "rule": "service-deep-import",
-      "message": "'services/api/src/product-integration/runtime.ts' deep-imports 'personal-data-vault' internals via '../../../../packages/personal-data-vault/src/encryption.ts'",
-      "sourcePackage": "api",
-      "targetPackage": "personal-data-vault",
-      "spec": "../../../../packages/personal-data-vault/src/encryption.ts"
-    },
-    {
-      "file": "services/api/src/product-integration/runtime.ts",
-      "line": 18,
-      "rule": "service-deep-import",
-      "message": "'services/api/src/product-integration/runtime.ts' deep-imports 'personal-data-vault' internals via '../../../../packages/personal-data-vault/src/store.ts'",
-      "sourcePackage": "api",
-      "targetPackage": "personal-data-vault",
-      "spec": "../../../../packages/personal-data-vault/src/store.ts"
-    },
-    {
-      "file": "services/api/src/product-integration/runtime.ts",
-      "line": 19,
-      "rule": "service-deep-import",
-      "message": "'services/api/src/product-integration/runtime.ts' deep-imports 'personal-data-vault' internals via '../../../../packages/personal-data-vault/src/service.ts'",
-      "sourcePackage": "api",
-      "targetPackage": "personal-data-vault",
-      "spec": "../../../../packages/personal-data-vault/src/service.ts"
-    },
-    {
-      "file": "services/api/src/product-integration/runtime.ts",
-      "line": 20,
-      "rule": "service-deep-import",
-      "message": "'services/api/src/product-integration/runtime.ts' deep-imports 'security' internals via '../../../../packages/security/src/simulation.ts'",
-      "sourcePackage": "api",
-      "targetPackage": "security",
-      "spec": "../../../../packages/security/src/simulation.ts"
-    },
-    {
-      "file": "services/api/src/product-integration/runtime.ts",
-      "line": 21,
-      "rule": "service-deep-import",
-      "message": "'services/api/src/product-integration/runtime.ts' deep-imports 'sunrey-agent' internals via '../../../../packages/sunrey-agent/src/store.ts'",
-      "sourcePackage": "api",
-      "targetPackage": "sunrey-agent",
-      "spec": "../../../../packages/sunrey-agent/src/store.ts"
     },
     {
       "file": "services/api/src/server.ts",
