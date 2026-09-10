@@ -458,34 +458,38 @@ function reviveConsumerAlphaValue(key: string, value: unknown): unknown {
   return value;
 }
 
+function jsonCloneWithBigIntStrings(value: unknown): string {
+  return JSON.stringify(value, (_key, item) => (typeof item === 'bigint' ? item.toString() : item));
+}
+
 function serializeTrade(value: unknown): Record<string, unknown> {
-  return JSON.parse(JSON.stringify(value, (_key, item) => (typeof item === 'bigint' ? item.toString() : item)));
+  return JSON.parse(jsonCloneWithBigIntStrings(value));
 }
 
 function deserializeTrade(value: Record<string, unknown>): never {
-  return JSON.parse(JSON.stringify(value), reviveConsumerAlphaValue) as never;
+  return JSON.parse(jsonCloneWithBigIntStrings(value), reviveConsumerAlphaValue) as never;
 }
 
 function serializeSettlement(value: unknown): Record<string, unknown> {
-  return JSON.parse(JSON.stringify(value, (_key, item) => (typeof item === 'bigint' ? item.toString() : item)));
+  return JSON.parse(jsonCloneWithBigIntStrings(value));
 }
 
 function deserializeSettlement(value: Record<string, unknown>): never {
-  return JSON.parse(JSON.stringify(value), reviveConsumerAlphaValue) as never;
+  return JSON.parse(jsonCloneWithBigIntStrings(value), reviveConsumerAlphaValue) as never;
 }
 
 function serializeReceipt(value: unknown): Record<string, unknown> {
-  return JSON.parse(JSON.stringify(value, (_key, item) => (typeof item === 'bigint' ? item.toString() : item)));
+  return JSON.parse(jsonCloneWithBigIntStrings(value));
 }
 
 function deserializeReceipt(value: Record<string, unknown>): never {
-  return JSON.parse(JSON.stringify(value), reviveConsumerAlphaValue) as never;
+  return JSON.parse(jsonCloneWithBigIntStrings(value), reviveConsumerAlphaValue) as never;
 }
 
 function serializeWithdrawal(value: unknown): Record<string, unknown> {
-  return JSON.parse(JSON.stringify(value, (_key, item) => (typeof item === 'bigint' ? item.toString() : item)));
+  return JSON.parse(jsonCloneWithBigIntStrings(value));
 }
 
 function deserializeWithdrawal(value: Record<string, unknown>): never {
-  return JSON.parse(JSON.stringify(value), reviveConsumerAlphaValue) as never;
+  return JSON.parse(jsonCloneWithBigIntStrings(value), reviveConsumerAlphaValue) as never;
 }
