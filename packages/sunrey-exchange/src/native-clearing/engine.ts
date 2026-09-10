@@ -678,6 +678,10 @@ export class NativeClearingEngine {
       priceUnits,
       quoteScale: 6,
       basePrecision: 6,
+      // Simulation native clearing mirrors ops trades at spread-derived ticks that
+      // may not divide evenly for every quantity; floor quote sizing instead of
+      // rejecting settlement.
+      rounding: 'FLOOR',
     });
   }
 
