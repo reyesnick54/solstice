@@ -173,6 +173,16 @@ export {
   custodyAddressFromPublicKey,
 } from './native-custody/index.ts';
 export type { NativeCustodyChainPort } from './native-custody/index.ts';
+export * as exchangeClearing from './exchange-clearing/index.ts';
+export {
+  AlphaExchangeClearingChain,
+  createAlphaExchangeClearingChain,
+  exchangeCustodyAddress,
+  exchangeDepositAddress,
+  SUNREY_INTERNAL_ALPHA_CHAIN_ID,
+  SUNREY_INTERNAL_ALPHA_NETWORK_ID,
+} from './exchange-clearing/index.ts';
+export type { ExchangeClearingChainPort } from './exchange-clearing/index.ts';
 export * as economicUnits from './units/index.ts';
 export * as productionEconomicActivation from './economics/production-activation/index.ts';
 export * as chainRuntime from './runtime/index.ts';
