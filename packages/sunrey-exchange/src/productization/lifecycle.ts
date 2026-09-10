@@ -125,20 +125,7 @@ export class DigitalAssetLifecycle {
       });
     }
     if (this.mode !== 'NO_LIQUIDITY') {
-      this.engine.seedLiquidity({
-        participantId: `${this.participantId}_maker_sell`,
-        side: 'SELL',
-        quantity: 50n,
-        priceUnits: 2_500_000n,
-        now: input.now,
-      });
-      this.engine.seedLiquidity({
-        participantId: `${this.participantId}_maker_buy`,
-        side: 'BUY',
-        quantity: 50n,
-        priceUnits: 2_400_000n,
-        now: input.now,
-      });
+      this.engine.activateInternalAlphaLiquidity(input.now);
     }
     if (this.mode === 'PROVIDER_KILL_SWITCH') {
       engageExchangeKillSwitch({
