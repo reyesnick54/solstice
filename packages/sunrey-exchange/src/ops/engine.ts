@@ -17,7 +17,7 @@ import {
 } from '../ids.ts';
 import { applyFill, matchIncoming, sortBook } from '../matching.ts';
 import { NativeClearingEngine } from '../native-clearing/engine.ts';
-import { exchangePrice, quoteForQuantity } from '../price.ts';
+import { exchangePrice, quoteAssetQuantity, quoteForQuantity } from '../price.ts';
 import {
   engageExchangeKillSwitch,
   EXCHANGE_KILL_SWITCH_SCOPES,
@@ -861,14 +861,33 @@ export class MarketOperationsEngine {
       if (!this.clearing.accounts.has(buyer.exchangeAccountId) || !this.clearing.accounts.has(seller.exchangeAccountId)) {
         return;
       }
+      const bridgePrice = exchangePrice({
+        baseAssetId: 'SUNREY_COIN',
+        quoteAssetId: 'MOONREY_COIN',
+        quoteKind: 'ASSET',
+        priceUnits,
+        quoteScale: 6,
+        basePrecision: 6,
+        rounding: 'FLOOR',
+      });
+      const bridgeQuantity = AssetQuantity.fromScaledUnits(quantity, 'SUNREY_COIN');
+      const quoteRequired = quoteAssetQuantity(bridgePrice, bridgeQuantity).scaledUnits + this.clearing.fees.tradingFeeQuote;
       this.clearing.faucetToCustody(seller.exchangeAccountId, 'SUNREY_COIN', quantity);
-      this.clearing.faucetToCustody(buyer.exchangeAccountId, 'MOONREY_COIN', quantity * priceUnits / 1_000_000n + 1n);
+      const buyerQuoteAvailable = this.clearing.position(buyer.exchangeAccountId, 'MOONREY_COIN').available;
+      if (buyerQuoteAvailable < quoteRequired) {
+        this.clearing.faucetToCustody(
+          buyer.exchangeAccountId,
+          'MOONREY_COIN',
+          quoteRequired - buyerQuoteAvailable,
+        );
+      }
       this.clearing.placeOrder({
         accountId: seller.exchangeAccountId,
         side: 'SELL',
         quantity,
         priceUnits,
         now,
+        quoteRounding: 'FLOOR',
       });
       this.clearing.placeOrder({
         accountId: buyer.exchangeAccountId,
@@ -876,6 +895,7 @@ export class MarketOperationsEngine {
         quantity,
         priceUnits,
         now,
+        quoteRounding: 'FLOOR',
       });
       for (const settlement of this.clearing.settlements.values()) {
         if (settlement.status === 'SETTLEMENT_CREATED') {

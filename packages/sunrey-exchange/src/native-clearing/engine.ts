@@ -21,7 +21,7 @@ import {
   type TradeId,
 } from '../ids.ts';
 import { applyFill, matchIncoming, sortBook } from '../matching.ts';
-import { exchangePrice, quoteAssetQuantity, type ExchangePrice } from '../price.ts';
+import { exchangePrice, quoteAssetQuantity, type ExchangePrice, type PriceRounding } from '../price.ts';
 import type { DigitalOrder } from '../types.ts';
 import { requireCanonicalAssetId, sunreyMoonreyMarket } from './markets.ts';
 import {
@@ -205,13 +205,15 @@ export class NativeClearingEngine {
     readonly quantity: bigint;
     readonly priceUnits: bigint;
     readonly now: UtcInstant;
+    /** Simulation bridge may use FLOOR when ops match prices are not exact at native precision. */
+    readonly quoteRounding?: PriceRounding;
   }): DigitalOrder {
     const account = this.requireAccount(input.accountId);
     const market = this.market;
     if (input.quantity % market.quantityIncrement !== 0n || input.quantity < market.minimumQuantity) {
       throw Object.assign(new Error('INVALID_QUANTITY'), { code: 'INVALID_QUANTITY' });
     }
-    const price = this.price(input.priceUnits);
+    const price = this.price(input.priceUnits, input.quoteRounding);
     const quantity = AssetQuantity.fromScaledUnits(input.quantity, market.baseAsset);
     const quote = quoteAssetQuantity(price, quantity);
     const reserveAsset = input.side === 'SELL' ? market.baseAsset : market.quoteAsset;
@@ -670,7 +672,7 @@ export class NativeClearingEngine {
     return reservation;
   }
 
-  private price(priceUnits: bigint): ExchangePrice {
+  private price(priceUnits: bigint, rounding: PriceRounding = 'EXACT'): ExchangePrice {
     return exchangePrice({
       baseAssetId: SUNREY_COIN_NATIVE_ASSET_ID,
       quoteAssetId: MOONREY_COIN_NATIVE_ASSET_ID,
@@ -678,6 +680,7 @@ export class NativeClearingEngine {
       priceUnits,
       quoteScale: 6,
       basePrecision: 6,
+      rounding,
     });
   }
 
