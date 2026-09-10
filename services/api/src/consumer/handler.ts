@@ -190,7 +190,7 @@ const STUB_GROUPS = [
   'notifications',
 ] as const;
 
-export async function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffRequest): Promise<BffResponse> {
+export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffRequest): BffResponse | Promise<BffResponse> {
   const requestId = request.requestId ?? `req_${randomUUID()}`;
   const headers = {
     'cache-control': cachePolicyForPath(request.path).cacheControl,
@@ -318,19 +318,19 @@ export async function handleConsumerBff(runtime: ConsumerBffRuntime, request: Bf
   }
 
   try {
-    return await dispatchAuthenticated(runtime, request, principal, requestId, headers);
+    return dispatchAuthenticated(runtime, request, principal, requestId, headers);
   } catch {
     return json(500, bffFailClosedInternal(requestId), headers);
   }
 }
 
-async function dispatchAuthenticated(
+function dispatchAuthenticated(
   runtime: ConsumerBffRuntime,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
   headers: Record<string, string>,
-): Promise<BffResponse> {
+): BffResponse | Promise<BffResponse> {
   const { method, path, query, body } = request;
   const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
 
@@ -546,9 +546,12 @@ async function dispatchAuthenticated(
     }
   }
   if (runtime.exchange) {
-    const exchange = await dispatchExchange(runtime.exchange, request, principal, requestId, headers, {
+    const exchange = dispatchExchange(runtime.exchange, request, principal, requestId, headers, {
       skipWalletRoutes: Boolean(runtime.wallets),
     });
+    if (exchange instanceof Promise) {
+      return exchange;
+    }
     if (exchange) {
       return exchange;
     }
@@ -1619,14 +1622,14 @@ function isLifecycleExchange(
     && typeof (exchange as ExchangeLifecycleSurface).wallets === 'function';
 }
 
-async function dispatchExchange(
+function dispatchExchange(
   exchange: ExchangeLifecycleSurface | ExchangeProductSurface,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
   headers: Record<string, string>,
   options: { readonly skipWalletRoutes?: boolean } = {},
-): Promise<BffResponse | null> {
+): BffResponse | null | Promise<BffResponse | null> {
   const { method, path, query, body } = request;
   const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
   if (isLifecycleExchange(exchange)) {
@@ -1655,7 +1658,7 @@ async function dispatchExchange(
     }
     if (path.startsWith('/api/v1/exchange/proposals/') && path.endsWith('/submit') && method === 'POST') {
       const id = path.slice('/api/v1/exchange/proposals/'.length, -'/submit'.length);
-      return result(await exchange.submit(principal, id, rec, requestId), headers);
+      return (async () => result(await exchange.submit(principal, id, rec, requestId), headers))();
     }
     if (path === '/api/v1/exchange/orders' && method === 'GET') return result(exchange.orders(principal, requestId), headers);
     if (path === '/api/v1/exchange/fills' && method === 'GET') return result(exchange.fills(principal, requestId), headers);
@@ -1663,9 +1666,13 @@ async function dispatchExchange(
     if (!options.skipWalletRoutes) {
       if (path === '/api/v1/wallets' && method === 'GET') return result(exchange.wallets(principal, requestId), headers);
       if (path === '/api/v1/wallets/deposit-address' && method === 'GET') return result(exchange.depositAddress(principal, requestId), headers);
-      if (path === '/api/v1/wallets/deposits/simulate' && method === 'POST') return result(await exchange.simulateDeposit(principal, rec, requestId), headers);
+      if (path === '/api/v1/wallets/deposits/simulate' && method === 'POST') {
+        return (async () => result(await exchange.simulateDeposit(principal, rec, requestId), headers))();
+      }
       if (path === '/api/v1/wallets/withdrawals/quote' && method === 'POST') return result(exchange.withdrawalQuote(principal, rec, requestId), headers);
-      if (path === '/api/v1/wallets/withdrawals' && method === 'POST') return result(await exchange.withdraw(principal, rec, requestId), headers);
+      if (path === '/api/v1/wallets/withdrawals' && method === 'POST') {
+        return (async () => result(await exchange.withdraw(principal, rec, requestId), headers))();
+      }
       if (path === '/api/v1/wallets/transactions' && method === 'GET') return result(exchange.transactions(principal, requestId), headers);
     }
     if (path === '/api/v1/economy' && method === 'GET') return result(exchange.economy(principal, requestId), headers);
@@ -2047,6 +2054,8 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/action-center/{id}/dismiss',
   'GET /api/v1/agent/authorization-policy',
   'GET /api/v1/accounts',
+  'POST /api/v1/accounts',
+  'POST /api/v1/sandbox/funding',
   'GET /api/v1/accounts/{id}',
   'GET /api/v1/accounts/{id}/activity',
   'GET /api/v1/accounts/{id}/statement',
