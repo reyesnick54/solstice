@@ -17,14 +17,14 @@ function runtime(world: ReturnType<typeof createSandboxWorld>) {
   };
 }
 
-function call(
+async function call(
   world: ReturnType<typeof createSandboxWorld>,
   method: string,
   path: string,
   persona: Parameters<typeof sandboxToken>[0] | null,
   body: Record<string, unknown> = {},
 ) {
-  return handleConsumerBff(runtime(world), {
+  return await handleConsumerBff(runtime(world), {
     method,
     path,
     query: {},
@@ -34,16 +34,16 @@ function call(
 }
 
 describe('Internal Alpha Consumer Exchange BFF E2E', () => {
-  it('returns exchange home with LIVE_ALPHA and SRC/MRC markets', () => {
+  it('returns exchange home with LIVE_ALPHA and SRC/MRC markets', async () => {
     const world = createSandboxWorld();
-    const home = call(world, 'GET', '/api/v1/exchange', 'exchange');
+    const home = await call(world, 'GET', '/api/v1/exchange', 'exchange');
     assert.equal(home.status, 200);
     const body = home.body as { alphaStatus: string; environment: string; schema: string };
     assert.equal(body.schema, 'sunrey.consumer.exchange.home.v1');
     assert.equal(body.alphaStatus, 'LIVE_ALPHA');
     assert.equal(body.environment, 'simulation');
 
-    const markets = call(world, 'GET', '/api/v1/exchange/markets', 'exchange');
+    const markets = await call(world, 'GET', '/api/v1/exchange/markets', 'exchange');
     assert.equal(markets.status, 200);
     const items = (markets.body as { items: Array<{ marketId: string; quoteAsset?: string }> }).items;
     assert.ok(items.some((row) => row.marketId === 'SRC-USD'));
@@ -52,9 +52,9 @@ describe('Internal Alpha Consumer Exchange BFF E2E', () => {
     assert.notEqual(srcUsd?.quoteAsset, 'USD');
   });
 
-  it('creates a BUY quote from spendMinorUnits for SRC-USD', () => {
+  it('creates a BUY quote from spendMinorUnits for SRC-USD', async () => {
     const world = createSandboxWorld();
-    const quote = call(world, 'POST', '/api/v1/exchange/quotes', 'exchange', {
+    const quote = await call(world, 'POST', '/api/v1/exchange/quotes', 'exchange', {
       marketId: 'SRC-USD',
       side: 'BUY',
       spendMinorUnits: '10000',
@@ -78,9 +78,9 @@ describe('Internal Alpha Consumer Exchange BFF E2E', () => {
     assert.equal(body.quoteCurrencyLabel, 'SANDBOX_USD');
   });
 
-  it('rejects quote without quantity or spend', () => {
+  it('rejects quote without quantity or spend', async () => {
     const world = createSandboxWorld();
-    const badQuote = call(world, 'POST', '/api/v1/exchange/quotes', 'exchange', {
+    const badQuote = await call(world, 'POST', '/api/v1/exchange/quotes', 'exchange', {
       marketId: 'SRC-USD',
       side: 'BUY',
     });
@@ -245,12 +245,12 @@ describe('Internal Alpha Consumer Exchange BFF E2E', () => {
     assert.equal(unconfirmed.status, 400);
   });
 
-  it('denies cross-user order access and requires auth after logout', () => {
+  it('denies cross-user order access and requires auth after logout', async () => {
     const world = createSandboxWorld();
-    const denied = call(world, 'GET', '/api/v1/exchange/orders/xord_foreign', 'exchange');
+    const denied = await call(world, 'GET', '/api/v1/exchange/orders/xord_foreign', 'exchange');
     assert.equal(denied.status, 404);
 
-    const unauth = call(world, 'GET', '/api/v1/exchange/markets', null);
+    const unauth = await call(world, 'GET', '/api/v1/exchange/markets', null);
     assert.equal(unauth.status, 401);
   });
 

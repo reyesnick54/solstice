@@ -94,7 +94,7 @@ import {
   type SubscriptionIntelligenceBff,
 } from './subscription-intelligence-adapter.ts';
 import { SubscriptionIntelligenceService } from '../../../../packages/platform/src/subscription-intelligence/index.ts';
-import { asEconomicActivityId, deterministicActivityId } from '../../../../packages/personal-economic-graph/src/ids.ts';
+import { asEconomicActivityId, asEconomicGraphId, deterministicActivityId } from '../../../../packages/personal-economic-graph/src/ids.ts';
 import type { EconomicActivity } from '../../../../packages/personal-economic-graph/src/store.ts';
 import { createSandboxAccessEconomy, type HumanAccessEconomyProduct } from '../../../../packages/human-access-economy/src/service.ts';
 import {
@@ -937,7 +937,7 @@ function seedSandboxSubscriptionActivities(
   service: SubscriptionIntelligenceService,
   subjectId: string,
 ): void {
-  const graphId = 'egr_sandbox_sub' as never;
+  const graphId = asEconomicGraphId('peg_g_sandbox_sub');
   const months = ['03', '04', '05', '06', '07', '08'];
   const activities: EconomicActivity[] = months.map((month, index) =>
     Object.freeze({

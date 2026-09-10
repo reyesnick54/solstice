@@ -749,7 +749,7 @@ export class DigitalAssetLifecycle {
         marketId: trade.marketId,
         priceUnits: trade.price.priceUnits.toString(),
         quantity: trade.quantity.scaledUnits.toString(),
-        executedAt: trade.executedAt,
+        executedAt: trade.matchedAt,
       }),
     );
     return {
@@ -823,7 +823,7 @@ export class DigitalAssetLifecycle {
       authorization: walletAuth('Cancel order'),
       now: this.now,
     });
-    if ('ok' in result && result.ok === false) {
+    if ('ok' in result) {
       return result;
     }
     return alphaOrderEnvelope({
@@ -891,7 +891,7 @@ export class DigitalAssetLifecycle {
         previewId: input.previewId ?? previewReady?.previewId ?? null,
       },
     });
-    if ('ok' in result && result.ok === false) {
+    if ('ok' in result) {
       return result;
     }
     const receipt = result.orderId ? this.engine.receipts.get(result.orderId) : undefined;

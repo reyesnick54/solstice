@@ -220,6 +220,7 @@ describe('consumer BFF exchange SDK', () => {
       quantity: '1',
       proposalId: 'prop_1',
     });
+    assert.ok('requiresExecution' in submitted);
     assert.equal(submitted.requiresExecution, true);
     await client.listExchangeFills();
     await client.listExchangeHoldings();
