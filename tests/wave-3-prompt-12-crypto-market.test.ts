@@ -44,7 +44,7 @@ const ETH_USD = 'CRYPTO:ETH:ethereum:native:USD';
 const USDT_USD = 'CRYPTO:USDT:ethereum:0xdac17f958d2ee523a2206206994597c13d831ec7:USD';
 
 describe('Wave 3 Prompt 12 — crypto market reference layer', () => {
-  it('1. every selected provider adapter registers', () => {
+  it('1. every selected provider adapter registers', async () => {
     assert.equal(ALL_CRYPTO_MARKET_ADAPTERS.length, 5);
     for (const providerId of CRYPTO_MARKET_CATALOG_PROVIDER_IDS) {
       if (providerId === 'coinmarketcap') continue;
@@ -53,7 +53,7 @@ describe('Wave 3 Prompt 12 — crypto market reference layer', () => {
     }
   });
 
-  it('2. catalog identity matches adapter', () => {
+  it('2. catalog identity matches adapter', async () => {
     for (const entry of CRYPTO_MARKET_CATALOG_ENTRIES) {
       const adapter = ALL_CRYPTO_MARKET_ADAPTERS.find((row) => row.providerId === entry.provider_id);
       if (entry.provider_id === 'coinmarketcap') {
@@ -83,7 +83,7 @@ describe('Wave 3 Prompt 12 — crypto market reference layer', () => {
     assert.equal(quote.value.asset.network, 'ethereum');
   });
 
-  it('5. symbol collision handling via network identity', () => {
+  it('5. symbol collision handling via network identity', async () => {
     const usdt = disambiguateSymbolCollision('USDT');
     assert.ok(usdt.length >= 1);
     const ethNetwork = usdt.find((row) => row.network === 'ethereum');
@@ -91,7 +91,7 @@ describe('Wave 3 Prompt 12 — crypto market reference layer', () => {
     assert.ok(ethNetwork!.contractAddress);
   });
 
-  it('6. contract/network identity for stablecoins', () => {
+  it('6. contract/network identity for stablecoins', async () => {
     const usdt = resolveCryptoAsset(USDT_USD);
     assert.ok(usdt);
     assert.equal(usdt!.assetType, 'stablecoin');
@@ -109,7 +109,7 @@ describe('Wave 3 Prompt 12 — crypto market reference layer', () => {
     assert.equal(venue.value.provenance.priceSourceType, 'EXCHANGE_SPECIFIC');
   });
 
-  it('8. decimal precision via minor units', () => {
+  it('8. decimal precision via minor units', async () => {
     const minor = parseDecimalToMinorUnits('67234.56', 2);
     assert.equal(minor, 6723456n);
   });
@@ -143,12 +143,12 @@ describe('Wave 3 Prompt 12 — crypto market reference layer', () => {
     assert.equal(history.value[0]?.interval, '1d');
   });
 
-  it('12. invalid timestamp rejected', () => {
+  it('12. invalid timestamp rejected', async () => {
     const result = validateTimestamp('not-a-date');
     assert.equal(result.ok, false);
   });
 
-  it('13. negative price rejected', () => {
+  it('13. negative price rejected', async () => {
     const result = validatePriceMinorUnits(-1n);
     assert.equal(result.ok, false);
   });
@@ -161,7 +161,7 @@ describe('Wave 3 Prompt 12 — crypto market reference layer', () => {
     assert.equal(quote.value.freshness.status, 'stale');
   });
 
-  it('15. cache policy differs by capability', () => {
+  it('15. cache policy differs by capability', async () => {
     const spot = cryptoMarketCachePolicy(CRYPTO_MARKET_CACHE_CAPABILITIES.spotQuote);
     const metadata = cryptoMarketCachePolicy(CRYPTO_MARKET_CACHE_CAPABILITIES.assetMetadata);
     assert.ok(spot.freshTtlMs < metadata.freshTtlMs);
@@ -207,7 +207,7 @@ describe('Wave 3 Prompt 12 — crypto market reference layer', () => {
     assert.ok(quote.value.provenance.rawPayloadHash);
   });
 
-  it('21. exchange reference-vs-order-book separation', () => {
+  it('21. exchange reference-vs-order-book separation', async () => {
     const proof = integrations.exchangeSeparationProof();
     assert.equal(proof.externalDataPopulatesOrderBook, false);
     assert.equal(proof.externalDataExecutesTrades, false);
@@ -230,19 +230,19 @@ describe('Wave 3 Prompt 12 — crypto market reference layer', () => {
     assert.equal(evidence.items[0]?.label, 'REFERENCE_NOT_EXECUTION');
   });
 
-  it('24. SunRey Coin identity unchanged', () => {
+  it('24. SunRey Coin identity unchanged', async () => {
     assert.equal(isNativeSunReyAsset(SUNREY_COIN_NATIVE_ASSET_ID), true);
     assert.equal(resolveCryptoAsset(SUNREY_COIN_NATIVE_ASSET_ID), undefined);
   });
 
-  it('25. MoonRey Coin identity unchanged', () => {
+  it('25. MoonRey Coin identity unchanged', async () => {
     assert.equal(isNativeSunReyAsset(MOONREY_COIN_NATIVE_ASSET_ID), true);
     assert.equal(resolveCryptoAsset(MOONREY_COIN_NATIVE_ASSET_ID), undefined);
   });
 
-  it('26. no credentials exposed through BFF', () => {
+  it('26. no credentials exposed through BFF', async () => {
     const world = createSandboxWorld();
-    const response = handleConsumerBff(
+    const response = await handleConsumerBff(
       { ...world },
       {
         method: 'GET',
@@ -260,7 +260,7 @@ describe('Wave 3 Prompt 12 — crypto market reference layer', () => {
     assert.equal(body.includes('api.coingecko.com'), false);
   });
 
-  it('catalog discovery includes crypto providers after merge', () => {
+  it('catalog discovery includes crypto providers after merge', async () => {
     const index = buildCatalogIndex(
       createFixtureCatalog(
         CRYPTO_MARKET_CATALOG_ENTRIES.map((entry) => entry as never),
@@ -270,7 +270,7 @@ describe('Wave 3 Prompt 12 — crypto market reference layer', () => {
     assert.equal(matches.length, CRYPTO_MARKET_CATALOG_ENTRIES.length);
   });
 
-  it('fixture catalog quote validates', () => {
+  it('fixture catalog quote validates', async () => {
     const asset = resolveCryptoAsset(BTC_USD)!;
     const quote = normalizeCoingeckoBtc(asset, NOW);
     assert.equal(validateQuote(quote).ok, true);
@@ -283,9 +283,9 @@ describe('Wave 3 Prompt 12 — crypto market reference layer', () => {
     assert.equal(result.code, 'PROVIDER_BLOCKED');
   });
 
-  it('BFF crypto asset route returns reference quote', () => {
+  it('BFF crypto asset route returns reference quote', async () => {
     const world = createSandboxWorld();
-    const response = handleConsumerBff(
+    const response = await handleConsumerBff(
       { ...world },
       {
         method: 'GET',

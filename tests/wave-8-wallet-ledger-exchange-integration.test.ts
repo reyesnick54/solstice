@@ -54,7 +54,7 @@ async function call(
   persona: Parameters<typeof sandboxToken>[0] = 'basic_verified',
 ) {
   return Promise.resolve(
-    handleConsumerBff(bffRuntime(), {
+    await handleConsumerBff(bffRuntime(), {
       method,
       path,
       query: {},
@@ -79,13 +79,13 @@ function setupWalletEngine(): { engine: WalletEngine; aliceId: string; bobId: st
 }
 
 describe('Wave 8 — wallet, ledger, exchange integration', () => {
-  it('registers money integration BFF routes', () => {
+  it('registers money integration BFF routes', async () => {
     for (const route of MONEY_INTEGRATION_ROUTES) {
       assert.ok(CONSUMER_BFF_ROUTES.includes(route), `missing route ${route}`);
     }
   });
 
-  it('formalizes wallet architecture without implying regulated custody', () => {
+  it('formalizes wallet architecture without implying regulated custody', async () => {
     const chain = describeBlockchainAccount({
       walletId: 'wal_chain',
       accountId: 'bca.alice',
@@ -105,7 +105,7 @@ describe('Wave 8 — wallet, ledger, exchange integration', () => {
     assert.equal(custodial.balanceAuthority, 'CUSTODY_PROVIDER_REPORTED_STATE');
   });
 
-  it('derives native balance from canonical chain state', () => {
+  it('derives native balance from canonical chain state', async () => {
     const { engine, aliceId } = setupWalletEngine();
     const projection = canonicalChainBalance(engine, aliceId, 'SUNREY_COIN');
     assert.equal(projection.authority, 'NATIVE_BLOCKCHAIN_AUTHORITY');
@@ -114,7 +114,7 @@ describe('Wave 8 — wallet, ledger, exchange integration', () => {
     assert.equal(projectionMatchesCanonical(projection, engine), true);
   });
 
-  it('executes SunRey native transfer through finality', () => {
+  it('executes SunRey native transfer through finality', async () => {
     const { engine, aliceId, bobId, bobAddress } = setupWalletEngine();
     const receipt = executeNativeTransferLifecycle(engine, {
       walletId: 'alice',
@@ -135,7 +135,7 @@ describe('Wave 8 — wallet, ledger, exchange integration', () => {
     assert.equal(engine.balance(bobId, 'SUNREY_COIN'), 100_000n);
   });
 
-  it('executes MoonRey native transfer when simulation balance is credited', () => {
+  it('executes MoonRey native transfer when simulation balance is credited', async () => {
     const { engine, bobId, bobAddress } = setupWalletEngine();
     const receipt = executeNativeTransferLifecycle(engine, {
       walletId: 'alice',
@@ -154,11 +154,11 @@ describe('Wave 8 — wallet, ledger, exchange integration', () => {
     }
   });
 
-  it('rejects cross-asset unsupported id at lifecycle boundary', () => {
+  it('rejects cross-asset unsupported id at lifecycle boundary', async () => {
     assert.equal(rejectCrossAssetTransfer('FAKE_COIN', ['SUNREY_COIN', 'MOONREY_COIN']), true);
   });
 
-  it('rejects insufficient balance', () => {
+  it('rejects insufficient balance', async () => {
     const { engine, bobId, bobAddress } = setupWalletEngine();
     const receipt = executeNativeTransferLifecycle(engine, {
       walletId: 'alice',
@@ -176,14 +176,14 @@ describe('Wave 8 — wallet, ledger, exchange integration', () => {
     }
   });
 
-  it('rejects transaction replay', () => {
+  it('rejects transaction replay', async () => {
     const engine = new WalletEngine();
     assert.equal(rejectReplay(engine, 'client-tx-1'), false);
     recordFinalizedClientTx(engine, 'client-tx-1');
     assert.equal(rejectReplay(engine, 'client-tx-1'), true);
   });
 
-  it('detects projection mismatch without auto-correcting chain', () => {
+  it('detects projection mismatch without auto-correcting chain', async () => {
     const mismatch = detectProjectionMismatch({
       assetId: 'SUNREY_COIN',
       canonicalChainQuantity: 1_000n,
@@ -195,7 +195,7 @@ describe('Wave 8 — wallet, ledger, exchange integration', () => {
     assert.equal(mismatch!.autoCorrected, false);
   });
 
-  it('reconciles money surfaces without rewriting chain state', () => {
+  it('reconciles money surfaces without rewriting chain state', async () => {
     const report = reconcileMoneySurfaces({
       assetId: 'SUNREY_COIN',
       chainQuantity: 1_000n,
@@ -208,7 +208,7 @@ describe('Wave 8 — wallet, ledger, exchange integration', () => {
     assert.equal(report.autoCorrected, false);
   });
 
-  it('separates SunRey and MoonRey tickers and assets', () => {
+  it('separates SunRey and MoonRey tickers and assets', async () => {
     assert.equal(sunreyTickerIsDistinctFromMoonrey(), true);
     assert.equal(assertNoTickerCollision(SUNREY_COIN_NATIVE_ASSET_ID, MOONREY_COIN_NATIVE_ASSET_ID), true);
     assert.throws(() =>
@@ -221,7 +221,7 @@ describe('Wave 8 — wallet, ledger, exchange integration', () => {
     );
   });
 
-  it('proves market price is not PEVE or GPUV and does not alter supply', () => {
+  it('proves market price is not PEVE or GPUV and does not alter supply', async () => {
     const proof = marketPriceBoundaryProof();
     assert.equal(proof.sunreyMarketPriceIsPeve, false);
     assert.equal(proof.moonreyMarketPriceIsGpuv, false);
@@ -235,13 +235,13 @@ describe('Wave 8 — wallet, ledger, exchange integration', () => {
     assert.equal(supplyCheck.ok, true);
   });
 
-  it('maps native settlement to Wave 8 states', () => {
+  it('maps native settlement to Wave 8 states', async () => {
     assert.equal(mapNativeSettlementToWave8('SETTLEMENT_CREATED'), 'SETTLEMENT_PENDING');
     assert.equal(mapNativeSettlementToWave8('FINALIZED'), 'SETTLED');
     assert.equal(mapNativeSettlementToWave8('FAILED'), 'FAILED');
   });
 
-  it('runs exchange sandbox order/trade without minting supply', () => {
+  it('runs exchange sandbox order/trade without minting supply', async () => {
     const clearing = new NativeClearingEngine();
     const buyer = clearing.openExchangeAccount('cust_buyer');
     const seller = clearing.openExchangeAccount('cust_seller');
@@ -271,7 +271,7 @@ describe('Wave 8 — wallet, ledger, exchange integration', () => {
     assert.equal(finalized?.status, 'FINALIZED');
   });
 
-  it('detects duplicate settlement in reconciliation', () => {
+  it('detects duplicate settlement in reconciliation', async () => {
     const report = reconcileMoneySurfaces({
       assetId: 'SUNREY_COIN',
       chainQuantity: 1_000n,
@@ -284,7 +284,7 @@ describe('Wave 8 — wallet, ledger, exchange integration', () => {
     assert.ok(report.breaks.some((b) => b.kind === 'DUPLICATE_SETTLEMENT'));
   });
 
-  it('rebuilds wallet projection after service restart simulation', () => {
+  it('rebuilds wallet projection after service restart simulation', async () => {
     const { engine, aliceId } = setupWalletEngine();
     const before = canonicalChainBalance(engine, aliceId, 'SUNREY_COIN');
     engine.reconstructHistory();
@@ -318,7 +318,7 @@ describe('Wave 8 — wallet, ledger, exchange integration', () => {
     assert.equal(body.moonreyMarketPriceIsGpuv, false);
   });
 
-  it('reports settlement failure before finality on matched trade', () => {
+  it('reports settlement failure before finality on matched trade', async () => {
     const clearing = new NativeClearingEngine();
     const buyer = clearing.openExchangeAccount('cust_buyer');
     const seller = clearing.openExchangeAccount('cust_seller');
@@ -344,7 +344,7 @@ describe('Wave 8 — wallet, ledger, exchange integration', () => {
     assert.equal(settlement.transactionId, null);
   });
 
-  it('rebuilds money integration platform after simulated service restart', () => {
+  it('rebuilds money integration platform after simulated service restart', async () => {
     const world = createSandboxWorld();
     const engine = new WalletEngine();
     engine.unlock('development-passphrase');
@@ -382,7 +382,7 @@ describe('Wave 8 — wallet, ledger, exchange integration', () => {
     assert.equal(body.items[0]?.state, 'SETTLED');
   });
 
-  it('money integration platform survives restart with same deps', () => {
+  it('money integration platform survives restart with same deps', async () => {
     const world = createSandboxWorld();
     const engine = new WalletEngine();
     engine.unlock('development-passphrase');
