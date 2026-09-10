@@ -44,6 +44,7 @@
     "qualify:performance": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/qualify-performance.mjs",
     "qualify:wave9": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/qualify-wave9.mjs",
     "qualify:wave9:fast": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/qualify-wave9.mjs --profile smoke",
+    "smoke:exchange-alpha": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/smoke-exchange-alpha.mjs",
     "qualify:wave9:dr": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/qualify-wave9.mjs --suite database-failure,backup-restore,full-stack-restart",
     "test:wave9-regression": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/wave-9-chaos-regression.test.ts",
     "test:performance-regression": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/wave6-prompt16-performance-regression.test.ts",
