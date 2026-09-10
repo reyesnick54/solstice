@@ -3,19 +3,25 @@
  * Orchestration only. Not a second matching engine, ledger, or Kernel.
  */
 
-import { SUNREY_COIN_USD_MARKET_ID } from '../../../../packages/sunrey-exchange/src/ids.ts';
+import {
+  MRC_USD_ALPHA_MARKET_ID,
+  SRC_MRC_ALPHA_MARKET_ID,
+  SRC_USD_ALPHA_MARKET_ID,
+} from '../../../../packages/sunrey-exchange/src/ids.ts';
 import {
   ExchangeApplicationApi,
   isExchangeApiError,
   type ExchangeApiActor,
 } from '../../../../packages/sunrey-exchange/src/product/api.ts';
-import { createExchangeProductSandbox, emptySnapshot } from '../../../../packages/sunrey-exchange/src/product/sandbox.ts';
+import { createAlphaExchangeSandbox, type LedgerUsdAuthority } from '../../../../packages/sunrey-exchange/src/alpha/sandbox.ts';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import type { BffPrincipal } from './ports.ts';
 
 export type ExchangeBffSurface = {
-  readonly platform: ReturnType<typeof createExchangeProductSandbox>;
+  readonly platform: ReturnType<typeof createAlphaExchangeSandbox>['platform'];
   readonly api: ExchangeApplicationApi;
+  readonly alpha: ReturnType<typeof createAlphaExchangeSandbox>['alpha'];
+  readonly seedParticipant: ReturnType<typeof createAlphaExchangeSandbox>['seedParticipant'];
   markets(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope;
   market(principal: BffPrincipal, instrument: string, requestId: string): Record<string, unknown> | BffErrorEnvelope;
   ticker(principal: BffPrincipal, instrument: string, requestId: string): Record<string, unknown> | BffErrorEnvelope;
@@ -41,10 +47,10 @@ export type ExchangeBffSurface = {
   stream(principal: BffPrincipal, after: number, requestId: string): Record<string, unknown> | BffErrorEnvelope;
 };
 
-export function createExchangeBffSurface(): ExchangeBffSurface {
-  const platform = createExchangeProductSandbox();
-  platform.putSnapshot(emptySnapshot());
-  const api = platform.api;
+export function createExchangeBffSurface(input?: { readonly usd?: LedgerUsdAuthority }): ExchangeBffSurface {
+  const sandbox = createAlphaExchangeSandbox(input?.usd ? { usd: input.usd } : undefined);
+  const api = sandbox.api;
+  const alpha = sandbox.alpha;
 
   function actor(principal: BffPrincipal): ExchangeApiActor {
     return {
@@ -52,6 +58,16 @@ export function createExchangeBffSurface(): ExchangeBffSurface {
       accountIds: [`acct_${principal.customerId}`, principal.customerId],
       authorityPresent: false,
     };
+  }
+
+  function ensureParticipant(principal: BffPrincipal): void {
+    if (!alpha.participants.has(principal.customerId)) {
+      sandbox.seedParticipant({
+        participantId: principal.customerId,
+        usdAccountId: `acct_${principal.customerId}`,
+        usdMinor: 0n,
+      });
+    }
   }
 
   function wrap(value: unknown, requestId: string): Record<string, unknown> | BffErrorEnvelope {
@@ -67,11 +83,20 @@ export function createExchangeBffSurface(): ExchangeBffSurface {
     return value as Record<string, unknown>;
   }
 
+  function resolveMarket(body: Record<string, unknown>): { readonly marketId: string; readonly instrument: string } {
+    const marketId = str(body.marketId) ?? str(body.instrument) ?? SRC_USD_ALPHA_MARKET_ID;
+    const instrument = str(body.instrument) ?? marketId;
+    return { marketId, instrument };
+  }
+
   return {
-    platform,
+    platform: sandbox.platform,
     api,
+    alpha,
+    seedParticipant: sandbox.seedParticipant.bind(sandbox),
     markets: (_principal, _requestId) => ({
       ...(api.markets() as object),
+      environment: 'INTERNAL_ALPHA',
       screens: EXCHANGE_SCREENS,
     }),
     market: (_principal, instrument, requestId) => wrap(api.market(instrument), requestId),
@@ -79,32 +104,68 @@ export function createExchangeBffSurface(): ExchangeBffSurface {
     orderBook: (_principal, instrument, requestId) => wrap(api.orderBook(instrument), requestId),
     trades: (_principal, instrument, requestId) => wrap(api.trades(instrument), requestId),
     candles: (_principal, instrument, requestId) => wrap(api.candles(instrument), requestId),
-    eligibility: (principal, _requestId) => api.eligibility(actor(principal)) as Record<string, unknown>,
-    preview: (principal, body, _requestId) =>
-      api.preview(actor(principal), {
-        marketId: str(body.marketId) ?? SUNREY_COIN_USD_MARKET_ID,
-        instrument: str(body.instrument) ?? 'SUNREY_COIN-USD',
+    eligibility: (principal, _requestId) => {
+      ensureParticipant(principal);
+      return api.eligibility(actor(principal)) as Record<string, unknown>;
+    },
+    preview: (principal, body, _requestId) => {
+      ensureParticipant(principal);
+      const resolved = resolveMarket(body);
+      return api.preview(actor(principal), {
+        marketId: resolved.marketId,
+        instrument: resolved.instrument,
         side: body.side === 'SELL' ? 'SELL' : 'BUY',
         quantity: BigInt(str(body.quantity) ?? '0'),
-      }) as Record<string, unknown>,
-    orders: (principal, _requestId) => api.orders(actor(principal)) as Record<string, unknown>,
-    order: (principal, orderId, requestId) => wrap(api.order(actor(principal), orderId), requestId),
-    submitOrder: (principal, body, requestId) =>
-      wrap(
-        api.submitOrder(
-          { ...actor(principal), approvedProposalId: str(body.proposalId) ?? null },
-          {
-            marketId: str(body.marketId) ?? SUNREY_COIN_USD_MARKET_ID,
+      }) as Record<string, unknown>;
+    },
+    orders: (principal, _requestId) => {
+      ensureParticipant(principal);
+      return api.orders(actor(principal)) as Record<string, unknown>;
+    },
+    order: (principal, orderId, requestId) => {
+      ensureParticipant(principal);
+      return wrap(api.order(actor(principal), orderId), requestId);
+    },
+    submitOrder: (principal, body, requestId) => {
+      ensureParticipant(principal);
+      const resolved = resolveMarket(body);
+      const proposal = str(body.proposalId) ?? actor(principal).approvedProposalId ?? null;
+      if (!proposal && !actor(principal).authorityPresent) {
+        return wrap(
+          api.submitOrder({ ...actor(principal), approvedProposalId: null }, {
+            marketId: resolved.marketId,
             side: body.side === 'SELL' ? 'SELL' : 'BUY',
             quantity: BigInt(str(body.quantity) ?? '0'),
-            proposalId: str(body.proposalId) ?? null,
+            proposalId: null,
+          }),
+          requestId,
+        );
+      }
+      return wrap(
+        api.submitOrder(
+          { ...actor(principal), approvedProposalId: proposal },
+          {
+            marketId: resolved.marketId,
+            side: body.side === 'SELL' ? 'SELL' : 'BUY',
+            quantity: BigInt(str(body.quantity) ?? '0'),
+            proposalId: proposal,
           },
         ),
         requestId,
-      ),
-    cancelOrder: (principal, orderId, requestId) => wrap(api.cancelOrder(actor(principal), orderId), requestId),
-    fills: (principal, _requestId) => api.fills(actor(principal)) as Record<string, unknown>,
-    holdings: (principal, _requestId) => api.holdings(actor(principal)) as Record<string, unknown>,
+      );
+    },
+    cancelOrder: (principal, orderId, requestId) => {
+      ensureParticipant(principal);
+      return wrap(api.cancelOrder(actor(principal), orderId), requestId);
+    },
+    fills: (principal, _requestId) => {
+      ensureParticipant(principal);
+      return api.fills(actor(principal)) as Record<string, unknown>;
+    },
+    holdings: (principal, _requestId) => {
+      ensureParticipant(principal);
+      return api.holdings(actor(principal)) as Record<string, unknown>;
+    },
     stream: (_principal, after, _requestId) => api.stream(after) as Record<string, unknown>,
   };
 }
@@ -130,3 +191,5 @@ function str(value: unknown): string | undefined {
   return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
+void MRC_USD_ALPHA_MARKET_ID;
+void SRC_MRC_ALPHA_MARKET_ID;

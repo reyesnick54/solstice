@@ -31,7 +31,8 @@ export type CryptoMarketReferenceProvider = {
   readonly capabilities: readonly CryptoMarketCapability[];
   readonly priority: 'primary' | 'secondary' | 'fallback';
   readonly productionAuthorized: false;
-  readonly liveProviderConnected: false;
+  readonly liveCapable: boolean;
+  readonly liveProviderConnected: boolean;
   readonly blocked: boolean;
 
   health(nowUtc: UtcInstant): CryptoMarketProviderHealth;

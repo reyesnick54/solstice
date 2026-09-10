@@ -10,6 +10,7 @@ import { PreviewGrowSurface } from './consumer/preview-grow.ts';
 import { bindDurableFinancialReadModel } from './consumer/durable-consumer-bff.ts';
 import type { DurableInternalPaymentSurface } from './consumer/durable-internal-payments.ts';
 import type { DurableMoneyAccountMutations } from './consumer/durable-money-account-mutations.ts';
+import type { DurableExchangeSurface } from './consumer/durable-exchange.ts';
 import type { DurableWalletSurface } from './consumer/durable-wallets.ts';
 import type { PersonalDataVaultProduct } from '@solstice/personal-data-vault';
 import type { SimulationRuntime } from '../../accounts/src/runtime.ts';
@@ -28,6 +29,7 @@ export type SunReyPreviewOptions = {
   readonly durableInternalPayments?: DurableInternalPaymentSurface;
   readonly durableMoneyAccountMutations?: DurableMoneyAccountMutations;
   readonly durableWallets?: DurableWalletSurface;
+  readonly durableExchange?: DurableExchangeSurface;
   readonly durableVault?: PersonalDataVaultProduct;
 };
 
@@ -44,12 +46,12 @@ export type SunReyPreviewOptions = {
 export function createSunReyPreviewRuntime(
   options: Pick<
     SunReyPreviewOptions,
-    'providerDown' | 'durableFinancialRuntime' | 'durableMoneyAccountMutations' | 'durableWallets' | 'durableVault'
+    'providerDown' | 'durableFinancialRuntime' | 'durableMoneyAccountMutations' | 'durableWallets' | 'durableExchange' | 'durableVault'
   > = {},
 ): ConsumerBffRuntime {
   const world = createSandboxWorld({ providerDown: options.providerDown === true });
   const previewGrow = new PreviewGrowSurface(world.grow, world.bff, world.growOpportunity);
-  const exchange = new ExchangeBffSurface(() => world.runtime.clock.now());
+  const exchange = options.durableExchange ?? new ExchangeBffSurface(() => world.runtime.clock.now());
   const bff = options.durableFinancialRuntime
     ? bindDurableFinancialReadModel(world.bff, options.durableFinancialRuntime)
     : world.bff;
@@ -102,6 +104,7 @@ export async function startSunReyPreview(
         ? { durableMoneyAccountMutations: options.durableMoneyAccountMutations }
         : {}),
       ...(options.durableWallets ? { durableWallets: options.durableWallets } : {}),
+      ...(options.durableExchange ? { durableExchange: options.durableExchange } : {}),
       ...(options.durableVault ? { durableVault: options.durableVault } : {}),
     }),
     ...(options.durableInternalPayments ? { durableInternalPayments: options.durableInternalPayments } : {}),

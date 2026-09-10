@@ -15,6 +15,8 @@ export { evaluateConsumerAuthorization, humanReadableTradeIntent, sessionCannotS
 export { runConsumerExchangeCommand, CONSUMER_COMMANDS, consumerExchangeUsage } from './cli.ts';
 export { evaluateConsumerEligibility } from './eligibility.ts';
 export { ConsumerExchangeEngine } from './engine.ts';
+export { createInternalAlphaMarketMaker, InternalAlphaMarketMaker } from '../alpha/internal-market-maker.ts';
+export type { AlphaLiquidityConfig, AlphaPostedQuote } from '../alpha/index.ts';
 export { InMemoryConsumerNotificationPort, consumerNotification } from './notifications.ts';
 export { CONSUMER_TRADING_RATE_POLICY, PUBLIC_API_RATE_LIMIT_PER_MINUTE, defaultConsumerExchangePolicy } from './policy.ts';
 export { projectPortfolio } from './portfolio.ts';

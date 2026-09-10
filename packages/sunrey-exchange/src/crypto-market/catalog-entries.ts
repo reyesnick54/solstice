@@ -95,7 +95,7 @@ function cryptoCatalogEntry(input: {
       status: input.verification_status,
       verified_against_official_docs: input.verification_status === 'verified',
       last_verified: '2026-08-30',
-      notes: input.blocked ? 'Blocked pending credential and commercial review.' : 'Wave 3 Prompt 12 fixture-backed adapter.',
+      notes: input.blocked ? 'Blocked pending credential and commercial review.' : 'Exchange Task 5 live HTTP adapter with fixture simulation fallback.',
     }),
   });
 }

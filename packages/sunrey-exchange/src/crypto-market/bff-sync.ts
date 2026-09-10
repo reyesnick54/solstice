@@ -1,0 +1,33 @@
+/**
+ * Synchronous fixture-backed BFF builders for backward compatibility in tests.
+ */
+
+import { buildFixtureHistory, normalizeFixtureQuote } from './adapters/normalize.ts';
+import { resolveCryptoAsset } from './assets.ts';
+import type { CryptoHistoryInterval } from './types.ts';
+import { defaultCryptoMarketNow } from './validation.ts';
+import type { UtcInstant } from '@solstice/domain';
+
+export const DEFAULT_CRYPTO_NOW = defaultCryptoMarketNow();
+
+export function buildBffCryptoQuoteSync(assetId: string, providerId = 'coingecko') {
+  const result = normalizeFixtureQuote(providerId, assetId, DEFAULT_CRYPTO_NOW);
+  if (!result.ok) {
+    return null;
+  }
+  return result.quote;
+}
+
+export function buildBffCryptoHistorySync(
+  assetId: string,
+  interval: CryptoHistoryInterval,
+  from: UtcInstant,
+  to: UtcInstant,
+  providerId = 'coingecko',
+) {
+  const asset = resolveCryptoAsset(assetId);
+  if (!asset) {
+    return [];
+  }
+  return buildFixtureHistory(asset, providerId, interval, from, to, DEFAULT_CRYPTO_NOW);
+}

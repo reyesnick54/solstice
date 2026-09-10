@@ -51,5 +51,17 @@ export { attempt, runExchangeRedTeam, unauthorizedMutations } from './red-team.t
 export type { RedTeamAttempt } from './red-team.ts';
 export { runReconciliation, runRecoveryCases } from './recovery.ts';
 export type { ReconciliationReport, RecoveryCase } from './recovery.ts';
+export {
+  captureConsumerAlphaSnapshot,
+  decodeConsumerAlphaSnapshot,
+  encodeConsumerAlphaSnapshot,
+  hydrateConsumerAlphaLifecycle,
+} from './persistence.ts';
+export type {
+  ConsumerAlphaIdempotencyRecord,
+  ConsumerAlphaIdempotencyResource,
+  ConsumerAlphaPersistencePort,
+  ConsumerAlphaSnapshot,
+} from './persistence.ts';
 export { loadRead, measure, measurePhaseGPerformance } from './performance.ts';
 export type { PerformanceBaseline, PerformanceSample } from './performance.ts';

@@ -7,29 +7,37 @@
 
 import {
   ALL_CRYPTO_MARKET_ADAPTERS,
-  buildBffCryptoHistory,
-  buildBffCryptoQuote,
+  buildBffCryptoHistoryAsync,
+  buildBffCryptoQuoteAsync,
+  createCryptoMarketReferenceService,
   DEFAULT_CRYPTO_NOW,
   isNativeSunReyAsset,
   resolveCryptoAsset,
-} from '../../../../packages/sunrey-exchange/src/crypto-market/index.ts';
-import type { CryptoHistoryInterval } from '../../../../packages/sunrey-exchange/src/crypto-market/types.ts';
-import { asUtcInstant } from '../../../../packages/domain/src/time.ts';
+  type CryptoHistoryInterval,
+} from '@solstice/sunrey-exchange';
+import { asUtcInstant } from '@solstice/domain';
+import { DATA_MODE } from '@solstice/config';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import type { BffPrincipal } from './ports.ts';
 
 export type CryptoMarketBffSurface = {
   markets(principal: BffPrincipal, requestId: string): unknown | BffErrorEnvelope;
-  asset(principal: BffPrincipal, assetId: string, requestId: string): unknown | BffErrorEnvelope;
+  asset(principal: BffPrincipal, assetId: string, requestId: string): Promise<unknown | BffErrorEnvelope>;
   history(
     principal: BffPrincipal,
     assetId: string,
     query: Readonly<Record<string, string>>,
     requestId: string,
-  ): unknown | BffErrorEnvelope;
+  ): Promise<unknown | BffErrorEnvelope>;
 };
 
-export function createCryptoMarketBffSurface(): CryptoMarketBffSurface {
+export type CryptoMarketBffOptions = {
+  readonly service?: ReturnType<typeof createCryptoMarketReferenceService>;
+};
+
+export function createCryptoMarketBffSurface(options: CryptoMarketBffOptions = {}): CryptoMarketBffSurface {
+  const service = options.service ?? createCryptoMarketReferenceService();
+
   return Object.freeze({
     markets(principal: BffPrincipal, requestId: string) {
       void principal;
@@ -39,10 +47,13 @@ export function createCryptoMarketBffSurface(): CryptoMarketBffSurface {
         referenceOnly: true,
         executionAuthorized: false,
         environment: 'simulation',
+        dataMode: DATA_MODE,
         providers: ALL_CRYPTO_MARKET_ADAPTERS.map((provider) => ({
           providerId: provider.providerId,
           priority: provider.priority,
           blocked: provider.blocked,
+          liveCapable: provider.liveCapable,
+          liveProviderConnected: provider.liveProviderConnected,
         })),
         separation: Object.freeze({
           referenceOnly: true,
@@ -52,7 +63,7 @@ export function createCryptoMarketBffSurface(): CryptoMarketBffSurface {
       };
     },
 
-    asset(principal: BffPrincipal, assetId: string, requestId: string) {
+    async asset(principal: BffPrincipal, assetId: string, requestId: string) {
       void principal;
       if (isNativeSunReyAsset(assetId)) {
         return bffError({
@@ -72,13 +83,13 @@ export function createCryptoMarketBffSurface(): CryptoMarketBffSurface {
           requestId,
         });
       }
-      const quote = buildBffCryptoQuote(assetId);
+      const quote = await buildBffCryptoQuoteAsync(assetId, DEFAULT_CRYPTO_NOW, service);
       if (!quote) {
         return bffError({
           errorCode: 'QUOTE_UNAVAILABLE',
           category: 'UPSTREAM',
           message: `quote unavailable for ${assetId}`,
-          retryable: false,
+          retryable: true,
           requestId,
         });
       }
@@ -95,17 +106,20 @@ export function createCryptoMarketBffSurface(): CryptoMarketBffSurface {
         marketCapMinorUnits: quote.marketCapMinorUnits?.toString() ?? null,
         volume24hMinorUnits: quote.volume24hMinorUnits?.toString() ?? null,
         change24hBps: quote.change24hBps?.toString() ?? null,
+        high24hMinorUnits: quote.high24hMinorUnits?.toString() ?? null,
+        low24hMinorUnits: quote.low24hMinorUnits?.toString() ?? null,
         providerId: quote.providerId,
         providerName: quote.providerId,
         freshness: quote.freshness.status,
         sourceTimestamp: quote.marketTimestamp,
+        retrievalTimestamp: quote.retrievedAt,
         priceSourceType: quote.provenance.priceSourceType,
         observationId: quote.observationId,
         fromCache: false,
       };
     },
 
-    history(principal: BffPrincipal, assetId: string, query: Readonly<Record<string, string>>, requestId: string) {
+    async history(principal: BffPrincipal, assetId: string, query: Readonly<Record<string, string>>, requestId: string) {
       void principal;
       if (!resolveCryptoAsset(assetId)) {
         return bffError({
@@ -119,7 +133,7 @@ export function createCryptoMarketBffSurface(): CryptoMarketBffSurface {
       const interval = (query.interval ?? '1d') as CryptoHistoryInterval;
       const from = asUtcInstant(query.from ?? '2026-01-01T00:00:00.000Z');
       const to = asUtcInstant(query.to ?? DEFAULT_CRYPTO_NOW);
-      const candles = buildBffCryptoHistory(assetId, interval, from, to);
+      const candles = await buildBffCryptoHistoryAsync(assetId, interval, from, to, DEFAULT_CRYPTO_NOW, service);
       return {
         schema: 'sunrey.bff.crypto-history.v1',
         requestId,

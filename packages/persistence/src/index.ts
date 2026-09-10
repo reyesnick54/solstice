@@ -157,6 +157,14 @@ export {
   loadLatestExchangeRuntimeSnapshot,
   persistExchangeRuntimeSnapshot,
 } from './exchange/pg-exchange-runtime-snapshot.ts';
+export {
+  loadConsumerAlphaIdempotency,
+  loadConsumerAlphaState,
+  persistConsumerAlphaIdempotency,
+  persistConsumerAlphaState,
+  type ConsumerAlphaIdempotencyRecord,
+  type ConsumerAlphaSnapshot,
+} from './exchange/pg-consumer-alpha-store.ts';
 export { DurablePaymentStore } from './payments/durable-store.ts';
 export type { DurablePayment, DurableRailSubmission, PaymentDurableSnapshot } from './payments/durable-store.ts';
 export {
