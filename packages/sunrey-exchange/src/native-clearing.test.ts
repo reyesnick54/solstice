@@ -4,6 +4,11 @@ import { describe, it } from 'node:test';
 import { asUtcInstant } from '../../domain/src/time.ts';
 import { detectSurveillanceAlerts } from '../../market-surveillance/src/detectors.ts';
 import { AssetQuantity } from '../../money/src/asset-quantity.ts';
+import {
+  createAlphaExchangeClearingChain,
+  SUNREY_INTERNAL_ALPHA_CHAIN_ID,
+  SUNREY_INTERNAL_ALPHA_NETWORK_ID,
+} from '@solstice/sunrey-chain/exchange-clearing';
 import { MOONREY_COIN_NATIVE_ASSET_ID, SUNREY_COIN_NATIVE_ASSET_ID, SUNREY_MOONREY_MARKET_ID } from './ids.ts';
 import { nativeExchangeApi } from './native-clearing/api.ts';
 import { NativeClearingEngine } from './native-clearing/engine.ts';
@@ -256,5 +261,75 @@ describe('market surveillance inputs', () => {
     );
     assert.ok(Array.isArray(alerts));
     assert.ok(observed.settlementId);
+  });
+});
+
+describe('Alpha chain settlement adapter integration', () => {
+  function alphaEngine() {
+    const chain = createAlphaExchangeClearingChain();
+    const clearing = new NativeClearingEngine({ chain });
+    const alice = clearing.openExchangeAccount('alice');
+    const bob = clearing.openExchangeAccount('bob');
+    return { chain, clearing, alice, bob };
+  }
+
+  it('binds exchange runtime to internal alpha network identity', () => {
+    const { clearing } = alphaEngine();
+    assert.equal(clearing.networkId, SUNREY_INTERNAL_ALPHA_NETWORK_ID);
+    assert.equal(clearing.chainId, SUNREY_INTERNAL_ALPHA_CHAIN_ID);
+  });
+
+  it('uses canonical deposit addresses rather than fabricated prefixes', () => {
+    const { clearing, alice } = alphaEngine();
+    const address = clearing.allocateDepositAddress(alice);
+    assert.match(address, /^srtst1/);
+    assert.doesNotMatch(address, /^sr1ex_/);
+  });
+
+  it('settles SRC and MRC legs through the alpha chain port', () => {
+    const { clearing, alice, bob } = alphaEngine();
+    clearing.faucetToCustody(bob, SUNREY_COIN_NATIVE_ASSET_ID, 12n);
+    clearing.faucetToCustody(alice, MOONREY_COIN_NATIVE_ASSET_ID, 26n);
+    clearing.placeOrder({ accountId: bob, side: 'SELL', quantity: 10n, priceUnits: 2_500_000n, now: NOW });
+    clearing.placeOrder({ accountId: alice, side: 'BUY', quantity: 10n, priceUnits: 2_500_000n, now: NOW });
+    const settlement = [...clearing.settlements.values()][0]!;
+    const finalized = clearing.submitSettlement(settlement.settlementId);
+    assert.equal(finalized.status, 'FINALIZED');
+    assert.equal(clearing.position(alice, SUNREY_COIN_NATIVE_ASSET_ID).available, 10n);
+    assert.equal(clearing.position(bob, MOONREY_COIN_NATIVE_ASSET_ID).available, 25n);
+    const trade = [...clearing.trades.values()][0]!;
+    const receipt = clearing.receipt(trade.tradeId)!;
+    assert.equal(receipt.networkId, SUNREY_INTERNAL_ALPHA_NETWORK_ID);
+    assert.equal(receipt.transactionHash, receipt.blockchainTransactionId);
+  });
+
+  it('blocks settlement when chain is unavailable', () => {
+    const { chain, clearing, alice, bob } = alphaEngine();
+    clearing.faucetToCustody(bob, SUNREY_COIN_NATIVE_ASSET_ID, 10n);
+    clearing.faucetToCustody(alice, MOONREY_COIN_NATIVE_ASSET_ID, 25n);
+    clearing.placeOrder({ accountId: bob, side: 'SELL', quantity: 10n, priceUnits: 2_500_000n, now: NOW });
+    clearing.placeOrder({ accountId: alice, side: 'BUY', quantity: 10n, priceUnits: 2_500_000n, now: NOW });
+    chain.forceUnavailable();
+    const settlement = [...clearing.settlements.values()][0]!;
+    assert.throws(() => clearing.submitSettlement(settlement.settlementId), /CHAIN_UNAVAILABLE/);
+  });
+
+  it('flags reconciliation when settlement investigation is required', () => {
+    const { clearing, alice, bob } = alphaEngine();
+    clearing.faucetToCustody(bob, SUNREY_COIN_NATIVE_ASSET_ID, 10n);
+    clearing.faucetToCustody(alice, MOONREY_COIN_NATIVE_ASSET_ID, 25n);
+    clearing.placeOrder({ accountId: bob, side: 'SELL', quantity: 10n, priceUnits: 2_500_000n, now: NOW });
+    clearing.placeOrder({ accountId: alice, side: 'BUY', quantity: 10n, priceUnits: 2_500_000n, now: NOW });
+    const settlement = [...clearing.settlements.values()][0]!;
+    clearing.submitSettlement(settlement.settlementId, true);
+    clearing.settlements.set(settlement.settlementId, {
+      ...settlement,
+      status: 'RECONCILIATION_REQUIRED',
+      submittedOnce: true,
+      transactionId: 'pending-tx',
+    });
+    const report = clearing.reconcile();
+    assert.equal(report.outcome, 'INVESTIGATION_REQUIRED');
+    assert.ok(report.notes.some((note) => note.includes('investigation')));
   });
 });
