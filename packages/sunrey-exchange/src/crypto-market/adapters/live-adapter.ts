@@ -2,7 +2,7 @@
  * Live HTTP crypto market reference adapter with fixture simulation fallback.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { providerNativeId, resolveCryptoAsset, searchRegisteredCryptoAssets } from '../assets.ts';
 import { CRYPTO_MARKET_CACHE_CAPABILITIES } from '../cache-policies.ts';
 import { CryptoMarketHttpClient, type CryptoMarketHttpClientOptions } from '../http/client.ts';
