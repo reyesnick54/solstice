@@ -13,10 +13,10 @@ import {
   DEFAULT_CRYPTO_NOW,
   isNativeSunReyAsset,
   resolveCryptoAsset,
-} from '../../../../packages/sunrey-exchange/src/crypto-market/index.ts';
-import type { CryptoHistoryInterval } from '../../../../packages/sunrey-exchange/src/crypto-market/types.ts';
-import { asUtcInstant } from '../../../../packages/domain/src/time.ts';
-import { DATA_MODE } from '../../../../packages/config/src/data-mode.ts';
+  type CryptoHistoryInterval,
+} from '@solstice/sunrey-exchange';
+import { asUtcInstant } from '@solstice/domain';
+import { DATA_MODE } from '@solstice/config';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import type { BffPrincipal } from './ports.ts';
 
