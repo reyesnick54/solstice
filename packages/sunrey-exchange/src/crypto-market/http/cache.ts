@@ -2,7 +2,7 @@
  * In-memory response cache for crypto market HTTP adapters.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { CRYPTO_MARKET_CACHE_CAPABILITIES, cryptoMarketCachePolicy } from '../cache-policies.ts';
 
 type CacheEntry<T> = {
