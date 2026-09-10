@@ -4,7 +4,7 @@
 
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { RegisteredCryptoAsset } from '../assets.ts';
 import type {
   CryptoMarketReferenceProvenance,
