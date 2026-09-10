@@ -3,6 +3,11 @@ import { createHash, randomUUID } from 'node:crypto';
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import { AssetQuantity } from '../../../money/src/asset-quantity.ts';
 import {
+  createAlphaExchangeClearingChain,
+  exchangeCustodyAddress,
+  type ExchangeClearingChainPort,
+} from '@solstice/sunrey-chain/exchange-clearing';
+import {
   asExchangeAccountId,
   asOrderId,
   asTradeId,
@@ -18,7 +23,6 @@ import {
 import { applyFill, matchIncoming, sortBook } from '../matching.ts';
 import { exchangePrice, quoteAssetQuantity, type ExchangePrice } from '../price.ts';
 import type { DigitalOrder } from '../types.ts';
-import { InMemoryNativeChain } from './chain.ts';
 import { requireCanonicalAssetId, sunreyMoonreyMarket } from './markets.ts';
 import {
   EXCHANGE_SETTLEMENT_ISSUER,
@@ -45,11 +49,11 @@ export type NativeClearingFees = {
 const ZERO_FEES: NativeClearingFees = { tradingFeeQuote: 0n, networkFeeBase: 0n };
 
 export class NativeClearingEngine {
-  readonly chain: InMemoryNativeChain;
+  readonly chain: ExchangeClearingChainPort;
   readonly market: MarketDefinition;
   readonly fees: NativeClearingFees;
-  readonly networkId = 'net_sunrey_development';
-  readonly chainId = 'chn_sunrey_development';
+  readonly networkId: string;
+  readonly chainId: string;
   readonly accounts = new Map<string, { accountId: ExchangeAccountId; custody: string; customerId: string }>();
   readonly depositAddresses = new Map<string, ExchangeAccountId>();
   readonly deposits = new Map<string, NativeDeposit>();
@@ -71,19 +75,26 @@ export class NativeClearingEngine {
     settlementId: string;
     transactionId: string | null;
   }> = [];
-  private nonce = 0n;
-  private orderSequence = 0;
-  private readonly exchangeSignature: string;
+  nonce = 0n;
+  orderSequence = 0;
+  readonly exchangeSignature: string;
 
-  constructor(input?: { readonly chain?: InMemoryNativeChain; readonly fees?: NativeClearingFees }) {
-    this.chain = input?.chain ?? new InMemoryNativeChain();
+  constructor(input?: {
+    readonly chain?: ExchangeClearingChainPort;
+    readonly fees?: NativeClearingFees;
+    readonly exchangeSignature?: string;
+  }) {
+    this.chain = input?.chain ?? createAlphaExchangeClearingChain();
     this.market = sunreyMoonreyMarket();
     this.fees = input?.fees ?? ZERO_FEES;
-    this.exchangeSignature = `${EXCHANGE_SETTLEMENT_ISSUER}:${randomUUID().replace(/-/g, '')}`;
+    this.networkId = this.chain.networkId;
+    this.chainId = this.chain.chainId;
+    this.exchangeSignature =
+      input?.exchangeSignature ?? `${EXCHANGE_SETTLEMENT_ISSUER}:${randomUUID().replace(/-/g, '')}`;
     this.chain.registerExchangeKey(this.exchangeSignature);
   }
 
-  openExchangeAccount(customerId: string, custody = `cust_${customerId}`): ExchangeAccountId {
+  openExchangeAccount(customerId: string, custody = exchangeCustodyAddress(customerId)): ExchangeAccountId {
     const accountId = asExchangeAccountId(`xacct_native_${customerId}`);
     this.accounts.set(accountId, { accountId, custody, customerId });
     return accountId;
@@ -91,7 +102,7 @@ export class NativeClearingEngine {
 
   allocateDepositAddress(accountId: ExchangeAccountId): string {
     const account = this.requireAccount(accountId);
-    const address = `sr1ex_${account.custody}`;
+    const address = account.custody;
     this.depositAddresses.set(address, accountId);
     return address;
   }
@@ -306,6 +317,7 @@ export class NativeClearingEngine {
       this.withdrawals.set(withdrawalId, pending);
       this.chain.txs.set(transactionId, {
         transactionId,
+        transactionHash: transactionId,
         kind: 'TRANSFER',
         settlementId: null,
         status: 'PENDING_PROPOSAL',
@@ -348,6 +360,9 @@ export class NativeClearingEngine {
     }
     if (current.submittedOnce && current.transactionId) {
       return current;
+    }
+    if (!this.chain.available) {
+      throw Object.assign(new Error('CHAIN_UNAVAILABLE'), { code: 'CHAIN_UNAVAILABLE' });
     }
     const tx = this.chain.submitSettlement(current.intent);
     if (timeoutAfterBroadcast) {
@@ -408,6 +423,8 @@ export class NativeClearingEngine {
       found: queried.found,
       finality: queried.finality,
       settlementId: queried.settlementId,
+      blockHeight: queried.blockHeight,
+      networkId: this.networkId,
     };
   }
 
@@ -597,6 +614,8 @@ export class NativeClearingEngine {
         networkFee: trade.networkFee.scaledUnits,
         settlementId: current.settlementId,
         blockchainTransactionId: transactionId,
+        transactionHash: transactionId,
+        networkId: this.networkId,
         finalizedHeight: this.chain.height,
         blockId: this.chain.blockId,
         stateRootReference: this.chain.stateRoot,

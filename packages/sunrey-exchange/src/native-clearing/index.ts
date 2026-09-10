@@ -1,5 +1,5 @@
 export { nativeExchangeApi } from './api.ts';
-export { InMemoryNativeChain } from './chain.ts';
+export { InMemoryNativeChain, createAlphaExchangeClearingChain } from './chain.ts';
 export { NativeClearingEngine } from './engine.ts';
 export { sunreyMoonreyMarket, NATIVE_ASSET_PRECISION } from './markets.ts';
 export {

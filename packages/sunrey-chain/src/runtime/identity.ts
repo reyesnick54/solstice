@@ -62,6 +62,15 @@ export const NETWORK_REGISTRY: readonly NetworkIdentity[] = [
     productionNetworkEnabled: false,
   },
   {
+    environment: 'TESTNET',
+    networkId: 'net_sunrey_internal_alpha',
+    chainId: 'chn_sunrey_internal_alpha',
+    canonical: true,
+    deployable: true,
+    mainnetActive: false,
+    productionNetworkEnabled: false,
+  },
+  {
     environment: 'PREPRODUCTION',
     networkId: 'net_sunrey_preproduction',
     chainId: 'chn_sunrey_preproduction',

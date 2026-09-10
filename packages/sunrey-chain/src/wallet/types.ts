@@ -32,9 +32,11 @@ export const DEVELOPMENT_NETWORK_IDS = [
 
 export const RESERVED_TEST_NETWORK_ID = 'net_sunrey_reserved_test' as const;
 export const SUNREY_TESTNET_1_NETWORK_ID = 'net_sunrey_testnet_1' as const;
+export const SUNREY_INTERNAL_ALPHA_NETWORK_ID = 'net_sunrey_internal_alpha' as const;
 export const TESTNET_NETWORK_IDS = [
   RESERVED_TEST_NETWORK_ID,
   SUNREY_TESTNET_1_NETWORK_ID,
+  SUNREY_INTERNAL_ALPHA_NETWORK_ID,
 ] as const;
 export const RESERVED_PRODUCTION_NETWORK_ID = 'net_sunrey_reserved_production' as const;
 export const PRODUCTION_CANDIDATE_NETWORK_ID = 'net_sunrey_production_candidate_1' as const;

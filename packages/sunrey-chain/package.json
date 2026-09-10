@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./exchange-clearing": "./src/exchange-clearing/index.ts",
     "./economic-awareness-fabric": "./src/economic-awareness-fabric/index.ts",
     "./economic-proof": "./src/economic-proof/index.ts",
     "./economics/proof-bound": "./src/economics/proof-bound/index.ts"
