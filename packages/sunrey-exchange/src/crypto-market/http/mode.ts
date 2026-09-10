@@ -2,7 +2,7 @@
  * Crypto market adapter mode — distinct from ENVIRONMENT / LIVE_* monetary flags.
  */
 
-import { DATA_MODE } from '../../../../config/src/data-mode.ts';
+import { DATA_MODE } from '@solstice/config';
 
 export const CRYPTO_MARKET_ADAPTER_MODES = ['auto', 'live', 'simulation'] as const;
 export type CryptoMarketAdapterMode = (typeof CRYPTO_MARKET_ADAPTER_MODES)[number];
