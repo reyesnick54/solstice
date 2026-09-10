@@ -13,7 +13,7 @@ import {
   type ProviderAuthResolver,
   type ProviderAuthStrategy,
   type ProviderTransportEnvironment,
-} from '../../../../provider-sdk/src/index.ts';
+} from '@solstice/provider-sdk';
 import type { CryptoMarketAdapterMode } from './mode.ts';
 import { resolveCryptoMarketAdapterMode } from './mode.ts';
 import type { CryptoMarketHttpEndpoint } from './endpoints.ts';
