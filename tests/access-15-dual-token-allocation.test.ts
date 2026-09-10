@@ -4,7 +4,7 @@ import { describe, it } from 'node:test';
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
 import { handleConsumerBff, type ConsumerBffRuntime } from '../services/api/src/consumer/handler.ts';
 
-function call(
+async function call(
   world: ReturnType<typeof createSandboxWorld>,
   method: string,
   path: string,
@@ -18,7 +18,7 @@ function call(
     identity: world.runtime.identity.service,
     access: world.access,
   };
-  return handleConsumerBff(runtime, {
+  return await handleConsumerBff(runtime, {
     method,
     path,
     query,
@@ -29,30 +29,30 @@ function call(
 }
 
 describe('ACCESS-15 BFF integration', () => {
-  it('exposes epoch and participation read surfaces', () => {
+  it('exposes epoch and participation read surfaces', async () => {
     const world = createSandboxWorld();
-    const epoch = call(world, 'GET', '/api/v1/access/epoch', 'basic_verified');
+    const epoch = await call(world, 'GET', '/api/v1/access/epoch', 'basic_verified');
     assert.equal(epoch.status, 200);
     const epochBody = epoch.body as { epochId: string; explanation: string; posture: { productionReady: false } };
     assert.ok(epochBody.epochId.length > 0);
     assert.match(epochBody.explanation, /time-weighted SunRey and MoonRey participation/);
     assert.equal(epochBody.posture.productionReady, false);
 
-    const participation = call(world, 'GET', '/api/v1/access/participation', 'basic_verified');
+    const participation = await call(world, 'GET', '/api/v1/access/participation', 'basic_verified');
     assert.equal(participation.status, 200);
     const participationBody = participation.body as { humanScoreExposed: false; explanation: string };
     assert.equal(participationBody.humanScoreExposed, false);
     assert.match(participationBody.explanation, /capacity available this period/);
   });
 
-  it('exposes allocation categories and preview without global distribution', () => {
+  it('exposes allocation categories and preview without global distribution', async () => {
     const world = createSandboxWorld();
-    const categories = call(world, 'GET', '/api/v1/access/allocation/categories', 'basic_verified');
+    const categories = await call(world, 'GET', '/api/v1/access/allocation/categories', 'basic_verified');
     assert.equal(categories.status, 200);
     const categoryBody = categories.body as readonly { category: string; capacityUnit: string }[];
     assert.ok(categoryBody.length >= 9);
 
-    const preview = call(world, 'POST', '/api/v1/access/allocation/preview', 'basic_verified', {
+    const preview = await call(world, 'POST', '/api/v1/access/allocation/preview', 'basic_verified', {
       categories: ['MOBILITY', 'ENERGY'],
     });
     assert.equal(preview.status, 200);
