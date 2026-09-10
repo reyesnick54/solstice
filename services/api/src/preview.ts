@@ -82,6 +82,7 @@ export function createSunReyPreviewRuntime(
     dataRights: world.dataRights,
     vault: options.durableVault ?? world.vault,
     access: world.access,
+    accessLive: world.accessLive,
     hinAccess: world.hinAccess,
     worldExternalData: world.worldExternalData,
     environmental: world.environmental,
