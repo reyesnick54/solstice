@@ -861,20 +861,39 @@ export class MarketOperationsEngine {
       if (!this.clearing.accounts.has(buyer.exchangeAccountId) || !this.clearing.accounts.has(seller.exchangeAccountId)) {
         return;
       }
-      this.clearing.faucetToCustody(seller.exchangeAccountId, 'SUNREY_COIN', quantity);
-      this.clearing.faucetToCustody(buyer.exchangeAccountId, 'MOONREY_COIN', quantity * priceUnits / 1_000_000n + 1n);
+      const opsPrice = exchangePrice({
+        baseAssetId: 'SUNREY_COIN',
+        quoteAssetId: 'MOONREY_COIN',
+        quoteKind: 'ASSET',
+        priceUnits,
+        quoteScale: 0,
+        basePrecision: 0,
+      });
+      const quantityAsset = AssetQuantity.fromScaledUnits(quantity, 'SUNREY_COIN');
+      const quoteQty = quoteForQuantity(opsPrice, quantityAsset);
+      const nativePriceUnits = quantity > 0n ? (quoteQty * 1_000_000n) / quantity : priceUnits;
+      this.clearing.faucetToCustody(
+        seller.exchangeAccountId,
+        'SUNREY_COIN',
+        quantity + this.clearing.fees.networkFeeBase,
+      );
+      this.clearing.faucetToCustody(
+        buyer.exchangeAccountId,
+        'MOONREY_COIN',
+        quoteQty + this.clearing.fees.tradingFeeQuote,
+      );
       this.clearing.placeOrder({
         accountId: seller.exchangeAccountId,
         side: 'SELL',
         quantity,
-        priceUnits,
+        priceUnits: nativePriceUnits,
         now,
       });
       this.clearing.placeOrder({
         accountId: buyer.exchangeAccountId,
         side: 'BUY',
         quantity,
-        priceUnits,
+        priceUnits: nativePriceUnits,
         now,
       });
       for (const settlement of this.clearing.settlements.values()) {
