@@ -205,13 +205,14 @@ export class NativeClearingEngine {
     readonly quantity: bigint;
     readonly priceUnits: bigint;
     readonly now: UtcInstant;
+    readonly price?: ExchangePrice;
   }): DigitalOrder {
     const account = this.requireAccount(input.accountId);
     const market = this.market;
     if (input.quantity % market.quantityIncrement !== 0n || input.quantity < market.minimumQuantity) {
       throw Object.assign(new Error('INVALID_QUANTITY'), { code: 'INVALID_QUANTITY' });
     }
-    const price = this.price(input.priceUnits);
+    const price = input.price ?? this.price(input.priceUnits);
     const quantity = AssetQuantity.fromScaledUnits(input.quantity, market.baseAsset);
     const quote = quoteAssetQuantity(price, quantity);
     const reserveAsset = input.side === 'SELL' ? market.baseAsset : market.quoteAsset;
