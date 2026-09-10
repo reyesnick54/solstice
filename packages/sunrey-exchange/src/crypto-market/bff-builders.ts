@@ -2,7 +2,7 @@
  * BFF quote builders for crypto market reference.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { createCryptoMarketReferenceService } from './service.ts';
 import type { CryptoHistoryInterval } from './types.ts';
 import { defaultCryptoMarketNow } from './validation.ts';
