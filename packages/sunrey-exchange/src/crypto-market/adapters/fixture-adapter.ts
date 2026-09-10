@@ -10,7 +10,7 @@ import type {
   CryptoMarketCapability,
   CryptoMarketReferenceResult,
 } from '../types.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { buildFixtureHistory, buildFixtureMetadata, normalizeFixtureQuote } from './normalize.ts';
 
 export type FixtureAdapterConfig = {
