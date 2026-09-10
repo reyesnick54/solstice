@@ -416,7 +416,8 @@ export class DigitalAssetLifecycle {
         side: proposal.side,
         orderType: 'LIMIT',
         quantity: proposal.quantity,
-        limitPriceUnits: proposal.side === 'BUY' ? 2_500_000n : 2_400_000n,
+        // Alpha MM asks sit above the 2.5M reference mid; a buy at mid rests and self-trades on sell.
+        limitPriceUnits: proposal.side === 'BUY' ? 2_600_000n : 2_400_000n,
         priceProtectionBps: null,
         quoteId: null,
         previewId: proposal.previewId,
