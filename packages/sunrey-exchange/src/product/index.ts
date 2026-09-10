@@ -22,6 +22,8 @@ export { ExchangeProductPlatform, defaultMarketId } from './platform.ts';
 export { reconcileExchangePositions, recordBreak } from './reconciliation.ts';
 export type { PositionView } from './reconciliation.ts';
 export { SimulationCustodyRail, createExchangeProductSandbox, emptySnapshot, syntheticTrade } from './sandbox.ts';
+export { createAlphaExchangeSandbox, AlphaExchangeEngine } from '../alpha/sandbox.ts';
+export type { LedgerUsdAuthority } from '../alpha/usd-ledger.ts';
 export { ExchangeSettlementCoordinator, createFillObligation } from './settlement.ts';
 export type { ApplicationRail, CustodyRail, LedgerRail, NativeRail, SettlementRails } from './settlement.ts';
 export { observeExchangeSnapshot, openMarketAbuseCase, productizeSelfTradePolicy } from './surveillance.ts';
