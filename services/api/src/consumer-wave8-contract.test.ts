@@ -64,8 +64,8 @@ function runtime(): ConsumerBffRuntime {
   };
 }
 
-function get(path: string, token: string | null = TOKEN, query: Record<string, string> = {}) {
-  return handleConsumerBff(runtime(), {
+async function get(path: string, token: string | null = TOKEN, query: Record<string, string> = {}) {
+  return await handleConsumerBff(runtime(), {
     method: 'GET',
     path,
     query,
@@ -76,26 +76,26 @@ function get(path: string, token: string | null = TOKEN, query: Record<string, s
 }
 
 describe('Wave 8 consumer contract — Home', () => {
-  it('requires authentication on home', () => {
-    const res = get('/api/v1/me/home', null);
+  it('requires authentication on home', async () => {
+    const res = await get('/api/v1/me/home', null);
     assert.equal(res.status, 401);
   });
 
-  it('returns home with contract headers', () => {
-    const res = get('/api/v1/me/home');
+  it('returns home with contract headers', async () => {
+    const res = await get('/api/v1/me/home');
     assert.equal(res.status, 200);
     assert.equal(res.headers['x-sunrey-contract-version'], '1.0.0-wave8');
   });
 });
 
 describe('Wave 8 consumer contract — SunRey', () => {
-  it('registers SunRey domain routes', () => {
+  it('registers SunRey domain routes', async () => {
     assert.ok(WAVE8_BFF_ROUTES.includes('GET /api/v1/sunrey/supply'));
     assert.ok(WAVE8_BFF_ROUTES.includes('GET /api/v1/sunrey/peve'));
   });
 
-  it('returns supply without mint endpoints', () => {
-    const res = get('/api/v1/sunrey/supply');
+  it('returns supply without mint endpoints', async () => {
+    const res = await get('/api/v1/sunrey/supply');
     assert.equal(res.status, 200);
     const body = res.body as { schema: string; protocolNative: boolean; valuationDoesNotSetPrice: boolean };
     assert.equal(body.schema, 'sunrey.consumer.sunrey.supply.v1');
@@ -103,14 +103,14 @@ describe('Wave 8 consumer contract — SunRey', () => {
     assert.equal(body.valuationDoesNotSetPrice, true);
   });
 
-  it('returns PEVE only for verified principals', () => {
-    const ok = get('/api/v1/sunrey/peve');
+  it('returns PEVE only for verified principals', async () => {
+    const ok = await get('/api/v1/sunrey/peve');
     assert.equal(ok.status, 200);
     assert.equal((ok.body as { authorized: boolean }).authorized, true);
     assert.equal((ok.body as { isMintFormula: boolean }).isMintFormula, false);
 
     const sessions: SessionDirectory = new Map([[TOKEN, restrictedPrincipal()]]);
-    const denied = handleConsumerBff(
+    const denied = await handleConsumerBff(
       { ...runtime(), sessions },
       {
         method: 'GET',
@@ -124,8 +124,8 @@ describe('Wave 8 consumer contract — SunRey', () => {
     assert.equal(denied.status, 403);
   });
 
-  it('does not expose raw HIN in contribution history', () => {
-    const res = get('/api/v1/sunrey/contributions/history');
+  it('does not expose raw HIN in contribution history', async () => {
+    const res = await get('/api/v1/sunrey/contributions/history');
     assert.equal(res.status, 200);
     const body = res.body as { items: { containsRawPersonalData: false }[]; issuancePromised: false };
     assert.equal(body.issuancePromised, false);
@@ -136,8 +136,8 @@ describe('Wave 8 consumer contract — SunRey', () => {
 });
 
 describe('Wave 8 consumer contract — MoonRey', () => {
-  it('states GPUV is not market price', () => {
-    const res = get('/api/v1/moonrey/gpuv');
+  it('states GPUV is not market price', async () => {
+    const res = await get('/api/v1/moonrey/gpuv');
     assert.equal(res.status, 200);
     const body = res.body as {
       gpuvIsNotMarketPrice: boolean;
@@ -151,14 +151,14 @@ describe('Wave 8 consumer contract — MoonRey', () => {
     assert.equal(body.productionValuationActive, false);
   });
 
-  it('classifies moonrey domain as SIMULATION', () => {
+  it('classifies moonrey domain as SIMULATION', async () => {
     assert.equal(classifyEndpoint('/api/v1/moonrey/supply', 'GET'), 'SIMULATION');
   });
 });
 
 describe('Wave 8 consumer contract — Action Center', () => {
-  it('unifies durable backend actions', () => {
-    const res = get('/api/v1/actions');
+  it('unifies durable backend actions', async () => {
+    const res = await get('/api/v1/actions');
     assert.equal(res.status, 200);
     const body = res.body as {
       schema: string;
@@ -170,8 +170,8 @@ describe('Wave 8 consumer contract — Action Center', () => {
     assert.ok(body.items.some((row) => row.durableSource.includes('pendingApprovals')));
   });
 
-  it('supports SSE stream for actions', () => {
-    const res = handleConsumerBff(runtime(), {
+  it('supports SSE stream for actions', async () => {
+    const res = await handleConsumerBff(runtime(), {
       method: 'GET',
       path: '/api/v1/actions/stream',
       query: {},
@@ -186,9 +186,9 @@ describe('Wave 8 consumer contract — Action Center', () => {
 });
 
 describe('Wave 8 consumer contract — policy failure', () => {
-  it('denies restricted principals on regulated wallet routes', () => {
+  it('denies restricted principals on regulated wallet routes', async () => {
     const sessions: SessionDirectory = new Map([[TOKEN, restrictedPrincipal()]]);
-    const res = handleConsumerBff(
+    const res = await handleConsumerBff(
       { ...runtime(), sessions },
       {
         method: 'POST',
@@ -204,7 +204,7 @@ describe('Wave 8 consumer contract — policy failure', () => {
     assert.equal(body.errorCode, 'POLICY_DENIED');
   });
 
-  it('authorizeConsumerRoute returns POLICY_DENIED for restricted', () => {
+  it('authorizeConsumerRoute returns POLICY_DENIED for restricted', async () => {
     const err = authorizeConsumerRoute(restrictedPrincipal(), 'GET', '/api/v1/exchange', 'req_auth');
     assert.ok(err);
     assert.equal(err.errorCode, 'POLICY_DENIED');
@@ -212,8 +212,8 @@ describe('Wave 8 consumer contract — policy failure', () => {
 });
 
 describe('Wave 8 consumer contract — catalog', () => {
-  it('publishes API contract manifest', () => {
-    const res = get('/api/v1/catalog/contract');
+  it('publishes API contract manifest', async () => {
+    const res = await get('/api/v1/catalog/contract');
     assert.equal(res.status, 200);
     const body = res.body as ReturnType<typeof consumerContractManifest>;
     assert.equal(body.productionActive, false);
@@ -221,8 +221,8 @@ describe('Wave 8 consumer contract — catalog', () => {
     assert.ok(body.deprecations.length > 0);
   });
 
-  it('exposes status semantics enums', () => {
-    const res = get('/api/v1/catalog/status-semantics');
+  it('exposes status semantics enums', async () => {
+    const res = await get('/api/v1/catalog/status-semantics');
     assert.equal(res.status, 200);
     const body = res.body as { blockchainTxStatus: string[]; economicClaimStatus: string[] };
     assert.ok(body.blockchainTxStatus.includes('FINALIZED'));
@@ -232,11 +232,11 @@ describe('Wave 8 consumer contract — catalog', () => {
 });
 
 describe('Wave 8 consumer contract — Exchange and Grow stubs', () => {
-  it('classifies exchange as SIMULATION', () => {
+  it('classifies exchange as SIMULATION', async () => {
     assert.equal(classifyEndpoint('/api/v1/exchange', 'GET'), 'SIMULATION');
   });
 
-  it('classifies grow as SIMULATION', () => {
+  it('classifies grow as SIMULATION', async () => {
     assert.equal(classifyEndpoint('/api/v1/grow', 'GET'), 'SIMULATION');
   });
 });

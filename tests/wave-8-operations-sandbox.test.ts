@@ -28,7 +28,7 @@ const HEADERS = Object.freeze({
 });
 
 describe('Wave 8 — documentation and infrastructure artifacts', () => {
-  it('includes architecture and runbook deliverables', () => {
+  it('includes architecture and runbook deliverables', async () => {
     for (const file of [
       'docs/architecture/WAVE8_OPERATIONS_AND_SANDBOX_DEPLOYMENT.md',
       'docs/runbooks/SUNREY_SANDBOX_DEPLOYMENT.md',
@@ -42,7 +42,7 @@ describe('Wave 8 — documentation and infrastructure artifacts', () => {
     }
   });
 
-  it('extends prometheus alerts for Wave 8 conditions', () => {
+  it('extends prometheus alerts for Wave 8 conditions', async () => {
     const alerts = JSON.parse(readFileSync(join(ROOT, 'packages/sunrey-chain/ops/prometheus/alerts.json'), 'utf8')) as {
       rules: { alert: string }[];
     };
@@ -65,14 +65,14 @@ describe('Wave 8 — documentation and infrastructure artifacts', () => {
 });
 
 describe('Wave 8 — operations plane', () => {
-  it('lists core services for health evaluation', () => {
+  it('lists core services for health evaluation', async () => {
     const services = listCoreServices();
     assert.ok(services.includes('platform-api'));
     assert.ok(services.includes('sunrey-chain'));
     assert.ok(services.length >= 10);
   });
 
-  it('blocks production feature gates', () => {
+  it('blocks production feature gates', async () => {
     const gates = evaluateSandboxFeatureGates('2026-09-02T12:00:00.000Z');
     assert.equal(gates.productionActive, false);
     assert.equal(gates.mainnetEnabled, false);
@@ -81,7 +81,7 @@ describe('Wave 8 — operations plane', () => {
     assert.equal(blocked!.enabled, false);
   });
 
-  it('exports deterministic sandbox seed catalog', () => {
+  it('exports deterministic sandbox seed catalog', async () => {
     const seed = buildSandboxSeedCatalog();
     assert.equal(seed.schema, 'sunrey.sandbox.seed.v1');
     assert.ok(seed.records.some((row) => row.category === 'wallet'));
@@ -90,7 +90,7 @@ describe('Wave 8 — operations plane', () => {
     assert.ok(seed.records.length > 20);
   });
 
-  it('builds dashboard metrics from collectors', () => {
+  it('builds dashboard metrics from collectors', async () => {
     const plane = createSandboxOperationsPlane();
     const dashboard = plane.dashboard();
     const sections = new Set(dashboard.sections.map((row) => row.section));
@@ -247,7 +247,7 @@ describe('Wave 8 — full-stack connectivity', () => {
 });
 
 describe('Wave 8 — backup and recovery references', () => {
-  it('preserves Wave 2 recovery modules', () => {
+  it('preserves Wave 2 recovery modules', async () => {
     assert.equal(existsSync(join(ROOT, 'packages/persistence/src/production/recovery/index.ts')), true);
     assert.equal(existsSync(join(ROOT, 'docs/architecture/WAVE2_STATE_SYNC_AND_RECOVERY.md')), true);
   });
