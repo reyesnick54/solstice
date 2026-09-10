@@ -54,8 +54,23 @@ export class ExchangeBffSurface {
       mode: mode ?? (principal.restricted ? 'COMPLIANCE_BLOCKED' : 'READY'),
     });
     this.worlds.set(key, created);
-    void this.persistWorld(principal.customerId, mode ?? 'READY', created);
     return created;
+  }
+
+  private async ensureWorldLoaded(principal: BffPrincipal, mode: LifecycleMode = 'READY'): Promise<DigitalAssetLifecycle> {
+    const key = `${principal.customerId}:${mode}`;
+    const cached = this.worlds.get(key);
+    if (cached) {
+      return cached;
+    }
+    if (this.persistence) {
+      const loaded = await this.persistence.load(principal.customerId, mode);
+      if (loaded) {
+        this.worlds.set(key, loaded);
+        return loaded;
+      }
+    }
+    return this.worldFor(principal, mode);
   }
 
   home(principal: BffPrincipal, requestId: string): Record<string, unknown> {
@@ -163,11 +178,11 @@ export class ExchangeBffSurface {
     if (replay) {
       return { ...replay, requestId, replay: true };
     }
-    const result = this.worldFor(principal).submitOrder(proposalId, str(body.clientOrderId));
+    const world = await this.ensureWorldLoaded(principal);
+    const result = world.submitOrder(proposalId, str(body.clientOrderId));
     if ('ok' in result && result.ok === false) {
       return this.fail(requestId, 'POLICY', result.reason);
     }
-    const world = this.worldFor(principal);
     await this.persistWorld(principal.customerId, 'READY', world);
     const response = this.jsonQty(result as object, requestId);
     await this.saveIdempotentResponse({
@@ -212,11 +227,11 @@ export class ExchangeBffSurface {
       return { ...replay, requestId, replay: true };
     }
     const quantity = parseQty(body.quantity) ?? 25n;
-    const result = this.worldFor(principal).simulateDeposit(quantity);
+    const world = await this.ensureWorldLoaded(principal);
+    const result = world.simulateDeposit(quantity);
     if (result.ok === false) {
       return this.fail(requestId, 'TEMPORARY_UNAVAILABLE', String(result.reason));
     }
-    const world = this.worldFor(principal);
     await this.persistWorld(principal.customerId, 'READY', world);
     const response = { ...result, requestId };
     await this.saveIdempotentResponse({
@@ -259,7 +274,8 @@ export class ExchangeBffSurface {
     if (quantity === null) {
       return this.fail(requestId, 'VALIDATION', 'INVALID_QUANTITY');
     }
-    const result = this.worldFor(principal).withdraw({
+    const world = await this.ensureWorldLoaded(principal);
+    const result = world.withdraw({
       assetId: body.assetId === 'MOONREY_COIN' ? 'MOONREY_COIN' : 'SUNREY_COIN',
       quantity,
       destination: str(body.destination) ?? '',
@@ -269,7 +285,6 @@ export class ExchangeBffSurface {
     if (result.ok === false) {
       return this.fail(requestId, 'POLICY', String(result.reason));
     }
-    const world = this.worldFor(principal);
     await this.persistWorld(principal.customerId, 'READY', world);
     const response = { ...result, requestId };
     await this.saveIdempotentResponse({
