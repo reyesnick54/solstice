@@ -300,3 +300,12 @@ export {
 export type { MarketPriceBoundaryProof } from './market-price-boundary.ts';
 export * as accessFabric from './access-fabric/index.ts';
 export * as merchantExchange from './merchant-exchange/index.ts';
+export * as alphaLiquidity from './alpha/index.ts';
+export {
+  createInternalAlphaMarketMaker,
+  InternalAlphaMarketMaker,
+  defaultAlphaLiquidityConfig,
+  SUNREY_ALPHA_MARKET_MAKER_ID,
+  SUNREY_ALPHA_INTERNAL_LIQUIDITY_SOURCE,
+} from './alpha/index.ts';
+export type { AlphaLiquidityConfig, AlphaPostedQuote, AlphaLiquidityStatus } from './alpha/index.ts';
