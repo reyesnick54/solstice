@@ -4,6 +4,7 @@
  */
 
 import type { UtcInstant } from '@solstice/domain';
+import { AssetQuantity } from '@solstice/money';
 import type { ConsumerOrderStatus, ConsumerPriceAlert, ConsumerTradeReceipt, ConsumerTradingProfile } from '../consumer/types.ts';
 import type { DigitalOrder, ImmutableTrade } from '../types.ts';
 import { InMemoryNativeChain, type SimulatedHolding, type SimulatedLock, type SimulatedTx } from '../native-clearing/chain.ts';
@@ -290,7 +291,7 @@ function hydrateOpsMaps(ops: MarketOperationsEngine, snapshot: ConsumerAlphaOpsS
   ops.participants.clear();
   ops.trades.length = 0;
   for (const order of snapshot.orders) {
-    ops.orders.set(order.orderId, order);
+    ops.orders.set(order.orderId, hydrateDigitalOrder(order));
   }
   for (const [clOrdId, orderId] of snapshot.ordersByClOrd) {
     ops.ordersByClOrd.set(clOrdId, orderId as never);
@@ -341,7 +342,7 @@ function hydrateClearingMaps(clearing: NativeClearingEngine, snapshot: ConsumerA
     clearing.reservationsByOrder.set(orderId, reservationId);
   }
   for (const order of snapshot.orders) {
-    clearing.orders.set(order.orderId, order);
+    clearing.orders.set(order.orderId, hydrateDigitalOrder(order));
   }
   for (const [key, value] of snapshot.trades) {
     clearing.trades.set(key, deserializeTrade(value));
@@ -358,6 +359,27 @@ function hydrateClearingMaps(clearing: NativeClearingEngine, snapshot: ConsumerA
   for (const [key, value] of snapshot.withdrawals) {
     clearing.withdrawals.set(key, deserializeWithdrawal(value));
   }
+}
+
+function hydrateDigitalOrder(order: DigitalOrder): DigitalOrder {
+  const filledQuantity = order.filledQuantity;
+  return Object.freeze({
+    ...order,
+    quantity: hydrateAssetQuantity(order.quantity),
+    remaining: hydrateAssetQuantity(order.remaining),
+    ...(filledQuantity !== undefined ? { filledQuantity: hydrateAssetQuantity(filledQuantity) } : {}),
+  });
+}
+
+function hydrateAssetQuantity(value: AssetQuantity): AssetQuantity {
+  if (value instanceof AssetQuantity) {
+    return value;
+  }
+  const serialized = value as unknown as { readonly scaledUnits: string | bigint; readonly assetId: string };
+  return AssetQuantity.fromScaledUnits(
+    typeof serialized.scaledUnits === 'bigint' ? serialized.scaledUnits : BigInt(serialized.scaledUnits),
+    serialized.assetId,
+  );
 }
 
 function hydrateChain(chain: InMemoryNativeChain, snapshot: ConsumerAlphaChainSnapshot): void {
@@ -426,7 +448,9 @@ function reviveConsumerAlphaValue(key: string, value: unknown): unknown {
       key === 'finalizedHeight' ||
       key === 'expirationHeight' ||
       key === 'baseQuantity' ||
-      key === 'quoteQuantity'
+      key === 'quoteQuantity' ||
+      key === 'makerBps' ||
+      key === 'takerBps'
     ) {
       return BigInt(value);
     }
