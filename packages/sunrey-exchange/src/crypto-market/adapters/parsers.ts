@@ -2,7 +2,7 @@
  * Provider-specific response parsers and validators for crypto market reference data.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { providerNativeId, type RegisteredCryptoAsset } from '../assets.ts';
 import { bpsFromPercent, parseDecimalToMinorUnits } from '../validation.ts';
 import type { CryptoMarketReferenceQuote } from '../types.ts';
