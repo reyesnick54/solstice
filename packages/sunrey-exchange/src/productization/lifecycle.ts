@@ -388,6 +388,17 @@ export class DigitalAssetLifecycle {
     return next;
   }
 
+  private executableLimitPriceUnits(side: 'BUY' | 'SELL'): bigint {
+    const maker = this.engine.getInternalAlphaLiquidity();
+    if (maker) {
+      const srcMrc = maker.getReferenceQuotes(this.engine.ops).find((quote) => quote.pair === 'SRC/MRC');
+      if (srcMrc) {
+        return side === 'BUY' ? srcMrc.askPriceUnits : srcMrc.bidPriceUnits;
+      }
+    }
+    return side === 'BUY' ? 2_500_000n : 2_400_000n;
+  }
+
   submitOrder(proposalId: string, clientOrderId = id('clord')): ConsumerOrderStatus | { readonly ok: false; readonly reason: string } {
     if (this.mode === 'CHAIN_UNAVAILABLE') {
       return { ok: false, reason: 'CHAIN_UNAVAILABLE' };
@@ -416,7 +427,7 @@ export class DigitalAssetLifecycle {
         side: proposal.side,
         orderType: 'LIMIT',
         quantity: proposal.quantity,
-        limitPriceUnits: proposal.side === 'BUY' ? 2_500_000n : 2_400_000n,
+        limitPriceUnits: this.executableLimitPriceUnits(proposal.side),
         priceProtectionBps: null,
         quoteId: null,
         previewId: proposal.previewId,
