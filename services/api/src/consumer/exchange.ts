@@ -6,21 +6,42 @@
 import type { UtcInstant } from '../../../../packages/domain/src/time.ts';
 import { asUtcInstant } from '../../../../packages/domain/src/time.ts';
 import {
+  captureConsumerAlphaSnapshot,
   DigitalAssetLifecycle,
   MARKET_DATA_CLIENT_STATUSES,
   moonreyCoinEconomyView,
   sunreyCoinEconomyView,
+  type ConsumerAlphaIdempotencyRecord,
+  type ConsumerAlphaIdempotencyResource,
   type LifecycleMode,
 } from '../../../../packages/sunrey-exchange/src/productization/index.ts';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import type { BffPrincipal } from './ports.ts';
 
+export type ExchangeBffPersistenceHooks = {
+  load(customerId: string, mode: LifecycleMode): Promise<DigitalAssetLifecycle | null>;
+  save(customerId: string, mode: LifecycleMode, world: DigitalAssetLifecycle): Promise<void>;
+  loadIdempotency(idempotencyKey: string): Promise<ConsumerAlphaIdempotencyRecord | null>;
+  saveIdempotency(record: ConsumerAlphaIdempotencyRecord): Promise<void>;
+};
+
 export class ExchangeBffSurface {
   private readonly worlds = new Map<string, DigitalAssetLifecycle>();
   private readonly now: () => UtcInstant;
+  private readonly persistence: ExchangeBffPersistenceHooks | null;
 
-  constructor(now: () => UtcInstant = () => asUtcInstant(new Date().toISOString())) {
+  constructor(
+    now: () => UtcInstant = () => asUtcInstant(new Date().toISOString()),
+    persistence: ExchangeBffPersistenceHooks | null = null,
+    preloadedWorlds?: Map<string, DigitalAssetLifecycle>,
+  ) {
     this.now = now;
+    this.persistence = persistence;
+    if (preloadedWorlds) {
+      for (const [key, world] of preloadedWorlds) {
+        this.worlds.set(key, world);
+      }
+    }
   }
 
   worldFor(principal: BffPrincipal, mode?: LifecycleMode): DigitalAssetLifecycle {
@@ -35,6 +56,7 @@ export class ExchangeBffSurface {
       mode: mode ?? (principal.restricted ? 'COMPLIANCE_BLOCKED' : 'READY'),
     });
     this.worlds.set(key, created);
+    void this.persistWorld(principal.customerId, mode ?? 'READY', created);
     return created;
   }
 
@@ -107,6 +129,7 @@ export class ExchangeBffSurface {
     if ('ok' in proposal && proposal.ok === false) {
       return this.fail(requestId, 'POLICY', proposal.reason);
     }
+    void this.persistWorld(principal.customerId, 'READY', this.worldFor(principal));
     return this.jsonQty(proposal as object, requestId);
   }
 
@@ -127,15 +150,36 @@ export class ExchangeBffSurface {
     if ('ok' in result && result.ok === false) {
       return this.fail(requestId, result.reason === 'STEP_UP_REQUIRED' ? 'AUTH' : 'POLICY', result.reason);
     }
+    void this.persistWorld(principal.customerId, 'READY', this.worldFor(principal));
     return this.jsonQty(result as object, requestId);
   }
 
-  submit(principal: BffPrincipal, proposalId: string, body: Record<string, unknown>, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+  async submit(
+    principal: BffPrincipal,
+    proposalId: string,
+    body: Record<string, unknown>,
+    requestId: string,
+  ): Promise<Record<string, unknown> | BffErrorEnvelope> {
+    const idempotencyKey = readExchangeIdempotencyKey(body, requestId);
+    const replay = await this.loadIdempotentResponse(principal.customerId, idempotencyKey, 'ORDER');
+    if (replay) {
+      return { ...replay, requestId, replay: true };
+    }
     const result = this.worldFor(principal).submitOrder(proposalId, str(body.clientOrderId));
     if ('ok' in result && result.ok === false) {
       return this.fail(requestId, 'POLICY', result.reason);
     }
-    return this.jsonQty(result as object, requestId);
+    const world = this.worldFor(principal);
+    await this.persistWorld(principal.customerId, 'READY', world);
+    const response = this.jsonQty(result as object, requestId);
+    await this.saveIdempotentResponse({
+      idempotencyKey,
+      customerId: principal.customerId,
+      resourceType: 'ORDER',
+      resourceId: String((result as { orderId?: string }).orderId ?? proposalId),
+      response,
+    });
+    return response;
   }
 
   orders(principal: BffPrincipal, requestId: string): Record<string, unknown> {
@@ -159,13 +203,32 @@ export class ExchangeBffSurface {
     return { schema: 'sunrey.consumer.wallet.deposit-address.v1', address: wallet.depositAddress, source: wallet.source, requestId };
   }
 
-  simulateDeposit(principal: BffPrincipal, body: Record<string, unknown>, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+  async simulateDeposit(
+    principal: BffPrincipal,
+    body: Record<string, unknown>,
+    requestId: string,
+  ): Promise<Record<string, unknown> | BffErrorEnvelope> {
+    const idempotencyKey = readExchangeIdempotencyKey(body, requestId);
+    const replay = await this.loadIdempotentResponse(principal.customerId, idempotencyKey, 'DEPOSIT');
+    if (replay) {
+      return { ...replay, requestId, replay: true };
+    }
     const quantity = parseQty(body.quantity) ?? 25n;
     const result = this.worldFor(principal).simulateDeposit(quantity);
     if (result.ok === false) {
       return this.fail(requestId, 'TEMPORARY_UNAVAILABLE', String(result.reason));
     }
-    return { ...result, requestId };
+    const world = this.worldFor(principal);
+    await this.persistWorld(principal.customerId, 'READY', world);
+    const response = { ...result, requestId };
+    await this.saveIdempotentResponse({
+      idempotencyKey,
+      customerId: principal.customerId,
+      resourceType: 'DEPOSIT',
+      resourceId: String(result.depositId),
+      response,
+    });
+    return response;
   }
 
   withdrawalQuote(principal: BffPrincipal, body: Record<string, unknown>, requestId: string): Record<string, unknown> | BffErrorEnvelope {
@@ -184,7 +247,16 @@ export class ExchangeBffSurface {
     return { ...result, requestId };
   }
 
-  withdraw(principal: BffPrincipal, body: Record<string, unknown>, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+  async withdraw(
+    principal: BffPrincipal,
+    body: Record<string, unknown>,
+    requestId: string,
+  ): Promise<Record<string, unknown> | BffErrorEnvelope> {
+    const idempotencyKey = readExchangeIdempotencyKey(body, requestId);
+    const replay = await this.loadIdempotentResponse(principal.customerId, idempotencyKey, 'WITHDRAWAL');
+    if (replay) {
+      return { ...replay, requestId, replay: true };
+    }
     const quantity = parseQty(body.quantity);
     if (quantity === null) {
       return this.fail(requestId, 'VALIDATION', 'INVALID_QUANTITY');
@@ -199,7 +271,17 @@ export class ExchangeBffSurface {
     if (result.ok === false) {
       return this.fail(requestId, 'POLICY', String(result.reason));
     }
-    return { ...result, requestId };
+    const world = this.worldFor(principal);
+    await this.persistWorld(principal.customerId, 'READY', world);
+    const response = { ...result, requestId };
+    await this.saveIdempotentResponse({
+      idempotencyKey,
+      customerId: principal.customerId,
+      resourceType: 'WITHDRAWAL',
+      resourceId: String(result.withdrawalId),
+      response,
+    });
+    return response;
   }
 
   transactions(principal: BffPrincipal, requestId: string): Record<string, unknown> {
@@ -260,6 +342,50 @@ export class ExchangeBffSurface {
     };
   }
 
+  private async persistWorld(customerId: string, mode: LifecycleMode, world: DigitalAssetLifecycle): Promise<void> {
+    if (!this.persistence) {
+      return;
+    }
+    await this.persistence.save(customerId, mode, world);
+  }
+
+  private async loadIdempotentResponse(
+    customerId: string,
+    idempotencyKey: string,
+    resourceType: ConsumerAlphaIdempotencyResource,
+  ): Promise<Record<string, unknown> | null> {
+    if (!this.persistence) {
+      return null;
+    }
+    const record = await this.persistence.loadIdempotency(idempotencyKey);
+    if (!record || record.customerId !== customerId || record.resourceType !== resourceType) {
+      return null;
+    }
+    return JSON.parse(record.responseCanonical) as Record<string, unknown>;
+  }
+
+  private async saveIdempotentResponse(input: {
+    readonly idempotencyKey: string;
+    readonly customerId: string;
+    readonly resourceType: ConsumerAlphaIdempotencyResource;
+    readonly resourceId: string;
+    readonly response: Record<string, unknown>;
+  }): Promise<void> {
+    if (!this.persistence) {
+      return;
+    }
+    await this.persistence.saveIdempotency(
+      Object.freeze({
+        idempotencyKey: input.idempotencyKey,
+        customerId: input.customerId,
+        resourceType: input.resourceType,
+        resourceId: input.resourceId,
+        responseCanonical: JSON.stringify(input.response),
+        createdAt: this.now(),
+      }),
+    );
+  }
+
   private fail(requestId: string, category: 'VALIDATION' | 'POLICY' | 'AUTH' | 'TEMPORARY_UNAVAILABLE', code: string): BffErrorEnvelope {
     const errorCode =
       code === 'STEP_UP_REQUIRED'
@@ -309,4 +435,10 @@ function parseQty(value: unknown): bigint | null {
 
 function str(value: unknown): string | undefined {
   return typeof value === 'string' && value.length > 0 ? value : undefined;
+}
+
+function readExchangeIdempotencyKey(body: Record<string, unknown>, requestId: string): string {
+  const fromBody = typeof body.idempotencyKey === 'string' ? body.idempotencyKey.trim() : '';
+  const fromClient = typeof body.clientOrderId === 'string' ? body.clientOrderId.trim() : '';
+  return fromBody || fromClient || `idem_${requestId}`;
 }

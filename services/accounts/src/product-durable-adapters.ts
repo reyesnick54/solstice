@@ -15,6 +15,8 @@ import {
   loadConsumerWallet,
   loadConsumerWalletByAsset,
   loadConsumerWalletByIdempotency,
+  loadConsumerAlphaIdempotency,
+  loadConsumerAlphaState,
   loadGrowthState,
   loadGrowExecutionState,
   loadPersonalDataVaultState,
@@ -22,6 +24,8 @@ import {
   persistConsentState,
   persistConsumerInternalPayment,
   persistConsumerWallet,
+  persistConsumerAlphaIdempotency,
+  persistConsumerAlphaState,
   persistGrowthState,
   persistGrowExecutionState,
   persistPersonalDataVaultState,
@@ -162,4 +166,35 @@ export async function listProductWallets(
   customerId: string,
 ): Promise<readonly PersistedConsumerWallet[]> {
   return listConsumerWallets(pool, customerId);
+}
+
+export async function persistProductExchangeState(
+  pool: Pool,
+  customerId: string,
+  mode: string,
+  snapshot: import('@solstice/sunrey-exchange').ConsumerAlphaSnapshot,
+): Promise<void> {
+  await persistConsumerAlphaState(pool, customerId, mode, snapshot);
+}
+
+export async function loadProductExchangeState(
+  pool: Pool,
+  customerId: string,
+  mode: string,
+): Promise<import('@solstice/sunrey-exchange').ConsumerAlphaSnapshot | null> {
+  return loadConsumerAlphaState(pool, customerId, mode);
+}
+
+export async function persistProductExchangeIdempotency(
+  pool: Pool,
+  record: import('@solstice/sunrey-exchange').ConsumerAlphaIdempotencyRecord,
+): Promise<void> {
+  await persistConsumerAlphaIdempotency(pool, record);
+}
+
+export async function loadProductExchangeIdempotency(
+  pool: Pool,
+  idempotencyKey: string,
+): Promise<import('@solstice/sunrey-exchange').ConsumerAlphaIdempotencyRecord | null> {
+  return loadConsumerAlphaIdempotency(pool, idempotencyKey);
 }
