@@ -67,9 +67,9 @@ function auth(persona: Parameters<typeof sandboxToken>[0]) {
 
 describe('Wave 9 — application and Exchange security', () => {
   describe('API authentication and error handling', () => {
-    it('requires Bearer session for protected Consumer BFF routes', () => {
+    it('requires Bearer session for protected Consumer BFF routes', async () => {
       const world = createSandboxWorld();
-      const denied = handleConsumerBff(bffRuntime(world), {
+      const denied = await handleConsumerBff(bffRuntime(world), {
         method: 'GET',
         path: '/api/v1/me',
         query: {},
@@ -82,7 +82,7 @@ describe('Wave 9 — application and Exchange security', () => {
       assert.equal(body.errorCode, 'AUTH_REQUIRED');
     });
 
-    it('fails closed on unexpected handler errors without leaking stack traces', () => {
+    it('fails closed on unexpected handler errors without leaking stack traces', async () => {
       const world = createSandboxWorld();
       const runtime = {
         ...bffRuntime(world),
@@ -93,7 +93,7 @@ describe('Wave 9 — application and Exchange security', () => {
           },
         },
       };
-      const response = handleConsumerBff(runtime, {
+      const response = await handleConsumerBff(runtime, {
         method: 'GET',
         path: '/api/v1/me',
         query: {},
@@ -339,7 +339,7 @@ describe('Wave 9 — application and Exchange security', () => {
       assert.equal(verifyAccessToken(keys, clock, issued.value.token).ok, false);
     });
 
-    it('rejects revoked identity sessions on the Consumer BFF', () => {
+    it('rejects revoked identity sessions on the Consumer BFF', async () => {
       const clock = new FrozenClock(NOW);
       const keys = createSimulationKeyProvider({ clock: { now: () => clock.now() } });
       const evidence = new EvidenceVault(clock);
@@ -350,7 +350,7 @@ describe('Wave 9 — application and Exchange security', () => {
       adapter.service.revokeSession(session!.sessionId, 'USER_LOGOUT');
       const world = createSandboxWorld();
       world.sessions.delete(sandboxToken('basic_verified'));
-      const denied = handleConsumerBff(
+      const denied = await handleConsumerBff(
         { ...bffRuntime(world), identity: adapter.service },
         {
           method: 'GET',
@@ -366,9 +366,9 @@ describe('Wave 9 — application and Exchange security', () => {
   });
 
   describe('Action Center server authority', () => {
-    it('does not allow marking another user action complete via forged outcome', () => {
+    it('does not allow marking another user action complete via forged outcome', async () => {
       const world = createSandboxWorld();
-      const opened = handleConsumerBff(bffRuntime(world), {
+      const opened = await handleConsumerBff(bffRuntime(world), {
         method: 'POST',
         path: '/api/v1/agent/conversations',
         query: {},
@@ -378,7 +378,7 @@ describe('Wave 9 — application and Exchange security', () => {
       });
       assert.equal(opened.status, 201);
       const conversationId = (opened.body as { conversationId: string }).conversationId;
-      const pay = handleConsumerBff(bffRuntime(world), {
+      const pay = await handleConsumerBff(bffRuntime(world), {
         method: 'POST',
         path: `/api/v1/agent/conversations/${conversationId}/messages`,
         query: {},
@@ -389,7 +389,7 @@ describe('Wave 9 — application and Exchange security', () => {
       assert.equal(pay.status, 200);
       const actionId = (pay.body as { cards: { actionId: string }[] }).cards[0]?.actionId;
       assert.ok(actionId);
-      const forged = handleConsumerBff(bffRuntime(world), {
+      const forged = await handleConsumerBff(bffRuntime(world), {
         method: 'POST',
         path: `/api/v1/agent/actions/${actionId}/outcome`,
         query: {},
