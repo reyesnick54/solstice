@@ -32,8 +32,7 @@ async function call(
 }
 
 describe('Consumer BFF exchange productization', () => {
-  it('lists canonical Alpha markets and order preview without guaranteeing price', () => {
-  it('lists markets and order preview without guaranteeing price', async () => {
+  it('lists canonical Alpha markets and order preview without guaranteeing price', async () => {
     const world = createSandboxWorld();
     const markets = await call(world, 'GET', '/api/v1/exchange/markets', 'exchange');
     assert.equal(markets.status, 200);
@@ -47,12 +46,9 @@ describe('Consumer BFF exchange productization', () => {
     assert.ok(body.items.some((item) => item.instrument === 'SRC-USD'));
     assert.ok(body.items.some((item) => item.instrument === 'MRC-USD'));
     assert.ok(body.items.some((item) => item.instrument === 'SRC-MRC'));
-    const preview = call(world, 'POST', '/api/v1/exchange/preview', 'exchange', {
+    const preview = await call(world, 'POST', '/api/v1/exchange/preview', 'exchange', {
       marketId: 'market:src-usd-alpha',
       instrument: 'SRC-USD',
-    const preview = await call(world, 'POST', '/api/v1/exchange/preview', 'exchange', {
-      marketId: 'market:sunrey-coin-usd-simulation',
-      instrument: 'SUNREY_COIN-USD',
       side: 'BUY',
       quantity: '1',
     });
@@ -62,18 +58,14 @@ describe('Consumer BFF exchange productization', () => {
 
   it('refuses raw agent-style order submission without an approved proposal', async () => {
     const world = createSandboxWorld();
-    const raw = call(world, 'POST', '/api/v1/exchange/orders', 'exchange', {
-      marketId: 'market:src-usd-alpha',
     const raw = await call(world, 'POST', '/api/v1/exchange/orders', 'exchange', {
-      marketId: 'market:sunrey-coin-usd-simulation',
+      marketId: 'market:src-usd-alpha',
       side: 'BUY',
       quantity: '1',
     });
     assert.ok(raw.status === 400 || raw.status === 403);
-    const proposed = call(world, 'POST', '/api/v1/exchange/orders', 'exchange', {
-      marketId: 'market:src-usd-alpha',
     const proposed = await call(world, 'POST', '/api/v1/exchange/orders', 'exchange', {
-      marketId: 'market:sunrey-coin-usd-simulation',
+      marketId: 'market:src-usd-alpha',
       side: 'BUY',
       quantity: '1',
       proposalId: 'prop_approved',
