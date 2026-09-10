@@ -14,8 +14,7 @@ import { nativeExchangeApi } from './native-clearing/api.ts';
 import { NativeClearingEngine } from './native-clearing/engine.ts';
 import { sunreyMoonreyMarket } from './native-clearing/markets.ts';
 import { EXCHANGE_SETTLEMENT_ISSUER, NATIVE_TICKER_STATUS } from './native-clearing/types.ts';
-import { quoteAssetQuantity, quoteForQuantity } from './price.ts';
-import { exchangePrice } from './price.ts';
+import { exchangePrice, nativeClearingExactPriceUnits, quoteAssetQuantity, quoteForQuantity } from './price.ts';
 
 const NOW = asUtcInstant('2026-08-16T16:00:00.000Z');
 
@@ -52,6 +51,20 @@ describe('fixed-point price arithmetic', () => {
     assert.equal(quoteForQuantity(price, qty), 25_000_000n);
     assert.equal(quoteAssetQuantity(price, qty).scaledUnits, 25_000_000n);
     assert.equal(quoteAssetQuantity(price, qty).assetId, MOONREY_COIN_NATIVE_ASSET_ID);
+  });
+
+  it('snaps alpha ask prices to exact native-clearing quote amounts', () => {
+    const snapped = nativeClearingExactPriceUnits(2_525_000n, 2n, 6);
+    assert.equal(snapped, 2_500_000n);
+    const price = exchangePrice({
+      baseAssetId: SUNREY_COIN_NATIVE_ASSET_ID,
+      quoteAssetId: MOONREY_COIN_NATIVE_ASSET_ID,
+      quoteKind: 'ASSET',
+      priceUnits: snapped,
+      quoteScale: 6,
+      basePrecision: 6,
+    });
+    assert.equal(quoteForQuantity(price, AssetQuantity.fromScaledUnits(2n, SUNREY_COIN_NATIVE_ASSET_ID)), 5n);
   });
 });
 
