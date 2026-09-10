@@ -204,10 +204,13 @@ export class ConsumerExchangeEngine {
     return this.alphaMarketMaker;
   }
 
-  fundAlphaSandboxUsd(participantId: string, usdMinor: bigint): { readonly ok: true; readonly balanceMinor: bigint } {
-    const maker = this.alphaMarketMaker ?? createInternalAlphaMarketMaker();
-    if (!this.alphaMarketMaker) {
-      this.alphaMarketMaker = maker;
+  fundAlphaSandboxUsd(
+    participantId: string,
+    usdMinor: bigint,
+  ): { readonly ok: true; readonly balanceMinor: bigint } | { readonly ok: false; readonly reason: 'ALPHA_LIQUIDITY_NOT_ACTIVATED' } {
+    const maker = this.alphaMarketMaker;
+    if (!maker?.accountId) {
+      return { ok: false, reason: 'ALPHA_LIQUIDITY_NOT_ACTIVATED' };
     }
     return maker.fundUserSandboxUsd(participantId, usdMinor);
   }
