@@ -15,7 +15,7 @@ function runtime(world: ReturnType<typeof createSandboxWorld>) {
   };
 }
 
-function call(
+async function call(
   world: ReturnType<typeof createSandboxWorld>,
   method: string,
   path: string,
@@ -33,8 +33,9 @@ function call(
 
 describe('Consumer BFF exchange productization', () => {
   it('lists canonical Alpha markets and order preview without guaranteeing price', () => {
+  it('lists markets and order preview without guaranteeing price', async () => {
     const world = createSandboxWorld();
-    const markets = call(world, 'GET', '/api/v1/exchange/markets', 'exchange');
+    const markets = await call(world, 'GET', '/api/v1/exchange/markets', 'exchange');
     assert.equal(markets.status, 200);
     const body = markets.body as {
       productionTradingEnabled: false;
@@ -49,6 +50,9 @@ describe('Consumer BFF exchange productization', () => {
     const preview = call(world, 'POST', '/api/v1/exchange/preview', 'exchange', {
       marketId: 'market:src-usd-alpha',
       instrument: 'SRC-USD',
+    const preview = await call(world, 'POST', '/api/v1/exchange/preview', 'exchange', {
+      marketId: 'market:sunrey-coin-usd-simulation',
+      instrument: 'SUNREY_COIN-USD',
       side: 'BUY',
       quantity: '1',
     });
@@ -56,16 +60,20 @@ describe('Consumer BFF exchange productization', () => {
     assert.equal((preview.body as { guaranteedExecutionPrice: false }).guaranteedExecutionPrice, false);
   });
 
-  it('refuses raw agent-style order submission without an approved proposal', () => {
+  it('refuses raw agent-style order submission without an approved proposal', async () => {
     const world = createSandboxWorld();
     const raw = call(world, 'POST', '/api/v1/exchange/orders', 'exchange', {
       marketId: 'market:src-usd-alpha',
+    const raw = await call(world, 'POST', '/api/v1/exchange/orders', 'exchange', {
+      marketId: 'market:sunrey-coin-usd-simulation',
       side: 'BUY',
       quantity: '1',
     });
     assert.ok(raw.status === 400 || raw.status === 403);
     const proposed = call(world, 'POST', '/api/v1/exchange/orders', 'exchange', {
       marketId: 'market:src-usd-alpha',
+    const proposed = await call(world, 'POST', '/api/v1/exchange/orders', 'exchange', {
+      marketId: 'market:sunrey-coin-usd-simulation',
       side: 'BUY',
       quantity: '1',
       proposalId: 'prop_approved',
@@ -74,15 +82,15 @@ describe('Consumer BFF exchange productization', () => {
     assert.equal((proposed.body as { requiresExecution: true }).requiresExecution, true);
   });
 
-  it('denies cross-user order reads', () => {
+  it('denies cross-user order reads', async () => {
     const world = createSandboxWorld();
-    const denied = call(world, 'GET', '/api/v1/exchange/orders/xord_someone_else', 'exchange');
+    const denied = await call(world, 'GET', '/api/v1/exchange/orders/xord_someone_else', 'exchange');
     assert.equal(denied.status, 403);
   });
 
-  it('streams non-privileged market events', () => {
+  it('streams non-privileged market events', async () => {
     const world = createSandboxWorld();
-    const streamed = handleConsumerBff(runtime(world), {
+    const streamed = await handleConsumerBff(runtime(world), {
       method: 'GET',
       path: '/api/v1/exchange/stream',
       query: { after: '0' },

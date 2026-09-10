@@ -114,6 +114,8 @@ export type TradeSettlementReceipt = {
   readonly networkFee: bigint;
   readonly settlementId: SettlementId;
   readonly blockchainTransactionId: string;
+  readonly transactionHash: string;
+  readonly networkId: string;
   readonly finalizedHeight: bigint;
   readonly blockId: string;
   readonly stateRootReference: string;
@@ -154,4 +156,6 @@ export type ChainQueryResult = {
   readonly found: boolean;
   readonly finality: NativeFinality | 'UNKNOWN';
   readonly settlementId: string | null;
+  readonly blockHeight: bigint | null;
+  readonly networkId: string;
 };
