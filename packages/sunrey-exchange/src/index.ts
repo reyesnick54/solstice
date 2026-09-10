@@ -25,6 +25,10 @@ export {
   MOONREY_COIN_ASSET_ID,
   SIMULATION_FEE_SCHEDULE_ID,
   SIMULATION_USD_CASH_ASSET_ID,
+  MOONREY_COIN_USD_MARKET_ID,
+  SRC_MRC_ALPHA_MARKET_ID,
+  SRC_USD_ALPHA_MARKET_ID,
+  MRC_USD_ALPHA_MARKET_ID,
   SUNREY_COIN_USD_MARKET_ID,
   SUNREY_MOONREY_MARKET_ID,
   SUNREY_COIN_NATIVE_ASSET_ID,
@@ -54,6 +58,15 @@ export {
   type ListingId,
   type OrderId,
   type TradeId,
+  ALPHA_MARKET_INSTRUMENT_MRC_USD,
+  ALPHA_MARKET_INSTRUMENT_SRC_MRC,
+  ALPHA_MARKET_INSTRUMENT_SRC_USD,
+  canonicalAlphaMarkets,
+  isAlphaNativePairMarket,
+  isAlphaUsdMarket,
+  resolveAlphaMarketRef,
+  type AlphaMarketDefinition,
+  type AlphaMarketInstrument,
 } from './ids.ts';
 export {
   capacityInstrument,
@@ -263,6 +276,7 @@ export * from './productization/index.ts';
 export { ExchangeSettlementRecovery } from './operation-recovery.ts';
 export type { ExchangeSettlementDraft, SettlementPhase } from './operation-recovery.ts';
 export * from './product/index.ts';
+export * from './alpha/index.ts';
 export * from './production-core/index.ts';
 export {
   WAVE8_SETTLEMENT_STATES,
