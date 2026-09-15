@@ -3,6 +3,8 @@ export {
   LIFECYCLE_STAGE_STATUSES,
   DATA_FRESHNESS_STATUSES,
   CANONICAL_EXECUTION_LIFECYCLE_STATES,
+  CANONICAL_PROPOSAL_LIFECYCLE_STATES,
+  EXECUTION_MODES,
   GROW_FINANCIAL_AGENT_IDS,
   GROW_AUDIT_EVENT_KINDS,
   FINANCIAL_RISK_DIMENSIONS,
@@ -12,6 +14,8 @@ export type {
   LifecycleStageStatus,
   DataFreshnessStatus,
   CanonicalExecutionLifecycleState,
+  CanonicalProposalLifecycleState,
+  ExecutionMode,
   GrowFinancialAgentId,
   GrowAuditEventKind,
   FinancialRiskDimension,
@@ -46,6 +50,20 @@ export type {
 } from './execution-adapter.ts';
 
 export { mapCanonicalExecutionState, submittedIsNotCompleted, providerConfirmedState } from './execution-states.ts';
+
+export {
+  mapGrowExecutionToCanonicalLifecycle,
+  mapGrowProposalToCanonicalLifecycle,
+  inferGrowExecutionMode,
+  projectGrowExecutionForClient,
+  projectGrowProposalForClient,
+  executionModeMustNotAppearLive,
+} from './lifecycle-projection.ts';
+export type {
+  GrowExecutionProjectionInput,
+  GrowExecutionClientProjection,
+  GrowProposalClientProjection,
+} from './lifecycle-projection.ts';
 
 export { projectedVsRealized, presentOutcomeToUser } from './outcome-attribution.ts';
 export type { OutcomeAttribution } from './outcome-attribution.ts';

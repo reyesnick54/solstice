@@ -81,6 +81,12 @@ export {
 export { redactSecrets } from './secrets.ts';
 export { parseStructuredOutput, parseToolIntents } from './structured.ts';
 export {
+  bindGrowthProposalEvidence,
+  toolRunReferenceForIntent,
+  validateGrowthProposalEvidenceBinding,
+} from './proposal-evidence.ts';
+export type { ToolRunReference } from './proposal-evidence.ts';
+export {
   parseMarketOpportunityResearch,
   isCandidateEligibleForRanking,
   MARKET_RESEARCH_THRESHOLDS,

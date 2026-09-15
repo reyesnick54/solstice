@@ -7,13 +7,20 @@ export const CANONICAL_TO_GROW_EXECUTION: Readonly<Record<CanonicalExecutionLife
     REVIEWED: 'QUEUED',
     AUTHORIZED: 'AUTHORIZED',
     SUBMITTED: 'SUBMITTED',
+    ACKNOWLEDGED: 'PROCESSING',
     PENDING: 'PROCESSING',
     PARTIALLY_FILLED: 'PARTIALLY_COMPLETED',
+    FILLED: 'COMPLETED',
+    SETTLED: 'COMPLETED',
+    RECONCILED: 'COMPLETED',
+    AVAILABLE: 'COMPLETED',
     COMPLETED: 'COMPLETED',
     FAILED: 'FAILED',
     CANCELLED: 'CANCELLED',
     REJECTED: 'FAILED',
     EXPIRED: 'FAILED',
+    UNKNOWN: 'REQUIRES_REVIEW',
+    ACTION_REQUIRED: 'REQUIRES_REVIEW',
   });
 
 export function mapCanonicalExecutionState(state: CanonicalExecutionLifecycleState): GrowExecutionState {
@@ -25,7 +32,14 @@ export function mapCanonicalExecutionState(state: CanonicalExecutionLifecycleSta
 }
 
 export function submittedIsNotCompleted(state: GrowExecutionState): boolean {
-  return state === 'SUBMITTED' || state === 'PROCESSING' || state === 'QUEUED' || state === 'AUTHORIZED';
+  return (
+    state === 'SUBMITTED' ||
+    state === 'PROCESSING' ||
+    state === 'QUEUED' ||
+    state === 'AUTHORIZED' ||
+    state === 'PARTIALLY_COMPLETED' ||
+    state === 'REQUIRES_REVIEW'
+  );
 }
 
 export function providerConfirmedState(state: GrowExecutionState): boolean {

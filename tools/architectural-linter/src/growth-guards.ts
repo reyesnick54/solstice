@@ -176,6 +176,34 @@ export function lintGrowthBoundary(root: string): Finding[] {
         );
       }
 
+      const inAgentConversation =
+        rel.startsWith('packages/sunrey-agent/src/conversation/') ||
+        rel.startsWith('packages/sunrey-agent/src/inference.ts') ||
+        rel.startsWith('packages/sunrey-agent/src/runtime.ts') ||
+        rel.startsWith('packages/ai-runtime/src/structured.ts') ||
+        rel.startsWith('packages/ai-runtime/src/runtime.ts') ||
+        rel.startsWith('packages/ai-runtime/src/gateway.ts') ||
+        (rel.startsWith('packages/ai-runtime/src/providers/') &&
+          !rel.endsWith('/fixtures.ts') &&
+          !rel.endsWith('/local-test.ts')) ||
+        rel.startsWith('packages/agent/src/');
+      if (
+        inAgentConversation &&
+        !isTest &&
+        !rel.endsWith('formal.ts') &&
+        /\b(approved|authorized|executed|filled|settled|reconciled|mayExecute|executes)\s*:\s*true\b/.test(line) &&
+        !/\b(humanApproved|requiredUserApproval|grantsExecutionAuthority|agentIsApprover|mayExecute:\s*false|executes:\s*false|achievementPromised|productionMoneyMovement|guaranteedReturn|serverOwned|projectedNotRealized|clientInstructionsTrusted|executesMoney|isExecutionInstruction|approvalIsNotExecution|authorizationIsNotExecution|proposalIsNotExecution|originatedFromAgent|mayExecuteFinancialActions|policyModifiedByModel|providerSelfSelected|simulationOnly|depositsAreNotPerformance|executedContributions|liveExecution|immediatelyExecutable:\s*false)\b/.test(line)
+      ) {
+        findings.push(
+          finding(
+            'model-output-is-not-authorization',
+            rel,
+            lineNo,
+            'model or agent output must not set financial authorization or execution booleans to true',
+          ),
+        );
+      }
+
       if (
         inGrowth &&
         !isTest &&

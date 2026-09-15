@@ -379,3 +379,5 @@ export class GrowLifecycleService {
     sealGrowEvidence(this.evidence, kind, trace);
   }
 }
+
+export { projectGrowExecutionForClient, projectGrowProposalForClient } from './lifecycle/lifecycle-projection.ts';

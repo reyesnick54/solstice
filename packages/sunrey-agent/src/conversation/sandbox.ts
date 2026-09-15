@@ -34,7 +34,11 @@ export type ConversationDomainPorts = {
   getProposal(proposalId: string): DomainProposalRef | undefined;
 };
 
-type StoredProposal = DomainProposalRef & { readonly subjectId: string; readonly approved: boolean };
+type StoredProposal = DomainProposalRef & {
+  readonly subjectId: string;
+  readonly humanApproved: boolean;
+  readonly executionStatus: 'NONE' | 'SUBMITTED' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'REQUIRES_REVIEW';
+};
 
 export function createConversationSandbox(input: {
   readonly subjectId: string;
@@ -128,7 +132,7 @@ export function createConversationSandbox(input: {
       if (!existing || existing.subjectId !== request.subjectId) {
         return { ok: false, code: 'RESOURCE_NOT_OWNED', message: 'Proposal is not on this customer.' };
       }
-      if (existing.approved) {
+      if (existing.humanApproved) {
         return { ok: false, code: 'PROPOSAL_ALREADY_APPROVED', message: 'Approved terms cannot be mutated. A new version is required before approval only.' };
       }
       const minor = parseAmountToMinorUnits(request.amountRaw);
@@ -160,8 +164,11 @@ export function createConversationSandbox(input: {
       if (!request.approvalId.startsWith('aap_')) {
         return { ok: false, code: 'APPROVAL_REQUIRES_HUMAN', message: 'Execution requires a human approval record.' };
       }
-      existing.approved;
-      proposals.set(existing.proposalId, { ...existing, approved: true });
+      proposals.set(existing.proposalId, {
+        ...existing,
+        humanApproved: true,
+        executionStatus: 'COMPLETED',
+      });
       return { ok: true, status: 'COMPLETED' };
     },
     getProposal(id) {
@@ -318,7 +325,8 @@ function proposalOf(input: {
     requiresAcknowledgements: highImpact,
     executionAuthorityId: null,
     subjectId: input.subjectId,
-    approved: false,
+    humanApproved: false,
+    executionStatus: 'NONE',
   });
 }
 
