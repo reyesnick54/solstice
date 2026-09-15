@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "id": "helios.authority-matrix.v1",
+  "workPackage": "H01",
+  "auditedAt": "2026-09-15T13:01:00Z",
+  "baseSha": "3c13beb3df000c25b8e81b953058387d9b04774d",
+  "blockers": [],
+  "functions": [
+    {
+      "function": "customer_identity",
+      "canonicalOwner": "packages/identity",
+      "callers": ["services/api Consumer BFF", "services/accounts", "packages/kernel proofs"],
+      "persistence": "customer.* (V002)",
+      "simulationPath": "FrozenClock sessions; sandbox personas",
+      "livePath": "DISABLED",
+      "notes": "ActorContext from verified session"
+    },
+    {
+      "function": "mandate",
+      "canonicalOwner": "packages/platform (economic) + packages/sunrey-agent (agent)",
+      "callers": ["GrowthOrchestrator", "UserAgentMandateEngine", "CapitalMeshService"],
+      "persistence": "growth.mandate_version; agent_runtime.mandate",
+      "simulationPath": "compileEconomicMandate; SIMULATION_ONLY agent mandates",
+      "livePath": "DISABLED",
+      "notes": "Two mandate domains by design; not competing financial authority"
+    },
+    {
+      "function": "consent",
+      "canonicalOwner": "packages/consent",
+      "callers": ["Consumer BFF data routes", "PDV", "clean-room"],
+      "persistence": "consent.* (V020, V038)",
+      "simulationPath": "ConsentService",
+      "livePath": "DISABLED",
+      "notes": "Separate from Kernel compliance screening"
+    },
+    {
+      "function": "risk",
+      "canonicalOwner": "packages/risk",
+      "callers": ["InvestmentsService", "Kernel riskProof", "CapitalMeshService"],
+      "persistence": "risk.* (V015)",
+      "simulationPath": "RiskEngine.assessPreTrade → ALLOW_SIMULATION",
+      "livePath": "DISABLED",
+      "notes": "Exchange has local risk-limits; filter not second engine"
+    },
+    {
+      "function": "compliance",
+      "canonicalOwner": "packages/kernel",
+      "callers": ["services/accounts", "packages/investments", "ProposalGate"],
+      "persistence": "EvidenceVault KERNEL_DECISION",
+      "simulationPath": "ComplianceKernel.submit",
+      "livePath": "DISABLED",
+      "notes": "Only component that DECIDES"
+    },
+    {
+      "function": "proposal_creation",
+      "canonicalOwner": "packages/platform (Grow) + packages/sunrey-agent (Agent)",
+      "callers": ["GrowLifecycleService", "UserAgentMandateEngine", "PersonalEconomyAgent"],
+      "persistence": "growth.financial_proposal; agent proposals in agent_runtime",
+      "simulationPath": "In-memory or PG adapters",
+      "livePath": "DISABLED",
+      "notes": "Proposals are not ActionIntents"
+    },
+    {
+      "function": "financial_authorization",
+      "canonicalOwner": "packages/permissions (AuthorityIssuer)",
+      "callers": ["ComplianceKernel on ALLOW only"],
+      "persistence": "Transient EA; audit in evidence",
+      "simulationPath": "HMAC SimulationKeyProvider",
+      "livePath": "DISABLED",
+      "notes": "ProposalGate does not issue EA"
+    },
+    {
+      "function": "cash_balance",
+      "canonicalOwner": "packages/ledger (via services/accounts reads)",
+      "callers": ["Consumer BFF", "GrowBffSurface", "InvestmentPlatform"],
+      "persistence": "solstice_ledger journal lines",
+      "simulationPath": "Ledger.postJournal derived balances",
+      "livePath": "DISABLED",
+      "notes": "Never stored on Account object"
+    },
+    {
+      "function": "reserved_capital",
+      "canonicalOwner": "services/accounts (HoldStore)",
+      "callers": ["BankingOperationsService"],
+      "persistence": "PROCESS_LOCAL only",
+      "simulationPath": "In-memory holds",
+      "livePath": "DISABLED",
+      "notes": "No PG adapter; ephemeral"
+    },
+    {
+      "function": "position_state",
+      "canonicalOwner": "packages/investments",
+      "callers": ["InvestmentsService", "Grow execution adapter"],
+      "persistence": "investments.* (V014)",
+      "simulationPath": "InvestmentStore / PG",
+      "livePath": "DISABLED",
+      "notes": "Exchange consumer portfolio is separate read projection"
+    },
+    {
+      "function": "execution_submission",
+      "canonicalOwner": "packages/investments (paper) + services/accounts (banking)",
+      "callers": ["executeGrowInvestmentCommand", "MoneyMovementService"],
+      "simulationPath": "Kernel-gated ActionIntent → EA → postJournal",
+      "livePath": "DISABLED",
+      "notes": "Grow BFF routes non-investment to REQUIRES_REVIEW"
+    },
+    {
+      "function": "execution_status",
+      "canonicalOwner": "packages/platform (GrowLifecycleService)",
+      "callers": ["GrowBffSurface.executionStatus"],
+      "persistence": "growth.execution_record (V036)",
+      "simulationPath": "In-memory GrowStore in preview",
+      "livePath": "DISABLED",
+      "notes": "Not wired in deployed preview"
+    },
+    {
+      "function": "settlement",
+      "canonicalOwner": "packages/sunrey-exchange (digital) + packages/payments (fiat rails)",
+      "callers": ["ExchangeProductPlatform", "PaymentPlatform"],
+      "simulationPath": "InMemoryCoinPort/FiatPort or ledger rail optional",
+      "livePath": "DISABLED",
+      "notes": "Default exchange settlement is not ledger.postJournal"
+    },
+    {
+      "function": "reconciliation",
+      "canonicalOwner": "services/accounts + money integration platform",
+      "callers": ["Consumer BFF /api/v1/money/*"],
+      "simulationPath": "Simulation reconciliation reads",
+      "livePath": "DISABLED",
+      "notes": "No live bank reconciliation"
+    },
+    {
+      "function": "wallet_custody",
+      "canonicalOwner": "packages/custody",
+      "callers": ["DurableWalletSurface", "CustodyService"],
+      "persistence": "V044",
+      "simulationPath": "SIMULATION_ONLY providers",
+      "livePath": "DISABLED",
+      "notes": "Constructor enforces simulation providers"
+    },
+    {
+      "function": "exchange_state",
+      "canonicalOwner": "packages/sunrey-exchange",
+      "callers": ["ExchangeBffSurface", "DurableExchangeSurface"],
+      "persistence": "sunrey_exchange + runtime snapshots",
+      "simulationPath": "ExchangeStore / PG snapshots",
+      "livePath": "DISABLED",
+      "notes": "Not a second ledger"
+    },
+    {
+      "function": "strategy_qualification",
+      "canonicalOwner": "packages/strategy-lab",
+      "callers": ["StrategyLab.backtest/shadow/paper"],
+      "persistence": "strategy_lab.*",
+      "simulationPath": "LIVE_STRATEGY_EXECUTION=false",
+      "livePath": "DISABLED",
+      "notes": "Mesh cannot set VALIDATED"
+    },
+    {
+      "function": "performance_attribution",
+      "canonicalOwner": "packages/ledger (banking) + packages/platform (PEVE)",
+      "callers": ["MoneyMovementService", "PersonalEconomicValueEngine"],
+      "persistence": "Ledger journals; PEVE tables",
+      "simulationPath": "skipPrincipalMovement vs economic-benefit attribution",
+      "livePath": "DISABLED",
+      "notes": "Intentional dual owner; not a blocker"
+    },
+    {
+      "function": "evidence_audit_state",
+      "canonicalOwner": "packages/evidence",
+      "callers": ["ComplianceKernel", "all gated mutators"],
+      "persistence": "solstice_evidence hash chain",
+      "simulationPath": "EvidenceVault.seal",
+      "livePath": "DISABLED",
+      "notes": "Broken chain is hard failure"
+    },
+    {
+      "function": "ai_inference",
+      "canonicalOwner": "packages/ai-runtime",
+      "callers": ["packages/sunrey-agent via bindAgentModelGateway"],
+      "persistence": "none",
+      "simulationPath": "S3M simulator; optional Grok preview",
+      "livePath": "DISABLED",
+      "notes": "financialExecuted always false on gateway results"
+    },
+    {
+      "function": "market_data",
+      "canonicalOwner": "packages/external-data + packages/sunrey-exchange/src/market-data",
+      "callers": ["InvestmentsService quotes", "Consumer BFF world routes"],
+      "persistence": "fixture inventory / simulation observations",
+      "simulationPath": "SUNREY_DATA_MODE=simulation",
+      "livePath": "DISABLED",
+      "notes": "Provider catalog exists; live connectivity disabled"
+    },
+    {
+      "function": "provider_runtime",
+      "canonicalOwner": "packages/sunrey-chain/src/provider-runtime",
+      "callers": ["Consumer BFF fixtures", "internal provider ops"],
+      "persistence": "provider_runtime.* (V033)",
+      "simulationPath": "seedSimulationProviders",
+      "livePath": "DISABLED",
+      "notes": "Production binding evaluator only; no live apply"
+    }
+  ]
+}

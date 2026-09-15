@@ -15,7 +15,9 @@ import { createSimulationRuntime } from '../../../services/accounts/src/runtime.
 import { activateCustomer, openIntent, NOW } from '../../../services/accounts/src/test-helpers.ts';
 import { asInstrumentId, asInvestmentAccountId } from './ids.ts';
 import { InvestmentsService } from './service.ts';
-import { computePerformance } from './product/performance.ts';
+import { computePerformance, type ValuationPoint } from './product/performance.ts';
+import { computeRiskMetrics } from './product/risk-metrics.ts';
+import type { ProductAllocationView } from './product/allocation-target.ts';
 import { evaluateProductSuitability } from './product/suitability.ts';
 import { seedInstrumentProducts } from './product/instrument-catalog.ts';
 import { InvestmentPlatform } from './product/platform.ts';
@@ -305,6 +307,101 @@ describe('performance engine', () => {
     });
     assert.equal(withdraw.absoluteReturn.minorUnits, 0n);
     assert.equal(withdraw.externalCashFlow.minorUnits, -50_000n);
+  });
+});
+
+function riskMetricsAllocation(totalMinor: bigint, instrumentWeightBps: bigint): ProductAllocationView {
+  const total = Money.fromMinorUnits(totalMinor, 'USD');
+  const instrumentValue = Money.fromMinorUnits((totalMinor * instrumentWeightBps) / 10_000n, 'USD');
+  const cash = total.minus(instrumentValue);
+  return Object.freeze({
+    total,
+    cash,
+    invested: instrumentValue,
+    byInstrument: Object.freeze([
+      Object.freeze({
+        key: 'SIM-ETF-1',
+        marketValue: instrumentValue,
+        weightBps: instrumentWeightBps,
+        positionCount: 1n,
+      }),
+    ]),
+    byCurrency: Object.freeze([
+      Object.freeze({
+        key: 'USD',
+        marketValue: total,
+        weightBps: 10_000n,
+        positionCount: 1n,
+      }),
+    ]),
+    byAssetClass: Object.freeze([
+      Object.freeze({
+        key: 'ETF',
+        marketValue: instrumentValue,
+        weightBps: instrumentWeightBps,
+        positionCount: 1n,
+      }),
+      Object.freeze({
+        key: 'CASH',
+        marketValue: cash,
+        weightBps: 10_000n - instrumentWeightBps,
+        positionCount: 0n,
+      }),
+    ]),
+    byRiskClass: Object.freeze([
+      Object.freeze({
+        key: 'MODERATE',
+        marketValue: total,
+        weightBps: 10_000n,
+        positionCount: 1n,
+      }),
+    ]),
+  });
+}
+
+function riskMetricsHistory(values: readonly bigint[]): ValuationPoint[] {
+  return values.map((minor, index) =>
+    Object.freeze({
+      at: asUtcInstant(`2026-01-${String(index + 1).padStart(2, '0')}T00:00:00.000Z`),
+      marketValue: Money.fromMinorUnits(minor, 'USD'),
+      cash: Money.zero('USD'),
+    }),
+  );
+}
+
+describe('portfolio risk metrics', () => {
+  it('computes sample stdev of period returns in basis points', () => {
+    const view = computeRiskMetrics({
+      allocation: riskMetricsAllocation(90_000n, 5_000n),
+      holdings: Object.freeze([]),
+      history: riskMetricsHistory([100_000n, 110_000n, 90_000n]),
+    });
+    assert.equal(view.volatility.availability, 'AVAILABLE');
+    assert.equal(view.volatility.stdevBps, 1992n);
+    assert.match(view.volatility.note, /Not annualized/);
+  });
+
+  it('computes drawdown peak, trough, and bps without fabricating data', () => {
+    const view = computeRiskMetrics({
+      allocation: riskMetricsAllocation(80_000n, 5_000n),
+      holdings: Object.freeze([]),
+      history: riskMetricsHistory([100_000n, 90_000n, 80_000n]),
+    });
+    assert.equal(view.drawdown.availability, 'AVAILABLE');
+    assert.equal(view.drawdown.peak?.minorUnits, 100_000n);
+    assert.equal(view.drawdown.trough?.minorUnits, 80_000n);
+    assert.equal(view.drawdown.drawdown?.minorUnits, 20_000n);
+    assert.equal(view.drawdown.drawdownBps, 2000n);
+  });
+
+  it('returns insufficient drawdown for a single valuation point', () => {
+    const view = computeRiskMetrics({
+      allocation: riskMetricsAllocation(100_000n, 0n),
+      holdings: Object.freeze([]),
+      history: riskMetricsHistory([100_000n]),
+    });
+    assert.equal(view.drawdown.availability, 'INSUFFICIENT_DATA');
+    assert.equal(view.drawdown.drawdownBps, null);
   });
 });
 

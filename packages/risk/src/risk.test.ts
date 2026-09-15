@@ -9,7 +9,8 @@ import { DomainEventLog } from '../../events/src/events.ts';
 import { SimulatedIdentityAdapter } from '../../identity/src/simulation.ts';
 import { ModelRegistry, seedCanonicalRiskModel } from '../../model-registry/src/registry.ts';
 import { createSimulationKeyProvider } from '../../security/src/simulation.ts';
-import { ratioPercent, shareOf } from './arithmetic.ts';
+import { ratioPercent, RATIO_UNIT, shareOf } from './arithmetic.ts';
+import { analyzeExtremeGoal, estimateMaxDrawdown, estimateVolatility } from './analytics.ts';
 import { DEFAULT_RISK_POLICY_VERSION, RiskEngine, defaultSimulationBudget } from './engine.ts';
 import { escalateWithInvestmentRisk } from './kernel-facts.ts';
 import { asPortfolioRiskSnapshotId } from './ids.ts';
@@ -292,5 +293,70 @@ describe('investment risk engine', () => {
 
   it('uses the default policy version token', () => {
     assert.equal(DEFAULT_RISK_POLICY_VERSION, 'risk-policy-v1');
+  });
+});
+
+function analyticsObservations(values: readonly bigint[]) {
+  return values.map((portfolioMarketValueMinor, index) =>
+    Object.freeze({
+      at: asUtcInstant(`2026-01-${String(index + 1).padStart(2, '0')}T00:00:00.000Z`),
+      portfolioMarketValueMinor,
+      currency: 'USD',
+    }),
+  );
+}
+
+describe('risk analytics', () => {
+  it('requires at least three observations for volatility', () => {
+    const two = estimateVolatility(analyticsObservations([100_000n, 110_000n]), 'h02');
+    assert.equal(two.sufficient, false);
+    const three = estimateVolatility(analyticsObservations([100_000n, 110_000n, 90_000n]), 'h02');
+    assert.equal(three.sufficient, true);
+    if (three.sufficient) {
+      assert.equal(three.method, 'SAMPLE_STDDEV_INTEGER_RETURNS');
+      assert.equal(three.value.units, 19_927_554n);
+    }
+  });
+
+  it('refuses non-positive valuation observations for volatility', () => {
+    const result = estimateVolatility(analyticsObservations([100_000n, 0n, 90_000n]), 'h02');
+    assert.equal(result.sufficient, false);
+    if (!result.sufficient) {
+      assert.match(result.reason, /non-positive/);
+    }
+  });
+
+  it('computes peak-to-trough max drawdown with explicit positive units', () => {
+    const flat = estimateMaxDrawdown(analyticsObservations([100_000n, 100_000n, 100_000n]));
+    assert.equal(flat.sufficient, true);
+    if (flat.sufficient) {
+      assert.equal(flat.maxDrawdown.units, 0n);
+      assert.equal(flat.futureLossGuarantee, false);
+    }
+    const loss = estimateMaxDrawdown(analyticsObservations([100_000n, 90_000n, 80_000n]));
+    assert.equal(loss.sufficient, true);
+    if (loss.sufficient) {
+      assert.equal(loss.maxDrawdown.units, 20_000_000n);
+    }
+  });
+
+  it('returns insufficient analytics for single-point drawdown input', () => {
+    const result = estimateMaxDrawdown(analyticsObservations([100_000n]));
+    assert.equal(result.sufficient, false);
+  });
+
+  it('preserves extreme-goal implied growth without relaxing limits', () => {
+    const analysis = analyzeExtremeGoal({
+      goalText: 'double in one year',
+      baselineMinor: 100_000n,
+      targetMinor: 200_000n,
+      intervalDays: 365n,
+      maxImpliedGrowth: ratioPercent(50n),
+    });
+    assert.equal(analysis.impliedGrowth.units, 100_000_000n);
+    assert.equal(analysis.compatibleWithCurrentLimits, false);
+    assert.equal(analysis.guaranteed, false);
+    assert.equal(analysis.limitsRelaxed, false);
+    assert.equal(analysis.impliedGrowth.units, ((200_000n - 100_000n) * RATIO_UNIT) / 100_000n);
   });
 });
