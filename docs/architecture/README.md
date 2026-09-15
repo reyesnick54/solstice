@@ -1,5 +1,6 @@
 # Architecture
 
+- [HELIOS Phase 1 audit (H01)](../helios/README.md) — repository and runtime truth baseline for integrated intelligence/orchestration
 - [Constitution](./constitution.md) — canonical owners, boundaries, and dependency direction
 - [Manifest](./manifest.json) — machine-readable enforcement input
 - [ADR index](./adr/README.md) — decision records (not renumbered)
