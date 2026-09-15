@@ -262,5 +262,6 @@ export type {
   OpportunityProposalReceipt,
   OpportunityDiscoveryContext,
 } from './growth/opportunity/types.ts';
+export * from './helios/index.ts';
 export * from './personal-economy/index.ts';
 export * from './subscription-intelligence/index.ts';
