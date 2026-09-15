@@ -4,15 +4,30 @@ import { RATIO_UNIT, integerSqrt, ratioFromUnits, type Ratio } from '../../risk/
  * Analytical statistics use the Risk Engine's deterministic scale-8 ratio.
  * Money remains integer minor units. These figures are historical
  * engineering statistics, not future-return guarantees.
+ *
+ * Volatility: sample standard deviation of simple period returns
+ * (`SAMPLE_STDDEV_INTEGER_RETURNS`), matching `packages/risk` analytics.
+ *
+ * Downside volatility: semideviation from zero over all periods
+ * (`SEMIDEVIATION_FROM_ZERO_POPULATION`), not a Sortino ratio.
+ *
+ * Annualized return: linear extrapolation of total return to a 365-day year
+ * (`LINEAR_EXTRAPOLATION_365_DAY`). Not compound annual growth (CAGR).
+ *
+ * Risk-adjusted: total return divided by period volatility when volatility > 0.
+ * Not a Sharpe ratio (no risk-free rate, not annualized).
  */
 export type PerformanceMetrics = {
   readonly startingCapitalMinor: bigint;
   readonly endingCapitalMinor: bigint;
   readonly totalReturn: Ratio;
   readonly annualizedReturn: Ratio | null;
+  readonly annualizedReturnMethod: 'LINEAR_EXTRAPOLATION_365_DAY' | null;
   readonly maximumDrawdown: Ratio;
   readonly volatility: Ratio | null;
+  readonly volatilityMethod: 'SAMPLE_STDDEV_INTEGER_RETURNS' | null;
   readonly downsideVolatility: Ratio | null;
+  readonly downsideVolatilityMethod: 'SEMIDEVIATION_FROM_ZERO_POPULATION' | null;
   readonly riskAdjusted: Ratio | null;
   readonly turnoverBps: bigint;
   readonly feesMinor: bigint;
@@ -33,6 +48,34 @@ function mean(values: readonly bigint[]): bigint {
     return 0n;
   }
   return values.reduce((sum, value) => sum + value, 0n) / BigInt(values.length);
+}
+
+/** Sample stdev of scale-8 simple returns; matches `packages/risk` analytics. */
+function sampleStdevRatioUnits(returns: readonly bigint[]): bigint | null {
+  if (returns.length < 2) {
+    return null;
+  }
+  const n = BigInt(returns.length);
+  const avg = mean(returns);
+  const squared = returns.reduce((sum, value) => {
+    const delta = value - avg;
+    return sum + delta * delta;
+  }, 0n);
+  const variance = squared / (n - 1n);
+  return integerSqrt(variance < 0n ? 0n : variance);
+}
+
+/** Semideviation from zero across all periods (population denominator). */
+function semideviationFromZeroRatioUnits(returns: readonly bigint[]): bigint | null {
+  if (returns.length < 2) {
+    return null;
+  }
+  const n = BigInt(returns.length);
+  const squared = returns.reduce((sum, value) => (value < 0n ? sum + value * value : sum), 0n);
+  if (squared === 0n) {
+    return 0n;
+  }
+  return integerSqrt(squared / n);
 }
 
 function periodReturns(points: readonly EquityPoint[]): readonly bigint[] {
@@ -78,21 +121,10 @@ export function calculateMetrics(input: {
     }
   }
   const returns = periodReturns(input.equity);
-  const avg = mean(returns);
-  const variance =
-    returns.length === 0
-      ? 0n
-      : mean(returns.map((value) => {
-          const delta = value - avg;
-          return delta * delta;
-        })) / RATIO_UNIT;
-  const volatility = returns.length >= 2 ? ratioFromUnits(integerSqrt(variance < 0n ? 0n : variance)) : null;
-  const downside = returns.filter((value) => value < 0n);
-  const downVar =
-    downside.length === 0
-      ? 0n
-      : mean(downside.map((value) => (value * value) / RATIO_UNIT));
-  const downsideVolatility = downside.length >= 2 ? ratioFromUnits(integerSqrt(downVar < 0n ? 0n : downVar)) : null;
+  const stdevUnits = sampleStdevRatioUnits(returns);
+  const volatility = stdevUnits === null ? null : ratioFromUnits(stdevUnits);
+  const downUnits = semideviationFromZeroRatioUnits(returns);
+  const downsideVolatility = downUnits === null ? null : ratioFromUnits(downUnits);
   const riskAdjusted =
     volatility && volatility.units > 0n ? ratioFromUnits((totalReturn.units * RATIO_UNIT) / volatility.units) : null;
   const annualized =
@@ -112,9 +144,13 @@ export function calculateMetrics(input: {
     endingCapitalMinor: input.endingCapitalMinor,
     totalReturn,
     annualizedReturn: annualized,
+    annualizedReturnMethod: annualized === null ? null : 'LINEAR_EXTRAPOLATION_365_DAY',
     maximumDrawdown: ratioFromUnits(maxDrawdown),
     volatility,
+    volatilityMethod: volatility === null ? null : 'SAMPLE_STDDEV_INTEGER_RETURNS',
     downsideVolatility,
+    downsideVolatilityMethod:
+      downsideVolatility === null ? null : 'SEMIDEVIATION_FROM_ZERO_POPULATION',
     riskAdjusted,
     turnoverBps,
     feesMinor: input.feesMinor,
