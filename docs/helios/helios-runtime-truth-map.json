@@ -1,0 +1,265 @@
+{
+  "schemaVersion": 1,
+  "id": "helios.runtime-truth-map.v1",
+  "workPackage": "H01",
+  "auditedAt": "2026-09-15T13:01:00Z",
+  "repository": {
+    "remote": "https://github.com/reyesnick54/solstice",
+    "baseSha": "3c13beb3df000c25b8e81b953058387d9b04774d",
+    "branch": "main",
+    "workspaceVersion": "0.1.0",
+    "localMatchesOriginMain": true
+  },
+  "migrationHeads": {
+    "customer": "V046__consumer_alpha_exchange_persistence.sql",
+    "ledger": "V010__chain_reference_anchor.sql",
+    "evidence": "V001__evidence.sql",
+    "security": "V002__credential_descriptor_refs.sql"
+  },
+  "posture": {
+    "ENVIRONMENT": "simulation",
+    "PRODUCTION_READY": false,
+    "PRODUCTION_ACTIVE": false,
+    "LIVE_CONNECTIVITY_ENABLED": false,
+    "MAINNET_ACTIVE": false,
+    "LIVE_AGENT_FINANCIAL_EXECUTION_ENABLED": false,
+    "LIVE_INVESTMENT_EXECUTION": false,
+    "source": "packages/config/src/flags.ts"
+  },
+  "deployedRuntime": {
+    "primary": {
+      "name": "Hetzner sandbox Consumer BFF",
+      "manifest": "deploy/sunrey-sandbox-hetzner/docker-compose.yml",
+      "entrypoint": "services/api/src/preview-main.ts",
+      "productIntegrationMode": "DURABLE",
+      "publicOrigin": "https://api.sunrey.xyz"
+    },
+    "secondary": {
+      "localSandbox": "infra/sandbox/docker-compose.yml",
+      "platformApi": "services/api/src/main.ts",
+      "cloudRun": "UNAVAILABLE"
+    }
+  },
+  "compositionRoots": [
+    {
+      "id": "preview-main",
+      "path": "services/api/src/preview-main.ts",
+      "instantiates": ["ConsumerBff", "ProductIntegrationRuntime (optional DURABLE)", "PreviewGrowSurface"]
+    },
+    {
+      "id": "preview-runtime",
+      "path": "services/api/src/preview.ts",
+      "instantiates": ["createSandboxWorld", "bindDurableFinancialReadModel", "DurableExchangeSurface", "DurableWalletSurface"]
+    },
+    {
+      "id": "phase-e-world",
+      "path": "tests/phase-e-world.ts",
+      "instantiates": ["GrowBffSurface", "GrowLifecycleService", "InvestmentsService", "GrowthOrchestrator"]
+    }
+  ],
+  "subsystems": [
+    {
+      "id": "growth-orchestrator",
+      "owner": "packages/platform",
+      "class": "GrowthOrchestrator",
+      "runtimeState": "PROCESS_LOCAL",
+      "persistence": "growth.* (V011, V035); pg-growth-store.ts",
+      "wiredInDeployedPreview": true,
+      "evidence": ["packages/platform/src/service.ts", "services/api/src/consumer/grow-adapter.ts"]
+    },
+    {
+      "id": "grow-product-plans",
+      "owner": "packages/platform",
+      "class": "ProductGrowthService",
+      "runtimeState": "PROCESS_LOCAL",
+      "persistence": "none",
+      "wiredInDeployedPreview": true,
+      "evidence": ["packages/platform/src/growth/product/service.ts", "services/api/src/consumer/preview-grow.ts"]
+    },
+    {
+      "id": "grow-execution-lifecycle",
+      "owner": "packages/platform",
+      "class": "GrowLifecycleService",
+      "runtimeState": "FIXTURE_BACKED",
+      "persistence": "growth.financial_proposal, growth.execution_* (V036); pg-grow-execution-store.ts",
+      "wiredInDeployedPreview": false,
+      "evidence": ["packages/platform/src/grow/service.ts", "tests/phase-e-world.ts"]
+    },
+    {
+      "id": "personal-economic-graph",
+      "owner": "packages/personal-economic-graph",
+      "class": "EconomicGraphService",
+      "runtimeState": "PROCESS_LOCAL",
+      "persistence": "economic_graph.* (V009, V034)",
+      "wiredInDeployedPreview": true,
+      "evidence": ["packages/personal-economic-graph", "services/api/src/consumer/fixtures.ts"]
+    },
+    {
+      "id": "agentic-capital-mesh",
+      "owner": "packages/agentic-capital-mesh",
+      "class": "CapitalMeshService",
+      "runtimeState": "FIXTURE_BACKED",
+      "persistence": "capital_mesh.* (V017)",
+      "wiredInDeployedPreview": false,
+      "evidence": ["packages/agentic-capital-mesh/src/service.ts"]
+    },
+    {
+      "id": "strategy-lab",
+      "owner": "packages/strategy-lab",
+      "class": "StrategyLab",
+      "runtimeState": "FIXTURE_BACKED",
+      "persistence": "strategy_lab.* (V018)",
+      "wiredInDeployedPreview": false,
+      "evidence": ["packages/strategy-lab/src/service.ts"]
+    },
+    {
+      "id": "financial-agent",
+      "owner": "packages/sunrey-agent",
+      "class": "AgentConversationRuntime",
+      "runtimeState": "DURABLE_SIMULATED",
+      "persistence": "agent_runtime.* (V037)",
+      "wiredInDeployedPreview": true,
+      "evidence": ["packages/sunrey-agent/src/runtime.ts", "services/api/src/product-integration/runtime.ts"]
+    },
+    {
+      "id": "personal-economy-agent",
+      "owner": "packages/agent",
+      "class": "PersonalEconomyAgent",
+      "runtimeState": "PROCESS_LOCAL",
+      "persistence": "none",
+      "wiredInDeployedPreview": true,
+      "evidence": ["packages/agent/src/service.ts", "packages/agent/src/isolation.ts"]
+    },
+    {
+      "id": "ai-runtime",
+      "owner": "packages/ai-runtime",
+      "class": "AiModelGateway",
+      "runtimeState": "FIXTURE_BACKED",
+      "persistence": "none",
+      "wiredInDeployedPreview": true,
+      "evidence": ["packages/ai-runtime/src/gateway.ts", "packages/ai-runtime/src/posture.ts"]
+    },
+    {
+      "id": "risk-engine",
+      "owner": "packages/risk",
+      "class": "RiskEngine",
+      "runtimeState": "DURABLE_SIMULATED",
+      "persistence": "risk.* (V015)",
+      "wiredInDeployedPreview": "indirect via investments when wired",
+      "evidence": ["packages/risk/src/engine.ts"]
+    },
+    {
+      "id": "compliance-kernel",
+      "owner": "packages/kernel",
+      "class": "ComplianceKernel",
+      "runtimeState": "DURABLE_SIMULATED",
+      "persistence": "evidence via EvidenceVault",
+      "wiredInDeployedPreview": true,
+      "evidence": ["packages/kernel/src/kernel.ts"]
+    },
+    {
+      "id": "execution-authority",
+      "owner": "packages/permissions",
+      "class": "AuthorityIssuer",
+      "runtimeState": "DURABLE_SIMULATED",
+      "persistence": "transient tokens; audit in evidence/ledger",
+      "wiredInDeployedPreview": true,
+      "evidence": ["packages/permissions/src/execution-authority.ts"]
+    },
+    {
+      "id": "investments",
+      "owner": "packages/investments",
+      "class": "InvestmentsService",
+      "runtimeState": "DURABLE_SIMULATED",
+      "persistence": "investments.* (V014)",
+      "wiredInDeployedPreview": false,
+      "evidence": ["packages/investments/src/service.ts", "tests/phase-e-world.ts"]
+    },
+    {
+      "id": "exchange",
+      "owner": "packages/sunrey-exchange",
+      "class": "SunReyExchangeService",
+      "runtimeState": "DURABLE_SIMULATED",
+      "persistence": "sunrey_exchange (V025, V045, V046)",
+      "wiredInDeployedPreview": true,
+      "evidence": ["services/api/src/consumer/durable-exchange.ts"]
+    },
+    {
+      "id": "custody",
+      "owner": "packages/custody",
+      "class": "CustodyService",
+      "runtimeState": "DURABLE_SIMULATED",
+      "persistence": "V044",
+      "wiredInDeployedPreview": true,
+      "evidence": ["services/api/src/consumer/durable-wallets.ts"]
+    },
+    {
+      "id": "ledger",
+      "owner": "packages/ledger",
+      "class": "Ledger",
+      "runtimeState": "DURABLE_SIMULATED",
+      "persistence": "solstice_ledger",
+      "wiredInDeployedPreview": true,
+      "evidence": ["packages/ledger/src/journal.ts", "services/accounts/src/postgres-runtime.ts"]
+    },
+    {
+      "id": "evidence-vault",
+      "owner": "packages/evidence",
+      "class": "EvidenceVault",
+      "runtimeState": "DURABLE_SIMULATED",
+      "persistence": "solstice_evidence",
+      "wiredInDeployedPreview": true,
+      "evidence": ["packages/evidence/src/vault.ts"]
+    },
+    {
+      "id": "provider-runtime",
+      "owner": "packages/sunrey-chain",
+      "class": "UniversalProviderRuntime",
+      "runtimeState": "EXTERNAL_SANDBOX",
+      "persistence": "provider_runtime.* (V033)",
+      "wiredInDeployedPreview": true,
+      "evidence": ["packages/sunrey-chain/src/provider-runtime/", "services/api/src/consumer/fixtures.ts"]
+    },
+    {
+      "id": "growth-attribution-banking",
+      "owner": "packages/ledger",
+      "class": "GrowthAttributionLedger",
+      "runtimeState": "DURABLE_SIMULATED",
+      "persistence": "with ledger journals",
+      "wiredInDeployedPreview": true,
+      "evidence": ["packages/ledger/src/growth.ts"]
+    },
+    {
+      "id": "growth-attribution-peve",
+      "owner": "packages/platform",
+      "class": "GrowthAttributionLedger",
+      "runtimeState": "FIXTURE_BACKED",
+      "persistence": "growth/PEVE tables",
+      "wiredInDeployedPreview": false,
+      "evidence": ["packages/platform/src/value/attribution.ts"]
+    }
+  ],
+  "callPaths": [
+    {
+      "id": "grow-preview",
+      "ingress": "GET /api/v1/grow",
+      "chain": ["handler.dispatchGrow", "PreviewGrowSurface.home", "ProductGrowthService", "GrowOpportunityPort", "GrowthOrchestrator"],
+      "execution": false,
+      "composition": "preview-main"
+    },
+    {
+      "id": "grow-execute-phase-e",
+      "ingress": "POST /api/v1/grow/proposals/{id}/execute",
+      "chain": ["GrowBffSurface.executeProposal", "GrowLifecycleService", "executeGrowInvestmentCommand", "InvestmentsService.createPaperOrder", "ComplianceKernel.submit", "Ledger.postJournal"],
+      "execution": true,
+      "composition": "phase-e-world only"
+    },
+    {
+      "id": "agent-proposal",
+      "ingress": "POST /api/v1/agent/conversations/{id}/messages",
+      "chain": ["AgentConversationRuntime", "AiModelGateway", "UserAgentMandateEngine", "ProposalGate"],
+      "execution": false,
+      "composition": "preview-main"
+    }
+  ]
+}
