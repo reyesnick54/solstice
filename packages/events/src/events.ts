@@ -1086,6 +1086,27 @@ export type GrowthOpportunityPreferencesUpdatedV1 = VersionedEvent<
 >;
 export type GrowthOpportunitiesRecomputedV1 = VersionedEvent<'GrowthOpportunitiesRecomputed', 1, GrowthAuditPayload>;
 
+export type WorkOrderAuditPayload = {
+  readonly workOrderId?: string;
+  readonly subjectId?: string;
+  readonly customerId?: string;
+  readonly state?: string;
+  readonly revision?: number;
+  readonly mandateId?: string;
+  readonly planId?: string | null;
+  readonly actorId?: string;
+  readonly reason?: string;
+};
+
+export type WorkOrderCreatedV1 = VersionedEvent<'WorkOrderCreated', 1, WorkOrderAuditPayload>;
+export type WorkOrderActivatedV1 = VersionedEvent<'WorkOrderActivated', 1, WorkOrderAuditPayload>;
+export type WorkOrderPausedV1 = VersionedEvent<'WorkOrderPaused', 1, WorkOrderAuditPayload>;
+export type WorkOrderBlockedV1 = VersionedEvent<'WorkOrderBlocked', 1, WorkOrderAuditPayload>;
+export type WorkOrderResumedV1 = VersionedEvent<'WorkOrderResumed', 1, WorkOrderAuditPayload>;
+export type WorkOrderCompletedV1 = VersionedEvent<'WorkOrderCompleted', 1, WorkOrderAuditPayload>;
+export type WorkOrderCancelledV1 = VersionedEvent<'WorkOrderCancelled', 1, WorkOrderAuditPayload>;
+export type WorkOrderExpiredV1 = VersionedEvent<'WorkOrderExpired', 1, WorkOrderAuditPayload>;
+
 export type EconomicValueAuditPayload = {
   readonly snapshotId?: string;
   readonly subjectId?: string;
@@ -1318,6 +1339,14 @@ export type DomainEvent =
   | GrowthOpportunityLifecycleChangedV1
   | GrowthOpportunityPreferencesUpdatedV1
   | GrowthOpportunitiesRecomputedV1
+  | WorkOrderCreatedV1
+  | WorkOrderActivatedV1
+  | WorkOrderPausedV1
+  | WorkOrderBlockedV1
+  | WorkOrderResumedV1
+  | WorkOrderCompletedV1
+  | WorkOrderCancelledV1
+  | WorkOrderExpiredV1
   | EconomicValueSnapshotCreatedV1
   | EconomicValueDimensionChangedV1
   | EconomicValueAttributionRecordedV1
