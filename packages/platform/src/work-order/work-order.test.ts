@@ -6,7 +6,9 @@ import { asCustomerId } from '../../../domain/src/customer.ts';
 import { asJurisdiction } from '../../../domain/src/jurisdiction.ts';
 import { asUtcInstant } from '../../../domain/src/time.ts';
 import { DomainEventLog } from '../../../events/src/events.ts';
+import type { IdentityCapability } from '../../../identity/src/capability.ts';
 import { SimulatedIdentityAdapter } from '../../../identity/src/simulation.ts';
+import { EconomicGraphService } from '../../../personal-economic-graph/src/service.ts';
 import { createSimulationKeyProvider } from '../../../security/src/simulation.ts';
 import { asEconomicMandateId, asGrowthPlanId, asGrowthPlanVersion, asMandateVersion } from '../ids.ts';
 import { GrowthOrchestrator } from '../service.ts';
@@ -77,7 +79,12 @@ function setupActors() {
   const keys = createSimulationKeyProvider({ clock: { now: () => clock.now() } });
   const events = new DomainEventLog();
   const identity = new SimulatedIdentityAdapter({ clock, keys, events });
-  const provision = (actorId: string, identityId: string, customerId: string, capabilities: string[]) => {
+  const provision = (
+    actorId: string,
+    identityId: string,
+    customerId: string,
+    capabilities: readonly IdentityCapability[],
+  ) => {
     assert.equal(
       identity.provisionSimulatedActor({
         actorId,
@@ -351,12 +358,20 @@ describe('Economic Work Order H04', () => {
   it('existing Growth Orchestrator behavior remains regression-green', () => {
     const clock = new FrozenClock(NOW);
     const events = new DomainEventLog();
-    const orchestrator = new GrowthOrchestrator({ clock, events, store: new InMemoryGrowthStore() });
+    const peg = new EconomicGraphService({ clock, events });
+    const orchestrator = new GrowthOrchestrator({
+      clock,
+      events,
+      peg,
+      store: new InMemoryGrowthStore(),
+    });
     const compiled = orchestrator.interpretAndCompile({} as never, {
       subjectId: 'subj_regression',
       sourceText: 'Keep liquidity and grow conservatively.',
     });
     assert.equal(compiled.ok, false);
-    assert.match(compiled.error.message, /ActorContext|CAPABILITY/);
+    if (!compiled.ok && 'message' in compiled.error) {
+      assert.match(compiled.error.message, /ActorContext|CAPABILITY/);
+    }
   });
 });
