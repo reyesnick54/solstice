@@ -26,6 +26,7 @@ import {
 import { asStrategyId, asStrategyVersion } from './ids.ts';
 import { assertNoLiveTransition, transitionStrategy } from './lifecycle.ts';
 import { classifyPeveStrategyValue, refuseMeshValidation, refusePeveRealizedBacktest } from './bridges.ts';
+import { calculateMetrics, type EquityPoint } from './metrics.ts';
 import { StrategyLab } from './service.ts';
 import { LIVE_STRATEGY_EXECUTION } from './types.ts';
 
@@ -436,5 +437,81 @@ describe('Strategy Lab', () => {
     assert.equal(objective.guaranteed, false);
     assert.equal(objective.promote, false);
     assert.equal(lab.growthGate('str_two_etf_cash', 'v1'), 'NEEDS_BACKTEST');
+  });
+});
+
+function metricsEquitySeries(values: readonly bigint[]): EquityPoint[] {
+  return values.map((totalMinor, index) =>
+    Object.freeze({
+      at: asUtcInstant(`2026-01-${String(index + 1).padStart(2, '0')}T00:00:00.000Z`),
+      totalMinor,
+    }),
+  );
+}
+
+function metricsFor(values: readonly bigint[], observationDays = 90) {
+  const equity = metricsEquitySeries(values);
+  return calculateMetrics({
+    startingCapitalMinor: values[0]!,
+    endingCapitalMinor: values[values.length - 1]!,
+    equity,
+    feesMinor: 0n,
+    tradedNotionalMinor: 0n,
+    cashMinorSeries: [0n],
+    tradeCount: 0,
+    winCount: 0,
+    lossCount: 0,
+    observationDays,
+  });
+}
+
+describe('Strategy Lab performance metrics', () => {
+  it('uses sample stdev of simple period returns in scale-8 units', () => {
+    const values = [100_000n, 110_000n, 90_000n];
+    const metrics = metricsFor(values);
+    assert.equal(metrics.volatilityMethod, 'SAMPLE_STDDEV_INTEGER_RETURNS');
+    assert.equal(metrics.volatility?.units, 19_927_554n);
+    assert.equal(metrics.volatility?.scale, 8);
+  });
+
+  it('reports zero volatility for a flat series', () => {
+    const metrics = metricsFor([100_000n, 100_000n, 100_000n]);
+    assert.equal(metrics.totalReturn.units, 0n);
+    assert.equal(metrics.volatility?.units, 0n);
+    assert.equal(metrics.downsideVolatility?.units, 0n);
+    assert.equal(metrics.maximumDrawdown.units, 0n);
+  });
+
+  it('computes monotonic loss drawdown from peak to trough', () => {
+    const metrics = metricsFor([100_000n, 90_000n, 80_000n]);
+    assert.equal(metrics.maximumDrawdown.units, 20_000_000n);
+  });
+
+  it('returns null volatility for a single observation', () => {
+    const metrics = metricsFor([100_000n]);
+    assert.equal(metrics.volatility, null);
+    assert.equal(metrics.downsideVolatility, null);
+    assert.equal(metrics.volatilityMethod, null);
+  });
+
+  it('linearly extrapolates annualized return only when enough days are observed', () => {
+    const short = metricsFor([100_000n, 110_000n], 10);
+    assert.equal(short.annualizedReturn, null);
+    assert.equal(short.annualizedReturnMethod, null);
+    const long = metricsFor([100_000n, 110_000n, 120_000n], 365);
+    assert.equal(long.annualizedReturnMethod, 'LINEAR_EXTRAPOLATION_365_DAY');
+    assert.equal(long.annualizedReturn?.units, (long.totalReturn.units * 365n) / 365n);
+  });
+
+  it('does not leak risk-adjusted when volatility is zero', () => {
+    const metrics = metricsFor([100_000n, 110_000n, 121_000n]);
+    assert.equal(metrics.volatility?.units, 0n);
+    assert.equal(metrics.riskAdjusted, null);
+  });
+
+  it('keeps cumulative total return consistent with simple return convention', () => {
+    const metrics = metricsFor([100_000n, 125_000n]);
+    const expected = ((125_000n - 100_000n) * 100_000_000n) / 100_000n;
+    assert.equal(metrics.totalReturn.units, expected);
   });
 });
