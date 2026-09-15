@@ -38,15 +38,42 @@ export const CANONICAL_EXECUTION_LIFECYCLE_STATES = [
   'REVIEWED',
   'AUTHORIZED',
   'SUBMITTED',
+  'ACKNOWLEDGED',
   'PENDING',
   'PARTIALLY_FILLED',
+  'FILLED',
+  'SETTLED',
+  'RECONCILED',
+  'AVAILABLE',
   'COMPLETED',
   'FAILED',
   'CANCELLED',
   'REJECTED',
   'EXPIRED',
+  'UNKNOWN',
+  'ACTION_REQUIRED',
 ] as const;
 export type CanonicalExecutionLifecycleState = (typeof CANONICAL_EXECUTION_LIFECYCLE_STATES)[number];
+
+export const CANONICAL_PROPOSAL_LIFECYCLE_STATES = [
+  'PROPOSED',
+  'AWAITING_APPROVAL',
+  'AUTHORIZED',
+  'SUPERSEDED',
+  'REJECTED',
+  'EXPIRED',
+  'CANCELLED',
+] as const;
+export type CanonicalProposalLifecycleState = (typeof CANONICAL_PROPOSAL_LIFECYCLE_STATES)[number];
+
+export const EXECUTION_MODES = [
+  'SIMULATION_FIXTURE',
+  'SIMULATION_SANDBOX',
+  'PAPER',
+  'PROVIDER_SANDBOX',
+  'LIVE',
+] as const;
+export type ExecutionMode = (typeof EXECUTION_MODES)[number];
 
 export const GROW_FINANCIAL_AGENT_IDS = [
   'savings',

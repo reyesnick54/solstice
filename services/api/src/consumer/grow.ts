@@ -8,7 +8,7 @@ import type { UtcInstant } from '../../../../packages/domain/src/time.ts';
 import { Money } from '../../../../packages/money/src/money.ts';
 import type { EconomicGraphService } from '../../../../packages/personal-economic-graph/src/service.ts';
 import type { GrowthOrchestrator } from '../../../../packages/platform/src/service.ts';
-import type { GrowLifecycleService } from '../../../../packages/platform/src/grow/service.ts';
+import { type GrowLifecycleService, projectGrowExecutionForClient, projectGrowProposalForClient } from '../../../../packages/platform/src/grow/service.ts';
 import { evaluateGrowSuitability, type SuitabilityFacts } from '../../../../packages/platform/src/grow/suitability.ts';
 import type { FinancialProposal as GrowLifecycleProposal } from '../../../../packages/platform/src/grow/types.ts';
 import type { InvestmentsService } from '../../../../packages/investments/src/service.ts';
@@ -631,35 +631,50 @@ export class GrowBffSurface {
 
   private projectProposal(proposal: GrowLifecycleProposal) {
     return {
-      proposalId: proposal.proposalId,
-      version: proposal.version,
-      state: proposal.state,
-      proposalType: proposal.proposalType,
-      amount: proposal.amount,
+      ...this.projectProposalCore(proposal),
       explainability: proposal.explainability,
       scenario: proposal.scenario,
       suitability: proposal.suitability,
       requiredAuthAssurance: proposal.requiredAuthAssurance,
       expiresAt: proposal.expiresAt,
       contentHash: proposal.contentHash,
-      serverOwned: true,
-      clientInstructionsTrusted: false,
-      productionMoneyMovement: false,
+      proposalType: proposal.proposalType,
+      amount: proposal.amount,
     };
   }
 
-  private projectExecution(row: { readonly executionId: string; readonly state: string; readonly providerId: string | null; readonly filledMinorUnits: string; readonly requestedMinorUnits: string; readonly authorityId: string | null; readonly ledgerJournalId: string | null }) {
-    return {
+  private projectProposalCore(proposal: Pick<GrowLifecycleProposal, 'proposalId' | 'version' | 'state'>) {
+    return projectGrowProposalForClient({
+      proposalId: proposal.proposalId,
+      version: proposal.version,
+      state: proposal.state,
+    });
+  }
+
+  private projectExecution(
+    row: {
+      readonly executionId: string;
+      readonly commandId: string;
+      readonly proposalId: string;
+      readonly state: string;
+      readonly providerId: string | null;
+      readonly filledMinorUnits: string;
+      readonly requestedMinorUnits: string;
+      readonly authorityId: string | null;
+      readonly ledgerJournalId: string | null;
+    },
+  ) {
+    return projectGrowExecutionForClient({
       executionId: row.executionId,
-      state: row.state,
+      commandId: row.commandId,
+      proposalId: row.proposalId,
+      state: row.state as never,
       providerId: row.providerId,
       filledMinorUnits: row.filledMinorUnits,
       requestedMinorUnits: row.requestedMinorUnits,
       authorityId: row.authorityId,
       ledgerJournalId: row.ledgerJournalId,
-      submittedIsNotCompleted: row.state !== 'COMPLETED',
-      productionMoneyMovement: false,
-    };
+    });
   }
 
   private fail(requestId: string, errorCode: string, message: string): BffErrorEnvelope {

@@ -92,9 +92,18 @@ describe('Phase E Grow My Money E2E', () => {
       body: { idempotencyKey: 'phase-e-happy-1' },
     });
     assert.equal(executed.status, 200, JSON.stringify(executed.body));
-    const execution = executed.body as { executionId: string; state: string; submittedIsNotCompleted: boolean };
+    const execution = executed.body as {
+      executionId: string;
+      state: string;
+      submittedIsNotCompleted: boolean;
+      canonicalLifecycleState: string;
+      executionMode: string;
+      liveExecution: boolean;
+    };
     assert.ok(execution.state === 'COMPLETED' || execution.state === 'PARTIALLY_COMPLETED');
     assert.equal(execution.submittedIsNotCompleted, execution.state !== 'COMPLETED');
+    assert.equal(execution.liveExecution, false);
+    assert.notEqual(execution.executionMode, 'LIVE');
 
     const status = await world.handle({ method: 'GET', path: `/api/v1/grow/executions/${execution.executionId}`, query: {} });
     assert.equal(status.status, 200);
