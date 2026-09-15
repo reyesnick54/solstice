@@ -317,11 +317,13 @@ function riskMetricsAllocation(totalMinor: bigint, instrumentWeightBps: bigint):
   return Object.freeze({
     total,
     cash,
+    invested: instrumentValue,
     byInstrument: Object.freeze([
       Object.freeze({
         key: 'SIM-ETF-1',
         marketValue: instrumentValue,
         weightBps: instrumentWeightBps,
+        positionCount: 1n,
       }),
     ]),
     byCurrency: Object.freeze([
@@ -329,6 +331,7 @@ function riskMetricsAllocation(totalMinor: bigint, instrumentWeightBps: bigint):
         key: 'USD',
         marketValue: total,
         weightBps: 10_000n,
+        positionCount: 1n,
       }),
     ]),
     byAssetClass: Object.freeze([
@@ -336,11 +339,13 @@ function riskMetricsAllocation(totalMinor: bigint, instrumentWeightBps: bigint):
         key: 'ETF',
         marketValue: instrumentValue,
         weightBps: instrumentWeightBps,
+        positionCount: 1n,
       }),
       Object.freeze({
         key: 'CASH',
         marketValue: cash,
         weightBps: 10_000n - instrumentWeightBps,
+        positionCount: 0n,
       }),
     ]),
     byRiskClass: Object.freeze([
@@ -348,6 +353,7 @@ function riskMetricsAllocation(totalMinor: bigint, instrumentWeightBps: bigint):
         key: 'MODERATE',
         marketValue: total,
         weightBps: 10_000n,
+        positionCount: 1n,
       }),
     ]),
   });

@@ -299,8 +299,9 @@ describe('investment risk engine', () => {
 function analyticsObservations(values: readonly bigint[]) {
   return values.map((portfolioMarketValueMinor, index) =>
     Object.freeze({
+      at: asUtcInstant(`2026-01-${String(index + 1).padStart(2, '0')}T00:00:00.000Z`),
       portfolioMarketValueMinor,
-      observedAt: asUtcInstant(`2026-01-${String(index + 1).padStart(2, '0')}T00:00:00.000Z`),
+      currency: 'USD',
     }),
   );
 }
