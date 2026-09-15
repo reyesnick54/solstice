@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-10T04:26:26.075811+00:00",
+  "generatedAt": "2026-09-15T15:07:34.071087+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -538,14 +538,14 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 4695,
-      "serviceDeepImport": 656,
+      "packageDeepImport": 4706,
+      "serviceDeepImport": 650,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 4695,
+      "relativeCrossPackage": 4706,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5351
+      "total": 5356
     }
   },
   "violations": [
@@ -21817,6 +21817,15 @@
       "spec": "../../../platform/src/store.ts"
     },
     {
+      "file": "packages/persistence/src/growth/pg-helios-work-store.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/persistence/src/growth/pg-helios-work-store.ts' deep-imports 'platform' internals via '../../../platform/src/helios/store.ts'",
+      "sourcePackage": "persistence",
+      "targetPackage": "platform",
+      "spec": "../../../platform/src/helios/store.ts"
+    },
+    {
       "file": "packages/persistence/src/identity/pg-auth-store.ts",
       "line": 9,
       "rule": "package-deep-import",
@@ -25511,6 +25520,123 @@
       "line": 2,
       "rule": "package-deep-import",
       "message": "'packages/platform/src/growth/types.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/authority-binding.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/authority-binding.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/budget.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/budget.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/evidence.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/evidence.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/helios-h06.test.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/helios-h06.test.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/helios-h06.test.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/helios-h06.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/helios-h06.test.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/helios-h06.test.ts' deep-imports 'evidence' internals via '../../../evidence/src/vault.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "evidence",
+      "spec": "../../../evidence/src/vault.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/ids.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/ids.ts' deep-imports 'domain' internals via '../../../domain/src/brand.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/brand.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/orchestrator.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/orchestrator.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/orchestrator.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/orchestrator.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/orchestrator.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/orchestrator.ts' deep-imports 'evidence' internals via '../../../evidence/src/vault.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "evidence",
+      "spec": "../../../evidence/src/vault.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/store.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/store.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/store.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/store.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/types.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/types.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
       "sourcePackage": "platform",
       "targetPackage": "domain",
       "spec": "../../../domain/src/time.ts"
@@ -37954,33 +38080,6 @@
       "spec": "../../sunrey-coin/src/simulation-catalog.ts"
     },
     {
-      "file": "packages/sunrey-exchange/src/crypto-market/adapters/index.ts",
-      "line": 7,
-      "rule": "package-deep-import",
-      "message": "'packages/sunrey-exchange/src/crypto-market/adapters/index.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
-      "sourcePackage": "sunrey-exchange",
-      "targetPackage": "domain",
-      "spec": "../../../../domain/src/time.ts"
-    },
-    {
-      "file": "packages/sunrey-exchange/src/crypto-market/adapters/normalize.ts",
-      "line": 10,
-      "rule": "package-deep-import",
-      "message": "'packages/sunrey-exchange/src/crypto-market/adapters/normalize.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
-      "sourcePackage": "sunrey-exchange",
-      "targetPackage": "domain",
-      "spec": "../../../../domain/src/time.ts"
-    },
-    {
-      "file": "packages/sunrey-exchange/src/crypto-market/bff-builders.ts",
-      "line": 9,
-      "rule": "package-deep-import",
-      "message": "'packages/sunrey-exchange/src/crypto-market/bff-builders.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
-      "sourcePackage": "sunrey-exchange",
-      "targetPackage": "domain",
-      "spec": "../../../domain/src/time.ts"
-    },
-    {
       "file": "packages/sunrey-exchange/src/crypto-market/cache-policies.ts",
       "line": 5,
       "rule": "package-deep-import",
@@ -45595,33 +45694,6 @@
       "spec": "../../../../packages/domain/src/time.ts"
     },
     {
-      "file": "services/api/src/consumer/crypto-market.ts",
-      "line": 15,
-      "rule": "service-deep-import",
-      "message": "'services/api/src/consumer/crypto-market.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/crypto-market/index.ts'",
-      "sourcePackage": "api",
-      "targetPackage": "sunrey-exchange",
-      "spec": "../../../../packages/sunrey-exchange/src/crypto-market/index.ts"
-    },
-    {
-      "file": "services/api/src/consumer/crypto-market.ts",
-      "line": 16,
-      "rule": "service-deep-import",
-      "message": "'services/api/src/consumer/crypto-market.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/crypto-market/types.ts'",
-      "sourcePackage": "api",
-      "targetPackage": "sunrey-exchange",
-      "spec": "../../../../packages/sunrey-exchange/src/crypto-market/types.ts"
-    },
-    {
-      "file": "services/api/src/consumer/crypto-market.ts",
-      "line": 17,
-      "rule": "service-deep-import",
-      "message": "'services/api/src/consumer/crypto-market.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/time.ts'",
-      "sourcePackage": "api",
-      "targetPackage": "domain",
-      "spec": "../../../../packages/domain/src/time.ts"
-    },
-    {
       "file": "services/api/src/consumer/data-rights.ts",
       "line": 6,
       "rule": "service-deep-import",
@@ -45683,33 +45755,6 @@
       "sourcePackage": "api",
       "targetPackage": "sunrey-exchange",
       "spec": "../../../../packages/sunrey-exchange/src/alpha/sandbox.ts"
-    },
-    {
-      "file": "services/api/src/consumer/exchange.ts",
-      "line": 6,
-      "rule": "service-deep-import",
-      "message": "'services/api/src/consumer/exchange.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/time.ts'",
-      "sourcePackage": "api",
-      "targetPackage": "domain",
-      "spec": "../../../../packages/domain/src/time.ts"
-    },
-    {
-      "file": "services/api/src/consumer/exchange.ts",
-      "line": 7,
-      "rule": "service-deep-import",
-      "message": "'services/api/src/consumer/exchange.ts' deep-imports 'domain' internals via '../../../../packages/domain/src/time.ts'",
-      "sourcePackage": "api",
-      "targetPackage": "domain",
-      "spec": "../../../../packages/domain/src/time.ts"
-    },
-    {
-      "file": "services/api/src/consumer/exchange.ts",
-      "line": 14,
-      "rule": "service-deep-import",
-      "message": "'services/api/src/consumer/exchange.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/productization/index.ts'",
-      "sourcePackage": "api",
-      "targetPackage": "sunrey-exchange",
-      "spec": "../../../../packages/sunrey-exchange/src/productization/index.ts"
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",

@@ -264,3 +264,30 @@ export type {
 } from './growth/opportunity/types.ts';
 export * from './personal-economy/index.ts';
 export * from './subscription-intelligence/index.ts';
+export {
+  HELIOS_PHASE_2_BLOCKED,
+  HELIOS_PHASE_2_DURABLE_CONTROL_TRUSTED,
+  HeliosTaskWorker,
+  HeliosWorkOrchestrator,
+  InMemoryHeliosWorkStore,
+  authorityPermitsDispatch,
+  bindWorkOrderAuthority,
+  collectHeliosMetrics,
+  isRetryableCategory,
+  rejectAuthorityExpansion,
+  rejectBudgetSelfIncrease,
+  restartWorker,
+  TASK_STATES,
+  WORK_ORDER_STATES,
+} from './helios/index.ts';
+export type {
+  EconomicWorkOrder,
+  HeliosFailure,
+  HeliosMetricsSnapshot,
+  HeliosStoreSnapshot,
+  HeliosWorkTask,
+  ResearchBudgetSnapshot,
+  ResearchSpendRecord,
+  TaskLease,
+  WorkOrderAuthorityBinding,
+} from './helios/index.ts';
