@@ -6,14 +6,16 @@
 
 import { randomUUID } from 'node:crypto';
 
-import { NO_AUTH_PROVIDER_RESOLVER, type ProviderAuthResolver, type ProviderAuthStrategy } from '../../../../provider-sdk/src/auth.ts';
-import { createProviderTransportConfig } from '../../../../provider-sdk/src/config.ts';
 import {
   createFetchProviderTransport,
+  createProviderTransportConfig,
+  NO_AUTH_PROVIDER_RESOLVER,
   type FetchLike,
   type HttpProviderTransportResult,
+  type ProviderAuthResolver,
+  type ProviderAuthStrategy,
   type ProviderTransportEnvironment,
-} from '../../../../provider-sdk/src/transport.ts';
+} from '@solstice/provider-sdk';
 import type { CapitalMarketHttpEndpoint } from './endpoints.ts';
 
 export type CapitalMarketHttpRequestResult<T> =
@@ -29,7 +31,7 @@ export type CapitalMarketHttpClientOptions = {
 };
 
 export class CapitalMarketHttpClient {
-  readonly #fetchFn?: FetchLike;
+  readonly #fetchFn: FetchLike | undefined;
   readonly #environment: ProviderTransportEnvironment;
   readonly #authResolver: ProviderAuthResolver;
   readonly #authStrategy: ProviderAuthStrategy;
@@ -69,7 +71,7 @@ export class CapitalMarketHttpClient {
       }),
       authResolver: this.#authResolver,
       authStrategy: this.#authStrategy,
-      fetchFn: this.#fetchFn,
+      ...(this.#fetchFn ? { fetchFn: this.#fetchFn } : {}),
     });
 
     const queryParams: Record<string, string> = {};

@@ -7,6 +7,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
+import { authenticationError } from '@solstice/provider-sdk';
 import { canonicalJsonStringify, hashRawPayload } from '../../../../provider-sdk/src/hash.ts';
 import { resolveCapitalMarketEntitlement } from '../entitlement.ts';
 import { CapitalMarketHttpClient, type CapitalMarketHttpClientOptions } from '../http/client.ts';
@@ -58,19 +59,13 @@ export class FinnhubCapitalMarketAdapter implements CapitalMarketProvider {
       },
       authResolver: {
         resolverId: 'capital-market.env-auth',
-        async resolve(strategy) {
+        async resolve(strategy, context) {
           if (strategy.kind !== 'api_key_query') {
             return Object.freeze({ headers: Object.freeze({}), queryParams: Object.freeze({}) });
           }
           const value = process.env[strategy.secretRef.path]?.trim();
           if (!value) {
-            return {
-              kind: 'ProviderAuthenticationError',
-              providerId: 'finnhub',
-              requestId: 'credential-check',
-              message: 'required credential unavailable',
-              httpStatus: 401,
-            };
+            return authenticationError(context.providerId, context.requestId, 401);
           }
           return Object.freeze({
             headers: Object.freeze({}),
