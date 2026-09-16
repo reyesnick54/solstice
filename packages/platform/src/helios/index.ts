@@ -122,6 +122,10 @@ export { HeliosTaskWorker, restartWorker } from './executor.ts';
 export { collectHeliosMetrics } from './metrics.ts';
 export { HeliosWorkOrchestrator } from './orchestrator.ts';
 export {
+  HeliosResearchBudgetPort,
+  recordHeliosInferenceSpend,
+} from './inference-bridge.ts';
+export {
   classifyTaskError,
   HeliosTaskError,
   initialRetryMetadata,

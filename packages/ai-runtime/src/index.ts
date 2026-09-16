@@ -46,6 +46,7 @@ export { AiRuntime, type AiRuntimeResult } from './runtime.ts';
 export { AiModelGateway, type AiGatewayRequest, type AiGatewayResult } from './gateway.ts';
 export { InferenceModelCatalog } from './catalog.ts';
 export type { InferenceModelRecord, InferenceModelStatus } from './catalog.ts';
+export type { ModelQualificationState } from './async-inference/taxonomy.ts';
 export {
   CANONICAL_HTTPS_GENERIC_MODEL_ID,
   CANONICAL_HTTPS_GENERIC_MODEL_VERSION,
@@ -67,7 +68,35 @@ export {
 export type { HttpsInferenceTransport, HttpsTransportRequest, NodeHttpsInferenceTransportOptions } from './transport.ts';
 export { encodeSse, streamEventsFromResponse, publicStreamEvent } from './streaming.ts';
 export type { AiStreamEvent, AiStreamEventType } from './streaming.ts';
-export { UsageAccountant, estimateCostMicros } from './usage.ts';
+export { UsageAccountant, estimateCostMicros, type AiUsageRecord } from './usage.ts';
+export {
+  AsyncInferenceExecutor,
+  AsyncSyncHttpsTransportAdapter,
+  ConcurrencyGate,
+  DEFAULT_CONCURRENCY_LIMITS,
+  FixtureAsyncHttpsTransport,
+  InMemoryInferenceJobStore,
+  InMemoryResearchBudgetPort,
+  InferenceMetricsCollector,
+  classifyInferenceRetry,
+  externalPrivacyForGateway,
+  mapPrivacyClassToExternal,
+  MODEL_QUALIFICATION_STATES,
+  INFERENCE_CANCELLATION_STATES,
+  INFERENCE_COST_STATUS,
+  INFERENCE_EXTERNAL_PRIVACY_CLASSES,
+  type AsyncInferenceExecutorOptions,
+  type AsyncHttpsInferenceTransport,
+  type ConcurrencyLimits,
+  type DurableInferenceUsageRecord,
+  type InferenceCancellationState,
+  type InferenceExternalPrivacyClass,
+  type InferenceJobRecord,
+  type InferenceMetricsSnapshot,
+  type ModelQualificationState,
+  type ResearchBudgetPort,
+  type StructuredInferenceRequest,
+} from './async-inference/index.ts';
 export { ModelHealthTracker } from './health-tracker.ts';
 export { resolveCachePolicy, DEFAULT_AGENT_CACHE_POLICY } from './cache.ts';
 export { normalizeModelFailure, modelFailureIsNotFinancial } from './failures.ts';
