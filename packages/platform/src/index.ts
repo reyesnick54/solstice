@@ -103,6 +103,19 @@ export {
   type PolicyControlPort,
 } from './policy-port.ts';
 export { GrowthOrchestrator, type GrowthFailure } from './service.ts';
+export {
+  EconomicWorkOrderService,
+  InMemoryWorkOrderStore,
+  WORK_ORDER_STATES,
+  WORK_ORDER_DISPOSITIONS,
+  canTransitionWorkOrder,
+  isTerminalWorkOrderState,
+  type EconomicWorkOrder,
+  type CreateEconomicWorkOrderInput,
+  type WorkOrderFailure,
+  type WorkOrderStoreSnapshot,
+  type WorkOrderMetricsSnapshot,
+} from './work-order/index.ts';
 export { InMemoryGrowthStore, type GrowthStoreSnapshot } from './store.ts';
 export {
   ASSUMPTION_CATALOG_ID,
