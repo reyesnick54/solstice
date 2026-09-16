@@ -1,4 +1,4 @@
--- V050 HELIOS H09 — executable opportunity binding lifecycle.
+-- V051 HELIOS H09 — executable opportunity binding lifecycle.
 -- Qualification state only. Does not post journals or issue Execution Authority.
 
 CREATE TABLE growth.helios_executable_opportunity (
