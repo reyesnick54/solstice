@@ -46,28 +46,30 @@ function unique<T extends string>(items: readonly T[]): readonly T[] {
  * HELIOS may only narrow; this projection never widens beyond the coordination input.
  */
 export function scopeFromCoordinationWorkOrder(workOrder: EconomicWorkOrder): WorkOrderScope {
-  const activityClasses = unique(
+  const activityClasses: readonly ActivityClass[] = unique<ActivityClass>(
     workOrder.actionBoundary.permittedActionCategories.flatMap((category) => ACTION_TO_ACTIVITY[category]),
   );
-  const objectiveClasses = unique(
+  const objectiveClasses: readonly ObjectiveClass[] = unique<ObjectiveClass>(
     workOrder.actionBoundary.permittedActionCategories.flatMap((category) => ACTION_TO_OBJECTIVE[category]),
   );
-  const toolIds = Object.freeze(
+  const toolIds: readonly string[] = Object.freeze(
     workOrder.researchBoundary.permittedToolClasses.map((toolClass) => TOOL_CLASS_TO_ID[toolClass]),
   );
-  const modelIds = Object.freeze(
+  const modelIds: readonly string[] = Object.freeze(
     workOrder.researchBoundary.permittedModelClasses.map((modelClass) => MODEL_CLASS_TO_ID[modelClass]),
   );
-  const accountIds = workOrder.capitalBoundary.accountId
+  const accountIds: readonly string[] = workOrder.capitalBoundary.accountId
     ? Object.freeze([workOrder.capitalBoundary.accountId])
     : Object.freeze([]);
   const jurisdiction = workOrder.authorityReferences.jurisdiction
     ? asJurisdiction(workOrder.authorityReferences.jurisdiction)
     : asJurisdiction('US');
-  const horizonDays =
-    workOrder.objective.horizon?.kind === 'DURATION_DAYS' ? workOrder.objective.horizon.days : null;
+  const horizonDays: number | null =
+    workOrder.objective.horizon?.kind === 'DURATION_DAYS'
+      ? (workOrder.objective.horizon.days ?? null)
+      : null;
 
-  return Object.freeze({
+  const scope: WorkOrderScope = {
     objectiveClasses,
     activityClasses,
     productClasses: DEFAULT_PRODUCT_CLASSES,
@@ -80,5 +82,6 @@ export function scopeFromCoordinationWorkOrder(workOrder: EconomicWorkOrder): Wo
     horizonDays,
     toolIds,
     modelIds,
-  });
+  };
+  return Object.freeze(scope);
 }
