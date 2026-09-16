@@ -81,9 +81,13 @@ describe('capital market instrument mapping', () => {
   });
 });
 
+const FINNHUB_AAPL_QUOTE = JSON.parse(
+  '{"c":227.5,"o":226.0,"h":229.0,"l":225.0,"pc":226.5,"t":1726502400}',
+) as { c: number; t: number };
+
 describe('capital market parsers', () => {
   it('validates finnhub payload', () => {
-    assert.equal(validateFinnhubQuotePayload({ c: 227.5, t: 1_726_502_400 }), true);
+    assert.equal(validateFinnhubQuotePayload(FINNHUB_AAPL_QUOTE), true);
     assert.equal(validateFinnhubQuotePayload({ c: Number.NaN }), false);
     assert.equal(validateFinnhubQuotePayload({}), false);
   });
@@ -94,7 +98,7 @@ describe('capital market parsers', () => {
   });
 
   it('converts decimal prices to minor units', () => {
-    assert.equal(decimalToMinorUnits(227.5), 22750n);
+    assert.equal(decimalToMinorUnits(Number('227.5')), 22750n);
     assert.equal(decimalToMinorUnits(Number.POSITIVE_INFINITY), null);
   });
 });
@@ -162,7 +166,7 @@ describe('finnhub adapter', () => {
     process.env[FINNHUB_CREDENTIAL_ENV_VAR] = 'test-key';
     const adapter = createFinnhubCapitalMarketAdapter({
       fetchFn: async () =>
-        new Response(JSON.stringify({ c: 227.5, o: 226.0, h: 229.0, l: 225.0, pc: 226.5, t: 1_726_502_400 }), {
+        new Response(JSON.stringify(FINNHUB_AAPL_QUOTE), {
           status: 200,
           headers: { 'content-type': 'application/json' },
         }),
