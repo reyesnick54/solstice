@@ -1,0 +1,117 @@
+export const WORK_ORDER_STATES = [
+  'DRAFT',
+  'AWAITING_AUTHORITY',
+  'ACTIVE',
+  'PAUSED',
+  'BLOCKED',
+  'REQUIRES_REVIEW',
+  'REVOKED',
+  'COMPLETED',
+  'EXPIRED',
+] as const;
+
+export type WorkOrderState = (typeof WORK_ORDER_STATES)[number];
+
+export const OBJECTIVE_CLASSES = [
+  'RESEARCH',
+  'ANALYSIS',
+  'FINANCIAL_PROPOSAL',
+  'EXECUTION_PREP',
+] as const;
+
+export type ObjectiveClass = (typeof OBJECTIVE_CLASSES)[number];
+
+export const ACTIVITY_CLASSES = [
+  'RESEARCH',
+  'DATA_ACCESS',
+  'TOOL_USE',
+  'FINANCIAL_PROPOSAL',
+  'EXECUTION_PREP',
+] as const;
+
+export type ActivityClass = (typeof ACTIVITY_CLASSES)[number];
+
+export const PRODUCT_CLASSES = [
+  'CASH',
+  'EQUITIES',
+  'ETF',
+  'BONDS',
+  'CRYPTO',
+  'DERIVATIVES',
+  'FX',
+] as const;
+
+export type ProductClass = (typeof PRODUCT_CLASSES)[number];
+
+export const APPROVAL_CLASSES = [
+  'NONE',
+  'INFORMED',
+  'EXPLICIT_STEP_UP',
+  'COMPLIANCE_REVIEW',
+] as const;
+
+export type ApprovalClass = (typeof APPROVAL_CLASSES)[number];
+
+export const BINDING_DECISION_OUTCOMES = [
+  'ALLOWED',
+  'NARROWED',
+  'BLOCKED',
+  'REQUIRES_REVIEW',
+] as const;
+
+export type BindingDecisionOutcome = (typeof BINDING_DECISION_OUTCOMES)[number];
+
+export const BINDING_REASON_CODES = [
+  'OK',
+  'MANDATE_NOT_ACTIVE',
+  'MANDATE_EXPIRED',
+  'MANDATE_REVOKED',
+  'MANDATE_CUSTOMER_MISMATCH',
+  'MANDATE_SCOPE_EXCEEDED',
+  'CAPITAL_CEILING_EXCEEDED',
+  'PRODUCT_CLASS_NOT_PERMITTED',
+  'ACTIVITY_CLASS_NOT_PERMITTED',
+  'OBJECTIVE_CLASS_NOT_PERMITTED',
+  'CAPABILITY_UNKNOWN',
+  'CAPABILITY_DISABLED',
+  'CAPABILITY_RESTRICTED',
+  'CAPABILITY_REVIEW_REQUIRED',
+  'APPROVAL_REQUIRED',
+  'APPROVAL_MISSING',
+  'APPROVAL_CUSTOMER_MISMATCH',
+  'APPROVAL_SCOPE_MISMATCH',
+  'APPROVAL_EXPIRED',
+  'APPROVAL_INVALIDATED',
+  'AGENT_CANNOT_APPROVE',
+  'MATERIAL_SCOPE_CHANGE',
+  'AUTHORITY_REVOKED',
+  'PLATFORM_CAPABILITY_UNAVAILABLE',
+  'JURISDICTION_NOT_PERMITTED',
+  'WORK_ORDER_CUSTOMER_MISMATCH',
+  'CACHE_STALE',
+] as const;
+
+export type BindingReasonCode = (typeof BINDING_REASON_CODES)[number];
+
+export const BINDING_CHECKPOINTS = [
+  'CREATION',
+  'ACTIVATION',
+  'TASK_DISPATCH',
+  'RESUME',
+  'AMENDMENT',
+  'FINANCIAL_PROPOSAL',
+  'AUTHORITY_CHANGE',
+] as const;
+
+export type BindingCheckpoint = (typeof BINDING_CHECKPOINTS)[number];
+
+export const CAPABILITY_RESOLUTION_STATES = [
+  'ENABLED',
+  'DISABLED',
+  'UNKNOWN',
+  'RESTRICTED',
+  'REVIEW_REQUIRED',
+  'EXPIRED',
+] as const;
+
+export type CapabilityResolutionState = (typeof CAPABILITY_RESOLUTION_STATES)[number];

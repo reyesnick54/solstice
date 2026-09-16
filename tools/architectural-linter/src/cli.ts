@@ -6,6 +6,7 @@ import { lintCardBoundary } from './card-guards.ts';
 import { lintRailBoundary } from './rail-guards.ts';
 import { lintEconomicGraphBoundary } from './economic-graph-guards.ts';
 import { lintGrowthBoundary } from './growth-guards.ts';
+import { lintHeliosBoundary } from './helios-guards.ts';
 import { lintInvestmentBoundary } from './investments-guards.ts';
 import { lintRegulatoryTwinBoundary } from './regulatory-twin-guards.ts';
 import { lintPersonalDataVaultBoundary } from './personal-data-vault-guards.ts';
@@ -36,6 +37,7 @@ const findings = [
   ...lintRailBoundary(root),
   ...lintEconomicGraphBoundary(root),
   ...lintGrowthBoundary(root),
+  ...lintHeliosBoundary(root),
   ...lintInvestmentBoundary(root),
   ...lintRegulatoryTwinBoundary(root),
   ...lintPersonalDataVaultBoundary(root),
