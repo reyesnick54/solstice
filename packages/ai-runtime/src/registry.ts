@@ -9,6 +9,8 @@ export const CANONICAL_LOCAL_TEST_MODEL_ID = asModelId('mdl_sunrey_local_test');
 export const CANONICAL_LOCAL_TEST_MODEL_VERSION = asModelVersion('local-test-v1');
 export const CANONICAL_S3M_MODEL_ID = asModelId('mdl_sunrey_s3m');
 export const CANONICAL_S3M_MODEL_VERSION = asModelVersion('s3m-sim-v1');
+export const CANONICAL_S3M_FINANCE_MODEL_ID = asModelId('mdl_sunrey_s3m_finance');
+export const CANONICAL_S3M_FINANCE_MODEL_VERSION = asModelVersion('s3m-finance-v0');
 export const CANONICAL_GROK_MODEL_ID = asModelId('mdl_sunrey_grok');
 export const CANONICAL_GROK_MODEL_VERSION = asModelVersion('grok-4.6-sandbox-v1');
 /** Backward-compatible aliases retained for callers created before Prompt 4. */
@@ -187,6 +189,34 @@ export function seedCanonicalAiModels(
   if (!s3m.ok) {
     return s3m;
   }
+  const s3mFinance = seedAiModel(registry, actor, now, {
+    modelId: CANONICAL_S3M_FINANCE_MODEL_ID,
+    version: CANONICAL_S3M_FINANCE_MODEL_VERSION,
+    description:
+      'S3M-Finance qualified serving contract binding. Contract-ready; external deployment qualification pending.',
+    owner: 'solstice-ai-runtime',
+    validationId: 'mvn_s3m_finance_v0',
+    provider: 'S3M',
+    inputSchema: 'S3mFinanceServingRequest',
+    outputSchema: 'S3mFinanceServingResponse',
+    applicableDomain: 'SUNREY_AI_S3M_FINANCE_SERVING_CONTRACT',
+    dataRequirements: Object.freeze(['qualified-deployment', 'privacy-classification', 'authorized-context']),
+    supportedTasks: Object.freeze([
+      'FINANCIAL_EXPLANATION',
+      'GROWTH_PLANNING',
+      'PORTFOLIO_REASONING',
+      'MARKET_OPPORTUNITY_RESEARCH',
+    ]),
+    limitations: Object.freeze([
+      'Serving contract only; does not claim external S3M deployment is qualified',
+      'Private-context dispatch requires QUALIFIED_PRIVATE_CONTEXT deployment evidence',
+      'Cannot self-authorize or grant Execution Authority',
+      'Simulation approval only',
+    ]),
+  });
+  if (!s3mFinance.ok) {
+    return s3mFinance;
+  }
   const grok = seedAiModel(registry, actor, now, {
     modelId: CANONICAL_GROK_MODEL_ID,
     version: CANONICAL_GROK_MODEL_VERSION,
@@ -219,5 +249,5 @@ export function seedCanonicalAiModels(
   if (!grok.ok) {
     return grok;
   }
-  return ok(Object.freeze([local.value, s3m.value, grok.value]));
+  return ok(Object.freeze([local.value, s3m.value, s3mFinance.value, grok.value]));
 }

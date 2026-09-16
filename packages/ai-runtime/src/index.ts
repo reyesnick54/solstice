@@ -38,9 +38,12 @@ export {
   CANONICAL_LOCAL_TEST_MODEL_VERSION,
   CANONICAL_S3M_MODEL_ID,
   CANONICAL_S3M_MODEL_VERSION,
+  CANONICAL_S3M_FINANCE_MODEL_ID,
+  CANONICAL_S3M_FINANCE_MODEL_VERSION,
   resolveModelRef,
   seedCanonicalAiModels,
 } from './registry.ts';
+export * from './s3m-finance/index.ts';
 export { AiRuntimeRouter } from './router.ts';
 export { AiRuntime, type AiRuntimeResult } from './runtime.ts';
 export { AiModelGateway, type AiGatewayRequest, type AiGatewayResult } from './gateway.ts';

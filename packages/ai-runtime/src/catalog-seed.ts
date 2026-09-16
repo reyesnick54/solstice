@@ -4,6 +4,8 @@ import {
   CANONICAL_GROK_MODEL_VERSION,
   CANONICAL_LOCAL_TEST_MODEL_ID,
   CANONICAL_LOCAL_TEST_MODEL_VERSION,
+  CANONICAL_S3M_FINANCE_MODEL_ID,
+  CANONICAL_S3M_FINANCE_MODEL_VERSION,
   CANONICAL_S3M_MODEL_ID,
   CANONICAL_S3M_MODEL_VERSION,
 } from './registry.ts';
@@ -15,6 +17,8 @@ export const CANONICAL_HTTPS_GENERIC_MODEL_VERSION = asModelVersion('https-gener
 export const RESERVED_OPENAI_MODEL_ID = asModelId('mdl_sunrey_openai_reserved');
 export const RESERVED_ANTHROPIC_MODEL_ID = asModelId('mdl_sunrey_anthropic_reserved');
 export const RESERVED_MISTRAL_MODEL_ID = asModelId('mdl_sunrey_mistral_reserved');
+
+import { S3M_FINANCE_APPROVED_PURPOSES } from './s3m-finance/model-profile.ts';
 
 const ALL_PURPOSES: readonly AiApprovedPurpose[] = AI_APPROVED_PURPOSES;
 const PUBLIC_PURPOSES: readonly AiApprovedPurpose[] = Object.freeze([
@@ -42,6 +46,25 @@ export function seedInferenceModelCatalog(catalog: InferenceModelCatalog): reado
       cost: Object.freeze({ inputMicrosPer1kTokens: 0, outputMicrosPer1kTokens: 0, currency: 'USD' }),
       latencyClass: 'LOW',
       dataHandling: Object.freeze(['PUBLIC', 'INTERNAL', 'PERSONAL', 'FINANCIAL_SENSITIVE']),
+      jurisdictionRestrictions: Object.freeze([]),
+      liveApproved: false,
+    },
+    {
+      modelId: CANONICAL_S3M_FINANCE_MODEL_ID,
+      provider: 'S3M',
+      providerModel: 's3m-finance',
+      version: CANONICAL_S3M_FINANCE_MODEL_VERSION,
+      capabilities: Object.freeze(['language', 'structured', 'finance-reasoning']),
+      contextWindow: 32_768,
+      supportsStreaming: false,
+      supportsTools: false,
+      supportsStructuredOutput: true,
+      approvedPurposes: S3M_FINANCE_APPROVED_PURPOSES,
+      environment: 'SANDBOX',
+      status: 'TEST',
+      cost: Object.freeze({ inputMicrosPer1kTokens: 60, outputMicrosPer1kTokens: 120, currency: 'USD' }),
+      latencyClass: 'STANDARD',
+      dataHandling: Object.freeze(['PUBLIC', 'INTERNAL']),
       jurisdictionRestrictions: Object.freeze([]),
       liveApproved: false,
     },
