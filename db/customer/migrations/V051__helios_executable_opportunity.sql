@@ -20,7 +20,10 @@ CREATE TABLE growth.helios_executable_opportunity (
     'QUALIFIED_FOR_PROPOSAL', 'REJECTED', 'EXPIRED', 'STALE', 'INELIGIBLE',
     'NO_ROUTE', 'DATA_DEGRADED', 'REVIEW_REQUIRED'
   )),
-  CONSTRAINT helios_executable_opportunity_no_ea CHECK (body_canonical NOT LIKE '%ExecutionAuthority%')
+  CONSTRAINT helios_executable_opportunity_no_ea CHECK (
+    body_canonical NOT LIKE '%"grantsExecutionAuthority":true%'
+    AND body_canonical NOT LIKE '%"authorizesFinancialExecution":true%'
+  )
 );
 
 CREATE TABLE growth.helios_opportunity_candidate (

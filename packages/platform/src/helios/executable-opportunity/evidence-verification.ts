@@ -67,7 +67,14 @@ export function verifyCandidateEvidence(input: {
   if (verified) {
     reasonCodes.push('EVIDENCE_ADMISSIBLE');
   }
-  return finalize(verified, reasonCodes, admissibleRefs, rejectedRefs, verified ? ['OK'] : unique(reasonCodes), input);
+  return finalize(
+    verified,
+    reasonCodes,
+    admissibleRefs,
+    rejectedRefs,
+    verified ? ['OK'] : [...unique(reasonCodes)],
+    input,
+  );
 }
 
 function isFixtureMasquerade(sourceKind: string, provenanceId: string): boolean {
@@ -104,7 +111,7 @@ function entitlementPermits(
   return false;
 }
 
-function unique(codes: QualificationReasonCode[]): QualificationReasonCode[] {
+function unique(codes: readonly QualificationReasonCode[]): readonly QualificationReasonCode[] {
   return Object.freeze([...new Set(codes)]);
 }
 

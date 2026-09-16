@@ -30,14 +30,14 @@ export function bindCanonicalInstrument(input: {
     return Object.freeze({
       ok: false,
       binding: null,
-      reasonCodes: Object.freeze(['PRODUCT_CAPABILITY_DENIED']),
+      reasonCodes: Object.freeze(['PRODUCT_CAPABILITY_DENIED'] as const),
     });
   }
   if (!supported.includes(input.candidate.instrumentId)) {
     return Object.freeze({
       ok: false,
       binding: null,
-      reasonCodes: Object.freeze(['INSTRUMENT_UNSUPPORTED']),
+      reasonCodes: Object.freeze(['INSTRUMENT_UNSUPPORTED'] as const),
     });
   }
   const mapping = INSTRUMENT_MAPPINGS[input.candidate.instrumentId];
@@ -45,7 +45,7 @@ export function bindCanonicalInstrument(input: {
     return Object.freeze({
       ok: false,
       binding: null,
-      reasonCodes: Object.freeze(['INSTRUMENT_MAPPING_MISSING']),
+      reasonCodes: Object.freeze(['INSTRUMENT_MAPPING_MISSING'] as const),
     });
   }
   return Object.freeze({
@@ -58,7 +58,7 @@ export function bindCanonicalInstrument(input: {
       assetClass: mapping.assetClass,
       mappingVerified: true,
     }),
-    reasonCodes: Object.freeze(['OK']),
+    reasonCodes: Object.freeze(['OK'] as const),
   });
 }
 

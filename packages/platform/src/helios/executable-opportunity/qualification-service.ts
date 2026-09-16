@@ -279,7 +279,7 @@ export class ExecutableOpportunityQualificationService {
       routeDecision: null,
       terms: null,
       qualificationExpiresAt: null,
-      reasonCodes: Object.freeze(['CANDIDATE_CREATED']),
+      reasonCodes: Object.freeze(['CANDIDATE_CREATED'] as const),
       grantsExecutionAuthority: false,
       authorizesFinancialExecution: false,
       proposalPath: 'GROW_OPPORTUNITY_PROPOSAL',
@@ -287,7 +287,7 @@ export class ExecutableOpportunityQualificationService {
         Object.freeze({
           from: 'DISCOVERED',
           to: 'DISCOVERED',
-          reasonCodes: Object.freeze(['CANDIDATE_CREATED']),
+          reasonCodes: Object.freeze(['CANDIDATE_CREATED'] as const),
           occurredAt: now,
         }),
       ]),

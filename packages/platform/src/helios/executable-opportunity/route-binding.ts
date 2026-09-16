@@ -65,21 +65,21 @@ function classifyRouteReadiness(
 ): { readonly ready: boolean; readonly reasonCodes: readonly QualificationReasonCode[] } {
   switch (route.availability) {
     case 'LIVE_AUTHORIZED':
-      return Object.freeze({ ready: false, reasonCodes: Object.freeze(['ROUTE_CONFIGURED_NOT_LIVE']) });
+      return Object.freeze({ ready: false, reasonCodes: Object.freeze(['ROUTE_CONFIGURED_NOT_LIVE'] as const) });
     case 'CONFIGURED':
-      return Object.freeze({ ready: false, reasonCodes: Object.freeze(['ROUTE_NOT_OPERATIONAL']) });
+      return Object.freeze({ ready: false, reasonCodes: Object.freeze(['ROUTE_NOT_OPERATIONAL'] as const) });
     case 'SANDBOX_AVAILABLE':
       if (environment === 'sandbox' || environment === 'simulation') {
-        return Object.freeze({ ready: true, reasonCodes: Object.freeze(['ROUTE_SANDBOX_READY', 'OK']) });
+        return Object.freeze({ ready: true, reasonCodes: Object.freeze(['ROUTE_SANDBOX_READY', 'OK'] as const) });
       }
-      return Object.freeze({ ready: false, reasonCodes: Object.freeze(['ROUTE_NOT_OPERATIONAL']) });
+      return Object.freeze({ ready: false, reasonCodes: Object.freeze(['ROUTE_NOT_OPERATIONAL'] as const) });
     case 'AVAILABLE':
       if (environment === 'simulation' || environment === 'sandbox') {
-        return Object.freeze({ ready: true, reasonCodes: Object.freeze(['OK']) });
+        return Object.freeze({ ready: true, reasonCodes: Object.freeze(['OK'] as const) });
       }
-      return Object.freeze({ ready: false, reasonCodes: Object.freeze(['ROUTE_CONFIGURED_NOT_LIVE']) });
+      return Object.freeze({ ready: false, reasonCodes: Object.freeze(['ROUTE_CONFIGURED_NOT_LIVE'] as const) });
     default:
-      return Object.freeze({ ready: false, reasonCodes: Object.freeze(['ROUTE_UNAVAILABLE']) });
+      return Object.freeze({ ready: false, reasonCodes: Object.freeze(['ROUTE_UNAVAILABLE'] as const) });
   }
 }
 
@@ -87,7 +87,7 @@ function decision(
   routeReady: boolean,
   route: ExecutionRouteDescriptor | null,
   availability: RouteAvailabilityState,
-  reasonCodes: QualificationReasonCode[],
+  reasonCodes: readonly QualificationReasonCode[],
   now: UtcInstant,
   executableOpportunityId: string,
 ): ExecutionRouteDecision {

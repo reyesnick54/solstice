@@ -36,8 +36,12 @@ import type { CompiledEconomicMandate, HardConstraint } from '../packages/platfo
 import { defaultOpportunityPreferences } from '../packages/platform/src/growth/opportunity/preferences.ts';
 import { SIMULATION_GROWTH_PRODUCTS, SIMULATION_RATE_CATALOG } from '../packages/platform/src/growth/opportunity/products.ts';
 import { simulationPolicyPort } from '../packages/platform/src/policy-port.ts';
-import { GrowthOrchestrator } from '../packages/platform/src/service.ts';
+import { GrowthOrchestrator, type GrowthFailure } from '../packages/platform/src/service.ts';
 import { lintHeliosBoundary } from '../tools/architectural-linter/src/helios-guards.ts';
+
+function growthFailureMessage(error: GrowthFailure): string {
+  return 'message' in error ? error.message : error.code;
+}
 
 const NOW = asUtcInstant('2026-09-15T14:00:00.000Z');
 
@@ -556,7 +560,7 @@ describe('HELIOS H09 executable opportunity binding', () => {
     const orchestrator = setup.orchestrator;
     orchestrator.store.putMandate(activeMandate('id_a'));
     const discovered = orchestrator.discoverCustomerOpportunities(setup.actor, 'id_a', discoveryContext('id_a'));
-    if (!discovered.ok) throw new Error(discovered.error.message);
+    if (!discovered.ok) throw new Error(growthFailureMessage(discovered.error));
     const presented = discovered.value.all.find((item) => item.status === 'PRESENTED' || item.status === 'ELIGIBLE');
     assert.ok(presented);
     const workOrder = activeWorkOrder('cust_a', 'id_a');
@@ -567,12 +571,13 @@ describe('HELIOS H09 executable opportunity binding', () => {
       evidenceRefs: Object.freeze(['ev_external_market_obs_001']),
       productId: 'prod_paper_investment_review',
       instrumentId: 'SIM-ETF-1',
+      symbol: 'SIM-ETF-1',
       environment: 'sandbox',
       accountClass: 'BROKERAGE',
       proposedNotional: { minorUnits: '50000', currency: 'USD' },
       originatingOpportunityId: presented.opportunityId,
     });
-    if (!qualified.ok) throw new Error(qualified.error.message);
+    if (!qualified.ok) throw new Error(growthFailureMessage(qualified.error));
     assert.equal(qualified.value.opportunity.state, 'QUALIFIED_FOR_PROPOSAL');
     const proposal = orchestrator.proposeFromQualifiedExecutableOpportunity(
       setup.actor,
@@ -581,7 +586,7 @@ describe('HELIOS H09 executable opportunity binding', () => {
       qualified.value.opportunity.executableOpportunityId,
       presented.opportunityId,
     );
-    if (!proposal.ok) throw new Error(proposal.error.message);
+    if (!proposal.ok) throw new Error(growthFailureMessage(proposal.error));
     assert.equal(proposal.value.issuesExecutionAuthority, false);
     assert.equal(proposal.value.executesMoney, false);
     assert.equal(proposal.value.nextStep, 'USER_CONFIRMATION_THEN_KERNEL');

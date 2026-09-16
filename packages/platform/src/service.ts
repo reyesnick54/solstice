@@ -756,12 +756,11 @@ export class GrowthOrchestrator {
       ...(input.accountClass ? { accountClass: input.accountClass } : {}),
       ...(input.requireExternalObservation ? { requireExternalObservation: true } : {}),
     });
-    this.emit('HeliosExecutableOpportunityQualified', {
+    this.emit('GrowthOpportunityLifecycleChanged', {
       subjectId,
-      customerId: input.customerId,
-      executableOpportunityId: qualified.opportunity.executableOpportunityId,
-      state: qualified.opportunity.state,
-      outcome: qualified.outcome,
+      opportunityId: input.originatingOpportunityId ?? qualified.opportunity.candidateId,
+      status: qualified.opportunity.state,
+      reason: qualified.outcome,
     });
     this.seal('HELIOS_EXECUTABLE_OPPORTUNITY_PIPELINE', {
       subjectId,
