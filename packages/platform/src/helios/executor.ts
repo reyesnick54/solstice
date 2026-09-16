@@ -1,4 +1,4 @@
-import type { HeliosWorkOrchestrator } from './orchestrator.ts';
+import { HeliosWorkOrchestrator } from './orchestrator.ts';
 import type { HeliosFailure, HeliosWorkTask } from './types.ts';
 
 export type TaskHandler = (task: HeliosWorkTask) => Promise<{
@@ -40,7 +40,7 @@ export class HeliosTaskWorker {
         workOrderId: input.workOrderId,
         customerId: input.customerId,
         workerId: this.workerId,
-        leaseMs: input.leaseMs,
+        ...(input.leaseMs !== undefined ? { leaseMs: input.leaseMs } : {}),
       });
       if ('code' in claimed) {
         skipped += 1;
@@ -67,8 +67,8 @@ export class HeliosTaskWorker {
           workerId: this.workerId,
           leaseGeneration: claimed.lease!.leaseGeneration,
           resultRef: outcome.resultRef,
-          evidenceRefs: outcome.evidenceRefs,
-          actualSpend: outcome.actualSpend,
+          ...(outcome.evidenceRefs !== undefined ? { evidenceRefs: outcome.evidenceRefs } : {}),
+          ...(outcome.actualSpend !== undefined ? { actualSpend: outcome.actualSpend } : {}),
         });
         if ('code' in completed) {
           failed += 1;

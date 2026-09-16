@@ -21,6 +21,7 @@ import {
   asHeliosProgramId,
   asHeliosTaskId,
   taskIdFor,
+  type HeliosTaskId,
 } from './ids.ts';
 import { collectHeliosMetrics } from './metrics.ts';
 import { classifyTaskError, initialRetryMetadata, isRetryableCategory } from './retry.ts';
@@ -58,7 +59,7 @@ export type CreateTaskInput = {
   readonly permittedTools: readonly string[];
   readonly permittedModelClass: ModelClass;
   readonly requestedObjective: string;
-  readonly dependencyTaskIds?: readonly string[];
+  readonly dependencyTaskIds?: readonly HeliosTaskId[];
   readonly deadline?: UtcInstant | null;
   readonly priority?: number;
   readonly estimatedBudget?: string;
@@ -79,8 +80,12 @@ export class HeliosWorkOrchestrator {
 
   constructor(ports: HeliosWorkOrchestratorPorts) {
     this.clock = ports.clock;
-    this.evidence = ports.evidence;
-    this.mandateLookup = ports.mandateLookup;
+    if (ports.evidence !== undefined) {
+      this.evidence = ports.evidence;
+    }
+    if (ports.mandateLookup !== undefined) {
+      this.mandateLookup = ports.mandateLookup;
+    }
   }
 
   now(): UtcInstant {

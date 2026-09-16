@@ -10,7 +10,7 @@ import {
   HeliosWorkOrchestrator,
   collectHeliosMetrics,
 } from '../packages/platform/src/helios/index.ts';
-import { asEconomicMandateId, asMandateVersion } from '../packages/platform/src/ids.ts';
+import { asEconomicMandateId, asMandateVersion, type EconomicMandateId } from '../packages/platform/src/ids.ts';
 import type { CompiledEconomicMandate } from '../packages/platform/src/mandate/types.ts';
 import { lintGrowthBoundary } from '../tools/architectural-linter/src/growth-guards.ts';
 
@@ -45,7 +45,7 @@ describe('HELIOS H06 integration — durable work execution and research budgets
     const orchestrator = new HeliosWorkOrchestrator({
       clock,
       evidence,
-      mandateLookup: (id) => mandates.get(id),
+      mandateLookup: (id) => mandates.get(id as EconomicMandateId),
     });
     const order = orchestrator.createWorkOrder({
       programId: 'hpg_integration',

@@ -85,3 +85,18 @@ CREATE TABLE growth.research_spend_record (
 );
 
 CREATE INDEX helios_spend_customer_idx ON growth.research_spend_record (customer_id, work_order_id);
+
+REVOKE ALL ON TABLE growth.economic_work_order FROM PUBLIC;
+REVOKE ALL ON TABLE growth.helios_work_task FROM PUBLIC;
+REVOKE ALL ON TABLE growth.research_budget_reservation FROM PUBLIC;
+REVOKE ALL ON TABLE growth.research_spend_record FROM PUBLIC;
+
+GRANT SELECT, INSERT, UPDATE ON TABLE growth.economic_work_order TO customer_app;
+GRANT SELECT, INSERT, UPDATE ON TABLE growth.helios_work_task TO customer_app;
+GRANT SELECT, INSERT, UPDATE ON TABLE growth.research_budget_reservation TO customer_app;
+GRANT SELECT, INSERT, UPDATE ON TABLE growth.research_spend_record TO customer_app;
+
+REVOKE DELETE, TRUNCATE ON TABLE growth.economic_work_order FROM customer_app;
+REVOKE DELETE, TRUNCATE ON TABLE growth.helios_work_task FROM customer_app;
+REVOKE DELETE, TRUNCATE ON TABLE growth.research_budget_reservation FROM customer_app;
+REVOKE DELETE, TRUNCATE ON TABLE growth.research_spend_record FROM customer_app;
