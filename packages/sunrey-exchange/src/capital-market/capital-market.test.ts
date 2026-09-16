@@ -275,7 +275,7 @@ describe('capital market service', () => {
       provider: createFinnhubCapitalMarketAdapter({
         fetchFn: async () => {
           fetchCalled = true;
-          return new Response(JSON.stringify({ c: 227.5 }), { status: 200 });
+          return new Response(JSON.stringify(FINNHUB_AAPL_QUOTE), { status: 200 });
         },
       }),
     });
