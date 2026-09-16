@@ -68,22 +68,19 @@ export { loadGrowthState, persistGrowthState } from './growth/pg-growth-store.ts
 export { loadGrowExecutionState, persistGrowExecutionState } from './growth/pg-grow-execution-store.ts';
 export { loadHeliosWorkState, persistHeliosWorkState } from './growth/pg-helios-work-store.ts';
 export {
-<<<<<<< HEAD
   loadHeliosObservationState,
   persistHeliosObservationState,
 } from './growth/pg-helios-observation-store.ts';
+export {
+  loadExecutableOpportunityState,
+  persistExecutableOpportunityState,
+} from './growth/pg-helios-executable-opportunity-store.ts';
 export {
   loadWorkOrderState,
   persistWorkOrder,
   persistWorkOrderState,
   WorkOrderPersistenceError,
 } from './growth/pg-work-order-store.ts';
-=======
-  loadExecutableOpportunityState,
-  persistExecutableOpportunityState,
-} from './growth/pg-helios-executable-opportunity-store.ts';
-export { loadWorkOrderState, persistWorkOrderState } from './growth/pg-work-order-store.ts';
->>>>>>> 7359d082 (feat(helios): bind verified opportunities to customer execution routes)
 export { loadPeveState, persistPeveState } from './value/pg-peve-store.ts';
 export {
   loadRegulatoryTwinState,
