@@ -1,5 +1,9 @@
+import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { EvidenceVault } from '../../../evidence/src/vault.ts';
+import type { EconomicWorkOrderId, HeliosTaskId } from './ids.ts';
+import type { HeliosAuditEventKind } from './taxonomy.ts';
 import type { AuthorityBindingDecision } from './types.ts';
+import type { HeliosAuditEvent } from './execution-types.ts';
 
 export function sealAuthorityBindingDecision(
   vault: EvidenceVault | undefined,
@@ -34,5 +38,24 @@ export function sealAuthorityBindingDecision(
     actorId: decision.actorId,
     environment: decision.environment,
     grantsExecutionAuthority: false,
+  });
+}
+
+export function heliosAuditEvent(
+  kind: HeliosAuditEventKind,
+  occurredAt: UtcInstant,
+  customerId: string,
+  detail: string,
+  ids: {
+    readonly workOrderId?: EconomicWorkOrderId;
+    readonly taskId?: HeliosTaskId;
+  } = {},
+): HeliosAuditEvent {
+  return Object.freeze({
+    kind,
+    occurredAt,
+    customerId,
+    detail,
+    ...ids,
   });
 }

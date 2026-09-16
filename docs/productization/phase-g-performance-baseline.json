@@ -8,62 +8,62 @@
     {
       "name": "market_list",
       "iterations": 40,
-      "elapsedMs": 1.5865790000000004,
-      "perOpMs": 0.03966447500000001
+      "elapsedMs": 1.7893810000000485,
+      "perOpMs": 0.04473452500000121
     },
     {
       "name": "ticker",
       "iterations": 40,
-      "elapsedMs": 0.6269100000000094,
-      "perOpMs": 0.015672750000000235
+      "elapsedMs": 2.3851100000000542,
+      "perOpMs": 0.05962775000000135
     },
     {
       "name": "order_book",
       "iterations": 40,
-      "elapsedMs": 0.27437000000000467,
-      "perOpMs": 0.006859250000000117
+      "elapsedMs": 0.3443960000000743,
+      "perOpMs": 0.008609900000001858
     },
     {
       "name": "order_preview",
       "iterations": 20,
-      "elapsedMs": 1.278219000000007,
-      "perOpMs": 0.06391095000000035
+      "elapsedMs": 0.7245660000000953,
+      "perOpMs": 0.036228300000004765
     },
     {
       "name": "order_submission_matching_settlement",
       "iterations": 1,
-      "elapsedMs": 1.4570190000000025,
-      "perOpMs": 1.4570190000000025
+      "elapsedMs": 2.7345149999999876,
+      "perOpMs": 2.7345149999999876
     },
     {
       "name": "wallet_read",
       "iterations": 40,
-      "elapsedMs": 0.4138729999999953,
-      "perOpMs": 0.010346824999999883
+      "elapsedMs": 0.2872190000000501,
+      "perOpMs": 0.007180475000001252
     },
     {
       "name": "chain_rpc_and_explorer",
       "iterations": 20,
-      "elapsedMs": 0.42210399999999026,
-      "perOpMs": 0.021105199999999512
+      "elapsedMs": 0.5728730000000724,
+      "perOpMs": 0.02864365000000362
     },
     {
       "name": "transaction_submission",
       "iterations": 1,
-      "elapsedMs": 0.11669799999998531,
-      "perOpMs": 0.11669799999998531
+      "elapsedMs": 0.15704299999993054,
+      "perOpMs": 0.15704299999993054
     },
     {
       "name": "market_stream_connections:8",
       "iterations": 8,
-      "elapsedMs": 0.020733000000006996,
-      "perOpMs": 0.0025916250000008745
+      "elapsedMs": 0.024108000000069296,
+      "perOpMs": 0.003013500000008662
     },
     {
       "name": "rpc_reads:16",
       "iterations": 16,
-      "elapsedMs": 0.021785999999991645,
-      "perOpMs": 0.0013616249999994778
+      "elapsedMs": 0.0266470000000254,
+      "perOpMs": 0.0016654375000015875
     }
   ]
 }

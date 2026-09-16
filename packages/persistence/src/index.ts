@@ -66,6 +66,7 @@ export {
 } from './economic-knowledge-graph/pg-economic-knowledge-graph-store.ts';
 export { loadGrowthState, persistGrowthState } from './growth/pg-growth-store.ts';
 export { loadGrowExecutionState, persistGrowExecutionState } from './growth/pg-grow-execution-store.ts';
+export { loadHeliosWorkState, persistHeliosWorkState } from './growth/pg-helios-work-store.ts';
 export { loadPeveState, persistPeveState } from './value/pg-peve-store.ts';
 export {
   loadRegulatoryTwinState,

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-15T15:06:57.773524+00:00",
+  "generatedAt": "2026-09-16T05:13:59.991332+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -538,14 +538,14 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 4717,
+      "packageDeepImport": 4730,
       "serviceDeepImport": 650,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 4717,
+      "relativeCrossPackage": 4730,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5367
+      "total": 5380
     }
   },
   "violations": [
@@ -21817,6 +21817,15 @@
       "spec": "../../../platform/src/store.ts"
     },
     {
+      "file": "packages/persistence/src/growth/pg-helios-work-store.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/persistence/src/growth/pg-helios-work-store.ts' deep-imports 'platform' internals via '../../../platform/src/helios/execution-store.ts'",
+      "sourcePackage": "persistence",
+      "targetPackage": "platform",
+      "spec": "../../../platform/src/helios/execution-store.ts"
+    },
+    {
       "file": "packages/persistence/src/identity/pg-auth-store.ts",
       "line": 9,
       "rule": "package-deep-import",
@@ -25534,6 +25543,15 @@
       "spec": "../../../domain/src/time.ts"
     },
     {
+      "file": "packages/platform/src/helios/authority-binding.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/authority-binding.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
       "file": "packages/platform/src/helios/binding-service.ts",
       "line": 1,
       "rule": "package-deep-import",
@@ -25570,6 +25588,15 @@
       "spec": "../../../evidence/src/vault.ts"
     },
     {
+      "file": "packages/platform/src/helios/budget.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/budget.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
       "file": "packages/platform/src/helios/capability-binding.ts",
       "line": 1,
       "rule": "package-deep-import",
@@ -25582,7 +25609,70 @@
       "file": "packages/platform/src/helios/evidence.ts",
       "line": 1,
       "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/evidence.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/evidence.ts",
+      "line": 2,
+      "rule": "package-deep-import",
       "message": "'packages/platform/src/helios/evidence.ts' deep-imports 'evidence' internals via '../../../evidence/src/vault.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "evidence",
+      "spec": "../../../evidence/src/vault.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/execution-store.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/execution-store.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/execution-store.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/execution-store.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/execution-types.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/execution-types.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/helios-h06.test.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/helios-h06.test.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/helios-h06.test.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/helios-h06.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/helios-h06.test.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/helios-h06.test.ts' deep-imports 'evidence' internals via '../../../evidence/src/vault.ts'",
       "sourcePackage": "platform",
       "targetPackage": "evidence",
       "spec": "../../../evidence/src/vault.ts"
@@ -25649,6 +25739,33 @@
       "sourcePackage": "platform",
       "targetPackage": "money",
       "spec": "../../../money/src/money.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/orchestrator.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/orchestrator.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/orchestrator.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/orchestrator.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/orchestrator.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/orchestrator.ts' deep-imports 'evidence' internals via '../../../evidence/src/vault.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "evidence",
+      "spec": "../../../evidence/src/vault.ts"
     },
     {
       "file": "packages/platform/src/helios/revocation.ts",
