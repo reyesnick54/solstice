@@ -72,6 +72,10 @@ export {
   persistHeliosObservationState,
 } from './growth/pg-helios-observation-store.ts';
 export {
+  loadExecutableOpportunityState,
+  persistExecutableOpportunityState,
+} from './growth/pg-helios-executable-opportunity-store.ts';
+export {
   loadWorkOrderState,
   persistWorkOrder,
   persistWorkOrderState,

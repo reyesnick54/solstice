@@ -63,6 +63,18 @@ import { InMemoryGrowthStore } from './store.ts';
 import type { TreasuryContextPort } from './treasury-port.ts';
 import { absentTreasuryContextPort } from './treasury-port.ts';
 import type { PersonalEconomicValueEngine } from './value/service.ts';
+import {
+  createEvidenceRegistry,
+  createExecutionRouteRegistry,
+  createMarketTermsPort,
+  ExecutableOpportunityQualificationService,
+  type QualificationPipelineResult,
+  type ExecutableOpportunity,
+} from './helios/executable-opportunity/index.ts';
+import type { EconomicWorkOrder } from './helios/types.ts';
+import { asCustomerId } from '../../domain/src/customer.ts';
+import { asJurisdiction } from '../../domain/src/jurisdiction.ts';
+import { workOrderIdFor } from './helios/ids.ts';
 
 export type GrowthFailure =
   | MandateCompileFailure
@@ -77,7 +89,9 @@ export type GrowthFailure =
   | { readonly code: 'INTERPRETATION_FAILED'; readonly message: string }
   | { readonly code: 'OPPORTUNITY_NOT_FOUND'; readonly message: string }
   | { readonly code: 'INVALID_OPPORTUNITY_TRANSITION'; readonly message: string }
-  | { readonly code: 'CROSS_USER_DENIED'; readonly message: string };
+  | { readonly code: 'CROSS_USER_DENIED'; readonly message: string }
+  | { readonly code: 'EXECUTABLE_OPPORTUNITY_NOT_FOUND'; readonly message: string }
+  | { readonly code: 'EXECUTABLE_OPPORTUNITY_NOT_QUALIFIED'; readonly message: string };
 
 export class GrowthOrchestrator {
   private readonly clock: Clock;
@@ -88,6 +102,7 @@ export class GrowthOrchestrator {
   private readonly policy: PolicyControlPort;
   private readonly treasury: TreasuryContextPort;
   private readonly peve?: PersonalEconomicValueEngine;
+  private executableOpportunity?: ExecutableOpportunityQualificationService;
   readonly store: InMemoryGrowthStore;
 
   constructor(input: {
@@ -100,6 +115,7 @@ export class GrowthOrchestrator {
     readonly treasury?: TreasuryContextPort;
     readonly store?: InMemoryGrowthStore;
     readonly peve?: PersonalEconomicValueEngine;
+    readonly executableOpportunity?: ExecutableOpportunityQualificationService;
   }) {
     this.clock = input.clock;
     this.events = input.events;
@@ -113,6 +129,9 @@ export class GrowthOrchestrator {
     this.store = input.store ?? new InMemoryGrowthStore();
     if (input.peve) {
       this.peve = input.peve;
+    }
+    if (input.executableOpportunity) {
+      this.executableOpportunity = input.executableOpportunity;
     }
   }
 
@@ -666,6 +685,147 @@ export class GrowthOrchestrator {
       nextStep: 'USER_CONFIRMATION_THEN_KERNEL',
       acceptedAt: next.updatedAt,
     });
+  }
+
+  qualifyExecutableOpportunity(
+    actor: unknown,
+    subjectId: string,
+    input: {
+      readonly customerId: string;
+      readonly workOrder: EconomicWorkOrder | null;
+      readonly workOrderKey?: string;
+      readonly hypothesisType: string;
+      readonly evidenceRefs: readonly string[];
+      readonly productId: string;
+      readonly instrumentId: string;
+      readonly symbol: string;
+      readonly detector?: import('./growth/opportunity/taxonomy.ts').OpportunityDetectorKind;
+      readonly originatingOpportunityId?: string;
+      readonly environment?: 'simulation' | 'sandbox' | 'production_candidate';
+      readonly venueSession?: 'OPEN' | 'CLOSED' | 'PRE_MARKET' | 'POST_MARKET' | 'UNKNOWN';
+      readonly proposedNotional?: { readonly minorUnits: string; readonly currency: string };
+      readonly accountClass?: string;
+      readonly requireExternalObservation?: boolean;
+      readonly discoveryContext?: Partial<OpportunityDiscoveryContext>;
+    },
+  ): Result<QualificationPipelineResult, GrowthFailure> {
+    const access = authorizeViewGrowthPlan(actor, subjectId);
+    if (!access.ok) {
+      return access.error.code === 'SUBJECT_MISMATCH'
+        ? err({ code: 'CROSS_USER_DENIED', message: access.error.message })
+        : access;
+    }
+    const customerId = asCustomerId(input.customerId);
+    if (input.workOrder && input.workOrder.customerId !== customerId) {
+      return err({ code: 'CROSS_USER_DENIED', message: 'work order customer mismatch' });
+    }
+    const mandate = this.store.activeMandateFor(subjectId) ?? null;
+    const context = this.resolveDiscoveryContext(subjectId, input.discoveryContext);
+    const workOrderId =
+      input.workOrder?.workOrderId ??
+      workOrderIdFor(input.customerId, input.workOrderKey ?? input.hypothesisType);
+    const service = this.executableOpportunityService();
+    const candidate = service.discoverCandidate({
+      workOrderId,
+      customerId,
+      subjectId,
+      source: 'MARKET_OBSERVATION',
+      hypothesisType: input.hypothesisType,
+      evidenceRefs: input.evidenceRefs,
+      instrumentCandidate: Object.freeze({
+        instrumentId: input.instrumentId,
+        productId: input.productId,
+        symbol: input.symbol,
+        assetClass: 'ETF',
+      }),
+      ...(input.originatingOpportunityId
+        ? { originatingOpportunityId: asOpportunityId(input.originatingOpportunityId) }
+        : {}),
+      key: input.workOrderKey ?? input.hypothesisType,
+    });
+    const qualified = service.qualifyCandidate({
+      candidate,
+      workOrder: input.workOrder,
+      mandate,
+      jurisdiction: asJurisdiction(context.jurisdiction),
+      context,
+      detector: input.detector ?? 'MARKET_RESEARCH_CANDIDATE',
+      ...(input.environment ? { environment: input.environment } : {}),
+      ...(input.venueSession ? { venueSession: input.venueSession } : {}),
+      ...(input.proposedNotional ? { proposedNotional: input.proposedNotional } : {}),
+      ...(input.accountClass ? { accountClass: input.accountClass } : {}),
+      ...(input.requireExternalObservation ? { requireExternalObservation: true } : {}),
+    });
+    this.emit('GrowthOpportunityLifecycleChanged', {
+      subjectId,
+      opportunityId: input.originatingOpportunityId ?? qualified.opportunity.candidateId,
+      status: qualified.opportunity.state,
+      reason: qualified.outcome,
+    });
+    this.seal('HELIOS_EXECUTABLE_OPPORTUNITY_PIPELINE', {
+      subjectId,
+      customerId: input.customerId,
+      executableOpportunityId: qualified.opportunity.executableOpportunityId,
+      outcome: qualified.outcome,
+      state: qualified.opportunity.state,
+      grantsExecutionAuthority: false,
+    });
+    return ok(qualified);
+  }
+
+  getExecutableOpportunity(
+    actor: unknown,
+    subjectId: string,
+    customerId: string,
+    executableOpportunityId: string,
+  ): Result<ExecutableOpportunity, GrowthFailure> {
+    const access = authorizeViewGrowthPlan(actor, subjectId);
+    if (!access.ok) {
+      return access.error.code === 'SUBJECT_MISMATCH'
+        ? err({ code: 'CROSS_USER_DENIED', message: access.error.message })
+        : access;
+    }
+    const found = this.executableOpportunityService().getForCustomer(
+      asCustomerId(customerId),
+      executableOpportunityId,
+    );
+    if (!found || found.subjectId !== subjectId) {
+      return err({ code: 'EXECUTABLE_OPPORTUNITY_NOT_FOUND', message: 'executable opportunity not found' });
+    }
+    return ok(found);
+  }
+
+  proposeFromQualifiedExecutableOpportunity(
+    actor: unknown,
+    subjectId: string,
+    customerId: string,
+    executableOpportunityId: string,
+    opportunityId: string,
+  ): Result<OpportunityProposalReceipt, GrowthFailure> {
+    const qualified = this.getExecutableOpportunity(actor, subjectId, customerId, executableOpportunityId);
+    if (!qualified.ok) {
+      return qualified;
+    }
+    if (qualified.value.state !== 'QUALIFIED_FOR_PROPOSAL') {
+      return err({
+        code: 'EXECUTABLE_OPPORTUNITY_NOT_QUALIFIED',
+        message: `executable opportunity is ${qualified.value.state}, not QUALIFIED_FOR_PROPOSAL`,
+      });
+    }
+    return this.startOpportunityProposal(actor, subjectId, opportunityId);
+  }
+
+  executableOpportunityService(): ExecutableOpportunityQualificationService {
+    if (!this.executableOpportunity) {
+      this.executableOpportunity = new ExecutableOpportunityQualificationService({
+        clock: this.clock,
+        ...(this.evidence ? { evidence: this.evidence } : {}),
+        evidenceRegistry: createEvidenceRegistry(),
+        routeRegistry: createExecutionRouteRegistry(),
+        marketTerms: createMarketTermsPort(),
+      });
+    }
+    return this.executableOpportunity;
   }
 
   getOpportunityPreferences(actor: unknown, subjectId: string): Result<OpportunityPreferences, GrowthFailure> {
