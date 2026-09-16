@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-16T05:27:27.549037+00:00",
+  "generatedAt": "2026-09-16T07:39:58.265921+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -539,13 +539,13 @@
     },
     "violationCounts": {
       "packageDeepImport": 4749,
-      "serviceDeepImport": 650,
+      "serviceDeepImport": 653,
       "undeclaredPackageExport": 0,
       "relativeCrossPackage": 4749,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5399
+      "total": 5402
     }
   },
   "violations": [
@@ -46352,7 +46352,16 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 60,
+      "line": 43,
+      "rule": "service-deep-import",
+      "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'platform' internals via '../../../../packages/platform/src/work-order/service.ts'",
+      "sourcePackage": "api",
+      "targetPackage": "platform",
+      "spec": "../../../../packages/platform/src/work-order/service.ts"
+    },
+    {
+      "file": "services/api/src/consumer/fixtures.ts",
+      "line": 62,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'sunrey-agent' internals via '../../../../packages/sunrey-agent/src/runtime.ts'",
       "sourcePackage": "api",
@@ -46361,7 +46370,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 74,
+      "line": 76,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'platform' internals via '../../../../packages/platform/src/growth/product/service.ts'",
       "sourcePackage": "api",
@@ -46370,7 +46379,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 76,
+      "line": 78,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'custody' internals via '../../../../packages/custody/src/product/sandbox.ts'",
       "sourcePackage": "api",
@@ -46379,7 +46388,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 77,
+      "line": 79,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'custody' internals via '../../../../packages/custody/src/product/service.ts'",
       "sourcePackage": "api",
@@ -46388,7 +46397,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 80,
+      "line": 82,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'sunrey-exchange' internals via '../../../../packages/sunrey-exchange/src/native-clearing/engine.ts'",
       "sourcePackage": "api",
@@ -46397,7 +46406,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 82,
+      "line": 84,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'information-market' internals via '../../../../packages/information-market/src/rights-marketplace/index.ts'",
       "sourcePackage": "api",
@@ -46406,7 +46415,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 83,
+      "line": 85,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'information-market' internals via '../../../../packages/information-market/src/rights-marketplace/index.ts'",
       "sourcePackage": "api",
@@ -46415,7 +46424,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 86,
+      "line": 88,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'external-data' internals via '../../../../packages/external-data/src/index.ts'",
       "sourcePackage": "api",
@@ -46424,7 +46433,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 96,
+      "line": 98,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'platform' internals via '../../../../packages/platform/src/subscription-intelligence/index.ts'",
       "sourcePackage": "api",
@@ -46433,7 +46442,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 97,
+      "line": 99,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'personal-economic-graph' internals via '../../../../packages/personal-economic-graph/src/ids.ts'",
       "sourcePackage": "api",
@@ -46442,7 +46451,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 98,
+      "line": 100,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'personal-economic-graph' internals via '../../../../packages/personal-economic-graph/src/store.ts'",
       "sourcePackage": "api",
@@ -46451,7 +46460,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 99,
+      "line": 101,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/service.ts'",
       "sourcePackage": "api",
@@ -46460,7 +46469,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 104,
+      "line": 106,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'information-market' internals via '../../../../packages/information-market/src/network/access-integration/index.ts'",
       "sourcePackage": "api",
@@ -46469,7 +46478,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 105,
+      "line": 107,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/hin-access.ts'",
       "sourcePackage": "api",
@@ -46478,7 +46487,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 107,
+      "line": 109,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'consent' internals via '../../../../packages/consent/src/service.ts'",
       "sourcePackage": "api",
@@ -46487,7 +46496,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 108,
+      "line": 110,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'consent' internals via '../../../../packages/consent/src/product/engine.ts'",
       "sourcePackage": "api",
@@ -46496,7 +46505,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 109,
+      "line": 111,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'personal-data-vault' internals via '../../../../packages/personal-data-vault/src/service.ts'",
       "sourcePackage": "api",
@@ -46505,7 +46514,7 @@
     },
     {
       "file": "services/api/src/consumer/fixtures.ts",
-      "line": 113,
+      "line": 115,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/fixtures.ts' deep-imports 'personal-data-vault' internals via '../../../../packages/personal-data-vault/src/product/index.ts'",
       "sourcePackage": "api",
@@ -46892,7 +46901,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 56,
+      "line": 57,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'platform' internals via '../../../../packages/platform/src/growth/product/index.ts'",
       "sourcePackage": "api",
@@ -46901,7 +46910,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 58,
+      "line": 59,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'sunrey-agent' internals via '../../../../packages/sunrey-agent/src/conversation/taxonomy.ts'",
       "sourcePackage": "api",
@@ -46910,7 +46919,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 59,
+      "line": 60,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'custody' internals via '../../../../packages/custody/src/product/index.ts'",
       "sourcePackage": "api",
@@ -46919,7 +46928,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 65,
+      "line": 66,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'custody' internals via '../../../../packages/custody/src/product/taxonomy.ts'",
       "sourcePackage": "api",
@@ -46928,7 +46937,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 70,
+      "line": 71,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'information-market' internals via '../../../../packages/information-market/src/rights-marketplace/index.ts'",
       "sourcePackage": "api",
@@ -46937,7 +46946,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 80,
+      "line": 81,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'human-economic-contribution' internals via '../../../../packages/human-economic-contribution/src/hin-value/index.ts'",
       "sourcePackage": "api",
@@ -46946,7 +46955,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 93,
+      "line": 94,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'consent' internals via '../../../../packages/consent/src/product/engine.ts'",
       "sourcePackage": "api",
@@ -46955,7 +46964,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 94,
+      "line": 95,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'personal-data-vault' internals via '../../../../packages/personal-data-vault/src/product/index.ts'",
       "sourcePackage": "api",
@@ -46964,7 +46973,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 97,
+      "line": 98,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/consumer-bff/index.ts'",
       "sourcePackage": "api",
@@ -46973,7 +46982,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 100,
+      "line": 101,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/service.ts'",
       "sourcePackage": "api",
@@ -46982,7 +46991,7 @@
     },
     {
       "file": "services/api/src/consumer/handler.ts",
-      "line": 160,
+      "line": 162,
       "rule": "service-deep-import",
       "message": "'services/api/src/consumer/handler.ts' deep-imports 'human-access-economy' internals via '../../../../packages/human-access-economy/src/hin-access.ts'",
       "sourcePackage": "api",
@@ -48086,6 +48095,24 @@
       "sourcePackage": "api",
       "targetPackage": "custody",
       "spec": "../../../../packages/custody/src/product/service.ts"
+    },
+    {
+      "file": "services/api/src/consumer/work-order.ts",
+      "line": 1,
+      "rule": "service-deep-import",
+      "message": "'services/api/src/consumer/work-order.ts' deep-imports 'platform' internals via '../../../../packages/platform/src/work-order/service.ts'",
+      "sourcePackage": "api",
+      "targetPackage": "platform",
+      "spec": "../../../../packages/platform/src/work-order/service.ts"
+    },
+    {
+      "file": "services/api/src/consumer/work-order.ts",
+      "line": 2,
+      "rule": "service-deep-import",
+      "message": "'services/api/src/consumer/work-order.ts' deep-imports 'platform' internals via '../../../../packages/platform/src/work-order/types.ts'",
+      "sourcePackage": "api",
+      "targetPackage": "platform",
+      "spec": "../../../../packages/platform/src/work-order/types.ts"
     },
     {
       "file": "services/api/src/consumer/world-economy-adapter.ts",

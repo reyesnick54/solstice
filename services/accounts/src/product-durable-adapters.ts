@@ -19,6 +19,7 @@ import {
   loadConsumerAlphaState,
   loadGrowthState,
   loadGrowExecutionState,
+  loadWorkOrderState,
   loadPersonalDataVaultState,
   persistAgentRuntimeState,
   persistConsentState,
@@ -30,6 +31,7 @@ import {
   type ConsumerAlphaIdempotencyRecord,
   type ConsumerAlphaSnapshot,
   persistGrowExecutionState,
+  persistWorkOrderState,
   persistPersonalDataVaultState,
   persistenceEnvFromProcess as resolvePersistenceEnv,
   type PersistedConsumerInternalPayment,
@@ -94,6 +96,14 @@ export async function loadProductGrowExecutionState(pool: Pool): Promise<unknown
 
 export async function persistProductGrowExecutionState(pool: Pool, state: unknown): Promise<void> {
   await persistGrowExecutionState(pool, state as never);
+}
+
+export async function loadProductWorkOrderState(pool: Pool): Promise<unknown> {
+  return loadWorkOrderState(pool);
+}
+
+export async function persistProductWorkOrderState(pool: Pool, state: unknown): Promise<void> {
+  await persistWorkOrderState(pool, state as never);
 }
 
 export async function loadProductVaultState(pool: Pool): Promise<unknown> {

@@ -1,7 +1,13 @@
+import type { WorkOrderRevision } from './ids.ts';
 import type { EconomicWorkOrder } from './types.ts';
 
 export type WorkOrderStoreSnapshot = {
   readonly workOrders: readonly EconomicWorkOrder[];
+};
+
+export type WorkOrderStorePutFailure = {
+  readonly code: 'VERSION_CONFLICT';
+  readonly message: string;
 };
 
 export class InMemoryWorkOrderStore {
@@ -12,7 +18,17 @@ export class InMemoryWorkOrderStore {
     return `${customerId}:${key}`;
   }
 
-  put(workOrder: EconomicWorkOrder): EconomicWorkOrder {
+  put(
+    workOrder: EconomicWorkOrder,
+    expectedRevision?: WorkOrderRevision,
+  ): EconomicWorkOrder | WorkOrderStorePutFailure {
+    const existing = this.workOrders.get(workOrder.workOrderId);
+    if (existing && expectedRevision !== undefined && existing.revision !== expectedRevision) {
+      return {
+        code: 'VERSION_CONFLICT',
+        message: `expected revision ${String(expectedRevision)} but current is ${String(existing.revision)}`,
+      };
+    }
     this.workOrders.set(workOrder.workOrderId, workOrder);
     this.idempotencyIndex.set(
       this.idempotencyKey(workOrder.customerId, workOrder.idempotencyKey),

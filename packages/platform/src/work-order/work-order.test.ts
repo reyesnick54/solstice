@@ -15,7 +15,7 @@ import { GrowthOrchestrator } from '../service.ts';
 import { InMemoryGrowthStore } from '../store.ts';
 import { EconomicWorkOrderService } from './service.ts';
 import { InMemoryWorkOrderStore } from './store.ts';
-import type { CreateEconomicWorkOrderInput } from './types.ts';
+import type { CreateEconomicWorkOrderInput, EconomicWorkOrder } from './types.ts';
 
 const NOW = asUtcInstant('2026-09-15T12:00:00.000Z');
 const EXPIRES = asUtcInstant('2026-10-15T12:00:00.000Z');
@@ -340,6 +340,97 @@ describe('Economic Work Order H04', () => {
     service.activateEconomicWorkOrder(actorA, created.value.workOrderId, 'cust_a');
     const afterActivate = events.list().map((event) => event.eventType);
     assert.ok(afterActivate.includes('WorkOrderActivated'));
+  });
+
+  it('rejects optimistic concurrency conflicts on transition', () => {
+    const { service, actorA } = setupActors();
+    const created = service.createEconomicWorkOrder(actorA, baseInput('subj_a', 'cust_a', 'idem_version'));
+    assert.equal(created.ok, true);
+    if (!created.ok) {
+      return;
+    }
+    const ready = service.transitionEconomicWorkOrder(
+      actorA,
+      created.value.workOrderId,
+      'cust_a',
+      'READY',
+      'prepare',
+    );
+    assert.equal(ready.ok, true);
+    const conflict = service.store.put(created.value, created.value.revision);
+    assert.equal(typeof conflict === 'object' && 'code' in conflict, true);
+    if (typeof conflict !== 'object' || !('code' in conflict)) {
+      return;
+    }
+    assert.equal(conflict.code, 'VERSION_CONFLICT');
+  });
+
+  it('does not post ledger journals on work order creation', () => {
+    const { service, actorA } = setupActors();
+    const created = service.createEconomicWorkOrder(actorA, baseInput('subj_a', 'cust_a', 'idem_no_ledger'));
+    assert.equal(created.ok, true);
+    if (!created.ok) {
+      return;
+    }
+    assert.equal(created.value.postsLedger, false);
+    assert.equal(created.value.createsFinancialAuthority, false);
+    assert.equal(typeof (service as Record<string, unknown>).postJournal, 'undefined');
+  });
+
+  it('cannot directly execute financial actions', () => {
+    const { service } = setupActors();
+    const serviceProto = Object.getPrototypeOf(service) as Record<string, unknown>;
+    assert.equal(typeof serviceProto.postJournal, 'undefined');
+    assert.equal(typeof serviceProto.executeProposal, 'undefined');
+    assert.equal(typeof serviceProto.issueExecutionAuthority, 'undefined');
+    const workOrder: EconomicWorkOrder = {
+      workOrderId: 'ewo_static_check' as EconomicWorkOrder['workOrderId'],
+      subjectId: 'subj_a',
+      customerId: 'cust_a',
+      planId: null,
+      planVersion: null,
+      objectiveReference: null,
+      revision: 1 as EconomicWorkOrder['revision'],
+      environment: 'simulation',
+      state: 'CREATED',
+      createdAt: NOW,
+      updatedAt: NOW,
+      idempotencyKey: 'static',
+      objective: baseInput('subj_a', 'cust_a', 'static').objective,
+      authorityReferences: baseInput('subj_a', 'cust_a', 'static').authorityReferences,
+      capitalBoundary: baseInput('subj_a', 'cust_a', 'static').capitalBoundary,
+      researchBoundary: baseInput('subj_a', 'cust_a', 'static').researchBoundary,
+      actionBoundary: baseInput('subj_a', 'cust_a', 'static').actionBoundary,
+      completion: Object.freeze({
+        completionCriteria: Object.freeze(['done']),
+        expirationAt: null,
+        disposition: null,
+        blockReason: null,
+      }),
+      transitions: Object.freeze([]),
+      createsFinancialAuthority: false,
+      postsLedger: false,
+    };
+    assert.equal(typeof (workOrder as Record<string, unknown>).postJournal, 'undefined');
+    assert.equal(workOrder.actionBoundary.unrestrictedFinancialMutation, false);
+  });
+
+  it('list endpoints do not leak another customer work orders', () => {
+    const { service, actorA, actorB } = setupActors();
+    const created = service.createEconomicWorkOrder(actorA, baseInput('subj_a', 'cust_a', 'idem_list_iso'));
+    assert.equal(created.ok, true);
+    const listedB = service.listEconomicWorkOrders(actorB, 'cust_b', 'subj_b');
+    assert.equal(listedB.ok, true);
+    if (!listedB.ok || !created.ok) {
+      return;
+    }
+    assert.equal(listedB.value.some((row) => row.workOrderId === created.value.workOrderId), false);
+    const listedAllB = service.listEconomicWorkOrders(actorB, 'cust_b');
+    assert.equal(listedAllB.ok, true);
+    if (!listedAllB.ok) {
+      return;
+    }
+    assert.equal(listedAllB.value.some((row) => row.customerId === 'cust_a'), false);
   });
 
   it('does not widen action envelope through creation', () => {

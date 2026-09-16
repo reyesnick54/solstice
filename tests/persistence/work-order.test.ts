@@ -9,7 +9,9 @@ import { DomainEventLog } from '../../packages/events/src/events.ts';
 import { SimulatedIdentityAdapter } from '../../packages/identity/src/simulation.ts';
 import {
   loadWorkOrderState,
+  persistWorkOrder,
   persistWorkOrderState,
+  WorkOrderPersistenceError,
 } from '../../packages/persistence/src/growth/pg-work-order-store.ts';
 import {
   closePersistencePools,
@@ -119,6 +121,50 @@ describe('Economic Work Order persistence', () => {
     assert.ok(reloaded);
     assert.equal(reloaded?.customerId, 'cust_pg_wo');
     assert.equal(reloaded?.state, 'CREATED');
+    await closePersistencePools(pools);
+  });
+
+  it('rejects stale revision on single-work-order persist', async (t) => {
+    if (!persistenceAvailable()) {
+      t.skip('SUNREY_PERSISTENCE_TEST is not set');
+      return;
+    }
+    const env = await preparePersistence();
+    const pools = createPersistencePools(env);
+    const clock = new FrozenClock(NOW);
+    const keys = createSimulationKeyProvider({ clock: { now: () => clock.now() } });
+    const events = new DomainEventLog();
+    const identity = new SimulatedIdentityAdapter({ clock, keys, events });
+    assert.equal(
+      identity.provisionSimulatedActor({
+        actorId: 'actor_pg_wo_rev',
+        jurisdiction: asJurisdiction('US'),
+        identityId: 'subj_pg_wo_rev',
+        customerId: asCustomerId('cust_pg_wo_rev'),
+        capabilities: ['VIEW_GROWTH_PLAN', 'OPERATE_GROWTH_ORCHESTRATOR'],
+      }).ok,
+      true,
+    );
+    const actor = identity.service.resolveActorContext('actor_pg_wo_rev');
+    if (!actor.ok) {
+      throw new Error('actor');
+    }
+    const service = new EconomicWorkOrderService({ clock, events });
+    const created = service.createEconomicWorkOrder(actor.value, {
+      ...createInput(),
+      subjectId: 'subj_pg_wo_rev',
+      customerId: 'cust_pg_wo_rev',
+      idempotencyKey: 'idem_pg_wo_rev',
+    });
+    assert.equal(created.ok, true);
+    if (!created.ok) {
+      return;
+    }
+    await persistWorkOrder(pools.customer, created.value);
+    await assert.rejects(
+      () => persistWorkOrder(pools.customer, created.value, 99 as typeof created.value.revision),
+      (error: unknown) => error instanceof WorkOrderPersistenceError && error.code === 'VERSION_CONFLICT',
+    );
     await closePersistencePools(pools);
   });
 });
