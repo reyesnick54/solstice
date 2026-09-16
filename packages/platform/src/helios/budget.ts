@@ -7,7 +7,7 @@ import type {
   ResearchBudgetReservation,
   ResearchBudgetSnapshot,
   ResearchSpendRecord,
-} from './types.ts';
+} from './execution-types.ts';
 
 export function initialBudgetSnapshot(input: {
   readonly ceilingAmount: string;

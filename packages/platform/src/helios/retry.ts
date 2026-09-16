@@ -1,5 +1,5 @@
 import type { TaskFailureCategory } from './taxonomy.ts';
-import type { TaskRetryMetadata } from './types.ts';
+import type { TaskRetryMetadata } from './execution-types.ts';
 
 export const DEFAULT_TERMINAL_THRESHOLD = 5;
 export const DEFAULT_BASE_BACKOFF_MS = 1_000;

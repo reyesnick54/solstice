@@ -1,199 +1,144 @@
+import type { CustomerId } from '../../../domain/src/customer.ts';
+import type { Jurisdiction } from '../../../domain/src/jurisdiction.ts';
 import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { IdentityCapability } from '../../../identity/src/capability.ts';
 import type { EconomicMandateId, MandateVersion } from '../ids.ts';
+import type { MandateState } from '../mandate/taxonomy.ts';
+import type { SerializedMoney } from '../mandate/types.ts';
 import type {
-  EconomicWorkOrderId,
-  HeliosProgramId,
-  HeliosTaskId,
-  ResearchBudgetReservationId,
-  ResearchSpendRecordId,
-} from './ids.ts';
-import type {
-  AuthorityRevalidationState,
-  BudgetUnitKind,
-  HeliosCapability,
-  HeliosTaskType,
-  ModelClass,
-  SpendCostStatus,
-  TaskFailureCategory,
-  TaskState,
+  ActivityClass,
+  ApprovalClass,
+  BindingCheckpoint,
+  BindingDecisionOutcome,
+  BindingReasonCode,
+  CapabilityResolutionState,
+  ObjectiveClass,
+  ProductClass,
   WorkOrderState,
 } from './taxonomy.ts';
+import type {
+  AuthorityBindingDecisionId,
+  EconomicWorkOrderId,
+  WorkOrderApprovalBindingId,
+} from './ids.ts';
 
-export type SerializedMoney = {
-  readonly minorUnits: string;
-  readonly currency: string;
+export type WorkOrderScope = {
+  readonly objectiveClasses: readonly ObjectiveClass[];
+  readonly activityClasses: readonly ActivityClass[];
+  readonly productClasses: readonly ProductClass[];
+  readonly capitalCeiling: SerializedMoney | null;
+  readonly accountIds: readonly string[];
+  readonly jurisdiction: Jurisdiction;
+  readonly horizonDays: number | null;
+  readonly toolIds: readonly string[];
+  readonly modelIds: readonly string[];
 };
 
-export type BudgetCeiling = {
-  readonly unitKind: BudgetUnitKind;
-  readonly ceilingAmount: string;
-  readonly currency?: string;
-};
-
-export type ResearchBudgetSnapshot = {
-  readonly authorizedCeiling: string;
-  readonly unitKind: BudgetUnitKind;
-  readonly currency: string | null;
-  readonly reservedAmount: string;
-  readonly recordedSpend: string;
-  readonly estimatedAccrued: string;
-  readonly releasedReservation: string;
-  readonly remainingBudget: string;
-};
-
-export type WorkOrderAuthorityBinding = {
+export type MandateBindingRef = {
   readonly mandateId: EconomicMandateId;
   readonly mandateVersion: MandateVersion;
-  readonly approvalRef: string | null;
-  readonly capability: HeliosCapability;
-  readonly revalidationState: AuthorityRevalidationState;
-  readonly customerId: string;
-  readonly subjectId: string;
-  readonly agentMayExpandAuthority: false;
-  readonly agentMayIncreaseBudget: false;
+  readonly mandateOwnerCustomerId: CustomerId;
+  readonly mandateSubjectId: string;
+  readonly mandateState: MandateState;
+  readonly effectiveAt: UtcInstant;
+  readonly expiresAt: UtcInstant | null;
+  readonly snapshotHash: string;
+};
+
+export type CapabilityBindingContext = {
+  readonly customerId: CustomerId;
+  readonly jurisdiction: Jurisdiction;
+  readonly legalEntityId: string | null;
+  readonly environment: 'simulation';
+  readonly grantedCapabilities: readonly IdentityCapability[];
+  readonly capabilityStates: Readonly<Record<string, CapabilityResolutionState>>;
+  readonly contextVersion: string;
+};
+
+export type WorkOrderApprovalRef = {
+  readonly approvalBindingId: WorkOrderApprovalBindingId;
+  readonly approvalId: string;
+  readonly customerId: CustomerId;
+  readonly actorId: string;
+  readonly actorKind: 'CUSTOMER' | 'HUMAN_OPERATOR';
+  readonly approvalClass: ApprovalClass;
+  readonly scopeHash: string;
+  readonly effectiveAt: UtcInstant;
+  readonly expiresAt: UtcInstant | null;
 };
 
 export type EconomicWorkOrder = {
   readonly workOrderId: EconomicWorkOrderId;
-  readonly programId: HeliosProgramId;
-  readonly customerId: string;
+  readonly customerId: CustomerId;
   readonly subjectId: string;
+  readonly growObjectiveId: string;
   readonly state: WorkOrderState;
-  readonly objective: string;
-  readonly authority: WorkOrderAuthorityBinding;
-  readonly researchBudget: ResearchBudgetSnapshot;
-  readonly maxConcurrentTasks: number;
-  readonly priority: number;
+  readonly requestedScope: WorkOrderScope;
+  readonly effectiveScope: WorkOrderScope | null;
+  readonly mandateRef: MandateBindingRef;
+  readonly approvalRef: WorkOrderApprovalRef | null;
+  readonly requiredApprovalClass: ApprovalClass;
   readonly createdAt: UtcInstant;
   readonly updatedAt: UtcInstant;
-  readonly version: number;
+  readonly activatedAt: UtcInstant | null;
+  readonly contentHash: string;
+  readonly grantsExecutionAuthority: false;
+  readonly authorizesFinancialExecution: false;
 };
 
-export type TaskLease = {
-  readonly taskId: HeliosTaskId;
-  readonly workerId: string;
-  readonly acquiredAt: UtcInstant;
-  readonly expiresAt: UtcInstant;
-  readonly attemptNumber: number;
-  readonly leaseGeneration: number;
+export type ScopeNarrowing = {
+  readonly dimension: string;
+  readonly requested: string;
+  readonly allowed: string;
+  readonly reasonCode: BindingReasonCode;
 };
 
-export type TaskRetryMetadata = {
-  readonly attemptCount: number;
-  readonly lastFailureAt: UtcInstant | null;
-  readonly nextEligibleAt: UtcInstant | null;
-  readonly failureCategory: TaskFailureCategory | null;
-  readonly backoffMs: number;
-  readonly terminalThreshold: number;
-};
-
-export type HeliosWorkTask = {
-  readonly taskId: HeliosTaskId;
+export type AuthorityBindingDecision = {
+  readonly decisionId: AuthorityBindingDecisionId;
   readonly workOrderId: EconomicWorkOrderId;
-  readonly customerId: string;
-  readonly operationIdentity: string;
-  readonly taskType: HeliosTaskType;
-  readonly version: number;
-  readonly state: TaskState;
-  readonly requiredCapability: HeliosCapability;
-  readonly permittedTools: readonly string[];
-  readonly permittedModelClass: ModelClass;
-  readonly requestedObjective: string;
-  readonly dependencyTaskIds: readonly HeliosTaskId[];
-  readonly deadline: UtcInstant | null;
-  readonly priority: number;
-  readonly authority: WorkOrderAuthorityBinding;
-  readonly budgetReservationId: ResearchBudgetReservationId | null;
-  readonly reservedBudgetAmount: string | null;
-  readonly accumulatedSpend: string;
-  readonly budgetUnitKind: BudgetUnitKind;
-  readonly resultRef: string | null;
-  readonly evidenceRefs: readonly string[];
-  readonly failureReason: string | null;
-  readonly completedAt: UtcInstant | null;
-  readonly lease: TaskLease | null;
-  readonly retry: TaskRetryMetadata;
-  readonly createdAt: UtcInstant;
-  readonly updatedAt: UtcInstant;
+  readonly customerId: CustomerId;
+  readonly checkpoint: BindingCheckpoint;
+  readonly outcome: BindingDecisionOutcome;
+  readonly requestedScope: WorkOrderScope;
+  readonly effectiveScope: WorkOrderScope | null;
+  readonly narrowedElements: readonly ScopeNarrowing[];
+  readonly reasonCodes: readonly BindingReasonCode[];
+  readonly mandateRef: MandateBindingRef;
+  readonly capabilityContextVersion: string | null;
+  readonly approvalRef: WorkOrderApprovalRef | null;
+  readonly decidedAt: UtcInstant;
+  readonly actorId: string;
+  readonly environment: 'simulation';
 };
 
-export type ResearchBudgetReservation = {
-  readonly reservationId: ResearchBudgetReservationId;
-  readonly workOrderId: EconomicWorkOrderId;
-  readonly taskId: HeliosTaskId;
-  readonly customerId: string;
-  readonly unitKind: BudgetUnitKind;
-  readonly reservedAmount: string;
-  readonly reconciledAmount: string | null;
-  readonly releasedAmount: string | null;
-  readonly state: 'ACTIVE' | 'RECONCILED' | 'RELEASED';
-  readonly createdAt: UtcInstant;
-  readonly updatedAt: UtcInstant;
-};
-
-export type ResearchSpendRecord = {
-  readonly spendId: ResearchSpendRecordId;
-  readonly workOrderId: EconomicWorkOrderId;
-  readonly taskId: HeliosTaskId;
-  readonly customerId: string;
-  readonly programId: HeliosProgramId;
-  readonly providerId: string | null;
-  readonly modelId: string | null;
-  readonly toolId: string | null;
-  readonly budgetCategory: BudgetUnitKind;
-  readonly reservedAmount: string;
-  readonly actualAmount: string | null;
-  readonly estimatedAmount: string | null;
-  readonly costStatus: SpendCostStatus;
-  readonly currency: string | null;
-  readonly attemptNumber: number;
-  readonly retryCausedAdditionalCost: boolean;
-  readonly succeeded: boolean;
-  readonly recordedAt: UtcInstant;
-};
-
-export type HeliosFailureCode =
-  | 'WORK_ORDER_NOT_FOUND'
-  | 'TASK_NOT_FOUND'
-  | 'CUSTOMER_MISMATCH'
-  | 'WORK_ORDER_NOT_ACTIVE'
-  | 'AUTHORITY_REVOKED'
-  | 'CAPABILITY_DENIED'
-  | 'BUDGET_EXHAUSTED'
-  | 'BUDGET_SELF_INCREASE_FORBIDDEN'
-  | 'LEASE_LOST'
-  | 'LEASE_NOT_EXPIRED'
-  | 'DEPENDENCY_NOT_MET'
-  | 'TASK_ALREADY_COMPLETED'
-  | 'CONCURRENCY_LIMIT'
-  | 'AUTHORITY_EXPANSION_FORBIDDEN'
-  | 'INVALID_STATE_TRANSITION'
-  | 'RESERVATION_FAILED';
-
-export type HeliosFailure = {
-  readonly code: HeliosFailureCode;
+export type BindingFailure = {
+  readonly code: BindingReasonCode;
   readonly message: string;
 };
 
-export type HeliosAuditEvent = {
-  readonly kind: import('./taxonomy.ts').HeliosAuditEventKind;
-  readonly occurredAt: UtcInstant;
-  readonly workOrderId?: EconomicWorkOrderId;
-  readonly taskId?: HeliosTaskId;
-  readonly customerId: string;
-  readonly detail: string;
+export type MandatePermittedScope = {
+  readonly objectiveClasses: readonly ObjectiveClass[];
+  readonly activityClasses: readonly ActivityClass[];
+  readonly productClasses: readonly ProductClass[];
+  readonly capitalCeiling: SerializedMoney | null;
+  readonly prohibitedProductClasses: readonly ProductClass[];
+  readonly prohibitedActivityClasses: readonly ActivityClass[];
+  readonly jurisdictions: readonly Jurisdiction[];
 };
 
-export type HeliosMetricsSnapshot = {
-  readonly queueDepth: number;
-  readonly activeLeases: number;
-  readonly expiredLeases: number;
-  readonly retryCount: number;
-  readonly taskSuccessCount: number;
-  readonly taskFailureCount: number;
-  readonly budgetReservations: number;
-  readonly researchSpendTotal: string;
-  readonly budgetExhaustionCount: number;
-  readonly cancelledWorkCount: number;
-  readonly blockedAuthorityCount: number;
+export type PlatformCapabilityScope = {
+  readonly activityClasses: readonly ActivityClass[];
+  readonly productClasses: readonly ProductClass[];
+  readonly objectiveClasses: readonly ObjectiveClass[];
+};
+
+export type ToolModelCapabilityGrant = {
+  readonly grantId: string;
+  readonly workOrderId: EconomicWorkOrderId;
+  readonly customerId: CustomerId;
+  readonly toolIds: readonly string[];
+  readonly modelIds: readonly string[];
+  readonly revocable: true;
+  readonly issuedAt: UtcInstant;
+  readonly revokedAt: UtcInstant | null;
 };

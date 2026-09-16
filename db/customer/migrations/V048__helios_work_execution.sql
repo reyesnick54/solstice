@@ -1,8 +1,9 @@
--- V047 HELIOS Phase 2 H06 — durable work execution and research budgets.
+-- V048 HELIOS Phase 2 H06 — durable work execution and research budgets.
 -- Growth Orchestrator owner. Research budget only; not customer capital ledger.
 -- Not Execution Authority. Production remains inactive.
+-- H05 authority binding uses growth.economic_work_order (V047); execution uses a separate table.
 
-CREATE TABLE growth.economic_work_order (
+CREATE TABLE growth.helios_execution_work_order (
   work_order_id TEXT PRIMARY KEY,
   program_id TEXT NOT NULL,
   customer_id TEXT NOT NULL,
@@ -13,19 +14,19 @@ CREATE TABLE growth.economic_work_order (
   version INTEGER NOT NULL DEFAULT 1,
   created_at TIMESTAMPTZ NOT NULL,
   updated_at TIMESTAMPTZ NOT NULL,
-  CONSTRAINT helios_work_order_id_prefix CHECK (work_order_id LIKE 'ewo_%'),
-  CONSTRAINT helios_program_id_prefix CHECK (program_id LIKE 'hpg_%'),
-  CONSTRAINT helios_work_order_state CHECK (state IN (
+  CONSTRAINT helios_execution_work_order_id_prefix CHECK (work_order_id LIKE 'ewo_%'),
+  CONSTRAINT helios_execution_program_id_prefix CHECK (program_id LIKE 'hpg_%'),
+  CONSTRAINT helios_execution_work_order_state CHECK (state IN (
     'DRAFT', 'ACTIVE', 'PAUSED', 'BLOCKED_BUDGET', 'BLOCKED_AUTHORITY', 'CANCELLED', 'COMPLETED'
   )),
-  CONSTRAINT helios_work_order_no_ea CHECK (body_canonical NOT LIKE '%ExecutionAuthority%')
+  CONSTRAINT helios_execution_work_order_no_ea CHECK (body_canonical NOT LIKE '%ExecutionAuthority%')
 );
 
-CREATE INDEX helios_work_order_customer_idx ON growth.economic_work_order (customer_id, state);
+CREATE INDEX helios_execution_work_order_customer_idx ON growth.helios_execution_work_order (customer_id, state);
 
 CREATE TABLE growth.helios_work_task (
   task_id TEXT PRIMARY KEY,
-  work_order_id TEXT NOT NULL REFERENCES growth.economic_work_order (work_order_id),
+  work_order_id TEXT NOT NULL REFERENCES growth.helios_execution_work_order (work_order_id),
   customer_id TEXT NOT NULL,
   operation_identity TEXT NOT NULL,
   state TEXT NOT NULL,
@@ -49,7 +50,7 @@ CREATE INDEX helios_task_claim_idx ON growth.helios_work_task (state, locked_at)
 
 CREATE TABLE growth.research_budget_reservation (
   reservation_id TEXT PRIMARY KEY,
-  work_order_id TEXT NOT NULL REFERENCES growth.economic_work_order (work_order_id),
+  work_order_id TEXT NOT NULL REFERENCES growth.helios_execution_work_order (work_order_id),
   task_id TEXT NOT NULL REFERENCES growth.helios_work_task (task_id),
   customer_id TEXT NOT NULL,
   unit_kind TEXT NOT NULL,
@@ -66,7 +67,7 @@ CREATE TABLE growth.research_budget_reservation (
 
 CREATE TABLE growth.research_spend_record (
   spend_id TEXT PRIMARY KEY,
-  work_order_id TEXT NOT NULL REFERENCES growth.economic_work_order (work_order_id),
+  work_order_id TEXT NOT NULL REFERENCES growth.helios_execution_work_order (work_order_id),
   task_id TEXT NOT NULL REFERENCES growth.helios_work_task (task_id),
   customer_id TEXT NOT NULL,
   program_id TEXT NOT NULL,
@@ -86,17 +87,17 @@ CREATE TABLE growth.research_spend_record (
 
 CREATE INDEX helios_spend_customer_idx ON growth.research_spend_record (customer_id, work_order_id);
 
-REVOKE ALL ON TABLE growth.economic_work_order FROM PUBLIC;
+REVOKE ALL ON TABLE growth.helios_execution_work_order FROM PUBLIC;
 REVOKE ALL ON TABLE growth.helios_work_task FROM PUBLIC;
 REVOKE ALL ON TABLE growth.research_budget_reservation FROM PUBLIC;
 REVOKE ALL ON TABLE growth.research_spend_record FROM PUBLIC;
 
-GRANT SELECT, INSERT, UPDATE ON TABLE growth.economic_work_order TO customer_app;
+GRANT SELECT, INSERT, UPDATE ON TABLE growth.helios_execution_work_order TO customer_app;
 GRANT SELECT, INSERT, UPDATE ON TABLE growth.helios_work_task TO customer_app;
 GRANT SELECT, INSERT, UPDATE ON TABLE growth.research_budget_reservation TO customer_app;
 GRANT SELECT, INSERT, UPDATE ON TABLE growth.research_spend_record TO customer_app;
 
-REVOKE DELETE, TRUNCATE ON TABLE growth.economic_work_order FROM customer_app;
+REVOKE DELETE, TRUNCATE ON TABLE growth.helios_execution_work_order FROM customer_app;
 REVOKE DELETE, TRUNCATE ON TABLE growth.helios_work_task FROM customer_app;
 REVOKE DELETE, TRUNCATE ON TABLE growth.research_budget_reservation FROM customer_app;
 REVOKE DELETE, TRUNCATE ON TABLE growth.research_spend_record FROM customer_app;

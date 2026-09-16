@@ -3,7 +3,7 @@ import type { CompiledEconomicMandate } from '../mandate/types.ts';
 import { isActiveMandate } from '../mandate/lifecycle.ts';
 import type { EconomicMandateId, MandateVersion } from '../ids.ts';
 import type { HeliosCapability } from './taxonomy.ts';
-import type { HeliosFailure, WorkOrderAuthorityBinding } from './types.ts';
+import type { HeliosFailure, WorkOrderAuthorityBinding } from './execution-types.ts';
 
 export type AuthorityBindingInput = {
   readonly mandate: CompiledEconomicMandate;

@@ -1,5 +1,5 @@
 import { HeliosWorkOrchestrator } from './orchestrator.ts';
-import type { HeliosFailure, HeliosWorkTask } from './types.ts';
+import type { HeliosFailure, HeliosWorkTask } from './execution-types.ts';
 
 export type TaskHandler = (task: HeliosWorkTask) => Promise<{
   readonly resultRef: string;

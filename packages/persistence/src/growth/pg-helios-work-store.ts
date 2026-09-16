@@ -1,6 +1,6 @@
 import type { Pool } from 'pg';
 
-import type { HeliosStoreSnapshot } from '../../../platform/src/helios/store.ts';
+import type { HeliosStoreSnapshot } from '../../../platform/src/helios/execution-store.ts';
 import { withClient } from '../postgres/pools.ts';
 
 export async function persistHeliosWorkState(pool: Pool, state: HeliosStoreSnapshot): Promise<void> {
@@ -9,7 +9,7 @@ export async function persistHeliosWorkState(pool: Pool, state: HeliosStoreSnaps
     try {
       for (const order of state.workOrders) {
         await client.query(
-          `INSERT INTO growth.economic_work_order
+          `INSERT INTO growth.helios_execution_work_order
              (work_order_id, program_id, customer_id, subject_id, state, objective,
               body_canonical, version, created_at, updated_at)
            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
@@ -128,7 +128,7 @@ export async function persistHeliosWorkState(pool: Pool, state: HeliosStoreSnaps
 
 export async function loadHeliosWorkState(pool: Pool): Promise<HeliosStoreSnapshot> {
   return withClient(pool, async (client) => {
-    const orders = await client.query(`SELECT body_canonical FROM growth.economic_work_order ORDER BY created_at`);
+    const orders = await client.query(`SELECT body_canonical FROM growth.helios_execution_work_order ORDER BY created_at`);
     const tasks = await client.query(`SELECT body_canonical FROM growth.helios_work_task ORDER BY created_at`);
     const reservations = await client.query(
       `SELECT body_canonical FROM growth.research_budget_reservation ORDER BY created_at`,

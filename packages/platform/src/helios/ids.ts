@@ -1,6 +1,8 @@
 import { type Brand, brandAs } from '../../../domain/src/brand.ts';
 
 export type EconomicWorkOrderId = Brand<string, 'EconomicWorkOrderId'>;
+export type WorkOrderApprovalBindingId = Brand<string, 'WorkOrderApprovalBindingId'>;
+export type AuthorityBindingDecisionId = Brand<string, 'AuthorityBindingDecisionId'>;
 export type HeliosTaskId = Brand<string, 'HeliosTaskId'>;
 export type ResearchBudgetReservationId = Brand<string, 'ResearchBudgetReservationId'>;
 export type ResearchSpendRecordId = Brand<string, 'ResearchSpendRecordId'>;
@@ -8,6 +10,8 @@ export type HeliosProgramId = Brand<string, 'HeliosProgramId'>;
 
 const PREFIX = {
   EconomicWorkOrderId: 'ewo_',
+  WorkOrderApprovalBindingId: 'woab_',
+  AuthorityBindingDecisionId: 'abd_',
   HeliosTaskId: 'htk_',
   ResearchBudgetReservationId: 'rbr_',
   ResearchSpendRecordId: 'rsp_',
@@ -23,6 +27,14 @@ function brandPrefixed<Name extends keyof typeof PREFIX>(value: string, name: Na
 
 export function asEconomicWorkOrderId(value: string): EconomicWorkOrderId {
   return brandPrefixed(value, 'EconomicWorkOrderId');
+}
+
+export function asWorkOrderApprovalBindingId(value: string): WorkOrderApprovalBindingId {
+  return brandPrefixed(value, 'WorkOrderApprovalBindingId');
+}
+
+export function asAuthorityBindingDecisionId(value: string): AuthorityBindingDecisionId {
+  return brandPrefixed(value, 'AuthorityBindingDecisionId');
 }
 
 export function asHeliosTaskId(value: string): HeliosTaskId {
@@ -41,8 +53,16 @@ export function asHeliosProgramId(value: string): HeliosProgramId {
   return brandPrefixed(value, 'HeliosProgramId');
 }
 
-export function workOrderIdFor(programId: string, sequence: number): EconomicWorkOrderId {
-  return asEconomicWorkOrderId(`ewo_${programId}_${String(sequence)}`);
+export function workOrderIdFor(customerId: string, key: string): EconomicWorkOrderId {
+  return asEconomicWorkOrderId(`ewo_${customerId}_${key}`);
+}
+
+export function approvalBindingIdFor(workOrderId: string, approvalId: string): WorkOrderApprovalBindingId {
+  return asWorkOrderApprovalBindingId(`woab_${workOrderId}_${approvalId}`);
+}
+
+export function bindingDecisionIdFor(workOrderId: string, sequence: number): AuthorityBindingDecisionId {
+  return asAuthorityBindingDecisionId(`abd_${workOrderId}_${String(sequence)}`);
 }
 
 export function taskIdFor(workOrderId: string, operationKey: string): HeliosTaskId {

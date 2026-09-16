@@ -25,15 +25,15 @@ import {
 } from './ids.ts';
 import { collectHeliosMetrics } from './metrics.ts';
 import { classifyTaskError, initialRetryMetadata, isRetryableCategory } from './retry.ts';
-import { InMemoryHeliosWorkStore } from './store.ts';
+import { InMemoryHeliosWorkStore } from './execution-store.ts';
 import type { BudgetUnitKind, HeliosCapability, HeliosTaskType, ModelClass } from './taxonomy.ts';
 import type {
-  EconomicWorkOrder,
+  HeliosExecutionWorkOrder,
   HeliosFailure,
   HeliosMetricsSnapshot,
   HeliosWorkTask,
   WorkOrderAuthorityBinding,
-} from './types.ts';
+} from './execution-types.ts';
 
 export type CreateWorkOrderInput = {
   readonly programId: string;
@@ -92,7 +92,7 @@ export class HeliosWorkOrchestrator {
     return this.clock.now();
   }
 
-  createWorkOrder(input: CreateWorkOrderInput): EconomicWorkOrder | HeliosFailure {
+  createWorkOrder(input: CreateWorkOrderInput): HeliosExecutionWorkOrder | HeliosFailure {
     const binding = bindWorkOrderAuthority({
       mandate: input.mandate,
       customerId: input.customerId,
@@ -102,7 +102,7 @@ export class HeliosWorkOrchestrator {
     });
     if ('code' in binding) return binding;
     const workOrderId = asEconomicWorkOrderId(`ewo_${randomUUID()}`);
-    const order: EconomicWorkOrder = Object.freeze({
+    const order: HeliosExecutionWorkOrder = Object.freeze({
       workOrderId,
       programId: asHeliosProgramId(input.programId.startsWith('hpg_') ? input.programId : `hpg_${input.programId}`),
       customerId: input.customerId,
@@ -336,7 +336,7 @@ export class HeliosWorkOrchestrator {
     return failed;
   }
 
-  cancelWorkOrder(workOrderId: string, customerId: string): EconomicWorkOrder | HeliosFailure {
+  cancelWorkOrder(workOrderId: string, customerId: string): HeliosExecutionWorkOrder | HeliosFailure {
     const order = this.store.getWorkOrder(workOrderId, customerId);
     if (!order) return { code: 'WORK_ORDER_NOT_FOUND', message: 'work order not found' };
     const updated = Object.freeze({
@@ -364,7 +364,7 @@ export class HeliosWorkOrchestrator {
     return updated;
   }
 
-  pauseWorkOrder(workOrderId: string, customerId: string): EconomicWorkOrder | HeliosFailure {
+  pauseWorkOrder(workOrderId: string, customerId: string): HeliosExecutionWorkOrder | HeliosFailure {
     const order = this.store.getWorkOrder(workOrderId, customerId);
     if (!order) return { code: 'WORK_ORDER_NOT_FOUND', message: 'work order not found' };
     this.pausedWorkOrders.add(workOrderId);
@@ -379,7 +379,7 @@ export class HeliosWorkOrchestrator {
     return updated;
   }
 
-  revokeAuthority(workOrderId: string, customerId: string): EconomicWorkOrder | HeliosFailure {
+  revokeAuthority(workOrderId: string, customerId: string): HeliosExecutionWorkOrder | HeliosFailure {
     const order = this.store.getWorkOrder(workOrderId, customerId);
     if (!order) return { code: 'WORK_ORDER_NOT_FOUND', message: 'work order not found' };
     const updated = Object.freeze({
@@ -441,14 +441,14 @@ export class HeliosWorkOrchestrator {
     return instance;
   }
 
-  private canDispatch(order: EconomicWorkOrder): boolean {
+  private canDispatch(order: HeliosExecutionWorkOrder): boolean {
     if (order.state !== 'ACTIVE') return false;
     if (this.pausedWorkOrders.has(order.workOrderId)) return false;
     if (BigInt(order.researchBudget.remainingBudget) <= 0n) return false;
     return true;
   }
 
-  private revalidateOrderAuthority(order: EconomicWorkOrder): EconomicWorkOrder {
+  private revalidateOrderAuthority(order: HeliosExecutionWorkOrder): HeliosExecutionWorkOrder {
     const mandate = this.lookupMandate(order.authority.mandateId);
     const authority = revalidateAuthority(
       order.authority,

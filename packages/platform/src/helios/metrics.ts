@@ -1,5 +1,5 @@
-import type { HeliosMetricsSnapshot } from './types.ts';
-import type { InMemoryHeliosWorkStore } from './store.ts';
+import type { HeliosMetricsSnapshot } from './execution-types.ts';
+import type { InMemoryHeliosWorkStore } from './execution-store.ts';
 
 export function collectHeliosMetrics(store: InMemoryHeliosWorkStore, now: string): HeliosMetricsSnapshot {
   const snapshot = store.snapshot();
