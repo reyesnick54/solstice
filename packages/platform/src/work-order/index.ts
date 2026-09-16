@@ -50,3 +50,9 @@ export type {
   WorkOrderTransition,
 } from './types.ts';
 export { validateCreateInput, validateCapitalBoundary } from './validation.ts';
+export { scopeFromCoordinationWorkOrder } from './scope-mapper.ts';
+export {
+  AuthorityBoundWorkOrderService,
+  type AuthorityBoundWorkOrder,
+  type AuthorityGateInput,
+} from './authority-gate.ts';

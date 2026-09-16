@@ -104,12 +104,16 @@ export {
 } from './policy-port.ts';
 export { GrowthOrchestrator, type GrowthFailure } from './service.ts';
 export {
+  AuthorityBoundWorkOrderService,
   EconomicWorkOrderService,
   InMemoryWorkOrderStore,
   WORK_ORDER_STATES,
   WORK_ORDER_DISPOSITIONS,
   canTransitionWorkOrder,
   isTerminalWorkOrderState,
+  scopeFromCoordinationWorkOrder,
+  type AuthorityBoundWorkOrder,
+  type AuthorityGateInput,
   type EconomicWorkOrder,
   type CreateEconomicWorkOrderInput,
   type WorkOrderFailure,

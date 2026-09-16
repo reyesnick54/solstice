@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-16T07:39:58.265921+00:00",
+  "generatedAt": "2026-09-16T12:36:56.658315+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -538,14 +538,14 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 4749,
+      "packageDeepImport": 4755,
       "serviceDeepImport": 653,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 4749,
+      "relativeCrossPackage": 4755,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5402
+      "total": 5408
     }
   },
   "violations": [
@@ -27046,6 +27046,51 @@
       "spec": "../../../security/src/simulation.ts"
     },
     {
+      "file": "packages/platform/src/work-order/authority-gate.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/work-order/authority-gate.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/platform/src/work-order/authority-gate.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/work-order/authority-gate.ts' deep-imports 'domain' internals via '../../../domain/src/customer.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/customer.ts"
+    },
+    {
+      "file": "packages/platform/src/work-order/authority-gate.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/work-order/authority-gate.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/result.ts"
+    },
+    {
+      "file": "packages/platform/src/work-order/authority-gate.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/work-order/authority-gate.ts' deep-imports 'events' internals via '../../../events/src/events.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "events",
+      "spec": "../../../events/src/events.ts"
+    },
+    {
+      "file": "packages/platform/src/work-order/authority-gate.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/work-order/authority-gate.ts' deep-imports 'evidence' internals via '../../../evidence/src/vault.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "evidence",
+      "spec": "../../../evidence/src/vault.ts"
+    },
+    {
       "file": "packages/platform/src/work-order/ids.ts",
       "line": 1,
       "rule": "package-deep-import",
@@ -27062,6 +27107,15 @@
       "sourcePackage": "platform",
       "targetPackage": "domain",
       "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/work-order/scope-mapper.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/work-order/scope-mapper.ts' deep-imports 'domain' internals via '../../../domain/src/jurisdiction.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/jurisdiction.ts"
     },
     {
       "file": "packages/platform/src/work-order/service.ts",
