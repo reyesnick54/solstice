@@ -263,6 +263,26 @@ describe('capital market service', () => {
     assert.equal(diagnostics.routeStatus, 'NOT_QUALIFIED');
   });
 
+  it('does not fetch when route is not qualified', async () => {
+    process.env[FINNHUB_CREDENTIAL_ENV_VAR] = 'test-key';
+    let fetchCalled = false;
+    const service = createCapitalMarketService({
+      externalQualificationPassed: false,
+      provider: createFinnhubCapitalMarketAdapter({
+        fetchFn: async () => {
+          fetchCalled = true;
+          return new Response(JSON.stringify({ c: 227.5 }), { status: 200 });
+        },
+      }),
+    });
+    const result = await service.getObservation('SECURITY:US:AAPL:XNAS', NOW);
+    assert.equal(result.ok, false);
+    if (!result.ok) {
+      assert.equal(result.code, 'NOT_QUALIFIED');
+    }
+    assert.equal(fetchCalled, false);
+  });
+
   it('qualification pending without credential', async () => {
     delete process.env[FINNHUB_CREDENTIAL_ENV_VAR];
     const service = createCapitalMarketService();

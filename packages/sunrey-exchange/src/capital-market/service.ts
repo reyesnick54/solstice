@@ -75,11 +75,14 @@ export class CapitalMarketService {
 
   async getObservation(instrumentId: string, nowUtc: UtcInstant): Promise<CapitalMarketResult<CapitalMarketObservation>> {
     const diagnostics = this.diagnostics(nowUtc);
-    if (diagnostics.routeStatus === 'NOT_CONFIGURED') {
+    if (diagnostics.routeStatus === 'NOT_CONFIGURED' || diagnostics.routeStatus === 'NOT_QUALIFIED') {
       return Object.freeze({
         ok: false,
-        code: 'NOT_CONFIGURED',
-        message: 'market data credential is not configured',
+        code: diagnostics.routeStatus,
+        message:
+          diagnostics.routeStatus === 'NOT_CONFIGURED'
+            ? 'market data credential is not configured'
+            : 'market data route has not passed external qualification',
         providerId: this.#provider.providerId,
       });
     }
