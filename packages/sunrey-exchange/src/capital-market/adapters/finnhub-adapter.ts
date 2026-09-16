@@ -7,8 +7,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
-import { authenticationError } from '@solstice/provider-sdk';
-import { canonicalJsonStringify, hashRawPayload } from '../../../../provider-sdk/src/hash.ts';
+import { authenticationError, canonicalJsonStringify, hashRawPayload } from '@solstice/provider-sdk';
 import { resolveCapitalMarketEntitlement } from '../entitlement.ts';
 import { CapitalMarketHttpClient, type CapitalMarketHttpClientOptions } from '../http/client.ts';
 import { FINNHUB_ENDPOINT } from '../http/endpoints.ts';
