@@ -23,6 +23,7 @@ import { seedSimulationCatalog } from '../services/accounts/src/catalog.ts';
 import { createSimulationRuntime, type SimulationRuntime } from '../services/accounts/src/runtime.ts';
 import { activateCustomer, openIntent } from '../services/accounts/src/test-helpers.ts';
 import { createAccountsReadAdapter } from '../services/api/src/consumer/accounts-adapter.ts';
+import { InMemoryGrowStore } from '../packages/platform/src/grow/store.ts';
 import { GrowBffSurface } from '../services/api/src/consumer/grow.ts';
 import { handleConsumerBff, type BffRequest, type BffResponse, type ConsumerBffRuntime } from '../services/api/src/consumer/handler.ts';
 import { ConsumerBff, memoryPreferenceStore } from '../services/api/src/consumer/orchestrator.ts';
@@ -53,6 +54,7 @@ export type PhaseEWorld = {
     },
   ) => Promise<BffResponse>;
   readonly startHttp: () => ReturnType<typeof startConsumerBff>;
+  readonly restartGrowRuntime: () => void;
 };
 
 export function createPhaseEWorld(suffix = 'e1'): PhaseEWorld {
@@ -293,6 +295,47 @@ export function createPhaseEWorld(suffix = 'e1'): PhaseEWorld {
     identity: runtime.identity.service,
     grow: growBff,
   };
+  let activeGrow = grow;
+  let activeGrowBff = growBff;
+  const restartGrowRuntime = () => {
+    const snapshot = activeGrow.store.snapshot();
+    const reloadedStore = new InMemoryGrowStore();
+    reloadedStore.loadState(snapshot);
+    activeGrow = new GrowLifecycleService({ clock, evidence, store: reloadedStore });
+    activeGrowBff = new GrowBffSurface({
+      peg,
+      orchestrator,
+      grow: activeGrow,
+      investments,
+      providers,
+      ledger: runtime.ledger,
+      accounts: runtime.accounts,
+      resolveActor: (id) => {
+        const resolved = runtime.identity.service.resolveActorContext(id);
+        return resolved.ok ? resolved.value : null;
+      },
+      now: () => clock.now(),
+      investmentAccountsFor: (customerId) =>
+        customerId === customer.id
+          ? {
+              investmentAccountId: `inv_${suffix}`,
+              demandAccountId: demand.id,
+              brokerageCashAccountId: brokerage.id,
+              securitiesAccountId: securities.id,
+              pendingSettlementAccountId: pending.id,
+            }
+          : null,
+      suitabilityFor: (row) => ({
+        kycComplete: row.verification === 'VERIFIED',
+        jurisdictionPermitted: row.jurisdiction === 'GB' || row.jurisdiction === 'US',
+        accountRestricted: row.restricted,
+        customerEligible: row.customerStatus === 'ACTIVE',
+        riskProfile: row.risk === 'RESTRICTED' ? 'LOW' : 'MODERATE',
+        proposalRiskClass: 'MODERATE',
+      }),
+    });
+    consumerRuntime.grow = activeGrowBff;
+  };
   return {
     runtime,
     clock,
@@ -300,12 +343,13 @@ export function createPhaseEWorld(suffix = 'e1'): PhaseEWorld {
     actor,
     peg,
     orchestrator,
-    grow,
+    grow: activeGrow,
     investments,
-    growBff,
+    growBff: activeGrowBff,
     providers,
     demand,
     brokerage,
+    restartGrowRuntime,
     handle: async (request) =>
       await handleConsumerBff(consumerRuntime, {
         method: request.method,
