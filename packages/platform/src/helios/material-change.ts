@@ -2,6 +2,8 @@ import { Money } from '../../../money/src/money.ts';
 import type { BindingReasonCode } from './taxonomy.ts';
 import type { WorkOrderScope } from './types.ts';
 
+const OK_REASON: BindingReasonCode = 'OK';
+
 export type MaterialChangeResult = {
   readonly material: boolean;
   readonly reasonCodes: readonly BindingReasonCode[];
@@ -21,31 +23,31 @@ export function detectMaterialScopeChange(
   next: WorkOrderScope,
 ): MaterialChangeResult {
   const dimensions: string[] = [];
-  const reasonCodes: BindingReasonCode[] = [];
+  const reasonCodes = new Set<BindingReasonCode>();
 
   if (setsDiffer(prior.objectiveClasses, next.objectiveClasses)) {
     dimensions.push('objectiveClasses');
-    reasonCodes.push('MATERIAL_SCOPE_CHANGE');
+    reasonCodes.add('MATERIAL_SCOPE_CHANGE');
   }
   if (setsDiffer(prior.activityClasses, next.activityClasses)) {
     dimensions.push('activityClasses');
-    reasonCodes.push('MATERIAL_SCOPE_CHANGE');
+    reasonCodes.add('MATERIAL_SCOPE_CHANGE');
   }
   if (setsDiffer(prior.productClasses, next.productClasses)) {
     dimensions.push('productClasses');
-    reasonCodes.push('MATERIAL_SCOPE_CHANGE');
+    reasonCodes.add('MATERIAL_SCOPE_CHANGE');
   }
   if (prior.jurisdiction !== next.jurisdiction) {
     dimensions.push('jurisdiction');
-    reasonCodes.push('MATERIAL_SCOPE_CHANGE');
+    reasonCodes.add('MATERIAL_SCOPE_CHANGE');
   }
   if (setsDiffer(prior.accountIds, next.accountIds)) {
     dimensions.push('accountIds');
-    reasonCodes.push('MATERIAL_SCOPE_CHANGE');
+    reasonCodes.add('MATERIAL_SCOPE_CHANGE');
   }
   if (setsDiffer(prior.toolIds, next.toolIds)) {
     dimensions.push('toolIds');
-    reasonCodes.push('MATERIAL_SCOPE_CHANGE');
+    reasonCodes.add('MATERIAL_SCOPE_CHANGE');
   }
 
   const priorCeiling = prior.capitalCeiling;
@@ -55,24 +57,24 @@ export function detectMaterialScopeChange(
     const nextMoney = Money.fromMinorUnitsString(nextCeiling.minorUnits, nextCeiling.currency);
     if (nextMoney.cmp(priorMoney) > 0) {
       dimensions.push('capitalCeiling');
-      reasonCodes.push('MATERIAL_SCOPE_CHANGE');
-      reasonCodes.push('CAPITAL_CEILING_EXCEEDED');
+      reasonCodes.add('MATERIAL_SCOPE_CHANGE');
+      reasonCodes.add('CAPITAL_CEILING_EXCEEDED');
     }
   } else if (!priorCeiling && nextCeiling) {
     dimensions.push('capitalCeiling');
-    reasonCodes.push('MATERIAL_SCOPE_CHANGE');
+    reasonCodes.add('MATERIAL_SCOPE_CHANGE');
   }
 
   const priorHorizon = prior.horizonDays ?? 0;
   const nextHorizon = next.horizonDays ?? 0;
   if (nextHorizon > priorHorizon && nextHorizon - priorHorizon >= 30) {
     dimensions.push('horizonDays');
-    reasonCodes.push('MATERIAL_SCOPE_CHANGE');
+    reasonCodes.add('MATERIAL_SCOPE_CHANGE');
   }
 
   return Object.freeze({
     material: dimensions.length > 0,
-    reasonCodes: Object.freeze(reasonCodes.length > 0 ? reasonCodes : ['OK']),
+    reasonCodes: Object.freeze(reasonCodes.size > 0 ? [...reasonCodes] : [OK_REASON]),
     dimensions: Object.freeze(dimensions),
   });
 }

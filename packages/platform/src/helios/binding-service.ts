@@ -143,7 +143,7 @@ export class HeliosWorkOrderBindingService {
       capabilityContext,
       checkpoint: 'ACTIVATION',
       actorId,
-      approvedScope,
+      ...(approvedScope !== undefined ? { approvedScope } : {}),
     });
     if (!evaluation.ok) {
       return err(evaluation.error);
@@ -192,7 +192,7 @@ export class HeliosWorkOrderBindingService {
       capabilityContext,
       checkpoint,
       actorId,
-      approvedScope,
+      ...(approvedScope !== undefined ? { approvedScope } : {}),
     });
   }
 

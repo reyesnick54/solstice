@@ -1,6 +1,8 @@
 import { Money } from '../../../money/src/money.ts';
 import type { SerializedMoney } from '../mandate/types.ts';
 import type { BindingReasonCode, ObjectiveClass, ActivityClass, ProductClass } from './taxonomy.ts';
+
+const OK_REASON: BindingReasonCode = 'OK';
 import type { MandatePermittedScope, ScopeNarrowing, WorkOrderScope } from './types.ts';
 
 function intersectSets<T extends string>(requested: readonly T[], permitted: readonly T[]): readonly T[] {
@@ -184,7 +186,9 @@ export function intersectWorkOrderScope(input: ScopeIntersectionInput): ScopeInt
     effective,
     narrowedElements: Object.freeze(narrowedElements),
     blocked: false,
-    reasonCodes: Object.freeze(narrowedElements.length > 0 ? [...reasonCodes] : ['OK']),
+    reasonCodes: Object.freeze(
+      narrowedElements.length > 0 ? ([...reasonCodes] as readonly BindingReasonCode[]) : [OK_REASON],
+    ),
   });
 }
 
