@@ -505,7 +505,8 @@
         "packages/personal-economic-graph",
         "packages/agent",
         "packages/permissions",
-        "packages/security"
+        "packages/security",
+        "packages/provider-sdk"
       ],
       "codeowners": [
         "@reyesnick54"
