@@ -44,6 +44,7 @@ import {
 import type { AgentConversationRuntime } from '../../../../packages/sunrey-agent/src/runtime.ts';
 import { agentConversationReply, FORBIDDEN_PUBLIC_LLM_PATHS } from './agent-conversation.ts';
 import type { GrowBffSurface } from './grow.ts';
+import type { WorkOrderBffPort } from './work-order.ts';
 import { ExchangeBffSurface as ExchangeLifecycleSurface } from './exchange.ts';
 import type { ExchangeBffSurface as ExchangeProductSurface } from './exchange-bff.ts';
 import {
@@ -146,6 +147,7 @@ export type ConsumerBffRuntime = {
   readonly agent?: AgentBffFacade;
   readonly agentRuntime?: AgentConversationRuntime;
   readonly grow?: GrowBffSurface | ProductGrowthService;
+  readonly workOrders?: WorkOrderBffPort;
   readonly conversation?: AgentConversationSurface;
   readonly wallets?: WalletProductService;
   readonly hin?: InformationRightsMarketplace | HinContributionSurface;
@@ -537,6 +539,12 @@ function dispatchAuthenticated(
     const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
     if (grow) {
       return grow;
+    }
+  }
+  if (runtime.workOrders) {
+    const workOrders = dispatchWorkOrders(runtime.workOrders, request, principal, requestId, headers);
+    if (workOrders) {
+      return workOrders;
     }
   }
   if (runtime.moneyIntegration) {
@@ -1823,6 +1831,28 @@ function isProductGrowthService(grow: GrowBffSurface | ProductGrowthService): gr
   return typeof (grow as ProductGrowthService).createPlan === 'function';
 }
 
+function dispatchWorkOrders(
+  workOrders: WorkOrderBffPort,
+  request: BffRequest,
+  principal: import('./ports.ts').BffPrincipal,
+  requestId: string,
+  headers: Record<string, string>,
+): BffResponse | null {
+  const { method, path, body } = request;
+  const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
+  if (path === '/api/v1/grow/work-orders' && method === 'GET') {
+    return result(workOrders.list(principal, requestId), headers);
+  }
+  if (path === '/api/v1/grow/work-orders' && method === 'POST') {
+    return result(workOrders.create(principal, rec, requestId), headers, 201);
+  }
+  if (path.startsWith('/api/v1/grow/work-orders/') && method === 'GET') {
+    const id = path.slice('/api/v1/grow/work-orders/'.length);
+    return result(workOrders.get(principal, id, requestId), headers);
+  }
+  return null;
+}
+
 function dispatchGrow(
   grow: GrowBffSurface | ProductGrowthService,
   request: BffRequest,
@@ -2157,6 +2187,9 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/grow/recurring',
   'POST /api/v1/grow/recurring/{id}/cancel',
   'POST /api/v1/grow/monitor',
+  'GET /api/v1/grow/work-orders',
+  'POST /api/v1/grow/work-orders',
+  'GET /api/v1/grow/work-orders/{id}',
   'POST /api/v1/grow/agent-tools',
   'POST /api/v1/grow/proposals/{id}/reject',
   'GET /api/v1/grow/portfolio',

@@ -109,7 +109,10 @@ export class EconomicWorkOrderService {
       createsFinancialAuthority: false,
       postsLedger: false,
     });
-    this.store.put(workOrder);
+    const persisted = this.store.put(workOrder);
+    if (typeof persisted === 'object' && 'code' in persisted) {
+      return err({ code: persisted.code, message: persisted.message });
+    }
     this.metrics.recordCreated();
     this.emitEvent('WorkOrderCreated', workOrder, access.value.actorId);
     return ok(workOrder);
@@ -133,7 +136,10 @@ export class EconomicWorkOrderService {
     }
     const current = expireWorkOrderIfDue(workOrder, this.clock.now());
     if (current !== workOrder) {
-      this.store.put(current);
+      const expired = this.store.put(current, workOrder.revision);
+      if (typeof expired === 'object' && 'code' in expired) {
+        return err({ code: expired.code, message: expired.message });
+      }
       this.metrics.recordState('EXPIRED');
       this.emitEvent('WorkOrderExpired', current, 'system');
     }
@@ -155,15 +161,19 @@ export class EconomicWorkOrderService {
     const rows = subjectId
       ? this.store.listBySubject(subjectId).filter((row) => row.customerId === customerId)
       : this.store.listByCustomer(customerId);
-    const refreshed = rows.map((row) => {
+    const refreshed: EconomicWorkOrder[] = [];
+    for (const row of rows) {
       const current = expireWorkOrderIfDue(row, now);
       if (current !== row) {
-        this.store.put(current);
+        const expired = this.store.put(current, row.revision);
+        if (typeof expired === 'object' && 'code' in expired) {
+          return err({ code: expired.code, message: expired.message });
+        }
         this.metrics.recordState('EXPIRED');
         this.emitEvent('WorkOrderExpired', current, 'system');
       }
-      return current;
-    });
+      refreshed.push(current);
+    }
     return ok(Object.freeze(refreshed));
   }
 
@@ -204,7 +214,11 @@ export class EconomicWorkOrderService {
         now: this.clock.now(),
         eventReference: null,
       });
-      this.store.put(next);
+      const persisted = this.store.put(next, workOrder.revision);
+      if (typeof persisted === 'object' && 'code' in persisted) {
+        this.metrics.recordFailedTransition();
+        return err({ code: persisted.code, message: persisted.message });
+      }
       this.metrics.recordState(toState);
       const eventType = WORK_ORDER_EVENT_MAP[toState];
       if (eventType) {

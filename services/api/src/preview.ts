@@ -72,6 +72,7 @@ export function createSunReyPreviewRuntime(
     // ProductGrowthService. The handler recognizes the lifecycle shape by its
     // home() method; no second growth engine or execution authority is created.
     grow: previewGrow as unknown as NonNullable<ConsumerBffRuntime['grow']>,
+    workOrders: world.workOrders,
     previewDiagnostics: world.previewDiagnostics,
     conversation: world.conversation,
     wallets: options.durableWallets?.product ?? world.wallets,

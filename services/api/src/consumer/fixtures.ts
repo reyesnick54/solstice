@@ -40,6 +40,8 @@ import { ConsumerCardsFacade } from '../../../cards/src/consumer.ts';
 import { seedSimulationCatalog } from '../../../accounts/src/catalog.ts';
 import { EconomicGraphService } from '../../../../packages/personal-economic-graph/src/service.ts';
 import { GrowthOrchestrator } from '../../../../packages/platform/src/service.ts';
+import { EconomicWorkOrderService } from '../../../../packages/platform/src/work-order/service.ts';
+import { createWorkOrderBffPort, type WorkOrderBffPort } from './work-order.ts';
 import { createAccountsReadAdapter } from './accounts-adapter.ts';
 import { createGrowCommandPort } from './grow-adapter.ts';
 import { createFxCommandPort } from './fx-adapter.ts';
@@ -168,6 +170,7 @@ export type SandboxWorld = {
   readonly agentRuntime: AgentConversationRuntime;
   readonly grow: ProductGrowthService;
   readonly growOpportunity: GrowOpportunityPort;
+  readonly workOrders: WorkOrderBffPort;
   readonly previewDiagnostics: () => Readonly<Record<string, unknown>>;
   readonly conversation: AgentConversationSurface;
   readonly wallets: WalletProductService;
@@ -606,6 +609,14 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     events: runtime.events,
     peg: new EconomicGraphService({ clock: runtime.clock, events: runtime.events }),
   });
+  const workOrderService = new EconomicWorkOrderService({ clock: runtime.clock, events: runtime.events });
+  const workOrders = createWorkOrderBffPort({
+    service: workOrderService,
+    actorFor(principal) {
+      const actor = runtime.identity.service.resolveActorContext(principal.actorId);
+      return actor.ok ? actor.value : principal;
+    },
+  });
   const growOpportunity = createGrowOpportunityPort({
     orchestrator: growthOrchestrator,
     accounts: createAccountsReadAdapter(runtime),
@@ -877,6 +888,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     agentRuntime,
     grow,
     growOpportunity,
+    workOrders,
     previewDiagnostics: () => marketResearch.diagnostics(),
     conversation: createAgentConversationSurface(),
     wallets,
@@ -911,6 +923,7 @@ export function consumerBffRuntimeFromWorld(world: SandboxWorld): ConsumerBffRun
     agent: world.agent,
     agentRuntime: world.agentRuntime,
     grow: world.grow,
+    workOrders: world.workOrders,
     previewDiagnostics: world.previewDiagnostics,
     conversation: world.conversation,
     wallets: world.wallets,
