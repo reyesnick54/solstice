@@ -1,0 +1,143 @@
+/**
+ * HELIOS H09 — Executable Opportunity Binding taxonomies.
+ * Research candidates are not executable until fully qualified.
+ * No financial authority is granted at any state.
+ */
+
+export const EXECUTABLE_OPPORTUNITY_STATES = [
+  'DISCOVERED',
+  'EVIDENCE_VERIFIED',
+  'CUSTOMER_ELIGIBLE',
+  'EXECUTION_ROUTE_READY',
+  'QUALIFIED_FOR_PROPOSAL',
+  'REJECTED',
+  'EXPIRED',
+  'STALE',
+  'INELIGIBLE',
+  'NO_ROUTE',
+  'DATA_DEGRADED',
+  'REVIEW_REQUIRED',
+] as const;
+
+export type ExecutableOpportunityState = (typeof EXECUTABLE_OPPORTUNITY_STATES)[number];
+
+export const PROGRESSIVE_EXECUTABLE_OPPORTUNITY_STATES = [
+  'DISCOVERED',
+  'EVIDENCE_VERIFIED',
+  'CUSTOMER_ELIGIBLE',
+  'EXECUTION_ROUTE_READY',
+  'QUALIFIED_FOR_PROPOSAL',
+] as const;
+
+export type ProgressiveExecutableOpportunityState =
+  (typeof PROGRESSIVE_EXECUTABLE_OPPORTUNITY_STATES)[number];
+
+export const TERMINAL_EXECUTABLE_OPPORTUNITY_STATES = [
+  'REJECTED',
+  'EXPIRED',
+  'STALE',
+  'INELIGIBLE',
+  'NO_ROUTE',
+  'DATA_DEGRADED',
+  'REVIEW_REQUIRED',
+  'QUALIFIED_FOR_PROPOSAL',
+] as const;
+
+export type TerminalExecutableOpportunityState =
+  (typeof TERMINAL_EXECUTABLE_OPPORTUNITY_STATES)[number];
+
+export const ROUTE_AVAILABILITY_STATES = [
+  'CONFIGURED',
+  'AVAILABLE',
+  'SANDBOX_AVAILABLE',
+  'CERTIFICATION_ONLY',
+  'LIVE_AUTHORIZED',
+  'UNAVAILABLE',
+  'UNKNOWN',
+] as const;
+
+export type RouteAvailabilityState = (typeof ROUTE_AVAILABILITY_STATES)[number];
+
+export const QUALIFICATION_OUTCOMES = [
+  'QUALIFIED_FOR_PROPOSAL',
+  'WAIT',
+  'REJECTED',
+  'EXPIRED',
+  'NO_ACTION',
+] as const;
+
+export type QualificationOutcome = (typeof QUALIFICATION_OUTCOMES)[number];
+
+export const CANDIDATE_SOURCES = [
+  'DETERMINISTIC_SCREEN',
+  'MARKET_OBSERVATION',
+  'AGENT_RESEARCH',
+  'ECONOMIC_OBSERVATION',
+  'OPPORTUNITY_SERVICE',
+] as const;
+
+export type CandidateSource = (typeof CANDIDATE_SOURCES)[number];
+
+export const EVIDENCE_SOURCE_KINDS = [
+  'EXTERNAL_OBSERVATION',
+  'FIXTURE',
+  'PEG_DERIVED',
+  'MARKET_DATA',
+  'ORACLE_VERIFIED',
+] as const;
+
+export type EvidenceSourceKind = (typeof EVIDENCE_SOURCE_KINDS)[number];
+
+export const EVIDENCE_ENTITLEMENT_SCOPES = ['PUBLIC', 'CUSTOMER', 'SUBJECT'] as const;
+export type EvidenceEntitlementScope = (typeof EVIDENCE_ENTITLEMENT_SCOPES)[number];
+
+export const VENUE_SESSION_STATES = ['OPEN', 'CLOSED', 'PRE_MARKET', 'POST_MARKET', 'UNKNOWN'] as const;
+export type VenueSessionState = (typeof VENUE_SESSION_STATES)[number];
+
+export const QUALIFICATION_REASON_CODES = [
+  'OK',
+  'CANDIDATE_CREATED',
+  'EVIDENCE_ADMISSIBLE',
+  'EVIDENCE_STALE',
+  'EVIDENCE_ENTITLEMENT_DENIED',
+  'EVIDENCE_PROVENANCE_UNKNOWN',
+  'EVIDENCE_FIXTURE_MASQUERADE',
+  'EVIDENCE_DATA_QUALITY_FAILURE',
+  'EVIDENCE_MISSING',
+  'INSTRUMENT_MAPPING_MISSING',
+  'INSTRUMENT_UNSUPPORTED',
+  'PRODUCT_CAPABILITY_DENIED',
+  'MANDATE_RESTRICTED',
+  'WORK_ORDER_INACTIVE',
+  'MANDATE_INACTIVE',
+  'CUSTOMER_INELIGIBLE',
+  'MINIMUM_SIZE_FAILURE',
+  'ACCOUNT_CAPABILITY_DENIED',
+  'JURISDICTION_DENIED',
+  'ROUTE_UNAVAILABLE',
+  'ROUTE_NOT_OPERATIONAL',
+  'ROUTE_CERTIFICATION_ONLY',
+  'ROUTE_CONFIGURED_NOT_LIVE',
+  'ROUTE_SANDBOX_READY',
+  'VENUE_CLOSED',
+  'TERMS_EXPIRED',
+  'TERMS_MATERIAL_CHANGE',
+  'CUSTOMER_MISMATCH',
+  'QUALIFICATION_EXPIRED',
+  'REVALIDATION_REQUIRED',
+  'REVIEW_REQUIRED',
+  'NO_ACTION_REQUIRED',
+] as const;
+
+export type QualificationReasonCode = (typeof QUALIFICATION_REASON_CODES)[number];
+
+export const SUPPORTED_ORDER_ACTION_TYPES = [
+  'BUY',
+  'SELL',
+  'TRANSFER',
+  'CONVERT',
+  'SUBSCRIBE',
+  'REDEEM',
+] as const;
+
+export type SupportedOrderActionType = (typeof SUPPORTED_ORDER_ACTION_TYPES)[number];
