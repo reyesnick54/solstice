@@ -21820,10 +21820,10 @@
       "file": "packages/persistence/src/growth/pg-helios-work-store.ts",
       "line": 3,
       "rule": "package-deep-import",
-      "message": "'packages/persistence/src/growth/pg-helios-work-store.ts' deep-imports 'platform' internals via '../../../platform/src/helios/store.ts'",
+      "message": "'packages/persistence/src/growth/pg-helios-work-store.ts' deep-imports 'platform' internals via '../../../platform/src/helios/execution-store.ts'",
       "sourcePackage": "persistence",
       "targetPackage": "platform",
-      "spec": "../../../platform/src/helios/store.ts"
+      "spec": "../../../platform/src/helios/execution-store.ts"
     },
     {
       "file": "packages/persistence/src/identity/pg-auth-store.ts",
