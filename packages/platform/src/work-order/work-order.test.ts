@@ -374,7 +374,7 @@ describe('Economic Work Order H04', () => {
     }
     assert.equal(created.value.postsLedger, false);
     assert.equal(created.value.createsFinancialAuthority, false);
-    assert.equal(typeof (service as Record<string, unknown>).postJournal, 'undefined');
+    assert.equal(typeof (service as unknown as Record<string, unknown>).postJournal, 'undefined');
   });
 
   it('cannot directly execute financial actions', () => {

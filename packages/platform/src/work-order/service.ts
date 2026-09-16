@@ -161,7 +161,8 @@ export class EconomicWorkOrderService {
     const rows = subjectId
       ? this.store.listBySubject(subjectId).filter((row) => row.customerId === customerId)
       : this.store.listByCustomer(customerId);
-    const refreshed = rows.map((row) => {
+    const refreshed: EconomicWorkOrder[] = [];
+    for (const row of rows) {
       const current = expireWorkOrderIfDue(row, now);
       if (current !== row) {
         const expired = this.store.put(current, row.revision);
@@ -171,8 +172,8 @@ export class EconomicWorkOrderService {
         this.metrics.recordState('EXPIRED');
         this.emitEvent('WorkOrderExpired', current, 'system');
       }
-      return current;
-    });
+      refreshed.push(current);
+    }
     return ok(Object.freeze(refreshed));
   }
 

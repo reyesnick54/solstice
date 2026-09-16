@@ -24,10 +24,11 @@ async function upsertWorkOrder(
       'SELECT revision FROM growth.economic_work_order_coordination WHERE work_order_id = $1',
       [workOrder.workOrderId],
     );
-    if (existing.rowCount && existing.rows[0].revision !== expectedRevision) {
+    const row = existing.rows[0];
+    if (existing.rowCount && row && row.revision !== expectedRevision) {
       throw new WorkOrderPersistenceError(
         'VERSION_CONFLICT',
-        `expected revision ${String(expectedRevision)} but current is ${String(existing.rows[0].revision)}`,
+        `expected revision ${String(expectedRevision)} but current is ${String(row.revision)}`,
       );
     }
   }
