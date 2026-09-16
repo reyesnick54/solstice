@@ -130,5 +130,25 @@ export {
 } from './retry.ts';
 export { InMemoryHeliosWorkStore, type HeliosStoreSnapshot } from './execution-store.ts';
 
+export {
+  HELIOS_MARKET_OBSERVATION_SCHEMA,
+  HeliosObservationFabric,
+  assessHeliosFreshness,
+  buildInformationTime,
+  buildObservationEntitlement,
+  createHeliosObservationStore,
+  isKnowableAt,
+  isEntitlementUsable,
+  isFreshnessDegraded,
+  type HeliosMarketObservationEnvelope,
+  type HeliosObservationFabricOptions,
+  type HeliosObservationStore,
+  type HeliosObservationStoreSnapshot,
+  type InformationTime,
+  type ObservationEntitlement,
+  type ObservationType,
+  type QualityState,
+} from './observation/index.ts';
+
 export const HELIOS_PHASE_2_DURABLE_CONTROL_TRUSTED = 'HELIOS_PHASE_2_DURABLE_CONTROL_TRUSTED' as const;
 export const HELIOS_PHASE_2_BLOCKED = 'HELIOS_PHASE_2_BLOCKED' as const;

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-16T12:48:06.819368+00:00",
+  "generatedAt": "2026-09-16T13:08:38.421608+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -357,6 +357,7 @@
         "money",
         "permissions",
         "personal-economic-graph",
+        "provider-sdk",
         "security"
       ],
       "provider-sdk": [
@@ -538,14 +539,14 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 4764,
+      "packageDeepImport": 4784,
       "serviceDeepImport": 653,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 4764,
+      "relativeCrossPackage": 4784,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5417
+      "total": 5437
     }
   },
   "violations": [
@@ -21817,6 +21818,33 @@
       "spec": "../../../platform/src/store.ts"
     },
     {
+      "file": "packages/persistence/src/growth/pg-helios-observation-store.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/persistence/src/growth/pg-helios-observation-store.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "persistence",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/persistence/src/growth/pg-helios-observation-store.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/persistence/src/growth/pg-helios-observation-store.ts' deep-imports 'platform' internals via '../../../platform/src/helios/observation/store.ts'",
+      "sourcePackage": "persistence",
+      "targetPackage": "platform",
+      "spec": "../../../platform/src/helios/observation/store.ts"
+    },
+    {
+      "file": "packages/persistence/src/growth/pg-helios-observation-store.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/persistence/src/growth/pg-helios-observation-store.ts' deep-imports 'platform' internals via '../../../platform/src/helios/observation/types.ts'",
+      "sourcePackage": "persistence",
+      "targetPackage": "platform",
+      "spec": "../../../platform/src/helios/observation/types.ts"
+    },
+    {
       "file": "packages/persistence/src/growth/pg-helios-work-store.ts",
       "line": 3,
       "rule": "package-deep-import",
@@ -25757,6 +25785,159 @@
       "sourcePackage": "platform",
       "targetPackage": "money",
       "spec": "../../../money/src/money.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/observation/deduplication.ts",
+      "line": 10,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/observation/deduplication.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/deduplication.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/deduplication.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/observation/deduplication.ts",
+      "line": 11,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/observation/deduplication.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/types.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/types.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/observation/entitlement.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/observation/entitlement.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/types.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/types.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/observation/fabric.ts",
+      "line": 7,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/observation/fabric.ts' deep-imports 'config' internals via '../../../../config/src/clock.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "config",
+      "spec": "../../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/observation/freshness-policies.ts",
+      "line": 13,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/observation/freshness-policies.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/freshness.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/freshness.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/observation/freshness-policies.ts",
+      "line": 14,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/observation/freshness-policies.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/observation/information-time.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/observation/information-time.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/observation/information-time.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/observation/information-time.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/types.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/types.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/observation/lineage.ts",
+      "line": 7,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/observation/lineage.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/types.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/types.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/observation/quality.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/observation/quality.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/observation/quality.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/observation/quality.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/types.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/types.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/observation/store.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/observation/store.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/observation/trust-integration.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/observation/trust-integration.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/trust/types.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/trust/types.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/observation/types.ts",
+      "line": 9,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/observation/types.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/observation/types.ts",
+      "line": 15,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/observation/types.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/types.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/types.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/observation/types.ts",
+      "line": 16,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/observation/types.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/freshness.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/freshness.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/observation/types.ts",
+      "line": 21,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/observation/types.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/trust/types.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/trust/types.ts"
     },
     {
       "file": "packages/platform/src/helios/orchestrator.ts",
