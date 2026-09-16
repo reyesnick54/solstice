@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-16T12:36:56.658315+00:00",
+  "generatedAt": "2026-09-16T12:47:59.851500+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -538,14 +538,14 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 4755,
+      "packageDeepImport": 4768,
       "serviceDeepImport": 653,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 4755,
+      "relativeCrossPackage": 4768,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5408
+      "total": 5421
     }
   },
   "violations": [
@@ -38330,6 +38330,123 @@
       "sourcePackage": "sunrey-exchange",
       "targetPackage": "money",
       "spec": "../../../money/src/money.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/adapters/finnhub-adapter.ts",
+      "line": 9,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/adapters/finnhub-adapter.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/adapters/finnhub-adapter.ts",
+      "line": 10,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/adapters/finnhub-adapter.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/hash.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/hash.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/capital-market.test.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/capital-market.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/entitlement.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/entitlement.ts' deep-imports 'config' internals via '../../../config/src/flags.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "config",
+      "spec": "../../../config/src/flags.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/http/client.ts",
+      "line": 9,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/http/client.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/auth.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/auth.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/http/client.ts",
+      "line": 10,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/http/client.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/config.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/config.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/http/client.ts",
+      "line": 16,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/http/client.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/transport.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/transport.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/integrations/helios.ts",
+      "line": 8,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/integrations/helios.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/provider.ts",
+      "line": 8,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/provider.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/service.ts",
+      "line": 7,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/service.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/types.ts",
+      "line": 8,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/types.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/types.ts",
+      "line": 9,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/types.ts' deep-imports 'provider-sdk' internals via '../../../provider-sdk/src/types.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../provider-sdk/src/types.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/validation.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/validation.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
     },
     {
       "file": "packages/sunrey-exchange/src/consumer-demo.ts",

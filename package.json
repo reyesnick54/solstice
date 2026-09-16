@@ -52,6 +52,7 @@
     "test:phase-f": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/sunrey-agent/src/productization*.test.ts packages/sunrey-sdk/src/agent-productization.test.ts services/api/src/consumer-agent.test.ts",
     "provider:test": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/provider-test.ts",
     "provider:certify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/provider-certify.ts",
+    "helios:market-data:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-market-data-qualify.ts",
     "ai:certify:live": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/ai-certify-live.ts",
     "ai:certify:fixture": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/ai-certify-live.ts",
     "providers:certify:live": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/providers-certify-live.ts",
