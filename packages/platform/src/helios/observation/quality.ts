@@ -2,6 +2,7 @@
  * Reusable data quality checks — explicit degraded states over silent drops.
  */
 
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type { ExternalObservation } from '../../../../provider-sdk/src/types.ts';
 import { detectTimestampReversal } from './information-time.ts';
 import type { InformationTime } from './types.ts';
@@ -25,7 +26,7 @@ export type QualityCheckContext = {
   readonly freshness: HeliosFreshnessAssessment;
   readonly canonicalInstrumentId: string;
   readonly sequence: number | null;
-  readonly priorSourceEventTime: string | null;
+  readonly priorSourceEventTime: UtcInstant | null;
   readonly priorSequence: number | null;
   readonly isDuplicate: boolean;
   readonly gapDetected: boolean;

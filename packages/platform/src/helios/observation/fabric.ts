@@ -52,19 +52,33 @@ export class HeliosObservationFabric {
 
     const informationTime = buildInformationTime({
       observation,
-      sourceEventTime: input.informationTime?.sourceEventTime,
-      sourcePublishedTime: input.informationTime?.sourcePublishedTime,
-      providerAvailabilityTime: input.informationTime?.providerAvailabilityTime,
-      sunreyArrivalTime: input.informationTime?.sunreyArrivalTime,
       ingestionTime: input.informationTime?.ingestionTime ?? nowUtc,
+      ...(input.informationTime?.sourceEventTime !== undefined
+        ? { sourceEventTime: input.informationTime.sourceEventTime }
+        : {}),
+      ...(input.informationTime?.sourcePublishedTime !== undefined
+        ? { sourcePublishedTime: input.informationTime.sourcePublishedTime }
+        : {}),
+      ...(input.informationTime?.providerAvailabilityTime !== undefined
+        ? { providerAvailabilityTime: input.informationTime.providerAvailabilityTime }
+        : {}),
+      ...(input.informationTime?.sunreyArrivalTime !== undefined
+        ? { sunreyArrivalTime: input.informationTime.sunreyArrivalTime }
+        : {}),
     });
 
     const lineage = buildLineageRecord({
       observation,
-      upstreamSourceRef: input.lineage?.upstreamSourceRef,
-      sourceFamily: input.lineage?.sourceFamily,
-      parentLineageIds: input.lineage?.parentLineageIds,
-      duplicateEventKey: input.lineage?.duplicateEventKey,
+      ...(input.lineage?.upstreamSourceRef !== undefined
+        ? { upstreamSourceRef: input.lineage.upstreamSourceRef }
+        : {}),
+      ...(input.lineage?.sourceFamily !== undefined ? { sourceFamily: input.lineage.sourceFamily } : {}),
+      ...(input.lineage?.parentLineageIds !== undefined
+        ? { parentLineageIds: input.lineage.parentLineageIds }
+        : {}),
+      ...(input.lineage?.duplicateEventKey !== undefined
+        ? { duplicateEventKey: input.lineage.duplicateEventKey }
+        : {}),
     });
 
     const duplicate = checkDuplicate(
@@ -81,9 +95,14 @@ export class HeliosObservationFabric {
 
     const entitlement = buildObservationEntitlement({
       observation,
-      entitlementClass: input.entitlement?.entitlementClass,
-      feedDelayClassification:
-        input.entitlement?.feedDelayClassification ?? input.feedDelayClassification,
+      ...(input.entitlement?.entitlementClass !== undefined
+        ? { entitlementClass: input.entitlement.entitlementClass }
+        : {}),
+      ...(input.entitlement?.feedDelayClassification !== undefined
+        ? { feedDelayClassification: input.entitlement.feedDelayClassification }
+        : input.feedDelayClassification !== undefined
+          ? { feedDelayClassification: input.feedDelayClassification }
+          : {}),
     });
 
     const freshness = assessHeliosFreshness({

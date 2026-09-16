@@ -6,7 +6,8 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { FrozenClock } from '../packages/config/src/clock.ts';
-import { asUtcInstant } from '../packages/domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '../packages/domain/src/time.ts';
+import type { IngestObservationResult } from '../packages/platform/src/helios/observation/types.ts';
 import {
   HeliosObservationFabric,
   assessHeliosFreshness,
@@ -24,6 +25,7 @@ import {
 import {
   assessMarketReferenceTrust,
   createExternalDataTrustEngine,
+  type CanonicalTrustResult,
 } from '../packages/provider-sdk/src/trust/index.ts';
 import {
   loadHeliosObservationState,
@@ -41,26 +43,36 @@ const DELAYED_ARRIVAL = asUtcInstant('2026-09-16T12:15:00.000Z');
 
 const describePersistence = persistenceAvailable() ? describe : describe.skip;
 
-function marketObservation(
-  overrides: {
-    observationId?: string;
-    providerId?: string;
-    sourceTimestamp?: string;
-    retrievedAt?: string;
-    priceMinor?: bigint;
-    rawPayload?: string;
-    commercialUseStatus?: 'permitted' | 'restricted' | 'prohibited' | 'unknown';
-    redistributionStatus?: 'permitted' | 'restricted' | 'prohibited' | 'unknown';
-    validationStatus?: 'valid' | 'timestamp_invalid' | 'schema_invalid';
-  } = {},
-): ExternalObservation<{
+type MarketData = {
   symbol: string;
   priceMinor: bigint;
   currency: string;
   asOf: string;
   sourceProvider: string;
   exchange: string | null;
-}> {
+};
+
+function assertIngestOk<T>(result: IngestObservationResult<T>): IngestObservationResult<T> & {
+  ok: true;
+  envelope: NonNullable<Extract<IngestObservationResult<T>, { ok: true }>['envelope']>;
+} {
+  assert.equal(result.ok, true);
+  return result as IngestObservationResult<T> & { ok: true };
+}
+
+function marketObservation(
+  overrides: {
+    observationId?: string;
+    providerId?: string;
+    sourceTimestamp?: UtcInstant;
+    retrievedAt?: UtcInstant;
+    priceMinor?: bigint;
+    rawPayload?: string;
+    commercialUseStatus?: 'permitted' | 'restricted' | 'prohibited' | 'unknown';
+    redistributionStatus?: 'permitted' | 'restricted' | 'prohibited' | 'unknown';
+    validationStatus?: 'valid' | 'timestamp_invalid' | 'schema_invalid';
+  } = {},
+): ExternalObservation<MarketData> {
   const built = buildExternalObservation({
     observationId: overrides.observationId ?? `obs_${Math.random().toString(36).slice(2, 10)}`,
     providerId: overrides.providerId ?? 'fixture_market',
@@ -86,17 +98,25 @@ function marketObservation(
     },
     freshnessPolicy: MARKET_PRICE_FRESHNESS_POLICY,
     validationStatus: overrides.validationStatus ?? 'valid',
-    licensing: {
-      commercialUseStatus: overrides.commercialUseStatus,
-      redistributionStatus: overrides.redistributionStatus,
-    },
+    ...(overrides.commercialUseStatus !== undefined || overrides.redistributionStatus !== undefined
+      ? {
+          licensing: {
+            ...(overrides.commercialUseStatus !== undefined
+              ? { commercialUseStatus: overrides.commercialUseStatus }
+              : {}),
+            ...(overrides.redistributionStatus !== undefined
+              ? { redistributionStatus: overrides.redistributionStatus }
+              : {}),
+          },
+        }
+      : {}),
   });
   assert.equal(built.ok, true);
   return built.value!;
 }
 
-function fabricAt(now: string): HeliosObservationFabric {
-  const clock = new FrozenClock(asUtcInstant(now));
+function fabricAt(now: UtcInstant): HeliosObservationFabric {
+  const clock = new FrozenClock(now);
   const store = createHeliosObservationStore();
   return new HeliosObservationFabric({ clock, store });
 }
@@ -140,11 +160,10 @@ describe('HELIOS H08 — observation provenance, freshness, and entitlements', (
         sunreyArrivalTime: DELAYED_ARRIVAL,
       },
     });
-    assert.equal(result.ok, true);
-    if (!result.ok) throw new Error(result.message);
-    assert.equal(result.envelope.entitlement.feedDelayClassification, 'delayed');
-    assert.equal(result.envelope.informationTime.knowableAt, DELAYED_ARRIVAL);
-    assert.ok(result.envelope.informationTime.sourceEventTime! < result.envelope.informationTime.knowableAt);
+    const ok = assertIngestOk(result);
+    assert.equal(ok.envelope.entitlement.feedDelayClassification, 'delayed');
+    assert.equal(ok.envelope.informationTime.knowableAt, DELAYED_ARRIVAL);
+    assert.ok(ok.envelope.informationTime.sourceEventTime! < ok.envelope.informationTime.knowableAt);
   });
 
   it('fresh observation passes with VALID quality state', () => {
@@ -157,11 +176,10 @@ describe('HELIOS H08 — observation provenance, freshness, and entitlements', (
       canonicalInstrumentId: 'instr_aapl_nasdaq',
       observationType: 'quote',
     });
-    assert.equal(result.ok, true);
-    if (!result.ok) throw new Error(result.message);
-    assert.equal(result.envelope.freshness.status, 'fresh');
-    assert.equal(result.envelope.qualityState, 'VALID');
-    assert.equal(result.duplicate, false);
+    const ok = assertIngestOk(result);
+    assert.equal(ok.envelope.freshness.status, 'fresh');
+    assert.equal(ok.envelope.qualityState, 'VALID');
+    assert.equal(ok.duplicate, false);
   });
 
   it('stale observation is explicitly degraded', () => {
@@ -173,11 +191,10 @@ describe('HELIOS H08 — observation provenance, freshness, and entitlements', (
       canonicalInstrumentId: 'instr_aapl_nasdaq',
       observationType: 'tick',
     });
-    assert.equal(result.ok, true);
-    if (!result.ok) throw new Error(result.message);
-    assert.ok(isFreshnessDegraded(result.envelope.freshness.status));
-    assert.equal(result.envelope.qualityState, 'DEGRADED_STALE');
-    assert.ok(result.envelope.qualityFlags.some((f) => f.code === 'STALENESS'));
+    const ok = assertIngestOk(result);
+    assert.ok(isFreshnessDegraded(ok.envelope.freshness.status));
+    assert.equal(ok.envelope.qualityState, 'DEGRADED_STALE');
+    assert.ok(ok.envelope.qualityFlags.some((f) => f.code === 'STALENESS'));
   });
 
   it('expired observation is explicitly degraded', () => {
@@ -195,10 +212,9 @@ describe('HELIOS H08 — observation provenance, freshness, and entitlements', (
       canonicalInstrumentId: 'instr_aapl_nasdaq',
       observationType: 'tick',
     });
-    assert.equal(result.ok, true);
-    if (!result.ok) throw new Error(result.message);
-    assert.equal(result.envelope.freshness.status, 'expired');
-    assert.equal(result.envelope.qualityState, 'DEGRADED_STALE');
+    const ok = assertIngestOk(result);
+    assert.equal(ok.envelope.freshness.status, 'expired');
+    assert.equal(ok.envelope.qualityState, 'DEGRADED_STALE');
   });
 
   it('unknown freshness when reference timestamp missing', () => {
@@ -254,12 +270,11 @@ describe('HELIOS H08 — observation provenance, freshness, and entitlements', (
       observationType: 'quote',
       lineage: { upstreamSourceRef: 'upstream_report_42' },
     });
-    assert.equal(first.ok, true);
-    assert.equal(second.ok, true);
-    if (!first.ok || !second.ok) throw new Error('ingest failed');
-    assert.equal(first.duplicate, false);
-    assert.equal(second.duplicate, true);
-    assert.equal(second.envelope.qualityState, 'DEGRADED_DUPLICATE');
+    const firstOk = assertIngestOk(first);
+    const secondOk = assertIngestOk(second);
+    assert.equal(firstOk.duplicate, false);
+    assert.equal(secondOk.duplicate, true);
+    assert.equal(secondOk.envelope.qualityState, 'DEGRADED_DUPLICATE');
   });
 
   it('lineage records upstream source reference', () => {
@@ -271,11 +286,10 @@ describe('HELIOS H08 — observation provenance, freshness, and entitlements', (
       observationType: 'quote',
       lineage: { upstreamSourceRef: 'reuters:quote:12345', sourceFamily: 'reuters' },
     });
-    assert.equal(result.ok, true);
-    if (!result.ok) throw new Error(result.message);
-    assert.equal(result.envelope.lineage.upstreamSourceRef, 'reuters:quote:12345');
-    assert.equal(result.envelope.lineage.sourceFamily, 'reuters');
-    assert.ok(result.envelope.lineage.lineageId.startsWith('hln_'));
+    const ok = assertIngestOk(result);
+    assert.equal(ok.envelope.lineage.upstreamSourceRef, 'reuters:quote:12345');
+    assert.equal(ok.envelope.lineage.sourceFamily, 'reuters');
+    assert.ok(ok.envelope.lineage.lineageId.startsWith('hln_'));
   });
 
   it('shared upstream source is not counted as independent', () => {
@@ -294,10 +308,9 @@ describe('HELIOS H08 — observation provenance, freshness, and entitlements', (
       observationType: 'quote',
       lineage: { upstreamSourceRef: 'shared_upstream_99' },
     });
-    assert.equal(second.ok, true);
-    if (!second.ok) throw new Error(second.message);
-    assert.equal(second.envelope.sourceIndependence, 'SHARED_UPSTREAM');
-    assert.ok(second.envelope.qualityFlags.some((f) => f.code === 'SHARED_UPSTREAM_SOURCE'));
+    const secondOk = assertIngestOk(second);
+    assert.equal(secondOk.envelope.sourceIndependence, 'SHARED_UPSTREAM');
+    assert.ok(secondOk.envelope.qualityFlags.some((f) => f.code === 'SHARED_UPSTREAM_SOURCE'));
   });
 
   it('entitlement unavailable blocks usable state', () => {
@@ -308,10 +321,9 @@ describe('HELIOS H08 — observation provenance, freshness, and entitlements', (
       canonicalInstrumentId: 'instr_aapl_nasdaq',
       observationType: 'quote',
     });
-    assert.equal(result.ok, true);
-    if (!result.ok) throw new Error(result.message);
-    assert.equal(result.envelope.qualityState, 'DEGRADED_ENTITLEMENT');
-    assert.ok(!isEntitlementUsable(result.envelope.entitlement));
+    const ok = assertIngestOk(result);
+    assert.equal(ok.envelope.qualityState, 'DEGRADED_ENTITLEMENT');
+    assert.ok(!isEntitlementUsable(ok.envelope.entitlement));
   });
 
   it('unknown entitlement is not treated as unrestricted', () => {
@@ -322,10 +334,9 @@ describe('HELIOS H08 — observation provenance, freshness, and entitlements', (
       canonicalInstrumentId: 'instr_aapl_nasdaq',
       observationType: 'quote',
     });
-    assert.equal(result.ok, true);
-    if (!result.ok) throw new Error(result.message);
-    assert.equal(result.envelope.entitlement.entitlementClass, 'unknown');
-    assert.ok(result.envelope.qualityFlags.some((f) => f.code === 'ENTITLEMENT_UNKNOWN'));
+    const ok = assertIngestOk(result);
+    assert.equal(ok.envelope.entitlement.entitlementClass, 'unknown');
+    assert.ok(ok.envelope.qualityFlags.some((f) => f.code === 'ENTITLEMENT_UNKNOWN'));
   });
 
   it('malformed timestamp degrades quality', () => {
@@ -336,9 +347,8 @@ describe('HELIOS H08 — observation provenance, freshness, and entitlements', (
       canonicalInstrumentId: 'instr_aapl_nasdaq',
       observationType: 'quote',
     });
-    assert.equal(result.ok, true);
-    if (!result.ok) throw new Error(result.message);
-    assert.equal(result.envelope.qualityState, 'DEGRADED_MALFORMED');
+    const ok = assertIngestOk(result);
+    assert.equal(ok.envelope.qualityState, 'DEGRADED_MALFORMED');
   });
 
   it('detects sequence gap', () => {
@@ -365,10 +375,9 @@ describe('HELIOS H08 — observation provenance, freshness, and entitlements', (
       observationType: 'quote',
       sequence: 3,
     });
-    assert.equal(gap.ok, true);
-    if (!gap.ok) throw new Error(gap.message);
-    assert.equal(gap.envelope.gapState, 'DETECTED');
-    assert.equal(gap.envelope.qualityState, 'DEGRADED_GAP');
+    const gapOk = assertIngestOk(gap);
+    assert.equal(gapOk.envelope.gapState, 'DETECTED');
+    assert.equal(gapOk.envelope.qualityState, 'DEGRADED_GAP');
   });
 
   it('outlier from trust engine degrades quality', () => {
@@ -382,6 +391,13 @@ describe('HELIOS H08 — observation provenance, freshness, and entitlements', (
     const trustWithOutlier = Object.freeze({
       ...trust,
       outlierStatus: 'OUTLIER' as const,
+      canonicalValue: {
+        priceMinor: '15000',
+        currency: 'USD',
+        symbol: 'AAPL',
+        asOf: SOURCE_EVENT,
+        sourceProvider: 'fixture_market',
+      },
     });
     const fabric = fabricAt(NOW);
     const result = fabric.ingest({
@@ -389,14 +405,13 @@ describe('HELIOS H08 — observation provenance, freshness, and entitlements', (
       sourceId: 'fixture_market:AAPL',
       canonicalInstrumentId: 'instr_aapl_nasdaq',
       observationType: 'quote',
-      trustResult: trustWithOutlier,
+      trustResult: trustWithOutlier as unknown as CanonicalTrustResult<MarketData>,
     });
-    assert.equal(result.ok, true);
-    if (!result.ok) throw new Error(result.message);
-    assert.equal(result.envelope.outlierState, 'OUTLIER');
-    assert.equal(result.envelope.qualityState, 'DEGRADED_OUTLIER');
-    assert.ok(result.envelope.trustRef);
-    assert.equal(result.envelope.trustRef!.grantsExecutionAuthority, false);
+    const ok = assertIngestOk(result);
+    assert.equal(ok.envelope.outlierState, 'OUTLIER');
+    assert.equal(ok.envelope.qualityState, 'DEGRADED_OUTLIER');
+    assert.ok(ok.envelope.trustRef);
+    assert.equal(ok.envelope.trustRef!.grantsExecutionAuthority, false);
   });
 
   it('provider unavailable yields UNAVAILABLE quality without synthetic fallback', () => {
@@ -412,11 +427,20 @@ describe('HELIOS H08 — observation provenance, freshness, and entitlements', (
       sourceId: 'fixture_market:AAPL',
       canonicalInstrumentId: 'instr_aapl_nasdaq',
       observationType: 'quote',
-      trustResult: Object.freeze({ ...trust, status: 'UNAVAILABLE' }),
+      trustResult: Object.freeze({
+        ...trust,
+        status: 'UNAVAILABLE' as const,
+        canonicalValue: {
+          priceMinor: '15000',
+          currency: 'USD',
+          symbol: 'AAPL',
+          asOf: SOURCE_EVENT,
+          sourceProvider: 'fixture_market',
+        },
+      }) as unknown as CanonicalTrustResult<MarketData>,
     });
-    assert.equal(result.ok, true);
-    if (!result.ok) throw new Error(result.message);
-    assert.equal(result.envelope.qualityState, 'UNAVAILABLE');
+    const ok = assertIngestOk(result);
+    assert.equal(ok.envelope.qualityState, 'UNAVAILABLE');
     assert.equal(fabric.store().list().length, 0);
   });
 
@@ -429,10 +453,10 @@ describe('HELIOS H08 — observation provenance, freshness, and entitlements', (
       venue: 'NASDAQ',
       observationType: 'quote',
     });
-    assert.equal(result.ok, true);
-    if (!result.ok) throw new Error(result.message);
-    const e = result.envelope;
-    assert.equal(e.observation.data.symbol, 'AAPL');
+    const ok = assertIngestOk(result);
+    const e = ok.envelope;
+    const data = e.observation.data as MarketData;
+    assert.equal(data.symbol, 'AAPL');
     assert.equal(e.canonicalInstrumentId, 'instr_aapl_nasdaq');
     assert.equal(e.providerId, 'fixture_market');
     assert.equal(e.informationTime.sourceEventTime, SOURCE_EVENT);

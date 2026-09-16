@@ -1,5 +1,6 @@
 import type { Pool } from 'pg';
 
+import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { HeliosObservationStoreSnapshot } from '../../../platform/src/helios/observation/store.ts';
 import type { HeliosMarketObservationEnvelope } from '../../../platform/src/helios/observation/types.ts';
 import { withClient } from '../postgres/pools.ts';
@@ -61,7 +62,7 @@ export async function loadHeliosObservationState(pool: Pool): Promise<HeliosObse
     const upstreamRefs = new Set<string>();
     const duplicateEventKeys = new Set<string>();
     const lastSequenceByInstrument: Record<string, number> = {};
-    const lastSourceEventTimeByInstrument: Record<string, string> = {};
+    const lastSourceEventTimeByInstrument: Record<string, UtcInstant> = {};
 
     for (const row of result.rows) {
       const envelope = JSON.parse(row.body_canonical) as HeliosMarketObservationEnvelope;
