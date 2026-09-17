@@ -1911,6 +1911,10 @@ function dispatchGrow(
     }
     if (path === '/api/v1/grow/monitor' && method === 'POST') return json(200, grow.monitor(principal), headers);
     if (path === '/api/v1/grow/agent-tools' && method === 'POST') return result(grow.invokeAgentTool(principal, rec, requestId), headers);
+    if (path === '/api/v1/grow/overview' && method === 'GET') return result(grow.overview(principal, requestId), headers);
+    if (path === '/api/v1/grow/activity' && method === 'GET') return result(grow.activity(principal, requestId), headers);
+    if (path === '/api/v1/grow/results' && method === 'GET') return result(grow.results(principal, requestId), headers);
+    if (path === '/api/v1/grow/cash' && method === 'GET') return result(grow.cashAvailable(principal, requestId), headers);
   }
   if (!isProductGrowthService(grow)) {
     return null;
@@ -2184,6 +2188,10 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/grow/executions/{id}',
   'GET /api/v1/grow/portfolio',
   'GET /api/v1/grow/performance',
+  'GET /api/v1/grow/overview',
+  'GET /api/v1/grow/activity',
+  'GET /api/v1/grow/results',
+  'GET /api/v1/grow/cash',
   'POST /api/v1/grow/recurring',
   'POST /api/v1/grow/recurring/{id}/cancel',
   'POST /api/v1/grow/monitor',
