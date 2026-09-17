@@ -8,12 +8,15 @@ import type { PaperStrategyRun } from './paper.ts';
 import type { StrategyPromotionReview } from './promotion.ts';
 import type { ShadowDecision, ShadowRun } from './shadow.ts';
 import type { StrategySpecification } from './specification.ts';
+import type { StrategyCapsuleRecord } from './capsule/types.ts';
+import type { StrategyFamilyId, StrategyCapsuleId, StrategyCapsuleVersion } from './capsule/ids.ts';
 import type { DataSnoopingRecord, StrategyRecord } from './types.ts';
 import type { StrategyValidationReport } from './validation.ts';
 import type { WalkForwardRun } from './walk-forward.ts';
 
 export type StrategyLabSnapshot = {
   readonly strategies: readonly StrategyRecord[];
+  readonly strategyCapsules: readonly StrategyCapsuleRecord[];
   readonly specifications: readonly StrategySpecification[];
   readonly plans: readonly SimulationPlan[];
   readonly datasets: readonly MarketDataset[];
@@ -32,6 +35,7 @@ export type StrategyLabSnapshot = {
 export function createEmptyStrategyLabSnapshot(): StrategyLabSnapshot {
   return Object.freeze({
     strategies: Object.freeze([]),
+    strategyCapsules: Object.freeze([]),
     specifications: Object.freeze([]),
     plans: Object.freeze([]),
     datasets: Object.freeze([]),
@@ -50,6 +54,7 @@ export function createEmptyStrategyLabSnapshot(): StrategyLabSnapshot {
 
 export class StrategyLabStore {
   private readonly strategies = new Map<string, StrategyRecord>();
+  private readonly strategyCapsules = new Map<string, StrategyCapsuleRecord>();
   private readonly specifications = new Map<string, StrategySpecification>();
   private readonly plans = new Map<string, SimulationPlan>();
   private readonly datasets = new Map<string, MarketDataset>();
@@ -70,6 +75,34 @@ export class StrategyLabStore {
 
   putStrategy(record: StrategyRecord): void {
     this.strategies.set(this.key(record.strategyId, record.version), record);
+  }
+
+  putStrategyCapsule(record: StrategyCapsuleRecord): void {
+    this.strategyCapsules.set(this.key(record.strategyCapsuleId, record.version), record);
+  }
+
+  getStrategyCapsule(id: StrategyCapsuleId, version: StrategyCapsuleVersion): StrategyCapsuleRecord | undefined {
+    return this.strategyCapsules.get(this.key(id, version));
+  }
+
+  getStrategyCapsuleByFamily(
+    familyId: StrategyFamilyId,
+    version: StrategyCapsuleVersion,
+  ): StrategyCapsuleRecord | undefined {
+    for (const record of this.strategyCapsules.values()) {
+      if (record.strategyFamilyId === familyId && record.version === version) {
+        return record;
+      }
+    }
+    return undefined;
+  }
+
+  listStrategyCapsulesByFamily(familyId: StrategyFamilyId): readonly StrategyCapsuleRecord[] {
+    return Object.freeze(
+      [...this.strategyCapsules.values()]
+        .filter((record) => record.strategyFamilyId === familyId)
+        .sort((left, right) => left.version.localeCompare(right.version)),
+    );
   }
 
   getStrategy(id: string, version: string): StrategyRecord | undefined {
@@ -155,6 +188,7 @@ export class StrategyLabStore {
   snapshot(): StrategyLabSnapshot {
     return Object.freeze({
       strategies: Object.freeze([...this.strategies.values()]),
+      strategyCapsules: Object.freeze([...this.strategyCapsules.values()]),
       specifications: Object.freeze([...this.specifications.values()]),
       plans: Object.freeze([...this.plans.values()]),
       datasets: Object.freeze([...this.datasets.values()]),

@@ -125,6 +125,50 @@ export type { GrowthStrategyGate, MeshCapitalProposal } from './bridges.ts';
 export { StrategyLabStore, createEmptyStrategyLabSnapshot } from './store.ts';
 export type { StrategyLabSnapshot } from './store.ts';
 export { StrategyLab } from './service.ts';
+export { asStrategyFamilyId } from './capsule/ids.ts';
+export type { StrategyFamilyId } from './capsule/ids.ts';
+export {
+  STRATEGY_CAPSULE_ENVIRONMENTS,
+  STRATEGY_CAPSULE_QUALIFICATION_STATES,
+  STRATEGY_CAPSULE_SCOPES,
+  TERMINAL_CAPSULE_QUALIFICATION_STATES,
+} from './capsule/types.ts';
+export type {
+  DeterministicDecisionRule,
+  FixedQualifiedParameters,
+  InstrumentUniverseSpec,
+  StrategyCapsuleComparison,
+  StrategyCapsuleEvidence,
+  StrategyCapsuleFailure,
+  StrategyCapsuleMaterial,
+  StrategyCapsuleQualificationState,
+  StrategyCapsuleRecord,
+  StrategyCapsuleScope,
+} from './capsule/types.ts';
+export {
+  computeStrategyCapsuleMaterialHash,
+  projectMaterialForHash,
+  serializeStrategyCapsuleMaterial,
+} from './capsule/fingerprint.ts';
+export {
+  LEGAL_CAPSULE_QUALIFICATION_TRANSITIONS,
+  canActivateCapsule,
+  canPromoteCapsule,
+  requiresReviewBeforePromotion,
+  transitionCapsuleQualification,
+} from './capsule/lifecycle.ts';
+export {
+  HELIOS_H14_CAPSULE_ID,
+  HELIOS_H14_ENTRY_QUANTITY_UNITS,
+  HELIOS_H14_ENTRY_THRESHOLD_MINOR,
+  HELIOS_H14_EXIT_THRESHOLD_MINOR,
+  HELIOS_H14_FAMILY_ID,
+  HELIOS_H14_RULE_ID,
+  buildHeliosH14Material,
+  buildHeliosH14StrategyCapsule,
+} from './capsule/h14.ts';
+export { StrategyCapsuleService } from './capsule/service.ts';
+export type { CreateStrategyCapsuleDraftInput } from './capsule/service.ts';
 export { freezePromotionCapsule } from './promotion-capsule.ts';
 export type { PromotionCapsule, PromotionCapsuleEvidenceRef } from './promotion-capsule.ts';
 export {
