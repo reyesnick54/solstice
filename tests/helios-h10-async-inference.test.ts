@@ -47,6 +47,7 @@ import { ModelRegistry } from '../packages/model-registry/src/registry.ts';
 import { asEconomicMandateId, asMandateVersion } from '../packages/platform/src/ids.ts';
 import type { CompiledEconomicMandate } from '../packages/platform/src/mandate/types.ts';
 import { HeliosWorkOrchestrator } from '../packages/platform/src/helios/index.ts';
+import { type EconomicWorkOrderId, type HeliosTaskId } from '../packages/platform/src/helios/ids.ts';
 import { createSimulationKeyProvider } from '../packages/security/src/simulation.ts';
 
 const NOW = AI_RUNTIME_NOW;
@@ -63,8 +64,8 @@ class HeliosResearchBudgetPort implements ResearchBudgetPort {
       return { ok: false, code: 'TASK_REQUIRED', message: 'HELIOS budget reservation requires a task id' };
     }
     const reserved = this.orchestrator.store.reserveBudgetAtomic({
-      workOrderId: request.workOrderId,
-      taskId: request.taskId,
+      workOrderId: request.workOrderId as EconomicWorkOrderId,
+      taskId: request.taskId as HeliosTaskId,
       customerId: request.customerId,
       amount: request.amountMicros,
       now: this.orchestrator.now(),
@@ -149,7 +150,7 @@ function buildExecutor(input: {
     catalog,
     providers: {
       LOCAL_TEST: new LocalTestAiProvider(clock),
-      S3M: new S3mInferenceProvider(clock, new SimulatedS3mServer()),
+      S3M: new S3mInferenceProvider({ clock, transport: new SimulatedS3mServer() }),
     },
   });
   const executor = new AsyncInferenceExecutor({
@@ -722,7 +723,7 @@ describe('HELIOS H10 platform inference bridge', () => {
     }
     const finalJob = executor.poll(requestId, customerId);
     assert.equal(finalJob.ok, true);
-    if (!finalJob.ok) throw new Error(finalJob.message);
+    if (!finalJob.ok) throw new Error('expected completed inference job');
     assert.equal(finalJob.job.state, 'COMPLETED');
   });
 });

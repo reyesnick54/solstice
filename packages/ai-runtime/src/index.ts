@@ -46,7 +46,6 @@ export { AiRuntime, type AiRuntimeResult } from './runtime.ts';
 export { AiModelGateway, type AiGatewayRequest, type AiGatewayResult } from './gateway.ts';
 export { InferenceModelCatalog } from './catalog.ts';
 export type { InferenceModelRecord, InferenceModelStatus } from './catalog.ts';
-export type { ModelQualificationState } from './async-inference/taxonomy.ts';
 export {
   CANONICAL_HTTPS_GENERIC_MODEL_ID,
   CANONICAL_HTTPS_GENERIC_MODEL_VERSION,

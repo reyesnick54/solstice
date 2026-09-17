@@ -1,12 +1,12 @@
 import type { AiPrivacyClass, AiProviderKind } from '../taxonomy.ts';
 import type { InferenceExternalPrivacyClass } from './taxonomy.ts';
 
-const EXTERNAL_PROVIDER_ALLOWED: Readonly<Record<AiProviderKind, readonly InferenceExternalPrivacyClass[]>> = Object.freeze({
-  S3M: Object.freeze(['PUBLIC', 'SUNREY_INTERNAL', 'CUSTOMER_PRIVATE']),
-  XAI_GROK: Object.freeze(['PUBLIC']),
-  LOCAL_TEST: Object.freeze(['PUBLIC', 'SUNREY_INTERNAL', 'CUSTOMER_PRIVATE', 'RESTRICTED_SENSITIVE']),
-  HTTPS_GENERIC: Object.freeze(['PUBLIC']),
-});
+const EXTERNAL_PROVIDER_ALLOWED = {
+  S3M: ['PUBLIC', 'SUNREY_INTERNAL', 'CUSTOMER_PRIVATE'],
+  XAI_GROK: ['PUBLIC'],
+  LOCAL_TEST: ['PUBLIC', 'SUNREY_INTERNAL', 'CUSTOMER_PRIVATE', 'RESTRICTED_SENSITIVE'],
+  HTTPS_GENERIC: ['PUBLIC'],
+} as const satisfies Readonly<Record<AiProviderKind, readonly InferenceExternalPrivacyClass[]>>;
 
 export function mapPrivacyClassToExternal(
   privacyClass: AiPrivacyClass,
@@ -36,7 +36,7 @@ export function providerAcceptsPrivacyClassification(input: {
   if (input.classification === 'PROVIDER_PROHIBITED' || input.classification === 'RESTRICTED_SENSITIVE') {
     return { ok: false, reason: `${input.classification} must not leave SunRey for external inference` };
   }
-  const allowed = EXTERNAL_PROVIDER_ALLOWED[input.provider];
+  const allowed = EXTERNAL_PROVIDER_ALLOWED[input.provider] as readonly InferenceExternalPrivacyClass[];
   if (!allowed.includes(input.classification)) {
     return {
       ok: false,
