@@ -22,6 +22,7 @@ export const HOLD_PURPOSES = [
   'COMPLIANCE',
   'WITHDRAWAL',
   'FX_RESERVATION',
+  'GROW_ALLOCATION',
 ] as const;
 
 export type HoldPurpose = (typeof HOLD_PURPOSES)[number];
