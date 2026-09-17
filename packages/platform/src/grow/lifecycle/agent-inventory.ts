@@ -148,7 +148,7 @@ export const GROW_BUILD_STATUS: readonly GrowBuildStatusRow[] = Object.freeze([
   { subsystem: 'Investment execution (sandbox)', status: SIMULATED, note: 'Kernel-gated InvestmentsService + sandbox provider' },
   { subsystem: 'Investment execution (live)', status: PROVIDER_GATED, note: 'No live broker connected; stops at PROVIDER_REQUIRED' },
   { subsystem: 'Portfolio monitoring', status: PARTIAL, note: 'Drift detection creates opportunities; no auto-trade' },
-  { subsystem: 'Outcome attribution', status: IMPLEMENTED, note: 'Projected vs realized separation enforced' },
+  { subsystem: 'Outcome attribution', status: IMPLEMENTED, note: 'HELIOS H25 independent Grow outcome attribution from canonical ledger/investment state' },
   { subsystem: 'Audit trail', status: IMPLEMENTED, note: 'Evidence Vault + grow audit event kinds' },
   { subsystem: 'AI credential isolation', status: IMPLEMENTED, note: 'Agent cannot access signing/provider secrets' },
   { subsystem: 'Debt optimization agent', status: NOT_IMPLEMENTED, note: 'Category reserved; detectors incomplete' },

@@ -42,6 +42,21 @@ export type { InvestmentsServiceOutcome, InvestmentCatalogPorts } from './servic
 export { SIM_ETF_1, seedSimulationInstruments } from './seed.ts';
 export { consumeLotsFifo, openLot } from './lot.ts';
 export { realizedFromSale, unrealizedFromValuation } from './pnl.ts';
+export {
+  buildCanonicalGrowAttributionSource,
+  moneyFromMinor,
+} from './attribution-snapshot.ts';
+export type {
+  AttributionFeeSnapshot,
+  AttributionFillSnapshot,
+  AttributionFxSnapshot,
+  AttributionIncomeSnapshot,
+  AttributionMarkSnapshot,
+  AttributionPositionSnapshot,
+  AttributionRealizedSnapshot,
+  AttributionSettlementSnapshot,
+  CanonicalGrowAttributionSource,
+} from './attribution-snapshot.ts';
 export { InvestmentPlatform } from './product/platform.ts';
 export type { PlatformResult } from './product/platform.ts';
 export { computePerformance } from './product/performance.ts';
