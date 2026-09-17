@@ -1,4 +1,4 @@
--- V053 Strategy Lab H18 controlled promotion pipeline.
+-- V054 Strategy Lab H18 controlled promotion pipeline.
 -- Qualification policies, promotion records, forward shadow evidence, and audit trail.
 
 CREATE TABLE strategy_lab.qualification_policy (
