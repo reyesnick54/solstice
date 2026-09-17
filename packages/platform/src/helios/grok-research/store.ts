@@ -1,4 +1,4 @@
-import type { CustomerId } from '@solstice/domain';
+import type { CustomerId } from '../../../../domain/src/customer.ts';
 import type { HeliosTaskId } from '../ids.ts';
 import type { GrokResearchResult } from './types.ts';
 

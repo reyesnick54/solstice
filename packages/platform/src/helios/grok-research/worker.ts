@@ -1,5 +1,5 @@
-import type { Clock } from '@solstice/config';
-import { asCustomerId } from '@solstice/domain';
+import type { Clock } from '../../../../config/src/clock.ts';
+import { asCustomerId } from '../../../../domain/src/customer.ts';
 import type { HeliosWorkTask } from '../execution-types.ts';
 import type { TaskHandler } from '../executor.ts';
 import { GrokResearchRuntime } from './runtime.ts';

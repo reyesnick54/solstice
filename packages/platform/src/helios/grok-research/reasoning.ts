@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import type { UtcInstant } from '@solstice/domain';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type { SanitizedResearchContext } from './context-sanitizer.ts';
 import type { HeliosResearchTaskInput, ResearchReasoningStep, ResearchToolRequest } from './types.ts';
 import type { ResearchToolCallRecord } from './types.ts';

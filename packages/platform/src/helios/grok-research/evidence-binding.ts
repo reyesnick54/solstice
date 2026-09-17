@@ -1,4 +1,4 @@
-import type { UtcInstant } from '@solstice/domain';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type { ResearchAssertion, ResearchEvidenceRef, ResearchToolCallRecord } from './types.ts';
 import type { AssertionKind } from './taxonomy.ts';
 

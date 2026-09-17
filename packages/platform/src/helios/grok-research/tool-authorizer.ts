@@ -1,4 +1,4 @@
-import type { UtcInstant } from '@solstice/domain';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type { HeliosResearchTaskInput, ResearchToolRequest } from './types.ts';
 import type { ToolAuthorizationOutcome } from './taxonomy.ts';
 import type { HeliosResearchToolRegistry, RegisteredResearchTool } from './tool-registry.ts';
