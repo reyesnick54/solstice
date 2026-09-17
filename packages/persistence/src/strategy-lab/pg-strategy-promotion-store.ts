@@ -26,27 +26,6 @@ export async function persistStrategyPromotionState(pool: Pool, state: StrategyP
           ],
         );
       }
-      for (const capsule of state.capsules) {
-        await client.query(
-          `INSERT INTO strategy_lab.strategy_capsule
-             (capsule_id, strategy_id, version, fingerprint, subject_id, compiled_hash,
-              frozen_at, simulation_only, live_eligible, body_canonical)
-           VALUES ($1,$2,$3,$4,$5,$6,$7,TRUE,FALSE,$8)
-           ON CONFLICT (strategy_id, version) DO UPDATE SET
-             fingerprint = EXCLUDED.fingerprint,
-             body_canonical = EXCLUDED.body_canonical`,
-          [
-            capsule.capsuleId,
-            capsule.strategyId,
-            capsule.version,
-            capsule.fingerprint,
-            capsule.subjectId,
-            capsule.compiledHash,
-            capsule.frozenAt,
-            canonicalJson(capsule),
-          ],
-        );
-      }
       for (const promotion of state.promotions) {
         await client.query(
           `INSERT INTO strategy_lab.promotion_record

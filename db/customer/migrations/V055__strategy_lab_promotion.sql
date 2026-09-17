@@ -1,5 +1,6 @@
--- V054 Strategy Lab H18 controlled promotion pipeline.
+-- V055 Strategy Lab H18 controlled promotion pipeline.
 -- Qualification policies, promotion records, forward shadow evidence, and audit trail.
+-- Strategy capsules are owned by V054 (H16); this migration adds promotion-only tables.
 
 CREATE TABLE strategy_lab.qualification_policy (
   policy_id TEXT PRIMARY KEY,
@@ -9,21 +10,6 @@ CREATE TABLE strategy_lab.qualification_policy (
   live_execution_permitted BOOLEAN NOT NULL CHECK (live_execution_permitted = FALSE),
   body_canonical TEXT NOT NULL,
   CONSTRAINT qualification_policy_id_prefix CHECK (policy_id LIKE 'qpol_%')
-);
-
-CREATE TABLE strategy_lab.strategy_capsule (
-  capsule_id TEXT PRIMARY KEY,
-  strategy_id TEXT NOT NULL,
-  version TEXT NOT NULL,
-  fingerprint TEXT NOT NULL,
-  subject_id TEXT NOT NULL,
-  compiled_hash TEXT,
-  frozen_at TIMESTAMPTZ NOT NULL,
-  simulation_only BOOLEAN NOT NULL CHECK (simulation_only = TRUE),
-  live_eligible BOOLEAN NOT NULL CHECK (live_eligible = FALSE),
-  body_canonical TEXT NOT NULL,
-  CONSTRAINT strategy_capsule_id_prefix CHECK (capsule_id LIKE 'scap_%'),
-  UNIQUE (strategy_id, version)
 );
 
 CREATE TABLE strategy_lab.promotion_record (
@@ -127,5 +113,17 @@ CREATE TABLE strategy_lab.demotion_record (
   body_canonical TEXT NOT NULL
 );
 
-GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA strategy_lab TO customer_app;
-REVOKE DELETE, TRUNCATE ON ALL TABLES IN SCHEMA strategy_lab FROM customer_app;
+GRANT SELECT, INSERT, UPDATE ON strategy_lab.qualification_policy TO customer_app;
+GRANT SELECT, INSERT, UPDATE ON strategy_lab.promotion_record TO customer_app;
+GRANT SELECT, INSERT, UPDATE ON strategy_lab.evaluation_qualification TO customer_app;
+GRANT SELECT, INSERT, UPDATE ON strategy_lab.forward_shadow_run TO customer_app;
+GRANT SELECT, INSERT, UPDATE ON strategy_lab.forward_shadow_decision TO customer_app;
+GRANT SELECT, INSERT, UPDATE ON strategy_lab.promotion_decision TO customer_app;
+GRANT SELECT, INSERT, UPDATE ON strategy_lab.demotion_record TO customer_app;
+REVOKE DELETE, TRUNCATE ON strategy_lab.qualification_policy FROM customer_app;
+REVOKE DELETE, TRUNCATE ON strategy_lab.promotion_record FROM customer_app;
+REVOKE DELETE, TRUNCATE ON strategy_lab.evaluation_qualification FROM customer_app;
+REVOKE DELETE, TRUNCATE ON strategy_lab.forward_shadow_run FROM customer_app;
+REVOKE DELETE, TRUNCATE ON strategy_lab.forward_shadow_decision FROM customer_app;
+REVOKE DELETE, TRUNCATE ON strategy_lab.promotion_decision FROM customer_app;
+REVOKE DELETE, TRUNCATE ON strategy_lab.demotion_record FROM customer_app;
