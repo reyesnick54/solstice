@@ -84,7 +84,9 @@ function activeMandate(subjectId: string): CompiledEconomicMandate {
 
 describe('HELIOS H11 — bounded Grok research and tool runtime', () => {
   it('architecture guard: grok-research does not bypass canonical authority', () => {
-    const findings = lintHeliosBoundary('packages/platform/src/helios/grok-research/runtime.ts');
+    const findings = lintHeliosBoundary(process.cwd()).filter((row) =>
+      row.file.includes('grok-research'),
+    );
     assert.equal(findings.length, 0);
   });
 
