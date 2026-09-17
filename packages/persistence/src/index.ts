@@ -84,6 +84,10 @@ export {
   persistDecisionValidityState,
 } from './growth/pg-helios-decision-validity-store.ts';
 export {
+  loadHeliosMetaAllocatorState,
+  persistHeliosMetaAllocatorState,
+} from './growth/pg-helios-meta-allocator-store.ts';
+export {
   loadWorkOrderState,
   persistWorkOrder,
   persistWorkOrderState,
