@@ -1,4 +1,4 @@
--- V053 HELIOS H21 — Decision-Validity Envelope durable records.
+-- V054 HELIOS H21 — Decision-Validity Envelope durable records.
 -- Validation artifact only. Does not post journals or issue Execution Authority.
 
 CREATE TABLE growth.helios_decision_validity_envelope (
