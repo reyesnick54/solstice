@@ -47,6 +47,7 @@ export function seedInferenceModelCatalog(catalog: InferenceModelCatalog): reado
       latencyClass: 'LOW',
       dataHandling: Object.freeze(['PUBLIC', 'INTERNAL', 'PERSONAL', 'FINANCIAL_SENSITIVE']),
       jurisdictionRestrictions: Object.freeze([]),
+      qualificationState: 'QUALIFIED_SANDBOX',
       liveApproved: false,
     },
     {
@@ -85,6 +86,7 @@ export function seedInferenceModelCatalog(catalog: InferenceModelCatalog): reado
       latencyClass: 'STANDARD',
       dataHandling: Object.freeze(['PUBLIC', 'INTERNAL', 'PERSONAL', 'FINANCIAL_SENSITIVE']),
       jurisdictionRestrictions: Object.freeze([]),
+      qualificationState: 'QUALIFIED_SANDBOX',
       liveApproved: false,
     },
     {
@@ -104,6 +106,7 @@ export function seedInferenceModelCatalog(catalog: InferenceModelCatalog): reado
       latencyClass: 'LOW',
       dataHandling: Object.freeze(['PUBLIC']),
       jurisdictionRestrictions: Object.freeze([]),
+      qualificationState: 'QUALIFIED_SANDBOX',
       liveApproved: false,
     },
     {
@@ -123,6 +126,7 @@ export function seedInferenceModelCatalog(catalog: InferenceModelCatalog): reado
       latencyClass: 'STANDARD',
       dataHandling: Object.freeze(['PUBLIC']),
       jurisdictionRestrictions: Object.freeze([]),
+      qualificationState: 'QUALIFIED_SANDBOX',
       liveApproved: false,
     },
     disabledVendor(RESERVED_OPENAI_MODEL_ID, 'openai-reserved'),
@@ -156,6 +160,7 @@ function disabledVendor(modelId: ReturnType<typeof asModelId>, providerModel: st
     latencyClass: 'STANDARD',
     dataHandling: Object.freeze(['PUBLIC']),
     jurisdictionRestrictions: Object.freeze([]),
+    qualificationState: 'DISABLED',
     liveApproved: false,
   };
 }
