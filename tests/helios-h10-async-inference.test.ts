@@ -1,16 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { FrozenClock } from '../../config/src/clock.ts';
-import { asCustomerId } from '../../domain/src/customer.ts';
-import { asJurisdiction } from '../../domain/src/jurisdiction.ts';
-import { asUtcInstant } from '../../domain/src/time.ts';
-import { DomainEventLog } from '../../events/src/events.ts';
-import { SimulatedIdentityAdapter } from '../../identity/src/simulation.ts';
-import { ModelRegistry } from '../../model-registry/src/registry.ts';
-import { createSimulationKeyProvider } from '../../security/src/simulation.ts';
-import { InferenceModelCatalog } from './catalog.ts';
-import { seedInferenceModelCatalog } from './catalog-seed.ts';
 import {
   AsyncInferenceExecutor,
   AsyncSyncHttpsTransportAdapter,
@@ -22,22 +12,102 @@ import {
   classifyInferenceRetry,
   externalPrivacyForGateway,
   mapPrivacyClassToExternal,
-} from './async-inference/index.ts';
-import { AI_RUNTIME_NOW, defaultAiPolicy } from './fixtures.ts';
-import { AiModelGateway, type AiGatewayRequest } from './gateway.ts';
-import { requestIdFor } from './ids.ts';
-import { LocalTestAiProvider } from './providers/local-test.ts';
-import { S3mInferenceProvider } from './providers/s3m.ts';
-import { SimulatedS3mServer } from './providers/s3m/simulator.ts';
-import { XaiGrokAiProvider } from './providers/xai-grok.ts';
-import { seedCanonicalAiModels } from './registry.ts';
-import { CANONICAL_LOCAL_TEST_MODEL_ID, CANONICAL_LOCAL_TEST_MODEL_VERSION } from './registry.ts';
-import { CANONICAL_GROK_MODEL_ID, CANONICAL_GROK_MODEL_VERSION } from './registry.ts';
-import { CANONICAL_S3M_MODEL_ID, CANONICAL_S3M_MODEL_VERSION } from './registry.ts';
-import { FixtureHttpsTransport, httpsOk } from './transport.ts';
-import type { StructuredInferenceRequest } from './async-inference/types.ts';
+  type InferenceJobRecord,
+  type ResearchBudgetPort,
+  type ResearchBudgetReconciliation,
+  type ResearchBudgetReservationRequest,
+  type StructuredInferenceRequest,
+} from '../packages/ai-runtime/src/async-inference/index.ts';
+import { InferenceModelCatalog } from '../packages/ai-runtime/src/catalog.ts';
+import { seedInferenceModelCatalog } from '../packages/ai-runtime/src/catalog-seed.ts';
+import { AI_RUNTIME_NOW, defaultAiPolicy } from '../packages/ai-runtime/src/fixtures.ts';
+import { AiModelGateway, type AiGatewayRequest } from '../packages/ai-runtime/src/gateway.ts';
+import { requestIdFor } from '../packages/ai-runtime/src/ids.ts';
+import { LocalTestAiProvider } from '../packages/ai-runtime/src/providers/local-test.ts';
+import { S3mInferenceProvider } from '../packages/ai-runtime/src/providers/s3m.ts';
+import { SimulatedS3mServer } from '../packages/ai-runtime/src/providers/s3m/simulator.ts';
+import { XaiGrokAiProvider } from '../packages/ai-runtime/src/providers/xai-grok.ts';
+import {
+  CANONICAL_GROK_MODEL_ID,
+  CANONICAL_GROK_MODEL_VERSION,
+  CANONICAL_LOCAL_TEST_MODEL_ID,
+  CANONICAL_LOCAL_TEST_MODEL_VERSION,
+  CANONICAL_S3M_MODEL_ID,
+  CANONICAL_S3M_MODEL_VERSION,
+  seedCanonicalAiModels,
+} from '../packages/ai-runtime/src/registry.ts';
+import { FixtureHttpsTransport, httpsOk } from '../packages/ai-runtime/src/transport.ts';
+import { FrozenClock } from '../packages/config/src/clock.ts';
+import { asCustomerId } from '../packages/domain/src/customer.ts';
+import { asJurisdiction } from '../packages/domain/src/jurisdiction.ts';
+import { asUtcInstant } from '../packages/domain/src/time.ts';
+import { DomainEventLog } from '../packages/events/src/events.ts';
+import { SimulatedIdentityAdapter } from '../packages/identity/src/simulation.ts';
+import { ModelRegistry } from '../packages/model-registry/src/registry.ts';
+import { asEconomicMandateId, asMandateVersion } from '../packages/platform/src/ids.ts';
+import type { CompiledEconomicMandate } from '../packages/platform/src/mandate/types.ts';
+import { HeliosWorkOrchestrator } from '../packages/platform/src/helios/index.ts';
+import { createSimulationKeyProvider } from '../packages/security/src/simulation.ts';
 
 const NOW = AI_RUNTIME_NOW;
+
+class HeliosResearchBudgetPort implements ResearchBudgetPort {
+  private readonly orchestrator: HeliosWorkOrchestrator;
+
+  constructor(orchestrator: HeliosWorkOrchestrator) {
+    this.orchestrator = orchestrator;
+  }
+
+  reserve(request: ResearchBudgetReservationRequest): { readonly ok: true } | { readonly ok: false; readonly code: string; readonly message: string } {
+    if (!request.taskId) {
+      return { ok: false, code: 'TASK_REQUIRED', message: 'HELIOS budget reservation requires a task id' };
+    }
+    const reserved = this.orchestrator.store.reserveBudgetAtomic({
+      workOrderId: request.workOrderId,
+      taskId: request.taskId,
+      customerId: request.customerId,
+      amount: request.amountMicros,
+      now: this.orchestrator.now(),
+    });
+    if ('code' in reserved) {
+      return { ok: false, code: reserved.code, message: reserved.message };
+    }
+    return { ok: true };
+  }
+
+  reconcile(input: ResearchBudgetReconciliation): { readonly ok: true } | { readonly ok: false; readonly code: string; readonly message: string } {
+    void input;
+    return { ok: true };
+  }
+}
+
+function mandate(subjectId: string): CompiledEconomicMandate {
+  return Object.freeze({
+    mandateId: asEconomicMandateId('emd_h10_integration'),
+    version: asMandateVersion(1),
+    subjectId,
+    state: 'ACTIVE',
+    sourceText: 'research only',
+    currency: 'USD',
+    goals: Object.freeze([]),
+    hardConstraints: Object.freeze([]),
+    softPreferences: Object.freeze([]),
+    compiledAt: asUtcInstant('2026-09-16T15:00:00.000Z'),
+    planningEligible: true,
+  });
+}
+
+function heliosSetup(subjectId: string, customerId: string) {
+  const clock = new FrozenClock(NOW);
+  const mandates = new Map<string, CompiledEconomicMandate>();
+  const active = mandate(subjectId);
+  mandates.set(active.mandateId, active);
+  const orchestrator = new HeliosWorkOrchestrator({
+    clock,
+    mandateLookup: (id) => mandates.get(id),
+  });
+  return { clock, orchestrator, subjectId, customerId };
+}
 
 function operator() {
   const clock = new FrozenClock(NOW);
@@ -172,7 +242,7 @@ async function waitForJob(
   requestId: string,
   customerId: string,
   timeoutMs = 5_000,
-): Promise<import('../async-inference/types.ts').InferenceJobRecord> {
+): Promise<InferenceJobRecord> {
   const started = Date.now();
   while (Date.now() - started < timeoutMs) {
     const polled = executor.poll(requestId, customerId);
@@ -312,13 +382,8 @@ describe('HELIOS H10 async inference transport and usage accounting', () => {
   });
 
   it('13. estimated cost', async () => {
-    const { executor, catalog } = buildExecutor();
-    const s3m = catalog.get(CANONICAL_S3M_MODEL_ID, CANONICAL_S3M_MODEL_VERSION);
-    assert.ok(s3m);
-    const request = structuredRequest({
-      executor,
-      provider: 'S3M',
-    });
+    const { executor } = buildExecutor();
+    const request = structuredRequest({ executor, provider: 'S3M' });
     const withS3m = Object.freeze({
       ...request,
       provider: 'S3M' as const,
@@ -351,9 +416,7 @@ describe('HELIOS H10 async inference transport and usage accounting', () => {
       governanceRegistry: registry,
       policy: defaultAiPolicy('S3M_PRIMARY'),
       catalog,
-      providers: {
-        LOCAL_TEST: new LocalTestAiProvider(clock),
-      },
+      providers: { LOCAL_TEST: new LocalTestAiProvider(clock) },
     });
     const executor = new AsyncInferenceExecutor({ clock, gateway, catalog, budgetPort });
     const request = structuredRequest({ executor });
@@ -510,5 +573,156 @@ describe('HELIOS H10 async inference transport and usage accounting', () => {
     executor.submit(request);
     const job = await waitForJob(executor, request.inferenceRequestId, request.customerId);
     assert.equal(job.state, 'PROVIDER_UNAVAILABLE');
+  });
+});
+
+describe('HELIOS H10 platform inference bridge', () => {
+  it('reserves HELIOS research budget before async inference dispatch', () => {
+    const { orchestrator, subjectId, customerId } = heliosSetup('id_h10', 'cust_h10');
+    const order = orchestrator.createWorkOrder({
+      programId: 'hpg_h10',
+      customerId,
+      subjectId,
+      objective: 'async inference research',
+      mandate: mandate(subjectId),
+      capability: 'HELIOS_RESEARCH',
+      approvalRef: null,
+      budgetCeiling: '500',
+      budgetUnitKind: 'MONETARY_MINOR',
+      budgetCurrency: 'USD',
+    });
+    if ('code' in order) throw new Error(order.message);
+    const task = orchestrator.createTask({
+      workOrderId: order.workOrderId,
+      customerId,
+      operationIdentity: 'infer_1',
+      taskType: 'RESEARCH_QUERY',
+      requiredCapability: 'HELIOS_RESEARCH',
+      permittedTools: Object.freeze([]),
+      permittedModelClass: 'SIMULATION',
+      requestedObjective: 'research query',
+      estimatedBudget: '100',
+    });
+    if ('code' in task) throw new Error(task.message);
+    const budgetPort = new HeliosResearchBudgetPort(orchestrator);
+    const blocked = budgetPort.reserve({
+      workOrderId: order.workOrderId,
+      taskId: task.taskId,
+      customerId,
+      reservationRef: 'rbr_h10_extra',
+      amountMicros: '500',
+      unitKind: 'MONETARY_MINOR',
+    });
+    assert.equal(blocked.ok, false);
+    if (blocked.ok) throw new Error('expected budget exhaustion');
+    assert.equal(blocked.code, 'BUDGET_EXHAUSTED');
+  });
+
+  it('composes orchestrator budget port with async inference executor', async () => {
+    const subjectId = 'id_async';
+    const customerId = 'cust_async';
+    const { clock, orchestrator } = heliosSetup(subjectId, customerId);
+    const { registry } = operator();
+    const catalog = new InferenceModelCatalog();
+    seedInferenceModelCatalog(catalog);
+    const gateway = new AiModelGateway({
+      clock,
+      governanceRegistry: registry,
+      policy: defaultAiPolicy('S3M_PRIMARY'),
+      catalog,
+      providers: { LOCAL_TEST: new LocalTestAiProvider(clock) },
+    });
+    const order = orchestrator.createWorkOrder({
+      programId: 'hpg_async',
+      customerId,
+      subjectId,
+      objective: 'async',
+      mandate: mandate(subjectId),
+      capability: 'HELIOS_RESEARCH',
+      approvalRef: null,
+      budgetCeiling: '1000',
+      budgetUnitKind: 'MONETARY_MINOR',
+      budgetCurrency: 'USD',
+    });
+    if ('code' in order) throw new Error(order.message);
+    const task = orchestrator.createTask({
+      workOrderId: order.workOrderId,
+      customerId,
+      operationIdentity: 'infer_async',
+      taskType: 'RESEARCH_QUERY',
+      requiredCapability: 'HELIOS_RESEARCH',
+      permittedTools: Object.freeze([]),
+      permittedModelClass: 'SIMULATION',
+      requestedObjective: 'async infer',
+      estimatedBudget: '100',
+    });
+    if ('code' in task) throw new Error(task.message);
+    const executor = new AsyncInferenceExecutor({
+      clock,
+      gateway,
+      catalog,
+      budgetPort: new HeliosResearchBudgetPort(orchestrator),
+    });
+    const requestId = requestIdFor('h10:platform');
+    const submitted = executor.submit(Object.freeze({
+      inferenceRequestId: requestId,
+      taskId: task.taskId,
+      workOrderId: order.workOrderId,
+      customerId,
+      purposeReference: 'helios',
+      purpose: 'GENERAL_ASSISTANT',
+      taskClass: 'GENERAL_ASSISTANT',
+      provider: 'LOCAL_TEST',
+      modelId: CANONICAL_LOCAL_TEST_MODEL_ID,
+      modelVersion: CANONICAL_LOCAL_TEST_MODEL_VERSION,
+      promptTemplateId: null,
+      structuredInput: Object.freeze({}),
+      toolCapabilities: Object.freeze([]),
+      responseSchema: 'EXPLANATION',
+      maxOutputTokens: 256,
+      connectionTimeoutMs: 1_000,
+      processingTimeoutMs: 30_000,
+      taskDeadline: null,
+      workOrderHorizon: null,
+      privacyClassification: 'PUBLIC',
+      budgetReservationRef: `rbr_${requestId}`,
+      estimatedBudgetMicros: '50',
+      traceRefs: Object.freeze([]),
+      evidenceRefs: Object.freeze([]),
+      gatewayRequest: Object.freeze({
+        requestId,
+        purpose: 'GENERAL_ASSISTANT',
+        taskClass: 'GENERAL_ASSISTANT',
+        privacyClass: 'PUBLIC',
+        jurisdictionRef: 'SIM',
+        authorization: Object.freeze({
+          actorId: subjectId,
+          subjectId,
+          userApprovedExternal: false,
+          mandateId: mandate(subjectId).mandateId,
+          agentId: null,
+        }),
+        conversationId: null,
+        userId: subjectId,
+        prompt: 'research',
+        context: Object.freeze([]),
+        correlationId: 'corr_platform',
+        modelRef: { modelId: CANONICAL_LOCAL_TEST_MODEL_ID, version: CANONICAL_LOCAL_TEST_MODEL_VERSION },
+        clientModelSelection: true,
+        preferredProvider: 'LOCAL_TEST',
+        allowFallback: false,
+      }),
+    }));
+    assert.equal(submitted.ok, true);
+    const started = Date.now();
+    while (Date.now() - started < 5_000) {
+      const polled = executor.poll(requestId, customerId);
+      if (polled.ok && polled.job.state === 'COMPLETED') break;
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+    const finalJob = executor.poll(requestId, customerId);
+    assert.equal(finalJob.ok, true);
+    if (!finalJob.ok) throw new Error(finalJob.message);
+    assert.equal(finalJob.job.state, 'COMPLETED');
   });
 });

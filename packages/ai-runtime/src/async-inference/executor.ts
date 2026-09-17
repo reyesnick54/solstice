@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
-import type { Clock } from '../../../config/src/clock.ts';
+import type { Clock } from '@solstice/config';
 import type { AiModelGateway } from '../gateway.ts';
 import { routeInferenceModel } from '../routing-policy.ts';
 import type { AiProviderFailure } from '../types.ts';

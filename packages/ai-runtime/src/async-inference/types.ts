@@ -1,5 +1,5 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
-import type { ModelId, ModelVersion } from '../../../model-registry/src/ids.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { ModelId, ModelVersion } from '@solstice/model-registry';
 import type { AiRequestId } from '../ids.ts';
 import type { AiApprovedPurpose, AiProviderKind, AiTaskClass } from '../taxonomy.ts';
 import type { AiGatewayResult, AiGatewayRequest } from '../gateway.ts';

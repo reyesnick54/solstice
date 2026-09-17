@@ -122,6 +122,7 @@ export { HeliosTaskWorker, restartWorker } from './executor.ts';
 export { collectHeliosMetrics } from './metrics.ts';
 export { HeliosWorkOrchestrator } from './orchestrator.ts';
 export {
+<<<<<<< HEAD
   HeliosResearchBudgetPort,
   recordHeliosInferenceSpend,
   type HeliosResearchBudgetPortContract,
@@ -129,6 +130,8 @@ export {
   type HeliosResearchBudgetReservationRequest,
 } from './inference-bridge.ts';
 export {
+=======
+>>>>>>> 05a44d9c (fix(helios): resolve H10 package boundary violations for CI)
   classifyTaskError,
   HeliosTaskError,
   initialRetryMetadata,
