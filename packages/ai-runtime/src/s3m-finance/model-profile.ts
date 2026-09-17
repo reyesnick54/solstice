@@ -92,7 +92,7 @@ export function defaultS3mFinanceModelProfile(now: UtcInstant): S3mFinanceModelP
       transportSecurity: null,
       securityControls: Object.freeze([]),
     }),
-    allowedEnvironments: Object.freeze(['SIMULATION', 'SANDBOX']),
+    allowedEnvironments: Object.freeze(['SIMULATION', 'SANDBOX'] as readonly InferenceModelEnvironment[]),
     supportsStructuredOutput: true,
     supportsTools: false,
     maxContextTokens: 32_768,

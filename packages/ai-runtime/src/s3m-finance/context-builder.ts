@@ -1,5 +1,5 @@
 import { err, ok, type Result } from '../../../domain/src/result.ts';
-import type { AiApprovedPurpose } from '../taxonomy.ts';
+import type { AiApprovedPurpose, AiProviderKind } from '../taxonomy.ts';
 import { minimizeContext } from '../envelope.ts';
 import type { AiContextObject } from '../types.ts';
 import type { S3mAuthorizedContextField, S3mFinanceServingRequest } from './contract.ts';
@@ -21,38 +21,28 @@ export type S3mContextBuildFailure = {
   readonly detail: string;
 };
 
-const PURPOSE_CONTEXT_CLASSES: Readonly<Record<AiApprovedPurpose, readonly S3mAuthorizedContextClass[]>> =
-  Object.freeze({
-    FINANCIAL_EXPLANATION: Object.freeze(['PEG_POSITION_SUMMARY', 'WORK_ORDER_SCOPE']),
-    STRUCTURED_PROPOSAL_NARRATION: Object.freeze(['PEG_POSITION_SUMMARY', 'MANDATE_CONSTRAINT', 'WORK_ORDER_SCOPE']),
-    SIMPLE_CLASSIFICATION: Object.freeze(['PUBLIC_RESEARCH']),
-    GROWTH_PLANNING: Object.freeze(['PEG_GOAL_SUMMARY', 'PEG_POSITION_SUMMARY', 'MANDATE_CONSTRAINT']),
-    PORTFOLIO_REASONING: Object.freeze(['PEG_POSITION_SUMMARY', 'MARKET_OBSERVATION']),
-    PAYMENT_PREPARATION: Object.freeze(['PEG_POSITION_SUMMARY', 'WORK_ORDER_SCOPE']),
-    EXCHANGE_ORDER_PREPARATION: Object.freeze(['PEG_POSITION_SUMMARY', 'MARKET_OBSERVATION']),
-    USER_SUPPORT: Object.freeze(['PUBLIC_RESEARCH']),
-    REGULATORY_EXPLANATION: Object.freeze(['PUBLIC_RESEARCH', 'WORK_ORDER_SCOPE']),
-    GENERAL_ASSISTANT: Object.freeze(['PUBLIC_RESEARCH']),
-    MARKET_OPPORTUNITY_RESEARCH: Object.freeze(['MARKET_OBSERVATION', 'PUBLIC_RESEARCH']),
-  });
+const PURPOSE_CONTEXT_CLASSES = {
+  FINANCIAL_EXPLANATION: ['PEG_POSITION_SUMMARY', 'WORK_ORDER_SCOPE'],
+  STRUCTURED_PROPOSAL_NARRATION: ['PEG_POSITION_SUMMARY', 'MANDATE_CONSTRAINT', 'WORK_ORDER_SCOPE'],
+  SIMPLE_CLASSIFICATION: ['PUBLIC_RESEARCH'],
+  GROWTH_PLANNING: ['PEG_GOAL_SUMMARY', 'PEG_POSITION_SUMMARY', 'MANDATE_CONSTRAINT'],
+  PORTFOLIO_REASONING: ['PEG_POSITION_SUMMARY', 'MARKET_OBSERVATION'],
+  PAYMENT_PREPARATION: ['PEG_POSITION_SUMMARY', 'WORK_ORDER_SCOPE'],
+  EXCHANGE_ORDER_PREPARATION: ['PEG_POSITION_SUMMARY', 'MARKET_OBSERVATION'],
+  USER_SUPPORT: ['PUBLIC_RESEARCH'],
+  REGULATORY_EXPLANATION: ['PUBLIC_RESEARCH', 'WORK_ORDER_SCOPE'],
+  GENERAL_ASSISTANT: ['PUBLIC_RESEARCH'],
+  MARKET_OPPORTUNITY_RESEARCH: ['MARKET_OBSERVATION', 'PUBLIC_RESEARCH'],
+} as const satisfies Record<AiApprovedPurpose, readonly S3mAuthorizedContextClass[]>;
 
-const PRIVACY_ALLOWED_CLASSES: Readonly<Record<S3mPrivacyClassification, readonly S3mAuthorizedContextClass[]>> =
-  Object.freeze({
-    PUBLIC_RESEARCH: Object.freeze(['PUBLIC_RESEARCH', 'MARKET_OBSERVATION']),
-    INTERNAL: Object.freeze(['PUBLIC_RESEARCH', 'MARKET_OBSERVATION', 'WORK_ORDER_SCOPE']),
-    CUSTOMER_PRIVATE: Object.freeze([
-      'PEG_POSITION_SUMMARY',
-      'PEG_GOAL_SUMMARY',
-      'WORK_ORDER_SCOPE',
-      'MANDATE_CONSTRAINT',
-    ]),
-    RESTRICTED_SENSITIVE: Object.freeze([
-      'PEG_POSITION_SUMMARY',
-      'PEG_GOAL_SUMMARY',
-      'MANDATE_CONSTRAINT',
-      'WORK_ORDER_SCOPE',
-    ]),
-  });
+const PRIVACY_ALLOWED_CLASSES = {
+  PUBLIC_RESEARCH: ['PUBLIC_RESEARCH', 'MARKET_OBSERVATION'],
+  INTERNAL: ['PUBLIC_RESEARCH', 'MARKET_OBSERVATION', 'WORK_ORDER_SCOPE'],
+  CUSTOMER_PRIVATE: ['PEG_POSITION_SUMMARY', 'PEG_GOAL_SUMMARY', 'WORK_ORDER_SCOPE', 'MANDATE_CONSTRAINT'],
+  RESTRICTED_SENSITIVE: ['PEG_POSITION_SUMMARY', 'PEG_GOAL_SUMMARY', 'MANDATE_CONSTRAINT', 'WORK_ORDER_SCOPE'],
+} as const satisfies Record<S3mPrivacyClassification, readonly S3mAuthorizedContextClass[]>;
+
+const S3M_ONLY_PROVIDERS: readonly AiProviderKind[] = Object.freeze(['S3M']);
 
 /**
  * Build only the context permitted for this task.
@@ -123,7 +113,7 @@ export function buildAuthorizedS3mContext(input: {
       Object.freeze({
         objectId: field.fieldId,
         dataClass: privacyToDataClass(request.privacyClassification),
-        authorizedProviders: Object.freeze(['S3M']),
+        authorizedProviders: S3M_ONLY_PROVIDERS,
         userApproved: request.privacyClassification !== 'PUBLIC_RESEARCH',
         payload: field.payload,
       }),

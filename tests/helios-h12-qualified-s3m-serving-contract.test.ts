@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 
 import { FrozenClock } from '../packages/config/src/clock.ts';
 import { asUtcInstant } from '../packages/domain/src/time.ts';
-import { asModelVersion } from '../packages/model-registry/src/ids.ts';
+import { asModelId, asModelVersion } from '../packages/model-registry/src/ids.ts';
 import { err, ok } from '../packages/domain/src/result.ts';
 import {
   S3M_FINANCE_MODEL_ID,
@@ -25,6 +25,7 @@ import {
 } from '../packages/ai-runtime/src/s3m-finance/index.ts';
 import { createDefaultAiRuntimePolicy } from '../packages/ai-runtime/src/policy.ts';
 import type { AiGatewayRequest, AiGatewayResult } from '../packages/ai-runtime/src/gateway.ts';
+import { S3M_PROVIDER_ID } from '../packages/ai-runtime/src/providers/s3m/normalization.ts';
 import type { AiProviderFailure } from '../packages/ai-runtime/src/types.ts';
 import { createHeliosS3mServingRoute } from '../packages/ai-runtime/src/integrations/helios-s3m-serving.ts';
 import { heliosS3mSpendBridge } from '../packages/platform/src/helios/s3m-serving/index.ts';
@@ -112,13 +113,13 @@ function fixtureGateway(input?: {
           providerKind: 'S3M',
         });
       }
-      const modelId = input?.wrongModel ? 'mdl_wrong' : S3M_FINANCE_MODEL_ID;
-      const version = input?.wrongModel ? 'wrong-v1' : S3M_FINANCE_MODEL_VERSION;
-      const response: AiGatewayResult = Object.freeze({
+      const modelId = input?.wrongModel ? asModelId('mdl_wrong') : S3M_FINANCE_MODEL_ID;
+      const version = input?.wrongModel ? asModelVersion('wrong-v1') : S3M_FINANCE_MODEL_VERSION;
+      const response = Object.freeze({
         response: Object.freeze({
           requestId: request.requestId,
-          providerId: 'ai_s3m',
-          providerKind: 'S3M',
+          providerId: S3M_PROVIDER_ID,
+          providerKind: 'S3M' as const,
           modelRef: Object.freeze({ modelId, version }),
           text: validReasoningJson(),
           structured: null,
@@ -175,7 +176,7 @@ function fixtureGateway(input?: {
         productionActive: false,
         liveConnectivityEnabled: false,
       });
-      return ok(response);
+      return ok(response as AiGatewayResult);
     },
   };
 }

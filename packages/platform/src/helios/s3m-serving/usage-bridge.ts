@@ -13,7 +13,7 @@ export const heliosS3mSpendBridge: HeliosS3mSpendBridge = {
       taskId: input.taskId,
       customerId: input.customerId,
       programId: input.programId,
-      budgetCategory: 'COMPUTE_UNITS',
+      budgetCategory: 'INFERENCE_CALLS',
       reservedAmount: input.reservedAmount,
       actualAmount: attribution.estimatedCostMicros,
       estimatedAmount: attribution.estimatedCostMicros,
