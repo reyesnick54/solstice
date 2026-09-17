@@ -24,6 +24,8 @@ import { createSimulationRuntime, type SimulationRuntime } from '../services/acc
 import { activateCustomer, openIntent } from '../services/accounts/src/test-helpers.ts';
 import { createAccountsReadAdapter } from '../services/api/src/consumer/accounts-adapter.ts';
 import { InMemoryGrowStore } from '../packages/platform/src/grow/store.ts';
+import { InMemoryGrowControlsStore } from '../packages/platform/src/helios/grow-controls/index.ts';
+import { createGrowControlsService } from '../services/api/src/consumer/grow-controls.ts';
 import { GrowBffSurface } from '../services/api/src/consumer/grow.ts';
 import { handleConsumerBff, type BffRequest, type BffResponse, type ConsumerBffRuntime } from '../services/api/src/consumer/handler.ts';
 import { ConsumerBff, memoryPreferenceStore } from '../services/api/src/consumer/orchestrator.ts';
@@ -215,6 +217,34 @@ export function createPhaseEWorld(suffix = 'e1'): PhaseEWorld {
   if (openedInvest.outcome !== 'OK') {
     throw new Error(`phase e investment profile: ${openedInvest.outcome}`);
   }
+  const growControlsStore = new InMemoryGrowControlsStore();
+  const growControls = createGrowControlsService({
+    clock,
+    grow,
+    orchestrator,
+    investments,
+    ledger: runtime.ledger,
+    accounts: runtime.accounts,
+    investmentAccountsFor: (customerId) =>
+      customerId === customer.id
+        ? {
+            investmentAccountId: `inv_${suffix}`,
+            demandAccountId: demand.id,
+            brokerageCashAccountId: brokerage.id,
+            securitiesAccountId: securities.id,
+            pendingSettlementAccountId: pending.id,
+          }
+        : null,
+    suitabilityFor: (row) => ({
+      kycComplete: row.verification === 'VERIFIED',
+      jurisdictionPermitted: row.jurisdiction === 'GB' || row.jurisdiction === 'US',
+      accountRestricted: row.restricted,
+      customerEligible: row.customerStatus === 'ACTIVE',
+      riskProfile: row.risk === 'RESTRICTED' ? 'LOW' : 'MODERATE',
+      proposalRiskClass: 'MODERATE',
+    }),
+    store: growControlsStore,
+  });
   const growBff = new GrowBffSurface({
     peg,
     orchestrator,
@@ -246,6 +276,7 @@ export function createPhaseEWorld(suffix = 'e1'): PhaseEWorld {
       riskProfile: row.risk === 'RESTRICTED' ? 'LOW' : 'MODERATE',
       proposalRiskClass: 'MODERATE',
     }),
+    growControls,
   });
   const growPortfolio: GrowPortfolioPort = {
     summarize: () =>
@@ -300,11 +331,43 @@ export function createPhaseEWorld(suffix = 'e1'): PhaseEWorld {
   };
   let activeGrow = grow;
   let activeGrowBff = growBff;
+  let activeGrowControlsStore = growControlsStore;
+  let activeGrowControls = growControls;
   const restartGrowRuntime = () => {
     const snapshot = activeGrow.store.snapshot();
+    const controlsSnapshot = activeGrowControlsStore.snapshot();
     const reloadedStore = new InMemoryGrowStore();
     reloadedStore.loadState(snapshot);
     activeGrow = new GrowLifecycleService({ clock, evidence, store: reloadedStore });
+    activeGrowControlsStore = new InMemoryGrowControlsStore();
+    activeGrowControlsStore.loadState(controlsSnapshot);
+    activeGrowControls = createGrowControlsService({
+      clock,
+      grow: activeGrow,
+      orchestrator,
+      investments,
+      ledger: runtime.ledger,
+      accounts: runtime.accounts,
+      investmentAccountsFor: (customerId) =>
+        customerId === customer.id
+          ? {
+              investmentAccountId: `inv_${suffix}`,
+              demandAccountId: demand.id,
+              brokerageCashAccountId: brokerage.id,
+              securitiesAccountId: securities.id,
+              pendingSettlementAccountId: pending.id,
+            }
+          : null,
+      suitabilityFor: (row) => ({
+        kycComplete: row.verification === 'VERIFIED',
+        jurisdictionPermitted: row.jurisdiction === 'GB' || row.jurisdiction === 'US',
+        accountRestricted: row.restricted,
+        customerEligible: row.customerStatus === 'ACTIVE',
+        riskProfile: row.risk === 'RESTRICTED' ? 'LOW' : 'MODERATE',
+        proposalRiskClass: 'MODERATE',
+      }),
+      store: activeGrowControlsStore,
+    });
     activeGrowBff = new GrowBffSurface({
       peg,
       orchestrator,
@@ -336,6 +399,7 @@ export function createPhaseEWorld(suffix = 'e1'): PhaseEWorld {
         riskProfile: row.risk === 'RESTRICTED' ? 'LOW' : 'MODERATE',
         proposalRiskClass: 'MODERATE',
       }),
+      growControls: activeGrowControls,
     });
     growSurface.current = activeGrowBff;
   };

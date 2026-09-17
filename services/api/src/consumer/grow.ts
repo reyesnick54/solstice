@@ -45,6 +45,18 @@ import {
   growPaperResults,
   type GrowPaperCycleDeps,
 } from './grow-paper-cycle.ts';
+import type { HeliosGrowControlService } from '@solstice/platform';
+import {
+  createGrowControlsService,
+  growControlsClose,
+  growControlsDegraded,
+  growControlsMandateChange,
+  growControlsPause,
+  growControlsResume,
+  growControlsStatus,
+  growControlsWithdraw,
+  type GrowControlsBffDeps,
+} from './grow-controls.ts';
 
 export { toLovableExperience };
 
@@ -60,10 +72,12 @@ export type GrowBffDeps = {
   readonly now: () => UtcInstant;
   readonly investmentAccountsFor: (customerId: string) => GrowInvestmentAccounts | null;
   readonly suitabilityFor: (principal: BffPrincipal) => SuitabilityFacts;
+  readonly growControls?: HeliosGrowControlService;
 };
 
 export class GrowBffSurface {
   private readonly deps: GrowBffDeps;
+  private cachedGrowControls: HeliosGrowControlService | null = null;
 
   constructor(deps: GrowBffDeps) {
     this.deps = deps;
@@ -215,6 +229,9 @@ export class GrowBffSurface {
     body: Record<string, unknown>,
     requestId: string,
   ): Record<string, unknown> | BffErrorEnvelope {
+    if (this.controlsService().isNewDeploymentBlocked(principal.customerId, principal.identityId)) {
+      return this.fail(requestId, 'DEPLOYMENT_PAUSED', 'new deployment is paused');
+    }
     const actor = this.actor(principal);
     const planned = this.deps.orchestrator.store.latestPlanFor(principal.identityId);
     if (!planned || planned.state === 'STALE') {
@@ -316,6 +333,14 @@ export class GrowBffSurface {
     body: Record<string, unknown>,
     requestId: string,
   ): Record<string, unknown> | BffErrorEnvelope {
+    if (this.controlsService().isNewDeploymentBlocked(principal.customerId, principal.identityId)) {
+      const inFlight = this.deps.grow.store
+        .listExecutions(principal.customerId)
+        .some((row) => row.proposalId === proposalId && (row.state === 'SUBMITTED' || row.state === 'PARTIALLY_COMPLETED'));
+      if (!inFlight) {
+        return this.fail(requestId, 'DEPLOYMENT_PAUSED', 'new deployment is paused');
+      }
+    }
     if (body.clientIntent && typeof body.clientIntent === 'object') {
       return this.fail(requestId, 'PROPOSAL_FORGED', 'do not execute arbitrary frontend-provided financial instructions');
     }
@@ -567,6 +592,56 @@ export class GrowBffSurface {
     return growPaperCash(this.paperCycleDeps(), principal, requestId);
   }
 
+  controlsStatus(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growControlsStatus(this.controlsBffDeps(), principal, requestId);
+  }
+
+  controlsPause(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growControlsPause(this.controlsBffDeps(), principal, requestId);
+  }
+
+  controlsResume(
+    principal: BffPrincipal,
+    body: Record<string, unknown>,
+    requestId: string,
+  ): Record<string, unknown> | BffErrorEnvelope {
+    return growControlsResume(this.controlsBffDeps(), principal, body, requestId, this.deps.suitabilityFor(principal));
+  }
+
+  controlsClose(
+    principal: BffPrincipal,
+    body: Record<string, unknown>,
+    requestId: string,
+  ): Record<string, unknown> | BffErrorEnvelope {
+    return growControlsClose(this.controlsBffDeps(), principal, body, requestId);
+  }
+
+  controlsWithdraw(
+    principal: BffPrincipal,
+    body: Record<string, unknown>,
+    requestId: string,
+  ): Record<string, unknown> | BffErrorEnvelope {
+    return growControlsWithdraw(
+      this.controlsBffDeps(),
+      principal,
+      body,
+      requestId,
+      this.deps.investmentAccountsFor(principal.customerId),
+    );
+  }
+
+  controlsMandateChange(
+    principal: BffPrincipal,
+    body: Record<string, unknown>,
+    requestId: string,
+  ): Record<string, unknown> | BffErrorEnvelope {
+    return growControlsMandateChange(this.controlsBffDeps(), principal, body, requestId);
+  }
+
+  controlsDegraded(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growControlsDegraded(this.controlsBffDeps(), principal, requestId);
+  }
+
   monitor(principal: BffPrincipal): Record<string, unknown> {
     return this.deps.grow.monitor(principal.identityId, {
       cashReserveBelowTarget: false,
@@ -645,6 +720,32 @@ export class GrowBffSurface {
       accounts: this.deps.accounts,
       resolveActor: this.deps.resolveActor,
       investmentAccountsFor: this.deps.investmentAccountsFor,
+    };
+  }
+
+  private controlsService(): HeliosGrowControlService {
+    if (this.deps.growControls) {
+      return this.deps.growControls;
+    }
+    if (!this.cachedGrowControls) {
+      this.cachedGrowControls = createGrowControlsService({
+        clock: { now: this.deps.now },
+        grow: this.deps.grow,
+        orchestrator: this.deps.orchestrator,
+        investments: this.deps.investments,
+        ledger: this.deps.ledger,
+        accounts: this.deps.accounts,
+        investmentAccountsFor: this.deps.investmentAccountsFor,
+        suitabilityFor: this.deps.suitabilityFor,
+      });
+    }
+    return this.cachedGrowControls;
+  }
+
+  private controlsBffDeps(): GrowControlsBffDeps {
+    return {
+      growControls: this.controlsService(),
+      resolveActor: this.deps.resolveActor,
     };
   }
 
@@ -733,6 +834,7 @@ function mapGrowError(code: string): { readonly code: BffErrorEnvelope['errorCod
     return { code: 'FORBIDDEN_PROFILE_FIELD', category: 'AUTHORIZATION' };
   }
   if (code === 'PROVIDER_UNAVAILABLE' || code === 'PRODUCT_UNAVAILABLE') return { code: 'FEATURE_UNAVAILABLE', category: 'TEMPORARY_UNAVAILABLE' };
+  if (code === 'DEPLOYMENT_PAUSED') return { code: 'FEATURE_UNAVAILABLE', category: 'TEMPORARY_UNAVAILABLE' };
   return { code: 'VALIDATION', category: 'VALIDATION' };
 }
 

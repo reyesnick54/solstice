@@ -1915,6 +1915,13 @@ function dispatchGrow(
     if (path === '/api/v1/grow/activity' && method === 'GET') return result(grow.activity(principal, requestId), headers);
     if (path === '/api/v1/grow/results' && method === 'GET') return result(grow.results(principal, requestId), headers);
     if (path === '/api/v1/grow/cash' && method === 'GET') return result(grow.cashAvailable(principal, requestId), headers);
+    if (path === '/api/v1/grow/controls/status' && method === 'GET') return result(grow.controlsStatus(principal, requestId), headers);
+    if (path === '/api/v1/grow/controls/pause' && method === 'POST') return result(grow.controlsPause(principal, requestId), headers);
+    if (path === '/api/v1/grow/controls/resume' && method === 'POST') return result(grow.controlsResume(principal, rec, requestId), headers);
+    if (path === '/api/v1/grow/controls/close' && method === 'POST') return result(grow.controlsClose(principal, rec, requestId), headers);
+    if (path === '/api/v1/grow/controls/withdraw' && method === 'POST') return result(grow.controlsWithdraw(principal, rec, requestId), headers);
+    if (path === '/api/v1/grow/controls/mandate' && method === 'POST') return result(grow.controlsMandateChange(principal, rec, requestId), headers);
+    if (path === '/api/v1/grow/controls/degraded' && method === 'GET') return result(grow.controlsDegraded(principal, requestId), headers);
   }
   if (!isProductGrowthService(grow)) {
     return null;
