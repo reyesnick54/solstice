@@ -279,7 +279,7 @@ describe('HELIOS H11 — bounded Grok research and tool runtime', () => {
       evidence,
       evidenceRegistry: createEvidenceRegistry(),
       routeRegistry: createExecutionRouteRegistry(),
-      marketTerms: createMarketTermsPort(clock),
+      marketTerms: createMarketTermsPort('OPEN'),
     });
     const runtime = new GrokResearchRuntime({ clock });
     const result = await runtime.executeResearch(baseTaskInput({
