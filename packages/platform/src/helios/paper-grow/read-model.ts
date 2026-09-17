@@ -92,7 +92,7 @@ function deriveCycleStatus(
     return blocking ? 'BLOCKED' : 'DEGRADED';
   }
   const latestProposal = proposals[0];
-  const latestExecution = executions.sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))[0];
+  const latestExecution = [...executions].sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))[0];
   if (latestExecution) {
     if (latestExecution.state === 'SUBMITTED' || latestExecution.state === 'PROCESSING' || latestExecution.state === 'QUEUED') {
       return 'PAPER_SUBMITTED';

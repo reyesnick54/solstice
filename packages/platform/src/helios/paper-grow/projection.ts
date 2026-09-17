@@ -6,7 +6,7 @@ import type {
   GrowOverviewResponse,
   PaperDisclosureContract,
 } from './types.ts';
-import type { GrowCycleStatus } from './taxonomy.ts';
+import type { GrowCycleStatus, PaperDisclosureKind } from './taxonomy.ts';
 import type { PaperGrowInvestmentSnapshot } from './read-model.ts';
 
 export function buildPaperDisclosure(): PaperDisclosureContract {
@@ -25,7 +25,7 @@ export function buildPaperDisclosure(): PaperDisclosureContract {
       'PAPER_TRADING',
       'NOT_LIVE_RETURN',
       'NOT_WITHDRAWABLE_EXTERNAL',
-    ]),
+    ] as readonly PaperDisclosureKind[]),
   });
 }
 

@@ -125,7 +125,7 @@ describe('HELIOS H15 — paper Grow activity, results, and restart proof', () =>
 
     assert.equal(state.activity.schema, 'sunrey.consumer.grow.activity.v1');
     assert.ok(state.activity.items.length >= 1);
-    assert.equal(state.activity.items[0].proposalId !== null, true);
+    assert.ok(state.activity.items[0]?.proposalId);
 
     assert.equal(state.results.attribution.paperSeparateFromLiveRealized, true);
     assert.equal(state.results.attribution.principalDepositsAreNotGrowth, true);
@@ -190,6 +190,7 @@ describe('HELIOS H15 — paper Grow activity, results, and restart proof', () =>
       planBody.actions.find((row) => row.action === 'PAPER_INVESTMENT_REVIEW_AVAILABLE') ??
       planBody.actions.find((row) => row.action === 'INVESTMENT_ACCOUNT_AVAILABLE') ??
       planBody.actions[0];
+    assert.ok(investAction);
     const created = await world.handle({
       method: 'POST',
       path: '/api/v1/grow/proposals',

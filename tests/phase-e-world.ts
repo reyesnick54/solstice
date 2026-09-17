@@ -289,11 +289,14 @@ export function createPhaseEWorld(suffix = 'e1'): PhaseEWorld {
     providerRuntime: providers,
   });
   const sessions = new Map([[PHASE_E_TOKEN, principal]]);
+  const growSurface = { current: growBff };
   const consumerRuntime: ConsumerBffRuntime = {
     bff,
     sessions,
     identity: runtime.identity.service,
-    grow: growBff,
+    get grow() {
+      return growSurface.current;
+    },
   };
   let activeGrow = grow;
   let activeGrowBff = growBff;
@@ -334,7 +337,7 @@ export function createPhaseEWorld(suffix = 'e1'): PhaseEWorld {
         proposalRiskClass: 'MODERATE',
       }),
     });
-    consumerRuntime.grow = activeGrowBff;
+    growSurface.current = activeGrowBff;
   };
   return {
     runtime,

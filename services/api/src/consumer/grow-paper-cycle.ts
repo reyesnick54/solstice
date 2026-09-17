@@ -3,12 +3,13 @@
  * Server-owned financial truth; hides inference plumbing.
  */
 
-import type { Account } from '@solstice/domain';
+import { asAccountId, type Account } from '@solstice/domain';
 import { asInvestmentAccountId, type InvestmentsService } from '@solstice/investments';
 import type { Ledger } from '@solstice/ledger';
 import {
   type GrowthOrchestrator,
   type GrowLifecycleService,
+  type EconomicWorkOrder,
   type EconomicWorkOrderService,
   buildPaperGrowActivity,
   buildPaperGrowAttribution,
@@ -104,9 +105,9 @@ function buildLedgerCash(deps: GrowPaperCycleDeps, customerId: string, subjectId
       currency,
     });
   }
-  const demand = deps.accounts.get(accounts.demandAccountId);
-  const brokerage = deps.accounts.get(accounts.brokerageCashAccountId);
-  const pending = deps.accounts.get(accounts.pendingSettlementAccountId);
+  const demand = deps.accounts.get(asAccountId(accounts.demandAccountId));
+  const brokerage = deps.accounts.get(asAccountId(accounts.brokerageCashAccountId));
+  const pending = deps.accounts.get(asAccountId(accounts.pendingSettlementAccountId));
   const total = accountBalanceMinor(deps.ledger, demand) + accountBalanceMinor(deps.ledger, brokerage);
   const latestProposal = deps.grow.store.latestProposalFor(subjectId);
   const reserved =
@@ -131,12 +132,12 @@ function buildLedgerCash(deps: GrowPaperCycleDeps, customerId: string, subjectId
 function buildReadModelInput(deps: GrowPaperCycleDeps, principal: BffPrincipal): PaperGrowReadModelInput {
   const plan = deps.orchestrator.store.latestPlanFor(principal.identityId) ?? null;
   const mandate = deps.orchestrator.store.latestMandateFor(principal.identityId);
-  let workOrder = null;
+  let workOrder: EconomicWorkOrder | null = null;
   if (deps.workOrders) {
     const actor = deps.resolveActor(principal.actorId);
     const listed = deps.workOrders.listEconomicWorkOrders(actor, principal.customerId, principal.identityId);
     if (listed.ok && listed.value.length > 0) {
-      workOrder = listed.value[0];
+      workOrder = listed.value[0] ?? null;
     }
   }
   return Object.freeze({
