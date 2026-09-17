@@ -1,20 +1,49 @@
-import type { ResearchBudgetPort, ResearchBudgetReconciliation, ResearchBudgetReservationRequest } from '../../../ai-runtime/src/async-inference/budget-port.ts';
 import type { HeliosWorkOrchestrator } from './orchestrator.ts';
 import { createSpendRecord } from './budget.ts';
 import type { SpendCostStatus } from './taxonomy.ts';
+
+/** Structural mirror of ai-runtime ResearchBudgetPort for HELIOS composition at the API layer. */
+export type HeliosResearchBudgetReservationRequest = {
+  readonly workOrderId: string;
+  readonly taskId: string | null;
+  readonly customerId: string;
+  readonly reservationRef: string;
+  readonly amountMicros: string;
+  readonly unitKind: 'MONETARY_MINOR' | 'INPUT_TOKENS' | 'OUTPUT_TOKENS' | 'INFERENCE_CALLS';
+};
+
+export type HeliosResearchBudgetReconciliation = {
+  readonly reservationRef: string;
+  readonly actualMicros: string;
+  readonly estimatedMicros: string | null;
+  readonly costStatus: SpendCostStatus;
+  readonly succeeded: boolean;
+  readonly cancelled: boolean;
+};
+
+export type HeliosResearchBudgetPortContract = {
+  readonly reserve: (
+    request: HeliosResearchBudgetReservationRequest,
+  ) => { readonly ok: true } | { readonly ok: false; readonly code: string; readonly message: string };
+  readonly reconcile: (
+    input: HeliosResearchBudgetReconciliation,
+  ) => { readonly ok: true } | { readonly ok: false; readonly code: string; readonly message: string };
+};
 
 /**
  * Bridges HELIOS H06 research budget reservations to the canonical async
  * inference executor without letting inference bypass Work Order ceilings.
  */
-export class HeliosResearchBudgetPort implements ResearchBudgetPort {
+export class HeliosResearchBudgetPort implements HeliosResearchBudgetPortContract {
   private readonly orchestrator: HeliosWorkOrchestrator;
 
   constructor(orchestrator: HeliosWorkOrchestrator) {
     this.orchestrator = orchestrator;
   }
 
-  reserve(request: ResearchBudgetReservationRequest): { readonly ok: true } | { readonly ok: false; readonly code: string; readonly message: string } {
+  reserve(
+    request: HeliosResearchBudgetReservationRequest,
+  ): { readonly ok: true } | { readonly ok: false; readonly code: string; readonly message: string } {
     if (!request.taskId) {
       return { ok: false, code: 'TASK_REQUIRED', message: 'HELIOS budget reservation requires a task id' };
     }
@@ -31,7 +60,9 @@ export class HeliosResearchBudgetPort implements ResearchBudgetPort {
     return { ok: true };
   }
 
-  reconcile(input: ResearchBudgetReconciliation): { readonly ok: true } | { readonly ok: false; readonly code: string; readonly message: string } {
+  reconcile(
+    input: HeliosResearchBudgetReconciliation,
+  ): { readonly ok: true } | { readonly ok: false; readonly code: string; readonly message: string } {
     void input;
     return { ok: true };
   }

@@ -124,6 +124,9 @@ export { HeliosWorkOrchestrator } from './orchestrator.ts';
 export {
   HeliosResearchBudgetPort,
   recordHeliosInferenceSpend,
+  type HeliosResearchBudgetPortContract,
+  type HeliosResearchBudgetReconciliation,
+  type HeliosResearchBudgetReservationRequest,
 } from './inference-bridge.ts';
 export {
   classifyTaskError,
