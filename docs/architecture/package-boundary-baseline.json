@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-17T07:47:48.402040+00:00",
+  "generatedAt": "2026-09-17T09:23:52.917909+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -539,14 +539,14 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 4884,
+      "packageDeepImport": 4901,
       "serviceDeepImport": 653,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 4884,
+      "relativeCrossPackage": 4901,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5537
+      "total": 5554
     }
   },
   "violations": [
@@ -2079,6 +2079,33 @@
       "sourcePackage": "agentic-capital-mesh",
       "targetPackage": "domain",
       "spec": "../../domain/src/brand.ts"
+    },
+    {
+      "file": "packages/agentic-capital-mesh/src/imports.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/agentic-capital-mesh/src/imports.ts' deep-imports 'domain' internals via '../../domain/src/result.ts'",
+      "sourcePackage": "agentic-capital-mesh",
+      "targetPackage": "domain",
+      "spec": "../../domain/src/result.ts"
+    },
+    {
+      "file": "packages/agentic-capital-mesh/src/imports.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/agentic-capital-mesh/src/imports.ts' deep-imports 'domain' internals via '../../domain/src/time.ts'",
+      "sourcePackage": "agentic-capital-mesh",
+      "targetPackage": "domain",
+      "spec": "../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/agentic-capital-mesh/src/imports.ts",
+      "line": 7,
+      "rule": "package-deep-import",
+      "message": "'packages/agentic-capital-mesh/src/imports.ts' deep-imports 'config' internals via '../../config/src/clock.ts'",
+      "sourcePackage": "agentic-capital-mesh",
+      "targetPackage": "config",
+      "spec": "../../config/src/clock.ts"
     },
     {
       "file": "packages/agentic-capital-mesh/src/materialization.ts",
@@ -29261,6 +29288,132 @@
       "spec": "../../regulatory-twin/src/taxonomy.ts"
     },
     {
+      "file": "packages/strategy-lab/src/capsule/h14.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/strategy-lab/src/capsule/h14.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "strategy-lab",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/strategy-lab/src/capsule/ids.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/strategy-lab/src/capsule/ids.ts' deep-imports 'domain' internals via '../../../domain/src/brand.ts'",
+      "sourcePackage": "strategy-lab",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/brand.ts"
+    },
+    {
+      "file": "packages/strategy-lab/src/capsule/lifecycle.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/strategy-lab/src/capsule/lifecycle.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
+      "sourcePackage": "strategy-lab",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/result.ts"
+    },
+    {
+      "file": "packages/strategy-lab/src/capsule/service.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/strategy-lab/src/capsule/service.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "strategy-lab",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/strategy-lab/src/capsule/service.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/strategy-lab/src/capsule/service.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
+      "sourcePackage": "strategy-lab",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/result.ts"
+    },
+    {
+      "file": "packages/strategy-lab/src/capsule/service.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/strategy-lab/src/capsule/service.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "strategy-lab",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/strategy-lab/src/capsule/service.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/strategy-lab/src/capsule/service.ts' deep-imports 'evidence' internals via '../../../evidence/src/vault.ts'",
+      "sourcePackage": "strategy-lab",
+      "targetPackage": "evidence",
+      "spec": "../../../evidence/src/vault.ts"
+    },
+    {
+      "file": "packages/strategy-lab/src/capsule/service.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/strategy-lab/src/capsule/service.ts' deep-imports 'events' internals via '../../../events/src/events.ts'",
+      "sourcePackage": "strategy-lab",
+      "targetPackage": "events",
+      "spec": "../../../events/src/events.ts"
+    },
+    {
+      "file": "packages/strategy-lab/src/capsule/strategy-capsule.test.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/strategy-lab/src/capsule/strategy-capsule.test.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "strategy-lab",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/strategy-lab/src/capsule/strategy-capsule.test.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/strategy-lab/src/capsule/strategy-capsule.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "strategy-lab",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/strategy-lab/src/capsule/strategy-capsule.test.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/strategy-lab/src/capsule/strategy-capsule.test.ts' deep-imports 'events' internals via '../../../events/src/events.ts'",
+      "sourcePackage": "strategy-lab",
+      "targetPackage": "events",
+      "spec": "../../../events/src/events.ts"
+    },
+    {
+      "file": "packages/strategy-lab/src/capsule/strategy-capsule.test.ts",
+      "line": 7,
+      "rule": "package-deep-import",
+      "message": "'packages/strategy-lab/src/capsule/strategy-capsule.test.ts' deep-imports 'evidence' internals via '../../../evidence/src/vault.ts'",
+      "sourcePackage": "strategy-lab",
+      "targetPackage": "evidence",
+      "spec": "../../../evidence/src/vault.ts"
+    },
+    {
+      "file": "packages/strategy-lab/src/capsule/types.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/strategy-lab/src/capsule/types.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "strategy-lab",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/strategy-lab/src/capsule/types.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/strategy-lab/src/capsule/types.ts' deep-imports 'model-registry' internals via '../../../model-registry/src/ids.ts'",
+      "sourcePackage": "strategy-lab",
+      "targetPackage": "model-registry",
+      "spec": "../../../model-registry/src/ids.ts"
+    },
+    {
       "file": "packages/strategy-lab/src/compiler.ts",
       "line": 3,
       "rule": "package-deep-import",
@@ -50382,132 +50535,6 @@
       "sourcePackage": "treasury",
       "targetPackage": "treasury",
       "spec": "../../../packages/treasury/src/index.ts"
-    },
-    {
-      "file": "packages/strategy-lab/src/capsule/h14.ts",
-      "line": 1,
-      "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/capsule/h14.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
-      "sourcePackage": "strategy-lab",
-      "targetPackage": "domain",
-      "spec": "../../../domain/src/time.ts"
-    },
-    {
-      "file": "packages/strategy-lab/src/capsule/ids.ts",
-      "line": 1,
-      "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/capsule/ids.ts' deep-imports 'domain' internals via '../../../domain/src/brand.ts'",
-      "sourcePackage": "strategy-lab",
-      "targetPackage": "domain",
-      "spec": "../../../domain/src/brand.ts"
-    },
-    {
-      "file": "packages/strategy-lab/src/capsule/lifecycle.ts",
-      "line": 1,
-      "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/capsule/lifecycle.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
-      "sourcePackage": "strategy-lab",
-      "targetPackage": "domain",
-      "spec": "../../../domain/src/result.ts"
-    },
-    {
-      "file": "packages/strategy-lab/src/capsule/service.ts",
-      "line": 1,
-      "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/capsule/service.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
-      "sourcePackage": "strategy-lab",
-      "targetPackage": "config",
-      "spec": "../../../config/src/clock.ts"
-    },
-    {
-      "file": "packages/strategy-lab/src/capsule/service.ts",
-      "line": 2,
-      "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/capsule/service.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
-      "sourcePackage": "strategy-lab",
-      "targetPackage": "domain",
-      "spec": "../../../domain/src/result.ts"
-    },
-    {
-      "file": "packages/strategy-lab/src/capsule/service.ts",
-      "line": 3,
-      "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/capsule/service.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
-      "sourcePackage": "strategy-lab",
-      "targetPackage": "domain",
-      "spec": "../../../domain/src/time.ts"
-    },
-    {
-      "file": "packages/strategy-lab/src/capsule/service.ts",
-      "line": 4,
-      "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/capsule/service.ts' deep-imports 'evidence' internals via '../../../evidence/src/vault.ts'",
-      "sourcePackage": "strategy-lab",
-      "targetPackage": "evidence",
-      "spec": "../../../evidence/src/vault.ts"
-    },
-    {
-      "file": "packages/strategy-lab/src/capsule/service.ts",
-      "line": 5,
-      "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/capsule/service.ts' deep-imports 'events' internals via '../../../events/src/events.ts'",
-      "sourcePackage": "strategy-lab",
-      "targetPackage": "events",
-      "spec": "../../../events/src/events.ts"
-    },
-    {
-      "file": "packages/strategy-lab/src/capsule/strategy-capsule.test.ts",
-      "line": 4,
-      "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/capsule/strategy-capsule.test.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
-      "sourcePackage": "strategy-lab",
-      "targetPackage": "config",
-      "spec": "../../../config/src/clock.ts"
-    },
-    {
-      "file": "packages/strategy-lab/src/capsule/strategy-capsule.test.ts",
-      "line": 5,
-      "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/capsule/strategy-capsule.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
-      "sourcePackage": "strategy-lab",
-      "targetPackage": "domain",
-      "spec": "../../../domain/src/time.ts"
-    },
-    {
-      "file": "packages/strategy-lab/src/capsule/strategy-capsule.test.ts",
-      "line": 6,
-      "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/capsule/strategy-capsule.test.ts' deep-imports 'events' internals via '../../../events/src/events.ts'",
-      "sourcePackage": "strategy-lab",
-      "targetPackage": "events",
-      "spec": "../../../events/src/events.ts"
-    },
-    {
-      "file": "packages/strategy-lab/src/capsule/strategy-capsule.test.ts",
-      "line": 7,
-      "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/capsule/strategy-capsule.test.ts' deep-imports 'evidence' internals via '../../../evidence/src/vault.ts'",
-      "sourcePackage": "strategy-lab",
-      "targetPackage": "evidence",
-      "spec": "../../../evidence/src/vault.ts"
-    },
-    {
-      "file": "packages/strategy-lab/src/capsule/types.ts",
-      "line": 1,
-      "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/capsule/types.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
-      "sourcePackage": "strategy-lab",
-      "targetPackage": "domain",
-      "spec": "../../../domain/src/time.ts"
-    },
-    {
-      "file": "packages/strategy-lab/src/capsule/types.ts",
-      "line": 2,
-      "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/capsule/types.ts' deep-imports 'model-registry' internals via '../../../model-registry/src/ids.ts'",
-      "sourcePackage": "strategy-lab",
-      "targetPackage": "model-registry",
-      "spec": "../../../model-registry/src/ids.ts"
     }
   ]
 }
