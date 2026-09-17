@@ -1,4 +1,4 @@
--- V052 HELIOS H13 — Grow sandbox capital allocation coordination records.
+-- V053 HELIOS H13 — Grow sandbox capital allocation coordination records.
 -- Coordination/reservation only. Not a second balance or shadow ledger.
 -- Canonical cash remains on accounts/ledger truth via holds.
 

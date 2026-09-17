@@ -380,6 +380,7 @@ export class GrowSandboxAllocationService {
       postsLedger: false as const,
       impliesLiveProvider: false as const,
     });
+    this.store.put(allocation);
     if (this.evidence) {
       sealAllocationEvidence(this.evidence, 'GROW_SANDBOX_ALLOCATION_REFUSED', allocation, {
         code: input.refusal.code,
