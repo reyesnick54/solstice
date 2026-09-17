@@ -70,7 +70,8 @@ describe('grow sandbox allocation persistence', () => {
       t.skip('persistence not available');
       return;
     }
-    const pools = await preparePersistence();
+    const env = await preparePersistence();
+    const pools = createPersistencePools(env);
     const allocation = sampleAllocation();
     await persistGrowSandboxAllocationState(pools.customer, {
       allocations: Object.freeze([allocation]),

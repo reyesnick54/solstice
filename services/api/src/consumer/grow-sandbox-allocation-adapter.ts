@@ -1,31 +1,27 @@
 import { randomUUID } from 'node:crypto';
 
-import type { Clock } from '../../../../packages/config/src/clock.ts';
-import { asCurrencyCode } from '../../../../packages/domain/src/currency.ts';
-import { asHoldId, freezeHold } from '../../../../packages/domain/src/hold.ts';
-import { err, isErr, ok, type Result } from '../../../../packages/domain/src/result.ts';
-import type { Ledger } from '../../../../packages/ledger/src/journal.ts';
-import { Money } from '../../../../packages/money/src/money.ts';
-import type {
-  SandboxAccountFundsPort,
-  SandboxAccountPosition,
-  SandboxCapitalReservationPort,
-  SandboxReservationRequest,
-  SandboxReservationResult,
-} from '../../../../packages/platform/src/work-order/sandbox-allocation/ports.ts';
-import type { GrowAllocationFailure } from '../../../../packages/platform/src/work-order/sandbox-allocation/types.ts';
-import {
-  assertSufficientAvailable,
-  projectBankingPosition,
-} from '../../../../services/accounts/src/available-funds.ts';
-import type { HoldStore } from '../../../../services/accounts/src/hold-store.ts';
-import type { AccountStore } from '../../../../services/accounts/src/stores.ts';
+import type { Clock } from '@solstice/config';
+import { asCurrencyCode, asHoldId, freezeHold, err, isErr, ok, type Result } from '@solstice/domain';
+import type { Ledger } from '@solstice/ledger';
+import { Money } from '@solstice/money';
 import {
   formatMinorUnits,
   minMinorUnits,
   parseMinorUnits,
   subtractMinorUnits,
-} from '../../../../packages/platform/src/work-order/sandbox-allocation/ports.ts';
+  type GrowAllocationFailure,
+  type SandboxAccountFundsPort,
+  type SandboxAccountPosition,
+  type SandboxCapitalReservationPort,
+  type SandboxReservationRequest,
+  type SandboxReservationResult,
+} from '@solstice/platform';
+import {
+  assertSufficientAvailable,
+  projectBankingPosition,
+} from '../../../accounts/src/available-funds.ts';
+import type { HoldStore } from '../../../accounts/src/hold-store.ts';
+import type { AccountStore } from '../../../accounts/src/stores.ts';
 
 export type GrowSandboxAllocationAdapterDeps = {
   readonly ledger: Ledger;
