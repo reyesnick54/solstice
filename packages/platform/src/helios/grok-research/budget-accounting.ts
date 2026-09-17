@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { BudgetUnitKind } from '../taxonomy.ts';
 import type { EconomicWorkOrderId, HeliosTaskId } from '../ids.ts';
 import { createSpendRecord } from '../budget.ts';

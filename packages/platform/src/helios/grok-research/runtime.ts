@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
-import type { Clock } from '../../../../config/src/clock.ts';
-import { err, ok, type Result } from '../../../../domain/src/result.ts';
+import type { Clock } from '@solstice/config';
+import { err, ok, type CustomerId, type Result } from '@solstice/domain';
 import { buildPublicResearchContext } from './context-sanitizer.ts';
 import { buildGrokResearchResult } from './parse.ts';
 import { runBoundedResearchToolLoop } from './tool-loop.ts';
@@ -129,7 +129,7 @@ export class GrokResearchRuntime {
     return ok(result);
   }
 
-  getResult(taskId: string, customerId: import('../../../../domain/src/customer.ts').CustomerId): GrokResearchResult | undefined {
+  getResult(taskId: string, customerId: CustomerId): GrokResearchResult | undefined {
     return this.store.get(taskId as import('../ids.ts').HeliosTaskId, customerId);
   }
 }

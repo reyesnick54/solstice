@@ -1,6 +1,5 @@
-import { err, ok, type Result } from '../../../../domain/src/result.ts';
+import { err, ok, type Result, type UtcInstant } from '@solstice/domain';
 import { randomUUID } from 'node:crypto';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type {
   GrokResearchResult,
   GrokResearchUsage,
