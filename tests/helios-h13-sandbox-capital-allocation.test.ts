@@ -23,14 +23,14 @@ import { ACTION_TYPES } from '../packages/permissions/src/action-types.ts';
 import { createSimulationKeyProvider } from '../packages/security/src/simulation.ts';
 import type { CapabilityBindingContext } from '../packages/platform/src/helios/index.ts';
 import { compileEconomicMandate, mandateDraftFromInterpretation } from '../packages/platform/src/mandate/compiler.ts';
-import type { CompiledEconomicMandate } from '../packages/platform/src/mandate/types.ts';
+import type { CompiledEconomicMandate, HardConstraint } from '../packages/platform/src/mandate/types.ts';
 import {
   AuthorityBoundWorkOrderService,
   GrowSandboxAllocationService,
   InMemoryGrowSandboxAllocationStore,
 } from '../packages/platform/src/work-order/index.ts';
 import type { CreateEconomicWorkOrderInput } from '../packages/platform/src/work-order/types.ts';
-import { asGrowthPlanId, asGrowthPlanVersion, asMandateVersion } from '../packages/platform/src/ids.ts';
+import { asGrowthPlanId, asGrowthPlanVersion, asMandateVersion, constraintIdFor } from '../packages/platform/src/ids.ts';
 import { createSimulationRuntime } from '../services/accounts/src/index.ts';
 import { GrowSandboxAllocationAdapter } from '../services/api/src/consumer/grow-sandbox-allocation-adapter.ts';
 import type { SimulationRuntime } from '../services/accounts/src/runtime.ts';
@@ -81,26 +81,23 @@ function mandateWithSingleActionLimit(
   subjectId: string,
   limitMinorUnits: string,
 ): CompiledEconomicMandate {
+  const extra: HardConstraint = Object.freeze({
+    constraintId: constraintIdFor('MAXIMUM_SINGLE_PROPOSED_ACTION_AMOUNT', `${subjectId}_h13_cap`),
+    kind: 'MAXIMUM_SINGLE_PROPOSED_ACTION_AMOUNT',
+    amount: { minorUnits: limitMinorUnits, currency: 'USD' },
+    overrideForbidden: true,
+  });
   const base = allocatableMandate(subjectId);
   return Object.freeze({
     ...base,
-    hardConstraints: Object.freeze([
-      ...base.hardConstraints,
-      Object.freeze({
-        constraintId: 'emc_max_single_h13',
-        kind: 'MAXIMUM_SINGLE_PROPOSED_ACTION_AMOUNT',
-        amount: { minorUnits: limitMinorUnits, currency: 'USD' },
-        overrideForbidden: true,
-      }),
-    ]),
+    hardConstraints: Object.freeze([...base.hardConstraints, extra]),
   });
 }
 
 function accountPosition(world: ReturnType<typeof setupWorld>) {
   const position = world.runtime.accountProduct.balanceOf(world.accountId);
-  assert.equal(position.ok, true);
   if (!position.ok) {
-    throw new Error(position.error.message);
+    assert.fail(position.error.message);
   }
   return position.value;
 }
@@ -331,9 +328,8 @@ async function activateWorkOrder(
     },
     'actor_h13_a',
   );
-  assert.equal(created.ok, true);
   if (!created.ok) {
-    throw new Error(created.error.message);
+    assert.fail(created.error.message);
   }
   const activated = world.authority.activateWithAuthority(
     world.actorA,
@@ -346,9 +342,8 @@ async function activateWorkOrder(
     },
     'actor_h13_a',
   );
-  assert.equal(activated.ok, true);
   if (!activated.ok) {
-    throw new Error(activated.error.message);
+    assert.fail(activated.error.message);
   }
   return activated.value.coordination;
 }

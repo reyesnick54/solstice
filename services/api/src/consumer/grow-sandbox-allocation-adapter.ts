@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import type { Clock } from '@solstice/config';
-import { asCurrencyCode, asHoldId, freezeHold, err, isErr, ok, type Result } from '@solstice/domain';
+import { asAccountId, asCurrencyCode, asHoldId, freezeHold, err, isErr, ok, type Result } from '@solstice/domain';
 import type { Ledger } from '@solstice/ledger';
 import { Money } from '@solstice/money';
 import {
@@ -50,12 +50,12 @@ export class GrowSandboxAllocationAdapter
   }
 
   ownsAccount(customerId: string, accountId: string): boolean {
-    const account = this.accounts.get(accountId);
+    const account = this.accounts.get(asAccountId(accountId));
     return account?.ownerId === customerId;
   }
 
   getPosition(customerId: string, accountId: string): Result<SandboxAccountPosition, GrowAllocationFailure> {
-    const account = this.accounts.get(accountId);
+    const account = this.accounts.get(asAccountId(accountId));
     if (!account) {
       return err({ code: 'ACCOUNT_NOT_FOUND', message: 'account does not exist' });
     }
@@ -98,7 +98,7 @@ export class GrowSandboxAllocationAdapter
         );
       }
 
-      const account = this.accounts.get(request.accountId);
+      const account = this.accounts.get(asAccountId(request.accountId));
       if (!account || account.ownerId !== request.customerId) {
         return err({ code: 'ACCOUNT_OWNER_MISMATCH', message: 'customer does not own account' });
       }

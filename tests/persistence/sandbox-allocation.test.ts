@@ -11,6 +11,8 @@ import {
   closePersistencePools,
   createPersistencePools,
 } from '../../packages/persistence/src/postgres/pools.ts';
+import { asEconomicMandateId, asMandateVersion } from '../../packages/platform/src/ids.ts';
+import { asEconomicWorkOrderId } from '../../packages/platform/src/work-order/ids.ts';
 import { asGrowSandboxAllocationId } from '../../packages/platform/src/work-order/sandbox-allocation/ids.ts';
 import type { GrowSandboxAllocation } from '../../packages/platform/src/work-order/sandbox-allocation/types.ts';
 import { persistenceAvailable, preparePersistence } from './helpers.ts';
@@ -20,7 +22,7 @@ const NOW = asUtcInstant('2026-09-16T15:30:00.000Z');
 function sampleAllocation(): GrowSandboxAllocation {
   return Object.freeze({
     allocationId: asGrowSandboxAllocationId('gsa_pg_h13'),
-    workOrderId: 'ewo_pg_h13',
+    workOrderId: asEconomicWorkOrderId('ewo_pg_h13'),
     customerId: 'cust_pg_h13',
     accountId: 'acct_pg_h13',
     currency: 'USD',
@@ -32,8 +34,8 @@ function sampleAllocation(): GrowSandboxAllocation {
     availableAtRequestMinorUnits: '1000000',
     status: 'RESERVED',
     mandateRef: Object.freeze({
-      mandateId: 'emd_pg_h13',
-      mandateVersion: 1,
+      mandateId: asEconomicMandateId('emd_pg_h13'),
+      mandateVersion: asMandateVersion(1),
     }),
     controlRefs: Object.freeze({
       approvalReference: null,
