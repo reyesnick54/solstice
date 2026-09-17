@@ -1,7 +1,26 @@
 import { err, ok, type Result } from '../../../../domain/src/result.ts';
-import { FORBIDDEN_CONTEXT_KEYS } from '../../../../ai-runtime/src/privacy.ts';
 import type { HeliosResearchTaskInput, GrokResearchFailure } from './types.ts';
 import type { ResearchPrivacyClass } from './taxonomy.ts';
+
+/** Mirrored from packages/ai-runtime/src/privacy.ts — platform must not import ai-runtime. */
+const FORBIDDEN_CONTEXT_KEYS = Object.freeze([
+  'kycDocument',
+  'kyc_document',
+  'passport',
+  'ssn',
+  'nationalId',
+  'privateKey',
+  'private_key',
+  'seedPhrase',
+  'mnemonic',
+  'pan',
+  'cvv',
+  'cardNumber',
+  'apiKey',
+  'api_key',
+  'password',
+  'masterKey',
+]);
 
 const PRIVATE_FIELD_KEYS = new Set([
   'customerId',
