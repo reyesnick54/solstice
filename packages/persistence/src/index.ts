@@ -85,6 +85,12 @@ export {
   persistWorkOrderState,
   WorkOrderPersistenceError,
 } from './growth/pg-work-order-store.ts';
+export {
+  loadGrowSandboxAllocationState,
+  persistGrowSandboxAllocation,
+  persistGrowSandboxAllocationState,
+  GrowSandboxAllocationPersistenceError,
+} from './growth/pg-sandbox-allocation-store.ts';
 export { loadPeveState, persistPeveState } from './value/pg-peve-store.ts';
 export {
   loadRegulatoryTwinState,

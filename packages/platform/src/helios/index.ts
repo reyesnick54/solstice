@@ -153,5 +153,8 @@ export {
 export const HELIOS_PHASE_2_DURABLE_CONTROL_TRUSTED = 'HELIOS_PHASE_2_DURABLE_CONTROL_TRUSTED' as const;
 export const HELIOS_PHASE_2_BLOCKED = 'HELIOS_PHASE_2_BLOCKED' as const;
 
+export * from './s3m-serving/index.ts';
 export * from './executable-opportunity/index.ts';
 export * from './paper-strategy/index.ts';
+export * from './paper-grow/index.ts';
+export * from './grok-research/index.ts';

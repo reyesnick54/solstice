@@ -38,6 +38,13 @@ import {
   isGrowRiskProfile,
 } from '../../../../packages/platform/src/growth/product/index.ts';
 import { toLovableExperience } from '../../../../packages/platform/src/growth/product/lovable-contract.ts';
+import {
+  growPaperActivity,
+  growPaperCash,
+  growPaperOverview,
+  growPaperResults,
+  type GrowPaperCycleDeps,
+} from './grow-paper-cycle.ts';
 
 export { toLovableExperience };
 
@@ -544,6 +551,22 @@ export class GrowBffSurface {
     };
   }
 
+  overview(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growPaperOverview(this.paperCycleDeps(), principal, requestId);
+  }
+
+  activity(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growPaperActivity(this.paperCycleDeps(), principal, requestId);
+  }
+
+  results(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growPaperResults(this.paperCycleDeps(), principal, requestId);
+  }
+
+  cashAvailable(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growPaperCash(this.paperCycleDeps(), principal, requestId);
+  }
+
   monitor(principal: BffPrincipal): Record<string, unknown> {
     return this.deps.grow.monitor(principal.identityId, {
       cashReserveBelowTarget: false,
@@ -611,6 +634,18 @@ export class GrowBffSurface {
 
   private actor(principal: BffPrincipal): unknown {
     return this.deps.resolveActor(principal.actorId);
+  }
+
+  private paperCycleDeps(): GrowPaperCycleDeps {
+    return {
+      orchestrator: this.deps.orchestrator,
+      grow: this.deps.grow,
+      investments: this.deps.investments,
+      ledger: this.deps.ledger,
+      accounts: this.deps.accounts,
+      resolveActor: this.deps.resolveActor,
+      investmentAccountsFor: this.deps.investmentAccountsFor,
+    };
   }
 
   private projectPlan(plan: { readonly planId: string; readonly version: number; readonly state: string; readonly orderedProposedActions: readonly { readonly actionId: string; readonly title: string; readonly action: string }[]; readonly assumptions: readonly string[]; readonly risks: readonly string[] }) {
