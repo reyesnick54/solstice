@@ -115,16 +115,8 @@ export type { GrowthStrategyGate, MeshCapitalProposal } from './bridges.ts';
 export { StrategyLabStore, createEmptyStrategyLabSnapshot } from './store.ts';
 export type { StrategyLabSnapshot } from './store.ts';
 export { StrategyLab } from './service.ts';
-export {
-  asStrategyCapsuleId,
-  asStrategyCapsuleVersion,
-  asStrategyFamilyId,
-} from './capsule/ids.ts';
-export type {
-  StrategyCapsuleId,
-  StrategyCapsuleVersion,
-  StrategyFamilyId,
-} from './capsule/ids.ts';
+export { asStrategyFamilyId } from './capsule/ids.ts';
+export type { StrategyFamilyId } from './capsule/ids.ts';
 export {
   STRATEGY_CAPSULE_ENVIRONMENTS,
   STRATEGY_CAPSULE_QUALIFICATION_STATES,
