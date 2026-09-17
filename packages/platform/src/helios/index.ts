@@ -158,3 +158,6 @@ export * from './executable-opportunity/index.ts';
 export * from './paper-strategy/index.ts';
 export * from './paper-grow/index.ts';
 export * from './grok-research/index.ts';
+export * from './strategy-capsule/index.ts';
+export * from './meta-allocator/index.ts';
+export * from './decision-validity/index.ts';

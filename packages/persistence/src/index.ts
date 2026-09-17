@@ -80,6 +80,10 @@ export {
   persistHeliosPaperStrategyState,
 } from './growth/pg-helios-paper-strategy-store.ts';
 export {
+  loadDecisionValidityState,
+  persistDecisionValidityState,
+} from './growth/pg-helios-decision-validity-store.ts';
+export {
   loadWorkOrderState,
   persistWorkOrder,
   persistWorkOrderState,

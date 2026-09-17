@@ -1,4 +1,4 @@
--- V055 Strategy Lab H18 controlled promotion pipeline.
+-- V056 Strategy Lab H18 controlled promotion pipeline.
 -- Qualification policies, promotion records, forward shadow evidence, and audit trail.
 -- Strategy capsules are owned by V054 (H16); this migration adds promotion-only tables.
 
