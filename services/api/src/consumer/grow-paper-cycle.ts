@@ -3,14 +3,13 @@
  * Server-owned financial truth; hides inference plumbing.
  */
 
-import { asInvestmentAccountId } from '../../../../packages/investments/src/ids.ts';
-import type { InvestmentsService } from '../../../../packages/investments/src/service.ts';
-import type { Ledger } from '../../../../packages/ledger/src/journal.ts';
-import type { Account } from '../../../../packages/domain/src/account.ts';
-import type { GrowthOrchestrator } from '../../../../packages/platform/src/service.ts';
-import type { GrowLifecycleService } from '../../../../packages/platform/src/grow/service.ts';
-import type { EconomicWorkOrderService } from '../../../../packages/platform/src/work-order/service.ts';
+import type { Account } from '@solstice/domain';
+import { asInvestmentAccountId, type InvestmentsService } from '@solstice/investments';
+import type { Ledger } from '@solstice/ledger';
 import {
+  type GrowthOrchestrator,
+  type GrowLifecycleService,
+  type EconomicWorkOrderService,
   buildPaperGrowActivity,
   buildPaperGrowAttribution,
   buildPaperGrowCash,
@@ -19,7 +18,7 @@ import {
   type PaperGrowInvestmentSnapshot,
   type PaperGrowLedgerCash,
   type PaperGrowReadModelInput,
-} from '../../../../packages/platform/src/helios/paper-grow/index.ts';
+} from '@solstice/platform';
 import { balanceOfAccount } from '../../../accounts/src/balances.ts';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import type { BffPrincipal } from './ports.ts';

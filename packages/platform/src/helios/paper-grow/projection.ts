@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { FinancialProposal, GrowExecutionRecord } from '../../grow/types.ts';
 import type {
   GrowActivityRecord,

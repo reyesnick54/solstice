@@ -4,7 +4,7 @@
  * Frontend must not calculate authoritative financial fields.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { InMemoryGrowStore } from '../../grow/store.ts';
 import type { FinancialProposal, GrowExecutionRecord } from '../../grow/types.ts';
 import type { GrowthPlan } from '../../growth/types.ts';
