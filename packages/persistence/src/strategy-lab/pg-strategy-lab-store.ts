@@ -181,6 +181,36 @@ export async function persistStrategyLabState(pool: Pool, state: StrategyLabSnap
           ],
         );
       }
+      for (const capsule of state.strategyCapsules) {
+        await client.query(
+          `INSERT INTO strategy_lab.strategy_capsule
+             (strategy_capsule_id, strategy_family_id, version, parent_version, scope, customer_id,
+              environment, lifecycle, material_hash, frozen, simulation_only, llm_deployable,
+              created_at, created_by, qualification_at, body_canonical)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,TRUE,FALSE,$11,$12,$13,$14)
+           ON CONFLICT (strategy_capsule_id, version) DO UPDATE SET
+             lifecycle = EXCLUDED.lifecycle,
+             frozen = EXCLUDED.frozen,
+             qualification_at = EXCLUDED.qualification_at,
+             body_canonical = EXCLUDED.body_canonical`,
+          [
+            capsule.strategyCapsuleId,
+            capsule.strategyFamilyId,
+            capsule.version,
+            capsule.parentVersion,
+            capsule.scope,
+            capsule.customerId,
+            capsule.environment,
+            capsule.qualificationState,
+            capsule.materialHash,
+            capsule.frozen,
+            capsule.createdAt,
+            capsule.createdBy,
+            capsule.qualificationAt,
+            canonicalJson(capsule),
+          ],
+        );
+      }
       await client.query(
         `INSERT INTO strategy_lab.kill_switch
            (id, active, reason, activated_at, blocks_new_orders, history_immutable, body_canonical)

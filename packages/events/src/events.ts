@@ -714,6 +714,24 @@ export type StrategyPaperApprovedV1 = VersionedEvent<'StrategyPaperApproved', 1,
 export type StrategyPaperStartedV1 = VersionedEvent<'StrategyPaperStarted', 1, StrategyAuditPayload>;
 export type StrategyPaperHaltedV1 = VersionedEvent<'StrategyPaperHalted', 1, StrategyAuditPayload>;
 export type StrategyRetiredV1 = VersionedEvent<'StrategyRetired', 1, StrategyAuditPayload>;
+export type StrategyCapsuleAuditPayload = {
+  readonly strategyCapsuleId?: string;
+  readonly strategyFamilyId?: string;
+  readonly version?: string;
+  readonly parentVersion?: string;
+  readonly materialHash?: string;
+  readonly qualificationState?: string;
+  readonly scope?: string;
+  readonly evaluationRef?: string;
+  readonly llmDeployable?: false;
+  readonly simulationOnly?: true;
+};
+export type StrategyCapsuleCreatedV1 = VersionedEvent<'StrategyCapsuleCreated', 1, StrategyCapsuleAuditPayload>;
+export type StrategyCapsuleVersionedV1 = VersionedEvent<'StrategyCapsuleVersioned', 1, StrategyCapsuleAuditPayload>;
+export type StrategyCapsuleFrozenV1 = VersionedEvent<'StrategyCapsuleFrozen', 1, StrategyCapsuleAuditPayload>;
+export type EvaluationRequestedV1 = VersionedEvent<'EvaluationRequested', 1, StrategyCapsuleAuditPayload>;
+export type StrategyCapsuleExpiredV1 = VersionedEvent<'StrategyCapsuleExpired', 1, StrategyCapsuleAuditPayload>;
+export type StrategyCapsuleRevokedV1 = VersionedEvent<'StrategyCapsuleRevoked', 1, StrategyCapsuleAuditPayload>;
 export type CapitalMeshAuditPayload = {
   readonly runId?: string;
   readonly subjectId?: string;
@@ -1413,6 +1431,12 @@ export type DomainEvent =
   | StrategyPaperStartedV1
   | StrategyPaperHaltedV1
   | StrategyRetiredV1
+  | StrategyCapsuleCreatedV1
+  | StrategyCapsuleVersionedV1
+  | StrategyCapsuleFrozenV1
+  | EvaluationRequestedV1
+  | StrategyCapsuleExpiredV1
+  | StrategyCapsuleRevokedV1
   | CapitalMeshRunStartedV1
   | CapitalMeshThesisCreatedV1
   | CapitalMeshCandidateCreatedV1
