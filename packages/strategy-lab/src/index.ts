@@ -14,6 +14,11 @@ export {
   asStrategyValidationId,
   asStrategyVersion,
   asWalkForwardRunId,
+  asQualificationPolicyId,
+  asEvaluationQualificationId,
+  asPromotionDecisionId,
+  asForwardShadowRunId,
+  asForwardShadowDecisionId,
 } from './ids.ts';
 export type {
   BacktestRunId,
@@ -31,6 +36,11 @@ export type {
   StrategyValidationId,
   StrategyVersion,
   WalkForwardRunId,
+  QualificationPolicyId,
+  EvaluationQualificationId,
+  PromotionDecisionId,
+  ForwardShadowRunId,
+  ForwardShadowDecisionId,
 } from './ids.ts';
 export {
   COST_MODES,
@@ -159,6 +169,61 @@ export {
 } from './capsule/h14.ts';
 export { StrategyCapsuleService } from './capsule/service.ts';
 export type { CreateStrategyCapsuleDraftInput } from './capsule/service.ts';
+export { freezePromotionCapsule } from './promotion-capsule.ts';
+export type { PromotionCapsule, PromotionCapsuleEvidenceRef } from './promotion-capsule.ts';
+export {
+  createQualificationPolicy,
+  DEFAULT_QUALIFICATION_POLICY,
+  QUALIFICATION_POLICY_VERSION,
+} from './qualification-policy.ts';
+export type { QualificationPolicy } from './qualification-policy.ts';
+export { evaluateQualification } from './evaluation-qualification.ts';
+export type { EvaluationQualificationResult, EvaluationQualificationMetrics } from './evaluation-qualification.ts';
+export {
+  STRATEGY_PROMOTION_STATES,
+  PROMOTION_DECISION_KINDS,
+  AUTHORITATIVE_PROMOTION_KINDS,
+  LEGAL_PROMOTION_TRANSITIONS,
+  transitionPromotionState,
+  isLiveEligibleState,
+} from './promotion-state.ts';
+export type { StrategyPromotionState, PromotionDecisionKind } from './promotion-state.ts';
+export { gateResearchToEvaluation, gateEvaluationToShadow, gateShadowToPaper } from './promotion-gates.ts';
+export type { GateResult } from './promotion-gates.ts';
+export {
+  startForwardShadowRun,
+  recordForwardShadowDecision,
+  attachForwardShadowOutcome,
+  summarizeForwardShadowEvidence,
+} from './forward-shadow.ts';
+export type {
+  ForwardShadowRun,
+  ForwardShadowDecision,
+  ForwardShadowOutcome,
+  ForwardShadowEvidenceSummary,
+} from './forward-shadow.ts';
+export {
+  canEmitPromotionDecision,
+  assertAuthoritativePromotion,
+  classifyPromotionActor,
+  recordPromotionRecommendation,
+} from './promotion-authority.ts';
+export type { PromotionActorKind } from './promotion-authority.ts';
+export { DEMOTION_TRIGGERS, evaluateDemotionTrigger, buildDemotionRecord, requiresRequalification } from './demotion.ts';
+export type { DemotionTrigger, DemotionRecord } from './demotion.ts';
+export { sealPromotionEvidence } from './promotion-evidence.ts';
+export type { PromotionEvidenceRecord } from './promotion-evidence.ts';
+export { StrategyPromotionStore, createEmptyPromotionSnapshot } from './promotion-store.ts';
+export type { StrategyPromotionRecord, StrategyPromotionSnapshot } from './promotion-store.ts';
+export { StrategyPromotionService } from './promotion-service.ts';
+export { lintStrategyPromotionAuthority } from './architecture-guards.ts';
+export {
+  HELIOS_H14_STRATEGY_CAPSULE_ID,
+  HELIOS_H14_STRATEGY_CAPSULE_VERSION,
+  observeH14CapsuleQualification,
+  buildH14ReferenceCapsule,
+} from './h14-capsule-bridge.ts';
+export type { H14CapsuleQualificationObservation } from './h14-capsule-bridge.ts';
 export {
   DEFAULT_PARAMETER_SET,
   EXPLICIT_COSTS,

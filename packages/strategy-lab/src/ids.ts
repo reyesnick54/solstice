@@ -15,6 +15,12 @@ export type ShadowRunId = Brand<string, 'ShadowRunId'>;
 export type ShadowDecisionId = Brand<string, 'ShadowDecisionId'>;
 export type PaperStrategyRunId = Brand<string, 'PaperStrategyRunId'>;
 export type StrategyPromotionReviewId = Brand<string, 'StrategyPromotionReviewId'>;
+export type StrategyCapsuleId = Brand<string, 'StrategyCapsuleId'>;
+export type QualificationPolicyId = Brand<string, 'QualificationPolicyId'>;
+export type EvaluationQualificationId = Brand<string, 'EvaluationQualificationId'>;
+export type PromotionDecisionId = Brand<string, 'PromotionDecisionId'>;
+export type ForwardShadowRunId = Brand<string, 'ForwardShadowRunId'>;
+export type ForwardShadowDecisionId = Brand<string, 'ForwardShadowDecisionId'>;
 
 function asPrefixed<T extends string>(value: string, prefix: string, label: string): Brand<string, T> {
   if (!value.startsWith(prefix) || value.length <= prefix.length) {
@@ -88,4 +94,28 @@ export function asPaperStrategyRunId(value: string): PaperStrategyRunId {
 
 export function asStrategyPromotionReviewId(value: string): StrategyPromotionReviewId {
   return asPrefixed(value, 'spr_', 'StrategyPromotionReviewId');
+}
+
+export function asStrategyCapsuleId(value: string): StrategyCapsuleId {
+  return asPrefixed(value, 'scap_', 'StrategyCapsuleId');
+}
+
+export function asQualificationPolicyId(value: string): QualificationPolicyId {
+  return asPrefixed(value, 'qpol_', 'QualificationPolicyId');
+}
+
+export function asEvaluationQualificationId(value: string): EvaluationQualificationId {
+  return asPrefixed(value, 'eqf_', 'EvaluationQualificationId');
+}
+
+export function asPromotionDecisionId(value: string): PromotionDecisionId {
+  return asPrefixed(value, 'pdec_', 'PromotionDecisionId');
+}
+
+export function asForwardShadowRunId(value: string): ForwardShadowRunId {
+  return asPrefixed(value, 'fshd_', 'ForwardShadowRunId');
+}
+
+export function asForwardShadowDecisionId(value: string): ForwardShadowDecisionId {
+  return asPrefixed(value, 'fsdec_', 'ForwardShadowDecisionId');
 }
