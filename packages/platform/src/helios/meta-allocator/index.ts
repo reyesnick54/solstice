@@ -41,7 +41,7 @@ export {
 export {
   HELIOS_H20_META_ALLOCATOR,
   type SpecialistOutputSummary,
-  type StrategyCapsuleRef,
+  type MetaAllocatorStrategyCapsuleRef,
   type AccountStateReference,
   type PortfolioExposure,
   type PortfolioContext,

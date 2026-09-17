@@ -36,7 +36,7 @@ export type SpecialistOutputSummary = {
   readonly evidenceRefs: readonly string[];
 };
 
-export type StrategyCapsuleRef = {
+export type MetaAllocatorStrategyCapsuleRef = {
   readonly strategyId: string;
   readonly version: string;
   readonly qualificationState: StrategyQualificationState;
@@ -130,7 +130,7 @@ export type CapitalAllocationRecommendation = {
   readonly candidateId: MetaAllocationCandidateId;
   readonly workOrderId: EconomicWorkOrderId;
   readonly customerId: CustomerId;
-  readonly strategyCapsule: StrategyCapsuleRef;
+  readonly strategyCapsule: MetaAllocatorStrategyCapsuleRef;
   readonly availableCapitalRef: AccountStateReference;
   readonly recommendedMaxCapitalMinor: string;
   readonly recommendedPercentageBps: number;
@@ -183,7 +183,7 @@ export type MetaAllocationCandidateInput = {
   readonly instrumentId: string;
   readonly sector: string;
   readonly currency: string;
-  readonly strategyCapsule: StrategyCapsuleRef;
+  readonly strategyCapsule: MetaAllocatorStrategyCapsuleRef;
   readonly researchValue: ResearchValueInput;
   readonly specialistOutputs: readonly SpecialistOutputSummary[];
   readonly evidenceRefs: readonly string[];
