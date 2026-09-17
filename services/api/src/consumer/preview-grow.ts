@@ -264,6 +264,34 @@ export class PreviewGrowSurface {
   invokeAgentTool(_principal: BffPrincipal, _body: Record<string, unknown>, requestId: string): BffErrorEnvelope {
     return unavailable(requestId, 'Grow agent tools are not enabled on this preview compatibility surface');
   }
+
+  overview(_principal: BffPrincipal, requestId: string): BffErrorEnvelope {
+    return unavailable(
+      requestId,
+      'Paper Grow overview requires GrowBffSurface with durable Grow execution lifecycle binding',
+    );
+  }
+
+  activity(_principal: BffPrincipal, requestId: string): BffErrorEnvelope {
+    return unavailable(
+      requestId,
+      'Paper Grow activity requires GrowBffSurface with durable Grow execution lifecycle binding',
+    );
+  }
+
+  results(_principal: BffPrincipal, requestId: string): BffErrorEnvelope {
+    return unavailable(
+      requestId,
+      'Paper Grow results requires GrowBffSurface with durable Grow execution lifecycle binding',
+    );
+  }
+
+  cashAvailable(_principal: BffPrincipal, requestId: string): BffErrorEnvelope {
+    return unavailable(
+      requestId,
+      'Paper Grow cash requires GrowBffSurface with durable Grow execution lifecycle binding',
+    );
+  }
 }
 
 function usdCashMinorUnits(bff: ConsumerBff, principal: BffPrincipal): bigint {
