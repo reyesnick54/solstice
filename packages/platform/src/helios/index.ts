@@ -157,3 +157,4 @@ export * from './s3m-serving/index.ts';
 export * from './executable-opportunity/index.ts';
 export * from './paper-strategy/index.ts';
 export * from './paper-grow/index.ts';
+export * from './grok-research/index.ts';
