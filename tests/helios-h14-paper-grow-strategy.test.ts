@@ -11,7 +11,7 @@ import { asJurisdiction } from '../packages/domain/src/jurisdiction.ts';
 import { asLegalEntityId } from '../packages/domain/src/legal-entity.ts';
 import { asProductId } from '../packages/domain/src/product.ts';
 import { asUtcInstant } from '../packages/domain/src/time.ts';
-import { asInstrumentId, asInvestmentAccountId } from '../packages/investments/src/ids.ts';
+import { asInstrumentId } from '../packages/investments/src/ids.ts';
 import { InvestmentsService } from '../packages/investments/src/service.ts';
 import { Money } from '../packages/money/src/money.ts';
 import { ModelRegistry, seedCanonicalRiskModel } from '../packages/model-registry/src/registry.ts';
@@ -183,7 +183,7 @@ function createH14Harness(customerId = 'cust_h14_a', subjectId = 'id_h14_a'): H1
   const registry = new ModelRegistry();
   const model = seedCanonicalRiskModel(registry, actor.value, clock.now());
   if (!model.ok) throw new Error('risk model');
-  const riskEngine = new RiskEngine({ registry, store: registry.store, clock, engineeringOnly: true });
+  const riskEngine = new RiskEngine({ clock, registry, events: runtime.events, evidence });
   const investmentAccountId = `inv_${customerId}`;
 
   const investments = new InvestmentsService(
@@ -257,7 +257,10 @@ function createH14Harness(customerId = 'cust_h14_a', subjectId = 'id_h14_a'): H1
       if (result.outcome === 'OK' && result.value) {
         return {
           outcome: 'OK',
-          value: result.value,
+          value: {
+            orderId: result.value.orderId,
+            ...(result.value.fillId ? { fillId: result.value.fillId } : {}),
+          },
           authorityId: result.decision.executionAuthority?.authorityId ?? null,
           riskAssessmentId: investments.lastRiskDecision?.assessmentId ?? null,
         };
@@ -265,53 +268,19 @@ function createH14Harness(customerId = 'cust_h14_a', subjectId = 'id_h14_a'): H1
       if (result.outcome === 'KERNEL_REFUSED') {
         return { outcome: 'KERNEL_REFUSED', code: 'KERNEL_REFUSED', message: 'kernel refused' };
       }
-      return {
-        outcome: 'REJECTED',
-        code: result.code,
-        message: result.message,
-      };
+      if (result.outcome === 'REJECTED') {
+        return {
+          outcome: 'REJECTED',
+          code: result.code,
+          message: result.message,
+        };
+      }
+      return { outcome: 'REJECTED', code: 'UNKNOWN', message: 'unexpected paper order outcome' };
     },
   };
 
-  const riskPort: HeliosPaperRiskPort = {
-    assess: (input) =>
-      riskEngine.assessPreTrade({
-        snapshot: investments.portfolioRiskSnapshot(asInvestmentAccountId(investmentAccountId)),
-        proposed: {
-          tradeId: 'h14_trade',
-          instrumentId: input.instrumentId,
-          side: 'BUY',
-          quantityUnits: 1_000_000_000n,
-          notionalMinor: input.proposedNotionalMinor,
-          feeMinor: 0n,
-          referencePriceMinor: 10_000n,
-          currency: 'USD',
-        },
-        budget:
-          riskEngine.store.listBudgets().find((row) => row.portfolioId === input.portfolioId) ??
-          defaultSimulationBudget({ subjectId, portfolioId: input.portfolioId, reviewBy: clock.now() }),
-      }),
-  };
-
   const blockingRiskPort: HeliosPaperRiskPort = {
-    assess: () =>
-      Object.freeze({
-        assessmentId: 'blocked_h14' as never,
-        modelId: model.value.modelId,
-        modelVersion: model.value.version,
-        generatedAt: clock.now(),
-        outcome: 'BLOCK',
-        triggeredLimits: Object.freeze([
-          Object.freeze({
-            limitId: 'lim_h14_block' as never,
-            dimension: 'POSITION_SIZE',
-            message: 'test block',
-            priority: 'HARD_RISK_LIMIT',
-            observedValue: '1',
-            threshold: '0',
-          }),
-        ]),
-      }),
+    assess: () => Object.freeze({ outcome: 'BLOCK' }),
   };
 
   const qualification = new ExecutableOpportunityQualificationService({
@@ -711,9 +680,21 @@ describe('HELIOS H14 paper Grow strategy', () => {
         createPaperOrder: (intent) => {
           const result = harness.investments.createPaperOrder(intent);
           if (result.outcome === 'OK' && result.value) {
-            return { outcome: 'OK', value: result.value };
+            return {
+              outcome: 'OK',
+              value: {
+                orderId: result.value.orderId,
+                ...(result.value.fillId ? { fillId: result.value.fillId } : {}),
+              },
+            };
           }
-          return { outcome: 'REJECTED', code: result.code, message: result.message };
+          if (result.outcome === 'KERNEL_REFUSED') {
+            return { outcome: 'KERNEL_REFUSED', code: 'KERNEL_REFUSED', message: 'kernel refused' };
+          }
+          if (result.outcome === 'REJECTED') {
+            return { outcome: 'REJECTED', code: result.code, message: result.message };
+          }
+          return { outcome: 'REJECTED', code: 'UNKNOWN', message: 'unexpected paper order outcome' };
         },
       },
       store,

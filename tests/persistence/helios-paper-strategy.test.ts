@@ -110,7 +110,7 @@ describePersistence('HELIOS H14 persistence', () => {
       grossResult: Object.freeze({ minorUnits: '10000', currency: 'USD' }),
       netResult: Object.freeze({ minorUnits: '10015', currency: 'USD' }),
       feesIncluded: Object.freeze({ minorUnits: '0', currency: 'USD' }),
-      reasonCodes: Object.freeze(['OK']),
+      reasonCodes: Object.freeze(['OK'] as const),
       evidenceChainRefs: Object.freeze([]),
       completedAt: NOW,
     });

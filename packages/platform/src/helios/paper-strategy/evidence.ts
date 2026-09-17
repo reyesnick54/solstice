@@ -11,7 +11,7 @@ export function sealPaperStrategyEvidence(
     return null;
   }
   const sealed = vault.seal(kind, payload);
-  return sealed?.recordId ?? null;
+  return sealed?.evidenceId ?? null;
 }
 
 export function sealResearchPhase(

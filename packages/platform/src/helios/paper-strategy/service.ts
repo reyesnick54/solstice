@@ -234,7 +234,7 @@ export class HeliosPaperGrowStrategyService {
       proposal,
       execution,
       now,
-      existing: openPosition,
+      ...(openPosition ? { existing: openPosition } : {}),
     });
     const posRef = sealPositionPhase(this.evidence, position);
     if (posRef) evidenceChain.push(posRef);
