@@ -154,3 +154,4 @@ export const HELIOS_PHASE_2_DURABLE_CONTROL_TRUSTED = 'HELIOS_PHASE_2_DURABLE_CO
 export const HELIOS_PHASE_2_BLOCKED = 'HELIOS_PHASE_2_BLOCKED' as const;
 
 export * from './executable-opportunity/index.ts';
+export * from './paper-strategy/index.ts';
