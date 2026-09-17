@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-17T06:08:37.552119+00:00",
+  "generatedAt": "2026-09-17T06:32:11.175786+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -539,14 +539,14 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 4824,
+      "packageDeepImport": 4845,
       "serviceDeepImport": 653,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 4824,
+      "relativeCrossPackage": 4845,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5477
+      "total": 5498
     }
   },
   "violations": [
@@ -21854,6 +21854,15 @@
       "spec": "../../../platform/src/helios/observation/types.ts"
     },
     {
+      "file": "packages/persistence/src/growth/pg-helios-paper-strategy-store.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/persistence/src/growth/pg-helios-paper-strategy-store.ts' deep-imports 'platform' internals via '../../../platform/src/helios/paper-strategy/types.ts'",
+      "sourcePackage": "persistence",
+      "targetPackage": "platform",
+      "spec": "../../../platform/src/helios/paper-strategy/types.ts"
+    },
+    {
       "file": "packages/persistence/src/growth/pg-helios-work-store.ts",
       "line": 3,
       "rule": "package-deep-import",
@@ -26208,6 +26217,186 @@
       "sourcePackage": "platform",
       "targetPackage": "evidence",
       "spec": "../../../evidence/src/vault.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/evidence.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/evidence.ts' deep-imports 'evidence' internals via '../../../../evidence/src/vault.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "evidence",
+      "spec": "../../../../evidence/src/vault.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/fill-model.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/fill-model.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/proposal.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/proposal.ts' deep-imports 'config' internals via '../../../../config/src/clock.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "config",
+      "spec": "../../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/proposal.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/proposal.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/research.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/research.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/service.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/service.ts' deep-imports 'config' internals via '../../../../config/src/clock.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "config",
+      "spec": "../../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/service.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/service.ts' deep-imports 'evidence' internals via '../../../../evidence/src/vault.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "evidence",
+      "spec": "../../../../evidence/src/vault.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/service.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/service.ts' deep-imports 'permissions' internals via '../../../../permissions/src/action-intent.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "permissions",
+      "spec": "../../../../permissions/src/action-intent.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/service.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/service.ts' deep-imports 'permissions' internals via '../../../../permissions/src/action-types.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "permissions",
+      "spec": "../../../../permissions/src/action-types.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/service.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/service.ts' deep-imports 'permissions' internals via '../../../../permissions/src/action-types.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "permissions",
+      "spec": "../../../../permissions/src/action-types.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/service.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/service.ts' deep-imports 'domain' internals via '../../../../domain/src/account.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/account.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/service.ts",
+      "line": 417,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/service.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/service.ts",
+      "line": 455,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/service.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/service.ts",
+      "line": 492,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/service.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/store.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/store.ts' deep-imports 'domain' internals via '../../../../domain/src/customer.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/customer.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/strategy-rule.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/strategy-rule.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/types.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/types.ts' deep-imports 'domain' internals via '../../../../domain/src/customer.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/customer.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/types.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/types.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/types.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/types.ts' deep-imports 'permissions' internals via '../../../../permissions/src/action-types.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "permissions",
+      "spec": "../../../../permissions/src/action-types.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/paper-strategy/validation.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/paper-strategy/validation.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
     },
     {
       "file": "packages/platform/src/helios/revocation.ts",
