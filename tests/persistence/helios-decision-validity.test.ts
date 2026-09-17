@@ -1,21 +1,27 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { interpretMandateLanguage } from '../../packages/agent/src/interpretation.ts';
 import { FrozenClock } from '../../packages/config/src/clock.ts';
 import { asCustomerId } from '../../packages/domain/src/customer.ts';
 import { asJurisdiction } from '../../packages/domain/src/jurisdiction.ts';
 import { asUtcInstant } from '../../packages/domain/src/time.ts';
 import {
   DecisionValidityEnvelopeService,
+  bindWorkOrderAuthority,
+  captureQualificationTerms,
   createEvidenceRegistry,
   createExecutionRouteRegistry,
   createMarketTermsPort,
+  createEconomicWorkOrderDraft,
+  mandateBindingRefFromCompiled,
   strategyCapsuleIdFor,
   workOrderIdFor,
   candidateIdFor,
   type StrategyCapsuleRef,
   type StrategyCapsuleRegistryPort,
 } from '../../packages/platform/src/helios/index.ts';
+import { compileEconomicMandate, mandateDraftFromInterpretation } from '../../packages/platform/src/mandate/compiler.ts';
 import {
   loadDecisionValidityState,
   persistDecisionValidityState,
@@ -88,18 +94,64 @@ describePersistence('HELIOS H21 persistence', () => {
       instrumentId: 'SIM-ETF-1',
       jurisdiction: asJurisdiction('US'),
     })!;
+    const interpretation = interpretMandateLanguage({
+      subjectId: candidate.subjectId,
+      sourceText: 'Keep at least $8,000 liquid. Ask me before any movement over $1,000.',
+      now: NOW,
+    });
+    if (!interpretation.ok) throw new Error('interpretation');
+    const mandateDraft = mandateDraftFromInterpretation(interpretation.value, NOW);
+    const compiled = compileEconomicMandate({ draft: mandateDraft, now: NOW });
+    if (!compiled.ok) throw new Error('compile');
+    const mandate = Object.freeze({ ...compiled.value, state: 'ACTIVE' as const });
+    const scope = Object.freeze({
+      objectiveClasses: Object.freeze(['RESEARCH', 'FINANCIAL_PROPOSAL'] as const),
+      activityClasses: Object.freeze(['RESEARCH', 'FINANCIAL_PROPOSAL'] as const),
+      productClasses: Object.freeze(['CASH', 'EQUITIES', 'ETF'] as const),
+      capitalCeiling: { minorUnits: '100000', currency: 'USD' },
+      accountIds: Object.freeze(['acct_checking']),
+      jurisdiction: asJurisdiction('US'),
+      horizonDays: 30,
+      toolIds: Object.freeze(['tool_research']),
+      modelIds: Object.freeze(['mdl_s3m']),
+    });
+    const workOrder = Object.freeze({
+      ...createEconomicWorkOrderDraft({
+        workOrderId,
+        customerId: candidate.customerId,
+        subjectId: candidate.subjectId,
+        growObjectiveId: 'grow_persist_h21',
+        requestedScope: scope,
+        mandateRef: mandateBindingRefFromCompiled(mandate, candidate.customerId, NOW),
+        approvalRef: null,
+        requiredApprovalClass: 'NONE' as const,
+        now: NOW,
+      }),
+      state: 'ACTIVE' as const,
+      effectiveScope: scope,
+      activatedAt: NOW,
+      updatedAt: NOW,
+    });
+    const authorityBinding = bindWorkOrderAuthority({
+      mandate,
+      customerId: candidate.customerId,
+      capability: 'HELIOS_RESEARCH',
+      approvalRef: null,
+      now: NOW,
+    });
+    const terms = captureQualificationTerms({ route, now: NOW, venueSession: 'OPEN' });
     service.createEnvelope(
       Object.freeze({
         now: NOW,
         candidate,
         recommendation,
         capsule,
-        workOrder: null,
-        mandate: null,
-        authorityBinding: null,
+        workOrder,
+        mandate,
+        authorityBinding: typeof authorityBinding === 'object' && 'revalidationState' in authorityBinding ? authorityBinding : null,
         jurisdiction: asJurisdiction('US'),
         accountId: 'acct_checking',
-        terms: null,
+        terms,
         route,
         venueSession: 'OPEN',
         availableFundsMinor: '500000',

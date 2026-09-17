@@ -2,7 +2,8 @@ import type { CustomerId } from '../../../../domain/src/customer.ts';
 import type { Jurisdiction } from '../../../../domain/src/jurisdiction.ts';
 import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type { EconomicWorkOrderId } from '../ids.ts';
-import type { EconomicWorkOrder, WorkOrderAuthorityBinding } from '../types.ts';
+import type { EconomicWorkOrder } from '../types.ts';
+import type { WorkOrderAuthorityBinding } from '../execution-types.ts';
 import type { CompiledEconomicMandate } from '../../mandate/types.ts';
 import type { ExecutableOpportunityId, OpportunityCandidateId } from '../executable-opportunity/ids.ts';
 import type {

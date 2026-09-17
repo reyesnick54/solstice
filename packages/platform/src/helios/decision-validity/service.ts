@@ -4,7 +4,7 @@ import type { CustomerId } from '../../../../domain/src/customer.ts';
 import { err, ok, type Result } from '../../../../domain/src/result.ts';
 import type { QualificationTermsSnapshot } from '../executable-opportunity/types.ts';
 import type { MetaAllocatorRecommendation } from '../meta-allocator/types.ts';
-import { envelopeIdForWorkOrder } from './ids.ts';
+import { envelopeIdForWorkOrder, type DecisionValidityEnvelopeId } from './ids.ts';
 import { sealDecisionValidityEnvelope } from './evidence.ts';
 import { evaluateAllComponents } from './validators.ts';
 import {
@@ -20,7 +20,6 @@ import {
 } from './taxonomy.ts';
 import type {
   DecisionValidityEnvelope,
-  DecisionValidityEnvelopeId,
   EnvelopeEvaluationContext,
   EnvelopeEvaluationPorts,
   EnvelopeEvaluationResult,
@@ -61,7 +60,7 @@ function failureActionForReasons(reasonCodes: readonly EnvelopeReasonCode[]): En
   return 'REQUALIFY';
 }
 
-function collectReasonCodes(checks: readonly DecisionValidityEnvelope['componentChecks']): readonly EnvelopeReasonCode[] {
+function collectReasonCodes(checks: DecisionValidityEnvelope['componentChecks']): readonly EnvelopeReasonCode[] {
   const codes = new Set<EnvelopeReasonCode>();
   for (const check of checks) {
     for (const code of check.reasonCodes) {
@@ -217,7 +216,7 @@ export class DecisionValidityEnvelopeService {
         eligible: false,
         envelope: existing,
         failureAction: 'ABANDON',
-        reasonCodes: Object.freeze(['CUSTOMER_MISMATCH']),
+        reasonCodes: Object.freeze(['CUSTOMER_MISMATCH'] as const),
       });
     }
 
@@ -228,7 +227,7 @@ export class DecisionValidityEnvelopeService {
           eligible: false,
           envelope: existing,
           failureAction: 'REQUALIFY',
-          reasonCodes: Object.freeze(['ENVELOPE_EXPIRED']),
+          reasonCodes: Object.freeze(['ENVELOPE_EXPIRED'] as const),
         });
       }
       return this.resultFromEvaluation(revalidated.value);

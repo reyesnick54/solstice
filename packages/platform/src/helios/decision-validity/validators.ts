@@ -98,10 +98,11 @@ export function evaluateMarketTerms(
   }
   const terms = current as QualificationTermsSnapshot;
   const drift = detectMaterialTermsChange(baselineTerms ?? ctx.terms, terms);
+  const baselineSpreadBps = baselineTerms?.spreadBps ?? ctx.terms?.spreadBps;
   const edge = assessEconomicEdge({
     expectedEdgeBps: ctx.recommendation.expectedEdgeBps,
     terms,
-    baselineSpreadBps: baselineTerms?.spreadBps ?? ctx.terms?.spreadBps,
+    ...(baselineSpreadBps !== undefined ? { baselineSpreadBps } : {}),
   });
   const reasonCodes: EnvelopeReasonCode[] = [];
   if (drift) {
