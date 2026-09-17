@@ -1,6 +1,6 @@
 import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
 import { asModelId, asModelVersion } from '../../../model-registry/src/ids.ts';
-import { asRiskBudgetId } from '../../../risk/src/ids.ts';
+import { asRiskBudgetId, asRiskModelId, asRiskModelVersion } from '../../../risk/src/ids.ts';
 import { compileStrategy, STRATEGY_COMPILER_VERSION } from '../compiler.ts';
 import type { StrategyExpr } from '../dsl.ts';
 import { EXPLICIT_COSTS, SIM_ETF_1, DEFAULT_PARAMETER_SET } from '../fixtures.ts';
@@ -209,8 +209,8 @@ export function buildReferenceCapsule(now: UtcInstant) {
   }
   const plan = compileStrategy(spec.value, {
     riskBudgetId: spec.value.riskBudgetId,
-    riskModelId: asModelId('mdl_investment_pretrade'),
-    riskModelVersion: asModelVersion('risk-model-v1'),
+    riskModelId: asRiskModelId('mdl_investment_pretrade'),
+    riskModelVersion: asRiskModelVersion('risk-model-v1'),
   });
   if (!plan.ok) {
     return plan;

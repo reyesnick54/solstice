@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 
 import { err, ok, type Result } from '../../../domain/src/result.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
 import { RATIO_UNIT, ratioFromUnits } from '../../../risk/src/arithmetic.ts';
 import { applyDividend, applySplit } from '../simulator.ts';
 import { evaluateDecision } from '../evaluate.ts';
@@ -320,7 +320,7 @@ function runChronologicalLoop(input: {
       Object.freeze({
         label: 'FIRST_HALF',
         start: input.config.period.start,
-        end: firstHalf[firstHalf.length - 1]?.at ?? input.config.period.start,
+        end: asUtcInstant(firstHalf[firstHalf.length - 1]?.at ?? input.config.period.start),
         metrics: calculateMetrics({
           startingCapitalMinor: input.config.startingCapitalMinor,
           endingCapitalMinor: firstEnding,
@@ -337,7 +337,7 @@ function runChronologicalLoop(input: {
       }),
       Object.freeze({
         label: 'SECOND_HALF',
-        start: secondHalf[0]?.at ?? input.config.period.start,
+        start: asUtcInstant(secondHalf[0]?.at ?? input.config.period.start),
         end: input.config.period.end,
         metrics: calculateMetrics({
           startingCapitalMinor: firstEnding,

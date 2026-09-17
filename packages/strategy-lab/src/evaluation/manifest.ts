@@ -56,7 +56,10 @@ export type EvaluationDatasetManifest = {
 };
 
 function canonicalManifest(
-  input: Omit<EvaluationDatasetManifest, 'hash' | 'liveMarketData' | 'manifestId' | 'observationCount'>,
+  input: Omit<
+    EvaluationDatasetManifest,
+    'hash' | 'liveMarketData' | 'manifestId' | 'observationCount' | 'availabilityTimeSemantics'
+  >,
 ): string {
   return JSON.stringify(
     {
@@ -107,8 +110,12 @@ export function buildChronologicalObservation(input: {
     instrumentId: input.instrumentId,
     informationTime: buildInformationTimeFields({
       sourceEventTime: input.sourceEventTime,
-      sourcePublishedTime: input.sourcePublishedTime,
-      providerAvailabilityTime: input.providerAvailabilityTime,
+      ...(input.sourcePublishedTime !== undefined
+        ? { sourcePublishedTime: input.sourcePublishedTime }
+        : {}),
+      ...(input.providerAvailabilityTime !== undefined
+        ? { providerAvailabilityTime: input.providerAvailabilityTime }
+        : {}),
       sunreyArrivalTime: input.sunreyArrivalTime,
       ingestionTime: input.ingestionTime,
     }),
