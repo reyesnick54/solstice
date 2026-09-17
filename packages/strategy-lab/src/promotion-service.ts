@@ -81,7 +81,7 @@ export class StrategyPromotionService {
     const capsule = freezeStrategyCapsule({
       specification: input.specification,
       plan: input.plan ?? null,
-      evidenceRefs: input.evidenceRefs,
+      ...(input.evidenceRefs !== undefined ? { evidenceRefs: input.evidenceRefs } : {}),
       subjectId: input.subjectId,
       frozenAt: this.clock.now(),
     });
@@ -150,10 +150,12 @@ export class StrategyPromotionService {
       capsule,
       policy: this.policy,
       validation: input.validation,
-      outOfSample: input.outOfSample,
-      reproducibilityHash: input.reproducibilityHash,
-      priorReproducibilityHash: input.priorReproducibilityHash,
-      limitationsAccepted: input.limitationsAccepted,
+      ...(input.outOfSample !== undefined ? { outOfSample: input.outOfSample } : {}),
+      ...(input.reproducibilityHash !== undefined ? { reproducibilityHash: input.reproducibilityHash } : {}),
+      ...(input.priorReproducibilityHash !== undefined
+        ? { priorReproducibilityHash: input.priorReproducibilityHash }
+        : {}),
+      ...(input.limitationsAccepted !== undefined ? { limitationsAccepted: input.limitationsAccepted } : {}),
       generatedAt: this.clock.now(),
     });
     if (!qualification.ok) {
@@ -237,7 +239,7 @@ export class StrategyPromotionService {
       capsule,
       observationRef: input.observationRef,
       startedAt: this.clock.now(),
-      modelVersions: input.modelVersions,
+      ...(input.modelVersions !== undefined ? { modelVersions: input.modelVersions } : {}),
     });
     this.store.putForwardShadowRun(run);
     if (current.promotionState === 'SHADOW_ELIGIBLE') {
@@ -299,7 +301,9 @@ export class StrategyPromotionService {
         run: completed,
         decisions,
         completedAt: this.clock.now(),
-        costSensitivityPassed: input.costSensitivityPassed,
+        ...(input.costSensitivityPassed !== undefined
+          ? { costSensitivityPassed: input.costSensitivityPassed }
+          : {}),
       }),
     );
   }
@@ -427,7 +431,7 @@ export class StrategyPromotionService {
       policyId: this.policy.policyId,
       policyHash: this.policy.policyHash,
     });
-    this.store.putDemotion(demotion.value);
+    this.store.putDemotion(demotion);
     const nextState: StrategyPromotionState =
       toState === 'PAUSED' ? 'PAUSED' : 'REVIEW_REQUIRED';
     if (requiresRequalification(input.trigger)) {
@@ -479,7 +483,7 @@ export class StrategyPromotionService {
       policyId: this.policy.policyId,
       policyHash: this.policy.policyHash,
     });
-    this.store.putDemotion(demotion.value);
+    this.store.putDemotion(demotion);
     return this.transition({
       strategyId,
       version,
@@ -532,12 +536,12 @@ export class StrategyPromotionService {
       fromState: current.promotionState as StrategyPromotionState,
       toState: nextState.value,
       policy: this.policy,
-      gate: input.gate,
-      qualification: input.qualification,
-      shadow: input.shadow,
+      ...(input.gate !== undefined ? { gate: input.gate } : {}),
+      ...(input.qualification !== undefined ? { qualification: input.qualification } : {}),
+      ...(input.shadow !== undefined ? { shadow: input.shadow } : {}),
       actorId: input.actorId,
       actorKind: input.actorKind,
-      humanApproved: input.humanApproved,
+      ...(input.humanApproved !== undefined ? { humanApproved: input.humanApproved } : {}),
       decidedAt: this.clock.now(),
     });
     this.store.putEvidence(evidence);

@@ -79,11 +79,10 @@ function policyHash(body: Omit<QualificationPolicy, 'policyId' | 'policyHash'>):
 export function createQualificationPolicy(
   overrides: Partial<Omit<QualificationPolicy, 'policyId' | 'policyHash' | 'version' | 'liveExecutionPermitted'>> = {},
 ): QualificationPolicy {
-  const version = overrides.version ?? QUALIFICATION_POLICY_VERSION;
   const body = {
     ...DEFAULT_POLICY_BODY,
     ...overrides,
-    version,
+    version: QUALIFICATION_POLICY_VERSION,
     liveExecutionPermitted: false as const,
   };
   const hash = policyHash(body);

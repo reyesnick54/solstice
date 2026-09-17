@@ -74,7 +74,7 @@ export function evaluateQualification(input: {
   const costSensitivityPassed =
     !input.policy.costSensitivityRequired ||
     oos.transactionCosts.mode === 'EXPLICIT_COSTS';
-  const robustnessWindowCount = input.walkForward?.windows.length ?? 1;
+  const robustnessWindowCount = input.walkForward?.folds.length ?? 1;
   const limitationsAccepted = input.limitationsAccepted ?? input.validation.limitations.length === 0;
 
   const metrics: EvaluationQualificationMetrics = Object.freeze({

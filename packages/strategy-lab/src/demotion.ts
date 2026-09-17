@@ -1,6 +1,5 @@
 import { createHash } from 'node:crypto';
 
-import { ok, type Result } from '../../domain/src/result.ts';
 import type { UtcInstant } from '../../domain/src/time.ts';
 import { asPromotionDecisionId, type PromotionDecisionId } from './ids.ts';
 import type { StrategyPromotionState } from './promotion-state.ts';
@@ -85,27 +84,25 @@ export function buildDemotionRecord(input: {
   readonly decidedAt: UtcInstant;
   readonly policyId: string;
   readonly policyHash: string;
-}): Result<DemotionRecord, never> {
+}): DemotionRecord {
   const material = `${input.strategyId}@${input.strategyVersion}:${input.trigger}:${input.decidedAt}`;
-  return ok(
-    Object.freeze({
-      decisionId: asPromotionDecisionId(
-        `pdec_${createHash('sha256').update(material).digest('hex').slice(0, 20)}`,
-      ),
-      strategyId: input.strategyId,
-      strategyVersion: input.strategyVersion,
-      capsuleFingerprint: input.capsuleFingerprint,
-      fromState: input.fromState,
-      toState: input.toState,
-      trigger: input.trigger,
-      reason: input.reason,
-      priorEvidencePreserved: true,
-      actorId: input.actorId,
-      decidedAt: input.decidedAt,
-      policyId: input.policyId,
-      policyHash: input.policyHash,
-    }),
-  );
+  return Object.freeze({
+    decisionId: asPromotionDecisionId(
+      `pdec_${createHash('sha256').update(material).digest('hex').slice(0, 20)}`,
+    ),
+    strategyId: input.strategyId,
+    strategyVersion: input.strategyVersion,
+    capsuleFingerprint: input.capsuleFingerprint,
+    fromState: input.fromState,
+    toState: input.toState,
+    trigger: input.trigger,
+    reason: input.reason,
+    priorEvidencePreserved: true,
+    actorId: input.actorId,
+    decidedAt: input.decidedAt,
+    policyId: input.policyId,
+    policyHash: input.policyHash,
+  });
 }
 
 export function requiresRequalification(trigger: DemotionTrigger): boolean {

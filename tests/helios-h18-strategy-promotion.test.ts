@@ -505,6 +505,7 @@ describe('HELIOS H18 strategy promotion pipeline', () => {
     const budget = defaultSimulationBudget({ subjectId: 'cust_h18_exp', portfolioId: 'inv_exp', reviewBy: NOW });
     risk.putBudget(budget);
     const ctx = {
+      clock,
       lab,
       promotion,
       actor: actor.value,
@@ -591,8 +592,8 @@ describe('HELIOS H18 strategy promotion pipeline', () => {
     });
     const capsule = ctx.promotion.store.getCapsule('str_two_etf_cash', 'v1');
     const observation = observeH14CapsuleQualification({
-      promotion: ctx.promotion.getQualificationStatus('str_two_etf_cash', 'v1'),
-      capsule,
+      promotion: ctx.promotion.getQualificationStatus('str_two_etf_cash', 'v1') ?? null,
+      capsule: capsule ?? null,
       observedAt: NOW,
     });
     assert.equal(observation.paperEligible, true);
@@ -648,8 +649,8 @@ describe('HELIOS H18 strategy promotion pipeline', () => {
     registerCapsuleWithLab(ctx);
     const compiled = ctx.lab.compile('str_two_etf_cash', 'v1', ctx.budget);
     const h14Observation = observeH14CapsuleQualification({
-      promotion: ctx.promotion.getQualificationStatus('str_two_etf_cash', 'v1'),
-      capsule: ctx.promotion.store.getCapsule('str_two_etf_cash', 'v1'),
+      promotion: ctx.promotion.getQualificationStatus('str_two_etf_cash', 'v1') ?? null,
+      capsule: ctx.promotion.store.getCapsule('str_two_etf_cash', 'v1') ?? null,
       observedAt: NOW,
     });
     assert.equal(h14Observation.strategyId, HELIOS_H14_STRATEGY_CAPSULE_ID);
