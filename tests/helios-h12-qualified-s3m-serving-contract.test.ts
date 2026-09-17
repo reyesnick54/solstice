@@ -26,10 +26,8 @@ import {
 import { createDefaultAiRuntimePolicy } from '../packages/ai-runtime/src/policy.ts';
 import type { AiGatewayRequest, AiGatewayResult } from '../packages/ai-runtime/src/gateway.ts';
 import type { AiProviderFailure } from '../packages/ai-runtime/src/types.ts';
-import {
-  createHeliosS3mServingRoute,
-  heliosS3mSpendBridge,
-} from '../packages/platform/src/helios/s3m-serving/index.ts';
+import { createHeliosS3mServingRoute } from '../packages/ai-runtime/src/integrations/helios-s3m-serving.ts';
+import { heliosS3mSpendBridge } from '../packages/platform/src/helios/s3m-serving/index.ts';
 import { asEconomicWorkOrderId, asHeliosProgramId, asHeliosTaskId } from '../packages/platform/src/helios/ids.ts';
 import { lintHeliosBoundary } from '../tools/architectural-linter/src/helios-guards.ts';
 
@@ -348,7 +346,22 @@ describe('HELIOS H12 — qualified S3M serving contract', () => {
     assert.equal(attribution.postedToCustomerLedger, false);
     assert.equal(attribution.workOrderRef, 'wo_1');
     const spend = heliosS3mSpendBridge.toResearchSpendRecord({
-      attribution,
+      attribution: Object.freeze({
+        inferenceRequestId: attribution.inferenceRequestId,
+        workOrderRef: attribution.workOrderRef,
+        taskRef: attribution.taskRef,
+        providerId: attribution.providerId,
+        modelId: attribution.modelId,
+        inputTokens: attribution.inputTokens,
+        outputTokens: attribution.outputTokens,
+        computeUnits: attribution.computeUnits,
+        gpuDurationMs: attribution.gpuDurationMs,
+        estimatedCostMicros: attribution.estimatedCostMicros,
+        latencyMs: attribution.latencyMs,
+        costStatus: attribution.costStatus,
+        recordedAt: attribution.recordedAt,
+        postedToCustomerLedger: false,
+      }),
       workOrderId: asEconomicWorkOrderId('ewo_h12'),
       taskId: asHeliosTaskId('htk_h12'),
       customerId: 'cust_h12',

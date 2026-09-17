@@ -44,6 +44,13 @@ export {
   seedCanonicalAiModels,
 } from './registry.ts';
 export * from './s3m-finance/index.ts';
+export {
+  HeliosS3mServingRoute,
+  createHeliosS3mServingRoute,
+  type HeliosS3mServingRouteOptions,
+  type HeliosS3mServingResult,
+  type HeliosS3mServingRouteStatus,
+} from './integrations/helios-s3m-serving.ts';
 export { AiRuntimeRouter } from './router.ts';
 export { AiRuntime, type AiRuntimeResult } from './runtime.ts';
 export { AiModelGateway, type AiGatewayRequest, type AiGatewayResult } from './gateway.ts';
