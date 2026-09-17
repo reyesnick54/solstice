@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-17T09:17:41.856693+00:00",
+  "generatedAt": "2026-09-17T09:26:27.997732+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -29270,24 +29270,6 @@
       "spec": "../../regulatory-twin/src/taxonomy.ts"
     },
     {
-      "file": "packages/strategy-lab/src/capsule.ts",
-      "line": 3,
-      "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/capsule.ts' deep-imports 'domain' internals via '../../domain/src/result.ts'",
-      "sourcePackage": "strategy-lab",
-      "targetPackage": "domain",
-      "spec": "../../domain/src/result.ts"
-    },
-    {
-      "file": "packages/strategy-lab/src/capsule.ts",
-      "line": 4,
-      "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/capsule.ts' deep-imports 'domain' internals via '../../domain/src/time.ts'",
-      "sourcePackage": "strategy-lab",
-      "targetPackage": "domain",
-      "spec": "../../domain/src/time.ts"
-    },
-    {
       "file": "packages/strategy-lab/src/compiler.ts",
       "line": 3,
       "rule": "package-deep-import",
@@ -29898,6 +29880,24 @@
       "sourcePackage": "strategy-lab",
       "targetPackage": "identity",
       "spec": "../../identity/src/actor-context.ts"
+    },
+    {
+      "file": "packages/strategy-lab/src/promotion-capsule.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/strategy-lab/src/promotion-capsule.ts' deep-imports 'domain' internals via '../../domain/src/result.ts'",
+      "sourcePackage": "strategy-lab",
+      "targetPackage": "domain",
+      "spec": "../../domain/src/result.ts"
+    },
+    {
+      "file": "packages/strategy-lab/src/promotion-capsule.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/strategy-lab/src/promotion-capsule.ts' deep-imports 'domain' internals via '../../domain/src/time.ts'",
+      "sourcePackage": "strategy-lab",
+      "targetPackage": "domain",
+      "spec": "../../domain/src/time.ts"
     },
     {
       "file": "packages/strategy-lab/src/promotion-evidence.ts",

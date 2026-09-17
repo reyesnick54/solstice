@@ -1,5 +1,5 @@
 import { err, ok, type Result } from '../../domain/src/result.ts';
-import type { StrategyCapsule } from './capsule.ts';
+import type { PromotionCapsule } from './promotion-capsule.ts';
 import type { EvaluationQualificationResult } from './evaluation-qualification.ts';
 import type { ForwardShadowEvidenceSummary } from './forward-shadow.ts';
 import type { QualificationPolicy } from './qualification-policy.ts';
@@ -15,7 +15,7 @@ export type GateResult = {
 };
 
 export function gateResearchToEvaluation(input: {
-  readonly capsule: StrategyCapsule;
+  readonly capsule: PromotionCapsule;
   readonly policy: QualificationPolicy;
 }): Result<GateResult, StrategyFailure> {
   const missing: string[] = [];

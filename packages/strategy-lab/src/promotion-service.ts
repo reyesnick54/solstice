@@ -4,7 +4,11 @@ import type { UtcInstant } from '../../domain/src/time.ts';
 import type { EvidenceVault } from '../../evidence/src/vault.ts';
 import type { BacktestRun } from './backtest.ts';
 import type { SimulationPlan } from './compiler.ts';
-import { freezeStrategyCapsule, type StrategyCapsule, type StrategyCapsuleEvidenceRef } from './capsule.ts';
+import {
+  freezePromotionCapsule,
+  type PromotionCapsule,
+  type PromotionCapsuleEvidenceRef,
+} from './promotion-capsule.ts';
 import type { MarketDataset } from './dataset.ts';
 import { buildDemotionRecord, evaluateDemotionTrigger, requiresRequalification, type DemotionTrigger } from './demotion.ts';
 import { evaluateQualification } from './evaluation-qualification.ts';
@@ -75,10 +79,10 @@ export class StrategyPromotionService {
   registerCapsule(input: {
     readonly specification: StrategySpecification;
     readonly plan?: SimulationPlan | null;
-    readonly evidenceRefs?: readonly StrategyCapsuleEvidenceRef[];
+    readonly evidenceRefs?: readonly PromotionCapsuleEvidenceRef[];
     readonly subjectId: string;
-  }): Result<StrategyCapsule, StrategyFailure> {
-    const capsule = freezeStrategyCapsule({
+  }): Result<PromotionCapsule, StrategyFailure> {
+    const capsule = freezePromotionCapsule({
       specification: input.specification,
       plan: input.plan ?? null,
       ...(input.evidenceRefs !== undefined ? { evidenceRefs: input.evidenceRefs } : {}),

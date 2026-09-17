@@ -12,13 +12,14 @@ import {
 import type { StrategySpecification } from './specification.ts';
 import type { StrategyFailure } from './types.ts';
 
-export type StrategyCapsuleEvidenceRef = {
+export type PromotionCapsuleEvidenceRef = {
   readonly evidenceKind: 'VALIDATION' | 'BACKTEST' | 'EXPERIMENT' | 'EXTERNAL';
   readonly refId: string;
   readonly hash: string;
 };
 
-export type StrategyCapsule = {
+/** H18 promotion eligibility capsule; distinct from H17 evaluation StrategyCapsule. */
+export type PromotionCapsule = {
   readonly capsuleId: StrategyCapsuleId;
   readonly strategyId: StrategyId;
   readonly version: StrategyVersion;
@@ -31,7 +32,7 @@ export type StrategyCapsule = {
   readonly dataDependencies: readonly string[];
   readonly costAssumptionsHash: string;
   readonly executionAssumptionsHash: string;
-  readonly evidenceRefs: readonly StrategyCapsuleEvidenceRef[];
+  readonly evidenceRefs: readonly PromotionCapsuleEvidenceRef[];
   readonly schemaDefects: readonly string[];
   readonly subjectId: string;
   readonly frozenAt: UtcInstant;
@@ -47,14 +48,14 @@ function hashCanonical(value: unknown): string {
   return createHash('sha256').update(canonicalJson(value)).digest('hex');
 }
 
-export function freezeStrategyCapsule(input: {
+export function freezePromotionCapsule(input: {
   readonly specification: StrategySpecification;
   readonly plan?: SimulationPlan | null;
-  readonly evidenceRefs?: readonly StrategyCapsuleEvidenceRef[];
+  readonly evidenceRefs?: readonly PromotionCapsuleEvidenceRef[];
   readonly schemaDefects?: readonly string[];
   readonly subjectId: string;
   readonly frozenAt: UtcInstant;
-}): Result<StrategyCapsule, StrategyFailure> {
+}): Result<PromotionCapsule, StrategyFailure> {
   const defects = input.schemaDefects ?? [];
   if (defects.length > 0) {
     return err({

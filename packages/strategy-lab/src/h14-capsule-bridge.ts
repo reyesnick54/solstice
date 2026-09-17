@@ -1,5 +1,5 @@
 import type { UtcInstant } from '../../domain/src/time.ts';
-import { freezeStrategyCapsule, type StrategyCapsule } from './capsule.ts';
+import { freezePromotionCapsule, type PromotionCapsule } from './promotion-capsule.ts';
 import type { StrategyPromotionRecord } from './promotion-store.ts';
 
 /** H14 reference Grow rule observed as a Strategy Capsule for qualification tracking. */
@@ -21,7 +21,7 @@ export type H14CapsuleQualificationObservation = {
 
 export function observeH14CapsuleQualification(input: {
   readonly promotion?: StrategyPromotionRecord | null;
-  readonly capsule?: StrategyCapsule | null;
+  readonly capsule?: PromotionCapsule | null;
   readonly observedAt: UtcInstant;
 }): H14CapsuleQualificationObservation {
   const promotion = input.promotion;
@@ -43,8 +43,8 @@ export function observeH14CapsuleQualification(input: {
 export function buildH14ReferenceCapsule(input: {
   readonly subjectId: string;
   readonly frozenAt: UtcInstant;
-}): ReturnType<typeof freezeStrategyCapsule> {
-  return freezeStrategyCapsule({
+}): ReturnType<typeof freezePromotionCapsule> {
+  return freezePromotionCapsule({
     specification: Object.freeze({
       specificationId: 'ssp_helios_h14_v1' as never,
       strategyId: HELIOS_H14_STRATEGY_CAPSULE_ID as never,

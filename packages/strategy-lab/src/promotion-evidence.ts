@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 
 import type { UtcInstant } from '../../domain/src/time.ts';
-import type { StrategyCapsule } from './capsule.ts';
+import type { PromotionCapsule } from './promotion-capsule.ts';
 import type { EvaluationQualificationResult } from './evaluation-qualification.ts';
 import type { ForwardShadowEvidenceSummary } from './forward-shadow.ts';
 import { asPromotionDecisionId, type PromotionDecisionId } from './ids.ts';
@@ -36,7 +36,7 @@ export type PromotionEvidenceRecord = {
   readonly liveEligible: false;
 };
 
-function capsuleHash(capsule: StrategyCapsule): string {
+function capsuleHash(capsule: PromotionCapsule): string {
   return createHash('sha256')
     .update(
       JSON.stringify({
@@ -50,7 +50,7 @@ function capsuleHash(capsule: StrategyCapsule): string {
 
 export function sealPromotionEvidence(input: {
   readonly kind: PromotionDecisionKind;
-  readonly capsule: StrategyCapsule;
+  readonly capsule: PromotionCapsule;
   readonly fromState: StrategyPromotionState;
   readonly toState: StrategyPromotionState;
   readonly policy: QualificationPolicy;

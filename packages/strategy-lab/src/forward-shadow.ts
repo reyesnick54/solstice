@@ -10,7 +10,7 @@ import {
   type ForwardShadowDecisionId,
   type ForwardShadowRunId,
 } from './ids.ts';
-import type { StrategyCapsule } from './capsule.ts';
+import type { PromotionCapsule } from './promotion-capsule.ts';
 import type { StrategySpecification } from './specification.ts';
 import type { StrategyFailure } from './types.ts';
 
@@ -78,7 +78,7 @@ function daysBetween(start: UtcInstant, end: UtcInstant): number {
 }
 
 export function startForwardShadowRun(input: {
-  readonly capsule: StrategyCapsule;
+  readonly capsule: PromotionCapsule;
   readonly observationRef: string;
   readonly startedAt: UtcInstant;
   readonly modelVersions?: readonly string[];

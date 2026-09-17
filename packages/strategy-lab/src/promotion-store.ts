@@ -1,4 +1,4 @@
-import type { StrategyCapsule } from './capsule.ts';
+import type { PromotionCapsule } from './promotion-capsule.ts';
 import type { DemotionRecord } from './demotion.ts';
 import type { EvaluationQualificationResult } from './evaluation-qualification.ts';
 import type { ForwardShadowDecision, ForwardShadowRun } from './forward-shadow.ts';
@@ -22,7 +22,7 @@ export type StrategyPromotionRecord = {
 
 export type StrategyPromotionSnapshot = {
   readonly promotions: readonly StrategyPromotionRecord[];
-  readonly capsules: readonly StrategyCapsule[];
+  readonly capsules: readonly PromotionCapsule[];
   readonly qualifications: readonly EvaluationQualificationResult[];
   readonly forwardShadowRuns: readonly ForwardShadowRun[];
   readonly forwardShadowDecisions: readonly ForwardShadowDecision[];
@@ -46,7 +46,7 @@ export function createEmptyPromotionSnapshot(): StrategyPromotionSnapshot {
 
 export class StrategyPromotionStore {
   private readonly promotions = new Map<string, StrategyPromotionRecord>();
-  private readonly capsules = new Map<string, StrategyCapsule>();
+  private readonly capsules = new Map<string, PromotionCapsule>();
   private readonly qualifications: EvaluationQualificationResult[] = [];
   private readonly forwardShadowRuns: ForwardShadowRun[] = [];
   private readonly forwardShadowDecisions: ForwardShadowDecision[] = [];
@@ -66,11 +66,11 @@ export class StrategyPromotionStore {
     return this.policies.get(policyId);
   }
 
-  putCapsule(capsule: StrategyCapsule): void {
+  putCapsule(capsule: PromotionCapsule): void {
     this.capsules.set(this.key(capsule.strategyId, capsule.version), capsule);
   }
 
-  getCapsule(id: string, version: string): StrategyCapsule | undefined {
+  getCapsule(id: string, version: string): PromotionCapsule | undefined {
     return this.capsules.get(this.key(id, version));
   }
 

@@ -14,7 +14,6 @@ export {
   asStrategyValidationId,
   asStrategyVersion,
   asWalkForwardRunId,
-  asStrategyCapsuleId,
   asQualificationPolicyId,
   asEvaluationQualificationId,
   asPromotionDecisionId,
@@ -37,7 +36,6 @@ export type {
   StrategyValidationId,
   StrategyVersion,
   WalkForwardRunId,
-  StrategyCapsuleId,
   QualificationPolicyId,
   EvaluationQualificationId,
   PromotionDecisionId,
@@ -127,8 +125,8 @@ export type { GrowthStrategyGate, MeshCapitalProposal } from './bridges.ts';
 export { StrategyLabStore, createEmptyStrategyLabSnapshot } from './store.ts';
 export type { StrategyLabSnapshot } from './store.ts';
 export { StrategyLab } from './service.ts';
-export { freezeStrategyCapsule } from './capsule.ts';
-export type { StrategyCapsule, StrategyCapsuleEvidenceRef } from './capsule.ts';
+export { freezePromotionCapsule } from './promotion-capsule.ts';
+export type { PromotionCapsule, PromotionCapsuleEvidenceRef } from './promotion-capsule.ts';
 export {
   createQualificationPolicy,
   DEFAULT_QUALIFICATION_POLICY,

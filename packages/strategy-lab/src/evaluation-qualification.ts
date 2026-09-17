@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { err, ok, type Result } from '../../domain/src/result.ts';
 import type { UtcInstant } from '../../domain/src/time.ts';
 import type { BacktestRun } from './backtest.ts';
-import type { StrategyCapsule } from './capsule.ts';
+import type { PromotionCapsule } from './promotion-capsule.ts';
 import { asEvaluationQualificationId, type EvaluationQualificationId } from './ids.ts';
 import type { QualificationPolicy } from './qualification-policy.ts';
 import type { StrategyFailure } from './types.ts';
@@ -45,7 +45,7 @@ function daysBetween(start: UtcInstant, end: UtcInstant): number {
 }
 
 export function evaluateQualification(input: {
-  readonly capsule: StrategyCapsule;
+  readonly capsule: PromotionCapsule;
   readonly policy: QualificationPolicy;
   readonly validation: StrategyValidationReport;
   readonly outOfSample?: BacktestRun | null;
