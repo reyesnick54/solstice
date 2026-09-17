@@ -176,7 +176,7 @@ function fixtureGateway(input?: {
         productionActive: false,
         liveConnectivityEnabled: false,
       });
-      return ok(response as AiGatewayResult);
+      return ok(response as unknown as AiGatewayResult);
     },
   };
 }

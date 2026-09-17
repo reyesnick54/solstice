@@ -67,6 +67,7 @@ export function seedInferenceModelCatalog(catalog: InferenceModelCatalog): reado
       latencyClass: 'STANDARD',
       dataHandling: Object.freeze(['PUBLIC', 'INTERNAL']),
       jurisdictionRestrictions: Object.freeze([]),
+      qualificationState: 'NOT_CONFIGURED',
       liveApproved: false,
     },
     {
