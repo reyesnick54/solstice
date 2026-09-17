@@ -92,6 +92,10 @@ export {
   persistProviderOrchestrationState,
 } from './growth/pg-helios-provider-orchestration-store.ts';
 export {
+  loadHeliosOrderLifecycleState,
+  persistHeliosOrderLifecycleState,
+} from './growth/pg-helios-order-lifecycle-store.ts';
+export {
   loadWorkOrderState,
   persistWorkOrder,
   persistWorkOrderState,
