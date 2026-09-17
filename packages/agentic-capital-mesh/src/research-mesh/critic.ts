@@ -1,6 +1,6 @@
 import type { SpecialistTaskInput, SpecialistTaskOutput } from './types.ts';
 import type { ModelRouteDecision } from './model-routing.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '../imports.ts';
 
 export type CriticInput = {
   readonly task: SpecialistTaskInput;

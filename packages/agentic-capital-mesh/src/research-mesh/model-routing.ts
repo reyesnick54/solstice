@@ -1,4 +1,4 @@
-import { err, ok, type Result } from '../../../domain/src/result.ts';
+import { err, ok, type Result } from '../imports.ts';
 import type { HeliosSpecialistRole, ModelProvider, PrivacyClass, ResearchMeshFailure } from './types.ts';
 
 export type ModelRouteDecision = {

@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '../imports.ts';
 import { buildAdversarialCriticOutput } from './critic.ts';
 import { buildEvidenceVerifierOutput, type AssertionClaim } from './evidence.ts';
 import type { ModelRouteDecision } from './model-routing.ts';

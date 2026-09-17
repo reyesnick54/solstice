@@ -1,4 +1,4 @@
-import { err, ok, type Result } from '../../../domain/src/result.ts';
+import { err, ok, type Result } from '../imports.ts';
 import type { ResearchMeshBudgetLimits, ResearchMeshBudgetSnapshot, ResearchMeshFailure } from './types.ts';
 
 export const DEFAULT_MESH_BUDGET_LIMITS: ResearchMeshBudgetLimits = Object.freeze({

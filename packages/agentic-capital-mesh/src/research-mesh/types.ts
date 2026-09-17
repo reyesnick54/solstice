@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '../imports.ts';
 
 export const HELIOS_SPECIALIST_ROLES = [
   'OPPORTUNITY_RESEARCH',

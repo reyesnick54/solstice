@@ -1,8 +1,6 @@
 import { createHash } from 'node:crypto';
 
-import type { Clock } from '../../../config/src/clock.ts';
-import { err, ok, type Result } from '../../../domain/src/result.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import { err, ok, type Result, type Clock, type UtcInstant } from '../imports.ts';
 import { DEFAULT_MESH_BUDGET_LIMITS, ResearchMeshBudgetController } from './budget.ts';
 import { buildMetaAllocatorOutput } from './meta-allocator.ts';
 import { nodeSpecForRole } from './nodes.ts';
