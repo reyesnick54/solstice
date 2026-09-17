@@ -6,6 +6,7 @@ import {
   AI_PRODUCTION_READY,
   AI_ENVIRONMENT,
 } from './posture.ts';
+import type { ModelQualificationState } from './async-inference/taxonomy.ts';
 import type { AiApprovedPurpose, AiFailureCode, AiPrivacyClass, AiProviderKind } from './taxonomy.ts';
 
 export const INFERENCE_MODEL_STATUSES = [
@@ -47,6 +48,7 @@ export type InferenceModelRecord = {
   readonly latencyClass: InferenceLatencyClass;
   readonly dataHandling: readonly AiPrivacyClass[];
   readonly jurisdictionRestrictions: readonly string[];
+  readonly qualificationState: ModelQualificationState;
   readonly liveApproved: false;
 };
 
