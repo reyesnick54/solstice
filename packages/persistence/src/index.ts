@@ -76,6 +76,10 @@ export {
   persistExecutableOpportunityState,
 } from './growth/pg-helios-executable-opportunity-store.ts';
 export {
+  loadHeliosPaperStrategyState,
+  persistHeliosPaperStrategyState,
+} from './growth/pg-helios-paper-strategy-store.ts';
+export {
   loadWorkOrderState,
   persistWorkOrder,
   persistWorkOrderState,
