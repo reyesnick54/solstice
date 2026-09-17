@@ -35,6 +35,7 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'model',
   'data',
   'strategy',
+  'strategy_capsule',
   'capital_mesh',
   'consent',
   'clean_room',

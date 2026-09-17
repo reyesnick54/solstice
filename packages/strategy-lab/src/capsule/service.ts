@@ -128,7 +128,7 @@ export class StrategyCapsuleService {
       environment: parent.environment,
       lineage: parent.lineage,
       material: input.material,
-      evidence: input.evidence,
+      ...(input.evidence !== undefined ? { evidence: input.evidence } : {}),
       qualificationState: 'DRAFT',
     });
     if (!draft.ok) {
