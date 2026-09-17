@@ -1,4 +1,4 @@
-import { err, ok, type Result } from '../../../../domain/src/result.ts';
+import { err, ok, type Result } from '@solstice/domain';
 import type { HeliosResearchTaskInput, GrokResearchFailure } from './types.ts';
 import type { ResearchPrivacyClass } from './taxonomy.ts';
 

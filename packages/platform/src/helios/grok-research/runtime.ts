@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto';
-import type { Clock } from '../../../../config/src/clock.ts';
-import type { CustomerId } from '../../../../domain/src/customer.ts';
-import { err, ok, type Result } from '../../../../domain/src/result.ts';
+import type { Clock } from '@solstice/config';
+import { err, ok, type CustomerId, type Result } from '@solstice/domain';
 import { buildPublicResearchContext } from './context-sanitizer.ts';
 import { buildGrokResearchResult } from './parse.ts';
 import { runBoundedResearchToolLoop } from './tool-loop.ts';
