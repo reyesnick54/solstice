@@ -642,6 +642,17 @@ describe('helios h24 capital lifecycle', () => {
       assert.equal(wd.value.state, 'SUBMITTED');
       assert.ok(wd.value.journalId);
     }
+    assert.equal(
+      world.lifecycle.store.listActiveReservations(asCustomerId(world.customerId), world.brokerageAccountId).length,
+      0,
+    );
+    const after = world.lifecycle.withdrawableCash({
+      customerId: asCustomerId(world.customerId),
+      investmentAccountId: world.investmentAccountId,
+      brokerageAccountId: world.brokerageAccountId,
+      currency: 'USD',
+    });
+    assert.equal(after.withdrawableMinor, (BigInt(cash.withdrawableMinor) - 10_000n).toString());
   });
 
   it('7 insufficient withdrawable cash rejected', () => {

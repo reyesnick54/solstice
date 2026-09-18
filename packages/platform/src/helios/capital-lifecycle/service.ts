@@ -344,6 +344,7 @@ export class HeliosCapitalLifecycleService {
     }
 
     state = submitted.replay ? 'COMPLETED' : 'SUBMITTED';
+    this.store.releaseReservation(reservation.value.reservationId);
     const withdrawal: HeliosWithdrawalRequest = Object.freeze({
       withdrawalRequestId: withdrawalRequestIdFor(String(input.customerId), input.operationId),
       customerId: input.customerId,
@@ -376,6 +377,11 @@ export class HeliosCapitalLifecycleService {
     }
     if (existing.state === 'COMPLETED') {
       return ok(existing);
+    }
+    for (const row of this.store.listActiveReservations(existing.customerId, existing.sourceAccountId)) {
+      if (row.operationId === existing.operationId) {
+        this.store.releaseReservation(row.reservationId);
+      }
     }
     const updated = Object.freeze({
       ...existing,
