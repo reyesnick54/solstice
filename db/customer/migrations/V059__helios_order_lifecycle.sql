@@ -66,8 +66,8 @@ CREATE TABLE growth.helios_provider_event (
 CREATE INDEX helios_pev_customer_idx ON growth.helios_provider_event (customer_id, received_at DESC);
 
 REVOKE ALL ON TABLE growth.helios_order FROM PUBLIC;
-GRANT SELECT, INSERT ON TABLE growth.helios_order TO customer_app;
-REVOKE DELETE, UPDATE, TRUNCATE ON TABLE growth.helios_order FROM customer_app;
+GRANT SELECT, INSERT, UPDATE ON TABLE growth.helios_order TO customer_app;
+REVOKE DELETE, TRUNCATE ON TABLE growth.helios_order FROM customer_app;
 
 REVOKE ALL ON TABLE growth.helios_order_fill FROM PUBLIC;
 GRANT SELECT, INSERT ON TABLE growth.helios_order_fill TO customer_app;
