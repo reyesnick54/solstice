@@ -17,10 +17,8 @@ fn serve(plane: RpcPlane) -> (String, std::thread::JoinHandle<()>) {
 }
 
 fn serve_config(config: RpcSecurityConfig) -> (String, std::thread::JoinHandle<()>) {
-    let nanos = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos();
-    let addr = format!("127.0.0.1:{}", 21000 + (nanos % 800) as u16);
     let node = LocalNode::init(dir()).unwrap();
-    let server = RpcServer::bind_with_config(&addr, node, config).unwrap();
+    let server = RpcServer::bind_with_config("127.0.0.1:0", node, config).unwrap();
     let listen = server.local_addr();
     let handle = std::thread::spawn(move || {
         let _ = server.serve();
