@@ -3,7 +3,7 @@
  * Requires simulation environment and explicit opt-in flag.
  */
 
-import { ENVIRONMENT } from '../../../../config/src/flags.ts';
+import { ENVIRONMENT } from '@solstice/config';
 
 export const HELIOS_FAULT_INJECTION_ENV = 'HELIOS_FAULT_INJECTION' as const;
 

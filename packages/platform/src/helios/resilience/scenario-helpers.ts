@@ -2,10 +2,13 @@
  * Shared helpers for H31 resilience scenarios.
  */
 
-import { FrozenClock } from '../../../../config/src/clock.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
-import { buildExternalObservation, MARKET_PRICE_FRESHNESS_POLICY } from '../../../../provider-sdk/src/index.ts';
-import type { ExternalObservation } from '../../../../provider-sdk/src/types.ts';
+import { FrozenClock } from '@solstice/config';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
+import {
+  buildExternalObservation,
+  MARKET_PRICE_FRESHNESS_POLICY,
+  type ExternalObservation,
+} from '@solstice/provider-sdk';
 import { HeliosObservationFabric, createHeliosObservationStore } from '../observation/index.ts';
 import type { ObservationType } from '../observation/types.ts';
 
@@ -40,14 +43,14 @@ export function marketObservation(
       symbol: 'SIM-ETF-1',
       priceMinor: overrides.priceMinor ?? 150_00n,
       currency: 'USD',
-      asOf: overrides.sourceTimestamp ?? overrides.retrievedAt ?? ('2026-09-18T08:59:55.000Z' as UtcInstant),
+      asOf: overrides.sourceTimestamp ?? overrides.retrievedAt ?? asUtcInstant('2026-09-18T08:59:55.000Z'),
       sourceProvider: overrides.providerId ?? 'fixture_market_h31',
       exchange: 'SIM',
     },
     source: { provider: overrides.providerId ?? 'fixture_market_h31', dataset: 'SIM-ETF-1' },
     time: {
-      retrievedAt: overrides.retrievedAt ?? ('2026-09-18T09:00:00.000Z' as UtcInstant),
-      sourceTimestamp: overrides.sourceTimestamp ?? ('2026-09-18T08:59:55.000Z' as UtcInstant),
+      retrievedAt: overrides.retrievedAt ?? asUtcInstant('2026-09-18T09:00:00.000Z'),
+      sourceTimestamp: overrides.sourceTimestamp ?? asUtcInstant('2026-09-18T08:59:55.000Z'),
     },
     authorityClass: 'reference_data',
     provenance: {

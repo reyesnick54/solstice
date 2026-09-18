@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { ENVIRONMENT } from '../../../../config/src/flags.ts';
+import { ENVIRONMENT } from '@solstice/config';
 import {
   HELIOS_H31_ADVERSARIAL_RESILIENCE,
   HELIOS_RESILIENCE_BLOCKED,

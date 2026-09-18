@@ -5,15 +5,14 @@
 
 import { randomUUID } from 'node:crypto';
 
-import { FrozenClock } from '../../../../config/src/clock.ts';
-import { asCustomerId } from '../../../../domain/src/customer.ts';
-import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
-import { EvidenceVault } from '../../../../evidence/src/vault.ts';
+import { FrozenClock } from '@solstice/config';
+import { asCustomerId, asUtcInstant, type UtcInstant } from '@solstice/domain';
+import { EvidenceVault } from '@solstice/evidence';
 import {
   assessMarketReferenceTrust,
   createExternalDataTrustEngine,
   type CanonicalTrustResult,
-} from '../../../../provider-sdk/src/trust/index.ts';
+} from '@solstice/provider-sdk';
 import { asEconomicMandateId, asMandateVersion } from '../../ids.ts';
 import type { CompiledEconomicMandate } from '../../mandate/types.ts';
 import { HeliosWorkOrchestrator } from '../orchestrator.ts';
