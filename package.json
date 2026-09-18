@@ -58,6 +58,7 @@
     "helios:capacity:qualify:fast": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-capacity-qualify.ts --profile SMALL",
     "test:helios-capacity-regression": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-h33-capacity-latency-portfolio.test.ts",
     "helios:h31:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-h31-qualify.ts",
+    "helios:h36:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-h36-qualify.ts",
     "test:helios-h31-fast": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-h31-adversarial-resilience.test.ts packages/platform/src/helios/resilience/resilience.test.ts",
     "ai:certify:live": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/ai-certify-live.ts",
     "ai:certify:fixture": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/ai-certify-live.ts",

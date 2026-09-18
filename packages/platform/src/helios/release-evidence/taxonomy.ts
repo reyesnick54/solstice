@@ -1,0 +1,137 @@
+/**
+ * HELIOS H36 — release candidate evidence and live-pilot external gate taxonomy.
+ */
+
+export const HELIOS_H36_RELEASE_EVIDENCE_LIVE_PILOT_GATE =
+  'HELIOS_H36_RELEASE_EVIDENCE_LIVE_PILOT_GATE' as const;
+
+export const HELIOS_RELEASE_PACKAGE_QUALIFIED = 'HELIOS_RELEASE_PACKAGE_QUALIFIED' as const;
+export const HELIOS_RELEASE_PACKAGE_BLOCKED = 'HELIOS_RELEASE_PACKAGE_BLOCKED' as const;
+export const HELIOS_HETZNER_APP_ACCEPTANCE_QUALIFIED =
+  'HELIOS_HETZNER_APP_ACCEPTANCE_QUALIFIED' as const;
+export const HELIOS_HETZNER_APP_ACCEPTANCE_BLOCKED = 'HELIOS_HETZNER_APP_ACCEPTANCE_BLOCKED' as const;
+
+export const HELIOS_RC_QUALIFIED_EXTERNAL_GATES_PENDING =
+  'HELIOS_RC_QUALIFIED_EXTERNAL_GATES_PENDING' as const;
+export const HELIOS_RC_QUALIFIED_READY_FOR_HUMAN_PILOT_AUTHORIZATION =
+  'HELIOS_RC_QUALIFIED_READY_FOR_HUMAN_PILOT_AUTHORIZATION' as const;
+export const HELIOS_RC_BLOCKED = 'HELIOS_RC_BLOCKED' as const;
+
+export const READY_FOR_HUMAN_LIVE_PILOT_AUTHORIZATION =
+  'READY_FOR_HUMAN_LIVE_PILOT_AUTHORIZATION' as const;
+
+export const LIVE_PILOT_GATE_STATES = [
+  'NOT_STARTED',
+  'PENDING_EVIDENCE',
+  'REVIEW_REQUIRED',
+  'SATISFIED',
+  'WAIVED_BY_AUTHORIZED_GOVERNANCE',
+  'FAILED',
+  'EXPIRED',
+  'REVOKED',
+] as const;
+export type LivePilotGateState = (typeof LIVE_PILOT_GATE_STATES)[number];
+
+export const LIVE_PILOT_GATE_CLASSES = [
+  'LEGAL_REGULATORY',
+  'PROVIDER_COMMERCIAL',
+  'SECURITY',
+  'MODEL_STRATEGY',
+  'RISK',
+  'COMPLIANCE',
+  'OPERATIONS',
+  'CUSTOMER',
+] as const;
+export type LivePilotGateClass = (typeof LIVE_PILOT_GATE_CLASSES)[number];
+
+export const GOVERNANCE_APPROVAL_ROLES = [
+  'AUTHORIZED_GOVERNANCE_LEGAL',
+  'AUTHORIZED_GOVERNANCE_COMPLIANCE',
+  'AUTHORIZED_GOVERNANCE_SECURITY',
+  'AUTHORIZED_GOVERNANCE_OPERATIONS',
+  'AUTHORIZED_GOVERNANCE_RISK',
+  'AUTHORIZED_GOVERNANCE_PRODUCT',
+  'AUTHORIZED_GOVERNANCE_PROVIDER',
+  'AUTHORIZED_GOVERNANCE_CUSTOMER_MANDATE',
+] as const;
+export type GovernanceApprovalRole = (typeof GOVERNANCE_APPROVAL_ROLES)[number];
+
+export const EXTERNAL_EVIDENCE_KINDS = [
+  'SIGNED_AGREEMENT',
+  'PROVIDER_CONFIRMATION',
+  'LEGAL_MEMO',
+  'LICENSE_REGISTRATION',
+  'SECURITY_ATTESTATION',
+  'PRODUCTION_CREDENTIAL_CONFIRMATION',
+  'HUMAN_APPROVAL_RECORD',
+  'DEPLOYMENT_ACCEPTANCE_RECORD',
+  'REGULATORY_FILING_ACK',
+  'OTHER_EXTERNAL_EVIDENCE',
+] as const;
+export type ExternalEvidenceKind = (typeof EXTERNAL_EVIDENCE_KINDS)[number];
+
+export const WORK_PACKAGE_STATUSES = [
+  'IMPLEMENTED',
+  'QUALIFIED',
+  'DEFERRED',
+  'BLOCKED',
+  'EXTERNAL_DEPENDENCY',
+] as const;
+export type WorkPackageStatus = (typeof WORK_PACKAGE_STATUSES)[number];
+
+export const PILOT_ABORT_CONDITIONS = [
+  'FINANCIAL_RECONCILIATION_MISMATCH',
+  'DUPLICATE_OPERATION',
+  'CUSTOMER_ISOLATION_DEFECT',
+  'UNAUTHORIZED_ACTION',
+  'RISK_LIMIT_VIOLATION',
+  'PROVIDER_AMBIGUITY',
+  'STALE_INVALID_DATA_UNSAFE_STATE',
+  'CRITICAL_SECURITY_INCIDENT',
+  'COMPLIANCE_CAPABILITY_REVOKED',
+  'STRATEGY_QUALIFICATION_REVOKED',
+  'MONITORING_BLIND_SPOT',
+  'UNEXPLAINED_ACCOUNTING_DISCREPANCY',
+] as const;
+export type PilotAbortCondition = (typeof PILOT_ABORT_CONDITIONS)[number];
+
+export const PILOT_ACTIVATION_CEREMONY_STEPS = [
+  'SELECT_QUALIFIED_RELEASE',
+  'SELECT_EXACT_PILOT_SCOPE',
+  'VERIFY_GATE_EVIDENCE_CURRENT',
+  'VERIFY_APPROVERS',
+  'SNAPSHOT_BACKUP',
+  'VERIFY_PROVIDER_PRODUCTION_CREDENTIALS',
+  'VERIFY_RISK_LIMITS',
+  'VERIFY_CUSTOMER_MANDATE',
+  'VERIFY_MONITORING_ON_CALL',
+  'ISSUE_SCOPED_HUMAN_AUTHORIZATION',
+  'ACTIVATE_ONLY_SCOPED_CAPABILITY',
+  'PERFORM_MINIMAL_CANARY_OPERATION',
+  'RECONCILE',
+  'VERIFY_REPORTING_EVIDENCE',
+  'EXPAND_ONLY_THROUGH_NEW_AUTHORIZATION',
+] as const;
+export type PilotActivationCeremonyStep = (typeof PILOT_ACTIVATION_CEREMONY_STEPS)[number];
+
+export const RELEASE_EVIDENCE_SCHEMA = 'sunrey.helios.release-evidence.v1' as const;
+export const LIVE_PILOT_GATE_SCHEMA = 'sunrey.helios.live-pilot-gate.v1' as const;
+export const LIVE_PILOT_AUTHORIZATION_SCHEMA = 'sunrey.helios.live-pilot-authorization.v1' as const;
+export const HELIOS_CLOSURE_REPORT_SCHEMA = 'sunrey.helios.closure-report.v1' as const;
+
+export const PERFORMANCE_CLAIM_RESTRICTIONS = Object.freeze([
+  'No guaranteed 100x return.',
+  'No guaranteed HFT profitability.',
+  'No guaranteed positive returns.',
+  'No guaranteed continuous attractive opportunities.',
+  'Marketing/performance claims require separate governance.',
+  'Pilot qualification may require paper/shadow evidence; profitability must not loosen controls.',
+]);
+
+export function isTerminalGateState(state: LivePilotGateState): boolean {
+  return state === 'FAILED' || state === 'REVOKED' || state === 'EXPIRED';
+}
+
+export function gateStatePermitsPilotAuthorization(state: LivePilotGateState): boolean {
+  return state === 'SATISFIED' || state === 'WAIVED_BY_AUTHORIZED_GOVERNANCE';
+}
