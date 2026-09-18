@@ -9,8 +9,14 @@ CREATE TABLE IF NOT EXISTS growth.helios_regulatory_evidence_package (
   package_hash        TEXT NOT NULL,
   reportability       TEXT NOT NULL,
   reporting_status    TEXT NOT NULL,
-  body_canonical      JSONB NOT NULL,
-  created_at          TIMESTAMPTZ NOT NULL
+  body_canonical      TEXT NOT NULL,
+  created_at          TIMESTAMPTZ NOT NULL,
+  CONSTRAINT helios_reg_evidence_no_ea CHECK (
+    body_canonical NOT LIKE '%"grantsExecutionAuthority":true%'
+    AND body_canonical NOT LIKE '%"authorizesFinancialExecution":true%'
+    AND body_canonical NOT LIKE '%"grantsFinancialEffect":true%'
+    AND body_canonical NOT LIKE '%"claimsFiled":true%'
+  )
 );
 
 CREATE INDEX IF NOT EXISTS idx_helios_reg_evidence_trace
@@ -25,9 +31,14 @@ CREATE TABLE IF NOT EXISTS growth.helios_reporting_obligation (
   package_id          TEXT NOT NULL REFERENCES growth.helios_regulatory_evidence_package(package_id),
   policy_obligation_ref TEXT NOT NULL,
   submission_state    TEXT NOT NULL,
-  body_canonical      JSONB NOT NULL,
+  body_canonical      TEXT NOT NULL,
   created_at          TIMESTAMPTZ NOT NULL,
-  updated_at          TIMESTAMPTZ NOT NULL
+  updated_at          TIMESTAMPTZ NOT NULL,
+  CONSTRAINT helios_reporting_obligation_no_ea CHECK (
+    body_canonical NOT LIKE '%"grantsExecutionAuthority":true%'
+    AND body_canonical NOT LIKE '%"authorizesFinancialExecution":true%'
+    AND body_canonical NOT LIKE '%"grantsFinancialEffect":true%'
+  )
 );
 
 CREATE INDEX IF NOT EXISTS idx_helios_reporting_obligation_trace
@@ -40,8 +51,14 @@ CREATE TABLE IF NOT EXISTS growth.helios_regulatory_report_package (
   revision            INTEGER NOT NULL,
   submission_state    TEXT NOT NULL,
   package_hash        TEXT NOT NULL,
-  body_canonical      JSONB NOT NULL,
-  generated_at        TIMESTAMPTZ NOT NULL
+  body_canonical      TEXT NOT NULL,
+  generated_at        TIMESTAMPTZ NOT NULL,
+  CONSTRAINT helios_regulatory_report_no_ea CHECK (
+    body_canonical NOT LIKE '%"grantsExecutionAuthority":true%'
+    AND body_canonical NOT LIKE '%"authorizesFinancialExecution":true%'
+    AND body_canonical NOT LIKE '%"grantsFinancialEffect":true%'
+    AND body_canonical NOT LIKE '%"claimsFiled":true%'
+  )
 );
 
 CREATE TABLE IF NOT EXISTS growth.helios_regulatory_idempotency (
