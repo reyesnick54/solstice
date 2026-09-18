@@ -1823,6 +1823,63 @@ function dispatchExchange(
   return null;
 }
 
+type GrowHeliosSurface = GrowBffSurface & {
+  readonly allocate?: (principal: import('./ports.ts').BffPrincipal, requestId: string) => unknown;
+  readonly activeCapital?: (principal: import('./ports.ts').BffPrincipal, requestId: string) => unknown;
+  readonly heliosPerformance?: (principal: import('./ports.ts').BffPrincipal, requestId: string) => unknown;
+  readonly providerAccount?: (principal: import('./ports.ts').BffPrincipal, requestId: string) => unknown;
+  readonly actionCards?: (principal: import('./ports.ts').BffPrincipal, requestId: string) => unknown;
+  readonly agentState?: (principal: import('./ports.ts').BffPrincipal, requestId: string) => unknown;
+  readonly activity?: (
+    principal: import('./ports.ts').BffPrincipal,
+    requestId: string,
+    query?: Readonly<Record<string, string>>,
+  ) => unknown;
+};
+
+function callGrowHeliosMethod(
+  grow: GrowHeliosSurface,
+  method:
+    | 'allocate'
+    | 'activeCapital'
+    | 'heliosPerformance'
+    | 'providerAccount'
+    | 'actionCards'
+    | 'agentState',
+  principal: import('./ports.ts').BffPrincipal,
+  requestId: string,
+): unknown {
+  const handler = grow[method];
+  if (typeof handler !== 'function') {
+    return bffError({
+      errorCode: 'CAPABILITY_DISABLED',
+      category: 'TEMPORARY_UNAVAILABLE',
+      message: `Grow ${method} requires HELIOS consumer binding`,
+      retryable: false,
+      requestId,
+    });
+  }
+  return handler.call(grow, principal, requestId);
+}
+
+function callGrowActivity(
+  grow: GrowHeliosSurface,
+  principal: import('./ports.ts').BffPrincipal,
+  requestId: string,
+  query: Readonly<Record<string, string>>,
+): unknown {
+  if (typeof grow.activity === 'function') {
+    return grow.activity(principal, requestId, query);
+  }
+  return bffError({
+    errorCode: 'CAPABILITY_DISABLED',
+    category: 'TEMPORARY_UNAVAILABLE',
+    message: 'Grow activity requires HELIOS consumer binding',
+    retryable: false,
+    requestId,
+  });
+}
+
 function isGrowBffSurface(grow: GrowBffSurface | ProductGrowthService): grow is GrowBffSurface {
   return typeof (grow as GrowBffSurface).home === 'function';
 }
@@ -1860,7 +1917,7 @@ function dispatchGrow(
   requestId: string,
   headers: Record<string, string>,
 ): BffResponse | null {
-  const { method, path, body } = request;
+  const { method, path, body, query } = request;
   const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
   if (isGrowBffSurface(grow)) {
     if (path === '/api/v1/grow' && method === 'GET') return result(grow.home(principal, requestId), headers);
@@ -1900,7 +1957,6 @@ function dispatchGrow(
     }
     if (path === '/api/v1/grow/portfolio' && method === 'GET') return result(grow.portfolio(principal, requestId), headers);
     if (path === '/api/v1/portfolio' && method === 'GET') return result(grow.portfolio(principal, requestId), headers);
-    if (path === '/api/v1/grow/performance' && method === 'GET') return result(grow.performance(principal, requestId), headers);
     if (path === '/api/v1/grow/portfolio/performance' && method === 'GET') {
       return result(grow.performance(principal, requestId), headers);
     }
@@ -1912,9 +1968,33 @@ function dispatchGrow(
     if (path === '/api/v1/grow/monitor' && method === 'POST') return json(200, grow.monitor(principal), headers);
     if (path === '/api/v1/grow/agent-tools' && method === 'POST') return result(grow.invokeAgentTool(principal, rec, requestId), headers);
     if (path === '/api/v1/grow/overview' && method === 'GET') return result(grow.overview(principal, requestId), headers);
-    if (path === '/api/v1/grow/activity' && method === 'GET') return result(grow.activity(principal, requestId), headers);
+    if (path === '/api/v1/grow/allocate' && method === 'GET') {
+      return result(callGrowHeliosMethod(grow, 'allocate', principal, requestId), headers);
+    }
+    if (path === '/api/v1/grow/active-capital' && method === 'GET') {
+      return result(callGrowHeliosMethod(grow, 'activeCapital', principal, requestId), headers);
+    }
+    if (path === '/api/v1/grow/performance' && method === 'GET') {
+      const helios = callGrowHeliosMethod(grow, 'heliosPerformance', principal, requestId);
+      if (!isBffError(helios) || helios.errorCode !== 'CAPABILITY_DISABLED') {
+        return result(helios, headers);
+      }
+      return result(grow.performance(principal, requestId), headers);
+    }
+    if (path === '/api/v1/grow/activity' && method === 'GET') {
+      return result(callGrowActivity(grow, principal, requestId, query), headers);
+    }
     if (path === '/api/v1/grow/results' && method === 'GET') return result(grow.results(principal, requestId), headers);
     if (path === '/api/v1/grow/cash' && method === 'GET') return result(grow.cashAvailable(principal, requestId), headers);
+    if (path === '/api/v1/grow/provider-account' && method === 'GET') {
+      return result(callGrowHeliosMethod(grow, 'providerAccount', principal, requestId), headers);
+    }
+    if (path === '/api/v1/grow/action-cards' && method === 'GET') {
+      return result(callGrowHeliosMethod(grow, 'actionCards', principal, requestId), headers);
+    }
+    if (path === '/api/v1/grow/agent-state' && method === 'GET') {
+      return result(callGrowHeliosMethod(grow, 'agentState', principal, requestId), headers);
+    }
     if (path === '/api/v1/grow/controls/status' && method === 'GET') return result(grow.controlsStatus(principal, requestId), headers);
     if (path === '/api/v1/grow/controls/pause' && method === 'POST') return result(grow.controlsPause(principal, requestId), headers);
     if (path === '/api/v1/grow/controls/resume' && method === 'POST') return result(grow.controlsResume(principal, rec, requestId), headers);
@@ -2196,9 +2276,14 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/grow/portfolio',
   'GET /api/v1/grow/performance',
   'GET /api/v1/grow/overview',
+  'GET /api/v1/grow/allocate',
+  'GET /api/v1/grow/active-capital',
   'GET /api/v1/grow/activity',
   'GET /api/v1/grow/results',
   'GET /api/v1/grow/cash',
+  'GET /api/v1/grow/provider-account',
+  'GET /api/v1/grow/action-cards',
+  'GET /api/v1/grow/agent-state',
   'POST /api/v1/grow/recurring',
   'POST /api/v1/grow/recurring/{id}/cancel',
   'POST /api/v1/grow/monitor',

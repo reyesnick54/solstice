@@ -1,9 +1,26 @@
-import type { ProductGrowthService } from '../../../../packages/platform/src/growth/product/service.ts';
+import { EconomicGraphService } from '@solstice/personal-economic-graph';
+import { InvestmentsService } from '@solstice/investments';
+import { GrowLifecycleService, GrowthOrchestrator, type ProductGrowthService } from '@solstice/platform';
+import type { SimulationRuntime } from '../../../accounts/src/runtime.ts';
 import type { ConsumerBff } from './orchestrator.ts';
 import type { BffPrincipal } from './ports.ts';
 import type { GrowOpportunityPort } from './grow-adapter.ts';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
-import { actorFromPrincipal, mapGrowFailure } from './grow.ts';
+import { actorFromPrincipal, mapGrowFailure, GrowBffSurface, type GrowBffDeps } from './grow.ts';
+import { seedSimulationCatalog } from '../../../accounts/src/catalog.ts';
+import type { GrowPaperCycleDeps } from './grow-paper-cycle.ts';
+import {
+  growPaperActionCards,
+  growPaperActiveCapital,
+  growPaperActivity,
+  growPaperAgentState,
+  growPaperAllocate,
+  growPaperCash,
+  growPaperOverview,
+  growPaperPerformance,
+  growPaperProviderAccount,
+  growPaperResults,
+} from './grow-paper-cycle.ts';
 
 /**
  * Preview-only compatibility surface for the Lovable Grow lifecycle routes.
@@ -220,7 +237,12 @@ export class PreviewGrowSurface {
     return approved.ok ? approved.value : mapGrowFailure(approved.error, requestId);
   }
 
-  executeProposal(_principal: BffPrincipal, _proposalId: string, _body: Record<string, unknown>, requestId: string): BffErrorEnvelope {
+  executeProposal(
+    _principal: BffPrincipal,
+    _proposalId: string,
+    _body: Record<string, unknown>,
+    requestId: string,
+  ): Record<string, unknown> | BffErrorEnvelope {
     return unavailable(requestId, 'Preview growth proposals do not execute financial state changes');
   }
 
@@ -229,7 +251,11 @@ export class PreviewGrowSurface {
     return loaded.ok ? loaded.value : mapGrowFailure(loaded.error, requestId);
   }
 
-  executionStatus(_principal: BffPrincipal, _executionId: string, requestId: string): BffErrorEnvelope {
+  executionStatus(
+    _principal: BffPrincipal,
+    _executionId: string,
+    requestId: string,
+  ): Record<string, unknown> | BffErrorEnvelope {
     return unavailable(requestId, 'No preview growth execution exists');
   }
 
@@ -261,32 +287,36 @@ export class PreviewGrowSurface {
     return { environment: 'simulation', productionMoneyMovement: false, actions: [] };
   }
 
-  invokeAgentTool(_principal: BffPrincipal, _body: Record<string, unknown>, requestId: string): BffErrorEnvelope {
+  invokeAgentTool(
+    _principal: BffPrincipal,
+    _body: Record<string, unknown>,
+    requestId: string,
+  ): Record<string, unknown> | BffErrorEnvelope {
     return unavailable(requestId, 'Grow agent tools are not enabled on this preview compatibility surface');
   }
 
-  overview(_principal: BffPrincipal, requestId: string): BffErrorEnvelope {
+  overview(_principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
     return unavailable(
       requestId,
       'Paper Grow overview requires GrowBffSurface with durable Grow execution lifecycle binding',
     );
   }
 
-  activity(_principal: BffPrincipal, requestId: string): BffErrorEnvelope {
+  activity(_principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
     return unavailable(
       requestId,
       'Paper Grow activity requires GrowBffSurface with durable Grow execution lifecycle binding',
     );
   }
 
-  results(_principal: BffPrincipal, requestId: string): BffErrorEnvelope {
+  results(_principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
     return unavailable(
       requestId,
       'Paper Grow results requires GrowBffSurface with durable Grow execution lifecycle binding',
     );
   }
 
-  cashAvailable(_principal: BffPrincipal, requestId: string): BffErrorEnvelope {
+  cashAvailable(_principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
     return unavailable(
       requestId,
       'Paper Grow cash requires GrowBffSurface with durable Grow execution lifecycle binding',
@@ -359,4 +389,248 @@ function unavailable(requestId: string, message: string): BffErrorEnvelope {
 
 function isError(value: unknown): value is BffErrorEnvelope {
   return Boolean(value && typeof value === 'object' && 'errorCode' in value);
+}
+
+type GrowHeliosReader = {
+  readonly paperCycleFor: (principal: BffPrincipal) => GrowPaperCycleDeps | null;
+  readonly executionFor: (principal: BffPrincipal) => GrowBffSurface | null;
+};
+
+export type HeliosGrowBindingLike = {
+  readonly growBff: GrowBffSurface;
+  readonly paperCycleDeps: GrowPaperCycleDeps;
+};
+
+export function createHeliosReader(bindings: ReadonlyMap<string, HeliosGrowBindingLike>): GrowHeliosReader {
+  return Object.freeze({
+    paperCycleFor: (principal) => bindings.get(principal.customerId)?.paperCycleDeps ?? null,
+    executionFor: (principal) => bindings.get(principal.customerId)?.growBff ?? null,
+  });
+}
+
+export type HeliosInvestmentAccounts = {
+  readonly investmentAccountId: string;
+  readonly demandAccountId: string;
+  readonly brokerageCashAccountId: string;
+  readonly securitiesAccountId: string;
+  readonly pendingSettlementAccountId: string;
+};
+
+export function sandboxInvestmentAccountsForPersona(principal: BffPrincipal): HeliosInvestmentAccounts {
+  return Object.freeze({
+    investmentAccountId: 'inv_sandbox_invest',
+    demandAccountId: 'acct_sandbox_invest_cash',
+    brokerageCashAccountId: 'acct_sandbox_invest_brokerage',
+    securitiesAccountId: 'acct_sandbox_invest_sec',
+    pendingSettlementAccountId: 'acct_sandbox_invest_pending',
+  });
+}
+
+export function createHeliosGrowBindingForPersona(input: {
+  readonly runtime: SimulationRuntime;
+  readonly principal: BffPrincipal;
+  readonly investmentAccounts: HeliosInvestmentAccounts;
+  readonly providers: GrowBffDeps['providers'];
+}): HeliosGrowBindingLike {
+  const { runtime, principal, investmentAccounts, providers } = input;
+  const peg = new EconomicGraphService({ clock: runtime.clock, events: runtime.events });
+  const orchestrator = new GrowthOrchestrator({
+    clock: runtime.clock,
+    events: runtime.events,
+    peg,
+    evidence: runtime.evidence,
+  });
+  const grow = new GrowLifecycleService({ clock: runtime.clock, evidence: runtime.evidence });
+  const seeded = seedSimulationCatalog();
+  const investments = new InvestmentsService(
+    runtime.kernel,
+    runtime.issuer,
+    runtime.evidence,
+    runtime.events,
+    runtime.clock,
+    {
+      customers: runtime.customers,
+      accounts: runtime.accounts,
+      products: seeded.products.asCatalog(),
+      legalEntities: seeded.legalEntities,
+    },
+    runtime.identity.service,
+    runtime.ledger,
+  );
+  const resolveActor = (actorId: string) => {
+    const resolved = runtime.identity.service.resolveActorContext(actorId);
+    return resolved.ok ? resolved.value : null;
+  };
+  const actor = resolveActor(principal.actorId);
+  if (actor) {
+    orchestrator.interpretAndCompile(actor, {
+      subjectId: principal.identityId,
+      sourceText: 'Invest eligible sandbox surplus with customer approval before any movement.',
+    });
+    orchestrator.confirmAndActivate(actor, principal.identityId);
+  }
+  const growBff = new GrowBffSurface({
+    peg,
+    orchestrator,
+    grow,
+    investments,
+    providers,
+    ledger: runtime.ledger,
+    accounts: runtime.accounts,
+    resolveActor,
+    now: () => runtime.clock.now(),
+    investmentAccountsFor: (customerId) => (customerId === principal.customerId ? investmentAccounts : null),
+    suitabilityFor: (row) => ({
+      kycComplete: row.verification === 'VERIFIED',
+      jurisdictionPermitted: row.jurisdiction === 'GB' || row.jurisdiction === 'US',
+      accountRestricted: row.restricted,
+      customerEligible: row.customerStatus === 'ACTIVE',
+      riskProfile: row.risk === 'RESTRICTED' ? 'LOW' : 'MODERATE',
+      proposalRiskClass: 'MODERATE',
+    }),
+  });
+  const paperCycleDeps: GrowPaperCycleDeps = {
+    orchestrator,
+    grow,
+    investments,
+    ledger: runtime.ledger,
+    accounts: runtime.accounts,
+    providers,
+    resolveActor,
+    now: () => runtime.clock.now(),
+    investmentAccountsFor: (customerId) => (customerId === principal.customerId ? investmentAccounts : null),
+  };
+  return Object.freeze({ growBff, paperCycleDeps });
+}
+
+export class ComposedConsumerGrowSurface extends PreviewGrowSurface {
+  private readonly helios: GrowHeliosReader;
+
+  constructor(
+    growth: ProductGrowthService,
+    bff: ConsumerBff,
+    opportunityPort: GrowOpportunityPort,
+    helios: GrowHeliosReader,
+  ) {
+    super(growth, bff, opportunityPort);
+    this.helios = helios;
+  }
+
+  override executeProposal(
+    principal: BffPrincipal,
+    proposalId: string,
+    body: Record<string, unknown>,
+    requestId: string,
+  ): Record<string, unknown> | BffErrorEnvelope {
+    const execution = this.helios.executionFor(principal);
+    if (execution) {
+      return execution.executeProposal(principal, proposalId, body, requestId);
+    }
+    return super.executeProposal(principal, proposalId, body, requestId);
+  }
+
+  override executionStatus(
+    principal: BffPrincipal,
+    executionId: string,
+    requestId: string,
+  ): Record<string, unknown> | BffErrorEnvelope {
+    const execution = this.helios.executionFor(principal);
+    if (execution) {
+      return execution.executionStatus(principal, executionId, requestId);
+    }
+    return super.executionStatus(principal, executionId, requestId);
+  }
+
+  override invokeAgentTool(
+    principal: BffPrincipal,
+    body: Record<string, unknown>,
+    requestId: string,
+  ): Record<string, unknown> | BffErrorEnvelope {
+    const execution = this.helios.executionFor(principal);
+    if (execution) {
+      return execution.invokeAgentTool(principal, body, requestId);
+    }
+    return super.invokeAgentTool(principal, body, requestId);
+  }
+
+  override overview(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growPaperOverview(this.helios.paperCycleFor(principal), principal, requestId);
+  }
+
+  override activity(
+    principal: BffPrincipal,
+    requestId: string,
+    query: Readonly<Record<string, string>> = {},
+  ): Record<string, unknown> | BffErrorEnvelope {
+    return growPaperActivity(this.helios.paperCycleFor(principal), principal, requestId, query);
+  }
+
+  override results(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growPaperResults(this.helios.paperCycleFor(principal), principal, requestId);
+  }
+
+  override cashAvailable(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growPaperCash(this.helios.paperCycleFor(principal), principal, requestId);
+  }
+
+  allocate(principal: BffPrincipal, requestId: string) {
+    return growPaperAllocate(this.helios.paperCycleFor(principal), principal, requestId);
+  }
+
+  activeCapital(principal: BffPrincipal, requestId: string) {
+    return growPaperActiveCapital(this.helios.paperCycleFor(principal), principal, requestId);
+  }
+
+  heliosPerformance(principal: BffPrincipal, requestId: string) {
+    return growPaperPerformance(this.helios.paperCycleFor(principal), principal, requestId);
+  }
+
+  providerAccount(principal: BffPrincipal, requestId: string) {
+    return growPaperProviderAccount(this.helios.paperCycleFor(principal), principal, requestId);
+  }
+
+  actionCards(principal: BffPrincipal, requestId: string) {
+    return growPaperActionCards(this.helios.paperCycleFor(principal), principal, requestId);
+  }
+
+  agentState(principal: BffPrincipal, requestId: string) {
+    return growPaperAgentState(this.helios.paperCycleFor(principal), principal, requestId);
+  }
+
+  override createProposal(principal: BffPrincipal, body: Record<string, unknown>, requestId: string) {
+    const execution = this.helios.executionFor(principal);
+    if (execution && typeof body.actionId === 'string') {
+      return execution.createProposal(principal, body, requestId);
+    }
+    return super.createProposal(principal, body, requestId);
+  }
+
+  override approveProposal(
+    principal: BffPrincipal,
+    proposalId: string,
+    body: Record<string, unknown>,
+    requestId: string,
+  ) {
+    const execution = this.helios.executionFor(principal);
+    if (execution) {
+      return execution.approveProposal(principal, proposalId, body, requestId);
+    }
+    return super.approveProposal(principal, proposalId, body, requestId);
+  }
+
+  override getProposal(principal: BffPrincipal, proposalId: string, requestId: string) {
+    const execution = this.helios.executionFor(principal);
+    if (execution) {
+      return execution.getProposal(principal, proposalId, requestId);
+    }
+    return super.getProposal(principal, proposalId, requestId);
+  }
+
+  override plan(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    const execution = this.helios.executionFor(principal);
+    if (execution) {
+      return execution.plan(principal, requestId);
+    }
+    return super.plan(principal, requestId);
+  }
 }

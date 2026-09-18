@@ -37,6 +37,14 @@ export const BFF_ERROR_CODES = [
   'PROVIDER_UNAVAILABLE',
   'REGULATED_FEATURE_DISABLED',
   'SANDBOX_ONLY',
+  'ACTION_REQUIRED',
+  'CAPABILITY_DISABLED',
+  'STALE_DATA',
+  'RECONCILIATION_PENDING',
+  'INSUFFICIENT_AVAILABLE_CAPITAL',
+  'APPROVAL_REQUIRED',
+  'VALIDITY_EXPIRED',
+  'SERVICE_DEGRADED',
 ] as const;
 export type BffErrorCode = (typeof BFF_ERROR_CODES)[number];
 
@@ -82,6 +90,11 @@ export function statusForError(error: BffErrorEnvelope): number {
     case 'RESOURCE_NOT_OWNED':
     case 'FORBIDDEN_PROFILE_FIELD':
     case 'FEATURE_UNAVAILABLE':
+    case 'CAPABILITY_DISABLED':
+    case 'ACTION_REQUIRED':
+    case 'APPROVAL_REQUIRED':
+    case 'VALIDITY_EXPIRED':
+    case 'INSUFFICIENT_AVAILABLE_CAPITAL':
     case 'KERNEL_DENIED':
     case 'KERNEL_REFUSED':
     case 'FORBIDDEN':
@@ -97,6 +110,9 @@ export function statusForError(error: BffErrorEnvelope): number {
     case 'CHAIN_UNAVAILABLE':
     case 'CHAIN_SYNCING':
     case 'PROVIDER_UNAVAILABLE':
+    case 'STALE_DATA':
+    case 'RECONCILIATION_PENDING':
+    case 'SERVICE_DEGRADED':
       return 503;
     case 'NOT_FOUND':
       return 404;
