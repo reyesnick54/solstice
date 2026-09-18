@@ -167,8 +167,5 @@ export * from './order-lifecycle/index.ts';
 export * from './capital-lifecycle/index.ts';
 export * from './outcome-attribution/index.ts';
 export * from './economic-evaluation/index.ts';
-<<<<<<< HEAD
 export * from './jurisdiction-capability/index.ts';
-=======
 export * from './capacity/index.ts';
->>>>>>> 71f17826 (test(helios): qualify capacity latency and portfolio interactions (H33))
