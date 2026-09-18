@@ -22,7 +22,7 @@ async function call(
   persona: Parameters<typeof sandboxToken>[0] | null,
   body: Record<string, unknown> = {},
 ) {
-  return handleConsumerBff(runtime(world), {
+  return await handleConsumerBff(runtime(world), {
     method,
     path,
     query: {},
