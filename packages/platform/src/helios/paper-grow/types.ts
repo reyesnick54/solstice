@@ -131,6 +131,7 @@ export type GrowResultsResponse = {
   readonly customerId: string;
   readonly performance: GrowPaperPerformanceSection;
   readonly attribution: GrowAttributionModel;
+  readonly outcomeAttribution: import('../outcome-attribution/types.ts').GrowIndependentOutcomeAttribution | null;
   readonly disclosure: PaperDisclosureContract;
   readonly serverOwned: true;
 };
