@@ -1,0 +1,107 @@
+# HELIOS H35 — controlled Hetzner sandbox deploy + integrated acceptance.
+# Requires human approval via GitHub environment protection (helios-sandbox).
+# Cursor agents must NOT deploy without this workflow and environment approval.
+name: HELIOS sandbox deploy acceptance
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_commit_sha:
+        description: Exact H34 qualified Git SHA (must match release/helios-release-package.json)
+        required: true
+        type: string
+      artifact_digest:
+        description: Exact H34 consumer-bff artifact digest
+        required: true
+        type: string
+      run_remote_acceptance:
+        description: Run remote acceptance against api.sunrey.xyz after deploy verification
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  pre-deploy-gate:
+    name: pre-deploy-gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact release SHA
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ inputs.release_commit_sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+
+      - name: Install from lockfile
+        run: npm ci --ignore-scripts
+
+      - name: Verify H34 release package manifest
+        run: |
+          test -f release/helios-release-package.json
+          node -e "
+            const m=require('./release/helios-release-package.json');
+            if (m.marker !== 'HELIOS_RELEASE_PACKAGE_QUALIFIED') process.exit(1);
+            if (m.commitSha !== '${{ inputs.release_commit_sha }}') {
+              console.error('SHA mismatch', m.commitSha);
+              process.exit(1);
+            }
+            if (m.artifactDigest !== '${{ inputs.artifact_digest }}') {
+              console.error('digest mismatch', m.artifactDigest);
+              process.exit(1);
+            }
+          "
+
+      - name: Local integrated acceptance (pre-deploy)
+        run: npm run helios:h35:accept -- --no-write
+
+  deploy-and-accept:
+    name: deploy-and-accept
+    needs: pre-deploy-gate
+    runs-on: ubuntu-latest
+    environment: helios-sandbox
+    steps:
+      - name: Checkout exact release SHA
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ inputs.release_commit_sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+
+      - name: Install from lockfile
+        run: npm ci --ignore-scripts
+
+      - name: Record deployment evidence
+        run: |
+          mkdir -p performance/helios/results/deploy-evidence
+          node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-h35-accept.ts --no-write \
+            > performance/helios/results/deploy-evidence/pre-remote-check.txt || true
+          echo "commit=${{ inputs.release_commit_sha }}" >> performance/helios/results/deploy-evidence/deploy-metadata.txt
+          echo "artifact=${{ inputs.artifact_digest }}" >> performance/helios/results/deploy-evidence/deploy-metadata.txt
+          echo "approved_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> performance/helios/results/deploy-evidence/deploy-metadata.txt
+
+      - name: Remote integrated acceptance
+        if: inputs.run_remote_acceptance
+        env:
+          SUNREY_VERIFY_API_BASE: https://api.sunrey.xyz
+          SUNREY_VERIFY_APP_ORIGIN: https://app.sunrey.xyz
+          SUNREY_VERIFY_PREVIEW_EMAIL: ${{ secrets.SUNREY_PREVIEW_AUTH_EMAIL }}
+          SUNREY_VERIFY_PREVIEW_PASSWORD: ${{ secrets.SUNREY_PREVIEW_AUTH_PASSWORD }}
+          SUNREY_VERIFY_PERSONA_ID: investment
+        run: npm run smoke:helios-integrated -- --remote
+
+      - name: Upload acceptance report
+        uses: actions/upload-artifact@b131fb6064bda6c0bf3e2148b31a47b1d410286 # v4.6.0
+        if: always()
+        with:
+          name: helios-h35-acceptance-report
+          path: performance/helios/results/
+          retention-days: 90
