@@ -100,6 +100,10 @@ export {
   persistHeliosOrderLifecycleState,
 } from './growth/pg-helios-order-lifecycle-store.ts';
 export {
+  loadRegulatoryEvidenceState,
+  persistRegulatoryEvidenceState,
+} from './growth/pg-helios-regulatory-evidence-store.ts';
+export {
   loadWorkOrderState,
   persistWorkOrder,
   persistWorkOrderState,
