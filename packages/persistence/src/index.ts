@@ -88,6 +88,10 @@ export {
   persistHeliosMetaAllocatorState,
 } from './growth/pg-helios-meta-allocator-store.ts';
 export {
+  loadProviderOrchestrationState,
+  persistProviderOrchestrationState,
+} from './growth/pg-helios-provider-orchestration-store.ts';
+export {
   loadWorkOrderState,
   persistWorkOrder,
   persistWorkOrderState,
