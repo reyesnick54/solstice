@@ -1,13 +1,6 @@
 import type { Pool } from 'pg';
 
-import type {
-  PolicyVersionRecord,
-  RegulatoryChangeRequest,
-  RegulatoryTransparencyStoreSnapshot,
-  SupervisoryExportPackage,
-  SupervisoryExportRequest,
-} from '../../../platform/src/helios/regulatory-transparency/types.ts';
-import type { PolicyVersionRef } from '../../../platform/src/helios/regulatory-transparency/ids.ts';
+import type { RegulatoryChangeRequest, RegulatoryTransparencyStoreSnapshot, SupervisoryExportPackage, SupervisoryExportRequest } from '../../../platform/src/helios/regulatory-transparency/types.ts';
 import { withClient } from '../postgres/pools.ts';
 
 export async function persistRegulatoryTransparencyState(
@@ -96,10 +89,10 @@ export async function loadRegulatoryTransparencyState(
 
     const policyVersions = parsedChanges.flatMap((request) =>
       request.proposedPolicyVersion ? [request.proposedPolicyVersion] : [],
-    ) as PolicyVersionRecord[];
+    );
     const activatedVersionRefs = parsedChanges
       .filter((request) => request.state === 'ACTIVATED' && request.proposedPolicyVersion)
-      .map((request) => request.proposedPolicyVersion!.versionRef as PolicyVersionRef);
+      .map((request) => request.proposedPolicyVersion!.versionRef);
 
     const snapshot: RegulatoryTransparencyStoreSnapshot = Object.freeze({
       exportRequests: Object.freeze(parsedRequests),
