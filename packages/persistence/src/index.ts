@@ -84,6 +84,10 @@ export {
   persistDecisionValidityState,
 } from './growth/pg-helios-decision-validity-store.ts';
 export {
+  loadHeliosEconomicEvaluationState,
+  persistHeliosEconomicEvaluationState,
+} from './growth/pg-helios-economic-evaluation-store.ts';
+export {
   loadHeliosMetaAllocatorState,
   persistHeliosMetaAllocatorState,
 } from './growth/pg-helios-meta-allocator-store.ts';
