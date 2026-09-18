@@ -166,3 +166,4 @@ export * from './provider-orchestration/index.ts';
 export * from './order-lifecycle/index.ts';
 export * from './capital-lifecycle/index.ts';
 export * from './outcome-attribution/index.ts';
+export * from './economic-evaluation/index.ts';
