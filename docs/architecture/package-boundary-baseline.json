@@ -26228,6 +26228,33 @@
       "spec": "../../../domain/src/time.ts"
     },
     {
+      "file": "packages/platform/src/helios/grow-controls/service.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/grow-controls/service.ts' deep-imports 'config' internals via '../../../../config/src/clock.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "config",
+      "spec": "../../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/grow-controls/service.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/grow-controls/service.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/grow-controls/service.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/grow-controls/service.ts' deep-imports 'domain' internals via '../../../../domain/src/result.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/result.ts"
+    },
+    {
       "file": "packages/platform/src/helios/helios-h06.test.ts",
       "line": 4,
       "rule": "package-deep-import",
