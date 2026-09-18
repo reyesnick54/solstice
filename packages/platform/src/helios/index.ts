@@ -167,9 +167,6 @@ export * from './order-lifecycle/index.ts';
 export * from './capital-lifecycle/index.ts';
 export * from './outcome-attribution/index.ts';
 export * from './economic-evaluation/index.ts';
-<<<<<<< HEAD
 export * from './jurisdiction-capability/index.ts';
 export * from './capacity/index.ts';
-=======
 export * from './regulatory-evidence/index.ts';
->>>>>>> 839c6f99 (feat(helios): add regulatory evidence and reporting lifecycle (H29))

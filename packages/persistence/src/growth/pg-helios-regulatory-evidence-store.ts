@@ -1,6 +1,11 @@
 import type { Pool } from 'pg';
 
-import type { RegulatoryEvidenceStoreSnapshot } from '../../../platform/src/helios/regulatory-evidence/types.ts';
+import type {
+  RegulatoryEvidencePackage,
+  RegulatoryEvidenceStoreSnapshot,
+  ReportingObligation,
+  StructuredReportPackage,
+} from '../../../platform/src/helios/regulatory-evidence/types.ts';
 import { withClient } from '../postgres/pools.ts';
 
 function parseBodyCanonical<T>(value: unknown): T {
@@ -126,9 +131,15 @@ export async function loadRegulatoryEvidenceState(pool: Pool): Promise<Regulator
     );
 
     return Object.freeze({
-      packages: Object.freeze(packages.rows.map((row) => parseBodyCanonical(row.body_canonical))),
-      obligations: Object.freeze(obligations.rows.map((row) => parseBodyCanonical(row.body_canonical))),
-      reportPackages: Object.freeze(reports.rows.map((row) => parseBodyCanonical(row.body_canonical))),
+      packages: Object.freeze(
+        packages.rows.map((row) => parseBodyCanonical<RegulatoryEvidencePackage>(row.body_canonical)),
+      ),
+      obligations: Object.freeze(
+        obligations.rows.map((row) => parseBodyCanonical<ReportingObligation>(row.body_canonical)),
+      ),
+      reportPackages: Object.freeze(
+        reports.rows.map((row) => parseBodyCanonical<StructuredReportPackage>(row.body_canonical)),
+      ),
       submissions: Object.freeze([]),
       triggers: Object.freeze([]),
       processedIdempotencyKeys: Object.freeze(idempotency.rows.map((row) => row.idempotency_key as string)),
