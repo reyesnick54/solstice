@@ -161,5 +161,6 @@ export * from './grok-research/index.ts';
 export * from './strategy-capsule/index.ts';
 export * from './meta-allocator/index.ts';
 export * from './decision-validity/index.ts';
+export * from './grow-controls/index.ts';
 export * from './provider-orchestration/index.ts';
 export * from './order-lifecycle/index.ts';

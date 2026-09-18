@@ -34,7 +34,7 @@ export {
 } from './ids.ts';
 export type { FinancialProposal, GrowExecutionCommand, GrowExecutionRecord, GrowFailure } from './types.ts';
 export { containsGuaranteedReturnClaim, assertNoGuaranteedReturnClaim } from './no-guaranteed-returns.ts';
-export { evaluateGrowSuitability, suitabilityBlocksExecution } from './suitability.ts';
+export { evaluateGrowSuitability, suitabilityBlocksExecution, type SuitabilityFacts } from './suitability.ts';
 export { routeProposalType, intendedActionFor } from './routing.ts';
 export { generateFinancialProposal, modifyProposalAmount, hashProposalContent } from './proposal.ts';
 export {

@@ -509,6 +509,97 @@ paths:
       responses:
         "200":
           description: Progress
+  /api/v1/grow/controls/status:
+    get:
+      operationId: getGrowControlsStatus
+      summary: Server-owned Grow operational control status
+      responses:
+        "200":
+          description: Controls status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowControlsStatus"
+  /api/v1/grow/controls/pause:
+    post:
+      operationId: pauseGrowDeployment
+      summary: Pause new Grow deployment without erasing in-flight operations
+      responses:
+        "200":
+          description: Pause confirmed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowPauseResponse"
+  /api/v1/grow/controls/resume:
+    post:
+      operationId: resumeGrowDeployment
+      summary: Resume Grow after authority revalidation
+      responses:
+        "200":
+          description: Resume confirmed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowPauseResponse"
+  /api/v1/grow/controls/close:
+    post:
+      operationId: requestGrowPositionClose
+      summary: Request close of eligible Grow positions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GrowCloseRequestBody"
+      responses:
+        "200":
+          description: Close requested
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowCloseResponse"
+  /api/v1/grow/controls/withdraw:
+    post:
+      operationId: requestGrowCashWithdrawal
+      summary: Withdraw settled unreserved Grow cash
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GrowWithdrawRequestBody"
+      responses:
+        "200":
+          description: Withdrawal submitted or completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowWithdrawResponse"
+  /api/v1/grow/controls/mandate:
+    post:
+      operationId: changeGrowMandate
+      summary: Change future Grow mandate boundaries
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GrowMandateChangeBody"
+      responses:
+        "200":
+          description: Mandate change applied
+  /api/v1/grow/controls/degraded:
+    get:
+      operationId: listGrowDegradedStates
+      summary: Consumer-visible Grow degraded states
+      responses:
+        "200":
+          description: Degraded states
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowDegradedStatesResponse"
   /api/v1/grow/scenarios:
     get:
       operationId: getGrowScenarios
@@ -3117,6 +3208,160 @@ components:
         reason: { type: string }
         productionActive: { type: boolean, enum: [false] }
         guaranteedOutcome: { type: boolean, enum: [false] }
+    GrowControlsStatus:
+      type: object
+      required: [schema, customerId, subjectId, pause, degradedStates, serverOwned]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.controls.status.v1] }
+        customerId: { type: string }
+        subjectId: { type: string }
+        pause:
+          $ref: "#/components/schemas/GrowPauseControl"
+        degradedStates:
+          type: array
+          items:
+            $ref: "#/components/schemas/GrowDegradedState"
+        pendingCloseRequests:
+          type: array
+          items:
+            $ref: "#/components/schemas/GrowCloseRequest"
+        pendingWithdrawals:
+          type: array
+          items:
+            $ref: "#/components/schemas/GrowWithdrawalRequest"
+        serverOwned: { type: boolean, enum: [true] }
+    GrowPauseControl:
+      type: object
+      required: [state, deploymentPaused, updatedAt]
+      properties:
+        state:
+          type: string
+          enum: [ACTIVE, PAUSE_REQUESTED, PAUSED, PAUSE_PARTIAL, RESUME_ELIGIBLE, BLOCKED]
+        deploymentPaused: { type: boolean }
+        inFlightExecutionIds:
+          type: array
+          items: { type: string }
+        inFlightProposalIds:
+          type: array
+          items: { type: string }
+        blockedReason: { type: string, nullable: true }
+        updatedAt: { type: string, format: date-time }
+    GrowPauseResponse:
+      type: object
+      required: [schema, pause, serverOwned]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.controls.pause.v1, sunrey.consumer.grow.controls.resume.v1] }
+        pause:
+          $ref: "#/components/schemas/GrowPauseControl"
+        serverOwned: { type: boolean, enum: [true] }
+    GrowCloseRequestBody:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum: [CLOSE_ALL_ELIGIBLE, CLOSE_SELECTED]
+        instrumentIds:
+          type: array
+          items: { type: string }
+        idempotencyKey: { type: string }
+    GrowCloseResponse:
+      type: object
+      required: [schema, closeRequest, serverOwned]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.controls.close.v1] }
+        closeRequest:
+          $ref: "#/components/schemas/GrowCloseRequest"
+        serverOwned: { type: boolean, enum: [true] }
+    GrowCloseRequest:
+      type: object
+      required: [closeRequestId, status, mode]
+      properties:
+        closeRequestId: { type: string }
+        status:
+          type: string
+          enum: [REQUESTED, AUTHORIZED, SUBMITTED, PARTIALLY_CLOSED, CLOSED, SETTLING, RECONCILING, COMPLETED, ACTION_REQUIRED, FAILED, UNKNOWN]
+        mode:
+          type: string
+          enum: [CLOSE_ALL_ELIGIBLE, CLOSE_SELECTED]
+        instrumentIds:
+          type: array
+          items: { type: string }
+    GrowWithdrawRequestBody:
+      type: object
+      required: [amountMinorUnits]
+      properties:
+        amountMinorUnits: { type: string, pattern: "^[0-9]+$" }
+        currency: { type: string }
+        destinationAccountId: { type: string }
+        idempotencyKey: { type: string }
+    GrowWithdrawResponse:
+      type: object
+      required: [schema, withdrawal, serverOwned]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.controls.withdraw.v1] }
+        withdrawal:
+          $ref: "#/components/schemas/GrowWithdrawalRequest"
+        serverOwned: { type: boolean, enum: [true] }
+    GrowWithdrawalRequest:
+      type: object
+      required: [withdrawalId, status, amount]
+      properties:
+        withdrawalId: { type: string }
+        status:
+          type: string
+          enum: [REQUESTED, VALIDATING, AUTHORIZED, SUBMITTED, SETTLING, COMPLETED, FAILED, REJECTED]
+        amount:
+          type: object
+          properties:
+            minorUnits: { type: string }
+            currency: { type: string }
+        journalId: { type: string, nullable: true }
+    GrowMandateChangeBody:
+      type: object
+      required: [sourceText]
+      properties:
+        sourceText: { type: string }
+    GrowDegradedStatesResponse:
+      type: object
+      required: [schema, items, serverOwned]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.controls.degraded.v1] }
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/GrowDegradedState"
+        serverOwned: { type: boolean, enum: [true] }
+    GrowDegradedState:
+      type: object
+      required: [code, severity, message, customerActionRequired]
+      properties:
+        code:
+          type: string
+          enum:
+            - MARKET_DATA_DEGRADED
+            - RESEARCH_PROVIDER_DEGRADED
+            - S3M_UNAVAILABLE
+            - PROVIDER_EXECUTION_DEGRADED
+            - PROVIDER_ACCOUNT_ACTION_REQUIRED
+            - RECONCILIATION_PENDING
+            - RECONCILIATION_MISMATCH
+            - SETTLEMENT_DELAYED
+            - VALUATION_STALE
+            - CAPABILITY_REVIEW_REQUIRED
+            - REGULATORY_RESTRICTION
+            - STRATEGY_REVIEW_REQUIRED
+            - SYSTEM_MAINTENANCE
+        severity:
+          type: string
+          enum: [INFO, WARNING, CRITICAL]
+        affectedCapability: { type: string }
+        customerImpact: { type: string }
+        fundsAffected: { type: boolean }
+        newDeploymentPaused: { type: boolean }
+        withdrawalsAvailable: { type: boolean }
+        customerActionRequired: { type: boolean }
+        message: { type: string }
+        observedAt: { type: string, format: date-time }
     GrowPlan:
       type: object
       required: [planId, ownerId, status, guaranteedOutcome, productionActive]

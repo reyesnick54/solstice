@@ -267,6 +267,7 @@ export type {
   GrowExecutionCommand,
   GrowExecutionRecord,
   GrowFailure,
+  SuitabilityFacts,
 } from './grow/index.ts';
 export {
   asOpportunityId,
