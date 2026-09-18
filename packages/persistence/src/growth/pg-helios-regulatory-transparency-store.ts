@@ -1,6 +1,13 @@
 import type { Pool } from 'pg';
 
-import type { RegulatoryTransparencyStoreSnapshot } from '../../../platform/src/helios/regulatory-transparency/types.ts';
+import type {
+  PolicyVersionRecord,
+  RegulatoryChangeRequest,
+  RegulatoryTransparencyStoreSnapshot,
+  SupervisoryExportPackage,
+  SupervisoryExportRequest,
+} from '../../../platform/src/helios/regulatory-transparency/types.ts';
+import type { PolicyVersionRef } from '../../../platform/src/helios/regulatory-transparency/ids.ts';
 import { withClient } from '../postgres/pools.ts';
 
 export async function persistRegulatoryTransparencyState(
@@ -77,20 +84,24 @@ export async function loadRegulatoryTransparencyState(
       `SELECT body_canonical FROM growth.helios_regulatory_change_request ORDER BY created_at ASC`,
     );
 
-    const parsedRequests = exportRequests.rows.map((row) => JSON.parse(row.body_canonical));
-    const parsedPackages = exportPackages.rows.map((row) => JSON.parse(row.body_canonical));
-    const parsedChanges = changeRequests.rows.map((row) => JSON.parse(row.body_canonical));
+    const parsedRequests = exportRequests.rows.map(
+      (row) => JSON.parse(row.body_canonical) as SupervisoryExportRequest,
+    );
+    const parsedPackages = exportPackages.rows.map(
+      (row) => JSON.parse(row.body_canonical) as SupervisoryExportPackage,
+    );
+    const parsedChanges = changeRequests.rows.map(
+      (row) => JSON.parse(row.body_canonical) as RegulatoryChangeRequest,
+    );
 
-    const policyVersions = parsedChanges
-      .flatMap((r: { proposedPolicyVersion?: unknown }) =>
-        r.proposedPolicyVersion ? [r.proposedPolicyVersion] : [],
-      );
+    const policyVersions = parsedChanges.flatMap((request) =>
+      request.proposedPolicyVersion ? [request.proposedPolicyVersion] : [],
+    ) as PolicyVersionRecord[];
     const activatedVersionRefs = parsedChanges
-      .filter((r: { state: string }) => r.state === 'ACTIVATED')
-      .map((r: { proposedPolicyVersion?: { versionRef: string } }) => r.proposedPolicyVersion?.versionRef)
-      .filter(Boolean);
+      .filter((request) => request.state === 'ACTIVATED' && request.proposedPolicyVersion)
+      .map((request) => request.proposedPolicyVersion!.versionRef as PolicyVersionRef);
 
-    return Object.freeze({
+    const snapshot: RegulatoryTransparencyStoreSnapshot = Object.freeze({
       exportRequests: Object.freeze(parsedRequests),
       exportPackages: Object.freeze(parsedPackages),
       changeRequests: Object.freeze(parsedChanges),
@@ -98,5 +109,6 @@ export async function loadRegulatoryTransparencyState(
       activatedVersionRefs: Object.freeze(activatedVersionRefs),
       scheduledActivations: Object.freeze([]),
     });
+    return snapshot;
   });
 }

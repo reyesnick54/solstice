@@ -171,8 +171,12 @@ function failingTests(evidenceRef: string) {
   ]);
 }
 
+type MutableQualificationChecks = {
+  -readonly [K in keyof RegulatoryTransparencyQualificationChecks]: boolean;
+};
+
 describe('HELIOS H30 — Supervisory access and regulated change governance', { concurrency: 1 }, () => {
-  const checks: RegulatoryTransparencyQualificationChecks = {
+  const checks: MutableQualificationChecks = {
     leastPrivilegeExportHolds: false,
     unauthorizedExportDenied: false,
     scopedCustomerExport: false,
@@ -845,7 +849,7 @@ describe('HELIOS H30 — Supervisory access and regulated change governance', { 
         accountIds: Object.freeze([]),
         dateRangeStart: asUtcInstant('2026-09-01T00:00:00.000Z'),
         dateRangeEnd: asUtcInstant('2026-09-30T23:59:59.000Z'),
-        artifactClasses: Object.freeze(['RISK_COMPLIANCE_DECISION']),
+        artifactClasses: Object.freeze(['RISK_COMPLIANCE_DECISION' as ArtifactClass]),
       }),
     });
     assert.ok(created.ok);
@@ -893,7 +897,9 @@ describe('HELIOS H30 — Supervisory access and regulated change governance', { 
   });
 
   it('qualification marker HELIOS_REGULATORY_TRANSPARENCY_QUALIFIED when all checks pass', () => {
-    const result = evaluateRegulatoryTransparencyQualification(checks);
+    const result = evaluateRegulatoryTransparencyQualification(
+      checks as RegulatoryTransparencyQualificationChecks,
+    );
     assert.equal(result.blockers.length, 0, `blockers: ${result.blockers.join(', ')}`);
     assert.equal(result.marker, HELIOS_REGULATORY_TRANSPARENCY_QUALIFIED);
     assert.equal(result.qualified, true);
