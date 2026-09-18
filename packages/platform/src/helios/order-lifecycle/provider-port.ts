@@ -78,9 +78,9 @@ export interface HeliosProviderOrderPort {
   readonly providerId: string;
   readonly environment: 'SIMULATION' | 'SANDBOX' | 'PAPER';
   readonly liveProviderConnected: false;
-  submit(request: ProviderSubmitRequest): ProviderSubmitResult | Promise<ProviderSubmitResult>;
-  query(externalOperationId: string): ProviderQueryResult | Promise<ProviderQueryResult>;
-  cancel(providerOrderId: string, externalOperationId: string): ProviderCancelResult | Promise<ProviderCancelResult>;
+  submit(request: ProviderSubmitRequest): ProviderSubmitResult;
+  query(externalOperationId: string): ProviderQueryResult;
+  cancel(providerOrderId: string, externalOperationId: string): ProviderCancelResult;
   verifyWebhook(payload: ProviderWebhookPayload): ProviderWebhookVerificationResult;
 }
 
