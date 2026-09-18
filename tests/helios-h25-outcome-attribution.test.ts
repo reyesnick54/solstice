@@ -6,7 +6,9 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { FrozenClock } from '../packages/config/src/clock.ts';
+import { type Account } from '../packages/domain/src/account.ts';
 import { asCurrencyCode } from '../packages/domain/src/currency.ts';
+import { type Customer, asCustomerId } from '../packages/domain/src/customer.ts';
 import { asJurisdiction } from '../packages/domain/src/jurisdiction.ts';
 import { asLegalEntityId } from '../packages/domain/src/legal-entity.ts';
 import { asProductId } from '../packages/domain/src/product.ts';
@@ -15,6 +17,7 @@ import { Money } from '../packages/money/src/money.ts';
 import { asIntentId } from '../packages/permissions/src/action-intent.ts';
 import { ACTION_TYPES } from '../packages/permissions/src/action-types.ts';
 import {
+  asInstrumentId,
   asInvestmentAccountId,
   buildCanonicalGrowAttributionSource,
   InvestmentsService,
@@ -38,16 +41,17 @@ const TEN_SHARES = '1000000000';
 const FOUR_SHARES = '400000000';
 const FIVE_THOUSAND = 500_000n;
 const TEN_THOUSAND = 1_000_000n;
+const SIM_ETF_1 = asInstrumentId('SIM-ETF-1');
 
 type TestWorld = {
   readonly clock: FrozenClock;
   readonly investments: InvestmentsService;
-  readonly demandId: string;
-  readonly brokerageId: string;
-  readonly securitiesId: string;
-  readonly pendingId: string;
+  readonly demand: Account;
+  readonly brokerage: Account;
+  readonly securities: Account;
+  readonly pending: Account;
   readonly investmentAccountId: string;
-  readonly customerId: string;
+  readonly customer: Customer;
   readonly ledger: ReturnType<typeof createSimulationRuntime>['ledger'];
 };
 
@@ -121,12 +125,12 @@ function buildWorld(suffix: string): TestWorld {
   return {
     clock,
     investments,
-    demandId: demand.account.id,
-    brokerageId: brokerage.account.id,
-    securitiesId: securities.account.id,
-    pendingId: pending.account.id,
+    demand: demand.account,
+    brokerage: brokerage.account,
+    securities: securities.account,
+    pending: pending.account,
     investmentAccountId: `inv_h25_${suffix}`,
-    customerId: customer.id,
+    customer,
     ledger: runtime.ledger,
   };
 }
@@ -140,12 +144,12 @@ function openAndFund(world: TestWorld) {
     requestedAt: world.clock.now(),
     purpose: 'CUSTOMER_INVESTMENT',
     payload: {
-      accountId: world.demandId,
+      accountId: world.demand.id,
       investmentAccountId: world.investmentAccountId,
-      customerId: world.customerId,
-      brokerageCashAccountId: world.brokerageId,
-      securitiesAccountId: world.securitiesId,
-      pendingSettlementAccountId: world.pendingId,
+      customerId: world.customer.id,
+      brokerageCashAccountId: world.brokerage.id,
+      securitiesAccountId: world.securities.id,
+      pendingSettlementAccountId: world.pending.id,
       productId: asProductId('prod_brokerage_cash_usd_gb'),
       legalEntityId: asLegalEntityId('le_solstice_uk_ltd'),
       jurisdiction: asJurisdiction('GB'),
@@ -161,8 +165,8 @@ function openAndFund(world: TestWorld) {
     requestedAt: world.clock.now(),
     purpose: 'CUSTOMER_INVESTMENT',
     payload: {
-      accountId: world.brokerageId,
-      sourceAccountId: world.demandId,
+      accountId: world.brokerage.id,
+      sourceAccountId: world.demand.id,
       amount: Money.fromMinorUnits(FIVE_THOUSAND, 'USD'),
     },
   });
@@ -178,10 +182,10 @@ function buy(world: TestWorld, key: string, quantityUnits = TEN_SHARES) {
     requestedAt: world.clock.now(),
     purpose: 'CUSTOMER_INVESTMENT',
     payload: {
-      accountId: world.brokerageId,
+      accountId: world.brokerage.id,
       investmentAccountId: world.investmentAccountId,
       orderId: `ord_${key}`,
-      instrumentId: 'SIM-ETF-1',
+      instrumentId: SIM_ETF_1,
       side: 'BUY',
       quantityUnits,
       orderType: 'MARKET_SIMULATION',
@@ -199,10 +203,10 @@ function sell(world: TestWorld, key: string, quantityUnits: string) {
     requestedAt: world.clock.now(),
     purpose: 'CUSTOMER_INVESTMENT',
     payload: {
-      accountId: world.brokerageId,
+      accountId: world.brokerage.id,
       investmentAccountId: world.investmentAccountId,
       orderId: `ord_${key}_sell`,
-      instrumentId: 'SIM-ETF-1',
+      instrumentId: SIM_ETF_1,
       side: 'SELL',
       quantityUnits,
       orderType: 'MARKET_SIMULATION',
@@ -216,7 +220,7 @@ function attribute(world: TestWorld, research: readonly GrowResearchSpendInput[]
     investments: world.investments,
     investmentAccountId: asInvestmentAccountId(world.investmentAccountId),
     ledger: world.ledger,
-    demandAccountId: world.demandId,
+    demandAccountId: world.demand.id,
     now: world.clock.now(),
   });
   return buildIndependentGrowOutcomeAttribution({
@@ -258,7 +262,7 @@ describe('HELIOS H25 — independent Grow outcome attribution', () => {
     const world = buildWorld('partial');
     openAndFund(world);
     buy(world, 'partial_buy');
-    world.investments.setSimulatedPrice('SIM-ETF-1', 11_000n, 'USD');
+    world.investments.setSimulatedPrice(SIM_ETF_1, 11_000n, 'USD');
     sell(world, 'partial_exit', FOUR_SHARES);
     const row = attribute(world);
     assert.equal(row.realizedLines.length, 1);
@@ -271,7 +275,7 @@ describe('HELIOS H25 — independent Grow outcome attribution', () => {
     const world = buildWorld('full');
     openAndFund(world);
     buy(world, 'full_buy');
-    world.investments.setSimulatedPrice('SIM-ETF-1', 11_000n, 'USD');
+    world.investments.setSimulatedPrice(SIM_ETF_1, 11_000n, 'USD');
     sell(world, 'full_exit', TEN_SHARES);
     const row = attribute(world);
     assert.equal(row.realizedTotal.minorUnits, '10000');
@@ -282,7 +286,7 @@ describe('HELIOS H25 — independent Grow outcome attribution', () => {
     const world = buildWorld('open');
     openAndFund(world);
     buy(world, 'open_buy');
-    world.investments.setSimulatedPrice('SIM-ETF-1', 12_000n, 'USD');
+    world.investments.setSimulatedPrice(SIM_ETF_1, 12_000n, 'USD');
     const row = attribute(world);
     assert.equal(row.realizedTotal.minorUnits, '0');
     assert.equal(row.unrealizedTotal.minorUnits, '20000');
@@ -307,7 +311,7 @@ describe('HELIOS H25 — independent Grow outcome attribution', () => {
       investments: world.investments,
       investmentAccountId: asInvestmentAccountId(world.investmentAccountId),
       ledger: world.ledger,
-      demandAccountId: world.demandId,
+      demandAccountId: world.demand.id,
       now: world.clock.now(),
     });
     const withIncome: CanonicalAttributionSourcePort = Object.freeze({
@@ -343,7 +347,7 @@ describe('HELIOS H25 — independent Grow outcome attribution', () => {
         spendId: 'rsp_h25_1',
         workOrderId: 'wo_h25',
         taskId: 'task_h25',
-        customerId: world.customerId,
+        customerId: world.customer.id,
         budgetCategory: 'MODEL_CALLS',
         actualAmount: '250',
         estimatedAmount: null,
@@ -366,7 +370,7 @@ describe('HELIOS H25 — independent Grow outcome attribution', () => {
       investments: world.investments,
       investmentAccountId: asInvestmentAccountId(world.investmentAccountId),
       ledger: world.ledger,
-      demandAccountId: world.demandId,
+      demandAccountId: world.demand.id,
       now: world.clock.now(),
     });
     const pendingSource: CanonicalAttributionSourcePort = Object.freeze({
@@ -400,7 +404,7 @@ describe('HELIOS H25 — independent Grow outcome attribution', () => {
     openAndFund(world);
     buy(world, 'stale_buy');
     const market = world.investments.market as SimulatedMarketDataProvider;
-    market.markQuotedAt('SIM-ETF-1', asUtcInstant('2026-08-22T11:00:00.000Z'));
+    market.markQuotedAt(SIM_ETF_1, asUtcInstant('2026-08-22T11:00:00.000Z'));
     world.clock.set(asUtcInstant('2026-08-22T13:00:00.000Z'));
     const row = attribute(world);
     assert.ok(row.positions.some((p) => p.markFreshness === 'STALE'));
@@ -428,7 +432,7 @@ describe('HELIOS H25 — independent Grow outcome attribution', () => {
       investments: world.investments,
       investmentAccountId: asInvestmentAccountId(world.investmentAccountId),
       ledger: world.ledger,
-      demandAccountId: world.demandId,
+      demandAccountId: world.demand.id,
       now: world.clock.now(),
     });
     const fxSource: CanonicalAttributionSourcePort = Object.freeze({
@@ -467,7 +471,7 @@ describe('HELIOS H25 — independent Grow outcome attribution', () => {
     const world = buildWorld('loss');
     openAndFund(world);
     buy(world, 'loss_buy');
-    world.investments.setSimulatedPrice('SIM-ETF-1', 8_000n, 'USD');
+    world.investments.setSimulatedPrice(SIM_ETF_1, 8_000n, 'USD');
     sell(world, 'loss_exit', TEN_SHARES);
     const row = attribute(world);
     assert.ok(BigInt(row.realizedTotal.minorUnits) < 0n);
@@ -478,17 +482,17 @@ describe('HELIOS H25 — independent Grow outcome attribution', () => {
     const world = buildWorld('restart');
     openAndFund(world);
     buy(world, 'restart_buy');
-    world.investments.setSimulatedPrice('SIM-ETF-1', 11_000n, 'USD');
+    world.investments.setSimulatedPrice(SIM_ETF_1, 11_000n, 'USD');
     const store = new InMemoryGrowOutcomeAttributionStore();
     const first = reconstructGrowOutcomeAttribution({
       store,
-      customerId: world.customerId,
+      customerId: world.customer.id,
       rebuild: () => attribute(world),
     });
     store.clear();
     const second = reconstructGrowOutcomeAttribution({
       store,
-      customerId: world.customerId,
+      customerId: world.customer.id,
       rebuild: () => attribute(world),
     });
     assert.deepEqual(
@@ -526,7 +530,7 @@ describe('HELIOS H25 — independent Grow outcome attribution', () => {
       investments: world.investments,
       investmentAccountId: asInvestmentAccountId(world.investmentAccountId),
       ledger: world.ledger,
-      demandAccountId: world.demandId,
+      demandAccountId: world.demand.id,
       now: world.clock.now(),
     });
     const mismatched: CanonicalAttributionSourcePort = Object.freeze({

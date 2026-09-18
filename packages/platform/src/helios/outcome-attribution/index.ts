@@ -16,7 +16,6 @@ export {
 export type {
   CanonicalAttributionSourcePort,
   GrowIndependentOutcomeAttribution,
-  GrowMoneyDto,
   GrowOutcomeEconomicEvent,
   GrowOutcomeFeeLine,
   GrowOutcomeFxContext,

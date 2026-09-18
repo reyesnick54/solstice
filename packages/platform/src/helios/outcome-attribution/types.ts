@@ -1,4 +1,5 @@
 import type { UtcInstant } from '@solstice/domain';
+import type { GrowMoneyDto } from '../paper-grow/types.ts';
 import type {
   AttributionResultKind,
   CostBasisMethod,
@@ -8,10 +9,7 @@ import type {
   ResearchCostClass,
 } from './taxonomy.ts';
 
-export type GrowMoneyDto = {
-  readonly minorUnits: string;
-  readonly currency: string;
-};
+export type { GrowMoneyDto };
 
 export type GrowOutcomeEconomicEvent = {
   readonly eventId: string;
@@ -187,6 +185,7 @@ export type CanonicalAttributionSourcePort = {
   readonly fills: readonly {
     readonly fillId: string;
     readonly providerFillRef: string;
+    readonly instrumentId: string;
     readonly side: 'BUY' | 'SELL';
     readonly feeMinorUnits: string;
     readonly currency: string;

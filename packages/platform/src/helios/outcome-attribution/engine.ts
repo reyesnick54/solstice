@@ -1,4 +1,4 @@
-import type { UtcInstant } from '@solstice/domain';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { ATTRIBUTION_RULE_FLAGS } from './taxonomy.ts';
 import type {
   CanonicalAttributionSourcePort,
@@ -13,6 +13,8 @@ import type {
   GrowOutcomeResearchCostLine,
   GrowResearchSpendInput,
 } from './types.ts';
+
+const EPOCH = asUtcInstant('1970-01-01T00:00:00.000Z');
 
 function money(minorUnits: string, currency: string): GrowMoneyDto {
   return Object.freeze({ minorUnits, currency });
@@ -95,7 +97,7 @@ function dedupeEvents(input: {
         sourceRef: fee.sourceRef,
         kind: 'FEE',
         dedupeKey: `fee:${fee.sourceRef}:${fee.feeType}`,
-        recordedAt: input.fills.find((f) => f.fillId === fee.sourceRef)?.filledAt ?? input.fills[0]?.filledAt ?? '1970-01-01T00:00:00.000Z',
+        recordedAt: input.fills.find((f) => f.fillId === fee.sourceRef)?.filledAt ?? input.fills[0]?.filledAt ?? EPOCH,
       }),
     );
   }
@@ -117,7 +119,7 @@ function dedupeEvents(input: {
         sourceRef: row.lotsConsumed.join(','),
         kind: 'REALIZED',
         dedupeKey: `realized:${row.instrumentId}:${row.lotsConsumed.join(',')}:${row.realizedMinorUnits}`,
-        recordedAt: input.fills.find((f) => f.side === 'SELL')?.filledAt ?? '1970-01-01T00:00:00.000Z',
+        recordedAt: input.fills.find((f) => f.side === 'SELL')?.filledAt ?? EPOCH,
       }),
     );
   }
