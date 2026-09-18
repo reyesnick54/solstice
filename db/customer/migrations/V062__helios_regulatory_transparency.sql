@@ -1,4 +1,4 @@
--- V061 HELIOS H30 — Supervisory export and regulated change governance durable records.
+-- V062 HELIOS H30 — Supervisory export and regulated change governance durable records.
 -- Validation artifact only. Does not post journals or issue Execution Authority.
 
 CREATE TABLE growth.helios_supervisory_export_request (
