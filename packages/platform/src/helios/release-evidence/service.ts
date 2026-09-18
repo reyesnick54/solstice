@@ -93,7 +93,9 @@ export class HeliosReleaseEvidenceService {
       row.itemKey === input.itemKey
         ? applyGateItemUpdate(row, {
             nextState: input.nextState,
-            evidenceRefs: input.evidenceRefs,
+            ...(input.evidenceRefs !== undefined
+              ? { evidenceRefs: input.evidenceRefs }
+              : {}),
             actorIsAuthorizedGovernance: input.actorIsAuthorizedGovernance,
             updatedAt: input.updatedAt,
           })

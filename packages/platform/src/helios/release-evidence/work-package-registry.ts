@@ -4,7 +4,8 @@
 
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import type { WorkPackageStatus, WorkPackageStatusRow } from './types.ts';
+import type { WorkPackageStatus } from './taxonomy.ts';
+import type { WorkPackageStatusRow } from './types.ts';
 
 function repoFile(root: string, rel: string): boolean {
   return existsSync(join(root, rel));
