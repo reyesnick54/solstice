@@ -172,10 +172,5 @@ export * from './capacity/index.ts';
 export * from './regulatory-evidence/index.ts';
 export * from './resilience/index.ts';
 export * from './regulatory-transparency/index.ts';
-<<<<<<< HEAD
-export * from './release-evidence/index.ts';
-export * from './release-packaging/index.ts';
-=======
 export * from './release-packaging/index.ts';
 export * from './release-evidence/index.ts';
->>>>>>> 685279e9 (fix(ci): resolve merge conflict markers and dedupe H34/H36 exports)
