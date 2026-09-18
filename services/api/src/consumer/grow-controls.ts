@@ -15,8 +15,9 @@ import {
   type GrowLifecycleService,
   type GrowthOrchestrator,
   type ResumeRevalidationInput,
+  evaluateGrowSuitability,
+  type SuitabilityFacts,
 } from '@solstice/platform';
-import { evaluateGrowSuitability, type SuitabilityFacts } from '../../../../packages/platform/src/grow/suitability.ts';
 import { balanceOfAccount } from '../../../accounts/src/balances.ts';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import type { BffPrincipal } from './ports.ts';
