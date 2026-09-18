@@ -237,7 +237,12 @@ export class PreviewGrowSurface {
     return approved.ok ? approved.value : mapGrowFailure(approved.error, requestId);
   }
 
-  executeProposal(_principal: BffPrincipal, _proposalId: string, _body: Record<string, unknown>, requestId: string): BffErrorEnvelope {
+  executeProposal(
+    _principal: BffPrincipal,
+    _proposalId: string,
+    _body: Record<string, unknown>,
+    requestId: string,
+  ): Record<string, unknown> | BffErrorEnvelope {
     return unavailable(requestId, 'Preview growth proposals do not execute financial state changes');
   }
 
@@ -246,7 +251,11 @@ export class PreviewGrowSurface {
     return loaded.ok ? loaded.value : mapGrowFailure(loaded.error, requestId);
   }
 
-  executionStatus(_principal: BffPrincipal, _executionId: string, requestId: string): BffErrorEnvelope {
+  executionStatus(
+    _principal: BffPrincipal,
+    _executionId: string,
+    requestId: string,
+  ): Record<string, unknown> | BffErrorEnvelope {
     return unavailable(requestId, 'No preview growth execution exists');
   }
 
@@ -278,32 +287,36 @@ export class PreviewGrowSurface {
     return { environment: 'simulation', productionMoneyMovement: false, actions: [] };
   }
 
-  invokeAgentTool(_principal: BffPrincipal, _body: Record<string, unknown>, requestId: string): BffErrorEnvelope {
+  invokeAgentTool(
+    _principal: BffPrincipal,
+    _body: Record<string, unknown>,
+    requestId: string,
+  ): Record<string, unknown> | BffErrorEnvelope {
     return unavailable(requestId, 'Grow agent tools are not enabled on this preview compatibility surface');
   }
 
-  overview(_principal: BffPrincipal, requestId: string): BffErrorEnvelope {
+  overview(_principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
     return unavailable(
       requestId,
       'Paper Grow overview requires GrowBffSurface with durable Grow execution lifecycle binding',
     );
   }
 
-  activity(_principal: BffPrincipal, requestId: string): BffErrorEnvelope {
+  activity(_principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
     return unavailable(
       requestId,
       'Paper Grow activity requires GrowBffSurface with durable Grow execution lifecycle binding',
     );
   }
 
-  results(_principal: BffPrincipal, requestId: string): BffErrorEnvelope {
+  results(_principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
     return unavailable(
       requestId,
       'Paper Grow results requires GrowBffSurface with durable Grow execution lifecycle binding',
     );
   }
 
-  cashAvailable(_principal: BffPrincipal, requestId: string): BffErrorEnvelope {
+  cashAvailable(_principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
     return unavailable(
       requestId,
       'Paper Grow cash requires GrowBffSurface with durable Grow execution lifecycle binding',
@@ -503,7 +516,12 @@ export class ComposedConsumerGrowSurface extends PreviewGrowSurface {
     this.helios = helios;
   }
 
-  executeProposal(principal: BffPrincipal, proposalId: string, body: Record<string, unknown>, requestId: string) {
+  override executeProposal(
+    principal: BffPrincipal,
+    proposalId: string,
+    body: Record<string, unknown>,
+    requestId: string,
+  ): Record<string, unknown> | BffErrorEnvelope {
     const execution = this.helios.executionFor(principal);
     if (execution) {
       return execution.executeProposal(principal, proposalId, body, requestId);
@@ -511,7 +529,11 @@ export class ComposedConsumerGrowSurface extends PreviewGrowSurface {
     return super.executeProposal(principal, proposalId, body, requestId);
   }
 
-  executionStatus(principal: BffPrincipal, executionId: string, requestId: string) {
+  override executionStatus(
+    principal: BffPrincipal,
+    executionId: string,
+    requestId: string,
+  ): Record<string, unknown> | BffErrorEnvelope {
     const execution = this.helios.executionFor(principal);
     if (execution) {
       return execution.executionStatus(principal, executionId, requestId);
@@ -519,7 +541,11 @@ export class ComposedConsumerGrowSurface extends PreviewGrowSurface {
     return super.executionStatus(principal, executionId, requestId);
   }
 
-  invokeAgentTool(principal: BffPrincipal, body: Record<string, unknown>, requestId: string) {
+  override invokeAgentTool(
+    principal: BffPrincipal,
+    body: Record<string, unknown>,
+    requestId: string,
+  ): Record<string, unknown> | BffErrorEnvelope {
     const execution = this.helios.executionFor(principal);
     if (execution) {
       return execution.invokeAgentTool(principal, body, requestId);
@@ -527,19 +553,23 @@ export class ComposedConsumerGrowSurface extends PreviewGrowSurface {
     return super.invokeAgentTool(principal, body, requestId);
   }
 
-  overview(principal: BffPrincipal, requestId: string) {
+  override overview(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
     return growPaperOverview(this.helios.paperCycleFor(principal), principal, requestId);
   }
 
-  activity(principal: BffPrincipal, requestId: string, query: Readonly<Record<string, string>> = {}) {
+  override activity(
+    principal: BffPrincipal,
+    requestId: string,
+    query: Readonly<Record<string, string>> = {},
+  ): Record<string, unknown> | BffErrorEnvelope {
     return growPaperActivity(this.helios.paperCycleFor(principal), principal, requestId, query);
   }
 
-  results(principal: BffPrincipal, requestId: string) {
+  override results(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
     return growPaperResults(this.helios.paperCycleFor(principal), principal, requestId);
   }
 
-  cashAvailable(principal: BffPrincipal, requestId: string) {
+  override cashAvailable(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
     return growPaperCash(this.helios.paperCycleFor(principal), principal, requestId);
   }
 
@@ -567,7 +597,7 @@ export class ComposedConsumerGrowSurface extends PreviewGrowSurface {
     return growPaperAgentState(this.helios.paperCycleFor(principal), principal, requestId);
   }
 
-  createProposal(principal: BffPrincipal, body: Record<string, unknown>, requestId: string) {
+  override createProposal(principal: BffPrincipal, body: Record<string, unknown>, requestId: string) {
     const execution = this.helios.executionFor(principal);
     if (execution && typeof body.actionId === 'string') {
       return execution.createProposal(principal, body, requestId);
@@ -575,7 +605,12 @@ export class ComposedConsumerGrowSurface extends PreviewGrowSurface {
     return super.createProposal(principal, body, requestId);
   }
 
-  approveProposal(principal: BffPrincipal, proposalId: string, body: Record<string, unknown>, requestId: string) {
+  override approveProposal(
+    principal: BffPrincipal,
+    proposalId: string,
+    body: Record<string, unknown>,
+    requestId: string,
+  ) {
     const execution = this.helios.executionFor(principal);
     if (execution) {
       return execution.approveProposal(principal, proposalId, body, requestId);
@@ -583,7 +618,7 @@ export class ComposedConsumerGrowSurface extends PreviewGrowSurface {
     return super.approveProposal(principal, proposalId, body, requestId);
   }
 
-  getProposal(principal: BffPrincipal, proposalId: string, requestId: string) {
+  override getProposal(principal: BffPrincipal, proposalId: string, requestId: string) {
     const execution = this.helios.executionFor(principal);
     if (execution) {
       return execution.getProposal(principal, proposalId, requestId);
@@ -591,7 +626,7 @@ export class ComposedConsumerGrowSurface extends PreviewGrowSurface {
     return super.getProposal(principal, proposalId, requestId);
   }
 
-  plan(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+  override plan(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
     const execution = this.helios.executionFor(principal);
     if (execution) {
       return execution.plan(principal, requestId);

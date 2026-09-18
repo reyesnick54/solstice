@@ -215,6 +215,7 @@ describe('HELIOS H26 — production-shaped Grow and Agent APIs', () => {
       path: '/api/v1/grow/provider-account',
       authorization: `Bearer ${sandboxToken('investment')}`,
       query: {},
+      body: undefined,
     });
     assert.equal(res.status, 503);
     assert.equal((res.body as { errorCode: string }).errorCode, 'PROVIDER_UNAVAILABLE');
@@ -248,6 +249,7 @@ describe('HELIOS H26 — production-shaped Grow and Agent APIs', () => {
       path: '/api/v1/grow/overview',
       authorization: `Bearer ${sandboxToken('basic_verified')}`,
       query: {},
+      body: undefined,
     });
     assert.equal(res.status, 403);
     assert.equal((res.body as { errorCode: string }).errorCode, 'CAPABILITY_DISABLED');

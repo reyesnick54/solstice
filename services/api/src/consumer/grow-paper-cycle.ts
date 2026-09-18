@@ -233,9 +233,7 @@ function buildReadModelInput(deps: GrowPaperCycleDeps, principal: BffPrincipal):
     }
   }
   const degradedReasons = Object.freeze(
-    deps.providerDown
-      ? (['PAPER_EXECUTOR_UNAVAILABLE'] as const)
-      : ([] as const),
+    deps.providerDown ? (['PAPER_EXECUTOR_UNAVAILABLE'] as const) : ([] as const),
   );
   return Object.freeze({
     customerId: principal.customerId,
@@ -250,7 +248,7 @@ function buildReadModelInput(deps: GrowPaperCycleDeps, principal: BffPrincipal):
     researchTaskCount: plan?.candidateActions.length ?? 0,
     qualifiedOpportunityCount: plan?.orderedProposedActions.length ?? 0,
     providerDisplay: buildProviderDisplay(deps, principal),
-    valuationFreshness: deps.now(),
+    valuationFreshness: asUtcInstant(deps.now()),
     operatingResearchCostMinorUnits: '0',
   });
 }
