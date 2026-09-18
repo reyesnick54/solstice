@@ -12,10 +12,13 @@ import { asUtcInstant } from '../packages/domain/src/time.ts';
 import {
   asInstrumentId,
   asInvestmentAccountId,
+  asSettlementId,
   type InvestmentAccountId,
 } from '../packages/investments/src/ids.ts';
 import { freezeSettlement } from '../packages/investments/src/settlement.ts';
 import { InvestmentsService } from '../packages/investments/src/service.ts';
+import type { Ledger } from '../packages/ledger/src/journal.ts';
+import { ledgerScaledUnits } from '../packages/money/src/ledger-amount.ts';
 import { Money } from '../packages/money/src/money.ts';
 import { ModelRegistry, seedCanonicalRiskModel } from '../packages/model-registry/src/registry.ts';
 import { asIntentId } from '../packages/permissions/src/action-intent.ts';
@@ -63,7 +66,7 @@ function mustOpen<T extends { outcome: string }>(result: T): Extract<T, { outcom
 function createInvestmentPort(
   investments: InvestmentsService,
   investmentAccountId: InvestmentAccountId,
-  ledger: { listPostingsForAccount(accountId: string): readonly { direction: string; amount: { minorUnits: bigint } }[] },
+  ledger: Ledger,
 ): InvestmentLifecyclePort {
   const profile = investments.store.getProfile(investmentAccountId);
   if (!profile) {
@@ -75,7 +78,10 @@ function createInvestmentPort(
       if (result.outcome === 'OK') {
         return {
           outcome: 'OK' as const,
-          value: { orderId: result.value.orderId, fillId: result.value.fillId ?? undefined },
+          value: {
+            orderId: result.value.orderId,
+            ...(result.value.fillId ? { fillId: result.value.fillId } : {}),
+          },
           authorityId: result.decision.executionAuthority?.authorityId ?? null,
         };
       }
@@ -95,7 +101,11 @@ function createInvestmentPort(
         payload: { settlementId: input.settlementId, accountId: profile.brokerageCashAccountId },
       });
       if (result.outcome === 'OK') {
-        return { outcome: 'OK' as const, value: { settlementId: result.value.settlementId }, replay: result.replay };
+        return {
+          outcome: 'OK' as const,
+          value: { settlementId: result.value.settlementId },
+          ...(result.replay ? { replay: result.replay } : {}),
+        };
       }
       if (result.outcome === 'KERNEL_REFUSED') {
         return { outcome: 'KERNEL_REFUSED' as const, message: 'Kernel refused' };
@@ -117,7 +127,11 @@ function createInvestmentPort(
         },
       });
       if (result.outcome === 'OK') {
-        return { outcome: 'OK' as const, value: { journalId: result.value.journalId }, replay: result.replay };
+        return {
+          outcome: 'OK' as const,
+          value: { journalId: result.value.journalId },
+          ...(result.replay ? { replay: result.replay } : {}),
+        };
       }
       if (result.outcome === 'KERNEL_REFUSED') {
         return { outcome: 'KERNEL_REFUSED' as const, message: 'Kernel refused' };
@@ -154,10 +168,11 @@ function createInvestmentPort(
       let credits = 0n;
       let debits = 0n;
       for (const posting of ledger.listPostingsForAccount(brokerageAccountId)) {
+        const minor = ledgerScaledUnits(posting.amount);
         if (posting.direction === 'CREDIT') {
-          credits += posting.amount.minorUnits;
+          credits += minor;
         } else {
-          debits += posting.amount.minorUnits;
+          debits += minor;
         }
       }
       return (credits - debits).toString();
@@ -495,7 +510,7 @@ describe('helios h24 capital lifecycle', () => {
     const fill = [...world.investments.store.listFills()][0];
     assert.ok(fill);
     const pending = freezeSettlement({
-      settlementId: `set_pending_${fill.fillId}`,
+      settlementId: asSettlementId(`set_pending_${fill.fillId}`),
       fillId: fill.fillId,
       investmentAccountId: world.investmentAccountId,
       side: fill.side,
@@ -533,7 +548,7 @@ describe('helios h24 capital lifecycle', () => {
       world.investments.store.putSettlement(
         freezeSettlement({
           ...pending,
-          settlementId: exit.value.settlementId,
+          settlementId: asSettlementId(exit.value.settlementId),
           state: 'PENDING_SETTLEMENT',
           settledAt: null,
         }),
