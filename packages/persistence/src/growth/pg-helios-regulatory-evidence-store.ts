@@ -5,7 +5,7 @@ import type {
   RegulatoryEvidenceStoreSnapshot,
   ReportingObligation,
   StructuredReportPackage,
-} from '../../../platform/src/helios/regulatory-evidence/types.ts';
+} from '@solstice/platform';
 import { withClient } from '../postgres/pools.ts';
 
 function parseBodyCanonical<T>(value: unknown): T {
