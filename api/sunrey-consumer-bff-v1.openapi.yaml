@@ -908,11 +908,132 @@ paths:
   /api/v1/grow/performance:
     get:
       operationId: getGrowPerformance
-      summary: Planned versus executed versus current
-      description: Deposits are not market performance.
+      summary: Server-owned Grow performance and attribution
+      description: Deposits are not market performance. Frontend must not calculate authoritative P&L.
       responses:
         "200":
           description: Performance
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GrowPerformanceResponse' }
+        "403":
+          description: HELIOS binding unavailable
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BffErrorEnvelope' }
+  /api/v1/grow/overview:
+    get:
+      operationId: getGrowOverview
+      summary: HELIOS Grow overview with plan, allocation, capital, and performance
+      responses:
+        "200":
+          description: Overview
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GrowOverviewResponse' }
+        "403":
+          description: HELIOS binding unavailable
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BffErrorEnvelope' }
+  /api/v1/grow/allocate:
+    get:
+      operationId: getGrowAllocate
+      summary: Assigned, reserved, deployed, and available capital
+      responses:
+        "200":
+          description: Allocation
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GrowAllocateResponse' }
+  /api/v1/grow/active-capital:
+    get:
+      operationId: getGrowActiveCapital
+      summary: Positions, strategies, pending proposals, and settlement state
+      responses:
+        "200":
+          description: Active capital
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GrowActiveCapitalResponse' }
+  /api/v1/grow/activity:
+    get:
+      operationId: listGrowActivity
+      summary: Paginated Grow activity timeline
+      parameters:
+        - in: query
+          name: cursor
+          schema: { type: string }
+        - in: query
+          name: pageSize
+          schema: { type: integer, minimum: 1, maximum: 100 }
+      responses:
+        "200":
+          description: Activity page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GrowActivityResponse' }
+        "400":
+          description: Invalid pagination cursor
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BffErrorEnvelope' }
+  /api/v1/grow/results:
+    get:
+      operationId: getGrowResults
+      summary: Deprecated alias for performance attribution
+      deprecated: true
+      responses:
+        "200":
+          description: Results
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GrowPerformanceResponse' }
+  /api/v1/grow/cash:
+    get:
+      operationId: getGrowCashAvailable
+      summary: Distinct withdrawable, reserved, invested, and pending settlement cash buckets
+      responses:
+        "200":
+          description: Cash buckets
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GrowCashResponse' }
+  /api/v1/grow/provider-account:
+    get:
+      operationId: getGrowProviderAccount
+      summary: Consumer-safe provider and account state
+      responses:
+        "200":
+          description: Provider account
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GrowProviderAccountResponse' }
+        "503":
+          description: Provider unavailable
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BffErrorEnvelope' }
+  /api/v1/grow/action-cards:
+    get:
+      operationId: listGrowActionCards
+      summary: Structured proposal cards for customer action
+      responses:
+        "200":
+          description: Action cards
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GrowActionCardsResponse' }
+  /api/v1/grow/agent-state:
+    get:
+      operationId: getGrowAgentState
+      summary: Canonical Grow state for agent explanation
+      responses:
+        "200":
+          description: Agent state
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GrowAgentStateResponse' }
   /api/v1/grow/recurring:
     post:
       operationId: createGrowRecurring
@@ -2862,6 +2983,128 @@ components:
       properties:
         minorUnits: { type: string }
         currency: { type: string }
+    BffErrorEnvelope:
+      type: object
+      required: [errorCode, category, message, retryable, detailsSafeForClient, requestId, apiVersion]
+      properties:
+        errorCode:
+          type: string
+          enum:
+            - AUTH_REQUIRED
+            - NOT_FOUND
+            - ACTION_REQUIRED
+            - CAPABILITY_DISABLED
+            - PROVIDER_UNAVAILABLE
+            - STALE_DATA
+            - RECONCILIATION_PENDING
+            - INSUFFICIENT_AVAILABLE_CAPITAL
+            - APPROVAL_REQUIRED
+            - VALIDITY_EXPIRED
+            - SERVICE_DEGRADED
+            - INVALID_PAGINATION_CURSOR
+        category: { type: string }
+        message: { type: string }
+        retryable: { type: boolean }
+        detailsSafeForClient:
+          type: object
+          additionalProperties: { type: string }
+        requestId: { type: string }
+        apiVersion: { type: string, enum: [v1] }
+    GrowOverviewResponse:
+      type: object
+      required:
+        - schema
+        - customerId
+        - subjectId
+        - cycleStatus
+        - consumerStatus
+        - serverOwned
+        - frontendMathAuthoritative
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.overview.v1] }
+        customerId: { type: string }
+        subjectId: { type: string }
+        cycleStatus: { type: string }
+        consumerStatus: { type: string }
+        nextRequiredCustomerAction: { type: string, nullable: true }
+        serverOwned: { type: boolean, enum: [true] }
+        frontendMathAuthoritative: { type: boolean, enum: [false] }
+        allocate: { type: object }
+        activeCapital: { type: object }
+        performance: { type: object }
+        providerAccount: { type: object, nullable: true }
+    GrowAllocateResponse:
+      type: object
+      required: [schema, customerId, allocate, serverOwned]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.allocate.v1] }
+        customerId: { type: string }
+        allocate: { type: object }
+        serverOwned: { type: boolean, enum: [true] }
+    GrowActiveCapitalResponse:
+      type: object
+      required: [schema, customerId, activeCapital, serverOwned]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.active-capital.v1] }
+        customerId: { type: string }
+        activeCapital: { type: object }
+        serverOwned: { type: boolean, enum: [true] }
+    GrowPerformanceResponse:
+      type: object
+      required: [schema, customerId, performance, serverOwned]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.performance.v1] }
+        customerId: { type: string }
+        performance: { type: object }
+        attribution: { type: object }
+        serverOwned: { type: boolean, enum: [true] }
+    GrowActivityResponse:
+      type: object
+      required: [schema, customerId, items, nextCursor, hasMore, serverOwned]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.activity.v1] }
+        customerId: { type: string }
+        items: { type: array, items: { type: object } }
+        nextCursor: { type: string, nullable: true }
+        hasMore: { type: boolean }
+        serverOwned: { type: boolean, enum: [true] }
+    GrowCashResponse:
+      type: object
+      required: [schema, settledWithdrawable, reserved, invested, serverOwned]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.cash.v1] }
+        settledWithdrawable: { $ref: '#/components/schemas/GrowMoney' }
+        reserved: { $ref: '#/components/schemas/GrowMoney' }
+        invested: { $ref: '#/components/schemas/GrowMoney' }
+        pendingSettlement: { $ref: '#/components/schemas/GrowMoney' }
+        unrealizedIsNotWithdrawable: { type: boolean, enum: [true] }
+        serverOwned: { type: boolean, enum: [true] }
+    GrowProviderAccountResponse:
+      type: object
+      required: [schema, customerId, serverOwned]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.provider-account.v1] }
+        customerId: { type: string }
+        providerAccount: { type: object, nullable: true }
+        serverOwned: { type: boolean, enum: [true] }
+    GrowActionCardsResponse:
+      type: object
+      required: [schema, customerId, items, serverOwned]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.action-cards.v1] }
+        customerId: { type: string }
+        items: { type: array, items: { type: object } }
+        serverOwned: { type: boolean, enum: [true] }
+    GrowAgentStateResponse:
+      type: object
+      required: [schema, customerId, consumerStatus, mayExecute, serverOwned]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.agent-state.v1] }
+        customerId: { type: string }
+        consumerStatus: { type: string }
+        summary: { type: string }
+        mayExecute: { type: boolean, enum: [false] }
+        serverOwned: { type: boolean, enum: [true] }
     GrowProfile:
       type: object
       required: [schema, subjectId, generatedAt, authoritativeBalance, ledgerWins]

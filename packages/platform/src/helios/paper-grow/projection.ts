@@ -6,6 +6,7 @@ import type {
   GrowOverviewResponse,
   PaperDisclosureContract,
 } from './types.ts';
+import type { ConsumerGrowStatus } from './status-semantics.ts';
 import type { GrowCycleStatus, PaperDisclosureKind } from './taxonomy.ts';
 import type { PaperGrowInvestmentSnapshot } from './read-model.ts';
 
@@ -33,24 +34,32 @@ export function projectOverview(input: {
   readonly customerId: string;
   readonly subjectId: string;
   readonly cycleStatus: GrowCycleStatus;
+  readonly consumerStatus: ConsumerGrowStatus;
   readonly degradedReasons: readonly string[];
+  readonly currentRestrictions: readonly string[];
+  readonly nextRequiredCustomerAction: string | null;
   readonly disclosure: PaperDisclosureContract;
   readonly plan: GrowOverviewResponse['plan'];
   readonly allocate: GrowOverviewResponse['allocate'];
   readonly activeCapital: GrowOverviewResponse['activeCapital'];
   readonly performance: GrowOverviewResponse['performance'];
+  readonly providerAccount: GrowOverviewResponse['providerAccount'];
 }): GrowOverviewResponse {
   return Object.freeze({
     schema: 'sunrey.consumer.grow.overview.v1',
     customerId: input.customerId,
     subjectId: input.subjectId,
     cycleStatus: input.cycleStatus,
+    consumerStatus: input.consumerStatus,
     degradedReasons: Object.freeze(input.degradedReasons as GrowOverviewResponse['degradedReasons']),
+    currentRestrictions: Object.freeze([...input.currentRestrictions]),
+    nextRequiredCustomerAction: input.nextRequiredCustomerAction,
     disclosure: input.disclosure,
     plan: input.plan,
     allocate: input.allocate,
     activeCapital: input.activeCapital,
     performance: input.performance,
+    providerAccount: input.providerAccount,
     frontendMathAuthoritative: false,
     serverOwned: true,
   });
@@ -84,6 +93,7 @@ export function projectActivityItems(input: {
   readonly proposals: readonly FinancialProposal[];
   readonly executions: readonly GrowExecutionRecord[];
   readonly cycleStatus: GrowCycleStatus;
+  readonly consumerStatus: ConsumerGrowStatus;
   readonly currency: string;
   readonly investment: PaperGrowInvestmentSnapshot | null;
 }): readonly GrowActivityRecord[] {
@@ -101,6 +111,7 @@ export function projectActivityItems(input: {
       Object.freeze({
         activityId: `act_${proposal.proposalId}_v${String(proposal.version)}`,
         status: input.cycleStatus,
+        consumerStatus: input.consumerStatus,
         whyConsidered: proposal.explainability.whyThis,
         researchSummary: proposal.explainability.supportedGoal,
         instrumentId: proposal.instrumentId,

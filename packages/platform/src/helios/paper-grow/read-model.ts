@@ -10,18 +10,27 @@ import type { FinancialProposal, GrowExecutionRecord } from '../../grow/types.ts
 import type { GrowthPlan } from '../../growth/types.ts';
 import type { EconomicWorkOrder } from '../../work-order/types.ts';
 import type {
+  GrowActionCard,
   GrowActivityRecord,
+  GrowAgentStateResponse,
   GrowAllocateSection,
   GrowActiveCapitalSection,
   GrowAttributionModel,
   GrowCashSnapshot,
+  GrowFundingState,
   GrowMoneyDto,
   GrowOverviewResponse,
   GrowPaperPerformanceSection,
   GrowPlanSection,
+  GrowProviderConsumerState,
   PaperDisclosureContract,
 } from './types.ts';
 import type { GrowCycleStatus, GrowDegradedReason } from './taxonomy.ts';
+import {
+  deriveNextRequiredCustomerAction,
+  mapConsumerGrowStatus,
+  type ConsumerGrowStatus,
+} from './status-semantics.ts';
 import { buildPaperDisclosure, projectActivityItems, projectOverview } from './projection.ts';
 
 export type PaperGrowLedgerCash = {
@@ -65,6 +74,9 @@ export type PaperGrowReadModelInput = {
   readonly degradedReasons: readonly GrowDegradedReason[];
   readonly researchTaskCount: number;
   readonly qualifiedOpportunityCount: number;
+  readonly providerDisplay?: GrowProviderConsumerState | null;
+  readonly valuationFreshness?: UtcInstant | null;
+  readonly operatingResearchCostMinorUnits?: string;
 };
 
 function money(minorUnits: string, currency: string): GrowMoneyDto {
@@ -146,13 +158,25 @@ function buildPlanSection(
   });
 }
 
+function deriveFundingState(deployed: string, reserved: string, assigned: string): GrowFundingState {
+  if (BigInt(deployed) > 0n) {
+    return 'DEPLOYED';
+  }
+  if (BigInt(reserved) > 0n) {
+    return 'RESERVED';
+  }
+  if (BigInt(assigned) > 0n) {
+    return 'FUNDED';
+  }
+  return 'UNFUNDED';
+}
+
 function buildAllocateSection(input: PaperGrowReadModelInput): GrowAllocateSection {
   const currency = input.ledgerCash.currency;
   const reserved = input.ledgerCash.growReservedMinorUnits;
+  const deployed = input.ledgerCash.paperDeployedMinorUnits;
   const total = input.ledgerCash.totalSandboxCashMinorUnits;
-  const unallocated = (
-    BigInt(total) - BigInt(reserved) - BigInt(input.ledgerCash.paperDeployedMinorUnits)
-  ).toString();
+  const unallocated = (BigInt(total) - BigInt(reserved) - BigInt(deployed)).toString();
   const latestProposal = input.growStore.listProposals(input.subjectId)[0];
   const assigned = latestProposal?.amount.minorUnits ?? '0';
   const fundingAccount = latestProposal?.sourceAccountId ?? input.workOrder?.capitalBoundary.accountId ?? null;
@@ -160,11 +184,11 @@ function buildAllocateSection(input: PaperGrowReadModelInput): GrowAllocateSecti
     amountAssigned: money(assigned, currency),
     fundingAccountId: fundingAccount,
     reservedAmount: money(reserved, currency),
-    retainedLiquidity: money(
-      (BigInt(total) - BigInt(assigned)).toString(),
-      currency,
-    ),
+    deployedCapital: money(deployed, currency),
+    retainedLiquidity: money((BigInt(total) - BigInt(assigned)).toString(), currency),
     unallocatedAvailable: money(unallocated, currency),
+    fundingState: deriveFundingState(deployed, reserved, assigned),
+    currency,
   });
 }
 
@@ -189,17 +213,62 @@ function buildActiveCapitalSection(
         positionStatus: h.positionStatus,
       }),
     ) ?? [];
+  const consumerStatus = mapConsumerGrowStatus({
+    cycleStatus: deriveCycleStatus(
+      proposals,
+      executions,
+      input.degradedReasons,
+      input.researchTaskCount,
+      input.plan,
+    ),
+    degradedReasons: input.degradedReasons,
+    executionState: pendingExecution?.state ?? executions[0]?.state ?? null,
+    proposalState: latestProposal?.state ?? null,
+  });
+  const strategyRef = input.workOrder?.objective.description ? 'grow-primary' : 'sandbox-balanced';
   return Object.freeze({
     reservedAmount: money(input.ledgerCash.growReservedMinorUnits, currency),
     paperDeployedAmount: money(input.ledgerCash.paperDeployedMinorUnits, currency),
     paperPositions: Object.freeze(positions),
+    strategies: Object.freeze([
+      Object.freeze({
+        strategyRef,
+        displayName: 'Grow primary strategy',
+        deployedAmount: money(input.ledgerCash.paperDeployedMinorUnits, currency),
+        status: consumerStatus,
+      }),
+    ]),
+    strategyCapsules: Object.freeze(
+      input.workOrder
+        ? [
+            Object.freeze({
+              capsuleId: `scap_${input.workOrder.workOrderId}_primary`,
+              displayLabel: 'Primary Grow capsule',
+              promotionState: 'SANDBOX',
+              qualificationState: 'QUALIFIED_FOR_SIMULATION',
+              consumerVisible: true as const,
+            }),
+          ]
+        : [],
+    ),
     pendingProposalId:
       latestProposal &&
       (latestProposal.state === 'AWAITING_APPROVAL' || latestProposal.state === 'APPROVED')
         ? latestProposal.proposalId
         : null,
     pendingExecutionId: pendingExecution?.executionId ?? null,
-    restrictions: Object.freeze([]),
+    pendingOrders: Object.freeze(
+      pendingExecution ? [pendingExecution.executionId] : [],
+    ),
+    settlementStates: Object.freeze(
+      executions
+        .filter((row) => row.state === 'SUBMITTED' || row.state === 'PROCESSING' || row.state === 'QUEUED')
+        .map((row) => row.state),
+    ),
+    restrictions: Object.freeze(
+      input.degradedReasons.length > 0 ? input.degradedReasons.map((reason) => `DEGRADED:${reason}`) : [],
+    ),
+    providerState: input.providerDisplay ?? null,
   });
 }
 
@@ -213,10 +282,13 @@ function buildPerformanceSection(input: PaperGrowReadModelInput): GrowPaperPerfo
       currentPaperValue: zero(currency),
       realizedPaperPnl: zero(currency),
       unrealizedPaperChange: zero(currency),
+      incomeReceived: zero(currency),
       simulatedFees: zero(currency),
       simulatedSpreadSlippage: zero(currency),
+      operatingResearchCost: zero(currency),
       netPaperResult: zero(currency),
       benchmark: null,
+      valuationFreshness: input.valuationFreshness ?? null,
       resultKind: 'PAPER_SIMULATION',
       notLiveCustomerReturn: true,
     });
@@ -233,24 +305,34 @@ function buildPerformanceSection(input: PaperGrowReadModelInput): GrowPaperPerfo
     currentPaperValue: money(inv.currentValueMinorUnits, currency),
     realizedPaperPnl: money(inv.realizedMinorUnits, currency),
     unrealizedPaperChange: money(inv.unrealizedMinorUnits, currency),
+    incomeReceived: zero(currency),
     simulatedFees: money(inv.simulatedFeesMinorUnits, currency),
     simulatedSpreadSlippage: money(inv.simulatedSpreadSlippageMinorUnits, currency),
+    operatingResearchCost: money(input.operatingResearchCostMinorUnits ?? '0', currency),
     netPaperResult: money(netResult, currency),
     benchmark:
       inv.benchmarkId && inv.benchmarkPeriodReturnBps
         ? Object.freeze({
             benchmarkId: inv.benchmarkId,
             periodReturnBps: inv.benchmarkPeriodReturnBps,
+            methodology: 'sandbox-benchmark-simulation',
           })
         : null,
+    valuationFreshness: input.valuationFreshness ?? null,
     resultKind: 'PAPER_SIMULATION',
     notLiveCustomerReturn: true,
   });
 }
 
-export function buildPaperGrowOverview(input: PaperGrowReadModelInput): GrowOverviewResponse {
-  const proposals = input.growStore.listProposals(input.subjectId);
-  const executions = input.growStore.listExecutions(input.customerId);
+function buildProviderAccount(input: PaperGrowReadModelInput): GrowProviderConsumerState | null {
+  return input.providerDisplay ?? null;
+}
+
+function buildOverviewEnvelope(
+  input: PaperGrowReadModelInput,
+  proposals: readonly FinancialProposal[],
+  executions: readonly GrowExecutionRecord[],
+): GrowOverviewResponse {
   const status = deriveCycleStatus(
     proposals,
     executions,
@@ -258,18 +340,36 @@ export function buildPaperGrowOverview(input: PaperGrowReadModelInput): GrowOver
     input.researchTaskCount,
     input.plan,
   );
+  const consumerStatus = mapConsumerGrowStatus({
+    cycleStatus: status,
+    degradedReasons: input.degradedReasons,
+    executionState: executions[0]?.state ?? null,
+    proposalState: proposals[0]?.state ?? null,
+  });
   const disclosure = buildPaperDisclosure();
+  const activeCapital = buildActiveCapitalSection(input, proposals, executions);
+  const restrictions = Object.freeze([...activeCapital.restrictions]);
   return projectOverview({
     customerId: input.customerId,
     subjectId: input.subjectId,
     cycleStatus: status,
+    consumerStatus,
     degradedReasons: input.degradedReasons,
+    currentRestrictions: restrictions,
+    nextRequiredCustomerAction: deriveNextRequiredCustomerAction(consumerStatus, status),
     disclosure,
     plan: buildPlanSection(input, status),
     allocate: buildAllocateSection(input),
-    activeCapital: buildActiveCapitalSection(input, proposals, executions),
+    activeCapital,
     performance: buildPerformanceSection(input),
+    providerAccount: buildProviderAccount(input),
   });
+}
+
+export function buildPaperGrowOverview(input: PaperGrowReadModelInput): GrowOverviewResponse {
+  const proposals = input.growStore.listProposals(input.subjectId);
+  const executions = input.growStore.listExecutions(input.customerId);
+  return buildOverviewEnvelope(input, proposals, executions);
 }
 
 export function buildPaperGrowActivity(input: PaperGrowReadModelInput): readonly GrowActivityRecord[] {
@@ -283,10 +383,17 @@ export function buildPaperGrowActivity(input: PaperGrowReadModelInput): readonly
     input.plan,
   );
   const currency = input.ledgerCash.currency;
+  const consumerStatus = mapConsumerGrowStatus({
+    cycleStatus: status,
+    degradedReasons: input.degradedReasons,
+    executionState: executions[0]?.state ?? null,
+    proposalState: proposals[0]?.state ?? null,
+  });
   return projectActivityItems({
     proposals,
     executions,
     cycleStatus: status,
+    consumerStatus,
     currency,
     investment: input.investment,
   });
@@ -300,14 +407,84 @@ export function buildPaperGrowCash(input: PaperGrowReadModelInput): GrowCashSnap
     BigInt(input.ledgerCash.paperDeployedMinorUnits) -
     BigInt(input.ledgerCash.unsettledMinorUnits)
   ).toString();
+  const restricted = input.degradedReasons.length > 0 ? input.ledgerCash.growReservedMinorUnits : '0';
   return Object.freeze({
+    settledWithdrawable: money(available, currency),
+    reserved: money(input.ledgerCash.growReservedMinorUnits, currency),
+    invested: money(input.ledgerCash.paperDeployedMinorUnits, currency),
+    pendingSettlement: money(input.ledgerCash.unsettledMinorUnits, currency),
+    restricted: money(restricted, currency),
     totalCanonicalSandboxCash: money(input.ledgerCash.totalSandboxCashMinorUnits, currency),
     growReserved: money(input.ledgerCash.growReservedMinorUnits, currency),
     paperDeployed: money(input.ledgerCash.paperDeployedMinorUnits, currency),
     unsettled: money(input.ledgerCash.unsettledMinorUnits, currency),
     availableUnreserved: money(available, currency),
     notWithdrawableExternal: true,
+    unrealizedIsNotWithdrawable: true,
     environment: 'simulation',
+  });
+}
+
+export function buildPaperGrowActionCards(input: PaperGrowReadModelInput): readonly GrowActionCard[] {
+  const proposals = input.growStore.listProposals(input.subjectId);
+  const executions = input.growStore.listExecutions(input.customerId);
+  const status = deriveCycleStatus(
+    proposals,
+    executions,
+    input.degradedReasons,
+    input.researchTaskCount,
+    input.plan,
+  );
+  return Object.freeze(
+    proposals.map((proposal) => {
+      const consumerStatus = mapConsumerGrowStatus({
+        cycleStatus: status,
+        degradedReasons: input.degradedReasons,
+        executionState: executions.find((row) => row.proposalId === proposal.proposalId)?.state ?? null,
+        proposalState: proposal.state,
+      });
+      const awaitingApproval =
+        proposal.state === 'AWAITING_APPROVAL' ||
+        proposal.state === 'AWAITING_STEP_UP' ||
+        proposal.state === 'APPROVED';
+      return Object.freeze({
+        actionCardId: `card_${proposal.proposalId}_v${String(proposal.version)}`,
+        actionType: proposal.proposalType,
+        amount: money(proposal.amount.minorUnits, proposal.amount.currency),
+        instrumentId: proposal.instrumentId,
+        instrumentLabel: proposal.instrumentId,
+        reason: proposal.explainability.whyThis,
+        evidenceSummary: proposal.explainability.supportedGoal,
+        status: consumerStatus,
+        riskFeeSummary: proposal.explainability.whatCouldGoWrong,
+        expiresAt: proposal.expiresAt,
+        customerActionRequired: awaitingApproval,
+        approvalEndpoint: awaitingApproval ? `/api/v1/grow/proposals/${proposal.proposalId}/approve` : null,
+        proposalId: proposal.proposalId,
+        serverOwned: true as const,
+      });
+    }),
+  );
+}
+
+export function buildPaperGrowAgentState(input: PaperGrowReadModelInput): GrowAgentStateResponse {
+  const overview = buildPaperGrowOverview(input);
+  const activity = buildPaperGrowActivity(input);
+  return Object.freeze({
+    schema: 'sunrey.consumer.grow.agent-state.v1',
+    customerId: input.customerId,
+    consumerStatus: overview.consumerStatus,
+    summary: `Grow is ${overview.consumerStatus}. ${overview.plan.objective ?? 'No active objective.'}`,
+    nextRequiredCustomerAction: overview.nextRequiredCustomerAction,
+    overview: Object.freeze({
+      cycleStatus: overview.cycleStatus,
+      plan: overview.plan,
+      allocate: overview.allocate,
+      performance: overview.performance,
+    }),
+    recentActivityCount: activity.length,
+    mayExecute: false,
+    serverOwned: true,
   });
 }
 

@@ -39,9 +39,15 @@ import {
 } from '../../../../packages/platform/src/growth/product/index.ts';
 import { toLovableExperience } from '../../../../packages/platform/src/growth/product/lovable-contract.ts';
 import {
+  growPaperActionCards,
+  growPaperActiveCapital,
   growPaperActivity,
+  growPaperAgentState,
+  growPaperAllocate,
   growPaperCash,
   growPaperOverview,
+  growPaperPerformance,
+  growPaperProviderAccount,
   growPaperResults,
   type GrowPaperCycleDeps,
 } from './grow-paper-cycle.ts';
@@ -580,8 +586,24 @@ export class GrowBffSurface {
     return growPaperOverview(this.paperCycleDeps(), principal, requestId);
   }
 
-  activity(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
-    return growPaperActivity(this.paperCycleDeps(), principal, requestId);
+  allocate(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growPaperAllocate(this.paperCycleDeps(), principal, requestId);
+  }
+
+  activeCapital(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growPaperActiveCapital(this.paperCycleDeps(), principal, requestId);
+  }
+
+  heliosPerformance(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growPaperPerformance(this.paperCycleDeps(), principal, requestId);
+  }
+
+  activity(
+    principal: BffPrincipal,
+    requestId: string,
+    query: Readonly<Record<string, string>> = {},
+  ): Record<string, unknown> | BffErrorEnvelope {
+    return growPaperActivity(this.paperCycleDeps(), principal, requestId, query);
   }
 
   results(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
@@ -590,6 +612,18 @@ export class GrowBffSurface {
 
   cashAvailable(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
     return growPaperCash(this.paperCycleDeps(), principal, requestId);
+  }
+
+  providerAccount(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growPaperProviderAccount(this.paperCycleDeps(), principal, requestId);
+  }
+
+  actionCards(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growPaperActionCards(this.paperCycleDeps(), principal, requestId);
+  }
+
+  agentState(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growPaperAgentState(this.paperCycleDeps(), principal, requestId);
   }
 
   controlsStatus(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
@@ -651,25 +685,71 @@ export class GrowBffSurface {
   }
 
   agentTools(): GrowAgentToolPort {
+    const principalFor = (subjectId: string): BffPrincipal =>
+      Object.freeze({
+        actorId: `agent_${subjectId}`,
+        customerId: subjectId,
+        identityId: subjectId,
+        sessionId: `ses_agent_${subjectId}`,
+        jurisdiction: 'GB',
+        verification: 'VERIFIED',
+        customerStatus: 'ACTIVE',
+        identityStatus: 'ACTIVE',
+        capabilities: Object.freeze([]),
+        risk: 'STANDARD',
+        restricted: false,
+        sandboxPersona: 'agent_enabled',
+        deviceSummary: Object.freeze({ deviceId: null, trustState: 'KNOWN' }),
+      });
     return {
-      getFinancialSnapshot: (subjectId) => ({ subjectId, tool: 'getFinancialSnapshot' }),
-      getGoals: (subjectId) => ({ subjectId, tool: 'getGoals' }),
-      getOpportunities: (subjectId) => ({ subjectId, tool: 'getOpportunities' }),
-      getGrowthPlan: (subjectId) => ({ subjectId, tool: 'getGrowthPlan' }),
-      getPortfolio: (subjectId) => ({ subjectId, tool: 'getPortfolio' }),
-      explainOpportunity: (subjectId, opportunityId) => ({ subjectId, opportunityId }),
-      createGrowthProposal: (subjectId, actionId) => ({ subjectId, actionId, awaitingHuman: true }),
-      modifyGrowthProposal: (subjectId, proposalId, amountMinorUnits) => ({
-        subjectId,
-        proposalId,
-        amountMinorUnits,
-      }),
-      submitProposalForApproval: (subjectId, proposalId) => ({
-        subjectId,
-        proposalId,
-        awaitingHuman: true,
-      }),
-      getExecutionStatus: (subjectId, executionId) => ({ subjectId, executionId }),
+      getFinancialSnapshot: (subjectId) => {
+        const overview = growPaperOverview(this.paperCycleDeps(), principalFor(subjectId), 'agent_tool');
+        return typeof overview === 'object' && overview !== null && 'performance' in overview
+          ? Object.freeze({ subjectId, overview, serverOwned: true, mayExecute: false })
+          : Object.freeze({ subjectId, serverOwned: true, mayExecute: false });
+      },
+      getGoals: (subjectId) => {
+        const principal = principalFor(subjectId);
+        const snap = this.deps.peg.getEconomicSnapshot(this.actor(principal), subjectId);
+        return snap.ok
+          ? Object.freeze({ subjectId, goals: snap.value.goals, serverOwned: true })
+          : Object.freeze({ subjectId, goals: [], serverOwned: true });
+      },
+      getOpportunities: (subjectId) => {
+        const principal = principalFor(subjectId);
+        const listed = this.opportunities(principal, 'agent_tool');
+        return Object.freeze({ subjectId, opportunities: listed, serverOwned: true });
+      },
+      getGrowthPlan: (subjectId) => {
+        const state = growPaperAgentState(this.paperCycleDeps(), principalFor(subjectId), 'agent_tool');
+        return typeof state === 'object' && state !== null && 'overview' in state
+          ? Object.freeze({ subjectId, plan: (state as { overview: unknown }).overview, serverOwned: true })
+          : Object.freeze({ subjectId, serverOwned: true });
+      },
+      getPortfolio: (subjectId) => {
+        const active = growPaperActiveCapital(this.paperCycleDeps(), principalFor(subjectId), 'agent_tool');
+        return typeof active === 'object' && active !== null && 'activeCapital' in active
+          ? Object.freeze({ subjectId, activeCapital: (active as { activeCapital: unknown }).activeCapital, serverOwned: true })
+          : Object.freeze({ subjectId, serverOwned: true });
+      },
+      explainOpportunity: (subjectId, opportunityId) =>
+        Object.freeze({ subjectId, opportunityId, serverOwned: true, explanationSource: 'backend_snapshot' }),
+      createGrowthProposal: (subjectId, actionId) =>
+        Object.freeze({ subjectId, actionId, awaitingHuman: true, mayExecute: false }),
+      modifyGrowthProposal: (subjectId, proposalId, amountMinorUnits) =>
+        Object.freeze({ subjectId, proposalId, amountMinorUnits, awaitingHuman: true, mayExecute: false }),
+      submitProposalForApproval: (subjectId, proposalId) =>
+        Object.freeze({ subjectId, proposalId, awaitingHuman: true, mayExecute: false }),
+      getExecutionStatus: (subjectId, executionId) => {
+        const execution = this.deps.grow.store.getExecution(executionId);
+        return Object.freeze({
+          subjectId,
+          executionId,
+          state: execution?.state ?? 'NOT_FOUND',
+          serverOwned: true,
+          mayExecute: false,
+        });
+      },
     };
   }
 
@@ -718,7 +798,9 @@ export class GrowBffSurface {
       investments: this.deps.investments,
       ledger: this.deps.ledger,
       accounts: this.deps.accounts,
+      providers: this.deps.providers,
       resolveActor: this.deps.resolveActor,
+      now: () => this.deps.now(),
       investmentAccountsFor: this.deps.investmentAccountsFor,
     };
   }
@@ -833,8 +915,18 @@ function mapGrowError(code: string): { readonly code: BffErrorEnvelope['errorCod
   if (code === 'AGENT_CANNOT_SELF_APPROVE' || code === 'AGENT_CANNOT_EXECUTE' || code === 'PROPOSAL_FORGED') {
     return { code: 'FORBIDDEN_PROFILE_FIELD', category: 'AUTHORIZATION' };
   }
-  if (code === 'PROVIDER_UNAVAILABLE' || code === 'PRODUCT_UNAVAILABLE') return { code: 'FEATURE_UNAVAILABLE', category: 'TEMPORARY_UNAVAILABLE' };
+  if (code === 'PROVIDER_UNAVAILABLE' || code === 'PRODUCT_UNAVAILABLE') {
+    return { code: 'PROVIDER_UNAVAILABLE', category: 'TEMPORARY_UNAVAILABLE' };
+  }
   if (code === 'DEPLOYMENT_PAUSED') return { code: 'FEATURE_UNAVAILABLE', category: 'TEMPORARY_UNAVAILABLE' };
+  if (code === 'INSUFFICIENT_AVAILABLE_CAPITAL') {
+    return { code: 'INSUFFICIENT_AVAILABLE_CAPITAL', category: 'POLICY' };
+  }
+  if (code === 'APPROVAL_REQUIRED') return { code: 'APPROVAL_REQUIRED', category: 'POLICY' };
+  if (code === 'VALIDITY_EXPIRED') return { code: 'VALIDITY_EXPIRED', category: 'POLICY' };
+  if (code === 'RECONCILIATION_PENDING') return { code: 'RECONCILIATION_PENDING', category: 'TEMPORARY_UNAVAILABLE' };
+  if (code === 'STALE_DATA') return { code: 'STALE_DATA', category: 'TEMPORARY_UNAVAILABLE' };
+  if (code === 'SERVICE_DEGRADED') return { code: 'SERVICE_DEGRADED', category: 'TEMPORARY_UNAVAILABLE' };
   return { code: 'VALIDATION', category: 'VALIDATION' };
 }
 
@@ -971,3 +1063,4 @@ function stringifyMinor(value: unknown): string | undefined {
   }
   return undefined;
 }
+

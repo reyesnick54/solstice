@@ -6,7 +6,13 @@ import {
 } from './consumer/index.ts';
 import type { RunningConsumerBff } from './consumer/http.ts';
 import { ExchangeBffSurface } from './consumer/exchange.ts';
-import { PreviewGrowSurface } from './consumer/preview-grow.ts';
+import {
+  ComposedConsumerGrowSurface,
+  createHeliosGrowBindingForPersona,
+  createHeliosReader,
+  sandboxInvestmentAccountsForPersona,
+  type HeliosGrowBindingLike,
+} from './consumer/preview-grow.ts';
 import { bindDurableFinancialReadModel } from './consumer/durable-consumer-bff.ts';
 import type { DurableInternalPaymentSurface } from './consumer/durable-internal-payments.ts';
 import type { DurableMoneyAccountMutations } from './consumer/durable-money-account-mutations.ts';
@@ -50,7 +56,35 @@ export function createSunReyPreviewRuntime(
   > = {},
 ): ConsumerBffRuntime {
   const world = createSandboxWorld({ providerDown: options.providerDown === true });
-  const previewGrow = new PreviewGrowSurface(world.grow, world.bff, world.growOpportunity);
+  const heliosBindings = new Map<string, HeliosGrowBindingLike>();
+  const investPrincipal = world.personas.investment;
+  const investmentAccounts = sandboxInvestmentAccountsForPersona(investPrincipal);
+  const investBinding = createHeliosGrowBindingForPersona({
+    runtime: world.runtime,
+    principal: investPrincipal,
+    investmentAccounts,
+    providers: world.providerRuntime,
+  });
+  heliosBindings.set(investPrincipal.customerId, investBinding);
+  const heliosReader = createHeliosReader(heliosBindings);
+  const previewGrow = new ComposedConsumerGrowSurface(
+    world.grow,
+    world.bff,
+    world.growOpportunity,
+    Object.freeze({
+      ...heliosReader,
+      paperCycleFor: (principal) => {
+        const deps = heliosReader.paperCycleFor(principal);
+        if (!deps) {
+          return null;
+        }
+        return Object.freeze({
+          ...deps,
+          providerDown: options.providerDown === true,
+        });
+      },
+    }),
+  );
   const exchange = options.durableExchange ?? new ExchangeBffSurface(() => world.runtime.clock.now());
   const bff = options.durableFinancialRuntime
     ? bindDurableFinancialReadModel(world.bff, options.durableFinancialRuntime)

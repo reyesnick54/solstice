@@ -192,6 +192,7 @@ export type SandboxWorld = {
   readonly opportunity: OpportunityIntelligenceBff;
   readonly subscriptions: SubscriptionIntelligenceBff;
   readonly providerDown: Readonly<Record<string, boolean>>;
+  readonly providerRuntime: ReturnType<typeof createUniversalProviderRuntime>;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -910,6 +911,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     opportunity,
     subscriptions,
     providerDown: options.providerDown ? { cards: true, payments: true, fx: true, custody: true } : {},
+    providerRuntime,
   });
 }
 
