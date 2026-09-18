@@ -326,11 +326,15 @@ export async function runHeliosIntegratedAcceptanceRemote(
   config: RemoteConfig,
   manifest: HeliosReleasePackageManifest | null,
 ): Promise<HeliosIntegratedAcceptanceReport> {
-  const preDeployGates = verifyHeliosReleasePackageGate({
-    manifest,
-    expectedCommitSha: manifest?.commitSha,
-    expectedArtifactDigest: manifest?.artifactDigest,
-  });
+  const preDeployGates = verifyHeliosReleasePackageGate(
+    manifest
+      ? {
+          manifest,
+          expectedCommitSha: manifest.commitSha,
+          expectedArtifactDigest: manifest.artifactDigest,
+        }
+      : { manifest },
+  );
   const healthChecks: AcceptanceCheck[] = [];
   const readinessChecks: AcceptanceCheck[] = [];
   const endToEndFlows: AcceptanceCheck[] = [];

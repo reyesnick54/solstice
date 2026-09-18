@@ -28,23 +28,37 @@ export function verifyHeliosReleasePackageGate(input: {
     status: 'PASS',
   });
 
-  checks.push({
-    category: 'preDeploy',
-    label: 'H34 release package qualified',
-    status: input.manifest.qualified ? 'PASS' : 'BLOCKED',
-    detail: input.manifest.qualified ? undefined : input.manifest.blockers.join('; '),
-  });
+  checks.push(
+    input.manifest.qualified
+      ? {
+          category: 'preDeploy',
+          label: 'H34 release package qualified',
+          status: 'PASS',
+        }
+      : {
+          category: 'preDeploy',
+          label: 'H34 release package qualified',
+          status: 'BLOCKED',
+          detail: input.manifest.blockers.join('; '),
+        },
+  );
 
   if (input.expectedCommitSha) {
-    checks.push({
-      category: 'preDeploy',
-      label: 'Exact Git SHA match',
-      status: input.manifest.commitSha === input.expectedCommitSha ? 'PASS' : 'FAIL',
-      detail:
-        input.manifest.commitSha === input.expectedCommitSha
-          ? undefined
-          : `manifest=${input.manifest.commitSha} expected=${input.expectedCommitSha}`,
-    });
+    const shaMatches = input.manifest.commitSha === input.expectedCommitSha;
+    checks.push(
+      shaMatches
+        ? {
+            category: 'preDeploy',
+            label: 'Exact Git SHA match',
+            status: 'PASS',
+          }
+        : {
+            category: 'preDeploy',
+            label: 'Exact Git SHA match',
+            status: 'FAIL',
+            detail: `manifest=${input.manifest.commitSha} expected=${input.expectedCommitSha}`,
+          },
+    );
   }
 
   if (input.expectedArtifactDigest) {
