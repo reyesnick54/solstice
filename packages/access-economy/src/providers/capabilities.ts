@@ -112,7 +112,7 @@ export const PROVIDER_CAPABILITY_REGISTRY: Readonly<Record<AccessProviderId, Pro
   }),
 });
 
-/** Live read provider IDs registered in packages/access-economy/src/providers/live/ */
+/** Live read provider IDs registered in packages/external-data/src/access-live/ */
 export const LIVE_READ_PROVIDER_IDS = [
   'vast-ai',
   'ticketmaster',
