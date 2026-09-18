@@ -114,6 +114,7 @@ export const LEGAL_HELIOS_ORDER_TRANSITIONS: Readonly<
   AVAILABLE: Object.freeze([] as const),
   REJECTED: Object.freeze([] as const),
   CANCEL_PENDING: Object.freeze([
+    'ACKNOWLEDGED',
     'CANCELLED',
     'PARTIALLY_FILLED_THEN_CANCELLED',
     'PARTIALLY_FILLED',

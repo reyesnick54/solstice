@@ -223,6 +223,18 @@ describe('HELIOS H23 order / fill / settlement lifecycle', () => {
     assert.equal(h.service.store.getFills(order.orderId).length, 0);
   });
 
+  it('8b. provider cancel rejection restores acknowledged state', async () => {
+    const h = createHarness('CANCEL_REJECTED');
+    const order = await submitAndAck(h, 'cust_cancel_reject', 'cancel_reject');
+    const rejected = h.service.requestCancellation(order.orderId, asCustomerId('cust_cancel_reject'));
+    assert.equal(rejected.ok, false);
+    if (rejected.ok) throw new Error('expected cancel rejection');
+    assert.equal(rejected.error.code, 'CANNOT_CANCEL');
+    const restored = h.service.store.getOrder(order.orderId);
+    assert.equal(restored?.status, 'ACKNOWLEDGED');
+    assert.equal(restored?.cancelStatus, 'CANCEL_REJECTED');
+  });
+
   it('9. cancellation/fill race resolves through provider evidence', async () => {
     const h = createHarness('CANCEL_FILL_RACE');
     const order = await submitAndAck(h, 'cust_race', 'race');
