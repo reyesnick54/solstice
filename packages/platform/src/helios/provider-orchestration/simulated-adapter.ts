@@ -231,8 +231,8 @@ export type SimulatedProviderScenarioRegistry = {
   setAccountScenario(idempotencyKey: string, scenario: ScenarioKey): void;
   setFundingScenario(idempotencyKey: string, scenario: ScenarioKey): void;
   setWalletScenario(idempotencyKey: string, scenario: ScenarioKey): void;
-  markProviderUnavailable(providerId: string): void;
-  markProviderAvailable(providerId: string): void;
+  markProviderUnavailable(): void;
+  markProviderAvailable(): void;
 };
 
 export function createSimulatedInvestmentAdapter(

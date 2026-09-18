@@ -555,9 +555,9 @@ describe('HELIOS H22 persistence', () => {
     const ctx = harness();
     ctx.service.submitAccountApplication(baseApplicationRequest('cust_h22_pg', 'pg-app'));
     const snapshot = ctx.service.snapshot();
-    const pools = await createPersistencePools();
+    const env = await preparePersistence();
+    const pools = createPersistencePools(env);
     try {
-      await preparePersistence(pools.customer);
       await persistProviderOrchestrationState(pools.customer, snapshot, NOW);
       const reloaded = await loadProviderOrchestrationState(pools.customer);
       assert.ok(reloaded);

@@ -668,7 +668,7 @@ export class HeliosProviderOrchestrationService {
     store.hydrate(input.snapshot);
     return new HeliosProviderOrchestrationService({
       clock: input.clock,
-      evidence: input.evidence,
+      ...(input.evidence !== undefined ? { evidence: input.evidence } : {}),
       ports: input.ports,
       store,
     });
