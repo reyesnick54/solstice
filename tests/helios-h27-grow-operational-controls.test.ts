@@ -4,6 +4,7 @@
 
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
 import { ENVIRONMENT, LIVE_TRADING_ENABLED } from '../packages/config/src/flags.ts';
@@ -24,6 +25,7 @@ import { asUtcInstant } from '../packages/domain/src/time.ts';
 import { lintHeliosBoundary } from '../tools/architectural-linter/src/helios-guards.ts';
 import { createPhaseEWorld, type PhaseEWorld } from './phase-e-world.ts';
 
+const ROOT = join(import.meta.dirname, '..');
 const NOW = asUtcInstant('2026-09-17T14:00:00.000Z');
 
 type ControlsStatus = {
@@ -307,7 +309,7 @@ describe('HELIOS H27 — Grow operational controls', () => {
   });
 
   it('OpenAPI documents Grow control routes', () => {
-    const spec = readFileSync('/workspace/api/sunrey-consumer-bff-v1.openapi.yaml', 'utf8');
+    const spec = readFileSync(join(ROOT, 'api/sunrey-consumer-bff-v1.openapi.yaml'), 'utf8');
     for (const path of [
       '/api/v1/grow/controls/status',
       '/api/v1/grow/controls/pause',
