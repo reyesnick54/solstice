@@ -58,13 +58,10 @@
     "helios:capacity:qualify:fast": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-capacity-qualify.ts --profile SMALL",
     "test:helios-capacity-regression": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-h33-capacity-latency-portfolio.test.ts",
     "helios:h31:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-h31-qualify.ts",
-<<<<<<< HEAD
-    "helios:h36:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-h36-qualify.ts",
-=======
     "helios:h34:release-package": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-h34-release-package.mjs",
     "helios:h34:release-package:fast": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-h34-release-package.mjs --skip-db --skip-tests",
     "test:helios-h34-release-packaging": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-h34-release-packaging.test.ts",
->>>>>>> fd24d924 (build(helios): package release candidate with migration and rollback controls)
+    "helios:h36:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-h36-qualify.ts",
     "test:helios-h31-fast": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-h31-adversarial-resilience.test.ts packages/platform/src/helios/resilience/resilience.test.ts",
     "helios:release-package:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-h34-release-qualify.ts",
     "helios:h35:accept": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-h35-accept.ts",

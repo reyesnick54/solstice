@@ -172,8 +172,5 @@ export * from './capacity/index.ts';
 export * from './regulatory-evidence/index.ts';
 export * from './resilience/index.ts';
 export * from './regulatory-transparency/index.ts';
-<<<<<<< HEAD
 export * from './release-evidence/index.ts';
-=======
 export * from './release-packaging/index.ts';
->>>>>>> fd24d924 (build(helios): package release candidate with migration and rollback controls)
