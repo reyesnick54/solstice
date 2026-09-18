@@ -35,7 +35,7 @@ import {
   canTransitionSubmission,
   generationIsNotSubmission,
   HELIOS_H28_REPORTING_POLICY_VERSION,
-  type ObligationStatus,
+  type RegulatoryObligationStatus,
   type SubmissionLifecycleState,
 } from './taxonomy.ts';
 import {
@@ -60,7 +60,7 @@ function fail(code: RegulatoryEvidenceFailure['code'], message: string): Result<
   return err({ code, message });
 }
 
-function obligationStatusFromSubmission(state: SubmissionLifecycleState): ObligationStatus {
+function obligationStatusFromSubmission(state: SubmissionLifecycleState): RegulatoryObligationStatus {
   switch (state) {
     case 'NOT_REQUIRED':
       return 'CLOSED';
@@ -380,7 +380,7 @@ export class RegulatoryEvidenceReportingService {
       ...obligation,
       reportPackageId: draft.reportPackageId,
       submissionState: 'DRAFT' as SubmissionLifecycleState,
-      status: 'PREPARING' as ObligationStatus,
+      status: 'PREPARING' as RegulatoryObligationStatus,
       updatedAt: this.clock.now(),
     });
     this.store.updateObligation(updatedObligation);
@@ -502,7 +502,7 @@ export class RegulatoryEvidenceReportingService {
     const updatedObligation = Object.freeze({
       ...obligation,
       submissionState: 'SUBMITTED' as SubmissionLifecycleState,
-      status: 'SUBMITTED' as ObligationStatus,
+      status: 'SUBMITTED' as RegulatoryObligationStatus,
       updatedAt: now,
     });
     this.store.updateObligation(updatedObligation);
@@ -549,7 +549,7 @@ export class RegulatoryEvidenceReportingService {
       Object.freeze({
         ...obligation,
         submissionState: 'ACKNOWLEDGED' as SubmissionLifecycleState,
-        status: 'ACKNOWLEDGED' as ObligationStatus,
+        status: 'ACKNOWLEDGED' as RegulatoryObligationStatus,
         updatedAt: now,
       }),
     );
@@ -592,7 +592,7 @@ export class RegulatoryEvidenceReportingService {
       Object.freeze({
         ...obligation,
         submissionState: 'CORRECTION_REQUIRED' as SubmissionLifecycleState,
-        status: 'REJECTED' as ObligationStatus,
+        status: 'REJECTED' as RegulatoryObligationStatus,
         updatedAt: now,
       }),
     );
@@ -664,7 +664,7 @@ export class RegulatoryEvidenceReportingService {
       packageId,
       reportPackageId: correctedReport.reportPackageId,
       submissionState: 'CORRECTED' as SubmissionLifecycleState,
-      status: 'CORRECTED' as ObligationStatus,
+      status: 'CORRECTED' as RegulatoryObligationStatus,
       updatedAt: now,
     });
     this.store.updateObligation(updatedObligation);

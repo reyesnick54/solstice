@@ -11,7 +11,7 @@ import type {
   TriggerEventId,
 } from './ids.ts';
 import type {
-  ObligationStatus,
+  RegulatoryObligationStatus,
   ReportabilityDetermination,
   ReportingTriggerCategory,
   ResponsibleFilerState,
@@ -128,7 +128,7 @@ export type ReportingObligation = {
   readonly evidenceRequirementRefs: readonly string[];
   readonly submissionChannelRef: string | null;
   readonly retention: RetentionMetadata;
-  readonly status: ObligationStatus;
+  readonly status: RegulatoryObligationStatus;
   readonly submissionState: SubmissionLifecycleState;
   readonly mappingStatus: 'APPROVED' | 'LEGAL_REVIEW_REQUIRED' | 'UNMAPPED';
   readonly reportPackageId: ReportPackageId | null;

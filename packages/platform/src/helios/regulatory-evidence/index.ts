@@ -21,7 +21,7 @@ export {
 export {
   DUE_RULE_KINDS,
   HELIOS_H28_REPORTING_POLICY_VERSION,
-  OBLIGATION_STATUSES,
+  REGULATORY_OBLIGATION_STATUSES,
   REGULATORY_ACCESS_ROLES,
   REPORTABILITY_DETERMINATIONS,
   REPORTING_TRIGGER_CATEGORIES,
@@ -32,7 +32,7 @@ export {
   canTransitionSubmission,
   generationIsNotSubmission,
   type DueRuleKind,
-  type ObligationStatus,
+  type RegulatoryObligationStatus,
   type RegulatoryAccessRole,
   type ReportabilityDetermination,
   type ReportingTriggerCategory,

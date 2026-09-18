@@ -48,3 +48,19 @@ CREATE TABLE IF NOT EXISTS growth.helios_regulatory_idempotency (
   idempotency_key     TEXT PRIMARY KEY,
   processed_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+REVOKE ALL ON TABLE growth.helios_regulatory_evidence_package FROM PUBLIC;
+GRANT SELECT, INSERT ON TABLE growth.helios_regulatory_evidence_package TO customer_app;
+REVOKE DELETE, UPDATE, TRUNCATE ON TABLE growth.helios_regulatory_evidence_package FROM customer_app;
+
+REVOKE ALL ON TABLE growth.helios_reporting_obligation FROM PUBLIC;
+GRANT SELECT, INSERT, UPDATE ON TABLE growth.helios_reporting_obligation TO customer_app;
+REVOKE DELETE, TRUNCATE ON TABLE growth.helios_reporting_obligation FROM customer_app;
+
+REVOKE ALL ON TABLE growth.helios_regulatory_report_package FROM PUBLIC;
+GRANT SELECT, INSERT, UPDATE ON TABLE growth.helios_regulatory_report_package TO customer_app;
+REVOKE DELETE, TRUNCATE ON TABLE growth.helios_regulatory_report_package FROM customer_app;
+
+REVOKE ALL ON TABLE growth.helios_regulatory_idempotency FROM PUBLIC;
+GRANT SELECT, INSERT ON TABLE growth.helios_regulatory_idempotency TO customer_app;
+REVOKE DELETE, UPDATE, TRUNCATE ON TABLE growth.helios_regulatory_idempotency FROM customer_app;

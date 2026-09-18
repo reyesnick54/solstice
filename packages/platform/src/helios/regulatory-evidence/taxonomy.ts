@@ -55,7 +55,7 @@ export const SUBMISSION_LIFECYCLE_STATES = [
 
 export type SubmissionLifecycleState = (typeof SUBMISSION_LIFECYCLE_STATES)[number];
 
-export const OBLIGATION_STATUSES = [
+export const REGULATORY_OBLIGATION_STATUSES = [
   'OPEN',
   'PREPARING',
   'VALIDATING',
@@ -70,7 +70,7 @@ export const OBLIGATION_STATUSES = [
   'UNMAPPED',
 ] as const;
 
-export type ObligationStatus = (typeof OBLIGATION_STATUSES)[number];
+export type RegulatoryObligationStatus = (typeof REGULATORY_OBLIGATION_STATUSES)[number];
 
 export const RETENTION_CLASSES = [
   'REGULATORY_STANDARD',
