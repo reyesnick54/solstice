@@ -1,26 +1,19 @@
 use std::io::{Read, Write};
 use std::net::TcpStream;
-use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
+use std::time::{Duration, Instant};
 
 use sunrey_node::LocalNode;
 use sunrey_rpc::{RpcPlane, RpcSecurityConfig, RpcServer};
+use tempfile::TempDir;
 
-fn dir() -> std::path::PathBuf {
-    let nanos = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos();
-    let path = std::env::temp_dir().join(format!("sunrey-rpc-prod-{nanos}"));
-    std::fs::create_dir_all(&path).unwrap();
-    path
-}
-
-fn serve(plane: RpcPlane) -> (String, std::thread::JoinHandle<()>) {
+fn serve(plane: RpcPlane) -> (String, TempDir, std::thread::JoinHandle<()>) {
     serve_config(RpcSecurityConfig::for_plane(plane))
 }
 
-fn serve_config(config: RpcSecurityConfig) -> (String, std::thread::JoinHandle<()>) {
-    let nanos = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos();
-    let addr = format!("127.0.0.1:{}", 21000 + (nanos % 800) as u16);
-    let node = LocalNode::init(dir()).unwrap();
-    let server = RpcServer::bind_with_config(&addr, node, config).unwrap();
+fn serve_config(config: RpcSecurityConfig) -> (String, TempDir, std::thread::JoinHandle<()>) {
+    let temp = TempDir::new().expect("temp data dir");
+    let node = LocalNode::init(temp.path()).expect("local node init");
+    let server = RpcServer::bind_with_config("127.0.0.1:0", node, config).expect("rpc bind");
     let listen = server.local_addr();
     let handle = std::thread::spawn(move || {
         let _ = server.serve();
@@ -37,7 +30,7 @@ fn serve_config(config: RpcSecurityConfig) -> (String, std::thread::JoinHandle<(
         }
         std::thread::sleep(Duration::from_millis(20));
     }
-    (listen, handle)
+    (listen, temp, handle)
 }
 
 fn raw_get(addr: &str, path: &str, extra: &str) -> String {
@@ -54,7 +47,7 @@ fn raw_get(addr: &str, path: &str, extra: &str) -> String {
 
 #[test]
 fn public_plane_serves_v1_and_hides_admin() {
-    let (addr, _handle) = serve(RpcPlane::Public);
+    let (addr, _temp, _handle) = serve(RpcPlane::Public);
     let status = sunrey_rpc::http_get(&addr, "/v1/chain/status").unwrap();
     assert!(status.contains("apiVersion"), "{status}");
     assert!(status.contains("localObservationIsNotFinality"), "{status}");
@@ -73,7 +66,7 @@ fn public_plane_rate_limits_flood() {
     let mut config = RpcSecurityConfig::for_plane(RpcPlane::Public);
     config.rate_per_window = 4;
     config.window_ms = 60_000;
-    let (addr, _handle) = serve_config(config);
+    let (addr, _temp, _handle) = serve_config(config);
     let mut saw_limit = false;
     for _ in 0..80 {
         let response = sunrey_rpc::http_get(&addr, "/v1/health").unwrap_or_default();
@@ -87,7 +80,7 @@ fn public_plane_rate_limits_flood() {
 
 #[test]
 fn simulation_plane_keeps_legacy_admin_for_local_dev() {
-    let (addr, _handle) = serve(RpcPlane::SimulationCombined);
+    let (addr, _temp, _handle) = serve(RpcPlane::SimulationCombined);
     let health = sunrey_rpc::http_get(&addr, "/health").unwrap();
     assert!(health.contains("ok"), "{health}");
 }

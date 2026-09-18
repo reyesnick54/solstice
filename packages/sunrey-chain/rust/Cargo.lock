@@ -886,6 +886,7 @@ dependencies = [
  "sunrey-storage",
  "sunrey-validators",
  "sunrey-wallet",
+ "tempfile",
  "thiserror",
  "tracing",
  "tracing-subscriber",
