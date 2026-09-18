@@ -94,9 +94,10 @@ jobs:
         run: npm test
 
       - name: Upload release evidence
-        uses: actions/upload-artifact@b4c36438f544a099a2421656676f6e369bf543b3 # v4.6.0
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
         with:
           name: helios-h34-release-evidence
+          if-no-files-found: warn
           path: |
             release/helios-release-manifest.json
             release/helios-h34-evidence.json
