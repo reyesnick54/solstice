@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-18T09:27:14.218392+00:00",
+  "generatedAt": "2026-09-18T11:58:16.961108+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -539,14 +539,14 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 4989,
+      "packageDeepImport": 4998,
       "serviceDeepImport": 652,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 4989,
+      "relativeCrossPackage": 4998,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5641
+      "total": 5650
     }
   },
   "violations": [
@@ -17300,6 +17300,78 @@
       "spec": "../../../permissions/src/decision.ts"
     },
     {
+      "file": "packages/kernel/src/policy/jurisdiction-capability/evidence.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/kernel/src/policy/jurisdiction-capability/evidence.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "kernel",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/kernel/src/policy/jurisdiction-capability/evidence.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/kernel/src/policy/jurisdiction-capability/evidence.ts' deep-imports 'evidence' internals via '../../../../evidence/src/vault.ts'",
+      "sourcePackage": "kernel",
+      "targetPackage": "evidence",
+      "spec": "../../../../evidence/src/vault.ts"
+    },
+    {
+      "file": "packages/kernel/src/policy/jurisdiction-capability/helios-adapter.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/kernel/src/policy/jurisdiction-capability/helios-adapter.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "kernel",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/kernel/src/policy/jurisdiction-capability/helios-adapter.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/kernel/src/policy/jurisdiction-capability/helios-adapter.ts' deep-imports 'evidence' internals via '../../../../evidence/src/vault.ts'",
+      "sourcePackage": "kernel",
+      "targetPackage": "evidence",
+      "spec": "../../../../evidence/src/vault.ts"
+    },
+    {
+      "file": "packages/kernel/src/policy/jurisdiction-capability/registry.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/kernel/src/policy/jurisdiction-capability/registry.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "kernel",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/kernel/src/policy/jurisdiction-capability/seed.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/kernel/src/policy/jurisdiction-capability/seed.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "kernel",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/kernel/src/policy/jurisdiction-capability/store.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/kernel/src/policy/jurisdiction-capability/store.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "kernel",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/kernel/src/policy/jurisdiction-capability/types.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/kernel/src/policy/jurisdiction-capability/types.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "kernel",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
       "file": "packages/kernel/src/policy/jurisdiction.ts",
       "line": 1,
       "rule": "package-deep-import",
@@ -26541,6 +26613,15 @@
       "sourcePackage": "platform",
       "targetPackage": "domain",
       "spec": "../../../domain/src/brand.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/jurisdiction-capability/types.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/jurisdiction-capability/types.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
     },
     {
       "file": "packages/platform/src/helios/mandate-binding.ts",

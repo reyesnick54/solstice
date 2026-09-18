@@ -307,15 +307,27 @@ export function evaluateRiskContext(
 }
 
 export function evaluateComplianceJurisdiction(ctx: EnvelopeEvaluationContext): ComponentCheckResult {
-  const status = ctx.jurisdictionCapabilityEnabled ? 'VALID' : 'INVALID';
+  const enabled =
+    ctx.jurisdictionCapabilityResult != null
+      ? ctx.jurisdictionCapabilityResult.outcome === 'ALLOWED'
+      : ctx.jurisdictionCapabilityEnabled;
+  const status = enabled ? 'VALID' : ctx.jurisdictionCapabilityResult?.outcome === 'UNKNOWN' ? 'UNKNOWN' : 'INVALID';
+  const reasonCodes: EnvelopeReasonCode[] = enabled
+    ? ['OK']
+    : ctx.jurisdictionCapabilityResult?.outcome === 'RESTRICTED'
+      ? ['JURISDICTION_CAPABILITY_DISABLED']
+      : ctx.jurisdictionCapabilityResult?.outcome === 'REVIEW_REQUIRED'
+        ? ['JURISDICTION_CAPABILITY_DISABLED']
+        : ['JURISDICTION_CAPABILITY_DISABLED'];
   return componentCheck('COMPLIANCE_JURISDICTION', {
     status,
-    reasonCodes: Object.freeze(
-      ctx.jurisdictionCapabilityEnabled ? ['OK'] : ['JURISDICTION_CAPABILITY_DISABLED'],
-    ),
+    reasonCodes: Object.freeze(reasonCodes),
     now: ctx.now,
     validUntilSeconds: MANDATE_VALIDITY_SECONDS,
-    inputRefs: Object.freeze([ctx.jurisdiction]),
+    inputRefs: Object.freeze([
+      ctx.jurisdiction,
+      ...(ctx.jurisdictionCapabilityResult?.capabilityId ? [ctx.jurisdictionCapabilityResult.capabilityId] : []),
+    ]),
   });
 }
 

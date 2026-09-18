@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0.0",
+  "policyVersion": "h28-v1",
+  "description": "HELIOS H28 eleven-jurisdiction capability pack manifest. Engineering shells only — not legal conclusions.",
+  "jurisdictions": [
+    { "id": "EU", "name": "European Union", "overlaySupport": ["EU_MEMBER_STATE"] },
+    { "id": "GB", "name": "United Kingdom", "overlaySupport": [] },
+    { "id": "US", "name": "United States", "overlaySupport": ["US_STATE"] },
+    { "id": "SA", "name": "Saudi Arabia", "overlaySupport": ["PROVIDER"] },
+    { "id": "IN", "name": "India", "overlaySupport": [] },
+    { "id": "CN", "name": "Mainland China", "overlaySupport": [] },
+    { "id": "JP", "name": "Japan", "overlaySupport": [] },
+    { "id": "SG", "name": "Singapore", "overlaySupport": [] },
+    { "id": "KR", "name": "South Korea", "overlaySupport": [] },
+    { "id": "MY", "name": "Malaysia", "overlaySupport": [] },
+    { "id": "AU", "name": "Australia", "overlaySupport": [] }
+  ],
+  "categories": [
+    "IDENTITY_CUSTOMER",
+    "PRODUCT",
+    "MARKET_ACCESS",
+    "DATA",
+    "ALGORITHM_AI",
+    "RECORDKEEPING_REPORTING"
+  ],
+  "defaultUnverifiedState": "RESEARCH_REQUIRED",
+  "sourceReference": "src-h28-engineering-shell"
+}

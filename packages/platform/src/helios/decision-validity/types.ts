@@ -16,6 +16,7 @@ import type {
 } from '../executable-opportunity/types.ts';
 import type { MetaAllocatorRecommendation } from '../meta-allocator/types.ts';
 import type { StrategyCapsuleRef, StrategyCapsuleRegistryPort } from '../strategy-capsule/types.ts';
+import type { HeliosJurisdictionCapabilityResult } from '../jurisdiction-capability/types.ts';
 import type { DecisionValidityEnvelopeId } from './ids.ts';
 import type {
   EnvelopeComponentKind,
@@ -97,6 +98,8 @@ export type EnvelopeEvaluationContext = {
   readonly instrumentActive: boolean;
   readonly instrumentHalted: boolean;
   readonly jurisdictionCapabilityEnabled: boolean;
+  /** H28 — when provided, overrides jurisdictionCapabilityEnabled boolean. */
+  readonly jurisdictionCapabilityResult?: HeliosJurisdictionCapabilityResult | null;
   readonly modelVersionQualified: boolean;
   readonly researchExpiresAt: UtcInstant | null;
   readonly researchCompletedAt: UtcInstant | null;
