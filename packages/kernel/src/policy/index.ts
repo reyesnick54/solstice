@@ -30,6 +30,7 @@ export {
   POLICY_SOURCES,
   SIMULATION_CAPABILITIES,
 } from './seed.ts';
+export * from './jurisdiction-capability/index.ts';
 export {
   LEGAL_REVIEW_STATUSES,
   POLICY_LIFECYCLES,
