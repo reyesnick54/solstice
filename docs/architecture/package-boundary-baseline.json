@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-17T14:29:32.260483+00:00",
+  "generatedAt": "2026-09-18T05:45:00.000Z",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -51075,6 +51075,123 @@
       "sourcePackage": "treasury",
       "targetPackage": "treasury",
       "spec": "../../../packages/treasury/src/index.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/capital-lifecycle/ids.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/capital-lifecycle/ids.ts' deep-imports 'domain' internals via '../../../../domain/src/brand.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/brand.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/capital-lifecycle/reconciliation.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/capital-lifecycle/reconciliation.ts' deep-imports 'domain' internals via '../../../../domain/src/customer.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/customer.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/capital-lifecycle/reconciliation.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/capital-lifecycle/reconciliation.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/capital-lifecycle/service.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/capital-lifecycle/service.ts' deep-imports 'config' internals via '../../../../config/src/clock.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "config",
+      "spec": "../../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/capital-lifecycle/service.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/capital-lifecycle/service.ts' deep-imports 'evidence' internals via '../../../../evidence/src/vault.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "evidence",
+      "spec": "../../../../evidence/src/vault.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/capital-lifecycle/service.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/capital-lifecycle/service.ts' deep-imports 'domain' internals via '../../../../domain/src/customer.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/customer.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/capital-lifecycle/service.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/capital-lifecycle/service.ts' deep-imports 'domain' internals via '../../../../domain/src/result.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/result.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/capital-lifecycle/store.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/capital-lifecycle/store.ts' deep-imports 'domain' internals via '../../../../domain/src/customer.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/customer.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/capital-lifecycle/types.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/capital-lifecycle/types.ts' deep-imports 'domain' internals via '../../../../domain/src/customer.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/customer.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/capital-lifecycle/types.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/capital-lifecycle/types.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/capital-lifecycle/types.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/capital-lifecycle/types.ts' deep-imports 'permissions' internals via '../../../../permissions/src/action-types.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "permissions",
+      "spec": "../../../../permissions/src/action-types.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/capital-lifecycle/withdrawable-cash.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/capital-lifecycle/withdrawable-cash.ts' deep-imports 'domain' internals via '../../../../domain/src/customer.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/customer.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/capital-lifecycle/withdrawable-cash.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/capital-lifecycle/withdrawable-cash.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
     }
   ]
 }
