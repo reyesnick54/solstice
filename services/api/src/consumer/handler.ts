@@ -2376,6 +2376,7 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/wallets/{id}/withdrawal-quote',
   'POST /api/v1/wallets/{id}/withdrawals',
   'GET /api/v1/wallets/{id}/withdrawals/{withdrawalId}',
+  'POST /api/v1/sandbox/funding',
   'GET /api/v1/money/holdings',
   'GET /api/v1/money/history',
   'GET /api/v1/money/settlements',
