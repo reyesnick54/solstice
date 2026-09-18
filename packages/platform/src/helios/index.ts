@@ -169,3 +169,4 @@ export * from './outcome-attribution/index.ts';
 export * from './economic-evaluation/index.ts';
 export * from './jurisdiction-capability/index.ts';
 export * from './capacity/index.ts';
+export * from './resilience/index.ts';
