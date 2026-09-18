@@ -96,15 +96,14 @@ async function main() {
     persistenceTestsPassed = persistence.status === 0;
   }
 
+  // H34-specific gate only; workflow runs full `npm test` for H01–H33 regression separately.
   const heliosCritical = run('node', [
     '--experimental-strip-types',
     '--disable-warning=ExperimentalWarning',
     '--test',
+    '--test-concurrency=1',
     '--test-reporter=spec',
     'tests/helios-h34-release-packaging.test.ts',
-    'tests/helios-h33-capacity-latency-portfolio.test.ts',
-    'tests/helios-h30-supervisory-governance.test.ts',
-    'tests/helios-h31-adversarial-resilience.test.ts',
   ]);
   gateRuns.push(heliosCritical);
 
@@ -206,6 +205,17 @@ async function main() {
   if (allBlockers.length > 0) {
     for (const blocker of allBlockers) {
       console.error(`[H34] blocker: ${blocker}`);
+    }
+    for (const gate of gateRuns) {
+      if (gate.status !== 0) {
+        console.error(`[H34] gate output (${gate.command}):`);
+        if (gate.stdout) {
+          console.error(gate.stdout.split('\n').slice(-40).join('\n'));
+        }
+        if (gate.stderr) {
+          console.error(gate.stderr.split('\n').slice(-40).join('\n'));
+        }
+      }
     }
     process.exit(1);
   }
