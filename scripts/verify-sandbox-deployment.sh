@@ -134,6 +134,22 @@ check_grow_endpoint() {
   [[ -n "$(json_get "$body" schema)" ]]
 }
 
+check_release_identity() {
+  if [[ -z "${SUNREY_EXPECTED_SOURCE_COMMIT:-}" && -z "${SUNREY_EXPECTED_RELEASE_ID:-}" ]]; then
+    return 0
+  fi
+  local body commit release
+  body="$(request GET /api/v1/version)"
+  commit="$(json_get "$body" sourceCommit)"
+  release="$(json_get "$body" releaseId)"
+  if [[ -n "${SUNREY_EXPECTED_SOURCE_COMMIT:-}" && "$commit" != "$SUNREY_EXPECTED_SOURCE_COMMIT" ]]; then
+    return 1
+  fi
+  if [[ -n "${SUNREY_EXPECTED_RELEASE_ID:-}" && "$release" != "$SUNREY_EXPECTED_RELEASE_ID" ]]; then
+    return 1
+  fi
+}
+
 printf 'Verifying SunRey sandbox at %s (origin %s)\n' "$API_BASE" "$ORIGIN"
 
 check "API reachable" check_api_reachable
@@ -148,6 +164,7 @@ check "wallet endpoint" check_wallet_endpoint
 check "market endpoint" check_market_endpoint
 check "vault endpoint" check_vault_endpoint
 check "grow endpoint" check_grow_endpoint
+check "release identity (optional)" check_release_identity
 
 printf '\nSummary: %s passed, %s failed\n' "$pass" "$fail"
 if [[ "$fail" -gt 0 ]]; then

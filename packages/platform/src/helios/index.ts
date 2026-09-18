@@ -172,4 +172,5 @@ export * from './capacity/index.ts';
 export * from './regulatory-evidence/index.ts';
 export * from './resilience/index.ts';
 export * from './regulatory-transparency/index.ts';
+export * from './release-packaging/index.ts';
 export * from './release-evidence/index.ts';

@@ -3,6 +3,7 @@ import type { Pool } from 'pg';
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { HeliosObservationStoreSnapshot } from '../../../platform/src/helios/observation/store.ts';
 import type { HeliosMarketObservationEnvelope } from '../../../platform/src/helios/observation/types.ts';
+import { persistenceJsonStringify } from '../json.ts';
 import { withClient } from '../postgres/pools.ts';
 
 export async function persistHeliosObservationState(
@@ -31,7 +32,7 @@ export async function persistHeliosObservationState(
             envelope.canonicalInstrumentId,
             envelope.venue,
             envelope.observationType,
-            JSON.stringify(envelope),
+            persistenceJsonStringify(envelope),
             envelope.informationTime.sourceEventTime,
             envelope.informationTime.knowableAt,
             envelope.informationTime.ingestionTime,

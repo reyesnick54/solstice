@@ -3,6 +3,7 @@
 ARG NODE_IMAGE=docker.io/library/node:22-bookworm-slim
 FROM ${NODE_IMAGE}
 ARG SOURCE_COMMIT=unknown
+ENV SUNREY_SOURCE_COMMIT=${SOURCE_COMMIT}
 WORKDIR /app
 RUN apt-get update \
   && apt-get install --no-install-recommends --yes curl ca-certificates \
