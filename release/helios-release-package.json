@@ -1,0 +1,37 @@
+{
+  "schema": "sunrey.helios.release-package.v1",
+  "releaseId": "helios-sandbox-rc-h34",
+  "commitSha": "32a612c37e68c99a2856a33e745052b27b512cf1",
+  "artifactDigest": "sha256:7527f1e063fbb9a191bd33ef8d1c15bb009d4cf4db675bbebc0f43ad62b2466c",
+  "migrationImageDigest": "sha256:614e95882b747dcc1484e054aa7105af833e40eb0ddea967d867282a2509bd3c",
+  "configurationPackage": "sha256:ac252010ce01822af166ae2187698a0990177a28e19834801a57d4ba0d530b32",
+  "environment": "simulation",
+  "marker": "HELIOS_RELEASE_PACKAGE_QUALIFIED",
+  "qualified": true,
+  "qualifiedAtUtc": "2026-09-18T13:20:29.293Z",
+  "gates": [
+    {
+      "id": "helios_h31_fast",
+      "status": "PASS",
+      "detail": "durationMs=605"
+    },
+    {
+      "id": "helios_h33_regression",
+      "status": "PASS",
+      "detail": "durationMs=574"
+    },
+    {
+      "id": "simulation_posture",
+      "status": "PASS",
+      "detail": "ENVIRONMENT=simulation enforced in deploy stack"
+    },
+    {
+      "id": "rollback_artifact_ref",
+      "status": "PASS",
+      "detail": "docs/productization/sunrey-backend-rc-artifacts.json"
+    }
+  ],
+  "blockers": [],
+  "rollbackArtifactRef": "docs/productization/sunrey-backend-rc-artifacts.json",
+  "deploymentStack": "deploy/sunrey-sandbox-hetzner"
+}

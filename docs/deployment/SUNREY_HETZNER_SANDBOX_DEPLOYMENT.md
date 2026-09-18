@@ -296,6 +296,38 @@ Readiness requires persistence when `SUNREY_FEATURE_REQUIRE_PERSISTENCE_FOR_READ
 
 ---
 
+## 16. HELIOS H35 integrated acceptance
+
+After deploying an **exact H34 qualified release** (pinned Git SHA and artifact digest — no floating `main`):
+
+1. Qualify the release package locally or in CI:
+
+```bash
+npm run helios:release-package:qualify
+```
+
+2. Run local integrated acceptance:
+
+```bash
+npm run helios:h35:accept
+```
+
+3. Run remote acceptance against the deployed sandbox (requires preview credentials — never commit them):
+
+```bash
+SUNREY_VERIFY_PREVIEW_EMAIL=... \
+SUNREY_VERIFY_PREVIEW_PASSWORD=... \
+npm run smoke:helios-integrated -- --remote
+```
+
+4. For human-approved deployment, use the GitHub Actions workflow **HELIOS sandbox deploy acceptance** (`.github/workflows/helios-sandbox-deploy-acceptance.yml`) with the `helios-sandbox` environment protection rule.
+
+Machine-readable output: `performance/helios/results/helios-h35-*/HELIOSIntegratedAcceptanceReport.json`
+
+Pass marker: `HELIOS_HETZNER_APP_ACCEPTANCE_QUALIFIED`
+
+---
+
 ## Related documents
 
 - `docs/runbooks/SUNREY_SANDBOX_DEPLOYMENT.md` — local integrated sandbox
