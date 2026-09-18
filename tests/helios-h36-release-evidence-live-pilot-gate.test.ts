@@ -16,11 +16,11 @@ import {
   LIVE_TRADING_ENABLED,
 } from '../packages/config/src/flags.ts';
 import { EvidenceVault } from '../packages/evidence/src/vault.ts';
+import { HELIOS_RELEASE_PACKAGE_QUALIFIED } from '../packages/platform/src/helios/release-packaging/index.ts';
 import {
   HELIOS_H36_RELEASE_EVIDENCE_LIVE_PILOT_GATE,
   HELIOS_RC_QUALIFIED_EXTERNAL_GATES_PENDING,
   HELIOS_RC_QUALIFIED_READY_FOR_HUMAN_PILOT_AUTHORIZATION,
-  HELIOS_RELEASE_PACKAGE_QUALIFIED,
   HELIOS_HETZNER_APP_ACCEPTANCE_QUALIFIED,
   LIVE_PILOT_GATE_CATALOG,
   LIVE_PILOT_GATE_CLASSES,
