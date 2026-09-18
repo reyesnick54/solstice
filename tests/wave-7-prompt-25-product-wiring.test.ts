@@ -33,7 +33,7 @@ function runtime() {
 
 async function call(method: string, path: string, query: Record<string, string> = {}) {
   const result = await Promise.resolve(
-    handleConsumerBff(runtime(), {
+    await handleConsumerBff(runtime(), {
       method,
       path,
       query,
