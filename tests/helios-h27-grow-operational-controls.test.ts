@@ -4,7 +4,10 @@
 
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, it } from 'node:test';
+
+const ROOT = join(import.meta.dirname, '..');
 
 import { ENVIRONMENT, LIVE_TRADING_ENABLED } from '../packages/config/src/flags.ts';
 import { asAccountId } from '../packages/domain/src/account.ts';
@@ -307,7 +310,7 @@ describe('HELIOS H27 — Grow operational controls', () => {
   });
 
   it('OpenAPI documents Grow control routes', () => {
-    const spec = readFileSync('/workspace/api/sunrey-consumer-bff-v1.openapi.yaml', 'utf8');
+    const spec = readFileSync(join(ROOT, 'api/sunrey-consumer-bff-v1.openapi.yaml'), 'utf8');
     for (const path of [
       '/api/v1/grow/controls/status',
       '/api/v1/grow/controls/pause',
