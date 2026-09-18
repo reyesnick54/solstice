@@ -15,9 +15,8 @@ import {
   type GrowLifecycleService,
   type GrowthOrchestrator,
   type ResumeRevalidationInput,
-  evaluateGrowSuitability,
-  type SuitabilityFacts,
 } from '@solstice/platform';
+import { evaluateGrowSuitability, type SuitabilityFacts } from '../../../../packages/platform/src/grow/suitability.ts';
 import { balanceOfAccount } from '../../../accounts/src/balances.ts';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import type { BffPrincipal } from './ports.ts';
@@ -143,14 +142,17 @@ export function createGrowControlsService(input: {
           amount: Money.fromMinorUnitsString(req.amountMinorUnits, req.currency),
         },
       });
-      if (result.outcome !== 'OK' || !result.value) {
-        const code =
-          result.code === 'INSUFFICIENT_BROKERAGE_CASH'
-            ? 'INSUFFICIENT_AVAILABLE_CASH'
-            : result.code === 'INVALID_ACCOUNT'
-              ? 'INVALID_DESTINATION'
-              : 'PROVIDER_UNAVAILABLE';
-        return { ok: false as const, error: { code, message: result.message ?? 'withdrawal failed' } };
+      if (result.outcome !== 'OK') {
+        if (result.outcome === 'REJECTED') {
+          const code =
+            result.code === 'INSUFFICIENT_BROKERAGE_CASH'
+              ? 'INSUFFICIENT_AVAILABLE_CASH'
+              : result.code === 'INVALID_ACCOUNT'
+                ? 'INVALID_DESTINATION'
+                : 'PROVIDER_UNAVAILABLE';
+          return { ok: false as const, error: { code, message: result.message } };
+        }
+        return { ok: false as const, error: { code: 'PROVIDER_UNAVAILABLE', message: 'withdrawal refused by kernel' } };
       }
       return { ok: true as const, value: { journalId: result.value.journalId } };
     },
@@ -192,19 +194,38 @@ export function createGrowControlsService(input: {
 }
 
 function mapFailure(requestId: string, error: GrowControlFailure): BffErrorEnvelope {
-  const status =
+  const errorCode =
     error.code === 'ACTOR_UNAUTHORIZED' || error.code === 'CUSTOMER_MISMATCH'
-      ? 403
-      : error.code === 'INSUFFICIENT_AVAILABLE_CASH' ||
-          error.code === 'RESERVED_CASH' ||
-          error.code === 'WITHDRAWAL_IN_FLIGHT' ||
-          error.code === 'ALREADY_PAUSED' ||
-          error.code === 'NOT_PAUSED' ||
-          error.code === 'RESUME_BLOCKED' ||
-          error.code === 'DEPLOYMENT_PAUSED'
-        ? 409
-        : 400;
-  return bffError(requestId, error.message, error.code, status);
+      ? 'FORBIDDEN'
+      : error.code === 'PROVIDER_UNAVAILABLE' || error.code === 'DEPLOYMENT_PAUSED'
+        ? 'FEATURE_UNAVAILABLE'
+        : error.code === 'ACCOUNT_RESTRICTED'
+          ? 'KERNEL_DENIED'
+          : 'VALIDATION';
+  const category =
+    errorCode === 'FORBIDDEN' || errorCode === 'KERNEL_DENIED'
+      ? 'AUTHORIZATION'
+      : errorCode === 'FEATURE_UNAVAILABLE'
+        ? 'TEMPORARY_UNAVAILABLE'
+        : 'VALIDATION';
+  return bffError({
+    errorCode,
+    category,
+    message: error.message,
+    retryable: false,
+    requestId,
+    detailsSafeForClient: { growControlCode: error.code },
+  });
+}
+
+function validationError(requestId: string, message: string): BffErrorEnvelope {
+  return bffError({
+    errorCode: 'VALIDATION',
+    category: 'VALIDATION',
+    message,
+    retryable: false,
+    requestId,
+  });
 }
 
 export function growControlsStatus(
@@ -292,10 +313,16 @@ export function growControlsWithdraw(
 ): Record<string, unknown> | BffErrorEnvelope {
   const amountMinorUnits = typeof body.amountMinorUnits === 'string' ? body.amountMinorUnits : '';
   if (!/^\d+$/.test(amountMinorUnits)) {
-    return bffError(requestId, 'amount must be integer minor units', 'VALIDATION', 400);
+    return validationError(requestId, 'amount must be integer minor units');
   }
   if (!accounts) {
-    return bffError(requestId, 'investment accounts not provisioned', 'PRODUCT_UNAVAILABLE', 400);
+    return bffError({
+      errorCode: 'FEATURE_UNAVAILABLE',
+      category: 'TEMPORARY_UNAVAILABLE',
+      message: 'investment accounts not provisioned',
+      retryable: false,
+      requestId,
+    });
   }
   const destinationAccountId =
     typeof body.destinationAccountId === 'string' ? body.destinationAccountId : accounts.demandAccountId;
@@ -323,7 +350,7 @@ export function growControlsMandateChange(
 ): Record<string, unknown> | BffErrorEnvelope {
   const sourceText = typeof body.sourceText === 'string' ? body.sourceText : '';
   if (!sourceText.trim()) {
-    return bffError(requestId, 'sourceText required', 'VALIDATION', 400);
+    return validationError(requestId, 'sourceText required');
   }
   const result = deps.growControls.changeMandate(deps.resolveActor(principal.actorId), {
     customerId: principal.customerId,
