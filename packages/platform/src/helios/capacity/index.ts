@@ -20,6 +20,7 @@ export {
   type PipelineLatencySummary,
   type PortfolioInteractionResult,
   type ResourceUtilizationSnapshot,
+  type QualificationEnvironment,
   type SafeOperatingEnvelope,
 } from './types.ts';
 
@@ -57,4 +58,8 @@ export {
   evaluateResilienceEconomicQualification,
 } from './qualification.ts';
 
-export { assertSimulationPosture, runHeliosCapacityQualification } from './harness.ts';
+export {
+  assertSimulationPosture,
+  runHeliosCapacityQualification,
+  type HeliosCapacityHarnessInput,
+} from './harness.ts';

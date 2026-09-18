@@ -3,7 +3,6 @@
  * Preserves tail latency — does not average away severe tails.
  */
 
-import { summarizeLatencyMs } from '../../../../../performance/lib/stats.ts';
 import type {
   DecisionLatencySummary,
   DiscoveryLatencySummary,
@@ -13,6 +12,12 @@ import type {
   LatencyDistribution,
   PipelineLatencySummary,
 } from './types.ts';
+
+function percentile(sorted: readonly number[], p: number): number {
+  if (sorted.length === 0) return 0;
+  const index = Math.max(0, Math.ceil((p / 100) * sorted.length) - 1);
+  return sorted[index] ?? 0;
+}
 
 export function toLatencyDistribution(samples: readonly number[]): LatencyDistribution {
   if (samples.length === 0) {
@@ -27,16 +32,17 @@ export function toLatencyDistribution(samples: readonly number[]): LatencyDistri
     });
   }
   const sorted = [...samples].sort((a, b) => a - b);
-  const summary = summarizeLatencyMs(sorted);
-  const p90Index = Math.max(0, Math.ceil(0.9 * sorted.length) - 1);
+  const count = sorted.length;
+  const sum = sorted.reduce((acc, value) => acc + value, 0);
+  const mean = sum / count;
   return Object.freeze({
-    count: summary.count,
-    p50Ms: summary.p50Ms,
-    p90Ms: sorted[p90Index] ?? 0,
-    p95Ms: summary.p95Ms,
-    p99Ms: summary.p99Ms,
-    maxMs: summary.maxMs,
-    meanMs: summary.meanMs,
+    count,
+    p50Ms: percentile(sorted, 50),
+    p90Ms: percentile(sorted, 90),
+    p95Ms: percentile(sorted, 95),
+    p99Ms: percentile(sorted, 99),
+    maxMs: sorted[count - 1] ?? 0,
+    meanMs: mean,
   });
 }
 

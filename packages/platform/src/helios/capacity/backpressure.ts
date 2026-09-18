@@ -2,7 +2,7 @@
  * HELIOS H33 — queue backpressure and bounded degradation simulation.
  */
 
-import { runConcurrent } from '../../../../../performance/lib/stats.ts';
+import { runConcurrent } from './concurrency.ts';
 import type { BackpressureResult, HeliosLoadProfile } from './types.ts';
 
 type BoundedQueue = {

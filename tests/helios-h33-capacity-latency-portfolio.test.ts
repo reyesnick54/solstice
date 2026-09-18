@@ -21,60 +21,11 @@ import {
   runTripleStrategyCapitalRace,
   toLatencyDistribution,
 } from '../packages/platform/src/helios/capacity/index.ts';
-import {
-  createEconomicWorkOrderDraft,
-  mandateBindingRefFromCompiled,
-  workOrderIdFor,
-} from '../packages/platform/src/helios/index.ts';
-import { interpretMandateLanguage } from '../packages/agent/src/interpretation.ts';
-import { compileEconomicMandate, mandateDraftFromInterpretation } from '../packages/platform/src/mandate/compiler.ts';
-import { asCustomerId } from '../packages/domain/src/customer.ts';
-import { asJurisdiction } from '../packages/domain/src/jurisdiction.ts';
+import { heliosH33ActiveWorkOrder, heliosH33BaseScope } from '../performance/helios/fixtures.ts';
+import { captureEnvironment } from '../performance/lib/env-metadata.ts';
 import { lintHeliosBoundary } from '../tools/architectural-linter/src/helios-guards.ts';
 
 const NOW = asUtcInstant('2026-09-18T09:00:00.000Z');
-
-function activeWorkOrder(customerId: string, subjectId: string) {
-  const interpretation = interpretMandateLanguage({
-    subjectId,
-    sourceText: 'Keep at least $2,000 liquid.',
-    now: NOW,
-  });
-  if (!interpretation.ok) throw new Error('interpretation');
-  const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
-  const compiled = compileEconomicMandate({ draft, now: NOW });
-  if (!compiled.ok) throw new Error('compile');
-  const mandate = Object.freeze({ ...compiled.value, state: 'ACTIVE' as const });
-  const scope = Object.freeze({
-    objectiveClasses: Object.freeze(['RESEARCH', 'FINANCIAL_PROPOSAL'] as const),
-    activityClasses: Object.freeze(['RESEARCH', 'FINANCIAL_PROPOSAL'] as const),
-    productClasses: Object.freeze(['CASH', 'EQUITIES', 'ETF'] as const),
-    capitalCeiling: { minorUnits: '1000000', currency: 'USD' },
-    accountIds: Object.freeze(['acct_h33']),
-    jurisdiction: asJurisdiction('US'),
-    horizonDays: 30,
-    toolIds: Object.freeze(['tool_research']),
-    modelIds: Object.freeze(['mdl_s3m']),
-  });
-  const workOrderId = workOrderIdFor(customerId, 'h33_ci');
-  return Object.freeze({
-    ...createEconomicWorkOrderDraft({
-      workOrderId,
-      customerId: asCustomerId(customerId),
-      subjectId,
-      growObjectiveId: 'grow_h33_ci',
-      requestedScope: scope,
-      mandateRef: mandateBindingRefFromCompiled(mandate, asCustomerId(customerId), NOW),
-      approvalRef: null,
-      requiredApprovalClass: 'NONE',
-      now: NOW,
-    }),
-    state: 'ACTIVE' as const,
-    effectiveScope: scope,
-    activatedAt: NOW,
-    updatedAt: NOW,
-  });
-}
 
 describe('HELIOS H33 capacity, latency, and portfolio interactions', () => {
   it('architecture guard: capacity module stays within HELIOS boundary', () => {
@@ -118,7 +69,7 @@ describe('HELIOS H33 capacity, latency, and portfolio interactions', () => {
   });
 
   it('portfolio concurrency: $10,000 available, three $5,000 strategies do not deploy $15,000', () => {
-    const workOrder = activeWorkOrder('cust_h33_portfolio', 'subj_h33_portfolio');
+    const workOrder = heliosH33ActiveWorkOrder('cust_h33_portfolio', 'subj_h33_portfolio', NOW, 'h33_ci');
     const result = runTripleStrategyCapitalRace({
       workOrder,
       availableMinor: '1000000',
@@ -135,6 +86,14 @@ describe('HELIOS H33 capacity, latency, and portfolio interactions', () => {
     const result = await runHeliosCapacityQualification({
       profileId: 'SMALL',
       now: clock.now(),
+      environment: captureEnvironment({
+        databaseMode: 'in-process',
+        networkMode: 'in-process',
+        benchmarkTool: 'helios-h33-regression',
+        benchmarkToolVersion: 'h33-v1',
+      }),
+      workOrder: heliosH33ActiveWorkOrder('cust_h33_main', 'subj_h33_main', clock.now()),
+      scope: heliosH33BaseScope(),
     });
     assert.ok(
       result.marker === HELIOS_RESILIENCE_ECONOMIC_QUALIFIED ||

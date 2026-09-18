@@ -2,21 +2,10 @@
  * HELIOS H33 — capacity qualification harness.
  */
 
-import { interpretMandateLanguage } from '../../../../agent/src/interpretation.ts';
-import { ENVIRONMENT, LIVE_TRADING_ENABLED } from '../../../../config/src/flags.ts';
-import { asCustomerId } from '../../../../domain/src/customer.ts';
-import { asJurisdiction } from '../../../../domain/src/jurisdiction.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
-import { captureEnvironment } from '../../../../../performance/lib/env-metadata.ts';
-import { runConcurrent } from '../../../../../performance/lib/stats.ts';
-import { compileEconomicMandate, mandateDraftFromInterpretation } from '../../mandate/compiler.ts';
-import {
-  createEconomicWorkOrderDraft,
-  mandateBindingRefFromCompiled,
-  workOrderIdFor,
-  type EconomicWorkOrder,
-  type WorkOrderScope,
-} from '../index.ts';
+import { ENVIRONMENT, LIVE_TRADING_ENABLED } from '@solstice/config';
+import type { UtcInstant } from '@solstice/domain';
+import { workOrderIdFor, type EconomicWorkOrder, type WorkOrderScope } from '../index.ts';
+import { runConcurrent } from './concurrency.ts';
 import { simulateQueueBackpressure, verifyPriorityUnderBacklog } from './backpressure.ts';
 import { runChaosUnderLoadScenarios } from './chaos-under-load.ts';
 import { verifyCapacityInvariants } from './invariants.ts';
@@ -34,58 +23,20 @@ import type {
   EconomicCapacityFinding,
   HeliosLoadProfileId,
   HeliosPipelineLatencySample,
+  QualificationEnvironment,
 } from './types.ts';
 
-function baseScope(): WorkOrderScope {
-  return Object.freeze({
-    objectiveClasses: Object.freeze(['RESEARCH', 'FINANCIAL_PROPOSAL'] as const),
-    activityClasses: Object.freeze(['RESEARCH', 'FINANCIAL_PROPOSAL'] as const),
-    productClasses: Object.freeze(['CASH', 'EQUITIES', 'ETF'] as const),
-    capitalCeiling: { minorUnits: '1000000', currency: 'USD' },
-    accountIds: Object.freeze(['acct_h33']),
-    jurisdiction: asJurisdiction('US'),
-    horizonDays: 30,
-    toolIds: Object.freeze(['tool_research']),
-    modelIds: Object.freeze(['mdl_s3m']),
-  });
-}
-
-function activeWorkOrder(customerId: string, subjectId: string, now: UtcInstant): EconomicWorkOrder {
-  const interpretation = interpretMandateLanguage({
-    subjectId,
-    sourceText: 'Keep at least $2,000 liquid. Ask me before any movement over $1,000.',
-    now,
-  });
-  if (!interpretation.ok) throw new Error('interpretation failed');
-  const draft = mandateDraftFromInterpretation(interpretation.value, now);
-  const compiled = compileEconomicMandate({ draft, now });
-  if (!compiled.ok) throw new Error('mandate compile failed');
-  const mandate = Object.freeze({ ...compiled.value, state: 'ACTIVE' as const });
-  const scope = baseScope();
-  const workOrderId = workOrderIdFor(customerId, 'h33');
-  return Object.freeze({
-    ...createEconomicWorkOrderDraft({
-      workOrderId,
-      customerId: asCustomerId(customerId),
-      subjectId,
-      growObjectiveId: 'grow_h33',
-      requestedScope: scope,
-      mandateRef: mandateBindingRefFromCompiled(mandate, asCustomerId(customerId), now),
-      approvalRef: null,
-      requiredApprovalClass: 'NONE',
-      now,
-    }),
-    state: 'ACTIVE',
-    effectiveScope: scope,
-    activatedAt: now,
-    updatedAt: now,
-  });
-}
+export type HeliosCapacityHarnessInput = {
+  readonly profileId: HeliosLoadProfileId;
+  readonly now: UtcInstant;
+  readonly environment: QualificationEnvironment;
+  readonly workOrder: EconomicWorkOrder;
+  readonly scope: WorkOrderScope;
+};
 
 async function simulatePipelineTraces(input: {
   readonly profileId: HeliosLoadProfileId;
   readonly customerCount: number;
-  readonly now: UtcInstant;
 }): Promise<{
   readonly samples: readonly HeliosPipelineLatencySample[];
   readonly observations: number;
@@ -96,7 +47,6 @@ async function simulatePipelineTraces(input: {
 }> {
   const profile = resolveHeliosLoadProfile(input.profileId);
   const samples: HeliosPipelineLatencySample[] = [];
-  let observations = 0;
   let researchTasks = 0;
   let proposals = 0;
   let orders = 0;
@@ -142,7 +92,6 @@ async function simulatePipelineTraces(input: {
     trace.addDeterministicTime(2 + (index % 4));
     samples.push(trace.freeze());
 
-    observations += profile.observationsPerSec > 0 ? 1 : 0;
     researchTasks += 1;
     if (index % 3 === 0) proposals += 1;
     if (index % 5 === 0) {
@@ -151,7 +100,7 @@ async function simulatePipelineTraces(input: {
     }
   });
 
-  observations = profile.observationsPerSec * Math.ceil(profile.durationMs / 1000);
+  const observations = profile.observationsPerSec * Math.ceil(profile.durationMs / 1000);
   return Object.freeze({
     samples: Object.freeze(samples),
     observations,
@@ -199,30 +148,27 @@ function detectBottlenecks(input: {
   return Object.freeze(bottlenecks);
 }
 
-export async function runHeliosCapacityQualification(input: {
-  readonly profileId: HeliosLoadProfileId;
-  readonly now: UtcInstant;
-}): Promise<CapacityQualificationResult> {
+export async function runHeliosCapacityQualification(
+  input: HeliosCapacityHarnessInput,
+): Promise<CapacityQualificationResult> {
   const profile = resolveHeliosLoadProfile(input.profileId);
-  const workOrder = activeWorkOrder('cust_h33_main', 'subj_h33_main', input.now);
 
   const pipeline = await simulatePipelineTraces({
     profileId: input.profileId,
     customerCount: profile.concurrentCustomers,
-    now: input.now,
   });
   const latency = computePipelineLatencySummary(pipeline.samples);
 
   const portfolioInteractions = runAllPortfolioInteractionScenarios({
-    workOrder,
+    workOrder: input.workOrder,
     now: input.now,
   });
 
   const customerIsolation = await runMultiCustomerIsolationTest({
     customerCount: Math.min(profile.concurrentCustomers, 20),
-    scope: baseScope(),
+    scope: input.scope,
     now: input.now,
-    mandateRef: workOrder.mandateRef,
+    mandateRef: input.workOrder.mandateRef,
   });
 
   const backpressureResults = [...(await simulateQueueBackpressure(profile))];
@@ -305,12 +251,7 @@ export async function runHeliosCapacityQualification(input: {
     report: Object.freeze({
       schemaVersion: 1,
       chunk: 'H33',
-      environment: captureEnvironment({
-        databaseMode: 'in-process',
-        networkMode: 'in-process',
-        benchmarkTool: 'helios-capacity-qualify',
-        benchmarkToolVersion: 'h33-v1',
-      }),
+      environment: input.environment,
       loadProfile: input.profileId,
       configuration: Object.freeze({
         simulationOnly: true,

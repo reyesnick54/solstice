@@ -3,7 +3,27 @@
  * ENGINEERING_MEASUREMENT only — not production SLAs.
  */
 
-import type { QualificationEnvironment } from '../../../../../performance/lib/env-metadata.ts';
+export type QualificationEnvironment = {
+  readonly resultClass: 'ENGINEERING_MEASUREMENT';
+  readonly label: 'ENGINEERING_QUALIFICATION_TARGET';
+  readonly sourceCommit: string;
+  readonly recordedAtUtc: string;
+  readonly nodeVersion: string;
+  readonly platform: string;
+  readonly arch: string;
+  readonly cpuCount: number;
+  readonly cpuModel: string;
+  readonly totalMemoryGiB: number;
+  readonly freeMemoryGiB: number;
+  readonly container: boolean;
+  readonly environment: string;
+  readonly databaseMode: 'in-process' | 'postgresql' | 'unavailable';
+  readonly networkMode: 'localhost' | 'in-process';
+  readonly cryptoMode: 'CLASSICAL_DEVELOPMENT_ED25519' | 'HYBRID_SIMULATION';
+  readonly validatorCount: number | null;
+  readonly benchmarkTool: string;
+  readonly benchmarkToolVersion: string;
+};
 
 export const HELIOS_H33_CAPACITY_LATENCY_PORTFOLIO = 'HELIOS_H33_CAPACITY_LATENCY_PORTFOLIO' as const;
 

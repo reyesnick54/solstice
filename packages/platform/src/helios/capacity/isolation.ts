@@ -2,8 +2,7 @@
  * HELIOS H33 — multi-customer isolation under concurrent load.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
-import { asCustomerId } from '../../../../domain/src/customer.ts';
+import { asCustomerId, type UtcInstant } from '@solstice/domain';
 import {
   HeliosMetaAllocatorService,
   InMemoryHeliosMetaAllocatorStore,

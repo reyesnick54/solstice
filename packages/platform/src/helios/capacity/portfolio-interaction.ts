@@ -2,7 +2,7 @@
  * HELIOS H33 — portfolio concurrency and capital reservation scenarios.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import {
   HeliosMetaAllocatorService,
   InMemoryHeliosMetaAllocatorStore,

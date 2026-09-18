@@ -2,7 +2,7 @@
  * HELIOS H33 — chaos scenarios combined with concurrent load (H31 composition).
  */
 
-import { runConcurrent } from '../../../../../performance/lib/stats.ts';
+import { runConcurrent } from './concurrency.ts';
 import { classifyTaskError, isRetryableCategory } from '../retry.ts';
 import type { ChaosUnderLoadResult, HeliosLoadProfile } from './types.ts';
 

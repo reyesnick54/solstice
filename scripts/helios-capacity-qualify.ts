@@ -11,7 +11,9 @@ import {
   runHeliosCapacityQualification,
   type HeliosLoadProfileId,
 } from '../packages/platform/src/helios/capacity/index.ts';
+import { heliosH33ActiveWorkOrder, heliosH33BaseScope } from '../performance/helios/fixtures.ts';
 import { writeHeliosCapacityReport } from '../performance/helios/lib/report.ts';
+import { captureEnvironment } from '../performance/lib/env-metadata.ts';
 
 function parseProfileArg(): HeliosLoadProfileId | 'ALL' {
   const profileIndex = process.argv.indexOf('--profile');
@@ -34,9 +36,24 @@ async function main(): Promise<void> {
   const profiles: HeliosLoadProfileId[] =
     profileArg === 'ALL' ? [...ALL_HELIOS_LOAD_PROFILE_IDS] : [profileArg];
 
+  const environment = captureEnvironment({
+    databaseMode: 'in-process',
+    networkMode: 'in-process',
+    benchmarkTool: 'helios-capacity-qualify',
+    benchmarkToolVersion: 'h33-v1',
+  });
+  const workOrder = heliosH33ActiveWorkOrder('cust_h33_main', 'subj_h33_main', clock.now());
+  const scope = heliosH33BaseScope();
+
   const reports = [];
   for (const profileId of profiles) {
-    const result = await runHeliosCapacityQualification({ profileId, now: clock.now() });
+    const result = await runHeliosCapacityQualification({
+      profileId,
+      now: clock.now(),
+      environment,
+      workOrder,
+      scope,
+    });
     const outDir = writeHeliosCapacityReport(result.report);
     reports.push({
       profileId,
