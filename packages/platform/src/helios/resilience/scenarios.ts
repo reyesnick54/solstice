@@ -14,6 +14,7 @@ import {
   type CanonicalTrustResult,
 } from '@solstice/provider-sdk';
 import { asEconomicMandateId, asMandateVersion } from '../../ids.ts';
+import { asEconomicWorkOrderId, asHeliosTaskId } from '../ids.ts';
 import type { CompiledEconomicMandate } from '../../mandate/types.ts';
 import { HeliosWorkOrchestrator } from '../orchestrator.ts';
 import { HeliosTaskWorker } from '../executor.ts';
@@ -103,8 +104,8 @@ function orchestratorSetup(subjectId = 'id_h31_a', customerId = 'cust_h31_a') {
 
 function researchTask(customerId: string): HeliosResearchTaskInput {
   return Object.freeze({
-    taskId: `htk_h31_${randomUUID().slice(0, 8)}`,
-    workOrderId: `ewo_h31_${randomUUID().slice(0, 8)}`,
+    taskId: asHeliosTaskId(`htk_h31_${randomUUID().slice(0, 8)}`),
+    workOrderId: asEconomicWorkOrderId(`ewo_h31_${randomUUID().slice(0, 8)}`),
     customerId: asCustomerId(customerId),
     question: 'Assess public macro liquidity under adversarial qualification.',
     permittedTools: Object.freeze(['tool_economic_data_search', 'tool_market_observation']),
@@ -544,7 +545,7 @@ async function runScenario(testId: ResilienceScenarioId): Promise<ResilienceScen
           reasoning: new ExcessiveToolReasoningEngine(),
           options: { limits: STRICT_RESEARCH_LOOP_LIMITS },
         });
-        const bounded = loop.completionStatus === 'LIMIT_REACHED' || loop.toolRecords.length <= STRICT_RESEARCH_LOOP_LIMITS.maxToolCallsPerIteration;
+        const bounded = loop.completionStatus === 'LIMIT_REACHED' || loop.toolRecords.length <= STRICT_RESEARCH_LOOP_LIMITS.maxToolCalls;
         return rowFromRun({
           testId,
           domain: def.domain,
