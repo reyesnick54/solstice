@@ -3,10 +3,9 @@
  * Extracts read-only facts from InvestmentsService state — no parallel P&L truth.
  */
 
-import type { UtcInstant } from '../../domain/src/time.ts';
-import { Money } from '../../money/src/money.ts';
-import type { Ledger } from '../../ledger/src/journal.ts';
-import { ledgerScaledUnits } from '../../money/src/ledger-amount.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { Ledger } from '@solstice/ledger';
+import { Money, ledgerScaledUnits } from '@solstice/money';
 import type { InvestmentAccountId } from './ids.ts';
 import type { InvestmentsService } from './service.ts';
 import type { ReconciliationResult } from './types.ts';
