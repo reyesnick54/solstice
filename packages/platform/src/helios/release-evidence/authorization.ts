@@ -2,7 +2,7 @@
  * HELIOS H36 — human live-pilot authorization record (AI cannot sign).
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { livePilotAuthorizationIdFor } from './ids.ts';
 import type {
   ExternalEvidenceRef,

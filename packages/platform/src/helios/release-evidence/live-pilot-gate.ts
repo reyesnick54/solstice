@@ -2,7 +2,7 @@
  * HELIOS H36 — live-pilot external gate evaluation.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { externalGateItemIdFor } from './ids.ts';
 import { LIVE_PILOT_GATE_CATALOG } from './live-pilot-gate-catalog.ts';
 import {

@@ -7,8 +7,8 @@ import {
   LIVE_CONNECTIVITY_ENABLED,
   LIVE_INVESTMENT_EXECUTION,
   LIVE_TRADING_ENABLED,
-} from '../../../../config/src/flags.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+} from '@solstice/config';
+import type { UtcInstant } from '@solstice/domain';
 import { PERFORMANCE_CLAIM_RESTRICTIONS } from './taxonomy.ts';
 import { sha256CanonicalJson } from './hash.ts';
 import { heliosReleaseIdFor } from './ids.ts';

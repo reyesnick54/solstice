@@ -2,7 +2,7 @@
  * HELIOS H36 — release evidence package and live-pilot gate types.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type {
   ExternalEvidenceKind,
   GovernanceApprovalRole,

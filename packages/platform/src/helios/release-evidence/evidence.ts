@@ -2,7 +2,7 @@
  * HELIOS H36 — Evidence Vault sealing for release evidence and pilot gate outcomes.
  */
 
-import type { EvidenceVault } from '../../../../evidence/src/vault.ts';
+import type { EvidenceVault } from '@solstice/evidence';
 import type {
   HELIOSReleaseEvidencePackage,
   HeliosClosureReport,

@@ -2,8 +2,8 @@
  * HELIOS H36 — release evidence and live-pilot gate service.
  */
 
-import type { EvidenceVault } from '../../../../evidence/src/vault.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { EvidenceVault } from '@solstice/evidence';
 import { buildPilotActivationCeremonyContract } from './activation-ceremony.ts';
 import { buildLivePilotAuthorization, refuseAiAuthorization } from './authorization.ts';
 import { buildHeliosClosureReport } from './closure-report.ts';

@@ -2,7 +2,7 @@
  * HELIOS H36 — H01-H36 engineering closure report.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { buildHeliosWorkPackageRegistry, registryHasBlockers } from './work-package-registry.ts';
 import type {
   HeliosClosureReport,
