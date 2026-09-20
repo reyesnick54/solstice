@@ -111,6 +111,10 @@ function capitalMarketAssetClassToMultiAsset(assetClass: CapitalMarketAssetClass
       return 'INDEX' as const;
     case 'commodity':
       return 'COMMODITY' as const;
+    case 'crypto':
+      return 'CRYPTO_SPOT' as const;
+    case 'future':
+      return 'FUTURE' as const;
     case 'fx':
       return 'FX_SPOT' as const;
     default:

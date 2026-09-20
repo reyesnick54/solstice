@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-20T16:46:30.450751+00:00",
+  "generatedAt": "2026-09-20T17:48:53.558422+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -539,14 +539,14 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 5040,
+      "packageDeepImport": 5050,
       "serviceDeepImport": 652,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 5040,
+      "relativeCrossPackage": 5050,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5692
+      "total": 5702
     }
   },
   "violations": [
@@ -22061,6 +22061,33 @@
       "spec": "../../../platform/src/helios/executable-opportunity/store.ts"
     },
     {
+      "file": "packages/persistence/src/growth/pg-helios-market-time-series.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/persistence/src/growth/pg-helios-market-time-series.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "persistence",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/persistence/src/growth/pg-helios-market-time-series.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/persistence/src/growth/pg-helios-market-time-series.ts' deep-imports 'platform' internals via '../../../platform/src/helios/observation/types.ts'",
+      "sourcePackage": "persistence",
+      "targetPackage": "platform",
+      "spec": "../../../platform/src/helios/observation/types.ts"
+    },
+    {
+      "file": "packages/persistence/src/growth/pg-helios-market-time-series.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/persistence/src/growth/pg-helios-market-time-series.ts' deep-imports 'platform' internals via '../../../platform/src/helios/market-observation/types.ts'",
+      "sourcePackage": "persistence",
+      "targetPackage": "platform",
+      "spec": "../../../platform/src/helios/market-observation/types.ts"
+    },
+    {
       "file": "packages/persistence/src/growth/pg-helios-observation-store.ts",
       "line": 3,
       "rule": "package-deep-import",
@@ -26676,6 +26703,78 @@
       "sourcePackage": "platform",
       "targetPackage": "money",
       "spec": "../../../money/src/money.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/market-observation/ingest.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/market-observation/ingest.ts' deep-imports 'config' internals via '../../../../config/src/clock.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "config",
+      "spec": "../../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/market-observation/ingest.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/market-observation/ingest.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/index.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/index.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/market-observation/order-book.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/market-observation/order-book.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/market-observation/strategy-api.ts",
+      "line": 9,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/market-observation/strategy-api.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/market-observation/time-series-store.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/market-observation/time-series-store.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/market-observation/types.ts",
+      "line": 9,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/market-observation/types.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/market-observation/types.ts",
+      "line": 10,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/market-observation/types.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/types.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/types.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/market-observation/validation.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/market-observation/validation.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
     },
     {
       "file": "packages/platform/src/helios/material-change.ts",
@@ -40797,15 +40896,6 @@
       "sourcePackage": "sunrey-exchange",
       "targetPackage": "domain",
       "spec": "../../../../domain/src/time.ts"
-    },
-    {
-      "file": "packages/sunrey-exchange/src/capital-market/gold/service.ts",
-      "line": 271,
-      "rule": "package-deep-import",
-      "message": "'packages/sunrey-exchange/src/capital-market/gold/service.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/types.ts'",
-      "sourcePackage": "sunrey-exchange",
-      "targetPackage": "provider-sdk",
-      "spec": "../../../../provider-sdk/src/types.ts"
     },
     {
       "file": "packages/sunrey-exchange/src/capital-market/gold/types.ts",
