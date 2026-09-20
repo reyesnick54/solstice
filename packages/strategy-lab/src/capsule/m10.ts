@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { asStrategyCapsuleId, asStrategyCapsuleVersion, asStrategyFamilyId } from './ids.ts';
 import { computeStrategyCapsuleMaterialHash } from './fingerprint.ts';
 import {

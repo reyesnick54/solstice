@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { buildChronologicalObservation, type ChronologicalObservation } from '../evaluation/manifest.ts';
 import { HELIOS_CRYPTO_OBSERVATION_SCHEMA } from './constants.ts';
 

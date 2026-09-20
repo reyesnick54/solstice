@@ -208,14 +208,14 @@ describe('HELIOS Multi-Asset M10 crypto momentum breakout', () => {
 
   it('exits on risk-engine forced exit and emergency close', () => {
     const forcedRisk = evaluateBtc({
-      position: openPosition(ENTRY_AT, 65_400_00n),
+      position: openPosition(asUtcInstant('2026-09-20T14:00:00.000Z'), 65_400_00n),
       forced: { riskForcedExit: true },
     });
     assert.equal(forcedRisk.action, 'SELL');
     assert.equal(forcedRisk.exitReason, 'RISK_FORCED_EXIT');
 
     const emergency = evaluateBtc({
-      position: openPosition(ENTRY_AT, 65_400_00n),
+      position: openPosition(asUtcInstant('2026-09-20T14:00:00.000Z'), 65_400_00n),
       forced: { emergencyClose: true },
     });
     assert.equal(emergency.action, 'SELL');

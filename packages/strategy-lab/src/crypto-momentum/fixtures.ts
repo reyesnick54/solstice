@@ -1,4 +1,4 @@
-import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { asMarketDatasetVersion } from '../ids.ts';
 import {
   CRYPTO_BTC_USD_ASSET_ID,

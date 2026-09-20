@@ -6,35 +6,35 @@
   "samples": [
     {
       "label": "vault_summary",
-      "ns": "1000543"
+      "ns": "1019563"
     },
     {
       "label": "permissions",
-      "ns": "843709"
+      "ns": "842266"
     },
     {
       "label": "access_history",
-      "ns": "691115"
+      "ns": "682484"
     },
     {
       "label": "hin_contribution_summary",
-      "ns": "531546"
+      "ns": "544822"
     },
     {
       "label": "aggregate_hin_metrics",
-      "ns": "428460"
+      "ns": "450042"
     },
     {
       "label": "earnings",
-      "ns": "346624"
+      "ns": "361122"
     },
     {
       "label": "productive_overview",
-      "ns": "268568"
+      "ns": "280373"
     },
     {
       "label": "category_metric_history",
-      "ns": "92916"
+      "ns": "95808"
     }
   ]
 }

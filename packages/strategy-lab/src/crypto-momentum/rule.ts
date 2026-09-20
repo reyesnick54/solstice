@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 import {
   DEFAULT_M10_CONFIG,
