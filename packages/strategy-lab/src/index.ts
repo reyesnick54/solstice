@@ -168,6 +168,13 @@ export {
   buildHeliosH14StrategyCapsule,
 } from './capsule/h14.ts';
 export {
+  HELIOS_M09_CAPSULE_ID,
+  HELIOS_M09_FAMILY_ID,
+  HELIOS_M09_RULE_ID,
+  buildHeliosM09Material,
+  buildHeliosM09StrategyCapsule,
+} from './capsule/m09-index-mean-reversion.ts';
+export {
   HELIOS_M10_CAPSULE_ID,
   HELIOS_M10_CRYPTO_MOMENTUM_BREAKOUT_V1,
   HELIOS_M10_FAMILY_ID,
@@ -175,6 +182,74 @@ export {
   buildHeliosM10Material,
   buildHeliosM10StrategyCapsule,
 } from './capsule/m10.ts';
+export {
+  HELIOS_M09_STRATEGY_CAPSULE_ID,
+  HELIOS_M09_STRATEGY_CAPSULE_VERSION,
+  observeM09CapsuleQualification,
+  buildM09EvaluationCapsule,
+  registerM09StrategyCapsuleRecord,
+  m09MaterialFingerprint,
+} from './m09-capsule-bridge.ts';
+export type { M09CapsuleQualificationObservation } from './m09-capsule-bridge.ts';
+export {
+  M09_SPY_INSTRUMENT_ID,
+  M09_QQQ_INSTRUMENT_ID,
+  M09_INSTRUMENT_UNIVERSE,
+  M09_BAR_INTERVAL,
+} from './m09/ids.ts';
+export {
+  M09_PARAMETERS_V1,
+  M09_PARAMETERS_V2,
+  M09_Z_SCORE_SCALE,
+  resolveM09Parameters,
+  parameterFingerprint,
+  freezeM09ParameterRecord,
+} from './m09/parameters.ts';
+export type { M09ParameterVersion, M09StrategyParameters, M09ParameterRecord } from './m09/parameters.ts';
+export {
+  HELIOS_M09_INDEX_MEAN_REVERSION_RULE_ID,
+  evaluateM09IndexMeanReversion,
+  evaluateM09Universe,
+} from './m09/rule.ts';
+export {
+  rollingMeanMinor,
+  realizedVolBps,
+  zScoreScaled,
+  buildFeatureSnapshot,
+  barsForInstrument,
+  indexAtOrBefore,
+} from './m09/features.ts';
+export {
+  syntheticM09BarSeries,
+  m09ChronologicalManifest,
+  barsFromManifest,
+  buildM09Bar,
+} from './m09/fixtures.ts';
+export { runM09ChronologicalEvaluation, m09BuyAndHoldEnding } from './m09/evaluation.ts';
+export type { M09ChronologicalEvaluationResult } from './m09/evaluation.ts';
+export {
+  initialM09LifecycleState,
+  promoteM09ToShadow,
+  promoteM09ToPaper,
+  demoteM09,
+  restartM09Lifecycle,
+} from './m09/lifecycle.ts';
+export type { M09LifecycleMode, M09LifecycleState } from './m09/lifecycle.ts';
+export {
+  HELIOS_MULTI_ASSET_M09_INDEX_MEAN_REVERSION_QUALIFIED,
+  HELIOS_MULTI_ASSET_M09_INDEX_MEAN_REVERSION_BLOCKED,
+  evaluateM09Qualification,
+} from './m09/qualification.ts';
+export type { M09QualificationChecks, M09QualificationResult } from './m09/qualification.ts';
+export type {
+  M09BarObservation,
+  M09FeatureSnapshot,
+  M09StrategyDecision,
+  M09EvaluationContext,
+  M09OpenPosition,
+  M09EntryBlockReason,
+  M09ExitReason,
+} from './m09/types.ts';
 export { StrategyCapsuleService } from './capsule/service.ts';
 export type { CreateStrategyCapsuleDraftInput } from './capsule/service.ts';
 export { freezePromotionCapsule } from './promotion-capsule.ts';
