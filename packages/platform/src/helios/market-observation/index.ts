@@ -33,6 +33,7 @@ export {
 
 export {
   HELIOS_MARKET_INSTRUMENT_REGISTRY_ID,
+  M02_REFERENCE_INSTRUMENT_IDS,
   REGISTERED_MARKET_INSTRUMENTS,
   resolveMarketInstrument,
   resolveMarketInstrumentByProviderSymbol,

@@ -19,8 +19,8 @@ import {
   type BarTimeframe,
   type MarketEntitlementMetadata,
   type MarketProvenance,
-  type OhlcvBar,
 } from '../packages/platform/src/helios/index.ts';
+import type { OhlcvBar } from '../packages/platform/src/helios/market-observation/types.ts';
 import {
   loadHeliosObservationState,
   persistHeliosObservationState,
@@ -454,8 +454,9 @@ const describePersistence = persistenceAvailable() ? describe : describe.skip;
 
 describePersistence('HELIOS M02 persistence restart', () => {
   it('persists and restores market observations across restart', async () => {
-    await preparePersistence();
-    const runtime = await createDurableRuntime();
+    const env = await preparePersistence();
+    const runtime = await createDurableRuntime(env);
+    const pool = runtime.session.pools.customer;
     const fabric = new HeliosMarketObservationFabric({ clock: new FrozenClock(BASE) });
 
     fabric.ingest(
@@ -472,8 +473,8 @@ describePersistence('HELIOS M02 persistence restart', () => {
       }),
     );
 
-    await persistHeliosObservationState(runtime.pool, fabric.observationFabric().store().snapshot());
-    const restoredSnapshot = await loadHeliosObservationState(runtime.pool);
+    await persistHeliosObservationState(pool, fabric.observationFabric().store().snapshot());
+    const restoredSnapshot = await loadHeliosObservationState(pool);
     assert.ok(restoredSnapshot.observations.length >= 1);
 
     const restoredFabric = new HeliosMarketObservationFabric({ clock: new FrozenClock(BASE) });
@@ -484,7 +485,7 @@ describePersistence('HELIOS M02 persistence restart', () => {
     );
     const api = createStrategyMarketDataApi(restoredFabric.timeSeriesStore());
 
-    const bars = await queryHeliosMarketBars(runtime.pool, {
+    const bars = await queryHeliosMarketBars(pool, {
       canonicalInstrumentId: 'SECURITY:US:SPY:ARCX',
       timeframe: '15m',
       knowableAt: ARRIVAL,
