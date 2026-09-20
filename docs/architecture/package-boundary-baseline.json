@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-18T12:37:14.057881+00:00",
+  "generatedAt": "2026-09-20T16:46:30.450751+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -539,14 +539,14 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 5016,
+      "packageDeepImport": 5040,
       "serviceDeepImport": 652,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 5016,
+      "relativeCrossPackage": 5040,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5668
+      "total": 5692
     }
   },
   "violations": [
@@ -27263,6 +27263,141 @@
       "spec": "../../../../domain/src/time.ts"
     },
     {
+      "file": "packages/platform/src/helios/regulatory-evidence/access.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/regulatory-evidence/access.ts' deep-imports 'domain' internals via '../../../../domain/src/customer.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/customer.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/regulatory-evidence/evidence.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/regulatory-evidence/evidence.ts' deep-imports 'evidence' internals via '../../../../evidence/src/vault.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "evidence",
+      "spec": "../../../../evidence/src/vault.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/regulatory-evidence/report-generator.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/regulatory-evidence/report-generator.ts' deep-imports 'security' internals via '../../../../security/src/hash.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "security",
+      "spec": "../../../../security/src/hash.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/regulatory-evidence/report-generator.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/regulatory-evidence/report-generator.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/regulatory-evidence/reporting-policy.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/regulatory-evidence/reporting-policy.ts' deep-imports 'domain' internals via '../../../../domain/src/jurisdiction.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/jurisdiction.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/regulatory-evidence/service.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/regulatory-evidence/service.ts' deep-imports 'config' internals via '../../../../config/src/clock.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "config",
+      "spec": "../../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/regulatory-evidence/service.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/regulatory-evidence/service.ts' deep-imports 'domain' internals via '../../../../domain/src/customer.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/customer.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/regulatory-evidence/service.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/regulatory-evidence/service.ts' deep-imports 'domain' internals via '../../../../domain/src/result.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/result.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/regulatory-evidence/service.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/regulatory-evidence/service.ts' deep-imports 'evidence' internals via '../../../../evidence/src/vault.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "evidence",
+      "spec": "../../../../evidence/src/vault.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/regulatory-evidence/service.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/regulatory-evidence/service.ts' deep-imports 'security' internals via '../../../../security/src/hash.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "security",
+      "spec": "../../../../security/src/hash.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/regulatory-evidence/store.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/regulatory-evidence/store.ts' deep-imports 'domain' internals via '../../../../domain/src/customer.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/customer.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/regulatory-evidence/trigger-engine.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/regulatory-evidence/trigger-engine.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/regulatory-evidence/types.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/regulatory-evidence/types.ts' deep-imports 'domain' internals via '../../../../domain/src/customer.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/customer.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/regulatory-evidence/types.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/regulatory-evidence/types.ts' deep-imports 'domain' internals via '../../../../domain/src/jurisdiction.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/jurisdiction.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/regulatory-evidence/types.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/regulatory-evidence/types.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
       "file": "packages/platform/src/helios/regulatory-transparency/authorization.ts",
       "line": 1,
       "rule": "package-deep-import",
@@ -40628,6 +40763,87 @@
       "spec": "../../../config/src/flags.ts"
     },
     {
+      "file": "packages/sunrey-exchange/src/capital-market/futures/contract-registry.ts",
+      "line": 9,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/futures/contract-registry.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/futures/types.ts",
+      "line": 8,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/futures/types.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/gold/bar-history.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/gold/bar-history.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/gold/service.ts",
+      "line": 8,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/gold/service.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/gold/service.ts",
+      "line": 271,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/gold/service.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/types.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/types.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/gold/types.ts",
+      "line": 8,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/gold/types.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/integrations/helios-gold-observation-bridge.ts",
+      "line": 8,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/integrations/helios-gold-observation-bridge.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/integrations/helios-gold-observation-bridge.ts",
+      "line": 9,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/integrations/helios-gold-observation-bridge.ts' deep-imports 'provider-sdk' internals via '../../../../provider-sdk/src/index.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../provider-sdk/src/index.ts"
+    },
+    {
+      "file": "packages/sunrey-exchange/src/capital-market/integrations/helios-gold.ts",
+      "line": 7,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-exchange/src/capital-market/integrations/helios-gold.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-exchange",
+      "targetPackage": "domain",
+      "spec": "../../../../domain/src/time.ts"
+    },
+    {
       "file": "packages/sunrey-exchange/src/capital-market/integrations/helios.ts",
       "line": 8,
       "rule": "package-deep-import",
@@ -51561,150 +51777,6 @@
       "sourcePackage": "treasury",
       "targetPackage": "treasury",
       "spec": "../../../packages/treasury/src/index.ts"
-    },
-    {
-      "file": "packages/persistence/src/growth/pg-helios-regulatory-evidence-store.ts",
-      "line": 3,
-      "rule": "package-deep-import",
-      "message": "'packages/persistence/src/growth/pg-helios-regulatory-evidence-store.ts' deep-imports 'platform' internals via '../../../platform/src/helios/regulatory-evidence/types.ts'",
-      "sourcePackage": "persistence",
-      "targetPackage": "platform",
-      "spec": "../../../platform/src/helios/regulatory-evidence/types.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/regulatory-evidence/access.ts",
-      "line": 1,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/regulatory-evidence/access.ts' deep-imports 'domain' internals via '../../../../domain/src/customer.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "domain",
-      "spec": "../../../../domain/src/customer.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/regulatory-evidence/evidence.ts",
-      "line": 1,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/regulatory-evidence/evidence.ts' deep-imports 'evidence' internals via '../../../../evidence/src/vault.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "evidence",
-      "spec": "../../../../evidence/src/vault.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/regulatory-evidence/report-generator.ts",
-      "line": 1,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/regulatory-evidence/report-generator.ts' deep-imports 'security' internals via '../../../../security/src/hash.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "security",
-      "spec": "../../../../security/src/hash.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/regulatory-evidence/report-generator.ts",
-      "line": 2,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/regulatory-evidence/report-generator.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "domain",
-      "spec": "../../../../domain/src/time.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/regulatory-evidence/reporting-policy.ts",
-      "line": 5,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/regulatory-evidence/reporting-policy.ts' deep-imports 'domain' internals via '../../../../domain/src/jurisdiction.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "domain",
-      "spec": "../../../../domain/src/jurisdiction.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/regulatory-evidence/service.ts",
-      "line": 1,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/regulatory-evidence/service.ts' deep-imports 'config' internals via '../../../../config/src/clock.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "config",
-      "spec": "../../../../config/src/clock.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/regulatory-evidence/service.ts",
-      "line": 2,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/regulatory-evidence/service.ts' deep-imports 'domain' internals via '../../../../domain/src/customer.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "domain",
-      "spec": "../../../../domain/src/customer.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/regulatory-evidence/service.ts",
-      "line": 3,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/regulatory-evidence/service.ts' deep-imports 'domain' internals via '../../../../domain/src/result.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "domain",
-      "spec": "../../../../domain/src/result.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/regulatory-evidence/service.ts",
-      "line": 4,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/regulatory-evidence/service.ts' deep-imports 'evidence' internals via '../../../../evidence/src/vault.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "evidence",
-      "spec": "../../../../evidence/src/vault.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/regulatory-evidence/service.ts",
-      "line": 5,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/regulatory-evidence/service.ts' deep-imports 'security' internals via '../../../../security/src/hash.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "security",
-      "spec": "../../../../security/src/hash.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/regulatory-evidence/store.ts",
-      "line": 1,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/regulatory-evidence/store.ts' deep-imports 'domain' internals via '../../../../domain/src/customer.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "domain",
-      "spec": "../../../../domain/src/customer.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/regulatory-evidence/trigger-engine.ts",
-      "line": 1,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/regulatory-evidence/trigger-engine.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "domain",
-      "spec": "../../../../domain/src/time.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/regulatory-evidence/types.ts",
-      "line": 1,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/regulatory-evidence/types.ts' deep-imports 'domain' internals via '../../../../domain/src/customer.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "domain",
-      "spec": "../../../../domain/src/customer.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/regulatory-evidence/types.ts",
-      "line": 2,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/regulatory-evidence/types.ts' deep-imports 'domain' internals via '../../../../domain/src/jurisdiction.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "domain",
-      "spec": "../../../../domain/src/jurisdiction.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/regulatory-evidence/types.ts",
-      "line": 3,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/regulatory-evidence/types.ts' deep-imports 'domain' internals via '../../../../domain/src/time.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "domain",
-      "spec": "../../../../domain/src/time.ts"
     }
   ]
 }
