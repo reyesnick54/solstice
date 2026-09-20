@@ -2,7 +2,7 @@
  * HELIOS equity/index market state generation from provider-backed observations.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { latestBarForInstrument, type CapitalMarketBarStore } from './bar-store.ts';
 import { resolveCapitalMarketInstrument } from './instrument-registry.ts';
 import type { CapitalMarketTimeframe } from './timeframes.ts';

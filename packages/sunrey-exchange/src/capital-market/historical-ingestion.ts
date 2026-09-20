@@ -5,7 +5,7 @@
  * Never fabricates historical bars from repeated quote values.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { CapitalMarketProvider } from './provider.ts';
 import {
   barsInRange,
@@ -227,7 +227,7 @@ export function detectGaps(
     const prior = sorted[index - 1]!;
     const current = sorted[index]!;
     const delta = Date.parse(current.periodStart) - Date.parse(prior.periodStart);
-    if (delta > bucketMs * 1.5) {
+    if (delta > (bucketMs * 3) / 2) {
       const missingStart = new Date(Date.parse(prior.periodStart) + bucketMs).toISOString();
       const missingEnd = new Date(Date.parse(current.periodStart) - 1).toISOString();
       gapPeriods.push({ expectedStart: missingStart, expectedEnd: missingEnd });
@@ -237,13 +237,13 @@ export function detectGaps(
   if (sorted.length > 0) {
     const first = sorted[0]!;
     const last = sorted[sorted.length - 1]!;
-    if (Date.parse(first.periodStart) - Date.parse(range.from) > bucketMs * 1.5) {
+    if (Date.parse(first.periodStart) - Date.parse(range.from) > (bucketMs * 3) / 2) {
       gapPeriods.push({
         expectedStart: range.from,
         expectedEnd: new Date(Date.parse(first.periodStart) - 1).toISOString(),
       });
     }
-    if (Date.parse(range.to) - Date.parse(last.periodStart) > bucketMs * 1.5) {
+    if (Date.parse(range.to) - Date.parse(last.periodStart) > (bucketMs * 3) / 2) {
       gapPeriods.push({
         expectedStart: new Date(Date.parse(last.periodStart) + bucketMs).toISOString(),
         expectedEnd: range.to,

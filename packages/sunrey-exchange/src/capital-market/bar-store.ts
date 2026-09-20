@@ -2,7 +2,7 @@
  * In-memory capital market bar store with idempotent storage and restart snapshot support.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { CapitalMarketTimeframe } from './timeframes.ts';
 import type { CapitalMarketBar } from './types.ts';
 

@@ -1,6 +1,6 @@
 import type { Pool } from 'pg';
 
-import type { CapitalMarketBarStoreSnapshot } from '../../../sunrey-exchange/src/capital-market/bar-store.ts';
+import type { CapitalMarketBarStoreSnapshot } from '@solstice/sunrey-exchange';
 import { persistenceJsonStringify } from '../json.ts';
 import { withClient } from '../postgres/pools.ts';
 

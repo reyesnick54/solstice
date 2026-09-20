@@ -5,7 +5,7 @@
  * credentials exist. Never logs secret values.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { FINNHUB_CREDENTIAL_ENV_VAR } from './adapters/finnhub-adapter.ts';
 import { createFinnhubCapitalMarketAdapter } from './adapters/finnhub-adapter.ts';
 import { createCapitalMarketBarStore } from './bar-store.ts';
@@ -46,24 +46,28 @@ const RANGE_15M: CapitalMarketHistoricalRange = Object.freeze({
   to: asUtcInstant('2026-09-16T15:30:00.000Z'),
 });
 
-function candlePayload(symbol: string): unknown {
-  return {
-    s: 'ok',
-    t: [1_789_563_600, 1_789_568_100, 1_789_572_600],
-    o: [498.0, 499.5, 500.0],
-    h: [499.0, 500.5, 501.0],
-    l: [497.5, 498.5, 499.5],
-    c: [498.5, 500.0, 500.12],
-    v: [1000, 1100, 1200],
-  };
+const CANDLE_FIXTURE = JSON.parse(
+  '{"s":"ok","t":[1789563600,1789568100,1789572600],"o":[498,499.5,500],"h":[499,500.5,501],"l":[497.5,498.5,499.5],"c":[498.5,500,500.12],"v":[1000,1100,1200]}',
+);
+
+const QUOTE_FIXTURES = JSON.parse(
+  '{"SPY":{"c":500.12,"o":499.12,"h":501.12,"l":498.12,"pc":499.62,"t":1789572600},"QQQ":{"c":430.25,"o":429.25,"h":431.25,"l":428.25,"pc":429.75,"t":1789572600},"AAPL":{"c":227.5,"o":226.5,"h":228.5,"l":225.5,"pc":227,"t":1789572600}}',
+) as Record<string, { readonly c: number; readonly o: number; readonly h: number; readonly l: number; readonly pc: number; readonly t: number }>;
+
+const MARKET_STATUS_FIXTURE = JSON.parse(
+  '{"exchange":"US","timezone":"America/New_York","session":"regular","isOpen":true,"t":1789572600}',
+);
+
+function candlePayload(_symbol: string): unknown {
+  return CANDLE_FIXTURE;
 }
 
-function quotePayload(price: number): unknown {
-  return { c: price, o: price - 1, h: price + 1, l: price - 2, pc: price - 0.5, t: 1_789_572_600 };
+function quotePayload(symbol: string): unknown {
+  return QUOTE_FIXTURES[symbol] ?? QUOTE_FIXTURES.AAPL;
 }
 
 function marketStatusPayload(isOpen = true): unknown {
-  return { exchange: 'US', timezone: 'America/New_York', session: isOpen ? 'regular' : null, isOpen, t: 1_789_572_600 };
+  return isOpen ? MARKET_STATUS_FIXTURE : { ...MARKET_STATUS_FIXTURE, session: null, isOpen: false };
 }
 
 function createHarnessFetch(mode: 'success' | 'rate_limit' | 'timeout' | 'invalid' | 'no_data' = 'success') {
@@ -92,8 +96,7 @@ function createHarnessFetch(mode: 'success' | 'rate_limit' | 'timeout' | 'invali
         return new Response(JSON.stringify({ c: null }), { status: 200, headers: { 'content-type': 'application/json' } });
       }
       const symbol = new URL(url).searchParams.get('symbol') ?? 'AAPL';
-      const price = symbol === 'SPY' ? 500.12 : symbol === 'QQQ' ? 430.25 : 227.5;
-      return new Response(JSON.stringify(quotePayload(price)), { status: 200, headers: { 'content-type': 'application/json' } });
+      return new Response(JSON.stringify(quotePayload(symbol)), { status: 200, headers: { 'content-type': 'application/json' } });
     }
     return new Response(JSON.stringify({ error: 'not found' }), { status: 404, headers: { 'content-type': 'application/json' } });
   };
