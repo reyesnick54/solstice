@@ -1,10 +1,10 @@
 import type { UtcInstant } from '@solstice/domain';
-import type { VenueSessionState } from '../executable-opportunity/taxonomy.ts';
+import type { VenueSessionState } from '../../executable-opportunity/taxonomy.ts';
 import { marketStatePermitsExecution, resolveMarketSession } from './calendar.ts';
 import { resolveContinuousSeriesContract } from './continuous-series.ts';
-import { evaluateFuturesContract, resolveFrontContract } from './futures.ts';
+import { evaluateMarketCalendarContract, resolveMarketCalendarFrontContract } from './contract-lifecycle.ts';
 import type { MarketCalendarRegistry, TradabilityAssessment, VenueSignal } from './types.ts';
-import type { MarketCalendarReasonCode, MarketState, RollState, TradabilityOutcome } from './taxonomy.ts';
+import type { MarketCalendarReasonCode, MarketCalendarRollState, MarketState, TradabilityOutcome } from './taxonomy.ts';
 
 export function mapMarketStateToVenueSession(state: MarketState): VenueSessionState {
   switch (state) {
@@ -78,14 +78,14 @@ export function assessInstrumentTradability(input: {
     });
   }
 
-  let rollState: RollState | null = null;
+  let rollState: MarketCalendarRollState | null = null;
   let resolvedContractId = binding.contractId;
   let contractBlocked = false;
 
   if (binding.contractId) {
     const contract = input.registry.getContract(binding.contractId);
     if (contract && calendar) {
-      const snapshot = evaluateFuturesContract({
+      const snapshot = evaluateMarketCalendarContract({
         contract,
         at: input.at,
         calendarTimeZone: calendar.timeZone,
@@ -102,7 +102,7 @@ export function assessInstrumentTradability(input: {
       }
     }
   } else if (binding.rootSymbol && (binding.kind === 'FUTURES' || binding.kind === 'COMMODITY_FUTURES')) {
-    const front = resolveFrontContract({
+    const front = resolveMarketCalendarFrontContract({
       rootSymbol: binding.rootSymbol,
       at: input.at,
       registry: input.registry,

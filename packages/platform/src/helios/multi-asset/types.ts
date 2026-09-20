@@ -1,136 +1,68 @@
-import type { UtcInstant } from '@solstice/domain';
-import type {
-  InstrumentKind,
-  MarketCalendarReasonCode,
-  MarketState,
-  RollState,
-  SessionMode,
-  SettlementType,
-  TradabilityOutcome,
-  VenueSignalKind,
-} from './taxonomy.ts';
+/**
+ * HELIOS Multi-Asset Expansion — shared identity and authority types.
+ *
+ * Reference and research intelligence only. Does not grant Execution Authority.
+ */
 
-export type LocalTimeOfDay = {
-  readonly hour: number;
-  readonly minute: number;
+export const HELIOS_MULTI_ASSET_SCHEMA = 'sunrey.helios.multi-asset.v1' as const;
+export const HELIOS_MULTI_ASSET_AUTHORITY = 'REFERENCE_ONLY' as const;
+
+export const MULTI_ASSET_IDENTITY_KINDS = [
+  'security_etf_proxy',
+  'commodity_reference',
+  'futures_family',
+  'futures_contract',
+  'futures_continuous',
+] as const;
+export type MultiAssetIdentityKind = (typeof MULTI_ASSET_IDENTITY_KINDS)[number];
+
+export const BAR_INTERVALS = ['1h', '4h', '1d'] as const;
+export type BarInterval = (typeof BAR_INTERVALS)[number];
+
+export const SESSION_STATUSES = ['OPEN', 'CLOSED', 'PRE_OPEN', 'HALTED', 'UNKNOWN'] as const;
+export type SessionStatus = (typeof SESSION_STATUSES)[number];
+
+export const ROUTE_STATUSES = [
+  'QUALIFIED',
+  'DEGRADED',
+  'UNAVAILABLE',
+  'NOT_CONFIGURED',
+  'NOT_QUALIFIED',
+  'STALE',
+  'ENTITLEMENT_DENIED',
+] as const;
+export type MultiAssetRouteStatus = (typeof ROUTE_STATUSES)[number];
+
+export type MultiAssetEntitlement = {
+  readonly entitlementClass: 'realtime' | 'delayed' | 'end_of_day' | 'sandbox' | 'indicative' | 'unknown';
+  readonly licensedForRealtime: boolean;
+  readonly delayedMinutes: number | null;
+  readonly unavailable: boolean;
 };
 
-export type LocalDateKey = `${number}-${string}-${string}`;
-
-export type SessionWindow = {
-  readonly start: LocalTimeOfDay;
-  readonly end: LocalTimeOfDay;
+export type OhlcvBar = {
+  readonly interval: BarInterval;
+  readonly openMinorUnits: bigint;
+  readonly highMinorUnits: bigint;
+  readonly lowMinorUnits: bigint;
+  readonly closeMinorUnits: bigint;
+  readonly volumeUnits: bigint;
+  readonly barOpenTime: string;
+  readonly barCloseTime: string;
+  readonly priceScale: number;
+  readonly currency: string;
 };
 
-export type MaintenanceWindow = {
-  readonly start: LocalTimeOfDay;
-  readonly end: LocalTimeOfDay;
-  readonly weekdays?: readonly number[];
-};
-
-export type MarketHoliday = {
-  readonly date: LocalDateKey;
-  readonly name: string;
-  readonly closed?: boolean;
-  readonly earlyClose?: LocalTimeOfDay;
-};
-
-export type MarketCalendarDefinition = {
-  readonly calendarId: string;
-  readonly displayName: string;
-  readonly timeZone: string;
-  readonly sessionMode: SessionMode;
-  readonly regularSession: SessionWindow | null;
-  readonly preMarketSession: SessionWindow | null;
-  readonly postMarketSession: SessionWindow | null;
-  readonly weekendDays: readonly number[];
-  readonly holidays: readonly MarketHoliday[];
-  readonly maintenanceWindows: readonly MaintenanceWindow[];
-  readonly fxWeekdayOpen?: SessionWindow;
-};
-
-export type VenueSignal = {
-  readonly kind: VenueSignalKind;
-  readonly authoritative: boolean;
-  readonly message: string;
-  readonly observedAt: UtcInstant;
-};
-
-export type MarketSessionSnapshot = {
-  readonly calendarId: string;
-  readonly at: UtcInstant;
-  readonly timeZone: string;
-  readonly localDate: LocalDateKey;
-  readonly localTimeMinutes: number;
-  readonly state: MarketState;
-  readonly reasonCode: MarketCalendarReasonCode;
-  readonly regularSession: SessionWindow | null;
-  readonly preMarketSession: SessionWindow | null;
-  readonly postMarketSession: SessionWindow | null;
-  readonly earlyClose: LocalTimeOfDay | null;
-  readonly maintenanceActive: boolean;
-  readonly venueSignals: readonly VenueSignal[];
-};
-
-export type FuturesContractDefinition = {
-  readonly contractId: string;
-  readonly rootSymbol: string;
-  readonly contractMonth: string;
-  readonly underlying: string;
-  readonly multiplier: number;
-  readonly settlementType: SettlementType;
-  readonly expirationDate: LocalDateKey;
-  readonly lastTradeDate: LocalDateKey;
-  readonly firstNoticeDate: LocalDateKey | null;
-  readonly calendarId: string;
-  readonly rollWindowDays: number;
-  readonly rollApproachDays: number;
-};
-
-export type FuturesContractSnapshot = {
-  readonly contract: FuturesContractDefinition;
-  readonly at: UtcInstant;
-  readonly daysToExpiration: number;
-  readonly daysToLastTrade: number;
-  readonly rollState: RollState;
-  readonly expired: boolean;
-  readonly newExposureAllowed: boolean;
-};
-
-export type ContinuousSeriesDefinition = {
-  readonly seriesId: string;
-  readonly rootSymbol: string;
-  readonly displayName: string;
-  readonly underlying: string;
-  readonly rollMethod: 'FRONT_MONTH';
-  readonly executable: false;
-};
-
-export type InstrumentMarketBinding = {
-  readonly instrumentId: string;
-  readonly kind: InstrumentKind;
-  readonly calendarId: string | null;
-  readonly contractId: string | null;
-  readonly continuousSeriesId: string | null;
-  readonly rootSymbol: string | null;
-};
-
-export type TradabilityAssessment = {
-  readonly instrumentId: string;
-  readonly at: UtcInstant;
-  readonly outcome: TradabilityOutcome;
-  readonly marketState: MarketState;
-  readonly rollState: RollState | null;
-  readonly resolvedContractId: string | null;
-  readonly continuousSeries: boolean;
-  readonly executable: boolean;
-  readonly reasonCodes: readonly MarketCalendarReasonCode[];
-};
-
-export type MarketCalendarRegistry = {
-  readonly getCalendar: (calendarId: string) => MarketCalendarDefinition | null;
-  readonly getContract: (contractId: string) => FuturesContractDefinition | null;
-  readonly getContinuousSeries: (seriesId: string) => ContinuousSeriesDefinition | null;
-  readonly getInstrumentBinding: (instrumentId: string) => InstrumentMarketBinding | null;
-  readonly listContractsForRoot: (rootSymbol: string) => readonly FuturesContractDefinition[];
+export type MarketQuote = {
+  readonly bidMinorUnits: bigint | null;
+  readonly askMinorUnits: bigint | null;
+  readonly lastMinorUnits: bigint | null;
+  readonly openMinorUnits: bigint | null;
+  readonly highMinorUnits: bigint | null;
+  readonly lowMinorUnits: bigint | null;
+  readonly previousCloseMinorUnits: bigint | null;
+  readonly volumeUnits: bigint | null;
+  readonly priceScale: number;
+  readonly currency: string;
+  readonly sessionStatus: SessionStatus;
 };

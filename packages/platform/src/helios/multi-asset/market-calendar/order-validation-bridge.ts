@@ -1,5 +1,5 @@
 import type { UtcInstant } from '@solstice/domain';
-import type { HeliosOrderValidationPorts } from '../order-lifecycle/types.ts';
+import type { HeliosOrderValidationPorts } from '../../order-lifecycle/types.ts';
 import { createMarketCalendarRegistry } from './registry.ts';
 import type { MarketCalendarRegistry } from './types.ts';
 import { createMarketOpenValidator } from './tradability.ts';

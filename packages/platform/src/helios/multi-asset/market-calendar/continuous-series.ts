@@ -1,5 +1,5 @@
 import type { ContinuousSeriesDefinition, MarketCalendarRegistry } from './types.ts';
-import { resolveFrontContract } from './futures.ts';
+import { resolveMarketCalendarFrontContract } from './contract-lifecycle.ts';
 import type { UtcInstant } from '@solstice/domain';
 
 export function isContinuousResearchSeries(series: ContinuousSeriesDefinition): boolean {
@@ -15,7 +15,7 @@ export function resolveContinuousSeriesContract(input: {
   if (!series) {
     return null;
   }
-  const front = resolveFrontContract({
+  const front = resolveMarketCalendarFrontContract({
     rootSymbol: series.rootSymbol,
     at: input.at,
     registry: input.registry,

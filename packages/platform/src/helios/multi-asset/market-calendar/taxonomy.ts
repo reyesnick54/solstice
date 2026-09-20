@@ -15,14 +15,14 @@ export const MARKET_STATES = [
 ] as const;
 export type MarketState = (typeof MARKET_STATES)[number];
 
-export const ROLL_STATES = [
+export const MARKET_CALENDAR_ROLL_STATES = [
   'NO_ROLL_REQUIRED',
   'APPROACHING_ROLL',
   'ROLL_ELIGIBLE',
   'ROLL_REQUIRED',
   'EXPIRED',
 ] as const;
-export type RollState = (typeof ROLL_STATES)[number];
+export type MarketCalendarRollState = (typeof MARKET_CALENDAR_ROLL_STATES)[number];
 
 export const SESSION_MODES = [
   'REGULAR_SCHEDULED',

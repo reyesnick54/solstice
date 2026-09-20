@@ -7,16 +7,16 @@ import {
   createMarketAwareOrderValidation,
   createMarketCalendarRegistry,
   createMarketOpenValidator,
-  evaluateFuturesContract,
+  evaluateMarketCalendarContract,
   evaluateMultiAssetM03Qualification,
   HELIOS_MULTI_ASSET_M03,
   HELIOS_MULTI_ASSET_M03_MARKET_CALENDAR_CONTRACTS_QUALIFIED,
   localDateKey,
   mapMarketStateToVenueSession,
   offsetLabel,
-  resolveFrontContract,
+  resolveMarketCalendarFrontContract,
   resolveMarketSession,
-  resolveNextContract,
+  resolveMarketCalendarNextContract,
   NYSE_EQUITY_CALENDAR,
   CRYPTO_24_7_CALENDAR,
   CME_CL_FUTURES_CALENDAR,
@@ -103,7 +103,7 @@ describe('HELIOS Multi-Asset M03 market calendar and contracts', () => {
 
   it('evaluates expiration and first notice on futures contracts', () => {
     const contract = WTI_CONTRACTS[0]!;
-    const beforeExpiry = evaluateFuturesContract({
+    const beforeExpiry = evaluateMarketCalendarContract({
       contract,
       at: asUtcInstant('2026-09-15T12:00:00.000Z'),
       calendarTimeZone: 'America/New_York',
@@ -112,7 +112,7 @@ describe('HELIOS Multi-Asset M03 market calendar and contracts', () => {
     assert.ok(beforeExpiry.daysToExpiration > 0);
     assert.equal(contract.firstNoticeDate, '2026-08-21');
 
-    const afterExpiry = evaluateFuturesContract({
+    const afterExpiry = evaluateMarketCalendarContract({
       contract,
       at: asUtcInstant('2026-09-21T12:00:00.000Z'),
       calendarTimeZone: 'America/New_York',
@@ -123,21 +123,21 @@ describe('HELIOS Multi-Asset M03 market calendar and contracts', () => {
 
   it('derives roll window states', () => {
     const contract = WTI_CONTRACTS[0]!;
-    const approaching = evaluateFuturesContract({
+    const approaching = evaluateMarketCalendarContract({
       contract,
       at: asUtcInstant('2026-09-05T12:00:00.000Z'),
       calendarTimeZone: 'America/New_York',
     });
     assert.equal(approaching.rollState, 'APPROACHING_ROLL');
 
-    const eligible = evaluateFuturesContract({
+    const eligible = evaluateMarketCalendarContract({
       contract,
       at: asUtcInstant('2026-09-10T12:00:00.000Z'),
       calendarTimeZone: 'America/New_York',
     });
     assert.equal(eligible.rollState, 'ROLL_ELIGIBLE');
 
-    const required = evaluateFuturesContract({
+    const required = evaluateMarketCalendarContract({
       contract,
       at: asUtcInstant('2026-09-18T12:00:00.000Z'),
       calendarTimeZone: 'America/New_York',
@@ -147,8 +147,8 @@ describe('HELIOS Multi-Asset M03 market calendar and contracts', () => {
 
   it('resolves front and next contracts', () => {
     const at = asUtcInstant('2026-09-01T12:00:00.000Z');
-    const front = resolveFrontContract({ rootSymbol: 'CL', at, registry });
-    const next = resolveNextContract({ rootSymbol: 'CL', at, registry });
+    const front = resolveMarketCalendarFrontContract({ rootSymbol: 'CL', at, registry });
+    const next = resolveMarketCalendarNextContract({ rootSymbol: 'CL', at, registry });
     assert.equal(front?.contractId, 'FUT:CL:2026-10');
     assert.equal(next?.contractId, 'FUT:CL:2026-11');
   });
@@ -268,19 +268,19 @@ describe('HELIOS Multi-Asset M03 market calendar and contracts', () => {
       futuresCrossesUtcMidnight:
         resolveMarketSession({ calendar: CME_CL_FUTURES_CALENDAR, at: asUtcInstant('2026-09-15T00:30:00.000Z') }).state ===
         'OPEN',
-      futuresExpiration: evaluateFuturesContract({
+      futuresExpiration: evaluateMarketCalendarContract({
         contract: WTI_CONTRACTS[0]!,
         at: asUtcInstant('2026-09-21T12:00:00.000Z'),
         calendarTimeZone: 'America/New_York',
       }).expired,
       futuresFirstNoticeModeled: WTI_CONTRACTS[0]!.firstNoticeDate === '2026-08-21',
       rollWindow:
-        evaluateFuturesContract({
+        evaluateMarketCalendarContract({
           contract: WTI_CONTRACTS[0]!,
           at: asUtcInstant('2026-09-18T12:00:00.000Z'),
           calendarTimeZone: 'America/New_York',
         }).rollState === 'ROLL_REQUIRED',
-      frontContractResolution: resolveFrontContract({
+      frontContractResolution: resolveMarketCalendarFrontContract({
         rootSymbol: 'CL',
         at: asUtcInstant('2026-09-01T12:00:00.000Z'),
         registry,

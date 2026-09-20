@@ -1,9 +1,9 @@
 import type { UtcInstant } from '@solstice/domain';
-import type { RollState } from './taxonomy.ts';
+import type { MarketCalendarRollState } from './taxonomy.ts';
 import { daysBetween, localDateKey } from './timezone.ts';
 import type { FuturesContractDefinition, FuturesContractSnapshot, MarketCalendarRegistry } from './types.ts';
 
-export function evaluateFuturesContract(input: {
+export function evaluateMarketCalendarContract(input: {
   readonly contract: FuturesContractDefinition;
   readonly at: UtcInstant;
   readonly calendarTimeZone: string;
@@ -12,7 +12,7 @@ export function evaluateFuturesContract(input: {
   const daysToExpiration = daysBetween(asOfDate, input.contract.expirationDate);
   const daysToLastTrade = daysBetween(asOfDate, input.contract.lastTradeDate);
   const expired = daysToLastTrade < 0;
-  const rollState = deriveRollState({
+  const rollState = deriveMarketCalendarRollState({
     daysToLastTrade,
     rollWindowDays: input.contract.rollWindowDays,
     rollApproachDays: input.contract.rollApproachDays,
@@ -30,12 +30,12 @@ export function evaluateFuturesContract(input: {
   });
 }
 
-export function deriveRollState(input: {
+export function deriveMarketCalendarRollState(input: {
   readonly daysToLastTrade: number;
   readonly rollWindowDays: number;
   readonly rollApproachDays: number;
   readonly expired: boolean;
-}): RollState {
+}): MarketCalendarRollState {
   if (input.expired || input.daysToLastTrade < 0) {
     return 'EXPIRED';
   }
@@ -51,7 +51,7 @@ export function deriveRollState(input: {
   return 'NO_ROLL_REQUIRED';
 }
 
-export function resolveFrontContract(input: {
+export function resolveMarketCalendarFrontContract(input: {
   readonly rootSymbol: string;
   readonly at: UtcInstant;
   readonly registry: MarketCalendarRegistry;
@@ -68,7 +68,7 @@ export function resolveFrontContract(input: {
   return active[0] ?? null;
 }
 
-export function resolveNextContract(input: {
+export function resolveMarketCalendarNextContract(input: {
   readonly rootSymbol: string;
   readonly at: UtcInstant;
   readonly registry: MarketCalendarRegistry;
