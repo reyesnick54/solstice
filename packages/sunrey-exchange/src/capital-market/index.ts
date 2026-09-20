@@ -68,7 +68,6 @@ export {
   type MultiAssetInstrumentSearchFilter,
   type MultiAssetInstrumentValidationResult,
 } from './multi-asset/index.ts';
-export { buildHeliosEquityIndexMarketState } from './market-state.ts';
 export type { CapitalMarketProvider } from './provider.ts';
 export {
   HELIOS_MULTI_ASSET_M05_EQUITY_INDEX_DATA_BLOCKED,
