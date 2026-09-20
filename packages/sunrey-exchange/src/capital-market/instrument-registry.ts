@@ -59,6 +59,19 @@ export const REGISTERED_CAPITAL_MARKET_INSTRUMENTS: readonly RegisteredCapitalMa
     displayName: 'SPDR S&P 500 ETF Trust',
     providerSymbols: Object.freeze({ finnhub: 'SPY' }),
   }),
+  instrument({
+    instrumentId: 'SECURITY:US:GLD:ARCX',
+    symbol: 'GLD',
+    vendorSymbol: 'GLD',
+    assetClass: 'etf',
+    venue: VENUE_ARCA,
+    currency: 'USD',
+    isin: 'US78463V1070',
+    figi: null,
+    providerNativeId: 'GLD',
+    displayName: 'SPDR Gold Shares',
+    providerSymbols: Object.freeze({ finnhub: 'GLD' }),
+  }),
 ]);
 
 const byId = new Map(REGISTERED_CAPITAL_MARKET_INSTRUMENTS.map((row) => [row.instrumentId, row]));

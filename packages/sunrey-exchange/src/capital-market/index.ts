@@ -59,3 +59,12 @@ export {
   type HeliosMarketDataRouteSnapshot,
   type HeliosMarketDataRouteStatus,
 } from './integrations/helios.ts';
+export {
+  createHeliosGoldMarketRoute,
+  HeliosGoldMarketRoute,
+  heliosGoldMarketNowUtc,
+  type HeliosGoldMarketRouteSnapshot,
+  type HeliosGoldQuoteResult,
+} from './integrations/helios-gold.ts';
+export * from './futures/index.ts';
+export * from './gold/index.ts';

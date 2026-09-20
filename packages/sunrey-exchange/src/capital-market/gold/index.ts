@@ -1,0 +1,45 @@
+export {
+  GOLD_CANONICAL_IDENTITIES,
+  GOLD_ETF_GLD_ID,
+  GOLD_REFERENCE_ID,
+  assertGoldIdentitySeparation,
+  goldReferenceAssetId,
+  listGoldIdentities,
+  resolveGoldIdentity,
+} from './identities.ts';
+export {
+  alignPeriodStart,
+  assertOrderedBars,
+  buildDeterministicGoldBars,
+  computeBarKnowableAt,
+  filterKnowableBars,
+  intervalDurationMs,
+  isBarKnowableAt,
+  isBarStale,
+  periodEndFromStart,
+  rejectStaleLatestBar,
+  sessionStatusForUtcHour,
+  staleAfterMsForInterval,
+} from './bar-history.ts';
+export {
+  GoldMarketIntelligenceService,
+  createGoldMarketIntelligenceService,
+  type GoldMarketIntelligenceOptions,
+} from './service.ts';
+export {
+  GOLD_4H_TREND_MIN_BARS,
+  GOLD_BAR_INTERVALS,
+  GOLD_FEED_QUALIFICATION_STATUSES,
+  GOLD_IDENTITY_KINDS,
+  GOLD_MARKET_SCHEMA,
+  GOLD_MARKET_STATE_RELATIONSHIPS,
+  type GoldBarCandle,
+  type GoldBarHistoryResult,
+  type GoldBarInterval,
+  type GoldCanonicalIdentity,
+  type GoldFeedQualificationStatus,
+  type GoldIdentityKind,
+  type GoldMarketResult,
+  type GoldMarketState,
+  type GoldMarketStateRelationship,
+} from './types.ts';
