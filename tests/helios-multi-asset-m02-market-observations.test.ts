@@ -205,7 +205,7 @@ describe('HELIOS Multi-Asset M02 market observations', () => {
   it('enforces knowableAt semantics — no look-ahead', () => {
     const fabric = new HeliosMarketObservationFabric({ clock: new FrozenClock(BASE) });
     const api = createStrategyMarketDataApi(fabric.timeSeriesStore());
-    const instrumentId = 'CRYPTO:GLOBAL:BTC:CRYPTO_AGG';
+    const instrumentId = 'CRYPTO:GLOBAL:BTC:USD:SIM';
 
     fabric.ingest(
       bar({
