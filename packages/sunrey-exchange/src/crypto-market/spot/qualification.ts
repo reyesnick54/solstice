@@ -49,20 +49,20 @@ const T09 = 1_789_894_800_000;
 
 function btcQuotePayload(): unknown {
   return {
-    bitcoin: { usd: 65_432.1, usd_24h_vol: 28_000_000_000, last_updated_at: 1_789_891_200 },
+    bitcoin: { usd: 6543210 / 100, usd_24h_vol: 28_000_000_000, last_updated_at: 1_789_891_200 },
   };
 }
 
 function ethQuotePayload(): unknown {
   return {
-    ethereum: { usd: 3_456.78, usd_24h_vol: 12_000_000_000, last_updated_at: 1_789_891_200 },
+    ethereum: { usd: 345678 / 100, usd_24h_vol: 12_000_000_000, last_updated_at: 1_789_891_200 },
   };
 }
 
 function ohlcPayload(): unknown {
   return [
-    [T08, 65000, 66000, 64500, 65432.1],
-    [T09, 65432.1, 65800, 65200, 65500],
+    [T08, 65000, 66000, 64500, 6543210 / 100],
+    [T09, 6543210 / 100, 65800, 65200, 65500],
   ];
 }
 
@@ -70,7 +70,7 @@ function marketChartPayload(): unknown {
   return {
     prices: [
       [T08, 65000],
-      [T09, 65432.1],
+      [T09, 6543210 / 100],
     ],
     total_volumes: [
       [T08, 1_000_000_000],

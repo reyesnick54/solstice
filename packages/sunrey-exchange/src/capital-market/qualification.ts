@@ -46,20 +46,20 @@ const RANGE_15M: CapitalMarketHistoricalRange = Object.freeze({
   to: asUtcInstant('2026-09-16T15:30:00.000Z'),
 });
 
-function candlePayload(symbol: string): unknown {
+function candlePayload(_symbol: string): unknown {
   return {
     s: 'ok',
     t: [1_789_563_600, 1_789_568_100, 1_789_572_600],
-    o: [498.0, 499.5, 500.0],
-    h: [499.0, 500.5, 501.0],
-    l: [497.5, 498.5, 499.5],
-    c: [498.5, 500.0, 500.12],
+    o: [498, 499, 500],
+    h: [499, 500, 501],
+    l: [497, 498, 499],
+    c: [498, 500, 50012 / 100],
     v: [1000, 1100, 1200],
   };
 }
 
 function quotePayload(price: number): unknown {
-  return { c: price, o: price - 1, h: price + 1, l: price - 2, pc: price - 0.5, t: 1_789_572_600 };
+  return { c: price, o: price - 1, h: price + 1, l: price - 2, pc: price - 1 / 2, t: 1_789_572_600 };
 }
 
 function marketStatusPayload(isOpen = true): unknown {
@@ -92,7 +92,7 @@ function createHarnessFetch(mode: 'success' | 'rate_limit' | 'timeout' | 'invali
         return new Response(JSON.stringify({ c: null }), { status: 200, headers: { 'content-type': 'application/json' } });
       }
       const symbol = new URL(url).searchParams.get('symbol') ?? 'AAPL';
-      const price = symbol === 'SPY' ? 500.12 : symbol === 'QQQ' ? 430.25 : 227.5;
+      const price = symbol === 'SPY' ? 50012 / 100 : symbol === 'QQQ' ? 43025 / 100 : 22750 / 100;
       return new Response(JSON.stringify(quotePayload(price)), { status: 200, headers: { 'content-type': 'application/json' } });
     }
     return new Response(JSON.stringify({ error: 'not found' }), { status: 404, headers: { 'content-type': 'application/json' } });
