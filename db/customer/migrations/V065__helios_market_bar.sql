@@ -1,4 +1,4 @@
--- V065 HELIOS M05/M06 — durable capital market bar storage for equity/index and crypto spot historical ingestion.
+-- V065 HELIOS M05 — durable capital market bar storage for equity/index historical ingestion.
 -- Reference data only; not Execution Authority.
 
 CREATE TABLE growth.helios_market_bar (
@@ -13,7 +13,7 @@ CREATE TABLE growth.helios_market_bar (
   duplicate_detected BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMPTZ NOT NULL,
   CONSTRAINT helios_market_bar_id_nonempty CHECK (char_length(bar_id) > 0),
-  CONSTRAINT helios_market_bar_timeframe CHECK (timeframe IN ('1m', '5m', '15m', '1h', '4h', '1d')),
+  CONSTRAINT helios_market_bar_timeframe CHECK (timeframe IN ('1m', '5m', '15m', '1h', '1d')),
   CONSTRAINT helios_market_bar_no_ea CHECK (body_canonical NOT LIKE '%ExecutionAuthority%')
 );
 
