@@ -44,35 +44,37 @@ const RANGE_1H = Object.freeze({
   from: asUtcInstant('2026-09-20T08:00:00.000Z'),
   to: asUtcInstant('2026-09-20T12:00:00.000Z'),
 });
+const T08 = 1_789_891_200_000;
+const T09 = 1_789_894_800_000;
 
 function btcQuotePayload(): unknown {
   return {
-    bitcoin: { usd: 65_432.1, usd_24h_vol: 28_000_000_000, last_updated_at: 1_756_000_000 },
+    bitcoin: { usd: 65_432.1, usd_24h_vol: 28_000_000_000, last_updated_at: 1_789_891_200 },
   };
 }
 
 function ethQuotePayload(): unknown {
   return {
-    ethereum: { usd: 3_456.78, usd_24h_vol: 12_000_000_000, last_updated_at: 1_756_000_000 },
+    ethereum: { usd: 3_456.78, usd_24h_vol: 12_000_000_000, last_updated_at: 1_789_891_200 },
   };
 }
 
 function ohlcPayload(): unknown {
   return [
-    [1_756_000_000_000, 65000, 66000, 64500, 65432.1],
-    [1_756_003_600_000, 65432.1, 65800, 65200, 65500],
+    [T08, 65000, 66000, 64500, 65432.1],
+    [T09, 65432.1, 65800, 65200, 65500],
   ];
 }
 
 function marketChartPayload(): unknown {
   return {
     prices: [
-      [1_756_000_000_000, 65000],
-      [1_756_003_600_000, 65432.1],
+      [T08, 65000],
+      [T09, 65432.1],
     ],
     total_volumes: [
-      [1_756_000_000_000, 1_000_000_000],
-      [1_756_003_600_000, 1_100_000_000],
+      [T08, 1_000_000_000],
+      [T09, 1_100_000_000],
     ],
   };
 }

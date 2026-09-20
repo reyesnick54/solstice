@@ -32,6 +32,9 @@ const RANGE = Object.freeze({
   from: asUtcInstant('2026-09-20T08:00:00.000Z'),
   to: asUtcInstant('2026-09-20T12:00:00.000Z'),
 });
+const T08 = 1_789_891_200_000;
+const T09 = 1_789_894_800_000;
+const T10 = 1_789_898_400_000;
 
 function harnessFetch(mode: 'success' | 'rate_limit' | 'timeout' = 'success') {
   return async (input: RequestInfo | URL): Promise<Response> => {
@@ -49,15 +52,15 @@ function harnessFetch(mode: 'success' | 'rate_limit' | 'timeout' = 'success') {
       const ids = new URL(url).searchParams.get('ids');
       const body =
         ids === 'ethereum'
-          ? { ethereum: { usd: 3456.78, usd_24h_vol: 12_000_000_000, last_updated_at: 1_756_000_000 } }
-          : { bitcoin: { usd: 65432.1, usd_24h_vol: 28_000_000_000, last_updated_at: 1_756_000_000 } };
+          ? { ethereum: { usd: 3456.78, usd_24h_vol: 12_000_000_000, last_updated_at: 1_789_891_200 } }
+          : { bitcoin: { usd: 65432.1, usd_24h_vol: 28_000_000_000, last_updated_at: 1_789_891_200 } };
       return new Response(JSON.stringify(body), { status: 200, headers: { 'content-type': 'application/json' } });
     }
     if (url.includes('/ohlc')) {
       return new Response(
         JSON.stringify([
-          [1_756_000_000_000, 65000, 66000, 64500, 65432.1],
-          [1_756_014_400_000, 65432.1, 66000, 65000, 65800],
+          [T08, 65000, 66000, 64500, 65432.1],
+          [T09, 65432.1, 66000, 65000, 65800],
         ]),
         { status: 200, headers: { 'content-type': 'application/json' } },
       );
@@ -66,12 +69,12 @@ function harnessFetch(mode: 'success' | 'rate_limit' | 'timeout' = 'success') {
       return new Response(
         JSON.stringify({
           prices: [
-            [1_756_000_000_000, 65000],
-            [1_756_003_600_000, 65432.1],
+            [T08, 65000],
+            [T09, 65432.1],
           ],
           total_volumes: [
-            [1_756_000_000_000, 1_000_000_000],
-            [1_756_003_600_000, 1_100_000_000],
+            [T08, 1_000_000_000],
+            [T09, 1_100_000_000],
           ],
         }),
         { status: 200, headers: { 'content-type': 'application/json' } },

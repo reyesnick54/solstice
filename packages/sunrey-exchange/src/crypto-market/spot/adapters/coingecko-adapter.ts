@@ -24,6 +24,7 @@ import type {
   CapitalMarketResult,
   CapitalMarketSessionObservation,
 } from '../../../capital-market/types.ts';
+import { filterBarsToRange } from '../../../capital-market/adapters/parsers.ts';
 import { quarantineIfInvalid } from '../../../capital-market/validation.ts';
 import { CryptoMarketHttpClient, type CryptoMarketHttpClientOptions } from '../../http/client.ts';
 import { LIVE_CRYPTO_MARKET_ENDPOINTS } from '../../http/endpoints.ts';
@@ -258,23 +259,26 @@ export class CoingeckoCryptoSpotAdapter implements CapitalMarketProvider {
     }
 
     const rawPayload = canonicalJsonStringify(response.data);
-    const bars = useOhlc
-      ? this.#normalizeOhlcBars({
-          payload: response.data as CoingeckoOhlcPayload,
-          rawPayload,
-          instrument,
-          coinId,
-          timeframe: cryptoTf,
-          nowUtc,
-        })
-      : this.#normalizeMarketChartBars({
-          payload: response.data as CoingeckoMarketChartPayload,
-          rawPayload,
-          instrument,
-          coinId,
-          timeframe: cryptoTf,
-          nowUtc,
-        });
+    const bars = filterBarsToRange(
+      useOhlc
+        ? this.#normalizeOhlcBars({
+            payload: response.data as CoingeckoOhlcPayload,
+            rawPayload,
+            instrument,
+            coinId,
+            timeframe: cryptoTf,
+            nowUtc,
+          })
+        : this.#normalizeMarketChartBars({
+            payload: response.data as CoingeckoMarketChartPayload,
+            rawPayload,
+            instrument,
+            coinId,
+            timeframe: cryptoTf,
+            nowUtc,
+          }),
+      range,
+    );
 
     if (bars.length === 0) {
       return fail('PROVIDER_CAPABILITY_UNAVAILABLE', `coingecko returned no bars for ${coinId} ${timeframe}`);
