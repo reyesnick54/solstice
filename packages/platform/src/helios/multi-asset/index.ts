@@ -1,5 +1,5 @@
 /**
- * HELIOS Multi-Asset Expansion M04 — canonical market state and tradability engine.
+ * HELIOS Multi-Asset Expansion — shared module exports (M04 market state, M08 energy, futures).
  */
 
 export {
@@ -51,16 +51,6 @@ export type {
 
 export type { MultiAssetSessionContractRecord } from './m03/types.ts';
 
-export type {
-  MarketState,
-  MarketStateEvidenceRef,
-  MarketDataQualityAssessment,
-  MarketCapabilityFlags,
-  MarketTradabilityDecision,
-  MarketStateEvaluationInput,
-  MarketStateEvaluationResult,
-} from './types.ts';
-
 export { assessMarketDataQuality, computeSpreadBps, EXTREME_SPREAD_BPS } from './data-quality.ts';
 export { evaluateTradability } from './tradability.ts';
 export { evaluateMarketState } from './evaluate.ts';
@@ -78,3 +68,8 @@ export {
   type MultiAssetM04QualificationChecks,
   type MultiAssetM04QualificationResult,
 } from './qualification.ts';
+
+export * from './types.ts';
+export * from './futures/index.ts';
+export * from './energy/wti/index.ts';
+export { generateM05M08CoverageReport, type M05M08CoverageReport, type AssetClassCoverage } from './data-coverage/m05-m08-report.ts';
