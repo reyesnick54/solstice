@@ -31,11 +31,25 @@ export type GoldObservationFabricPort = {
       readonly sunreyArrivalTime: UtcInstant;
       readonly ingestionTime: UtcInstant;
     }>;
-  }): { readonly ok: true; readonly envelope: { readonly entitlement: { readonly unavailable: boolean } } } | { readonly ok: false; readonly code: string; readonly message: string };
+  }):
+    | {
+        readonly ok: true;
+        readonly envelope: {
+          readonly entitlement: { readonly unavailable: boolean };
+          readonly canonicalInstrumentId: string;
+        };
+      }
+    | { readonly ok: false; readonly code: string; readonly message: string };
 };
 
 export type GoldObservationBridgeResult =
-  | { readonly ok: true; readonly envelope: { readonly entitlement: { readonly unavailable: boolean }; readonly canonicalInstrumentId: string } }
+  | {
+      readonly ok: true;
+      readonly envelope: {
+        readonly entitlement: { readonly unavailable: boolean };
+        readonly canonicalInstrumentId: string;
+      };
+    }
   | { readonly ok: false; readonly code: string; readonly message: string };
 
 export function externalObservationFromCapitalMarket(

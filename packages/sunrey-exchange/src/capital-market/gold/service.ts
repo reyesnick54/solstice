@@ -7,22 +7,17 @@
 
 import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
 import { MarketReferenceService } from '../../market-reference/service.ts';
-import { SimulationMarketReferenceAdapter } from '../../market-reference/adapters/simulation.ts';
 import { resolveCapitalMarketInstrument } from '../instrument-registry.ts';
 import type { CapitalMarketObservation } from '../types.ts';
 import { CapitalMarketService, type CapitalMarketServiceOptions } from '../service.ts';
 import { buildGoldFuturesRollSnapshot, resolveFuturesMetadata } from '../futures/contract-registry.ts';
 import { isContinuousResearchSeries, isExecutableFuturesIdentity } from '../futures/types.ts';
 import { assertOrderedBars, buildDeterministicGoldBars, filterKnowableBars } from './bar-history.ts';
-import {
-  GOLD_ETF_GLD_ID,
-  GOLD_REFERENCE_ID,
-  resolveGoldIdentity,
-  type GoldCanonicalIdentity,
-} from './identities.ts';
+import { GOLD_ETF_GLD_ID, GOLD_REFERENCE_ID, resolveGoldIdentity } from './identities.ts';
 import type {
   GoldBarHistoryResult,
   GoldBarInterval,
+  GoldCanonicalIdentity,
   GoldFeedQualificationStatus,
   GoldMarketResult,
   GoldMarketState,
@@ -41,11 +36,9 @@ export class GoldMarketIntelligenceService {
 
   constructor(options: GoldMarketIntelligenceOptions = {}) {
     this.#capitalMarket = new CapitalMarketService(options.capitalMarket);
-    const sim =
-      options.includeSimulationReference === false
-        ? []
-        : [new SimulationMarketReferenceAdapter()];
-    this.#reference = new MarketReferenceService({ providers: sim.length > 0 ? sim : undefined });
+    this.#reference = new MarketReferenceService(
+      options.includeSimulationReference === false ? { includeSimulationFallback: false } : undefined,
+    );
   }
 
   resolveIdentity(identityId: string): GoldCanonicalIdentity | undefined {
