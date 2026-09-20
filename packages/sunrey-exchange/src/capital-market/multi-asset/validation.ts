@@ -84,7 +84,7 @@ function validateFutureFields(record: CanonicalMultiAssetInstrument): MultiAsset
   if (!record.contractMonth) {
     return { ok: false, code: 'MISSING_CONTRACT_MONTH', message: 'FUTURE requires contractMonth' };
   }
-  if (record.contractMultiplier === null || record.contractMultiplier <= 0) {
+  if (record.contractMultiplier === null || record.contractMultiplier <= 0n) {
     return { ok: false, code: 'MISSING_CONTRACT_MULTIPLIER', message: 'FUTURE requires positive contractMultiplier' };
   }
   if (!record.expiration) {

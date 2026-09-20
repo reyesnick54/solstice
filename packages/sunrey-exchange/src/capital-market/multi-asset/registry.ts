@@ -169,7 +169,7 @@ export function searchMultiAssetInstruments(
 }
 
 export function serializeMultiAssetInstrument(record: CanonicalMultiAssetInstrument): string {
-  return JSON.stringify(record);
+  return JSON.stringify(record, (_key, value) => (typeof value === 'bigint' ? value.toString() : value));
 }
 
 export function providerSymbolsRecord(

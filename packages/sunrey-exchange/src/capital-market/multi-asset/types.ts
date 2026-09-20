@@ -66,10 +66,10 @@ export type CanonicalMultiAssetInstrument = {
   readonly underlyingInstrumentId: string | null;
   readonly baseAsset: string | null;
   readonly quoteAsset: string | null;
-  readonly contractMultiplier: number | null;
-  readonly tickSize: number | null;
-  readonly lotSize: number | null;
-  readonly minimumQuantity: number | null;
+  readonly contractMultiplier: bigint | null;
+  readonly tickSizeScaledUnits: bigint | null;
+  readonly lotSizeScaledUnits: bigint | null;
+  readonly minimumQuantityScaledUnits: bigint | null;
   readonly quantityScale: number;
   readonly priceScale: number;
   readonly expiration: string | null;
