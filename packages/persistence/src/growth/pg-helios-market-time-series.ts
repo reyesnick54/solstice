@@ -62,11 +62,29 @@ export async function queryLatestHeliosMarketObservation(
     readonly providerId?: string;
   },
 ): Promise<HeliosMarketObservationEnvelope | null> {
-  const rows = await queryHeliosMarketObservations(pool, {
-    ...input,
-    limit: 1,
+  return withClient(pool, async (client) => {
+    const conditions = ['canonical_instrument_id = $1', 'knowable_at <= $2'];
+    const params: unknown[] = [input.canonicalInstrumentId, input.knowableAt];
+    let paramIndex = 3;
+
+    if (input.observationType) {
+      conditions.push(`observation_type = $${paramIndex++}`);
+      params.push(input.observationType);
+    }
+    if (input.providerId) {
+      conditions.push(`provider_id = $${paramIndex++}`);
+      params.push(input.providerId);
+    }
+
+    const sql = `SELECT body_canonical FROM growth.helios_market_observation
+      WHERE ${conditions.join(' AND ')}
+      ORDER BY knowable_at DESC
+      LIMIT 1`;
+
+    const result = await client.query(sql, params);
+    const row = result.rows[0];
+    return row ? (JSON.parse(row.body_canonical) as HeliosMarketObservationEnvelope) : null;
   });
-  return rows[rows.length - 1] ?? null;
 }
 
 export type HeliosBarQuery = {
