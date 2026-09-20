@@ -5,19 +5,33 @@
  */
 
 import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
+import { createCapitalMarketBarStore, type CapitalMarketBarStore } from './bar-store.ts';
+import {
+  CapitalMarketHistoricalIngestor,
+  createCapitalMarketHistoricalIngestor,
+  type CapitalMarketHistoricalIngestRequest,
+  type CapitalMarketHistoricalIngestResult,
+} from './historical-ingestion.ts';
+import { buildHeliosEquityIndexMarketState } from './market-state.ts';
 import { createCapitalMarketProvider, CAPITAL_MARKET_PROVIDER_ID } from './adapters/index.ts';
 import type { CapitalMarketProvider } from './provider.ts';
+import type { CapitalMarketHistoricalRange, CapitalMarketTimeframe } from './timeframes.ts';
 import type {
+  CapitalMarketBar,
+  CapitalMarketCapabilityReport,
   CapitalMarketObservation,
   CapitalMarketResult,
   CapitalMarketRouteDiagnostics,
   CapitalMarketRouteStatus,
+  CapitalMarketSessionObservation,
+  HeliosEquityIndexMarketState,
 } from './types.ts';
 
 export type CapitalMarketServiceOptions = {
   readonly provider?: CapitalMarketProvider;
   readonly providerId?: string;
   readonly externalQualificationPassed?: boolean;
+  readonly barStore?: CapitalMarketBarStore;
 };
 
 export type CapitalMarketQualificationResult = {
@@ -44,14 +58,29 @@ export class CapitalMarketService {
   readonly #externalQualificationPassed: boolean;
   readonly #cache = new Map<string, { readonly value: CapitalMarketObservation; readonly expiresAtMs: number }>();
   readonly #cacheMaxEntries = 128;
+  readonly #barStore: CapitalMarketBarStore;
+  readonly #ingestor: CapitalMarketHistoricalIngestor;
 
   constructor(options: CapitalMarketServiceOptions = {}) {
     this.#provider = options.provider ?? createCapitalMarketProvider(options.providerId ?? CAPITAL_MARKET_PROVIDER_ID);
     this.#externalQualificationPassed = options.externalQualificationPassed ?? false;
+    this.#barStore = options.barStore ?? createCapitalMarketBarStore();
+    this.#ingestor = createCapitalMarketHistoricalIngestor({
+      provider: this.#provider,
+      store: this.#barStore,
+    });
   }
 
   get provider(): CapitalMarketProvider {
     return this.#provider;
+  }
+
+  get barStore(): CapitalMarketBarStore {
+    return this.#barStore;
+  }
+
+  get ingestor(): CapitalMarketHistoricalIngestor {
+    return this.#ingestor;
   }
 
   diagnostics(nowUtc: UtcInstant): CapitalMarketRouteDiagnostics {
@@ -73,18 +102,14 @@ export class CapitalMarketService {
     });
   }
 
+  getCapabilities(nowUtc: UtcInstant): readonly CapitalMarketCapabilityReport[] {
+    return this.#provider.getCapabilities(nowUtc);
+  }
+
   async getObservation(instrumentId: string, nowUtc: UtcInstant): Promise<CapitalMarketResult<CapitalMarketObservation>> {
-    const diagnostics = this.diagnostics(nowUtc);
-    if (diagnostics.routeStatus === 'NOT_CONFIGURED' || diagnostics.routeStatus === 'NOT_QUALIFIED') {
-      return Object.freeze({
-        ok: false,
-        code: diagnostics.routeStatus,
-        message:
-          diagnostics.routeStatus === 'NOT_CONFIGURED'
-            ? 'market data credential is not configured'
-            : 'market data route has not passed external qualification',
-        providerId: this.#provider.providerId,
-      });
+    const blocked = this.#blockedRouteResult(nowUtc);
+    if (blocked) {
+      return blocked;
     }
 
     const cacheKey = `${this.#provider.providerId}:${instrumentId}`;
@@ -98,6 +123,60 @@ export class CapitalMarketService {
       this.#writeCache(cacheKey, result.value);
     }
     return result;
+  }
+
+  async getHistoricalBars(
+    instrumentId: string,
+    timeframe: CapitalMarketTimeframe,
+    range: CapitalMarketHistoricalRange,
+    nowUtc: UtcInstant,
+  ): Promise<CapitalMarketResult<readonly CapitalMarketBar[]>> {
+    const blocked = this.#blockedRouteResult(nowUtc);
+    if (blocked) {
+      return blocked;
+    }
+    return this.#provider.getHistoricalBars(instrumentId, timeframe, range, nowUtc);
+  }
+
+  async ingestHistoricalBars(
+    request: CapitalMarketHistoricalIngestRequest,
+  ): Promise<CapitalMarketHistoricalIngestResult> {
+    const blocked = this.#blockedRouteResult(request.nowUtc);
+    if (blocked) {
+      return Object.freeze({
+        ok: false,
+        code: blocked.code,
+        message: blocked.message,
+        providerId: blocked.providerId,
+        qualityReport: null,
+      });
+    }
+    return this.#ingestor.ingest(request);
+  }
+
+  async getMarketStatus(exchange: string, nowUtc: UtcInstant): Promise<CapitalMarketResult<CapitalMarketSessionObservation>> {
+    const blocked = this.#blockedRouteResult(nowUtc);
+    if (blocked) {
+      return blocked;
+    }
+    return this.#provider.getMarketStatus(exchange, nowUtc);
+  }
+
+  async buildMarketState(
+    instrumentId: string,
+    nowUtc: UtcInstant,
+    options: { readonly barTimeframe?: CapitalMarketTimeframe; readonly exchange?: string } = {},
+  ): Promise<HeliosEquityIndexMarketState | null> {
+    const quoteResult = await this.getObservation(instrumentId, nowUtc);
+    const sessionResult = await this.getMarketStatus(options.exchange ?? 'US', nowUtc);
+    return buildHeliosEquityIndexMarketState({
+      instrumentId,
+      quote: quoteResult.ok ? quoteResult.value : null,
+      session: sessionResult.ok ? sessionResult.value : null,
+      barStore: this.#barStore,
+      ...(options.barTimeframe ? { barTimeframe: options.barTimeframe } : {}),
+      evaluatedAt: nowUtc,
+    });
   }
 
   async qualifyExternal(nowUtc: UtcInstant, instrumentId = DEFAULT_INSTRUMENT_ID): Promise<CapitalMarketQualificationResult> {
@@ -157,6 +236,22 @@ export class CapitalMarketService {
           : result.message,
       secretValuePresent: false,
     });
+  }
+
+  #blockedRouteResult(nowUtc: UtcInstant): CapitalMarketResult<never> | null {
+    const diagnostics = this.diagnostics(nowUtc);
+    if (diagnostics.routeStatus === 'NOT_CONFIGURED' || diagnostics.routeStatus === 'NOT_QUALIFIED') {
+      return Object.freeze({
+        ok: false,
+        code: diagnostics.routeStatus,
+        message:
+          diagnostics.routeStatus === 'NOT_CONFIGURED'
+            ? 'market data credential is not configured'
+            : 'market data route has not passed external qualification',
+        providerId: this.#provider.providerId,
+      });
+    }
+    return null;
   }
 
   #routeStatus(

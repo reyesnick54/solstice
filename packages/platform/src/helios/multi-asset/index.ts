@@ -78,3 +78,15 @@ export {
   type MultiAssetM04QualificationChecks,
   type MultiAssetM04QualificationResult,
 } from './qualification.ts';
+export {
+  buildHeliosCryptoSpotMarketState,
+  type HeliosCryptoSpotMarketState,
+} from './crypto-spot-bridge.ts';
+export {
+  HELIOS_MULTI_ASSET_M06_CRYPTO_MARKET_DATA_QUALIFIED,
+  HELIOS_MULTI_ASSET_M06_CRYPTO_MARKET_DATA_BLOCKED,
+  runM06CryptoMarketQualification,
+  COINGECKO_CREDENTIAL_ENV_VAR,
+  type M06QualificationCheck,
+  type M06QualificationResult,
+} from './m06-qualification.ts';

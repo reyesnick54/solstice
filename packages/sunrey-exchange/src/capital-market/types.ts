@@ -7,6 +7,7 @@
 
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { AuthorityClass } from '../../../provider-sdk/src/types.ts';
+import type { CapitalMarketHistoricalRange, CapitalMarketTimeframe } from './timeframes.ts';
 
 export const CAPITAL_MARKET_SCHEMA = 'sunrey.capital-market.v1' as const;
 export const CAPITAL_MARKET_AUTHORITY = 'REFERENCE_ONLY' as const;
@@ -25,8 +26,28 @@ export const CAPITAL_MARKET_OBSERVATION_TYPES = [
   'trade',
   'ticker',
   'session_status',
+  'ohlcv_bar',
 ] as const;
 export type CapitalMarketObservationType = (typeof CAPITAL_MARKET_OBSERVATION_TYPES)[number];
+
+export const CAPITAL_MARKET_CAPABILITIES = [
+  'equity_quotes',
+  'equity_ohlc',
+  'equity_ohlcv',
+  'equity_historical_bars',
+  'equity_intraday_bars',
+  'equity_session_status',
+] as const;
+export type CapitalMarketCapability = (typeof CAPITAL_MARKET_CAPABILITIES)[number];
+
+export const CAPITAL_MARKET_CAPABILITY_STATUSES = ['available', 'unavailable', 'not_configured'] as const;
+export type CapitalMarketCapabilityStatus = (typeof CAPITAL_MARKET_CAPABILITY_STATUSES)[number];
+
+export type CapitalMarketCapabilityReport = {
+  readonly capability: CapitalMarketCapability;
+  readonly status: CapitalMarketCapabilityStatus;
+  readonly message: string | null;
+};
 
 export const CAPITAL_MARKET_SESSION_STATUSES = ['OPEN', 'CLOSED', 'HALTED', 'PRE_MARKET', 'AFTER_HOURS', 'UNKNOWN'] as const;
 export type CapitalMarketSessionStatus = (typeof CAPITAL_MARKET_SESSION_STATUSES)[number];
@@ -146,4 +167,74 @@ export type CapitalMarketRouteDiagnostics = {
   readonly externalQualificationStatus: 'QUALIFIED' | 'ADAPTER_READY_EXTERNAL_QUALIFICATION_PENDING' | 'FAILED';
   readonly health: CapitalMarketProviderHealth;
   readonly message: string | null;
+};
+
+export type CapitalMarketBar = {
+  readonly schema: typeof CAPITAL_MARKET_SCHEMA;
+  readonly authority: typeof CAPITAL_MARKET_AUTHORITY;
+  readonly barId: string;
+  readonly instrument: CapitalMarketInstrument;
+  readonly timeframe: CapitalMarketTimeframe;
+  readonly openMinorUnits: bigint;
+  readonly highMinorUnits: bigint;
+  readonly lowMinorUnits: bigint;
+  readonly closeMinorUnits: bigint;
+  readonly volumeUnits: bigint | null;
+  readonly priceScale: number;
+  readonly currency: string;
+  readonly periodStart: UtcInstant;
+  readonly periodEnd: UtcInstant;
+  readonly providerId: string;
+  readonly sourceTimestamp: UtcInstant;
+  readonly arrivalTimestamp: UtcInstant;
+  readonly entitlement: CapitalMarketEntitlement;
+  readonly provenance: CapitalMarketProvenance;
+};
+
+export type CapitalMarketSessionObservation = {
+  readonly schema: typeof CAPITAL_MARKET_SCHEMA;
+  readonly authority: typeof CAPITAL_MARKET_AUTHORITY;
+  readonly observationType: 'session_status';
+  readonly exchange: string;
+  readonly sessionStatus: CapitalMarketSessionStatus;
+  readonly providerSession: string | null;
+  readonly isOpen: boolean;
+  readonly timezone: string | null;
+  readonly holiday: string | null;
+  readonly providerId: string;
+  readonly sourceTimestamp: UtcInstant;
+  readonly arrivalTimestamp: UtcInstant;
+  readonly entitlement: CapitalMarketEntitlement;
+  readonly provenance: CapitalMarketProvenance;
+};
+
+export type CapitalMarketIngestQualityReport = {
+  readonly instrumentId: string;
+  readonly timeframe: CapitalMarketTimeframe;
+  readonly range: CapitalMarketHistoricalRange;
+  readonly barsRequested: number;
+  readonly barsReceived: number;
+  readonly barsStored: number;
+  readonly duplicatesDetected: number;
+  readonly gapsDetected: number;
+  readonly gapPeriods: readonly { readonly expectedStart: string; readonly expectedEnd: string }[];
+  readonly requestBudgetUsed: number;
+  readonly requestBudgetLimit: number;
+  readonly providerId: string;
+};
+
+export type HeliosEquityIndexMarketState = {
+  readonly instrumentId: string;
+  readonly symbol: string;
+  readonly venueId: string;
+  readonly sessionStatus: CapitalMarketSessionStatus;
+  readonly lastMinorUnits: bigint | null;
+  readonly referenceMinorUnits: bigint | null;
+  readonly latestBarCloseMinorUnits: bigint | null;
+  readonly latestBarTimeframe: CapitalMarketTimeframe | null;
+  readonly latestBarPeriodStart: UtcInstant | null;
+  readonly volumeUnits: bigint | null;
+  readonly providerId: string;
+  readonly evaluatedAt: UtcInstant;
+  readonly entitlement: CapitalMarketEntitlement;
 };
