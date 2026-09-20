@@ -81,7 +81,7 @@ export class CoingeckoCryptoSpotAdapter implements CapitalMarketProvider {
       ...options,
       mode: 'live',
       authStrategy: {
-        kind: 'header',
+        kind: 'custom_header',
         headerName: 'x-cg-demo-api-key',
         secretRef: {
           scheme: 'secret',
@@ -93,7 +93,7 @@ export class CoingeckoCryptoSpotAdapter implements CapitalMarketProvider {
       authResolver: {
         resolverId: 'crypto-spot.env-auth',
         async resolve(strategy, context) {
-          if (strategy.kind !== 'header') {
+          if (strategy.kind !== 'custom_header') {
             return Object.freeze({ headers: Object.freeze({}), queryParams: Object.freeze({}) });
           }
           const value = process.env[strategy.secretRef.path]?.trim();

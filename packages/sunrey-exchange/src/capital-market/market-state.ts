@@ -9,6 +9,7 @@ import type { CapitalMarketTimeframe } from './timeframes.ts';
 import type {
   CapitalMarketObservation,
   CapitalMarketSessionObservation,
+  CapitalMarketSessionStatus,
   HeliosEquityIndexMarketState,
 } from './types.ts';
 
@@ -27,10 +28,21 @@ export function buildHeliosEquityIndexMarketState(input: {
 
   const timeframe = input.barTimeframe ?? '15m';
   const latestBar = latestBarForInstrument(input.barStore.list(), input.instrumentId, timeframe);
-  const sessionStatus =
+  const sessionStatus: CapitalMarketSessionStatus =
     input.session?.sessionStatus ??
     input.quote?.sessionStatus ??
     'UNKNOWN';
+
+  const entitlement: HeliosEquityIndexMarketState['entitlement'] =
+    input.quote?.entitlement ??
+    input.session?.entitlement ??
+    latestBar?.entitlement ?? {
+      entitlementClass: 'unknown',
+      feedTier: 'unknown',
+      delayedMinutes: null,
+      licensedForRealtime: false,
+      providerDeclaredRealtime: false,
+    };
 
   return Object.freeze({
     instrumentId: instrument.instrumentId,
@@ -45,12 +57,6 @@ export function buildHeliosEquityIndexMarketState(input: {
     volumeUnits: latestBar?.volumeUnits ?? input.quote?.volumeUnits ?? null,
     providerId: input.quote?.providerId ?? input.session?.providerId ?? latestBar?.providerId ?? 'unknown',
     evaluatedAt: input.evaluatedAt,
-    entitlement: input.quote?.entitlement ?? input.session?.entitlement ?? latestBar?.entitlement ?? {
-      entitlementClass: 'unknown',
-      feedTier: 'unknown',
-      delayedMinutes: null,
-      licensedForRealtime: false,
-      providerDeclaredRealtime: false,
-    },
-  });
+    entitlement,
+  }) satisfies HeliosEquityIndexMarketState;
 }

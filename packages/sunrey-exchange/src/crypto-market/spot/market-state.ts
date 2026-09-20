@@ -10,6 +10,7 @@ import type {
   CapitalMarketBar,
   CapitalMarketObservation,
   CapitalMarketSessionObservation,
+  CapitalMarketSessionStatus,
   HeliosCryptoSpotMarketState,
 } from '../../capital-market/types.ts';
 import { resolveCryptoSpotInstrument } from './instrument-registry.ts';
@@ -34,10 +35,21 @@ export function buildHeliosCryptoSpotMarketState(input: {
   const latestBar =
     input.latestBar ??
     (input.barStore ? latestBarForInstrument(input.barStore.list(), input.instrumentId, timeframe) : null);
-  const sessionStatus =
+  const sessionStatus: CapitalMarketSessionStatus =
     input.session?.sessionStatus ??
     input.quote?.sessionStatus ??
     'UNKNOWN';
+
+  const entitlement: HeliosCryptoSpotMarketState['entitlement'] =
+    input.quote?.entitlement ??
+    input.session?.entitlement ??
+    latestBar?.entitlement ?? {
+      entitlementClass: 'unknown',
+      feedTier: 'unknown',
+      delayedMinutes: null,
+      licensedForRealtime: false,
+      providerDeclaredRealtime: false,
+    };
 
   return Object.freeze({
     instrumentId: instrument.instrumentId,
@@ -60,15 +72,9 @@ export function buildHeliosCryptoSpotMarketState(input: {
           : ('UNKNOWN' as const),
     providerId: input.quote?.providerId ?? input.session?.providerId ?? latestBar?.providerId ?? 'unknown',
     evaluatedAt: input.evaluatedAt,
-    executionEnabled: false,
-    researchOnly: true,
+    executionEnabled: false as const,
+    researchOnly: true as const,
     dataFreshness: input.staleQuote ? ('STALE' as const) : ('FRESH' as const),
-    entitlement: input.quote?.entitlement ?? input.session?.entitlement ?? latestBar?.entitlement ?? {
-      entitlementClass: 'unknown',
-      feedTier: 'unknown',
-      delayedMinutes: null,
-      licensedForRealtime: false,
-      providerDeclaredRealtime: false,
-    },
-  });
+    entitlement,
+  }) satisfies HeliosCryptoSpotMarketState;
 }

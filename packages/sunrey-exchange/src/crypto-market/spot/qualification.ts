@@ -80,7 +80,7 @@ function marketChartPayload(): unknown {
 }
 
 function createHarnessFetch(mode: 'success' | 'rate_limit' | 'timeout' = 'success') {
-  return async (input: RequestInfo | URL): Promise<Response> => {
+  return async (input: string | URL): Promise<Response> => {
     const url = String(input);
     if (mode === 'timeout') {
       throw Object.assign(new Error('timeout'), { name: 'AbortError' });

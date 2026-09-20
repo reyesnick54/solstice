@@ -117,7 +117,7 @@ export class CryptoSpotMarketService {
     request: CapitalMarketHistoricalIngestRequest,
   ): Promise<CapitalMarketHistoricalIngestResult> {
     const blocked = this.#blockedRouteResult(request.nowUtc);
-    if (blocked) {
+    if (blocked && !blocked.ok) {
       return Object.freeze({
         ok: false,
         code: blocked.code,

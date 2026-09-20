@@ -37,6 +37,10 @@ export const CAPITAL_MARKET_CAPABILITIES = [
   'equity_historical_bars',
   'equity_intraday_bars',
   'equity_session_status',
+  'crypto_spot_quote',
+  'crypto_spot_ohlcv',
+  'crypto_spot_historical_bars',
+  'crypto_spot_venue_status',
 ] as const;
 export type CapitalMarketCapability = (typeof CAPITAL_MARKET_CAPABILITIES)[number];
 

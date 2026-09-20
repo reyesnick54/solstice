@@ -37,7 +37,7 @@ const T09 = 1_789_894_800_000;
 const T10 = 1_789_898_400_000;
 
 function harnessFetch(mode: 'success' | 'rate_limit' | 'timeout' = 'success') {
-  return async (input: RequestInfo | URL): Promise<Response> => {
+  return async (input: string | URL): Promise<Response> => {
     const url = String(input);
     if (mode === 'timeout') {
       throw Object.assign(new Error('timeout'), { name: 'AbortError' });
@@ -297,7 +297,9 @@ describe('HELIOS M06 crypto spot market data', () => {
 
   describePersistence('persists BTC and ETH bars across restart', () => {
     it('round-trips bar store snapshot through PostgreSQL', async () => {
-      const runtime = await preparePersistence(createDurableRuntime('helios-m06-crypto-bars'));
+      const env = await preparePersistence();
+      const durable = await createDurableRuntime(env);
+      const pool = durable.session.pools.customer;
       const barStore = createCapitalMarketBarStore();
       const service = createCryptoSpotMarketService({
         provider: createCoingeckoCryptoSpotAdapter({ fetchFn: harnessFetch() }),
@@ -319,10 +321,10 @@ describe('HELIOS M06 crypto spot market data', () => {
         nowUtc: NOW,
       });
       const snapshot = barStore.snapshot();
-      await persistHeliosMarketBarState(runtime.pool, snapshot);
+      await persistHeliosMarketBarState(pool, snapshot);
 
       const restored = createCapitalMarketBarStore();
-      restored.restore(await loadHeliosMarketBarState(runtime.pool));
+      restored.restore((await loadHeliosMarketBarState(pool)) as ReturnType<typeof barStore.snapshot>);
       assert.equal(restored.listByInstrument('CRYPTO:GLOBAL:BTC:USD:SIM').length, snapshot.bars.filter((b) => b.instrument.instrumentId === 'CRYPTO:GLOBAL:BTC:USD:SIM').length);
       assert.equal(restored.listByInstrument('CRYPTO:GLOBAL:ETH:USD:SIM').length, snapshot.bars.filter((b) => b.instrument.instrumentId === 'CRYPTO:GLOBAL:ETH:USD:SIM').length);
     });

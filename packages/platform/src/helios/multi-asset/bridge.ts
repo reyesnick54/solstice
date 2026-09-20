@@ -43,7 +43,7 @@ export type MarketStateBridgeAdmissionPolicy = {
   readonly allowedTradability: readonly TradabilityState[];
 };
 
-const DEFAULT_ADMISSION: Record<ResearchConsumerSystem, MarketStateBridgeAdmissionPolicy> = Object.freeze({
+const DEFAULT_ADMISSION = Object.freeze({
   OPPORTUNITY_RESEARCH: Object.freeze({
     requireResearchable: true,
     requireProposalEligible: false,
@@ -92,7 +92,7 @@ const DEFAULT_ADMISSION: Record<ResearchConsumerSystem, MarketStateBridgeAdmissi
       'CONTRACT_EXPIRING',
     ]),
   }),
-});
+}) as Record<ResearchConsumerSystem, MarketStateBridgeAdmissionPolicy>;
 
 export function bridgeMarketStateToResearch(input: {
   readonly consumer: ResearchConsumerSystem;
