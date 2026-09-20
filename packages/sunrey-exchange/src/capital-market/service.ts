@@ -4,7 +4,7 @@
  * No hidden fixture fallback. External failures surface as unavailable/degraded.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { createCapitalMarketBarStore, type CapitalMarketBarStore } from './bar-store.ts';
 import {
   CapitalMarketHistoricalIngestor,

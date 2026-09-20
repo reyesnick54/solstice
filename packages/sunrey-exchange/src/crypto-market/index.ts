@@ -121,3 +121,4 @@ export { resolveCryptoMarketAdapterMode, type CryptoMarketAdapterMode } from './
 export type { CryptoMarketHttpClientOptions } from './http/client.ts';
 
 export * as integrations from './integrations/index.ts';
+export * as spot from './spot/index.ts';

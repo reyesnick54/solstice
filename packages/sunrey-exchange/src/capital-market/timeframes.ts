@@ -4,7 +4,7 @@
 
 import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 
-export const CAPITAL_MARKET_TIMEFRAMES = ['1m', '5m', '15m', '1h', '1d'] as const;
+export const CAPITAL_MARKET_TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h', '1d'] as const;
 export type CapitalMarketTimeframe = (typeof CAPITAL_MARKET_TIMEFRAMES)[number];
 
 export const FINNHUB_TIMEFRAME_RESOLUTIONS: Readonly<Record<CapitalMarketTimeframe, string>> = Object.freeze({
@@ -12,6 +12,7 @@ export const FINNHUB_TIMEFRAME_RESOLUTIONS: Readonly<Record<CapitalMarketTimefra
   '5m': '5',
   '15m': '15',
   '1h': '60',
+  '4h': '60',
   '1d': 'D',
 });
 
@@ -20,6 +21,7 @@ const TIMEFRAME_SECONDS: Readonly<Record<CapitalMarketTimeframe, number>> = Obje
   '5m': 300,
   '15m': 900,
   '1h': 3600,
+  '4h': 14_400,
   '1d': 86_400,
 });
 

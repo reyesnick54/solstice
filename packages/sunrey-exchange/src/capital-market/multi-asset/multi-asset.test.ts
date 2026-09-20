@@ -65,7 +65,7 @@ describe('HELIOS M01 multi-asset instrument domain', () => {
     assert.ok(future);
     assert.equal(future.assetClass, 'FUTURE');
     assert.equal(future.contractMonth, '202612');
-    assert.equal(future.contractMultiplier, 1000n);
+    assert.equal(future.contractMultiplier, 1000);
     assert.equal(future.expiration, '2026-11-20');
     assert.equal(future.firstNoticeDate, '2026-10-31');
     assert.equal(future.lastTradeDate, '2026-11-19');
@@ -111,9 +111,9 @@ describe('HELIOS M01 multi-asset instrument domain', () => {
       baseAsset: null,
       quoteAsset: null,
       contractMultiplier: null,
-      tickSizeScaledUnits: null,
-      lotSizeScaledUnits: null,
-      minimumQuantityScaledUnits: null,
+      tickSize: null,
+      lotSize: null,
+      minimumQuantity: null,
       quantityScale: 0,
       priceScale: 2,
       expiration: null,

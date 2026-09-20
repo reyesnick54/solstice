@@ -72,16 +72,16 @@ export {
   persistHeliosObservationState,
 } from './growth/pg-helios-observation-store.ts';
 export {
+  loadHeliosMarketBarState,
+  persistHeliosMarketBarState,
+} from './growth/pg-helios-market-bar-store.ts';
+export {
   queryHeliosMarketBars,
   queryHeliosMarketObservations,
   queryLatestHeliosMarketObservation,
   type HeliosBarQuery,
   type HeliosMarketObservationQuery,
 } from './growth/pg-helios-market-time-series.ts';
-export {
-  loadHeliosMarketBarState,
-  persistHeliosMarketBarState,
-} from './growth/pg-helios-market-bar-store.ts';
 export {
   loadExecutableOpportunityState,
   persistExecutableOpportunityState,
