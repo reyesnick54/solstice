@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { VenueSessionState } from '../executable-opportunity/taxonomy.ts';
 import { marketStatePermitsExecution, resolveMarketSession } from './calendar.ts';
 import { resolveContinuousSeriesContract } from './continuous-series.ts';

@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { RollState } from './taxonomy.ts';
 import { daysBetween, localDateKey } from './timezone.ts';
 import type { FuturesContractDefinition, FuturesContractSnapshot, MarketCalendarRegistry } from './types.ts';

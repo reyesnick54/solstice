@@ -1,6 +1,6 @@
 import type { ContinuousSeriesDefinition, MarketCalendarRegistry } from './types.ts';
 import { resolveFrontContract } from './futures.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export function isContinuousResearchSeries(series: ContinuousSeriesDefinition): true {
   return series.executable === false;

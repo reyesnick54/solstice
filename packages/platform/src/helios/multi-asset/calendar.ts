@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { MarketCalendarReasonCode, MarketState } from './taxonomy.ts';
 import { isWithinWindow, localDateKey, localDateTimeParts, localTimeMinutes } from './timezone.ts';
 import type {
