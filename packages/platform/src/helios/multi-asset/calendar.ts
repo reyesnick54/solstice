@@ -2,6 +2,7 @@ import type { UtcInstant } from '@solstice/domain';
 import type { MarketCalendarReasonCode, MarketState } from './taxonomy.ts';
 import { isWithinWindow, localDateKey, localDateTimeParts, localTimeMinutes } from './timezone.ts';
 import type {
+  LocalDateKey,
   MarketCalendarDefinition,
   MarketHoliday,
   MarketSessionSnapshot,
@@ -114,7 +115,7 @@ function resolveFxWeekdaySession(input: {
   readonly calendar: MarketCalendarDefinition;
   readonly at: UtcInstant;
 }): { readonly state: MarketState; readonly reasonCode: MarketCalendarReasonCode } {
-  const weekday = localDateTimeParts(at, input.calendar.timeZone).weekday;
+  const weekday = localDateTimeParts(input.at, input.calendar.timeZone).weekday;
   if (weekday === 0 || weekday === 6) {
     return Object.freeze({ state: 'CLOSED', reasonCode: 'WEEKEND' });
   }
@@ -122,7 +123,7 @@ function resolveFxWeekdaySession(input: {
   if (!window) {
     return Object.freeze({ state: 'UNKNOWN', reasonCode: 'UNKNOWN_CALENDAR' });
   }
-  const nowMinutes = localTimeMinutes(at, input.calendar.timeZone);
+  const nowMinutes = localTimeMinutes(input.at, input.calendar.timeZone);
   if (isWithinWindow({ nowMinutes, window })) {
     return Object.freeze({ state: 'OPEN', reasonCode: 'OK' });
   }

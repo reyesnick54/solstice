@@ -20,6 +20,7 @@ import {
   NYSE_EQUITY_CALENDAR,
   CRYPTO_24_7_CALENDAR,
   CME_CL_FUTURES_CALENDAR,
+  FX_WEEKDAY_CALENDAR,
   WTI_CONTRACTS,
 } from '../packages/platform/src/helios/multi-asset/index.ts';
 
@@ -77,6 +78,21 @@ describe('HELIOS Multi-Asset M03 market calendar and contracts', () => {
     const session = resolveMarketSession({ calendar: CRYPTO_24_7_CALENDAR, at });
     assert.equal(session.state, 'MAINTENANCE');
     assert.notEqual(session.state, 'HALTED');
+  });
+
+  it('resolves FX weekday session on business days', () => {
+    const weekdayOpen = resolveMarketSession({
+      calendar: FX_WEEKDAY_CALENDAR,
+      at: asUtcInstant('2026-09-16T15:00:00.000Z'),
+    });
+    assert.equal(weekdayOpen.state, 'OPEN');
+
+    const weekendClosed = resolveMarketSession({
+      calendar: FX_WEEKDAY_CALENDAR,
+      at: asUtcInstant('2026-09-19T15:00:00.000Z'),
+    });
+    assert.equal(weekendClosed.state, 'CLOSED');
+    assert.equal(weekendClosed.reasonCode, 'WEEKEND');
   });
 
   it('supports futures session crossing UTC midnight', () => {
