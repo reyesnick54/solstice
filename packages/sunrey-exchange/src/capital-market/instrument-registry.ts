@@ -3,103 +3,82 @@
  *
  * Ticker alone is never canonical identity. Instruments are keyed by
  * jurisdiction, venue, and product class to prevent cross-venue collisions.
+ *
+ * Backed by the HELIOS M01 multi-asset instrument domain.
  */
 
-import type { CapitalMarketAssetClass, CapitalMarketInstrument, CapitalMarketVenue } from './types.ts';
+import {
+  buildMultiAssetInstrumentId,
+  providerSymbolsRecord,
+  REGISTERED_MULTI_ASSET_INSTRUMENTS,
+  resolveMultiAssetInstrument,
+  resolveMultiAssetInstrumentByTickerVenue,
+  resolveMultiAssetProviderMapping,
+  searchMultiAssetInstruments,
+  toCapitalMarketAssetClass,
+} from './multi-asset/index.ts';
+import type { CapitalMarketAssetClass, CapitalMarketInstrument } from './types.ts';
+import type { CanonicalMultiAssetInstrument } from './multi-asset/types.ts';
 
 export const CAPITAL_MARKET_INSTRUMENT_REGISTRY_ID = 'sunrey.capital-market.instruments.v1' as const;
-
-const VENUE_NASDAQ: CapitalMarketVenue = Object.freeze({
-  venueId: 'XNAS',
-  mic: 'XNAS',
-  displayName: 'NASDAQ',
-  exchange: 'NASDAQ',
-});
-
-const VENUE_ARCA: CapitalMarketVenue = Object.freeze({
-  venueId: 'ARCX',
-  mic: 'ARCX',
-  displayName: 'NYSE Arca',
-  exchange: 'ARCA',
-});
 
 export type RegisteredCapitalMarketInstrument = CapitalMarketInstrument & {
   readonly displayName: string;
   readonly providerSymbols: Readonly<Record<string, string>>;
 };
 
-function instrument(input: RegisteredCapitalMarketInstrument): RegisteredCapitalMarketInstrument {
-  return Object.freeze(input);
+function toRegisteredCapitalMarketInstrument(
+  record: CanonicalMultiAssetInstrument,
+): RegisteredCapitalMarketInstrument {
+  const providerSymbols = providerSymbolsRecord(record.providerMappings);
+  const primaryProvider = record.providerMappings[0];
+  return Object.freeze({
+    instrumentId: record.instrumentId,
+    symbol: record.symbol,
+    vendorSymbol: primaryProvider?.symbol ?? record.symbol,
+    assetClass: toCapitalMarketAssetClass(record.assetClass),
+    venue: record.venue,
+    currency: record.tradingCurrency,
+    isin: record.isin,
+    figi: record.figi,
+    providerNativeId: primaryProvider?.nativeId ?? primaryProvider?.symbol ?? record.symbol,
+    displayName: record.displayName,
+    providerSymbols,
+  });
 }
 
-export const REGISTERED_CAPITAL_MARKET_INSTRUMENTS: readonly RegisteredCapitalMarketInstrument[] = Object.freeze([
-  instrument({
-    instrumentId: 'SECURITY:US:AAPL:XNAS',
-    symbol: 'AAPL',
-    vendorSymbol: 'AAPL',
-    assetClass: 'equity',
-    venue: VENUE_NASDAQ,
-    currency: 'USD',
-    isin: 'US0378331005',
-    figi: null,
-    providerNativeId: 'AAPL',
-    displayName: 'Apple Inc.',
-    providerSymbols: Object.freeze({ finnhub: 'AAPL' }),
-  }),
-  instrument({
-    instrumentId: 'SECURITY:US:SPY:ARCX',
-    symbol: 'SPY',
-    vendorSymbol: 'SPY',
-    assetClass: 'etf',
-    venue: VENUE_ARCA,
-    currency: 'USD',
-    isin: 'US78462F1030',
-    figi: null,
-    providerNativeId: 'SPY',
-    displayName: 'SPDR S&P 500 ETF Trust',
-    providerSymbols: Object.freeze({ finnhub: 'SPY' }),
-  }),
-  instrument({
-    instrumentId: 'SECURITY:US:GLD:ARCX',
-    symbol: 'GLD',
-    vendorSymbol: 'GLD',
-    assetClass: 'etf',
-    venue: VENUE_ARCA,
-    currency: 'USD',
-    isin: 'US78463V1070',
-    figi: null,
-    providerNativeId: 'GLD',
-    displayName: 'SPDR Gold Shares',
-    providerSymbols: Object.freeze({ finnhub: 'GLD' }),
-  }),
-]);
-
-const byId = new Map(REGISTERED_CAPITAL_MARKET_INSTRUMENTS.map((row) => [row.instrumentId, row]));
-const byTickerVenue = new Map(
-  REGISTERED_CAPITAL_MARKET_INSTRUMENTS.map((row) => [`${row.symbol}@${row.venue.venueId}`, row]),
-);
-const byProviderSymbol = new Map(
-  REGISTERED_CAPITAL_MARKET_INSTRUMENTS.flatMap((row) =>
-    Object.entries(row.providerSymbols).map(([providerId, symbol]) => [`${providerId}:${symbol}`, row]),
-  ),
+export const REGISTERED_CAPITAL_MARKET_INSTRUMENTS: readonly RegisteredCapitalMarketInstrument[] = Object.freeze(
+  REGISTERED_MULTI_ASSET_INSTRUMENTS.filter((row) => row.status === 'ACTIVE').map(toRegisteredCapitalMarketInstrument),
 );
 
 export function resolveCapitalMarketInstrument(instrumentId: string): RegisteredCapitalMarketInstrument | undefined {
-  return byId.get(instrumentId);
+  const record = resolveMultiAssetInstrument(instrumentId);
+  if (!record || record.status === 'INACTIVE') {
+    return undefined;
+  }
+  return toRegisteredCapitalMarketInstrument(record);
 }
 
 export function resolveCapitalMarketInstrumentByTickerVenue(
   ticker: string,
   venueId: string,
 ): RegisteredCapitalMarketInstrument | undefined {
-  return byTickerVenue.get(`${ticker}@${venueId}`);
+  const record = resolveMultiAssetInstrumentByTickerVenue(ticker, venueId);
+  if (!record || record.status === 'INACTIVE') {
+    return undefined;
+  }
+  return toRegisteredCapitalMarketInstrument(record);
 }
 
 export function resolveCapitalMarketInstrumentByProviderSymbol(
   providerId: string,
   providerSymbol: string,
 ): RegisteredCapitalMarketInstrument | undefined {
-  return byProviderSymbol.get(`${providerId}:${providerSymbol}`);
+  const record = resolveMultiAssetProviderMapping(providerId, providerSymbol);
+  if (!record || record.status === 'INACTIVE') {
+    return undefined;
+  }
+  return toRegisteredCapitalMarketInstrument(record);
 }
 
 export function canonicalInstrumentId(
@@ -108,21 +87,33 @@ export function canonicalInstrumentId(
   venueId: string,
   assetClass: CapitalMarketAssetClass,
 ): string {
-  return `SECURITY:${jurisdiction}:${ticker}:${venueId}`;
+  return buildMultiAssetInstrumentId({
+    assetClass: capitalMarketAssetClassToMultiAsset(assetClass),
+    jurisdiction,
+    symbol: ticker,
+    venueId,
+  });
 }
 
 export function searchCapitalMarketInstruments(query: string, limit = 20): readonly RegisteredCapitalMarketInstrument[] {
-  const normalized = query.trim().toLowerCase();
-  if (!normalized) {
-    return Object.freeze(REGISTERED_CAPITAL_MARKET_INSTRUMENTS.slice(0, limit));
-  }
   return Object.freeze(
-    REGISTERED_CAPITAL_MARKET_INSTRUMENTS.filter(
-      (row) =>
-        row.instrumentId.toLowerCase().includes(normalized) ||
-        row.symbol.toLowerCase().includes(normalized) ||
-        row.displayName.toLowerCase().includes(normalized) ||
-        row.venue.venueId.toLowerCase().includes(normalized),
-    ).slice(0, limit),
+    searchMultiAssetInstruments({ query, status: 'ACTIVE', limit }).map(toRegisteredCapitalMarketInstrument),
   );
+}
+
+function capitalMarketAssetClassToMultiAsset(assetClass: CapitalMarketAssetClass) {
+  switch (assetClass) {
+    case 'equity':
+      return 'EQUITY' as const;
+    case 'etf':
+      return 'ETF' as const;
+    case 'index':
+      return 'INDEX' as const;
+    case 'commodity':
+      return 'COMMODITY' as const;
+    case 'fx':
+      return 'FX_SPOT' as const;
+    default:
+      return 'EQUITY' as const;
+  }
 }
