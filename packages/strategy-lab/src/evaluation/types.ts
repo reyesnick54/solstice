@@ -31,6 +31,7 @@ export const BENCHMARK_KINDS = [
   'BUY_AND_HOLD',
   'SIMPLE_DETERMINISTIC',
   'HELIOS_H14_REFERENCE',
+  'HELIOS_M09_INDEX_MEAN_REVERSION',
 ] as const;
 
 export type BenchmarkKind = (typeof BENCHMARK_KINDS)[number];

@@ -16,6 +16,40 @@ export {
   resolveCapitalMarketInstrumentByTickerVenue,
   searchCapitalMarketInstruments,
 } from './instrument-registry.ts';
+export {
+  buildCanonicalInstrumentId,
+  buildMultiAssetInstrumentId,
+  determineMultiAssetExecutionCapability,
+  determineMultiAssetMarketDataCapability,
+  ENGINEERING_UNIVERSE_INSTRUMENTS,
+  evaluateMultiAssetInstrumentDomainQualification,
+  filterMultiAssetInstrumentsByAssetClass,
+  getMultiAssetInstrumentCapability,
+  hasMultiAssetExecutionCapability,
+  hasMultiAssetMarketDataCapability,
+  HELIOS_MULTI_ASSET_M01_INSTRUMENT_DOMAIN_BLOCKED,
+  HELIOS_MULTI_ASSET_M01_INSTRUMENT_DOMAIN_QUALIFIED,
+  MULTI_ASSET_CLASSES,
+  MULTI_ASSET_INSTRUMENT_REGISTRY_ID,
+  MULTI_ASSET_SCHEMA,
+  providerSymbolsRecord,
+  REGISTERED_MULTI_ASSET_INSTRUMENTS,
+  resolveMultiAssetInstrument,
+  resolveMultiAssetInstrumentByTickerVenue,
+  resolveMultiAssetProviderMapping,
+  resolveMultiAssetProviderNativeId,
+  resolveMultiAssetUnderlyingChain,
+  resolveMultiAssetUnderlyingDependents,
+  searchMultiAssetInstruments,
+  serializeMultiAssetInstrument,
+  toCapitalMarketAssetClass,
+  validateMultiAssetInstrument,
+  type CanonicalMultiAssetInstrument,
+  type MultiAssetClass,
+  type MultiAssetInstrumentDomainQualificationResult,
+  type MultiAssetInstrumentSearchFilter,
+  type MultiAssetInstrumentValidationResult,
+} from './multi-asset/index.ts';
 export type { CapitalMarketProvider } from './provider.ts';
 export {
   CapitalMarketService,
@@ -59,3 +93,20 @@ export {
   type HeliosMarketDataRouteSnapshot,
   type HeliosMarketDataRouteStatus,
 } from './integrations/helios.ts';
+export {
+  createHeliosGoldMarketRoute,
+  HeliosGoldMarketRoute,
+  heliosGoldMarketNowUtc,
+  type HeliosGoldMarketRouteSnapshot,
+  type HeliosGoldQuoteResult,
+} from './integrations/helios-gold.ts';
+export {
+  externalObservationFromCapitalMarket,
+  externalObservationFromGoldBar,
+  ingestGoldBar,
+  ingestGoldQuote,
+  type GoldObservationBridgeResult,
+  type GoldObservationFabricPort,
+} from './integrations/helios-gold-observation-bridge.ts';
+export * from './futures/index.ts';
+export * from './gold/index.ts';

@@ -73,3 +73,97 @@ export * from './types.ts';
 export * from './futures/index.ts';
 export * from './energy/wti/index.ts';
 export { generateM05M08CoverageReport, type M05M08CoverageReport, type AssetClassCoverage } from './data-coverage/m05-m08-report.ts';
+export {
+  HELIOS_MULTI_ASSET_M03,
+  MARKET_STATES,
+  MARKET_CALENDAR_ROLL_STATES,
+  SESSION_MODES,
+  SETTLEMENT_TYPES,
+  INSTRUMENT_KINDS,
+  VENUE_SIGNAL_KINDS,
+  TRADABILITY_OUTCOMES,
+  MARKET_CALENDAR_REASON_CODES,
+  type MarketState as MarketCalendarState,
+  type MarketCalendarRollState,
+  type SessionMode,
+  type SettlementType,
+  type InstrumentKind,
+  type VenueSignalKind,
+  type TradabilityOutcome,
+  type MarketCalendarReasonCode,
+} from './market-calendar/taxonomy.ts';
+export type {
+  LocalTimeOfDay,
+  LocalDateKey,
+  SessionWindow,
+  MaintenanceWindow,
+  MarketHoliday,
+  MarketCalendarDefinition,
+  VenueSignal,
+  MarketSessionSnapshot,
+  FuturesContractDefinition,
+  FuturesContractSnapshot,
+  ContinuousSeriesDefinition,
+  InstrumentMarketBinding,
+  TradabilityAssessment,
+  MarketCalendarRegistry,
+} from './market-calendar/types.ts';
+export {
+  localDateTimeParts,
+  localDateKey,
+  localTimeMinutes,
+  timeOfDayToMinutes,
+  isWithinWindow,
+  daysBetween,
+  offsetLabel,
+  type LocalDateTimeParts,
+} from './market-calendar/timezone.ts';
+export { resolveMarketSession, marketStatePermitsExecution } from './market-calendar/calendar.ts';
+export {
+  evaluateMarketCalendarContract,
+  deriveMarketCalendarRollState,
+  resolveMarketCalendarFrontContract,
+  resolveMarketCalendarNextContract,
+} from './market-calendar/contract-lifecycle.ts';
+export {
+  isContinuousResearchSeries,
+  resolveContinuousSeriesContract,
+  continuousSeriesBlocksExecution,
+} from './market-calendar/continuous-series.ts';
+export {
+  NYSE_EQUITY_CALENDAR,
+  CRYPTO_24_7_CALENDAR,
+  CME_CL_FUTURES_CALENDAR,
+  FX_WEEKDAY_CALENDAR,
+  WTI_CONTRACTS,
+  GOLD_CONTRACTS,
+  CONTINUOUS_SERIES,
+  DEFAULT_HELIOS_MARKET_CALENDARS,
+} from './market-calendar/fixtures.ts';
+export { createMarketCalendarRegistry } from './market-calendar/registry.ts';
+export {
+  mapMarketStateToVenueSession,
+  assessInstrumentTradability,
+  createMarketOpenValidator,
+} from './market-calendar/tradability.ts';
+export { createMarketAwareOrderValidation } from './market-calendar/order-validation-bridge.ts';
+export {
+  HELIOS_MULTI_ASSET_M03_MARKET_CALENDAR_CONTRACTS_QUALIFIED,
+  HELIOS_MULTI_ASSET_M03_MARKET_CALENDAR_CONTRACTS_BLOCKED,
+  evaluateMultiAssetM03Qualification,
+  type MultiAssetM03QualificationChecks,
+  type MultiAssetM03QualificationResult,
+} from './market-calendar/qualification.ts';
+export {
+  HELIOS_MULTI_ASSET_BAR_INTERVALS,
+  HELIOS_MULTI_ASSET_INDEX_INSTRUMENTS,
+  HELIOS_M09_STRATEGY_FAMILY,
+  type HeliosMultiAssetBarInterval,
+  type HeliosMultiAssetIndexInstrument,
+} from './taxonomy.ts';
+export type {
+  HeliosBar15mObservation,
+  HeliosMultiAssetBarStorePort,
+  HeliosMultiAssetBarStoreSnapshot,
+} from './index-bars.ts';
+export { InMemoryHeliosMultiAssetBarStore } from './bar-store.ts';
