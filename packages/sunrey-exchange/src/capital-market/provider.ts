@@ -6,7 +6,15 @@
  */
 
 import type { UtcInstant } from '../../../domain/src/time.ts';
-import type { CapitalMarketObservation, CapitalMarketProviderHealth, CapitalMarketResult } from './types.ts';
+import type { CapitalMarketHistoricalRange, CapitalMarketTimeframe } from './timeframes.ts';
+import type {
+  CapitalMarketBar,
+  CapitalMarketCapabilityReport,
+  CapitalMarketObservation,
+  CapitalMarketProviderHealth,
+  CapitalMarketResult,
+  CapitalMarketSessionObservation,
+} from './types.ts';
 
 export type CapitalMarketProvider = {
   readonly providerId: string;
@@ -16,4 +24,12 @@ export type CapitalMarketProvider = {
   credentialConfigured(): boolean;
   health(nowUtc: UtcInstant): CapitalMarketProviderHealth;
   getQuote(instrumentId: string, nowUtc: UtcInstant): Promise<CapitalMarketResult<CapitalMarketObservation>>;
+  getHistoricalBars(
+    instrumentId: string,
+    timeframe: CapitalMarketTimeframe,
+    range: CapitalMarketHistoricalRange,
+    nowUtc: UtcInstant,
+  ): Promise<CapitalMarketResult<readonly CapitalMarketBar[]>>;
+  getMarketStatus(exchange: string, nowUtc: UtcInstant): Promise<CapitalMarketResult<CapitalMarketSessionObservation>>;
+  getCapabilities(nowUtc: UtcInstant): readonly CapitalMarketCapabilityReport[];
 };

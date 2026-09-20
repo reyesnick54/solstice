@@ -6,9 +6,18 @@
  */
 
 import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
+import type { CapitalMarketHistoricalIngestRequest, CapitalMarketHistoricalIngestResult } from '../historical-ingestion.ts';
 import type { CapitalMarketProvider } from '../provider.ts';
 import { CapitalMarketService, createCapitalMarketService, type CapitalMarketServiceOptions } from '../service.ts';
-import type { CapitalMarketObservation, CapitalMarketRouteDiagnostics, CapitalMarketRouteStatus } from '../types.ts';
+import type { CapitalMarketHistoricalRange, CapitalMarketTimeframe } from '../timeframes.ts';
+import type {
+  CapitalMarketBar,
+  CapitalMarketObservation,
+  CapitalMarketRouteDiagnostics,
+  CapitalMarketRouteStatus,
+  CapitalMarketSessionObservation,
+  HeliosEquityIndexMarketState,
+} from '../types.ts';
 
 export type HeliosMarketDataRouteStatus = CapitalMarketRouteStatus;
 
@@ -49,6 +58,10 @@ export class HeliosMarketDataRoute {
 
   get provider(): CapitalMarketProvider {
     return this.#service.provider;
+  }
+
+  get service(): CapitalMarketService {
+    return this.#service;
   }
 
   status(nowUtc: UtcInstant): HeliosMarketDataRouteSnapshot {
@@ -93,6 +106,66 @@ export class HeliosMarketDataRoute {
       route,
       fromCache: result.fromCache,
     });
+  }
+
+  async fetchHistoricalBars(
+    instrumentId: string,
+    timeframe: CapitalMarketTimeframe,
+    range: CapitalMarketHistoricalRange,
+    nowUtc: UtcInstant,
+  ): Promise<
+    | { readonly ok: true; readonly bars: readonly CapitalMarketBar[]; readonly route: HeliosMarketDataRouteSnapshot }
+    | { readonly ok: false; readonly code: string; readonly message: string; readonly route: HeliosMarketDataRouteSnapshot }
+  > {
+    const route = this.status(nowUtc);
+    const result = await this.#service.getHistoricalBars(instrumentId, timeframe, range, nowUtc);
+    if (!result.ok) {
+      return Object.freeze({
+        ok: false,
+        code: result.code,
+        message: result.message,
+        route: Object.freeze({
+          ...route,
+          status: result.code === 'RATE_LIMITED' ? 'DEGRADED' : 'UNAVAILABLE',
+        }),
+      });
+    }
+    return Object.freeze({ ok: true, bars: result.value, route });
+  }
+
+  async ingestHistoricalBars(request: CapitalMarketHistoricalIngestRequest): Promise<CapitalMarketHistoricalIngestResult> {
+    return this.#service.ingestHistoricalBars(request);
+  }
+
+  async fetchMarketStatus(
+    exchange: string,
+    nowUtc: UtcInstant,
+  ): Promise<
+    | { readonly ok: true; readonly session: CapitalMarketSessionObservation; readonly route: HeliosMarketDataRouteSnapshot }
+    | { readonly ok: false; readonly code: string; readonly message: string; readonly route: HeliosMarketDataRouteSnapshot }
+  > {
+    const route = this.status(nowUtc);
+    const result = await this.#service.getMarketStatus(exchange, nowUtc);
+    if (!result.ok) {
+      return Object.freeze({
+        ok: false,
+        code: result.code,
+        message: result.message,
+        route: Object.freeze({
+          ...route,
+          status: result.code === 'RATE_LIMITED' ? 'DEGRADED' : 'UNAVAILABLE',
+        }),
+      });
+    }
+    return Object.freeze({ ok: true, session: result.value, route });
+  }
+
+  async buildMarketState(
+    instrumentId: string,
+    nowUtc: UtcInstant,
+    options: { readonly barTimeframe?: CapitalMarketTimeframe; readonly exchange?: string } = {},
+  ): Promise<HeliosEquityIndexMarketState | null> {
+    return this.#service.buildMarketState(instrumentId, nowUtc, options);
   }
 }
 

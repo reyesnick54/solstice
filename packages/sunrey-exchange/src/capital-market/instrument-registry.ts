@@ -32,6 +32,14 @@ function instrument(input: RegisteredCapitalMarketInstrument): RegisteredCapital
   return Object.freeze(input);
 }
 
+export const M05_EQUITY_INDEX_UNIVERSE = Object.freeze([
+  'SECURITY:US:SPY:ARCX',
+  'SECURITY:US:QQQ:XNAS',
+  'SECURITY:US:AAPL:XNAS',
+  'SECURITY:US:MSFT:XNAS',
+  'SECURITY:US:NVDA:XNAS',
+] as const);
+
 export const REGISTERED_CAPITAL_MARKET_INSTRUMENTS: readonly RegisteredCapitalMarketInstrument[] = Object.freeze([
   instrument({
     instrumentId: 'SECURITY:US:AAPL:XNAS',
@@ -45,6 +53,45 @@ export const REGISTERED_CAPITAL_MARKET_INSTRUMENTS: readonly RegisteredCapitalMa
     providerNativeId: 'AAPL',
     displayName: 'Apple Inc.',
     providerSymbols: Object.freeze({ finnhub: 'AAPL' }),
+  }),
+  instrument({
+    instrumentId: 'SECURITY:US:MSFT:XNAS',
+    symbol: 'MSFT',
+    vendorSymbol: 'MSFT',
+    assetClass: 'equity',
+    venue: VENUE_NASDAQ,
+    currency: 'USD',
+    isin: 'US5949181045',
+    figi: null,
+    providerNativeId: 'MSFT',
+    displayName: 'Microsoft Corporation',
+    providerSymbols: Object.freeze({ finnhub: 'MSFT' }),
+  }),
+  instrument({
+    instrumentId: 'SECURITY:US:NVDA:XNAS',
+    symbol: 'NVDA',
+    vendorSymbol: 'NVDA',
+    assetClass: 'equity',
+    venue: VENUE_NASDAQ,
+    currency: 'USD',
+    isin: 'US67066G1040',
+    figi: null,
+    providerNativeId: 'NVDA',
+    displayName: 'NVIDIA Corporation',
+    providerSymbols: Object.freeze({ finnhub: 'NVDA' }),
+  }),
+  instrument({
+    instrumentId: 'SECURITY:US:QQQ:XNAS',
+    symbol: 'QQQ',
+    vendorSymbol: 'QQQ',
+    assetClass: 'etf',
+    venue: VENUE_NASDAQ,
+    currency: 'USD',
+    isin: 'US46090E1038',
+    figi: null,
+    providerNativeId: 'QQQ',
+    displayName: 'Invesco QQQ Trust',
+    providerSymbols: Object.freeze({ finnhub: 'QQQ' }),
   }),
   instrument({
     instrumentId: 'SECURITY:US:SPY:ARCX',
