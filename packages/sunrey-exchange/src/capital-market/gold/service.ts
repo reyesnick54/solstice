@@ -7,6 +7,7 @@
 
 import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
 import { MarketReferenceService } from '../../market-reference/service.ts';
+import type { CommodityPriceObservation } from '../../market-reference/types.ts';
 import { resolveCapitalMarketInstrument } from '../instrument-registry.ts';
 import type { CapitalMarketObservation } from '../types.ts';
 import { CapitalMarketService, type CapitalMarketServiceOptions } from '../service.ts';
@@ -261,7 +262,7 @@ export class GoldMarketIntelligenceService {
 }
 
 function commodityToCapitalMarketObservation(
-  commodity: { readonly priceMinorUnits: bigint; readonly currency: string; readonly priceScale: number; readonly effectiveTime: UtcInstant; readonly providerId: string; readonly provenance: { readonly observationId: string; readonly rawPayloadHash: string | null; readonly capability: string; readonly authorityClass: import('../../../../provider-sdk/src/types.ts').AuthorityClass; readonly sourceUrl: string | null } },
+  commodity: CommodityPriceObservation,
   identityId: string,
   nowUtc: UtcInstant,
 ): CapitalMarketObservation {
