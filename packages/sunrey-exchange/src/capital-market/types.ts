@@ -5,7 +5,7 @@
  * prices, ledger values, or issuance authority.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { AuthorityClass } from '../../../provider-sdk/src/types.ts';
 import type { CapitalMarketHistoricalRange, CapitalMarketTimeframe } from './timeframes.ts';
 
@@ -34,9 +34,6 @@ export const CAPITAL_MARKET_OBSERVATION_TYPES = [
 ] as const;
 export type CapitalMarketObservationType = (typeof CAPITAL_MARKET_OBSERVATION_TYPES)[number];
 
-export const CAPITAL_MARKET_BAR_TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h', '1d'] as const;
-export type CapitalMarketBarTimeframe = (typeof CAPITAL_MARKET_BAR_TIMEFRAMES)[number];
-
 export const CAPITAL_MARKET_CAPABILITIES = [
   'equity_quotes',
   'equity_ohlc',
@@ -44,6 +41,10 @@ export const CAPITAL_MARKET_CAPABILITIES = [
   'equity_historical_bars',
   'equity_intraday_bars',
   'equity_session_status',
+  'crypto_spot_quote',
+  'crypto_spot_ohlcv',
+  'crypto_spot_historical_bars',
+  'crypto_spot_venue_status',
 ] as const;
 export type CapitalMarketCapability = (typeof CAPITAL_MARKET_CAPABILITIES)[number];
 
@@ -55,6 +56,9 @@ export type CapitalMarketCapabilityReport = {
   readonly status: CapitalMarketCapabilityStatus;
   readonly message: string | null;
 };
+
+export const CAPITAL_MARKET_BAR_TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h', '1d'] as const;
+export type CapitalMarketBarTimeframe = (typeof CAPITAL_MARKET_BAR_TIMEFRAMES)[number];
 
 export const CAPITAL_MARKET_SESSION_STATUSES = ['OPEN', 'CLOSED', 'HALTED', 'PRE_MARKET', 'AFTER_HOURS', 'UNKNOWN'] as const;
 export type CapitalMarketSessionStatus = (typeof CAPITAL_MARKET_SESSION_STATUSES)[number];
@@ -278,5 +282,27 @@ export type HeliosEquityIndexMarketState = {
   readonly volumeUnits: bigint | null;
   readonly providerId: string;
   readonly evaluatedAt: UtcInstant;
+  readonly entitlement: CapitalMarketEntitlement;
+};
+
+export type HeliosCryptoSpotMarketState = {
+  readonly instrumentId: string;
+  readonly symbol: string;
+  readonly baseAsset: string | null;
+  readonly quoteAsset: string | null;
+  readonly venueId: string;
+  readonly sessionStatus: CapitalMarketSessionStatus;
+  readonly lastMinorUnits: bigint | null;
+  readonly referenceMinorUnits: bigint | null;
+  readonly latestBarCloseMinorUnits: bigint | null;
+  readonly latestBarTimeframe: CapitalMarketTimeframe | null;
+  readonly latestBarPeriodStart: UtcInstant | null;
+  readonly volumeUnits: bigint | null;
+  readonly volumeKind: 'QUOTE_NOTIONAL' | 'BASE_UNITS' | 'UNKNOWN';
+  readonly providerId: string;
+  readonly evaluatedAt: UtcInstant;
+  readonly executionEnabled: false;
+  readonly researchOnly: true;
+  readonly dataFreshness: 'FRESH' | 'STALE';
   readonly entitlement: CapitalMarketEntitlement;
 };

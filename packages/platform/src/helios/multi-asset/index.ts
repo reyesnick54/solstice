@@ -161,6 +161,14 @@ export {
   type HeliosMultiAssetBarInterval,
   type HeliosMultiAssetIndexInstrument,
 } from './taxonomy.ts';
+export {
+  buildHeliosCryptoSpotM04MarketState,
+  type CryptoSpotM04BridgeBar,
+  type CryptoSpotM04BridgeInput,
+  type CryptoSpotM04BridgeQuote,
+  type CryptoSpotM04BridgeSession,
+  type HeliosCryptoSpotM04MarketState,
+} from './crypto-spot-bridge.ts';
 export type {
   HeliosBar15mObservation,
   HeliosMultiAssetBarStorePort,

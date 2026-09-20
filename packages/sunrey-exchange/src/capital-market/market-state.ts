@@ -4,12 +4,13 @@
 
 import type { UtcInstant } from '@solstice/domain';
 import { latestBarForInstrument, type CapitalMarketBarStore } from './bar-store.ts';
+import { resolveCapitalMarketEntitlement } from './entitlement.ts';
 import { resolveCapitalMarketInstrument } from './instrument-registry.ts';
 import type { CapitalMarketTimeframe } from './timeframes.ts';
-import { resolveCapitalMarketEntitlement } from './entitlement.ts';
 import type {
   CapitalMarketObservation,
   CapitalMarketSessionObservation,
+  CapitalMarketSessionStatus,
   HeliosEquityIndexMarketState,
 } from './types.ts';
 
@@ -28,10 +29,20 @@ export function buildHeliosEquityIndexMarketState(input: {
 
   const timeframe = input.barTimeframe ?? '15m';
   const latestBar = latestBarForInstrument(input.barStore.list(), input.instrumentId, timeframe);
-  const sessionStatus =
+  const sessionStatus: CapitalMarketSessionStatus =
     input.session?.sessionStatus ??
     input.quote?.sessionStatus ??
     'UNKNOWN';
+
+  const entitlement: HeliosEquityIndexMarketState['entitlement'] =
+    input.quote?.entitlement ??
+    input.session?.entitlement ??
+    latestBar?.entitlement ??
+    resolveCapitalMarketEntitlement({
+      providerId: 'unknown',
+      providerDeclaredRealtime: false,
+      feedTier: 'unknown',
+    });
 
   return Object.freeze({
     instrumentId: instrument.instrumentId,
@@ -46,14 +57,6 @@ export function buildHeliosEquityIndexMarketState(input: {
     volumeUnits: latestBar?.volumeUnits ?? input.quote?.volumeUnits ?? null,
     providerId: input.quote?.providerId ?? input.session?.providerId ?? latestBar?.providerId ?? 'unknown',
     evaluatedAt: input.evaluatedAt,
-    entitlement:
-      input.quote?.entitlement ??
-      input.session?.entitlement ??
-      latestBar?.entitlement ??
-      resolveCapitalMarketEntitlement({
-        providerId: 'unknown',
-        providerDeclaredRealtime: false,
-        feedTier: 'unknown',
-      }),
-  });
+    entitlement,
+  }) satisfies HeliosEquityIndexMarketState;
 }
