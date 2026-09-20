@@ -341,9 +341,13 @@ describe('HELIOS Multi-Asset M10 crypto momentum breakout', () => {
   });
 
   it('builds promotion capsule and observation without live eligibility', () => {
-    const capsule = buildM10ReferenceCapsule({ subjectId: 'cust_m10', frozenAt: NOW });
+    const capsuleResult = buildM10ReferenceCapsule({ subjectId: 'cust_m10', frozenAt: NOW });
+    assert.equal(capsuleResult.ok, true);
+    if (!capsuleResult.ok) {
+      return;
+    }
     const observation = observeM10CapsuleQualification({
-      fingerprint: capsule.fingerprint,
+      fingerprint: capsuleResult.value.fingerprint,
       observedAt: NOW,
     });
     assert.equal(observation.qualificationMarker, HELIOS_MULTI_ASSET_M10_CRYPTO_MOMENTUM_BREAKOUT_QUALIFIED);
