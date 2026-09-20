@@ -2,7 +2,7 @@
  * HELIOS M06 — crypto spot bar timeframes and provider mapping hints.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 
 export const CRYPTO_SPOT_TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h', '1d'] as const;
 export type CryptoSpotTimeframe = (typeof CRYPTO_SPOT_TIMEFRAMES)[number];

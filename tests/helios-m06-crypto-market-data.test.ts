@@ -9,18 +9,18 @@ import { asUtcInstant } from '../packages/domain/src/time.ts';
 import { createCapitalMarketBarStore } from '../packages/sunrey-exchange/src/capital-market/bar-store.ts';
 import { sortBarsByPeriodStart } from '../packages/sunrey-exchange/src/capital-market/bar-store.ts';
 import {
+  buildHeliosCryptoSpotMarketState,
   createCoingeckoCryptoSpotAdapter,
   createCryptoSpotMarketService,
   createHeliosCryptoMarketRoute,
+  HELIOS_MULTI_ASSET_M06_CRYPTO_MARKET_DATA_QUALIFIED,
   M06_CRYPTO_SPOT_UNIVERSE,
   resolveCryptoSpotByProviderSymbol,
   resolveCryptoSpotInstrument,
-} from '../packages/sunrey-exchange/src/crypto-market/spot/index.ts';
-import {
-  buildHeliosCryptoSpotMarketState,
-  HELIOS_MULTI_ASSET_M06_CRYPTO_MARKET_DATA_QUALIFIED,
   runM06CryptoMarketQualification,
-} from '../packages/platform/src/helios/multi-asset/index.ts';
+} from '../packages/sunrey-exchange/src/crypto-market/spot/index.ts';
+import { buildHeliosCryptoSpotM04MarketState } from '../packages/platform/src/helios/multi-asset/index.ts';
+import { toCryptoSpotM04BridgeInput } from './helpers/crypto-spot-m04-mapper.ts';
 import {
   loadHeliosMarketBarState,
   persistHeliosMarketBarState,
@@ -160,16 +160,30 @@ describe('HELIOS M06 crypto spot market data', () => {
     });
     const quote = await service.getObservation('CRYPTO:GLOBAL:BTC:USD:SIM', NOW);
     assert.equal(quote.ok, true);
-    const stale = buildHeliosCryptoSpotMarketState({
+    const staleExchange = buildHeliosCryptoSpotMarketState({
       instrumentId: 'CRYPTO:GLOBAL:BTC:USD:SIM',
       quote: quote.ok ? quote.value : null,
       session: null,
       latestBar: null,
-      timeframe: '1h',
+      barTimeframe: '1h',
       evaluatedAt: NOW,
       staleQuote: true,
     });
-    assert.ok(stale?.tradability?.reasonCodes.includes('QUOTE_STALE') || stale?.marketState?.freshness === 'STALE');
+    assert.equal(staleExchange?.dataFreshness, 'STALE');
+    const staleBridge = buildHeliosCryptoSpotM04MarketState(
+      toCryptoSpotM04BridgeInput({
+        instrumentId: 'CRYPTO:GLOBAL:BTC:USD:SIM',
+        quote: quote.ok ? quote.value : null,
+        session: null,
+        latestBar: null,
+        timeframe: '1h',
+        evaluatedAt: NOW,
+        staleQuote: true,
+      })!,
+    );
+    assert.ok(
+      staleBridge?.tradability?.reasonCodes.includes('QUOTE_STALE') || staleBridge?.marketState?.freshness === 'STALE',
+    );
   });
 
   it('preserves quote-notional volume semantics separately from trade count', async () => {
@@ -232,20 +246,33 @@ describe('HELIOS M06 crypto spot market data', () => {
       nowUtc: NOW,
     });
     const bars = sortBarsByPeriodStart(barStore.listByInstrumentTimeframe('CRYPTO:GLOBAL:BTC:USD:SIM', '1h'));
-    const state = buildHeliosCryptoSpotMarketState({
+    const exchangeState = buildHeliosCryptoSpotMarketState({
       instrumentId: 'CRYPTO:GLOBAL:BTC:USD:SIM',
       quote: quote.ok ? quote.value : null,
       session: venue.ok ? venue.value : null,
       latestBar: bars.at(-1) ?? null,
-      timeframe: '1h',
+      barTimeframe: '1h',
       evaluatedAt: NOW,
     });
-    assert.ok(state?.marketState);
-    assert.equal(state?.executionEnabled, false);
-    assert.equal(state?.researchOnly, true);
-    assert.equal(state?.tradability?.tradability, 'RESEARCH_ONLY');
-    assert.equal(state?.tradability?.capabilities.executable, false);
-    assert.equal(state?.tradability?.capabilities.researchable, true);
+    assert.equal(exchangeState?.executionEnabled, false);
+    assert.equal(exchangeState?.researchOnly, true);
+
+    const m04State = buildHeliosCryptoSpotM04MarketState(
+      toCryptoSpotM04BridgeInput({
+        instrumentId: 'CRYPTO:GLOBAL:BTC:USD:SIM',
+        quote: quote.ok ? quote.value : null,
+        session: venue.ok ? venue.value : null,
+        latestBar: bars.at(-1) ?? null,
+        timeframe: '1h',
+        evaluatedAt: NOW,
+      })!,
+    );
+    assert.ok(m04State?.marketState);
+    assert.equal(m04State?.executionEnabled, false);
+    assert.equal(m04State?.researchOnly, true);
+    assert.equal(m04State?.tradability?.tradability, 'RESEARCH_ONLY');
+    assert.equal(m04State?.tradability?.capabilities.executable, false);
+    assert.equal(m04State?.tradability?.capabilities.researchable, true);
   });
 
   it('supports chronological Strategy Lab replay from persisted bars', async () => {

@@ -5,7 +5,7 @@
  * Never fabricates historical bars from repeated quote values.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { CapitalMarketProvider } from './provider.ts';
 import {
   barsInRange,

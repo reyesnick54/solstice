@@ -5,7 +5,7 @@
  * No vendor-specific JSON crosses this boundary. No hidden fixture fallback.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import type { CapitalMarketHistoricalIngestRequest, CapitalMarketHistoricalIngestResult } from '../../../capital-market/historical-ingestion.ts';
 import type { CapitalMarketProvider } from '../../../capital-market/provider.ts';
 import type {

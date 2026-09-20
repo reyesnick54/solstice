@@ -2,7 +2,7 @@
  * Capital market observation validation and quarantine.
  */
 
-import { isUtcInstant } from '../../../domain/src/time.ts';
+import { isUtcInstant } from '@solstice/domain';
 import type { CapitalMarketObservation } from './types.ts';
 
 export type CapitalMarketValidationResult =

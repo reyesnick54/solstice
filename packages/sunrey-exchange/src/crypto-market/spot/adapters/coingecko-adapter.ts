@@ -7,7 +7,7 @@
 
 import { randomUUID } from 'node:crypto';
 
-import { asUtcInstant, type UtcInstant } from '../../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { canonicalJsonStringify, hashRawPayload } from '@solstice/provider-sdk';
 import { resolveCapitalMarketInstrument } from '../../../capital-market/instrument-registry.ts';
 import type { CapitalMarketProvider } from '../../../capital-market/provider.ts';

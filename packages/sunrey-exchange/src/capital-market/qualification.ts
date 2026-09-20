@@ -5,7 +5,7 @@
  * credentials exist. Never logs secret values.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { FINNHUB_CREDENTIAL_ENV_VAR } from './adapters/finnhub-adapter.ts';
 import { createFinnhubCapitalMarketAdapter } from './adapters/finnhub-adapter.ts';
 import { createCapitalMarketBarStore } from './bar-store.ts';

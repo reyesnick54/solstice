@@ -2,7 +2,7 @@
  * HELIOS Multi-Asset Expansion M02 — observation records consumed by M04.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { MarketFreshnessState, MarketProviderHealthState } from '../taxonomy.ts';
 
 export type MultiAssetPriceQuote = {

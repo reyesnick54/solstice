@@ -2,19 +2,19 @@
  * HELIOS Multi-Asset M06 — crypto spot market data qualification harness.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
-import { latestBarForInstrument } from '../../../../sunrey-exchange/src/capital-market/bar-store.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
+import { latestBarForInstrument } from '../../capital-market/bar-store.ts';
 import {
   createCoingeckoCryptoSpotAdapter,
   COINGECKO_CREDENTIAL_ENV_VAR,
-} from '../../../../sunrey-exchange/src/crypto-market/spot/adapters/coingecko-adapter.ts';
+} from './adapters/coingecko-adapter.ts';
 import {
   M06_CRYPTO_SPOT_UNIVERSE,
   resolveCryptoSpotByProviderSymbol,
   resolveCryptoSpotInstrument,
-} from '../../../../sunrey-exchange/src/crypto-market/spot/instrument-registry.ts';
-import { createCryptoSpotMarketService } from '../../../../sunrey-exchange/src/crypto-market/spot/service.ts';
-import { buildHeliosCryptoSpotMarketState } from './crypto-spot-bridge.ts';
+} from './instrument-registry.ts';
+import { buildHeliosCryptoSpotMarketState } from './market-state.ts';
+import { createCryptoSpotMarketService } from './service.ts';
 
 export const HELIOS_MULTI_ASSET_M06_CRYPTO_MARKET_DATA_QUALIFIED =
   'HELIOS_MULTI_ASSET_M06_CRYPTO_MARKET_DATA_QUALIFIED' as const;
@@ -202,31 +202,25 @@ export async function runM06CryptoMarketQualification(options: {
     quote: btcQuote.ok ? btcQuote.value : null,
     session: weekendStatus.ok ? weekendStatus.value : null,
     latestBar: latestBarForInstrument(service.barStore.list(), 'CRYPTO:GLOBAL:BTC:USD:SIM', '1h') ?? null,
-    timeframe: '1h',
+    barTimeframe: '1h',
     evaluatedAt: nowUtc,
     staleQuote: true,
   });
-  checks.push(
-    check(
-      'stale_feed',
-      staleState?.marketState?.freshness === 'STALE' || staleState?.tradability?.tradability === 'DATA_STALE',
-      'stale feed degrades market state',
-    ),
-  );
+  checks.push(check('stale_feed', staleState?.dataFreshness === 'STALE', 'stale feed degrades market state'));
 
   const marketState = buildHeliosCryptoSpotMarketState({
     instrumentId: 'CRYPTO:GLOBAL:BTC:USD:SIM',
     quote: btcQuote.ok ? btcQuote.value : null,
     session: weekendStatus.ok ? weekendStatus.value : null,
     latestBar: latestBarForInstrument(service.barStore.list(), 'CRYPTO:GLOBAL:BTC:USD:SIM', '1h') ?? null,
-    timeframe: '1h',
+    barTimeframe: '1h',
     evaluatedAt: nowUtc,
   });
   checks.push(
     check(
       'market_state',
-      Boolean(marketState?.marketState && marketState.tradability?.tradability === 'RESEARCH_ONLY'),
-      'M04 MarketState with research-only tradability',
+      marketState !== null && marketState.researchOnly && marketState.executionEnabled === false,
+      'crypto market state with research-only posture',
     ),
   );
   checks.push(

@@ -37,3 +37,11 @@ export {
   type HeliosCryptoMarketRouteSnapshot,
   type HeliosCryptoMarketRouteStatus,
 } from './integrations/helios.ts';
+export { buildHeliosCryptoSpotMarketState } from './market-state.ts';
+export {
+  HELIOS_MULTI_ASSET_M06_CRYPTO_MARKET_DATA_BLOCKED,
+  HELIOS_MULTI_ASSET_M06_CRYPTO_MARKET_DATA_QUALIFIED,
+  runM06CryptoMarketQualification,
+  type M06QualificationCheck,
+  type M06QualificationResult,
+} from './qualification.ts';

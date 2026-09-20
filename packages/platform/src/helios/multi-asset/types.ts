@@ -2,7 +2,7 @@
  * HELIOS Multi-Asset Expansion M04 — canonical market state types.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { MultiAssetInstrumentRecord } from './m01/types.ts';
 import type { MultiAssetObservationBundle, MultiAssetPriceQuote } from './m02/types.ts';
 import type { MultiAssetSessionContractRecord } from './m03/types.ts';

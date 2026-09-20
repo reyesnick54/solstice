@@ -2,7 +2,7 @@
  * HELIOS Multi-Asset Expansion M03 — session and contract records consumed by M04.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type {
   FuturesRollState,
   MarketExecutionCapabilityState,

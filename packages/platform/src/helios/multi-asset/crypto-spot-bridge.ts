@@ -1,37 +1,68 @@
 /**
  * HELIOS M06 — bridge crypto spot observations into M04 canonical MarketState.
+ *
+ * Platform-local DTOs only. Callers map exchange observations into this shape.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
-import type {
-  CapitalMarketBar,
-  CapitalMarketObservation,
-  CapitalMarketSessionObservation,
-} from '../../../../sunrey-exchange/src/capital-market/types.ts';
-import type { CapitalMarketTimeframe } from '../../../../sunrey-exchange/src/capital-market/timeframes.ts';
-import { resolveMultiAssetInstrument } from '../../../../sunrey-exchange/src/capital-market/multi-asset/index.ts';
-import { resolveCryptoSpotInstrument } from '../../../../sunrey-exchange/src/crypto-market/spot/instrument-registry.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { evaluateMarketState } from './evaluate.ts';
 import type { MultiAssetInstrumentRecord } from './m01/types.ts';
 import type { MultiAssetObservationBundle } from './m02/types.ts';
 import type { MultiAssetSessionContractRecord } from './m03/types.ts';
 import type { MarketState, MarketStateEvaluationResult, MarketTradabilityDecision } from './types.ts';
 
-export type HeliosCryptoSpotMarketState = {
+export type CryptoSpotM04BridgeQuote = {
+  readonly observationId: string;
+  readonly providerId: string;
+  readonly capability: string;
+  readonly sourceTimestamp: UtcInstant;
+  readonly availabilityTimestamp: UtcInstant | null;
+  readonly arrivalTimestamp: UtcInstant;
+  readonly lastMinorUnits: bigint | null;
+  readonly bidMinorUnits: bigint | null;
+  readonly askMinorUnits: bigint | null;
+  readonly volumeUnits: bigint | null;
+  readonly currency: string;
+  readonly priceScale: number;
+  readonly entitlementUsable: boolean;
+};
+
+export type CryptoSpotM04BridgeBar = {
+  readonly barId: string;
+  readonly timeframe: string;
+  readonly sourceTimestamp: UtcInstant;
+  readonly providerId: string;
+};
+
+export type CryptoSpotM04BridgeSession = {
+  readonly sessionStatus: string;
+  readonly isOpen: boolean;
+  readonly providerId: string;
+};
+
+export type CryptoSpotM04BridgeInput = {
+  readonly instrumentId: string;
+  readonly symbol: string;
+  readonly venueId: string;
+  readonly venueDisplayName: string;
+  readonly currency: string;
+  readonly baseAsset: string | null;
+  readonly quoteAsset: string | null;
+  readonly quote: CryptoSpotM04BridgeQuote | null;
+  readonly session: CryptoSpotM04BridgeSession | null;
+  readonly latestBar: CryptoSpotM04BridgeBar | null;
+  readonly timeframe: string;
+  readonly evaluatedAt: UtcInstant;
+  readonly staleQuote?: boolean;
+};
+
+export type HeliosCryptoSpotM04MarketState = {
   readonly instrumentId: string;
   readonly symbol: string;
   readonly baseAsset: string | null;
   readonly quoteAsset: string | null;
   readonly venueId: string;
   readonly sessionStatus: string;
-  readonly lastMinorUnits: bigint | null;
-  readonly referenceMinorUnits: bigint | null;
-  readonly latestBarCloseMinorUnits: bigint | null;
-  readonly latestBarTimeframe: CapitalMarketTimeframe | null;
-  readonly latestBarPeriodStart: UtcInstant | null;
-  readonly volumeUnits: bigint | null;
-  readonly volumeKind: 'QUOTE_NOTIONAL' | 'BASE_UNITS' | 'UNKNOWN';
-  readonly providerId: string;
   readonly evaluatedAt: UtcInstant;
   readonly executionEnabled: false;
   readonly researchOnly: true;
@@ -39,55 +70,19 @@ export type HeliosCryptoSpotMarketState = {
   readonly tradability: MarketTradabilityDecision | null;
 };
 
-export function buildHeliosCryptoSpotMarketState(input: {
-  readonly instrumentId: string;
-  readonly quote: CapitalMarketObservation | null;
-  readonly session: CapitalMarketSessionObservation | null;
-  readonly latestBar: CapitalMarketBar | null;
-  readonly barTimeframe?: CapitalMarketTimeframe;
-  readonly evaluatedAt: UtcInstant;
-  readonly staleQuote?: boolean;
-}): HeliosCryptoSpotMarketState | null {
-  const instrument = resolveCryptoSpotInstrument(input.instrumentId);
-  if (!instrument) {
-    return null;
-  }
-
-  const multiAsset = resolveMultiAssetInstrument(input.instrumentId);
-  const timeframe = input.barTimeframe ?? input.latestBar?.timeframe ?? '1h';
-  const latestBar = input.latestBar;
-  const sessionStatus = input.session?.sessionStatus ?? input.quote?.sessionStatus ?? 'UNKNOWN';
-  const m04 = buildM04Evaluation({
-    instrumentId: input.instrumentId,
-    quote: input.quote,
-    session: input.session,
-    latestBar,
-    timeframe,
-    evaluatedAt: input.evaluatedAt,
-    staleQuote: input.staleQuote ?? false,
-    instrument,
-  });
+export function buildHeliosCryptoSpotM04MarketState(
+  input: CryptoSpotM04BridgeInput,
+): HeliosCryptoSpotM04MarketState | null {
+  const m04 = buildM04Evaluation(input);
+  const sessionStatus = input.session?.sessionStatus ?? 'UNKNOWN';
 
   return Object.freeze({
-    instrumentId: instrument.instrumentId,
-    symbol: instrument.symbol,
-    baseAsset: multiAsset?.baseAsset ?? null,
-    quoteAsset: multiAsset?.quoteAsset ?? null,
-    venueId: instrument.venue.venueId,
+    instrumentId: input.instrumentId,
+    symbol: input.symbol,
+    baseAsset: input.baseAsset,
+    quoteAsset: input.quoteAsset,
+    venueId: input.venueId,
     sessionStatus,
-    lastMinorUnits: input.quote?.lastMinorUnits ?? latestBar?.closeMinorUnits ?? null,
-    referenceMinorUnits: input.quote?.lastMinorUnits ?? latestBar?.closeMinorUnits ?? null,
-    latestBarCloseMinorUnits: latestBar?.closeMinorUnits ?? null,
-    latestBarTimeframe: latestBar?.timeframe ?? null,
-    latestBarPeriodStart: latestBar?.periodStart ?? null,
-    volumeUnits: latestBar?.volumeUnits ?? input.quote?.volumeUnits ?? null,
-    volumeKind:
-      latestBar?.volumeUnits !== null && latestBar?.volumeUnits !== undefined
-        ? 'QUOTE_NOTIONAL'
-        : input.quote?.volumeUnits
-          ? 'QUOTE_NOTIONAL'
-          : 'UNKNOWN',
-    providerId: input.quote?.providerId ?? input.session?.providerId ?? latestBar?.providerId ?? 'unknown',
     evaluatedAt: input.evaluatedAt,
     executionEnabled: false,
     researchOnly: true,
@@ -96,23 +91,14 @@ export function buildHeliosCryptoSpotMarketState(input: {
   });
 }
 
-function buildM04Evaluation(input: {
-  readonly instrumentId: string;
-  readonly quote: CapitalMarketObservation | null;
-  readonly session: CapitalMarketSessionObservation | null;
-  readonly latestBar: CapitalMarketBar | null;
-  readonly timeframe: CapitalMarketTimeframe;
-  readonly evaluatedAt: UtcInstant;
-  readonly staleQuote: boolean;
-  readonly instrument: NonNullable<ReturnType<typeof resolveCryptoSpotInstrument>>;
-}): MarketStateEvaluationResult | null {
+function buildM04Evaluation(input: CryptoSpotM04BridgeInput): MarketStateEvaluationResult | null {
   const instrumentRecord: MultiAssetInstrumentRecord = Object.freeze({
-    instrumentId: input.instrument.instrumentId,
-    symbol: input.instrument.symbol,
+    instrumentId: input.instrumentId,
+    symbol: input.symbol,
     assetClass: 'CRYPTO_SPOT',
-    venueId: input.instrument.venue.venueId,
-    venueDisplayName: input.instrument.venue.displayName,
-    currency: input.instrument.currency,
+    venueId: input.venueId,
+    venueDisplayName: input.venueDisplayName,
+    currency: input.currency,
     priceScale: 2,
     instrumentMode: 'RESEARCH_ONLY',
     active: true,
@@ -122,9 +108,9 @@ function buildM04Evaluation(input: {
 
   const quoteObs = input.quote
     ? Object.freeze({
-        observationId: input.quote.provenance.observationId,
+        observationId: input.quote.observationId,
         providerId: input.quote.providerId,
-        sourceId: input.quote.provenance.capability,
+        sourceId: input.quote.capability,
         observedAt: input.quote.sourceTimestamp,
         knowableAt: input.quote.availabilityTimestamp ?? input.quote.arrivalTimestamp,
         referencePrice: input.quote.lastMinorUnits
@@ -151,7 +137,7 @@ function buildM04Evaluation(input: {
         recentVolume: input.quote.volumeUnits?.toString() ?? null,
         freshness: input.staleQuote ? ('STALE' as const) : ('FRESH' as const),
         qualityState: input.staleQuote ? 'DEGRADED_STALE' : 'VALID',
-        entitlementUsable: input.quote.entitlement.entitlementClass !== 'unknown',
+        entitlementUsable: input.quote.entitlementUsable,
         entitlementBlocked: false,
         timestampConsistent: true,
         contradictory: false,

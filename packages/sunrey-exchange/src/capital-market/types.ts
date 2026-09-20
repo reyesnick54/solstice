@@ -5,7 +5,7 @@
  * prices, ledger values, or issuance authority.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { AuthorityClass } from '../../../provider-sdk/src/types.ts';
 import type { CapitalMarketHistoricalRange, CapitalMarketTimeframe } from './timeframes.ts';
 
@@ -236,5 +236,27 @@ export type HeliosEquityIndexMarketState = {
   readonly volumeUnits: bigint | null;
   readonly providerId: string;
   readonly evaluatedAt: UtcInstant;
+  readonly entitlement: CapitalMarketEntitlement;
+};
+
+export type HeliosCryptoSpotMarketState = {
+  readonly instrumentId: string;
+  readonly symbol: string;
+  readonly baseAsset: string | null;
+  readonly quoteAsset: string | null;
+  readonly venueId: string;
+  readonly sessionStatus: CapitalMarketSessionStatus;
+  readonly lastMinorUnits: bigint | null;
+  readonly referenceMinorUnits: bigint | null;
+  readonly latestBarCloseMinorUnits: bigint | null;
+  readonly latestBarTimeframe: CapitalMarketTimeframe | null;
+  readonly latestBarPeriodStart: UtcInstant | null;
+  readonly volumeUnits: bigint | null;
+  readonly volumeKind: 'QUOTE_NOTIONAL' | 'BASE_UNITS' | 'UNKNOWN';
+  readonly providerId: string;
+  readonly evaluatedAt: UtcInstant;
+  readonly executionEnabled: false;
+  readonly researchOnly: true;
+  readonly dataFreshness: 'FRESH' | 'STALE';
   readonly entitlement: CapitalMarketEntitlement;
 };

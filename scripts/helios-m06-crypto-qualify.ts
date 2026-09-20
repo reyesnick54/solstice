@@ -13,7 +13,7 @@ import {
   COINGECKO_CREDENTIAL_ENV_VAR,
   HELIOS_MULTI_ASSET_M06_CRYPTO_MARKET_DATA_QUALIFIED,
   runM06CryptoMarketQualification,
-} from '../packages/platform/src/helios/multi-asset/m06-qualification.ts';
+} from '../packages/sunrey-exchange/src/crypto-market/spot/qualification.ts';
 import { qualificationNowUtc } from '../packages/sunrey-exchange/src/capital-market/service.ts';
 
 const LIVE_FLAG = process.env.HELIOS_M06_LIVE_QUALIFY === '1';

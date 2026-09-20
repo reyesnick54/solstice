@@ -2,7 +2,7 @@
  * Capital market bar timeframes and Finnhub resolution mapping.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 
 export const CAPITAL_MARKET_TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h', '1d'] as const;
 export type CapitalMarketTimeframe = (typeof CAPITAL_MARKET_TIMEFRAMES)[number];

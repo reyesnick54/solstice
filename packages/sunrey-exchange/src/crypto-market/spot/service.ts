@@ -5,8 +5,8 @@
  * No hidden fixture fallback. Research-only execution posture preserved.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
-import { createCapitalMarketBarStore, type CapitalMarketBarStore } from '../../capital-market/bar-store.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
+import { createCapitalMarketBarStore, latestBarForInstrument, type CapitalMarketBarStore } from '../../capital-market/bar-store.ts';
 import {
   CapitalMarketHistoricalIngestor,
   type CapitalMarketHistoricalIngestRequest,
@@ -23,6 +23,8 @@ import type {
 } from '../../capital-market/types.ts';
 import type { CapitalMarketHistoricalRange, CapitalMarketTimeframe } from '../../capital-market/timeframes.ts';
 import { createCoingeckoCryptoSpotAdapter, COINGECKO_PROVIDER_ID } from './adapters/coingecko-adapter.ts';
+import { buildHeliosCryptoSpotMarketState } from './market-state.ts';
+import type { HeliosCryptoSpotMarketState } from '../../capital-market/types.ts';
 
 export type CryptoSpotMarketServiceOptions = {
   readonly provider?: CapitalMarketProvider;
@@ -133,6 +135,27 @@ export class CryptoSpotMarketService {
       return blocked;
     }
     return this.#provider.getMarketStatus(exchange, nowUtc);
+  }
+
+  async buildMarketState(
+    instrumentId: string,
+    nowUtc: UtcInstant,
+    options: { readonly barTimeframe?: CapitalMarketTimeframe; readonly staleQuote?: boolean } = {},
+  ): Promise<HeliosCryptoSpotMarketState | null> {
+    const quoteResult = await this.getObservation(instrumentId, nowUtc);
+    const sessionResult = await this.getVenueStatus('CRYPTO_GLOBAL', nowUtc);
+    const timeframe = options.barTimeframe ?? '1h';
+    const latestBar = latestBarForInstrument(this.#barStore.list(), instrumentId, timeframe) ?? null;
+    return buildHeliosCryptoSpotMarketState({
+      instrumentId,
+      quote: quoteResult.ok ? quoteResult.value : null,
+      session: sessionResult.ok ? sessionResult.value : null,
+      latestBar,
+      barStore: this.#barStore,
+      barTimeframe: timeframe,
+      evaluatedAt: nowUtc,
+      ...(options.staleQuote ? { staleQuote: true } : {}),
+    });
   }
 
   #blockedRouteResult(nowUtc: UtcInstant): CapitalMarketResult<never> | null {

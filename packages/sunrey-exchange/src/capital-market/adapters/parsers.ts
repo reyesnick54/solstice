@@ -3,7 +3,7 @@
  */
 
 import { canonicalJsonStringify, hashRawPayload } from '@solstice/provider-sdk';
-import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { resolveCapitalMarketEntitlement } from '../entitlement.ts';
 import type { RegisteredCapitalMarketInstrument } from '../instrument-registry.ts';
 import {

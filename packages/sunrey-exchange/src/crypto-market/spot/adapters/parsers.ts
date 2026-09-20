@@ -2,7 +2,7 @@
  * CoinGecko payload parsers for HELIOS M06 crypto spot market data.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 
 export type CoingeckoSimplePricePayload = Readonly<Record<string, Readonly<Record<string, number>>>>;
 
