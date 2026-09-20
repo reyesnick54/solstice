@@ -25,8 +25,16 @@ export const CAPITAL_MARKET_OBSERVATION_TYPES = [
   'trade',
   'ticker',
   'session_status',
+  'ohlcv_bar',
+  'reference_price',
+  'market_status',
+  'best_bid_offer',
+  'order_book_snapshot',
 ] as const;
 export type CapitalMarketObservationType = (typeof CAPITAL_MARKET_OBSERVATION_TYPES)[number];
+
+export const CAPITAL_MARKET_BAR_TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h', '1d'] as const;
+export type CapitalMarketBarTimeframe = (typeof CAPITAL_MARKET_BAR_TIMEFRAMES)[number];
 
 export const CAPITAL_MARKET_SESSION_STATUSES = ['OPEN', 'CLOSED', 'HALTED', 'PRE_MARKET', 'AFTER_HOURS', 'UNKNOWN'] as const;
 export type CapitalMarketSessionStatus = (typeof CAPITAL_MARKET_SESSION_STATUSES)[number];
@@ -36,6 +44,8 @@ export const CAPITAL_MARKET_ASSET_CLASSES = [
   'etf',
   'index',
   'commodity',
+  'crypto',
+  'future',
   'fx',
   'bond',
   'other',
@@ -137,6 +147,39 @@ export type CapitalMarketProviderHealth = {
 export type CapitalMarketResult<T> =
   | { readonly ok: true; readonly value: T; readonly fromCache: boolean }
   | { readonly ok: false; readonly code: string; readonly message: string; readonly providerId: string };
+
+export type CapitalMarketOhlcvBar = {
+  readonly instrumentId: string;
+  readonly timeframe: CapitalMarketBarTimeframe;
+  readonly openMinorUnits: bigint;
+  readonly highMinorUnits: bigint;
+  readonly lowMinorUnits: bigint;
+  readonly closeMinorUnits: bigint;
+  readonly volumeUnits: bigint;
+  readonly startTime: UtcInstant;
+  readonly endTime: UtcInstant;
+  readonly sourceTimestamp: UtcInstant;
+  readonly arrivalTimestamp: UtcInstant;
+  readonly availabilityTimestamp: UtcInstant | null;
+  readonly providerId: string;
+  readonly venue: string;
+  readonly provenance: CapitalMarketProvenance;
+};
+
+export type CapitalMarketOrderBookLevel = {
+  readonly priceMinorUnits: bigint;
+  readonly quantityMinorUnits: bigint;
+  readonly depth: number;
+};
+
+export type CapitalMarketOrderBookSnapshot = {
+  readonly bids: readonly CapitalMarketOrderBookLevel[];
+  readonly asks: readonly CapitalMarketOrderBookLevel[];
+  readonly sequence: bigint | null;
+  readonly version: string | null;
+  readonly sourceTimestamp: UtcInstant;
+  readonly arrivalTimestamp: UtcInstant;
+};
 
 export type CapitalMarketRouteDiagnostics = {
   readonly routeStatus: CapitalMarketRouteStatus;

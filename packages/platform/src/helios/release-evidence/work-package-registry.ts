@@ -262,6 +262,12 @@ export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPacka
           : 'BLOCKED',
       'tests/helios-h36-release-evidence-live-pilot-gate.test.ts',
     ),
+    statusFrom(
+      'M02',
+      'Multi-asset market observation time-series fabric',
+      testExists(root, 'helios-multi-asset-m02-market-observations.test.ts') ? 'QUALIFIED' : 'BLOCKED',
+      'tests/helios-multi-asset-m02-market-observations.test.ts',
+    ),
   );
 
   return Object.freeze(rows);

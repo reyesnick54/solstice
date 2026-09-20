@@ -130,6 +130,8 @@ export {
 } from './retry.ts';
 export { InMemoryHeliosWorkStore, type HeliosStoreSnapshot } from './execution-store.ts';
 
+export * from './market-observation/index.ts';
+
 export {
   HELIOS_MARKET_OBSERVATION_SCHEMA,
   HeliosObservationFabric,
