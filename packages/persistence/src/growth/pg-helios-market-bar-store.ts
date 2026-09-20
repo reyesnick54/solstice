@@ -1,18 +1,17 @@
 import type { Pool } from 'pg';
 
+import type { CapitalMarketBarStoreSnapshot } from '@solstice/sunrey-exchange';
 import { persistenceJsonStringify } from '../json.ts';
 import { withClient } from '../postgres/pools.ts';
-import type { HeliosMarketBarStoreSnapshot } from './helios-market-bar-types.ts';
 
 export async function persistHeliosMarketBarState(
   pool: Pool,
-  snapshot: HeliosMarketBarStoreSnapshot,
+  snapshot: CapitalMarketBarStoreSnapshot,
 ): Promise<void> {
   await withClient(pool, async (client) => {
     await client.query('BEGIN');
     try {
       for (const bar of snapshot.bars) {
-        const barId = String(bar.barId);
         await client.query(
           `INSERT INTO growth.helios_market_bar
              (bar_id, provider_id, canonical_instrument_id, timeframe, period_start, period_end,
@@ -22,15 +21,15 @@ export async function persistHeliosMarketBarState(
              body_canonical = EXCLUDED.body_canonical,
              duplicate_detected = EXCLUDED.duplicate_detected`,
           [
-            barId,
+            bar.barId,
             bar.providerId,
-            (bar.instrument as { instrumentId: string }).instrumentId,
+            bar.instrument.instrumentId,
             bar.timeframe,
             bar.periodStart,
             bar.periodEnd,
             persistenceJsonStringify(bar),
-            (bar.provenance as { rawPayloadHash: string }).rawPayloadHash,
-            snapshot.duplicateBarIds.includes(barId),
+            bar.provenance.rawPayloadHash,
+            snapshot.duplicateBarIds.includes(bar.barId),
             bar.arrivalTimestamp,
           ],
         );
@@ -43,12 +42,12 @@ export async function persistHeliosMarketBarState(
   });
 }
 
-export async function loadHeliosMarketBarState(pool: Pool): Promise<HeliosMarketBarStoreSnapshot> {
+export async function loadHeliosMarketBarState(pool: Pool): Promise<CapitalMarketBarStoreSnapshot> {
   return withClient(pool, async (client) => {
     const result = await client.query(
       `SELECT body_canonical, duplicate_detected FROM growth.helios_market_bar ORDER BY period_start ASC`,
     );
-    const bars = result.rows.map((row) => JSON.parse(row.body_canonical) as Record<string, unknown>);
+    const bars = result.rows.map((row) => JSON.parse(row.body_canonical));
     const duplicateBarIds = result.rows
       .filter((row) => row.duplicate_detected === true)
       .map((row) => JSON.parse(row.body_canonical).barId as string);

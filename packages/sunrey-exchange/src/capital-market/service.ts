@@ -142,7 +142,7 @@ export class CapitalMarketService {
     request: CapitalMarketHistoricalIngestRequest,
   ): Promise<CapitalMarketHistoricalIngestResult> {
     const blocked = this.#blockedRouteResult(request.nowUtc);
-    if (blocked && !blocked.ok) {
+    if (blocked) {
       return Object.freeze({
         ok: false,
         code: blocked.code,
@@ -238,7 +238,7 @@ export class CapitalMarketService {
     });
   }
 
-  #blockedRouteResult(nowUtc: UtcInstant): CapitalMarketResult<never> | null {
+  #blockedRouteResult(nowUtc: UtcInstant): Extract<CapitalMarketResult<never>, { ok: false }> | null {
     const diagnostics = this.diagnostics(nowUtc);
     if (diagnostics.routeStatus === 'NOT_CONFIGURED' || diagnostics.routeStatus === 'NOT_QUALIFIED') {
       return Object.freeze({

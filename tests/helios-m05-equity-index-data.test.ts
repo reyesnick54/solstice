@@ -313,8 +313,8 @@ describe('HELIOS M05 equity/index market data', () => {
     it('round-trips bar snapshots through PostgreSQL', async () => {
       process.env[FINNHUB_CREDENTIAL_ENV_VAR] = 'test-key';
       const env = await preparePersistence();
-      const durable = await createDurableRuntime(env);
-      const pool = durable.session.pools.customer;
+      const runtime = await createDurableRuntime(env);
+      const pool = runtime.session.pools.customer;
       const provider = createFinnhubCapitalMarketAdapter({ fetchFn: routingFetch('success') });
       const store = createCapitalMarketBarStore();
       const service = createCapitalMarketService({ provider, externalQualificationPassed: true, barStore: store });
@@ -329,7 +329,7 @@ describe('HELIOS M05 equity/index market data', () => {
       await persistHeliosMarketBarState(pool, store.snapshot());
       const restored = await loadHeliosMarketBarState(pool);
       const restoredStore = createCapitalMarketBarStore();
-      restoredStore.restore(restored as ReturnType<typeof store.snapshot>);
+      restoredStore.restore(restored);
       assert.equal(restoredStore.list().length, store.list().length);
     });
   });

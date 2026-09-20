@@ -33,6 +33,7 @@ export {
   resolveCapitalMarketInstrumentByTickerVenue,
   searchCapitalMarketInstruments,
 } from './instrument-registry.ts';
+export { buildHeliosEquityIndexMarketState } from './market-state.ts';
 export {
   buildCanonicalInstrumentId,
   buildMultiAssetInstrumentId,

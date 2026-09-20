@@ -4,6 +4,7 @@
 
 import type { UtcInstant } from '@solstice/domain';
 import { latestBarForInstrument, type CapitalMarketBarStore } from './bar-store.ts';
+import { resolveCapitalMarketEntitlement } from './entitlement.ts';
 import { resolveCapitalMarketInstrument } from './instrument-registry.ts';
 import type { CapitalMarketTimeframe } from './timeframes.ts';
 import type {
@@ -36,13 +37,12 @@ export function buildHeliosEquityIndexMarketState(input: {
   const entitlement: HeliosEquityIndexMarketState['entitlement'] =
     input.quote?.entitlement ??
     input.session?.entitlement ??
-    latestBar?.entitlement ?? {
-      entitlementClass: 'unknown',
-      feedTier: 'unknown',
-      delayedMinutes: null,
-      licensedForRealtime: false,
+    latestBar?.entitlement ??
+    resolveCapitalMarketEntitlement({
+      providerId: 'unknown',
       providerDeclaredRealtime: false,
-    };
+      feedTier: 'unknown',
+    });
 
   return Object.freeze({
     instrumentId: instrument.instrumentId,
