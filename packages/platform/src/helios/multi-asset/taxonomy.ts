@@ -1,5 +1,5 @@
 /**
- * HELIOS Multi-Asset Expansion — shared market-state and index-strategy taxonomies.
+ * HELIOS Multi-Asset Expansion — shared taxonomies (M04 market state, M09 index strategies).
  *
  * Deterministic classification only. No AI or probabilistic validity checks.
  */

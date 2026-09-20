@@ -6,7 +6,7 @@
 import type { MultiAssetInstrumentRecord } from './m01/types.ts';
 import type { MultiAssetObservationBundle } from './m02/types.ts';
 import type { MultiAssetSessionContractRecord } from './m03/types.ts';
-import type { MarketDataQualityAssessment } from './market-state-types.ts';
+import type { MarketDataQualityAssessment } from './types.ts';
 import type { MarketDataQualityDimension, TradabilityReasonCode } from './taxonomy.ts';
 
 const EXTREME_SPREAD_BPS = 500;

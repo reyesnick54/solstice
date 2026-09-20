@@ -3,13 +3,13 @@
  */
 
 import { assessMarketDataQuality, computeSpreadBps } from './data-quality.ts';
-import type { MultiAssetPriceQuote } from './m02/types.ts';
 import type {
   MarketState,
   MarketStateEvaluationInput,
   MarketStateEvaluationResult,
   MarketStateEvidenceRef,
-} from './market-state-types.ts';
+  MultiAssetPriceQuote,
+} from './types.ts';
 import { evaluateTradability } from './tradability.ts';
 import type {
   BarTimeframe,

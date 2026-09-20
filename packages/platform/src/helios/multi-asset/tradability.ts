@@ -6,7 +6,7 @@ import type { MultiAssetInstrumentRecord } from './m01/types.ts';
 import type { MultiAssetObservationBundle } from './m02/types.ts';
 import type { MultiAssetSessionContractRecord } from './m03/types.ts';
 import { computeSpreadBps } from './data-quality.ts';
-import type { MarketCapabilityFlags, MarketDataQualityAssessment, MarketTradabilityDecision } from './market-state-types.ts';
+import type { MarketCapabilityFlags, MarketDataQualityAssessment, MarketTradabilityDecision } from './types.ts';
 import type { TradabilityReasonCode, TradabilityState } from './taxonomy.ts';
 
 type TradabilityContext = {

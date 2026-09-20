@@ -8,7 +8,7 @@ import { describe, it } from 'node:test';
 import { asUtcInstant, type UtcInstant } from '../packages/domain/src/time.ts';
 import {
   bridgeMarketStateToAllResearch,
-  evaluateMarketState,
+  evaluateMultiAssetMarketState,
   evaluateMultiAssetM04Qualification,
   HELIOS_MULTI_ASSET_M04_MARKET_STATE_QUALIFIED,
   type MarketStateEvaluationInput,
@@ -112,7 +112,7 @@ function evaluateScenario(
     sessionContract: baseSession(overrides.sessionContract),
     now: overrides.now ?? NOW,
   });
-  return evaluateMarketState(input);
+  return evaluateMultiAssetMarketState(input);
 }
 
 describe('HELIOS Multi-Asset M04 market state and tradability', () => {
