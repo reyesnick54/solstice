@@ -13,12 +13,33 @@ import { CapitalMarketHttpClient, type CapitalMarketHttpClientOptions } from '..
 import { FINNHUB_ENDPOINT } from '../http/endpoints.ts';
 import { resolveCapitalMarketInstrument } from '../instrument-registry.ts';
 import type { CapitalMarketProvider } from '../provider.ts';
-import type { CapitalMarketObservation, CapitalMarketProviderHealth, CapitalMarketResult } from '../types.ts';
+import {
+  finnhubResolutionForTimeframe,
+  type CapitalMarketHistoricalRange,
+  type CapitalMarketTimeframe,
+} from '../timeframes.ts';
+import type {
+  CapitalMarketBar,
+  CapitalMarketCapabilityReport,
+  CapitalMarketObservation,
+  CapitalMarketProviderHealth,
+  CapitalMarketResult,
+  CapitalMarketSessionObservation,
+} from '../types.ts';
 import { quarantineIfInvalid } from '../validation.ts';
 import {
   decimalToMinorUnits,
+  filterBarsToRange,
+  finnhubCandleHasData,
   finnhubSourceTimestamp,
+  parseFinnhubCandles,
+  parseFinnhubMarketStatus,
+  unixSeconds,
+  validateFinnhubCandlePayload,
+  validateFinnhubMarketStatusPayload,
   validateFinnhubQuotePayload,
+  type FinnhubCandlePayload,
+  type FinnhubMarketStatusPayload,
   type FinnhubQuotePayload,
 } from './parsers.ts';
 
@@ -108,6 +129,44 @@ export class FinnhubCapitalMarketAdapter implements CapitalMarketProvider {
     });
   }
 
+  getCapabilities(nowUtc: UtcInstant): readonly CapitalMarketCapabilityReport[] {
+    const configured = this.credentialConfigured();
+    const baseStatus = configured ? 'available' : 'not_configured';
+    const unavailableMessage = configured ? null : 'credential not configured';
+    return Object.freeze([
+      Object.freeze({
+        capability: 'equity_quotes',
+        status: baseStatus,
+        message: unavailableMessage,
+      }),
+      Object.freeze({
+        capability: 'equity_ohlc',
+        status: baseStatus,
+        message: unavailableMessage,
+      }),
+      Object.freeze({
+        capability: 'equity_ohlcv',
+        status: baseStatus,
+        message: unavailableMessage,
+      }),
+      Object.freeze({
+        capability: 'equity_historical_bars',
+        status: baseStatus,
+        message: configured ? 'daily bars available on free tier; deeper history may require premium' : unavailableMessage,
+      }),
+      Object.freeze({
+        capability: 'equity_intraday_bars',
+        status: baseStatus,
+        message: configured ? 'intraday bars limited to provider plan window (typically 1 month on free tier)' : unavailableMessage,
+      }),
+      Object.freeze({
+        capability: 'equity_session_status',
+        status: baseStatus,
+        message: unavailableMessage,
+      }),
+    ]);
+  }
+
   async getQuote(instrumentId: string, nowUtc: UtcInstant): Promise<CapitalMarketResult<CapitalMarketObservation>> {
     if (!this.credentialConfigured()) {
       return fail('NOT_CONFIGURED', 'FINNHUB_API_KEY is not configured');
@@ -128,9 +187,7 @@ export class FinnhubCapitalMarketAdapter implements CapitalMarketProvider {
     });
 
     if (!response.ok) {
-      this.#rateLimited = response.code === 'RATE_LIMITED';
-      this.#circuitOpen = response.code === 'TIMEOUT' || response.code === 'NETWORK_ERROR';
-      this.#authenticated = response.code !== 'AUTHENTICATION_FAILED' && response.code !== 'NOT_CONFIGURED';
+      this.#applyFailureState(response.code);
       return fail(response.code, response.message);
     }
 
@@ -151,10 +208,102 @@ export class FinnhubCapitalMarketAdapter implements CapitalMarketProvider {
       return fail(validated.code, validated.message);
     }
 
-    this.#lastSuccess = nowUtc;
-    this.#rateLimited = false;
-    this.#circuitOpen = false;
-    this.#authenticated = true;
+    this.#markSuccess(nowUtc);
+    return Object.freeze({ ok: true, value: observation, fromCache: false });
+  }
+
+  async getHistoricalBars(
+    instrumentId: string,
+    timeframe: CapitalMarketTimeframe,
+    range: CapitalMarketHistoricalRange,
+    nowUtc: UtcInstant,
+  ): Promise<CapitalMarketResult<readonly CapitalMarketBar[]>> {
+    if (!this.credentialConfigured()) {
+      return fail('NOT_CONFIGURED', 'FINNHUB_API_KEY is not configured');
+    }
+
+    const instrument = resolveCapitalMarketInstrument(instrumentId);
+    if (!instrument) {
+      return fail('UNKNOWN_INSTRUMENT', `unknown instrument ${instrumentId}`);
+    }
+
+    const providerSymbol = instrument.providerSymbols.finnhub;
+    if (!providerSymbol) {
+      return fail('UNKNOWN_INSTRUMENT', `no finnhub mapping for ${instrumentId}`);
+    }
+
+    const resolution = finnhubResolutionForTimeframe(timeframe);
+    const response = await this.#http.getJson<FinnhubCandlePayload>(FINNHUB_ENDPOINT, '/stock/candle', {
+      symbol: providerSymbol,
+      resolution,
+      from: unixSeconds(range.from),
+      to: unixSeconds(range.to),
+    });
+
+    if (!response.ok) {
+      this.#applyFailureState(response.code);
+      return fail(response.code, response.message);
+    }
+
+    if (!validateFinnhubCandlePayload(response.data)) {
+      return fail('INVALID_PAYLOAD', 'unexpected finnhub candle response shape');
+    }
+
+    if (!finnhubCandleHasData(response.data)) {
+      return fail(
+        'PROVIDER_CAPABILITY_UNAVAILABLE',
+        `finnhub returned no_data for ${providerSymbol} ${timeframe} in requested range`,
+      );
+    }
+
+    const rawPayload = canonicalJsonStringify(response.data);
+    const bars = filterBarsToRange(
+      parseFinnhubCandles({
+        payload: response.data,
+        rawPayload,
+        instrument,
+        providerSymbol,
+        timeframe,
+        nowUtc,
+      }),
+      range,
+    );
+
+    this.#markSuccess(nowUtc);
+    return Object.freeze({ ok: true, value: bars, fromCache: false });
+  }
+
+  async getMarketStatus(
+    exchange: string,
+    nowUtc: UtcInstant,
+  ): Promise<CapitalMarketResult<CapitalMarketSessionObservation>> {
+    if (!this.credentialConfigured()) {
+      return fail('NOT_CONFIGURED', 'FINNHUB_API_KEY is not configured');
+    }
+
+    const response = await this.#http.getJson<FinnhubMarketStatusPayload>(FINNHUB_ENDPOINT, '/stock/market-status', {
+      exchange,
+    });
+
+    if (!response.ok) {
+      this.#applyFailureState(response.code);
+      return fail(response.code, response.message);
+    }
+
+    if (!validateFinnhubMarketStatusPayload(response.data)) {
+      return fail('INVALID_PAYLOAD', 'unexpected finnhub market status response shape');
+    }
+
+    const rawPayload = canonicalJsonStringify(response.data);
+    const observation = parseFinnhubMarketStatus({
+      payload: response.data,
+      rawPayload,
+      exchange,
+      nowUtc,
+      observationId: randomUUID(),
+    });
+
+    this.#markSuccess(nowUtc);
     return Object.freeze({ ok: true, value: observation, fromCache: false });
   }
 
@@ -215,6 +364,19 @@ export class FinnhubCapitalMarketAdapter implements CapitalMarketProvider {
         capability: 'equity_quotes',
       }),
     });
+  }
+
+  #applyFailureState(code: string): void {
+    this.#rateLimited = code === 'RATE_LIMITED';
+    this.#circuitOpen = code === 'TIMEOUT' || code === 'NETWORK_ERROR';
+    this.#authenticated = code !== 'AUTHENTICATION_FAILED' && code !== 'NOT_CONFIGURED';
+  }
+
+  #markSuccess(nowUtc: UtcInstant): void {
+    this.#lastSuccess = nowUtc;
+    this.#rateLimited = false;
+    this.#circuitOpen = false;
+    this.#authenticated = true;
   }
 }
 

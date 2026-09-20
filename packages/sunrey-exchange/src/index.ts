@@ -319,3 +319,4 @@ export {
   SUNREY_ALPHA_INTERNAL_LIQUIDITY_SOURCE,
 } from './alpha/index.ts';
 export type { AlphaLiquidityConfig, AlphaPostedQuote, AlphaLiquidityStatus } from './alpha/index.ts';
+export type { CapitalMarketBarStoreSnapshot } from './capital-market/index.ts';
