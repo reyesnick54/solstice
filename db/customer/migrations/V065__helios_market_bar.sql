@@ -1,4 +1,4 @@
--- V064 HELIOS M05 — durable capital market bar storage for equity/index historical ingestion.
+-- V065 HELIOS M05/M06 — durable capital market bar storage for equity/index and crypto spot historical ingestion.
 -- Reference data only; not Execution Authority.
 
 CREATE TABLE growth.helios_market_bar (
