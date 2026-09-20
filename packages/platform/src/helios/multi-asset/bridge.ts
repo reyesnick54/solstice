@@ -4,7 +4,7 @@
  * Downstream research modules must consume this port — not provider adapters.
  */
 
-import type { MarketState, MarketTradabilityDecision } from './types.ts';
+import type { MarketState, MarketTradabilityDecision } from './market-state-types.ts';
 import type { ResearchConsumerSystem, TradabilityState } from './taxonomy.ts';
 
 export type MarketStateResearchView = {

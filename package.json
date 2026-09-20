@@ -55,6 +55,7 @@
     "helios:market-data:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-market-data-qualify.ts",
     "helios:m05:equity-index:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-m05-equity-index-qualify.ts",
     "helios:m06:crypto:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-m06-crypto-qualify.ts",
+    "helios:m08:wti:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-m08-wti-qualify.ts",
     "helios:s3m-finance:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-s3m-finance-qualify.ts",
     "helios:capacity:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-capacity-qualify.ts",
     "helios:capacity:qualify:fast": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-capacity-qualify.ts --profile SMALL",
