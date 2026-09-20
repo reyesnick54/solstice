@@ -2,7 +2,7 @@
  * M08 — HELIOS integration route for WTI energy market intelligence.
  */
 
-import type { UtcInstant } from '../../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { createWtiEnergyMarketService, type WtiEnergyMarketService } from './service.ts';
 import type { WtiMarketState } from './types.ts';
 import { HELIOS_MULTI_ASSET_M08_WTI_ENERGY_DATA_QUALIFIED } from './qualification.ts';

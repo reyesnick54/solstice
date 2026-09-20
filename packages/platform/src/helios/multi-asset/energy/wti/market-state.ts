@@ -2,7 +2,7 @@
  * M08 — aggregated WTI MarketState composition.
  */
 
-import type { UtcInstant } from '../../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { evaluateRollState } from '../../futures/roll.ts';
 import {
   WTI_COMMODITY_REFERENCE_ID,

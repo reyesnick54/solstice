@@ -2,7 +2,7 @@
  * M03 — futures roll state and front-contract resolution.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import type { FuturesContractIdentity, RollContext, RollState } from './types.ts';
 
 const MS_PER_DAY = 86_400_000;

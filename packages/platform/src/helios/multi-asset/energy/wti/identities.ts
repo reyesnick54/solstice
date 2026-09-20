@@ -5,7 +5,7 @@
  * are never interchangeable.
  */
 
-import { asUtcInstant } from '../../../../../../domain/src/time.ts';
+import { asUtcInstant } from '@solstice/domain';
 import {
   buildFuturesContract,
   buildFuturesContinuous,

@@ -2,7 +2,7 @@
  * M08 — in-memory WTI market state store with restart snapshot support.
  */
 
-import type { UtcInstant } from '../../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { WtiMarketObservation, WtiMarketState } from './types.ts';
 
 export type WtiMarketStoreSnapshot = {

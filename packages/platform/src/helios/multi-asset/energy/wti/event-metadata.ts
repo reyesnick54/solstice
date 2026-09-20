@@ -4,7 +4,7 @@
  * Does not implement event trading logic.
  */
 
-import type { UtcInstant } from '../../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const WTI_EVENT_CATEGORIES = [
   'crude_inventory_report',

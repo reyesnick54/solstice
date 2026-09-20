@@ -2,7 +2,7 @@
  * M03 — first-notice date handling for physical-delivery futures.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { FirstNoticeAssessment, FuturesContractIdentity } from './types.ts';
 
 const MS_PER_DAY = 86_400_000;

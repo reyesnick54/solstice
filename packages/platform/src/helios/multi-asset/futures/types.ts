@@ -5,7 +5,7 @@
  * Synthetic continuous series are research-only and never executable.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const FUTURES_SCHEMA = 'sunrey.helios.futures.v1' as const;
 

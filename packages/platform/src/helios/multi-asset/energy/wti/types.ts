@@ -2,7 +2,7 @@
  * M08 — WTI energy market intelligence types.
  */
 
-import type { UtcInstant } from '../../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { BarInterval, MarketQuote, MultiAssetEntitlement, MultiAssetRouteStatus, OhlcvBar } from '../../types.ts';
 import type { RollContext } from '../../futures/types.ts';
 import { HELIOS_MULTI_ASSET_AUTHORITY, HELIOS_MULTI_ASSET_SCHEMA } from '../../types.ts';

@@ -2,7 +2,7 @@
  * M08 — sandbox WTI energy data provider (simulation only, no live network).
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import type { BarInterval, OhlcvBar } from '../../types.ts';
 import {
   WTI_COMMODITY_REFERENCE_ID,

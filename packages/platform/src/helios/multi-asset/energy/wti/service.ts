@@ -2,7 +2,7 @@
  * M08 — WTI energy market intelligence service.
  */
 
-import type { UtcInstant } from '../../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { resolveForExecution } from '../../futures/executability.ts';
 import { evaluateRollState, resolveExecutableContract } from '../../futures/roll.ts';
 import { assessFirstNotice } from '../../futures/first-notice.ts';
