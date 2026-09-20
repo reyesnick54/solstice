@@ -167,6 +167,14 @@ export {
   buildHeliosH14Material,
   buildHeliosH14StrategyCapsule,
 } from './capsule/h14.ts';
+export {
+  HELIOS_M10_CAPSULE_ID,
+  HELIOS_M10_CRYPTO_MOMENTUM_BREAKOUT_V1,
+  HELIOS_M10_FAMILY_ID,
+  HELIOS_M10_RULE_ID,
+  buildHeliosM10Material,
+  buildHeliosM10StrategyCapsule,
+} from './capsule/m10.ts';
 export { StrategyCapsuleService } from './capsule/service.ts';
 export type { CreateStrategyCapsuleDraftInput } from './capsule/service.ts';
 export { freezePromotionCapsule } from './promotion-capsule.ts';
@@ -224,6 +232,43 @@ export {
   buildH14ReferenceCapsule,
 } from './h14-capsule-bridge.ts';
 export type { H14CapsuleQualificationObservation } from './h14-capsule-bridge.ts';
+export {
+  HELIOS_M10_STRATEGY_CAPSULE_ID,
+  HELIOS_M10_STRATEGY_CAPSULE_VERSION,
+  observeM10CapsuleQualification,
+  buildM10ReferenceCapsule,
+  buildM10StrategySpecification,
+} from './m10-capsule-bridge.ts';
+export type { M10CapsuleQualificationObservation } from './m10-capsule-bridge.ts';
+export {
+  CRYPTO_BTC_USD_ASSET_ID,
+  CRYPTO_ETH_USD_ASSET_ID,
+  HELIOS_CRYPTO_USD_INSTRUMENTS,
+  HELIOS_MULTI_ASSET_M09_STRATEGY_LAB_FOUNDATION,
+  cryptoBarToChronologicalObservation,
+} from './multi-asset/index.ts';
+export {
+  DEFAULT_M10_CONFIG,
+  HELIOS_MULTI_ASSET_M10_CRYPTO_MOMENTUM_BREAKOUT_QUALIFIED,
+  evaluateCryptoMomentumBreakoutRule,
+  cryptoMomentumEvaluationManifest,
+  computeRollingRangeHighPriorBars,
+  VALID_GOVERNANCE,
+  baseBtcBar,
+  baseEthBar,
+  flatPosition,
+  openPosition,
+  validBreakoutControls,
+  validBtcBreakoutMarket,
+  validEthBreakoutMarket,
+} from './crypto-momentum/index.ts';
+export type {
+  CryptoMomentumBreakoutConfig,
+  CryptoMomentumDecision,
+  CryptoMomentumEvaluateInput,
+  CryptoMomentumMarketState,
+  CryptoMomentumPosition,
+} from './crypto-momentum/index.ts';
 export {
   DEFAULT_PARAMETER_SET,
   EXPLICIT_COSTS,
