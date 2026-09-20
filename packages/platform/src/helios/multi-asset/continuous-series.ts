@@ -2,7 +2,7 @@ import type { ContinuousSeriesDefinition, MarketCalendarRegistry } from './types
 import { resolveFrontContract } from './futures.ts';
 import type { UtcInstant } from '@solstice/domain';
 
-export function isContinuousResearchSeries(series: ContinuousSeriesDefinition): true {
+export function isContinuousResearchSeries(series: ContinuousSeriesDefinition): boolean {
   return series.executable === false;
 }
 
@@ -27,6 +27,6 @@ export function resolveContinuousSeriesContract(input: {
   });
 }
 
-export function continuousSeriesBlocksExecution(series: ContinuousSeriesDefinition): true {
+export function continuousSeriesBlocksExecution(series: ContinuousSeriesDefinition): boolean {
   return series.executable === false;
 }

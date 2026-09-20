@@ -44,7 +44,7 @@ export function assessInstrumentTradability(input: {
       resolvedContractId: null,
       continuousSeries: false,
       executable: false,
-      reasonCodes: Object.freeze(['CALENDAR_MISSING']),
+      reasonCodes: Object.freeze(['CALENDAR_MISSING'] as const),
     });
   }
 
@@ -52,7 +52,7 @@ export function assessInstrumentTradability(input: {
   const session = resolveMarketSession({
     calendar,
     at: input.at,
-    venueSignals: input.venueSignals,
+    ...(input.venueSignals ? { venueSignals: input.venueSignals } : {}),
   });
   reasonCodes.push(session.reasonCode);
 

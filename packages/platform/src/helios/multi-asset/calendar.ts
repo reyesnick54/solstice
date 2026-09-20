@@ -146,7 +146,7 @@ export function resolveMarketSession(input: {
       calendarId: 'unknown',
       at: input.at,
       timeZone: 'UTC',
-      localDate: '1970-01-01',
+      localDate: '1970-01-01' as LocalDateKey,
       localTimeMinutes: 0,
       state: applied.state,
       reasonCode: applied.reasonCode,
@@ -160,7 +160,7 @@ export function resolveMarketSession(input: {
   }
 
   const calendar = input.calendar;
-  const localDate = localDateKey(input.at, calendar.timeZone);
+  const localDate: LocalDateKey = localDateKey(input.at, calendar.timeZone);
   const weekday = localDateTimeParts(input.at, calendar.timeZone).weekday;
   const holiday = findHoliday(calendar, localDate);
   const weekend = calendar.weekendDays.includes(weekday);
@@ -193,7 +193,7 @@ export function resolveMarketSession(input: {
 
   const applied = applyVenueSignals({ baseState, baseReason, venueSignals });
 
-  return Object.freeze({
+  const snapshot: MarketSessionSnapshot = Object.freeze({
     calendarId: calendar.calendarId,
     at: input.at,
     timeZone: calendar.timeZone,
@@ -204,10 +204,11 @@ export function resolveMarketSession(input: {
     regularSession: calendar.regularSession,
     preMarketSession: calendar.preMarketSession,
     postMarketSession: calendar.postMarketSession,
-    earlyClose,
+    earlyClose: earlyClose ?? null,
     maintenanceActive: maintenance,
     venueSignals,
   });
+  return snapshot;
 }
 
 export function marketStatePermitsExecution(state: MarketState): boolean {
