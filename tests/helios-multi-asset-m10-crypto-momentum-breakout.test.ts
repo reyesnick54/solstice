@@ -46,6 +46,7 @@ import {
 } from '../packages/strategy-lab/src/index.ts';
 
 const NOW = asUtcInstant('2026-09-20T16:00:00.000Z');
+const ENTRY_AT = asUtcInstant('2026-09-20T14:00:00.000Z');
 
 function evaluateBtc(input: Partial<Parameters<typeof evaluateCryptoMomentumBreakoutRule>[0]> = {}) {
   const market = validBtcBreakoutMarket();
