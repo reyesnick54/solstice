@@ -1,5 +1,4 @@
-import { err, ok, type Result } from '../../../domain/src/result.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import { err, ok, type Result, type UtcInstant } from '@solstice/domain';
 import { calculateMetrics, type EquityPoint } from '../metrics.ts';
 import { simulateRealisticFill } from '../evaluation/fill-model.ts';
 import { buildExecutionTimeline, DEFAULT_CONSERVATIVE_LATENCY } from '../evaluation/latency-model.ts';

@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { M09_INSTRUMENT_UNIVERSE, M09_BAR_INTERVAL } from '../m09/ids.ts';
 import { M09_PARAMETERS_V1 } from '../m09/parameters.ts';
 import { HELIOS_M09_INDEX_MEAN_REVERSION_RULE_ID } from '../m09/rule.ts';

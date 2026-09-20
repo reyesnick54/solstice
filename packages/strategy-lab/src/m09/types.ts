@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const M09_MARKET_REGIMES = ['TRENDING', 'MEAN_REVERTING', 'HIGH_VOL', 'LOW_VOL', 'UNKNOWN'] as const;
 export type M09MarketRegime = (typeof M09_MARKET_REGIMES)[number];

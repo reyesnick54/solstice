@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { M09_Z_SCORE_SCALE } from './parameters.ts';
 import type { M09BarObservation, M09FeatureSnapshot } from './types.ts';
 

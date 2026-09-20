@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 /** Fixed-point scale for z-score comparisons (100 = 1.00 standard deviation). */
 export const M09_Z_SCORE_SCALE = 100n;

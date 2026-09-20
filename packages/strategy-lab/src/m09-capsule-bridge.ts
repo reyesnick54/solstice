@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { asStrategyCapsuleVersion } from './evaluation/ids.ts';
 import { freezeStrategyCapsule } from './evaluation/capsule.ts';
 import { DEFAULT_CONSERVATIVE_LATENCY } from './evaluation/latency-model.ts';
@@ -6,8 +6,8 @@ import { EXPLICIT_COSTS, DEFAULT_PARAMETER_SET } from './fixtures.ts';
 import { asStrategyId, asStrategyVersion } from './ids.ts';
 import { freezeSpecification } from './specification.ts';
 import { compileStrategy } from './compiler.ts';
-import { asRiskBudgetId, asRiskModelId, asRiskModelVersion } from '../../risk/src/ids.ts';
-import { asModelId, asModelVersion } from '../../model-registry/src/ids.ts';
+import { asRiskBudgetId, asRiskModelId, asRiskModelVersion } from '@solstice/risk';
+import { asModelId, asModelVersion } from '@solstice/model-registry';
 import {
   HELIOS_M09_CAPSULE_ID,
   HELIOS_M09_FAMILY_ID,

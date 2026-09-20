@@ -1,4 +1,4 @@
-import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { buildChronologicalObservation, freezeEvaluationDatasetManifest } from '../evaluation/manifest.ts';
 import type { EvaluationDatasetManifest } from '../evaluation/manifest.ts';
 import { M09_QQQ_INSTRUMENT_ID, M09_SPY_INSTRUMENT_ID } from './ids.ts';
