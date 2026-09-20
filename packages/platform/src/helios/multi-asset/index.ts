@@ -24,6 +24,9 @@ export {
   BAR_TIMEFRAMES,
   RESEARCH_CONSUMER_SYSTEMS,
   TRADABILITY_REASON_CODES,
+  HELIOS_MULTI_ASSET_BAR_INTERVALS,
+  HELIOS_MULTI_ASSET_INDEX_INSTRUMENTS,
+  HELIOS_M09_STRATEGY_FAMILY,
   type TradabilityState,
   type MarketSessionState,
   type MarketFreshnessState,
@@ -39,6 +42,8 @@ export {
   type BarTimeframe,
   type ResearchConsumerSystem,
   type TradabilityReasonCode,
+  type HeliosMultiAssetBarInterval,
+  type HeliosMultiAssetIndexInstrument,
 } from './taxonomy.ts';
 
 export type {
@@ -92,3 +97,10 @@ export {
   type CryptoSpotM04BridgeSession,
   type HeliosCryptoSpotM04MarketState,
 } from './crypto-spot-bridge.ts';
+
+export type {
+  HeliosBar15mObservation,
+  HeliosMultiAssetBarStorePort,
+  HeliosMultiAssetBarStoreSnapshot,
+} from './index-bars.ts';
+export { InMemoryHeliosMultiAssetBarStore } from './bar-store.ts';
