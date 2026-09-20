@@ -58,7 +58,7 @@ function quoteResponse(price: number): Response {
 }
 
 function routingFetch(mode: 'success' | 'rate_limit' | 'timeout' | 'invalid' | 'no_data' = 'success') {
-  return async (input: RequestInfo | URL): Promise<Response> => {
+  return async (input: string | URL): Promise<Response> => {
     const url = String(input);
     if (mode === 'timeout') {
       throw Object.assign(new Error('timeout'), { name: 'AbortError' });
@@ -312,7 +312,9 @@ describe('HELIOS M05 equity/index market data', () => {
   describePersistence('persists and restores bar store across restart', () => {
     it('round-trips bar snapshots through PostgreSQL', async () => {
       process.env[FINNHUB_CREDENTIAL_ENV_VAR] = 'test-key';
-      const runtime = await createDurableRuntime(preparePersistence());
+      const env = await preparePersistence();
+      const runtime = await createDurableRuntime(env);
+      const pool = runtime.session.pools.customer;
       const provider = createFinnhubCapitalMarketAdapter({ fetchFn: routingFetch('success') });
       const store = createCapitalMarketBarStore();
       const service = createCapitalMarketService({ provider, externalQualificationPassed: true, barStore: store });
@@ -324,8 +326,8 @@ describe('HELIOS M05 equity/index market data', () => {
         nowUtc: NOW,
       });
       assert.equal(ingest.ok, true);
-      await persistHeliosMarketBarState(runtime.pool, store.snapshot());
-      const restored = await loadHeliosMarketBarState(runtime.pool);
+      await persistHeliosMarketBarState(pool, store.snapshot());
+      const restored = await loadHeliosMarketBarState(pool);
       const restoredStore = createCapitalMarketBarStore();
       restoredStore.restore(restored);
       assert.equal(restoredStore.list().length, store.list().length);

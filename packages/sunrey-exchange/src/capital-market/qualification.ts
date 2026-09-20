@@ -71,7 +71,7 @@ function marketStatusPayload(isOpen = true): unknown {
 }
 
 function createHarnessFetch(mode: 'success' | 'rate_limit' | 'timeout' | 'invalid' | 'no_data' = 'success') {
-  return async (input: RequestInfo | URL): Promise<Response> => {
+  return async (input: string | URL): Promise<Response> => {
     const url = String(input);
     if (mode === 'timeout') {
       throw Object.assign(new Error('timeout'), { name: 'AbortError' });

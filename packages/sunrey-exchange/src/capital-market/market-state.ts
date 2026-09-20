@@ -6,6 +6,7 @@ import type { UtcInstant } from '@solstice/domain';
 import { latestBarForInstrument, type CapitalMarketBarStore } from './bar-store.ts';
 import { resolveCapitalMarketInstrument } from './instrument-registry.ts';
 import type { CapitalMarketTimeframe } from './timeframes.ts';
+import { resolveCapitalMarketEntitlement } from './entitlement.ts';
 import type {
   CapitalMarketObservation,
   CapitalMarketSessionObservation,
@@ -45,12 +46,14 @@ export function buildHeliosEquityIndexMarketState(input: {
     volumeUnits: latestBar?.volumeUnits ?? input.quote?.volumeUnits ?? null,
     providerId: input.quote?.providerId ?? input.session?.providerId ?? latestBar?.providerId ?? 'unknown',
     evaluatedAt: input.evaluatedAt,
-    entitlement: input.quote?.entitlement ?? input.session?.entitlement ?? latestBar?.entitlement ?? {
-      entitlementClass: 'unknown',
-      feedTier: 'unknown',
-      delayedMinutes: null,
-      licensedForRealtime: false,
-      providerDeclaredRealtime: false,
-    },
+    entitlement:
+      input.quote?.entitlement ??
+      input.session?.entitlement ??
+      latestBar?.entitlement ??
+      resolveCapitalMarketEntitlement({
+        providerId: 'unknown',
+        providerDeclaredRealtime: false,
+        feedTier: 'unknown',
+      }),
   });
 }
