@@ -8,8 +8,18 @@ import { createFinnhubCapitalMarketAdapter, type FinnhubCapitalMarketAdapterOpti
 export { createFinnhubCapitalMarketAdapter, FinnhubCapitalMarketAdapter, FINNHUB_CREDENTIAL_ENV_VAR } from './finnhub-adapter.ts';
 export {
   decimalToMinorUnits,
+  filterBarsToRange,
+  finnhubCandleHasData,
   finnhubSourceTimestamp,
+  parseFinnhubCandles,
+  parseFinnhubMarketStatus,
+  unixSeconds,
+  validateFinnhubCandlePayload,
+  validateFinnhubMarketStatusPayload,
   validateFinnhubQuotePayload,
+  volumeToUnits,
+  type FinnhubCandlePayload,
+  type FinnhubMarketStatusPayload,
   type FinnhubQuotePayload,
 } from './parsers.ts';
 
