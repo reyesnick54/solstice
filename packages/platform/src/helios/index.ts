@@ -174,3 +174,4 @@ export * from './resilience/index.ts';
 export * from './regulatory-transparency/index.ts';
 export * from './release-packaging/index.ts';
 export * from './release-evidence/index.ts';
+export * from './multi-asset/index.ts';
