@@ -60,25 +60,6 @@ export type CapitalMarketCapabilityReport = {
 export const CAPITAL_MARKET_BAR_TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h', '1d'] as const;
 export type CapitalMarketBarTimeframe = (typeof CAPITAL_MARKET_BAR_TIMEFRAMES)[number];
 
-export const CAPITAL_MARKET_CAPABILITIES = [
-  'equity_quotes',
-  'equity_ohlc',
-  'equity_ohlcv',
-  'equity_historical_bars',
-  'equity_intraday_bars',
-  'equity_session_status',
-] as const;
-export type CapitalMarketCapability = (typeof CAPITAL_MARKET_CAPABILITIES)[number];
-
-export const CAPITAL_MARKET_CAPABILITY_STATUSES = ['available', 'unavailable', 'not_configured'] as const;
-export type CapitalMarketCapabilityStatus = (typeof CAPITAL_MARKET_CAPABILITY_STATUSES)[number];
-
-export type CapitalMarketCapabilityReport = {
-  readonly capability: CapitalMarketCapability;
-  readonly status: CapitalMarketCapabilityStatus;
-  readonly message: string | null;
-};
-
 export const CAPITAL_MARKET_SESSION_STATUSES = ['OPEN', 'CLOSED', 'HALTED', 'PRE_MARKET', 'AFTER_HOURS', 'UNKNOWN'] as const;
 export type CapitalMarketSessionStatus = (typeof CAPITAL_MARKET_SESSION_STATUSES)[number];
 
