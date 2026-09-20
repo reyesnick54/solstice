@@ -12,7 +12,8 @@ COPY db ./db
 RUN apt-get update \
   && apt-get install --no-install-recommends --yes curl \
   && rm -rf /var/lib/apt/lists/* \
-  && useradd --uid 65532 --create-home --shell /usr/sbin/nologin sunrey \
+  && useradd --uid 65532 --create-home --shell /usr/sbin/nologin sunrey
+RUN npm ci --ignore-scripts \
   && chown -R 65532:65532 /app
 USER 65532
 ENV SUNREY_SERVICE=${SERVICE}
