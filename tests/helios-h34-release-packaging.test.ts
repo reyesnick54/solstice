@@ -55,7 +55,7 @@ describe('HELIOS H34 release packaging', () => {
   it('pre-deploy migration check passes on repository baseline', () => {
     const check = runPreDeployMigrationCheck(ROOT);
     assert.equal(check.passed, true, check.blockers.join('; '));
-    assert.equal(check.schemaBaseline.customer, 'V064');
+    assert.equal(check.schemaBaseline.customer, 'V065');
     assert.equal(check.schemaBaseline.ledger, 'V010');
   });
 
