@@ -6,7 +6,7 @@
 
 import type { UtcInstant } from '@solstice/domain';
 import type { MultiAssetInstrumentRecord } from './m01/types.ts';
-import type { MultiAssetObservationBundle, MultiAssetPriceQuote } from './m02/types.ts';
+import type { MultiAssetObservationBundle, MultiAssetPriceQuote, MultiAssetQuoteObservation } from './m02/types.ts';
 import type { MultiAssetSessionContractRecord } from './m03/types.ts';
 import type {
   BarTimeframe,

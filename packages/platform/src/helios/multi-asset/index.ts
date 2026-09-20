@@ -53,7 +53,7 @@ export type { MultiAssetSessionContractRecord } from './m03/types.ts';
 
 export { assessMarketDataQuality, computeSpreadBps, EXTREME_SPREAD_BPS } from './data-quality.ts';
 export { evaluateTradability } from './tradability.ts';
-export { evaluateMarketState } from './evaluate.ts';
+export { evaluateMarketState as evaluateMultiAssetMarketState } from './evaluate.ts';
 export {
   bridgeMarketStateToResearch,
   bridgeMarketStateToAllResearch,

@@ -48,49 +48,49 @@ const DEFAULT_ADMISSION: Record<ResearchConsumerSystem, MarketStateBridgeAdmissi
     requireResearchable: true,
     requireProposalEligible: false,
     requireExecutable: false,
-    allowedTradability: Object.freeze([
+    allowedTradability: [
       'TRADABLE',
       'RESEARCH_ONLY',
       'DATA_STALE',
       'MARKET_CLOSED',
       'CONTRACT_EXPIRING',
-    ]),
+    ] as const satisfies readonly TradabilityState[],
   }),
   STAT_ARB: Object.freeze({
     requireResearchable: true,
     requireProposalEligible: false,
     requireExecutable: false,
-    allowedTradability: Object.freeze(['TRADABLE', 'RESEARCH_ONLY', 'DATA_STALE']),
+    allowedTradability: ['TRADABLE', 'RESEARCH_ONLY', 'DATA_STALE'] as const satisfies readonly TradabilityState[],
   }),
   VOLATILITY: Object.freeze({
     requireResearchable: true,
     requireProposalEligible: false,
     requireExecutable: false,
-    allowedTradability: Object.freeze(['TRADABLE', 'RESEARCH_ONLY', 'DATA_STALE', 'MARKET_CLOSED']),
+    allowedTradability: ['TRADABLE', 'RESEARCH_ONLY', 'DATA_STALE', 'MARKET_CLOSED'] as const satisfies readonly TradabilityState[],
   }),
   MICROSTRUCTURE: Object.freeze({
     requireResearchable: true,
     requireProposalEligible: false,
     requireExecutable: false,
-    allowedTradability: Object.freeze(['TRADABLE', 'RESEARCH_ONLY']),
+    allowedTradability: ['TRADABLE', 'RESEARCH_ONLY'] as const satisfies readonly TradabilityState[],
   }),
   EXECUTION_RESEARCH: Object.freeze({
     requireResearchable: true,
     requireProposalEligible: true,
     requireExecutable: false,
-    allowedTradability: Object.freeze(['TRADABLE', 'EXECUTION_UNAVAILABLE']),
+    allowedTradability: ['TRADABLE', 'EXECUTION_UNAVAILABLE'] as const satisfies readonly TradabilityState[],
   }),
   STRATEGY_LAB: Object.freeze({
     requireResearchable: true,
     requireProposalEligible: false,
     requireExecutable: false,
-    allowedTradability: Object.freeze([
+    allowedTradability: [
       'TRADABLE',
       'RESEARCH_ONLY',
       'DATA_STALE',
       'MARKET_CLOSED',
       'CONTRACT_EXPIRING',
-    ]),
+    ] as const satisfies readonly TradabilityState[],
   }),
 });
 
