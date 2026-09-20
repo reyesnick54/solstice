@@ -47,6 +47,14 @@ function toRegisteredCapitalMarketInstrument(
   });
 }
 
+export const M05_EQUITY_INDEX_UNIVERSE = Object.freeze([
+  'SECURITY:US:SPY:ARCX',
+  'SECURITY:US:QQQ:XNAS',
+  'SECURITY:US:AAPL:XNAS',
+  'SECURITY:US:MSFT:XNAS',
+  'SECURITY:US:NVDA:XNAS',
+] as const);
+
 export const REGISTERED_CAPITAL_MARKET_INSTRUMENTS: readonly RegisteredCapitalMarketInstrument[] = Object.freeze(
   REGISTERED_MULTI_ASSET_INSTRUMENTS.filter((row) => row.status === 'ACTIVE').map(toRegisteredCapitalMarketInstrument),
 );
