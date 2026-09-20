@@ -5,5 +5,3 @@ export {
   type GoldMarketDataQualificationChecks,
   type GoldMarketDataQualificationResult,
 } from './qualification.ts';
-export { HeliosGoldObservationBridge, type GoldObservationBridgeResult } from './observation-bridge.ts';
-export { externalObservationFromCapitalMarket } from './external-observation.ts';

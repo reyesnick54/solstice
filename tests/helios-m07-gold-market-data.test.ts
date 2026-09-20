@@ -41,8 +41,11 @@ import {
 import {
   evaluateGoldMarketDataQualification,
   HELIOS_MULTI_ASSET_M07_GOLD_MARKET_DATA_QUALIFIED,
-  HeliosGoldObservationBridge,
 } from '../packages/platform/src/helios/multi-asset/gold/index.ts';
+import {
+  ingestGoldBar,
+  ingestGoldQuote,
+} from '../packages/sunrey-exchange/src/capital-market/integrations/helios-gold-observation-bridge.ts';
 
 const NOW = asUtcInstant('2026-09-20T16:00:00.000Z');
 const TREND_FROM = asUtcInstant('2026-08-01T00:00:00.000Z');
@@ -202,12 +205,11 @@ describe('HELIOS M07 gold market data', () => {
     const clock = new FrozenClock(NOW);
     const store = createHeliosObservationStore();
     const fabric = new HeliosObservationFabric({ clock, store });
-    const bridge = new HeliosGoldObservationBridge(fabric, clock);
     const service = createGoldMarketIntelligenceService();
     const quoteResult = await service.getQuote(GOLD_REFERENCE_ID, NOW);
     assert.equal(quoteResult.ok, true);
     if (!quoteResult.ok) return;
-    const ingested = bridge.ingestQuote(quoteResult.value, GOLD_REFERENCE_ID);
+    const ingested = ingestGoldQuote(fabric, quoteResult.value, GOLD_REFERENCE_ID);
     assert.equal(ingested.ok, true);
     assert.equal(store.listByInstrument(GOLD_REFERENCE_ID).length, 1);
   });
@@ -231,8 +233,7 @@ describe('HELIOS M07 gold market data', () => {
     const clock = new FrozenClock(NOW);
     const store = createHeliosObservationStore();
     const fabric = new HeliosObservationFabric({ clock, store });
-    const bridge = new HeliosGoldObservationBridge(fabric, clock);
-    const ingested = bridge.ingestQuote(quote.observation, GOLD_ETF_GLD_ID);
+    const ingested = ingestGoldQuote(fabric, quote.observation, GOLD_ETF_GLD_ID);
     assert.equal(ingested.ok, true);
     if (!ingested.ok) return;
     assert.ok(ingested.envelope.entitlement);
@@ -274,8 +275,7 @@ describe('HELIOS M07 gold market data', () => {
     const lastBar = history.candles[history.candles.length - 1]!;
     const clock = new FrozenClock(asUtcInstant('2026-08-02T00:00:00.000Z'));
     const fabric = new HeliosObservationFabric({ clock, store: createHeliosObservationStore() });
-    const bridge = new HeliosGoldObservationBridge(fabric, clock);
-    const rejected = bridge.ingestBar(lastBar, clock.now());
+    const rejected = ingestGoldBar(fabric, lastBar, clock.now(), clock.now());
     assert.equal(rejected.ok, false);
     if (!rejected.ok) {
       assert.equal(rejected.code, 'LOOK_AHEAD');
@@ -303,11 +303,10 @@ describe('HELIOS M07 gold market data', () => {
     const clock = new FrozenClock(NOW);
     const store = createHeliosObservationStore();
     const fabric = new HeliosObservationFabric({ clock, store });
-    const bridge = new HeliosGoldObservationBridge(fabric, clock);
     let persistenceWorks = false;
     let entitlementCaptured = false;
     if (gldQuote.ok) {
-      const ingested = bridge.ingestQuote(gldQuote.observation, GOLD_ETF_GLD_ID);
+      const ingested = ingestGoldQuote(fabric, gldQuote.observation, GOLD_ETF_GLD_ID);
       persistenceWorks = ingested.ok && store.list().length > 0;
       entitlementCaptured = ingested.ok && !ingested.envelope.entitlement.unavailable;
     }
