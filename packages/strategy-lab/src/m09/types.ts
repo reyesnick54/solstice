@@ -101,7 +101,6 @@ export type M09OpenPosition = {
 };
 
 export type M09EvaluationContext = {
-  readonly now: UtcInstant;
   readonly workOrderActive: boolean;
   readonly mandateActive: boolean;
   readonly envelopeValid: boolean;
