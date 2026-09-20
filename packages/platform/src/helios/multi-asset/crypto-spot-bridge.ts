@@ -9,7 +9,11 @@ import { evaluateMarketState } from './evaluate.ts';
 import type { MultiAssetInstrumentRecord } from './m01/types.ts';
 import type { MultiAssetObservationBundle } from './m02/types.ts';
 import type { MultiAssetSessionContractRecord } from './m03/types.ts';
-import type { MarketStateEvaluationResult } from './market-state-types.ts';
+import type {
+  MarketState,
+  MarketStateEvaluationResult,
+  MarketTradabilityDecision,
+} from './market-state-types.ts';
 
 export type CryptoSpotM04BridgeQuote = {
   readonly observationId: string;
