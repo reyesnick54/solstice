@@ -1,6 +1,8 @@
 import { asCustomerId, asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { asDecisionValidityEnvelopeId } from '../../decision-validity/ids.ts';
 import type { DecisionValidityEnvelope } from '../../decision-validity/types.ts';
+import { asStrategyCapsuleId } from '../../strategy-capsule/ids.ts';
+import type { StrategyCapsuleRef } from '../../strategy-capsule/types.ts';
 import {
   asExecutableOpportunityId,
   asOpportunityCandidateId,
@@ -18,13 +20,28 @@ import type {
 
 export const FIXTURE_NOW = asUtcInstant('2026-09-21T14:30:00.000Z');
 
+function fixtureStrategyCapsuleRef(now: UtcInstant): StrategyCapsuleRef {
+  return Object.freeze({
+    capsuleId: asStrategyCapsuleId('scap_m22_fixture'),
+    version: '1.0.0',
+    contentHash: 'sha256_m22_fixture_capsule',
+    promotionState: 'PROMOTED',
+    qualificationState: 'QUALIFIED',
+    validUntil: now,
+    modelDependencies: Object.freeze(['mdl_s3m']),
+    policyVersion: 'helios-strategy-capsule-v1',
+    grantsExecutionAuthority: false as const,
+  });
+}
+
 function baseEnvelope(now: UtcInstant, validUntil: UtcInstant): DecisionValidityEnvelope {
+  const strategyCapsuleRef = fixtureStrategyCapsuleRef(validUntil);
   return Object.freeze({
     envelopeId: asDecisionValidityEnvelopeId('dve_m22_fixture'),
     candidateId: asOpportunityCandidateId('opc_m22'),
     executableOpportunityId: asExecutableOpportunityId('xop_m22'),
-    strategyCapsuleRef: Object.freeze({ strategyId: 'strat_m22', version: 'v1', hash: 'hash_m22' }),
-    strategyCapsuleHash: 'hash_m22',
+    strategyCapsuleRef,
+    strategyCapsuleHash: strategyCapsuleRef.contentHash,
     workOrderId: asEconomicWorkOrderId('ewo_m22'),
     customerId: asCustomerId('cust_m22'),
     accountId: 'acct_m22',
@@ -75,7 +92,7 @@ export function equityTightSpreadMarketState(now: UtcInstant): MarketState {
     latestObservationTimestamp: now,
     freshness: 'FRESH',
     dataQuality: Object.freeze({
-      state: 'USABLE',
+      state: 'HEALTHY',
       dimensions: Object.freeze({
         freshness: 'PASS',
         completeness: 'PASS',
@@ -128,7 +145,7 @@ export function volatileBtcMarketState(now: UtcInstant): MarketState {
     latestObservationTimestamp: now,
     freshness: 'FRESH',
     dataQuality: Object.freeze({
-      state: 'USABLE',
+      state: 'HEALTHY',
       dimensions: Object.freeze({
         freshness: 'PASS',
         completeness: 'PASS',
@@ -159,7 +176,7 @@ export function futuresMarketState(now: UtcInstant): MarketState {
     instrumentId: 'FUTURE:US:CL:NYMEX:202512',
     assetClass: 'future',
     spreadBps: 12,
-    futuresRollState: 'FRONT_MONTH',
+    futuresRollState: 'STABLE',
   });
 }
 
@@ -172,7 +189,7 @@ export function staleMarketState(now: UtcInstant): MarketState {
       ...base.dataQuality,
       state: 'UNUSABLE',
       dimensions: Object.freeze({ ...base.dataQuality.dimensions, freshness: 'FAIL' }),
-      flags: Object.freeze(['STALE_QUOTE']),
+      flags: Object.freeze(['QUOTE_STALE'] as const),
     }),
   });
 }

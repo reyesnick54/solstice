@@ -400,7 +400,7 @@ export function planExecutionTactic(input: OrderPlanningInput): OrderPlanningRes
       requestId: input.requestId,
       outcome: 'REFUSED',
       tactic: null,
-      refusalReasons: Object.freeze(['RESEARCH_RECOMMENDATION_REJECTED']),
+      refusalReasons: uniqueRefusalReasons(['RESEARCH_RECOMMENDATION_REJECTED']),
       researchAccepted: false,
       evidence: Object.freeze(['research_recommendation_incompatible_with_deterministic_plan']),
       computedAt: input.now,
