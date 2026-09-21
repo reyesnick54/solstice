@@ -103,6 +103,10 @@ export {
   persistHeliosMetaAllocatorState,
 } from './growth/pg-helios-meta-allocator-store.ts';
 export {
+  loadHeliosPortfolioExposureGraphState,
+  persistHeliosPortfolioExposureGraphState,
+} from './growth/pg-helios-exposure-graph-store.ts';
+export {
   loadProviderOrchestrationState,
   persistProviderOrchestrationState,
 } from './growth/pg-helios-provider-orchestration-store.ts';
