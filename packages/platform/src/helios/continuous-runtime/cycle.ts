@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { HELIOS_CYCLE_STAGES, type HeliosCycleStage, type HeliosRuntimeState } from './taxonomy.ts';
 import type { InMemoryHeliosRuntimeStore } from './store.ts';
 import type {

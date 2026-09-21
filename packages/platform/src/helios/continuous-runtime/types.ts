@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { CompiledEconomicMandate } from '../../mandate/types.ts';
 import type {
   HeliosCycleOutcome,

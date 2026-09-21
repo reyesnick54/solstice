@@ -1,5 +1,5 @@
-import type { Clock } from '../../../../config/src/clock.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { Clock } from '@solstice/config';
+import type { UtcInstant } from '@solstice/domain';
 import type { InMemoryHeliosRuntimeStore } from './store.ts';
 import type { HeliosSupervisionMode, HeliosSupervisionScope } from './taxonomy.ts';
 import type { MandateRuntimeRegistration, SupervisionControl } from './types.ts';

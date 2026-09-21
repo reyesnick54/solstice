@@ -1,8 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
-import type { Clock } from '../../../../config/src/clock.ts';
-import { addMs } from '../../../../config/src/clock.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import { addMs, type Clock } from '@solstice/config';
+import type { UtcInstant } from '@solstice/domain';
 import type { HeliosRuntimeCadenceProfile, HeliosRuntimeQueueKind } from './taxonomy.ts';
 import { computeNextDueAt, InMemoryHeliosRuntimeStore } from './store.ts';
 import type { MandateRuntimeRegistration, ScheduledWorkItem } from './types.ts';

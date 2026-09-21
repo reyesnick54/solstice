@@ -1,5 +1,5 @@
-import { addMs } from '../../../../config/src/clock.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import { addMs } from '@solstice/config';
+import type { UtcInstant } from '@solstice/domain';
 import type {
   MandateRuntimeRegistration,
   RuntimeCycleRecord,
