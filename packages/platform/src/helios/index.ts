@@ -239,5 +239,6 @@ export * as heliosIntelligence from './intelligence/index.ts';
 export * from './intelligence/index.ts';
 export * from './multi-asset/m18/index.ts';
 export type { MacroEventStoreSnapshot } from './multi-asset/event-intelligence/index.ts';
+export * from './multi-asset/grow-product-contract/index.ts';
 export * from './grow-intelligence/index.ts';
 export * from './continuous-runtime/index.ts';
