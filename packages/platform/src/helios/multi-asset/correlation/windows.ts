@@ -11,6 +11,16 @@ import type { CorrelationWindowConfig } from './types.ts';
 const HOUR_MS = 3_600_000;
 const DAY_MS = 86_400_000;
 
+const OTHER_CORRELATION_WINDOW: CorrelationWindowConfig = Object.freeze({
+  returnInterval: '1h' satisfies BarTimeframe,
+  shortLookback: 24,
+  mediumLookback: 72,
+  longLookback: 168,
+  minSampleSize: 15,
+  staleAfterMs: 4 * HOUR_MS,
+  validForMs: HOUR_MS,
+});
+
 const DEFAULT_BY_ASSET_CLASS: Readonly<Record<string, CorrelationWindowConfig>> = Object.freeze({
   equity: Object.freeze({
     returnInterval: '15m' satisfies BarTimeframe,
@@ -84,21 +94,11 @@ const DEFAULT_BY_ASSET_CLASS: Readonly<Record<string, CorrelationWindowConfig>> 
     staleAfterMs: DAY_MS,
     validForMs: 6 * HOUR_MS,
   }),
-  other: Object.freeze({
-    returnInterval: '1h' satisfies BarTimeframe,
-    shortLookback: 24,
-    mediumLookback: 72,
-    longLookback: 168,
-    minSampleSize: 15,
-    staleAfterMs: 4 * HOUR_MS,
-    validForMs: HOUR_MS,
-  }),
+  other: OTHER_CORRELATION_WINDOW,
 });
 
-const DEFAULT_OTHER_CORRELATION_WINDOW = DEFAULT_BY_ASSET_CLASS.other;
-
 export function resolveCorrelationWindowConfig(assetClass: string): CorrelationWindowConfig {
-  return DEFAULT_BY_ASSET_CLASS[assetClass] ?? DEFAULT_OTHER_CORRELATION_WINDOW;
+  return DEFAULT_BY_ASSET_CLASS[assetClass] ?? OTHER_CORRELATION_WINDOW;
 }
 
 export function lookbackForHorizon(
