@@ -2,6 +2,7 @@ import type { Pool } from 'pg';
 
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { MacroEventStoreSnapshot } from '../../../platform/src/helios/multi-asset/event-intelligence/types.ts';
+import { persistenceJsonStringify } from '../json.ts';
 import { withClient } from '../postgres/pools.ts';
 
 export async function persistMacroEventIntelligenceState(
@@ -27,7 +28,7 @@ export async function persistMacroEventIntelligenceState(
             artifact.scheduledTime,
             artifact.knowableAt,
             artifact.relevanceWindow.expiresAt,
-            JSON.stringify(sealed),
+            persistenceJsonStringify(sealed),
             sealed.sealedAt,
             sealed.sealedAt,
           ],
