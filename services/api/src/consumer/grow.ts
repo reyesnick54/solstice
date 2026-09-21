@@ -51,6 +51,14 @@ import {
   growPaperResults,
   type GrowPaperCycleDeps,
 } from './grow-paper-cycle.ts';
+import {
+  growProductEvents,
+  growProductPerformance,
+  growProductPositions,
+  growProductStrategies,
+  growProductSummary,
+  type GrowProductContractBffOptions,
+} from './grow-product-contract.ts';
 import type { HeliosGrowControlService } from '@solstice/platform';
 import {
   createGrowControlsService,
@@ -626,6 +634,56 @@ export class GrowBffSurface {
     return growPaperAgentState(this.paperCycleDeps(), principal, requestId);
   }
 
+  productSummary(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growProductSummary(this.paperCycleDeps(), principal, requestId, this.productContractOptions(principal));
+  }
+
+  productPositions(
+    principal: BffPrincipal,
+    requestId: string,
+    query: Readonly<Record<string, string>> = {},
+  ): Record<string, unknown> | BffErrorEnvelope {
+    return growProductPositions(
+      this.paperCycleDeps(),
+      principal,
+      requestId,
+      query,
+      this.productContractOptions(principal),
+    );
+  }
+
+  productEvents(
+    principal: BffPrincipal,
+    requestId: string,
+    query: Readonly<Record<string, string>> = {},
+  ): Record<string, unknown> | BffErrorEnvelope {
+    return growProductEvents(
+      this.paperCycleDeps(),
+      principal,
+      requestId,
+      query,
+      this.productContractOptions(principal),
+    );
+  }
+
+  productStrategies(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growProductStrategies(this.paperCycleDeps(), principal, requestId, this.productContractOptions(principal));
+  }
+
+  productPerformance(
+    principal: BffPrincipal,
+    requestId: string,
+    query: Readonly<Record<string, string>> = {},
+  ): Record<string, unknown> | BffErrorEnvelope {
+    return growProductPerformance(
+      this.paperCycleDeps(),
+      principal,
+      requestId,
+      query,
+      this.productContractOptions(principal),
+    );
+  }
+
   controlsStatus(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
     return growControlsStatus(this.controlsBffDeps(), principal, requestId);
   }
@@ -822,6 +880,21 @@ export class GrowBffSurface {
       });
     }
     return this.cachedGrowControls;
+  }
+
+  private productContractOptions(principal: BffPrincipal): GrowProductContractBffOptions {
+    const status = this.controlsService().status(
+      this.actor(principal),
+      principal.customerId,
+      principal.identityId,
+    );
+    if (!status.ok) {
+      return Object.freeze({ deploymentPaused: false, pauseUpdatedAt: null });
+    }
+    return Object.freeze({
+      deploymentPaused: status.value.pause.deploymentPaused,
+      pauseUpdatedAt: status.value.pause.updatedAt,
+    });
   }
 
   private controlsBffDeps(): GrowControlsBffDeps {

@@ -21,6 +21,13 @@ import {
   growPaperProviderAccount,
   growPaperResults,
 } from './grow-paper-cycle.ts';
+import {
+  growProductEvents,
+  growProductPerformance,
+  growProductPositions,
+  growProductStrategies,
+  growProductSummary,
+} from './grow-product-contract.ts';
 
 /**
  * Preview-only compatibility surface for the Lovable Grow lifecycle routes.
@@ -555,6 +562,38 @@ export class ComposedConsumerGrowSurface extends PreviewGrowSurface {
 
   override overview(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
     return growPaperOverview(this.helios.paperCycleFor(principal), principal, requestId);
+  }
+
+  productSummary(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growProductSummary(this.helios.paperCycleFor(principal), principal, requestId);
+  }
+
+  productPositions(
+    principal: BffPrincipal,
+    requestId: string,
+    query: Readonly<Record<string, string>> = {},
+  ): Record<string, unknown> | BffErrorEnvelope {
+    return growProductPositions(this.helios.paperCycleFor(principal), principal, requestId, query);
+  }
+
+  productEvents(
+    principal: BffPrincipal,
+    requestId: string,
+    query: Readonly<Record<string, string>> = {},
+  ): Record<string, unknown> | BffErrorEnvelope {
+    return growProductEvents(this.helios.paperCycleFor(principal), principal, requestId, query);
+  }
+
+  productStrategies(principal: BffPrincipal, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+    return growProductStrategies(this.helios.paperCycleFor(principal), principal, requestId);
+  }
+
+  productPerformance(
+    principal: BffPrincipal,
+    requestId: string,
+    query: Readonly<Record<string, string>> = {},
+  ): Record<string, unknown> | BffErrorEnvelope {
+    return growProductPerformance(this.helios.paperCycleFor(principal), principal, requestId, query);
   }
 
   override activity(
