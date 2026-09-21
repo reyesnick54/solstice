@@ -95,8 +95,10 @@ const DEFAULT_BY_ASSET_CLASS: Readonly<Record<string, CorrelationWindowConfig>> 
   }),
 });
 
+const DEFAULT_OTHER_CORRELATION_WINDOW = DEFAULT_BY_ASSET_CLASS.other;
+
 export function resolveCorrelationWindowConfig(assetClass: string): CorrelationWindowConfig {
-  return DEFAULT_BY_ASSET_CLASS[assetClass] ?? DEFAULT_BY_ASSET_CLASS.other;
+  return DEFAULT_BY_ASSET_CLASS[assetClass] ?? DEFAULT_OTHER_CORRELATION_WINDOW;
 }
 
 export function lookbackForHorizon(

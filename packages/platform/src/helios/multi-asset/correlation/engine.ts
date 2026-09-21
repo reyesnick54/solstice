@@ -24,6 +24,7 @@ import {
   CLUSTER_CORRELATION_THRESHOLD_BPS,
   CORRELATION_BREAKDOWN_DELTA_BPS,
   ELEVATED_CORRELATION_THRESHOLD_BPS,
+  type CorrelationWindowHorizon,
 } from './taxonomy.ts';
 import type {
   CorrelationArtifact,
@@ -32,7 +33,6 @@ import type {
   CorrelationCluster,
   CorrelationMatrix,
   CorrelationMatrixCell,
-  CorrelationWindowHorizon,
 } from './types.ts';
 import { lookbackForHorizon, mergeCorrelationWindowConfig } from './windows.ts';
 
