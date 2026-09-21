@@ -178,3 +178,4 @@ export { InMemoryHeliosMultiAssetBarStore } from './bar-store.ts';
 export * from './m15/index.ts';
 export * from './correlation/index.ts';
 export * from './factor-exposure/index.ts';
+export * from './opportunity-graph/index.ts';
