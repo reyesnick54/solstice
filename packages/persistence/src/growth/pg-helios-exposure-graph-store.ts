@@ -4,6 +4,23 @@ import type { PortfolioExposureGraphSnapshot } from '@solstice/platform';
 import { persistenceJsonStringify } from '../json.ts';
 import { withClient } from '../postgres/pools.ts';
 
+const BIGINT_JSON_KEYS = new Set([
+  'marketValueMinor',
+  'quantityUnits',
+  'signedExposureMinor',
+  'grossExposureMinor',
+  'netExposureMinor',
+  'totalGrossExposureMinor',
+  'totalNetExposureMinor',
+]);
+
+function reviveBigIntFields(key: string, value: unknown): unknown {
+  if (typeof value === 'string' && BIGINT_JSON_KEYS.has(key)) {
+    return BigInt(value);
+  }
+  return value;
+}
+
 export async function persistHeliosPortfolioExposureGraphState(
   pool: Pool,
   state: PortfolioExposureGraphSnapshot,
@@ -38,7 +55,9 @@ export async function loadHeliosPortfolioExposureGraphState(
       `SELECT body_canonical FROM growth.helios_portfolio_exposure_graph ORDER BY as_of ASC`,
     );
     return Object.freeze({
-      graphs: Object.freeze(result.rows.map((row) => JSON.parse(String(row.body_canonical)))),
+      graphs: Object.freeze(
+        result.rows.map((row) => JSON.parse(String(row.body_canonical), reviveBigIntFields)),
+      ),
     });
   });
 }
