@@ -316,9 +316,7 @@ export class ExecutionRoutingService {
           ports: this.ports,
           allowDegraded: true,
         });
-        const onlyDegraded =
-          reasons.length === 1 && reasons[0] === 'PROVIDER_DEGRADED' && cap.healthState === 'DEGRADED';
-        if (onlyDegraded) {
+        if (reasons.length === 0 && cap.healthState === 'DEGRADED') {
           eligible.push(
             Object.freeze({ cap, venueId, score: scoreCandidate(cap) - 100_000 }),
           );
