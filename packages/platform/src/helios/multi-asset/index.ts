@@ -179,3 +179,4 @@ export * from './m15/index.ts';
 export * from './correlation/index.ts';
 export * from './factor-exposure/index.ts';
 export * from './opportunity-graph/index.ts';
+export * from './m18/index.ts';
