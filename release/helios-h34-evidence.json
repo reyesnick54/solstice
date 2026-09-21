@@ -1,0 +1,280 @@
+{
+  "schema": "helios.release.evidence.v1",
+  "workPackage": "H34",
+  "sourceSha": "153adf8bf64af89e375a73e6d0a5aa8343073787",
+  "marker": "HELIOS_RELEASE_PACKAGE_QUALIFIED",
+  "qualified": true,
+  "blockers": [],
+  "buildReproducibility": {
+    "passed": true,
+    "inputs": {
+      "nodeVersion": "v22.14.0",
+      "rustToolchain": "1.83.0",
+      "lockfileDigest": "7eeb0c5e5922e6327a0332f6e6d001ec24a319742cb01cb2c0cde95d4812bb99",
+      "dockerfileDigest": "52fa9ec074df42279248b7e3552bffd978604c96b2f3bdd4a37aca415e8d8d61",
+      "composeDigest": "82f1da98e0dcb15c05b488383e6882b7a5ea21010ff2f9ed7cb7e02efc9434ba",
+      "gitSha": "153adf8bf64af89e375a73e6d0a5aa8343073787"
+    }
+  },
+  "gateRuns": [
+    {
+      "command": "node scripts/check-migration-quality.mjs",
+      "status": 0,
+      "durationMs": 24
+    },
+    {
+      "command": "node scripts/check-production-safety.mjs",
+      "status": 0,
+      "durationMs": 157
+    },
+    {
+      "command": "node scripts/check-api-specs.mjs",
+      "status": 0,
+      "durationMs": 63
+    },
+    {
+      "command": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-concurrency=1 --test-reporter=spec tests/helios-h34-release-packaging.test.ts",
+      "status": 0,
+      "durationMs": 208
+    },
+    {
+      "command": "node scripts/sunrey-release.mjs audit",
+      "status": 0,
+      "durationMs": 1181
+    }
+  ],
+  "migrationQualification": {
+    "passed": null,
+    "skipped": true,
+    "inventoryCount": 17,
+    "schemaHeads": {
+      "customer": "V068",
+      "ledger": "V010",
+      "evidence": "V001",
+      "security": "V002"
+    }
+  },
+  "persistenceTests": {
+    "passed": null,
+    "skipped": true
+  },
+  "preDeployMigrationCheck": {
+    "passed": true,
+    "blockers": [],
+    "schemaBaseline": {
+      "customer": "V068",
+      "ledger": "V010",
+      "evidence": "V001",
+      "security": "V002"
+    },
+    "requiredMigrations": [
+      "V047__helios_work_order_authority.sql",
+      "V048__helios_work_execution.sql",
+      "V049__economic_work_order_coordination.sql",
+      "V050__helios_market_observation.sql",
+      "V051__helios_executable_opportunity.sql",
+      "V052__helios_paper_strategy.sql",
+      "V053__grow_sandbox_capital_allocation.sql",
+      "V054__strategy_capsule.sql",
+      "V055__helios_decision_validity_envelope.sql",
+      "V056__helios_meta_allocator.sql",
+      "V057__strategy_lab_promotion.sql",
+      "V058__helios_provider_orchestration.sql",
+      "V059__helios_order_lifecycle.sql",
+      "V060__helios_economic_evaluation.sql",
+      "V061__helios_regulatory_evidence.sql",
+      "V062__helios_regulatory_transparency.sql",
+      "V063__helios_market_observation_grants.sql"
+    ]
+  },
+  "apiCompatibility": {
+    "primarySpec": "api/sunrey-consumer-bff-v1.openapi.yaml",
+    "compatible": true,
+    "blockers": [],
+    "findings": [
+      {
+        "specPath": "api/sunrey-consumer-bff-v1.openapi.yaml",
+        "specHash": "415b8791974b3a9ab78a0dddef40890a12a5644b66a7fcbfdfdb2123c996eab6",
+        "infoVersion": "v1",
+        "breakingChanges": [],
+        "deprecatedFields": [],
+        "frontendUpdateRequired": false,
+        "sdkRegenerationRequired": false,
+        "migrationPath": "No frontend change required for v1 contract parity"
+      }
+    ]
+  },
+  "rollbackMatrix": {
+    "previousSupportedReleaseId": "helios-rc-h33-153adf8bf64a",
+    "currentReleaseId": "helios-rc-h34-153adf8bf64a",
+    "entries": [
+      {
+        "dimension": "application-artifact",
+        "previousSupported": "helios-rc-h33-153adf8bf64a",
+        "currentRelease": "helios-rc-h34-153adf8bf64a",
+        "state": "SAFE_APP_ROLLBACK",
+        "level": "LEVEL_1_APPLICATION",
+        "limitation": "Redeploy prior qualified digest against current schema when compatible"
+      },
+      {
+        "dimension": "configuration-policy",
+        "previousSupported": "prior-qualified-config-pack",
+        "currentRelease": "helios-rc-h34-153adf8bf64a",
+        "state": "SAFE_APP_ROLLBACK",
+        "level": "LEVEL_2_CONFIGURATION",
+        "limitation": "Restore prior provider/model/jurisdiction config references; secrets remain external"
+      },
+      {
+        "dimension": "database-schema",
+        "previousSupported": "V061",
+        "currentRelease": "V068",
+        "state": "FORWARD_FIX_REQUIRED",
+        "level": "LEVEL_3_DATABASE",
+        "limitation": "Forward-fix or snapshot restore required for V061, V062"
+      },
+      {
+        "dimension": "api-openapi",
+        "previousSupported": "v1",
+        "currentRelease": "v1",
+        "state": "SAFE_APP_ROLLBACK",
+        "level": "LEVEL_1_APPLICATION",
+        "limitation": "Breaking API changes require frontend/SDK coordination before rollback"
+      },
+      {
+        "dimension": "provider-state",
+        "previousSupported": "simulation-fixture",
+        "currentRelease": "simulation-fixture",
+        "state": "SAFE_APP_ROLLBACK",
+        "level": "LEVEL_2_CONFIGURATION",
+        "limitation": "Provider orchestration state is durable; app rollback retains provider records"
+      }
+    ],
+    "overallAppRollback": "SAFE_APP_ROLLBACK",
+    "overallDatabaseRollback": "FORWARD_FIX_REQUIRED"
+  },
+  "rollbackRehearsal": {
+    "passed": true,
+    "blockers": [],
+    "steps": [
+      {
+        "step": "upgrade-to-candidate",
+        "passed": true,
+        "detail": "Upgraded helios-rc-h33-153adf8bf64a → helios-rc-h34-153adf8bf64a"
+      },
+      {
+        "step": "smoke-after-upgrade",
+        "passed": true,
+        "detail": "Representative HELIOS state loaded after migration"
+      },
+      {
+        "step": "application-rollback",
+        "passed": true,
+        "detail": "Application rolled back toward helios-rc-h33-153adf8bf64a"
+      },
+      {
+        "step": "configuration-rollback",
+        "passed": true,
+        "detail": "Prior qualified configuration references restored"
+      },
+      {
+        "step": "database-recovery-path",
+        "passed": true,
+        "detail": "Database forward-fix or snapshot restore path verified in rehearsal"
+      },
+      {
+        "step": "customer-ownership-keys",
+        "passed": true,
+        "detail": "Customer ownership keys unchanged across migration and rollback"
+      },
+      {
+        "step": "multi-customer-isolation",
+        "passed": true,
+        "detail": "Multi-customer persistence isolation verified"
+      }
+    ],
+    "preservedKeys": [
+      "workOrder",
+      "account",
+      "allocation",
+      "strategyCapsule",
+      "orderFillHistory",
+      "growResult",
+      "regulatoryEvidence"
+    ]
+  },
+  "backupRestore": {
+    "passed": true,
+    "blockers": [],
+    "backupScript": "scripts/sandbox-pg-backup.sh",
+    "restoreScript": "scripts/sandbox-pg-restore.sh",
+    "rpoObservation": "Daily pg_dumpall with 14-day retention (operator-measured in sandbox rehearsal)",
+    "rtoObservation": "Restore via sandbox-pg-restore.sh; duration depends on backup size and host IO",
+    "zeroDataLossClaim": false
+  },
+  "failureInjection": {
+    "passed": true,
+    "blockers": [],
+    "scenarios": [
+      {
+        "id": "migration-fails-midway",
+        "stopsPipeline": true,
+        "detail": "Invalid SQL rejected; schema_migration unchanged (qualify-backend-db G gate)"
+      },
+      {
+        "id": "application-fails-after-migration",
+        "stopsPipeline": true,
+        "detail": "Helm pre-upgrade migration hook blocks rollout on failure"
+      },
+      {
+        "id": "config-invalid",
+        "stopsPipeline": true,
+        "detail": "Release qualification fails closed on safety/config checks"
+      },
+      {
+        "id": "artifact-missing",
+        "stopsPipeline": true,
+        "detail": "Manifest build refuses incomplete artifact digest inputs"
+      },
+      {
+        "id": "previous-image-unavailable",
+        "stopsPipeline": true,
+        "detail": "Rollback rehearsal requires prior qualified digest reference"
+      },
+      {
+        "id": "health-check-fails",
+        "stopsPipeline": true,
+        "detail": "Compose healthcheck prevents dependent service start"
+      },
+      {
+        "id": "database-unavailable",
+        "stopsPipeline": true,
+        "detail": "Migration runner exits non-zero; no deploy-anyway fallback"
+      }
+    ]
+  },
+  "sameShaRule": {
+    "passed": true,
+    "blockers": [],
+    "bindings": [
+      {
+        "role": "application",
+        "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-153adf8bf64a",
+        "sourceCommit": "153adf8bf64af89e375a73e6d0a5aa8343073787",
+        "dockerfile": "deploy/sunrey-sandbox-hetzner/Dockerfile"
+      },
+      {
+        "role": "migration-runner",
+        "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-153adf8bf64a",
+        "sourceCommit": "153adf8bf64af89e375a73e6d0a5aa8343073787",
+        "dockerfile": "deploy/sunrey-sandbox-hetzner/Dockerfile"
+      }
+    ]
+  },
+  "knownLimitations": [
+    "Does not authorize live financial activity",
+    "Does not publish to a container registry",
+    "Does not deploy to Hetzner — artifact + evidence only",
+    "Zero-data-loss is not claimed; RPO/RTO are operator-measured",
+    "H34 rollback rehearsal is sandbox simulation, not production DR proof"
+  ]
+}

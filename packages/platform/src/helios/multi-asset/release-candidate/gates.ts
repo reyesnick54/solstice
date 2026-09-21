@@ -7,7 +7,7 @@ import {
   LIVE_CONNECTIVITY_ENABLED,
   LIVE_INVESTMENT_EXECUTION,
   LIVE_TRADING_ENABLED,
-} from '../../../../../config/src/flags.ts';
+} from '@solstice/config';
 import { generateM05M08CoverageReport } from '../data-coverage/m05-m08-report.ts';
 import type { M28ForwardPaperQualificationResult } from './forward-paper-scenarios.ts';
 import type { M28GateStatus, M28ReleaseGateId } from './taxonomy.ts';

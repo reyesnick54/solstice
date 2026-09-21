@@ -3,7 +3,7 @@
  * Reports observed sandbox bounds only; does not claim institutional scale.
  */
 
-import { asUtcInstant } from '../../../../../domain/src/time.ts';
+import { asUtcInstant } from '@solstice/domain';
 import { evaluateMarketRegime, rangeBoundBars, fixtureNow } from '../regime/index.ts';
 import { evaluateMultiAssetMarketState, type MarketStateEvaluationInput } from '../index.ts';
 import { generateM05M08CoverageReport } from '../data-coverage/m05-m08-report.ts';

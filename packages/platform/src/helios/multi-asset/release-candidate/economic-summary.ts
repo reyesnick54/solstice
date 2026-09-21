@@ -3,8 +3,7 @@
  * Does not predict future live performance or claim profitability from small samples.
  */
 
-import { asCustomerId } from '../../../../../domain/src/customer.ts';
-import { asUtcInstant } from '../../../../../domain/src/time.ts';
+import { asCustomerId, asUtcInstant } from '@solstice/domain';
 import {
   computeNetEconomics,
   evaluationMoney,

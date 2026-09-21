@@ -3,18 +3,17 @@
  * Simulation-only. Composes canonical HELIOS owners; does not enable live finance.
  */
 
-import { FrozenClock } from '../../../../../config/src/clock.ts';
-import { asCustomerId } from '../../../../../domain/src/customer.ts';
-import { asUtcInstant, type UtcInstant } from '../../../../../domain/src/time.ts';
 import {
   ENVIRONMENT,
+  FrozenClock,
   LIVE_CONNECTIVITY_ENABLED,
   LIVE_TRADING_ENABLED,
-} from '../../../../../config/src/flags.ts';
+} from '@solstice/config';
+import { asCustomerId, asUtcInstant, type UtcInstant } from '@solstice/domain';
 import {
   evaluateM20PortfolioRiskQualification,
   type M20QualificationChecks,
-} from '../../../../../risk/src/portfolio/index.ts';
+} from './m20-qualification-shim.ts';
 import { GrokResearchRuntime } from '../../grok-research/runtime.ts';
 import { evaluateHeliosResilienceQualification, runResilienceScenarios } from '../../resilience/index.ts';
 import { asHeliosTaskId, asEconomicWorkOrderId } from '../../ids.ts';

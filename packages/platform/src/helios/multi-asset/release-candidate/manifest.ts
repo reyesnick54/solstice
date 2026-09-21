@@ -9,13 +9,13 @@ import {
   LIVE_CONNECTIVITY_ENABLED,
   LIVE_INVESTMENT_EXECUTION,
   LIVE_TRADING_ENABLED,
-} from '../../../../../config/src/flags.ts';
+} from '@solstice/config';
 import {
   buildHeliosMigrationInventory,
   migrationChecksumManifest,
   schemaMigrationHeads,
 } from '../../release-packaging/migration-inventory.ts';
-import { DEFAULT_M20_POLICY_VERSION } from '../../../../../risk/src/portfolio/mandate-policy.ts';
+import { M28_M20_RISK_POLICY_VERSION } from './m20-qualification-shim.ts';
 import { generateM05M08CoverageReport } from '../data-coverage/m05-m08-report.ts';
 import type { M28EconomicSummary } from './economic-summary.ts';
 import type { M28ForwardPaperQualificationResult } from './forward-paper-scenarios.ts';
@@ -126,7 +126,7 @@ export function buildM28ReleaseManifest(input: {
       liveExecution: 'blocked',
       reconciliation: 'simulation_qualified',
     }),
-    riskPolicyVersion: DEFAULT_M20_POLICY_VERSION,
+    riskPolicyVersion: M28_M20_RISK_POLICY_VERSION,
     compliancePolicyVersion: 'jurisdiction-capability-v1',
     releaseGates: input.gateEvaluation.gates,
     testResults: input.testResults,
