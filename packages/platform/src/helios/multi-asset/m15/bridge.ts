@@ -16,11 +16,12 @@ export function bridgeCrossAssetGraphToOpportunityResearch(input: {
   readonly customerId?: string | null;
 }): CrossAssetGraphResearchView {
   const anchorNodeId = anchorNodeIdForInstrument(input.instrumentId);
+  const customerScope = input.customerId !== undefined ? { customerId: input.customerId } : {};
   const related = queryCrossAssetOpportunityGraph(input.store, {
     queryKind: 'related_instruments',
     anchorNodeId,
     asOf: input.asOf,
-    customerId: input.customerId,
+    ...customerScope,
     includeHypotheses: true,
     includeDegraded: false,
   });
@@ -28,7 +29,7 @@ export function bridgeCrossAssetGraphToOpportunityResearch(input: {
     queryKind: 'possible_hedges',
     anchorNodeId,
     asOf: input.asOf,
-    customerId: input.customerId,
+    ...customerScope,
     includeHypotheses: true,
     includeDegraded: false,
   });
@@ -36,7 +37,7 @@ export function bridgeCrossAssetGraphToOpportunityResearch(input: {
     queryKind: 'macro_context',
     anchorNodeId,
     asOf: input.asOf,
-    customerId: input.customerId,
+    ...customerScope,
     includeHypotheses: false,
     includeDegraded: true,
   });

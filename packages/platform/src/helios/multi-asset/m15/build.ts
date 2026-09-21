@@ -355,7 +355,7 @@ function addMeasuredEdges(
 function degradedInstrumentsFromMarketStates(states: readonly MarketState[] | undefined): ReadonlySet<string> {
   const out = new Set<string>();
   for (const state of states ?? []) {
-    if (state.dataQuality.state === 'INSUFFICIENT' || state.dataQuality.state === 'INVALID') {
+    if (state.dataQuality.state === 'UNUSABLE' || state.dataQuality.state === 'DEGRADED') {
       out.add(state.instrumentId);
     }
     if (state.providerHealth === 'OUTAGE' || state.freshness === 'STALE') {

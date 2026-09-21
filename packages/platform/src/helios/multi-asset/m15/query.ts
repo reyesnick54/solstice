@@ -52,7 +52,11 @@ function relatedNodeForEdge(
 }
 
 function edgesTouching(store: InMemoryCrossAssetGraphStore, anchorNodeId: string, input: OpportunityGraphQueryInput): CrossAssetRelationshipEdge[] {
-  return [...store.edges({ customerId: input.customerId, asOf: input.asOf })].filter((edge) => {
+  const edgeScope = {
+    asOf: input.asOf,
+    ...(input.customerId !== undefined ? { customerId: input.customerId } : {}),
+  };
+  return [...store.edges(edgeScope)].filter((edge) => {
     if (edge.fromNodeId !== anchorNodeId && edge.toNodeId !== anchorNodeId) {
       return false;
     }

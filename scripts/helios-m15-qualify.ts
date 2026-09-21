@@ -78,13 +78,15 @@ function degradedMarketState(instrumentId: string): MarketState {
     latestObservationTimestamp: NOW,
     freshness: 'STALE',
     dataQuality: Object.freeze({
-      state: 'INSUFFICIENT',
+      state: 'UNUSABLE',
       dimensions: Object.freeze({
         completeness: 'FAIL',
         freshness: 'FAIL',
-        consistency: 'PASS',
+        timestampConsistency: 'PASS',
         entitlement: 'PASS',
         providerHealth: 'WARN',
+        spreadSanity: 'PASS',
+        corroboration: 'PASS',
       }),
       flags: Object.freeze(['DATA_STALE']),
     }),
