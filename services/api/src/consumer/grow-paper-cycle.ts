@@ -221,7 +221,7 @@ function buildProviderDisplay(
   });
 }
 
-function buildReadModelInput(deps: GrowPaperCycleDeps, principal: BffPrincipal): PaperGrowReadModelInput {
+export function buildReadModelInput(deps: GrowPaperCycleDeps, principal: BffPrincipal): PaperGrowReadModelInput {
   const plan = deps.orchestrator.store.latestPlanFor(principal.identityId) ?? null;
   const mandate = deps.orchestrator.store.latestMandateFor(principal.identityId);
   let workOrder: EconomicWorkOrder | null = null;

@@ -1967,6 +1967,21 @@ function dispatchGrow(
     }
     if (path === '/api/v1/grow/monitor' && method === 'POST') return json(200, grow.monitor(principal), headers);
     if (path === '/api/v1/grow/agent-tools' && method === 'POST') return result(grow.invokeAgentTool(principal, rec, requestId), headers);
+    if (path === '/api/v1/grow/summary' && method === 'GET') {
+      return result(grow.productSummary(principal, requestId), headers);
+    }
+    if (path === '/api/v1/grow/positions' && method === 'GET') {
+      return result(grow.productPositions(principal, requestId, query), headers);
+    }
+    if (path === '/api/v1/grow/events' && method === 'GET') {
+      return result(grow.productEvents(principal, requestId, query), headers);
+    }
+    if (path === '/api/v1/grow/strategies' && method === 'GET') {
+      return result(grow.productStrategies(principal, requestId), headers);
+    }
+    if (path === '/api/v1/grow/product-performance' && method === 'GET') {
+      return result(grow.productPerformance(principal, requestId, query), headers);
+    }
     if (path === '/api/v1/grow/overview' && method === 'GET') return result(grow.overview(principal, requestId), headers);
     if (path === '/api/v1/grow/allocate' && method === 'GET') {
       return result(callGrowHeliosMethod(grow, 'allocate', principal, requestId), headers);
@@ -1975,6 +1990,9 @@ function dispatchGrow(
       return result(callGrowHeliosMethod(grow, 'activeCapital', principal, requestId), headers);
     }
     if (path === '/api/v1/grow/performance' && method === 'GET') {
+      if (query.period) {
+        return result(grow.productPerformance(principal, requestId, query), headers);
+      }
       const helios = callGrowHeliosMethod(grow, 'heliosPerformance', principal, requestId);
       if (!isBffError(helios) || helios.errorCode !== 'CAPABILITY_DISABLED') {
         return result(helios, headers);
@@ -2275,6 +2293,11 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/grow/executions/{id}',
   'GET /api/v1/grow/portfolio',
   'GET /api/v1/grow/performance',
+  'GET /api/v1/grow/summary',
+  'GET /api/v1/grow/positions',
+  'GET /api/v1/grow/events',
+  'GET /api/v1/grow/strategies',
+  'GET /api/v1/grow/product-performance',
   'GET /api/v1/grow/overview',
   'GET /api/v1/grow/allocate',
   'GET /api/v1/grow/active-capital',

@@ -909,7 +909,13 @@ paths:
     get:
       operationId: getGrowPerformance
       summary: Server-owned Grow performance and attribution
-      description: Deposits are not market performance. Frontend must not calculate authoritative P&L.
+      description: Deposits are not market performance. Frontend must not calculate authoritative P&L. Optional period query returns M26 product-performance slices.
+      parameters:
+        - in: query
+          name: period
+          schema:
+            type: string
+            enum: [daily, weekly, monthly, since_inception]
       responses:
         "200":
           description: Performance
@@ -918,6 +924,93 @@ paths:
               schema: { $ref: '#/components/schemas/GrowPerformanceResponse' }
         "403":
           description: HELIOS binding unavailable
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BffErrorEnvelope' }
+  /api/v1/grow/summary:
+    get:
+      operationId: getGrowProductSummary
+      summary: Production-shaped Grow summary for mobile and web clients
+      description: Server-owned capital, P&L, and economic improvement breakdown. Deposits are not growth.
+      responses:
+        "200":
+          description: Grow summary
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GrowProductSummaryResponse' }
+        "403":
+          description: HELIOS binding unavailable
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BffErrorEnvelope' }
+  /api/v1/grow/positions:
+    get:
+      operationId: listGrowProductPositions
+      summary: Active Grow positions with server-owned marks and P&L
+      parameters:
+        - in: query
+          name: cursor
+          schema: { type: string }
+        - in: query
+          name: pageSize
+          schema: { type: integer, minimum: 1, maximum: 100 }
+      responses:
+        "200":
+          description: Positions page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GrowProductPositionsResponse' }
+        "400":
+          description: Invalid pagination cursor
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BffErrorEnvelope' }
+  /api/v1/grow/events:
+    get:
+      operationId: listGrowProductEvents
+      summary: Normalized user-safe Grow activity events
+      description: Does not expose chain-of-thought or provider secrets.
+      parameters:
+        - in: query
+          name: cursor
+          schema: { type: string }
+        - in: query
+          name: pageSize
+          schema: { type: integer, minimum: 1, maximum: 100 }
+      responses:
+        "200":
+          description: Activity events page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GrowProductActivityResponse' }
+  /api/v1/grow/strategies:
+    get:
+      operationId: listGrowProductStrategies
+      summary: Strategy summaries with allocation and performance attribution
+      responses:
+        "200":
+          description: Strategy summaries
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GrowProductStrategiesResponse' }
+  /api/v1/grow/product-performance:
+    get:
+      operationId: getGrowProductPerformance
+      summary: Period-sliced Grow performance with separated economic categories
+      parameters:
+        - in: query
+          name: period
+          schema:
+            type: string
+            enum: [daily, weekly, monthly, since_inception]
+      responses:
+        "200":
+          description: Performance slice
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GrowProductPerformanceResponse' }
+        "400":
+          description: Invalid period
           content:
             application/json:
               schema: { $ref: '#/components/schemas/BffErrorEnvelope' }
@@ -3010,6 +3103,68 @@ components:
           additionalProperties: { type: string }
         requestId: { type: string }
         apiVersion: { type: string, enum: [v1] }
+    GrowProductSummaryResponse:
+      type: object
+      required:
+        - schema
+        - customerId
+        - operatingMode
+        - operatingState
+        - riskState
+        - serverOwned
+        - frontendMathAuthoritative
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.summary.v1] }
+        customerId: { type: string }
+        operatingMode: { type: string, enum: [SIMULATION, PAPER, SANDBOX, LIVE] }
+        operatingState: { type: string }
+        riskState: { type: string }
+        totalAuthorizedGrowCapital: { $ref: '#/components/schemas/GrowMoney' }
+        portfolioEquity: { $ref: '#/components/schemas/GrowMoney' }
+        economicImprovement: { type: object }
+        serverOwned: { type: boolean, enum: [true] }
+        frontendMathAuthoritative: { type: boolean, enum: [false] }
+    GrowProductPositionsResponse:
+      type: object
+      required: [schema, customerId, items, serverOwned, frontendMathAuthoritative]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.positions.v1] }
+        customerId: { type: string }
+        items: { type: array, items: { type: object } }
+        nextCursor: { type: string, nullable: true }
+        hasMore: { type: boolean }
+        serverOwned: { type: boolean, enum: [true] }
+        frontendMathAuthoritative: { type: boolean, enum: [false] }
+    GrowProductActivityResponse:
+      type: object
+      required: [schema, customerId, items, serverOwned, frontendMathAuthoritative]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.events.v1] }
+        customerId: { type: string }
+        items: { type: array, items: { type: object } }
+        nextCursor: { type: string, nullable: true }
+        hasMore: { type: boolean }
+        serverOwned: { type: boolean, enum: [true] }
+        frontendMathAuthoritative: { type: boolean, enum: [false] }
+    GrowProductStrategiesResponse:
+      type: object
+      required: [schema, customerId, items, serverOwned, frontendMathAuthoritative]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.strategies.v1] }
+        customerId: { type: string }
+        items: { type: array, items: { type: object } }
+        serverOwned: { type: boolean, enum: [true] }
+        frontendMathAuthoritative: { type: boolean, enum: [false] }
+    GrowProductPerformanceResponse:
+      type: object
+      required: [schema, customerId, period, slice, serverOwned, frontendMathAuthoritative]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.product-performance.v1] }
+        customerId: { type: string }
+        period: { type: string, enum: [daily, weekly, monthly, since_inception] }
+        slice: { type: object }
+        serverOwned: { type: boolean, enum: [true] }
+        frontendMathAuthoritative: { type: boolean, enum: [false] }
     GrowOverviewResponse:
       type: object
       required:
