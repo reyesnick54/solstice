@@ -175,3 +175,5 @@ export type {
   HeliosMultiAssetBarStoreSnapshot,
 } from './index-bars.ts';
 export { InMemoryHeliosMultiAssetBarStore } from './bar-store.ts';
+export * from './correlation/index.ts';
+export * from './factor-exposure/index.ts';
