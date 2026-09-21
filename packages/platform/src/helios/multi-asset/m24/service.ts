@@ -1,8 +1,6 @@
-import type { Clock } from '../../../../../config/src/clock.ts';
-import { LIVE_INVESTMENT_EXECUTION, LIVE_TRADING_ENABLED } from '../../../../../config/src/flags.ts';
-import type { CustomerId } from '../../../../../domain/src/customer.ts';
-import { err, ok, type Result } from '../../../../../domain/src/result.ts';
-import type { EvidenceVault } from '../../../../../evidence/src/vault.ts';
+import { LIVE_INVESTMENT_EXECUTION, LIVE_TRADING_ENABLED, type Clock } from '@solstice/config';
+import { err, ok, type CustomerId, type Result, type UtcInstant } from '@solstice/domain';
+import type { EvidenceVault } from '@solstice/evidence';
 import type { EconomicWorkOrderId } from '../../ids.ts';
 import type { HeliosCapitalPort, HeliosOrderValidationPorts } from '../../order-lifecycle/types.ts';
 import {
@@ -520,7 +518,7 @@ export class MultiAssetExecutionService {
     executionPlanId: ReturnType<typeof executionPlanIdFor>,
     input: SubmitMultiAssetOrderInput,
     state: M24OrderLifecycleState,
-    now: import('../../../../../domain/src/time.ts').UtcInstant,
+    now: UtcInstant,
     h23Order?: HeliosOrder,
   ): MultiAssetOrderRecord {
     const assetClass = resolveAssetClass(input.instrumentId);

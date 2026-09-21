@@ -1,4 +1,4 @@
-import { asUtcInstant, type UtcInstant } from '../../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 
 function addDaysUtc(instant: UtcInstant, days: number): UtcInstant {
   const date = new Date(instant);

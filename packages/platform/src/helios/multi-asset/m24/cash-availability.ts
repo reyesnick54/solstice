@@ -1,5 +1,4 @@
-import type { CustomerId } from '../../../../../domain/src/customer.ts';
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { CustomerId, UtcInstant } from '@solstice/domain';
 import { cashEffectFromFill, resolveAssetClass } from './settlement-semantics.ts';
 import type { MultiAssetCashAvailability, MultiAssetFillRecord, MultiAssetOrderRecord } from './types.ts';
 
