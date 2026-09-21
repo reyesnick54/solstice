@@ -65,7 +65,7 @@ import {
   WALLET_STATUSES,
 } from '../../../../packages/custody/src/product/taxonomy.ts';
 import { dispatchWallets } from './wallets.ts';
-import { dispatchMoneyIntegration } from './money-integration/dispatch.ts';
+import { dispatchMoneyIntegration, MONEY_INTEGRATION_ROUTES } from './money-integration/dispatch.ts';
 import type { MoneyIntegrationPlatform } from './money-integration/platform.ts';
 import { dispatchHin } from './hin.ts';
 import type { InformationRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
@@ -2229,6 +2229,7 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/accounts/{id}',
   'GET /api/v1/accounts/{id}/activity',
   'GET /api/v1/accounts/{id}/statement',
+  ...MONEY_INTEGRATION_ROUTES,
   'GET /api/v1/payments',
   'POST /api/v1/payments',
   'POST /api/v1/payments/quote',
