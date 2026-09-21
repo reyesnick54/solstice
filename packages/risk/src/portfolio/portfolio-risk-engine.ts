@@ -19,6 +19,7 @@ import {
 import { policyUpdatePermitted } from './mandate-policy.ts';
 import { PortfolioRiskStore } from './store.ts';
 import type {
+  AssetClassTag,
   KillControlTrigger,
   MandateRiskPolicy,
   PortfolioExposureAssessment,
@@ -569,7 +570,7 @@ function emptyExposure(): PortfolioExposureAssessment {
     strategyExposures: Object.freeze([]),
     venueExposures: Object.freeze([]),
     clusterExposures: Object.freeze([]),
-    assetClassExposures: Object.freeze({} as Readonly<Record<'EQUITY', bigint>>),
+    assetClassExposures: Object.freeze({} as Readonly<Record<AssetClassTag, bigint>>),
     portfolioDrawdown: null,
     liquidityMinor: 0n,
   });

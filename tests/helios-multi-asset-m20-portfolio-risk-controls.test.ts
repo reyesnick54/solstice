@@ -36,8 +36,8 @@ const NEXT_DAY = asUtcInstant('2026-09-21T01:00:00.000Z');
 
 function position(input: Partial<PortfolioPositionRiskFact> & Pick<PortfolioPositionRiskFact, 'instrumentId' | 'marketValueMinor'>): PortfolioPositionRiskFact {
   const profile = fixtureMultiAssetProfiles().find((row) => row.instrumentId === input.instrumentId);
+  const strategyId = input.strategyId ?? profile?.strategyId;
   return Object.freeze({
-    strategyId: profile?.strategyId,
     assetClass: profile?.assetClass ?? 'ETF',
     venue: profile?.venue ?? 'SIM_VENUE',
     signedExposureMinor: input.marketValueMinor,
@@ -45,6 +45,7 @@ function position(input: Partial<PortfolioPositionRiskFact> & Pick<PortfolioPosi
     liquidityClass: 'HIGH',
     sourceRef: `fixture:${input.instrumentId}`,
     ...input,
+    ...(strategyId ? { strategyId } : {}),
   });
 }
 
