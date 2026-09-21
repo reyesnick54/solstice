@@ -10,13 +10,14 @@ Engineering status for Strategy Lab capsule families M09–M12. No performance o
 |---|---|---|---|
 | M09 | 15m Index Mean Reversion | `HELIOS_M09_INDEX_MEAN_REVERSION_V1` | Research / shadow / paper |
 | M10 | 1h Crypto Volume-Confirmed Momentum Breakout | `HELIOS_M10_CRYPTO_MOMENTUM_BREAKOUT_V1` | Research / shadow / paper |
-| M11 | Commodity Trend (4h WTI) | — | **Not implemented on main** |
+| M11 | 4h Commodity Trend Following | `HELIOS_M11_COMMODITY_TREND_FOLLOWING_V1` | Research / shadow / paper |
 | M12 | 1h Relative Value / Statistical Arbitrage | `HELIOS_M12_RELATIVE_VALUE_STAT_ARB_V1` | Research / shadow / paper |
 
 Qualification markers:
 
 - `HELIOS_MULTI_ASSET_M09_INDEX_MEAN_REVERSION_QUALIFIED`
 - `HELIOS_MULTI_ASSET_M10_CRYPTO_MOMENTUM_BREAKOUT_QUALIFIED`
+- `HELIOS_MULTI_ASSET_M11_COMMODITY_TREND_QUALIFIED`
 - `HELIOS_MULTI_ASSET_M12_RELATIVE_VALUE_STAT_ARB_QUALIFIED`
 
 ---
@@ -45,15 +46,15 @@ Qualification markers:
 
 ---
 
-## M11 — Commodity Trend
+## M11 — Commodity Trend Following
 
-**Engineering status:** **Not implemented on main.** M08 WTI energy data foundation exists (`HELIOS_MULTI_ASSET_M08_WTI_ENERGY_DATA_QUALIFIED`, 4h trend readiness assessment). No M11 strategy capsule, rule evaluator, or qualification marker yet.
+**Engineering status:** Implemented. Capsule `scap_helios_m11_commodity_trend_following_v1`; 4h SMA trend following on WTI and gold research instruments with roll-context and continuous-series guards.
 
-**Data requirements (planned):** WTI continuous / front-month research series from M08; 4h bar evidence; roll-context awareness.
+**Data requirements:** M08 WTI energy data and M07 gold market data planes; 4h bar evidence; continuous research series identity separation.
 
-**Paper eligibility:** Not eligible — strategy family absent.
+**Paper eligibility:** Promotion pipeline eligible. Not wired into live HELIOS paper runtime dispatch (H14-only today).
 
-**Known limitations:** Entire M11 capsule family pending; do not infer commodity trend signals from WTI data readiness alone.
+**Known limitations:** Synthetic fixture history for qualification; continuous research instruments are not executable proxies; forward shadow evidence still required for `PAPER_ACTIVE`.
 
 ---
 
