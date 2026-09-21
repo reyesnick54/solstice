@@ -341,7 +341,7 @@ describe('HELIOS M14 macro and event intelligence fabric', () => {
   });
 
   it('passes HELIOS boundary lint', () => {
-    const violations = lintHeliosBoundary('packages/platform/src/helios/multi-asset/event-intelligence');
+    const violations = lintHeliosBoundary(process.cwd());
     assert.deepEqual(violations, []);
   });
 
@@ -412,7 +412,7 @@ describePersistence('HELIOS M14 persistence restart', () => {
     const pool = runtime.session.pools.customer;
 
     const fabric = createMacroEventIntelligenceFabric();
-    fabric.ingest(cpiScheduledFixture(NOW), NOW);
+    fabric.ingest(cpiObservedReleaseFixture(NOW), NOW);
     fabric.ingest(fomcPolicyFixture(NOW), NOW);
 
     await persistMacroEventIntelligenceState(pool, fabric.snapshot());
@@ -421,7 +421,10 @@ describePersistence('HELIOS M14 persistence restart', () => {
 
     const restored = createMacroEventIntelligenceFabric();
     restored.restore(restoredSnapshot);
-    assert.ok(restored.store().get('m14.cpi.2026-09'));
+    const cpi = restored.store().get('m14.cpi.2026-09.release');
+    assert.ok(cpi);
+    assert.equal(typeof cpi!.artifact.surprise?.surpriseMinorUnits, 'bigint');
+    assert.equal(cpi!.artifact.surprise?.surpriseMinorUnits, 10n);
     assert.ok(restored.store().get('m14.fomc.2026-09'));
   });
 });

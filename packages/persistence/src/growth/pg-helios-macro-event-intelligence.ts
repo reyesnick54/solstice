@@ -5,6 +5,15 @@ import type { MacroEventStoreSnapshot } from '@solstice/platform';
 import { persistenceJsonStringify } from '../json.ts';
 import { withClient } from '../postgres/pools.ts';
 
+const BIGINT_JSON_KEYS = new Set(['valueMinorUnits', 'surpriseMinorUnits']);
+
+function reviveBigIntFields(key: string, value: unknown): unknown {
+  if (typeof value === 'string' && BIGINT_JSON_KEYS.has(key)) {
+    return BigInt(value);
+  }
+  return value;
+}
+
 export async function persistMacroEventIntelligenceState(
   pool: Pool,
   state: MacroEventStoreSnapshot,
@@ -48,7 +57,7 @@ export async function loadMacroEventIntelligenceState(pool: Pool): Promise<Macro
       `SELECT body_canonical FROM growth.helios_macro_event_intelligence ORDER BY knowable_at ASC`,
     );
     const events = Object.freeze(
-      rows.rows.map((row) => JSON.parse(row.body_canonical)),
+      rows.rows.map((row) => JSON.parse(String(row.body_canonical), reviveBigIntFields)),
     );
     return Object.freeze({
       events,
@@ -83,6 +92,6 @@ export async function queryHeliosMacroEvents(
       ORDER BY scheduled_time ASC NULLS LAST${limitClause}`;
 
     const result = await client.query(sql, params);
-    return Object.freeze(result.rows.map((row) => JSON.parse(row.body_canonical)));
+    return Object.freeze(result.rows.map((row) => JSON.parse(String(row.body_canonical), reviveBigIntFields)));
   });
 }
