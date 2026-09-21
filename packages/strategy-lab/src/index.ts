@@ -183,6 +183,14 @@ export {
   buildHeliosM10StrategyCapsule,
 } from './capsule/m10.ts';
 export {
+  HELIOS_M11_CAPSULE_ID,
+  HELIOS_M11_COMMODITY_TREND_FOLLOWING_V1,
+  HELIOS_M11_FAMILY_ID,
+  HELIOS_M11_RULE_ID,
+  buildHeliosM11Material,
+  buildHeliosM11StrategyCapsule,
+} from './capsule/m11.ts';
+export {
   HELIOS_M09_STRATEGY_CAPSULE_ID,
   HELIOS_M09_STRATEGY_CAPSULE_VERSION,
   observeM09CapsuleQualification,
@@ -316,10 +324,29 @@ export {
 } from './m10-capsule-bridge.ts';
 export type { M10CapsuleQualificationObservation } from './m10-capsule-bridge.ts';
 export {
+  HELIOS_M11_STRATEGY_CAPSULE_ID,
+  HELIOS_M11_STRATEGY_CAPSULE_VERSION,
+  observeM11CapsuleQualification,
+  buildM11ReferenceCapsule,
+  buildM11StrategySpecification,
+} from './m11-capsule-bridge.ts';
+export type { M11CapsuleQualificationObservation } from './m11-capsule-bridge.ts';
+export {
   CRYPTO_BTC_USD_ASSET_ID,
   CRYPTO_ETH_USD_ASSET_ID,
+  GOLD_ETF_GLD_ID,
+  GOLD_FUTURES_CONTINUOUS_ID,
+  GOLD_FUTURES_GCZ2026_ID,
+  GOLD_REFERENCE_ID,
+  HELIOS_COMMODITY_OBSERVATION_SCHEMA,
   HELIOS_CRYPTO_USD_INSTRUMENTS,
+  HELIOS_M11_INSTRUMENT_UNIVERSE,
   HELIOS_MULTI_ASSET_M09_STRATEGY_LAB_FOUNDATION,
+  WTI_COMMODITY_REFERENCE_ID,
+  WTI_FUTURES_CLM2026_ID,
+  WTI_FUTURES_CONTINUOUS_ID,
+  WTI_OIL_ETF_PROXY_ID,
+  commodityBarToChronologicalObservation,
   cryptoBarToChronologicalObservation,
 } from './multi-asset/index.ts';
 export {
@@ -344,6 +371,33 @@ export type {
   CryptoMomentumMarketState,
   CryptoMomentumPosition,
 } from './crypto-momentum/index.ts';
+export {
+  DEFAULT_M11_CONFIG,
+  HELIOS_MULTI_ASSET_M11_COMMODITY_TREND_QUALIFIED,
+  evaluateCommodityTrendFollowingRule,
+  commodityTrendEvaluationManifest,
+  computeSimpleMovingAveragePriorBars,
+  isContinuousResearchInstrument,
+  VALID_GOVERNANCE as COMMODITY_VALID_GOVERNANCE,
+  VALID_GOVERNANCE_LONG_ONLY as COMMODITY_VALID_GOVERNANCE_LONG_ONLY,
+  baseGoldBar,
+  baseWtiBar,
+  flatPosition as commodityFlatPosition,
+  openLongPosition,
+  openShortPosition,
+  validGoldDowntrendMarket,
+  validGoldUptrendMarket,
+  validWtiDowntrendMarket,
+  validWtiUptrendMarket,
+} from './commodity-trend/index.ts';
+export type {
+  CommodityTrendDecision,
+  CommodityTrendEvaluateInput,
+  CommodityTrendFollowingConfig,
+  CommodityTrendGovernance,
+  CommodityTrendMarketState,
+  CommodityTrendPosition,
+} from './commodity-trend/index.ts';
 export {
   DEFAULT_PARAMETER_SET,
   EXPLICIT_COSTS,
