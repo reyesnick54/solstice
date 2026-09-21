@@ -1,6 +1,6 @@
 import type { Pool } from 'pg';
 
-import type { PortfolioExposureGraphSnapshot } from '../../../platform/src/helios/multi-asset/m18/types.ts';
+import type { PortfolioExposureGraphSnapshot } from '@solstice/platform';
 import { withClient } from '../postgres/pools.ts';
 
 export async function persistHeliosPortfolioExposureGraphState(
