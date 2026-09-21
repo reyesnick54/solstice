@@ -1,8 +1,8 @@
 import { createHash } from 'node:crypto';
 
-import type { Clock } from '../../../config/src/clock.ts';
-import type { EvidenceVault } from '../../../evidence/src/vault.ts';
-import type { DomainEventLog } from '../../../events/src/events.ts';
+import type { Clock } from '@solstice/config';
+import type { EvidenceVault } from '@solstice/evidence';
+import type { DomainEventLog } from '@solstice/events';
 import { ratioCmp, shareOf, type Ratio } from '../arithmetic.ts';
 import type { RiskEngine } from '../engine.ts';
 import { computePortfolioDrawdown, rollDailyLossLedger, utcDayKey } from './drawdown-accounting.ts';
@@ -435,7 +435,7 @@ export class PortfolioRiskEngine {
 
   updateDailyLoss(input: {
     readonly mandateId: string;
-    readonly now: import('../../../domain/src/time.ts').UtcInstant;
+    readonly now: import('@solstice/domain').UtcInstant;
     readonly realizedPnlMinor: bigint;
     readonly totalPnlMinor: bigint;
     readonly priorLedger: import('./types.ts').DailyLossLedger | null;

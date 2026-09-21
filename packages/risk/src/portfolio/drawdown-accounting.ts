@@ -1,5 +1,5 @@
 import { ratioFromUnits, RATIO_UNIT, shareOf, type Ratio } from '../arithmetic.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { DailyLossLedger, ReconciledEquityPoint, StrategyDrawdownFact } from './types.ts';
 
 export function utcDayKey(at: UtcInstant): string {

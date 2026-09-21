@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { Ratio } from '../arithmetic.ts';
 import type { RiskPolicyVersion } from '../ids.ts';
 import type { LiquidityClass, MarketDataQuality } from '../types.ts';

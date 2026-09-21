@@ -2,7 +2,7 @@ import { ratioCmp, type Ratio } from '../arithmetic.ts';
 import type { RiskPolicyVersion } from '../ids.ts';
 import { asRiskPolicyVersion } from '../ids.ts';
 import type { MandateRiskPolicy } from './types.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const DEFAULT_M20_POLICY_VERSION = asRiskPolicyVersion('helios-m20-portfolio-risk-v1');
 
