@@ -4,7 +4,7 @@ export const HELIOS_RELEASE_PACKAGE_QUALIFIED = 'HELIOS_RELEASE_PACKAGE_QUALIFIE
 export const HELIOS_RELEASE_PACKAGE_BLOCKED = 'HELIOS_RELEASE_PACKAGE_BLOCKED' as const;
 
 export const HELIOS_RELEASE_WORK_PACKAGE = 'H34' as const;
-export const HELIOS_RELEASE_SEQUENCE = 'H01-H33' as const;
+export const HELIOS_RELEASE_SEQUENCE = 'H01-H33,M01-M28' as const;
 
 export const HELIOS_DEPLOYMENT_MANIFEST_VERSION = 'deploy/sunrey-sandbox-hetzner/v1' as const;
 
