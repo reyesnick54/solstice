@@ -1,4 +1,4 @@
--- V068 HELIOS Multi-Asset M21 — Universal multi-asset execution plan persistence.
+-- V069 HELIOS Multi-Asset M21 — Universal multi-asset execution plan persistence.
 -- Planning records only. Does not post journals or issue Execution Authority.
 
 CREATE TABLE growth.helios_execution_plan (

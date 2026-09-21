@@ -1,8 +1,6 @@
-import type { Clock } from '../../../../config/src/clock.ts';
-import { LIVE_INVESTMENT_EXECUTION, LIVE_TRADING_ENABLED } from '../../../../config/src/flags.ts';
-import type { CustomerId } from '../../../../domain/src/customer.ts';
-import { err, ok, type Result } from '../../../../domain/src/result.ts';
-import type { EvidenceVault } from '../../../../evidence/src/vault.ts';
+import { LIVE_INVESTMENT_EXECUTION, LIVE_TRADING_ENABLED, type Clock } from '@solstice/config';
+import { err, ok, type CustomerId, type Result } from '@solstice/domain';
+import type { EvidenceVault } from '@solstice/evidence';
 import { executionPlanIdFor, transitionIdFor } from './ids.ts';
 import { InMemoryHeliosExecutionPlanStore } from './store.ts';
 import {
