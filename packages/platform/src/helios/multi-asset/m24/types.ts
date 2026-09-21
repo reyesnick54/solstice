@@ -1,5 +1,4 @@
-import type { CustomerId } from '../../../../../domain/src/customer.ts';
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { CustomerId, UtcInstant } from '@solstice/domain';
 import type { HeliosFillId, HeliosOrderId } from '../../order-lifecycle/ids.ts';
 import type { M24ExecutionPlanId, M24ExitPlanId } from './ids.ts';
 import type {
