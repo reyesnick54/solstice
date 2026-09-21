@@ -1,4 +1,4 @@
-import type { EvidenceVault } from '../../../../../evidence/src/vault.ts';
+import type { EvidenceVault } from '@solstice/evidence';
 import { assembleOpportunityCandidates } from '../m15-opportunity-assembly/assembly.ts';
 import type { OpportunityAssemblyInput } from '../m15-opportunity-assembly/types.ts';
 import { buildCrossAssetOpportunityGraph, deriveCorrelationWarnings } from '../m14-opportunity-graph/graph.ts';

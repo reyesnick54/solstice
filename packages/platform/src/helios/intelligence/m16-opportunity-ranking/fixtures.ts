@@ -2,8 +2,7 @@
  * HELIOS M16 test fixtures — multi-asset opportunity ranking scenarios.
  */
 
-import { asCustomerId } from '../../../../../domain/src/customer.ts';
-import { asUtcInstant } from '../../../../../domain/src/time.ts';
+import { asCustomerId, asUtcInstant } from '@solstice/domain';
 import { M02_REFERENCE_INSTRUMENT_IDS } from '../../market-observation/instrument-registry.ts';
 import { workOrderIdFor } from '../../ids.ts';
 
