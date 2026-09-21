@@ -58,6 +58,7 @@
     "helios:m08:wti:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-m08-wti-qualify.ts",
     "helios:m15:cross-asset-graph:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-m15-qualify.ts",
     "helios:m16:opportunity-ranking:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-m16-opportunity-ranking-qualify.ts",
+    "helios:m23:execution-routing:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-m23-execution-routing-qualify.ts",
     "helios:m28:release-qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-m28-release-qualify.ts",
     "test:helios-m28-release-qualification": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-multi-asset-m28-release-qualification.test.ts",
     "helios:s3m-finance:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-s3m-finance-qualify.ts",
