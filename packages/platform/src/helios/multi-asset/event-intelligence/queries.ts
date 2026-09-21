@@ -77,10 +77,11 @@ export function assessStrategyEventSafety(
   store: MacroEventIntelligenceStore,
   query: StrategyEventSafetyQuery,
 ): StrategyEventSafetyResult {
+  const instrumentId = query.instrumentIds[0];
   const upcoming = queryUpcomingEvents(store, {
     asOf: query.asOf,
     horizonMinutes: 240,
-    instrumentId: query.instrumentIds[0],
+    ...(instrumentId !== undefined ? { instrumentId } : {}),
   });
 
   const activeBlackouts = store.listBlackouts().filter((b) => isWithinBlackout(b, query.asOf));
