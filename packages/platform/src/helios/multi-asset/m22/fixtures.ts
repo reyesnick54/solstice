@@ -1,6 +1,11 @@
-import { asUtcInstant, type UtcInstant } from '@solstice/domain';
+import { asCustomerId, asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { asDecisionValidityEnvelopeId } from '../../decision-validity/ids.ts';
 import type { DecisionValidityEnvelope } from '../../decision-validity/types.ts';
+import {
+  asExecutableOpportunityId,
+  asOpportunityCandidateId,
+} from '../../executable-opportunity/ids.ts';
+import { asEconomicWorkOrderId } from '../../ids.ts';
 import type { MarketState } from '../market-state-types.ts';
 import type { UniversalExecutionPlan } from '../m21/types.ts';
 import { UNIVERSAL_EXECUTION_PLAN_VERSION } from '../m21/types.ts';
@@ -16,12 +21,12 @@ export const FIXTURE_NOW = asUtcInstant('2026-09-21T14:30:00.000Z');
 function baseEnvelope(now: UtcInstant, validUntil: UtcInstant): DecisionValidityEnvelope {
   return Object.freeze({
     envelopeId: asDecisionValidityEnvelopeId('dve_m22_fixture'),
-    candidateId: 'cand_m22',
-    executableOpportunityId: 'exo_m22',
+    candidateId: asOpportunityCandidateId('opc_m22'),
+    executableOpportunityId: asExecutableOpportunityId('xop_m22'),
     strategyCapsuleRef: Object.freeze({ strategyId: 'strat_m22', version: 'v1', hash: 'hash_m22' }),
     strategyCapsuleHash: 'hash_m22',
-    workOrderId: 'wo_m22',
-    customerId: 'cust_m22',
+    workOrderId: asEconomicWorkOrderId('ewo_m22'),
+    customerId: asCustomerId('cust_m22'),
     accountId: 'acct_m22',
     proposedActionRef: 'action_m22',
     metaAllocatorRecommendationId: 'mar_m22',
@@ -66,7 +71,7 @@ export function equityTightSpreadMarketState(now: UtcInstant): MarketState {
     spread: quote('2'),
     spreadBps: 4,
     recentVolume: '5000000',
-    availableBarTimeframes: Object.freeze(['1m', '5m']),
+    availableBarTimeframes: Object.freeze(['1m', '5m'] as const),
     latestObservationTimestamp: now,
     freshness: 'FRESH',
     dataQuality: Object.freeze({
@@ -119,7 +124,7 @@ export function volatileBtcMarketState(now: UtcInstant): MarketState {
     spread: quote('4000'),
     spreadBps: 62,
     recentVolume: '1200',
-    availableBarTimeframes: Object.freeze(['1m']),
+    availableBarTimeframes: Object.freeze(['1m'] as const),
     latestObservationTimestamp: now,
     freshness: 'FRESH',
     dataQuality: Object.freeze({
@@ -176,8 +181,8 @@ export function fullProviderCapabilities(overrides: Partial<ProviderOrderCapabil
   return Object.freeze({
     providerId: 'fixture_broker',
     routeId: 'route_fixture_eq',
-    supportedOrderTypes: Object.freeze(['MARKET', 'LIMIT', 'STOP', 'STOP_LIMIT']),
-    supportedTimeInForce: Object.freeze(['DAY', 'GTC', 'IOC', 'FOK']),
+    supportedOrderTypes: Object.freeze(['MARKET', 'LIMIT', 'STOP', 'STOP_LIMIT'] as const),
+    supportedTimeInForce: Object.freeze(['DAY', 'GTC', 'IOC', 'FOK'] as const),
     supportsCancelReplace: true,
     supportsPartialFill: true,
     minimumQuantityUnits: 1n,
@@ -190,8 +195,8 @@ export function fullProviderCapabilities(overrides: Partial<ProviderOrderCapabil
 
 export function limitedProviderCapabilities(): ProviderOrderCapabilities {
   return fullProviderCapabilities({
-    supportedOrderTypes: Object.freeze(['LIMIT']),
-    supportedTimeInForce: Object.freeze(['DAY']),
+    supportedOrderTypes: Object.freeze(['LIMIT'] as const),
+    supportedTimeInForce: Object.freeze(['DAY'] as const),
     supportsCancelReplace: false,
     commissionMinor: null,
     commissionCertainty: 'INSUFFICIENT_DATA',
@@ -238,7 +243,7 @@ export function baseExecutionPlan(
     quantityScale: 0,
     currency: 'USD',
     urgency: 'NORMAL',
-    strategyRequirements: Object.freeze(['MINIMIZE_IMPACT']),
+    strategyRequirements: Object.freeze(['MINIMIZE_IMPACT'] as const),
     maxSlippageBps: 50,
     maxParticipationRateBps: 1500,
     arrivalPriceMinor: 45000n,

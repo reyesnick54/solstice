@@ -8,7 +8,12 @@ import {
   resolveRemainingQuantity,
 } from './continuation.ts';
 import { EXECUTION_TACTIC_METHODOLOGY_VERSION } from './taxonomy.ts';
-import type { ExecutionOrderType, ExecutionTacticType, ExecutionTimeInForce } from './taxonomy.ts';
+import type {
+  ExecutionOrderType,
+  ExecutionTacticType,
+  ExecutionTimeInForce,
+  TacticRefusalReason,
+} from './taxonomy.ts';
 import { buildCostEstimate } from './transaction-cost.ts';
 import {
   customerPermitsPlanning,
@@ -27,6 +32,22 @@ import type {
 } from './types.ts';
 
 const SLICE_INTERVAL_MS = 60_000;
+
+function uniqueRefusalReasons(
+  ...groups: readonly (readonly TacticRefusalReason[])[]
+): readonly TacticRefusalReason[] {
+  const seen = new Set<TacticRefusalReason>();
+  const out: TacticRefusalReason[] = [];
+  for (const group of groups) {
+    for (const reason of group) {
+      if (!seen.has(reason)) {
+        seen.add(reason);
+        out.push(reason);
+      }
+    }
+  }
+  return Object.freeze(out);
+}
 
 function tacticIdFor(material: string): string {
   return `tac_${createHash('sha256').update(material).digest('hex').slice(0, 24)}`;
@@ -351,7 +372,7 @@ export function planExecutionTactic(input: OrderPlanningInput): OrderPlanningRes
       requestId: input.requestId,
       outcome: 'REFUSED',
       tactic: null,
-      refusalReasons: Object.freeze([...new Set([...refusalReasons, 'ZERO_REMAINING_QUANTITY'])]),
+      refusalReasons: uniqueRefusalReasons(refusalReasons, ['ZERO_REMAINING_QUANTITY']),
       researchAccepted: false,
       evidence: Object.freeze(['remaining_quantity_zero']),
       computedAt: input.now,
@@ -363,7 +384,7 @@ export function planExecutionTactic(input: OrderPlanningInput): OrderPlanningRes
       requestId: input.requestId,
       outcome: 'REFUSED',
       tactic: null,
-      refusalReasons: Object.freeze([...new Set(refusalReasons)]),
+      refusalReasons: uniqueRefusalReasons(refusalReasons),
       researchAccepted: false,
       evidence: Object.freeze(refusalReasons.map((r) => `refusal:${r}`)),
       computedAt: input.now,
