@@ -53,7 +53,7 @@ function aggregateRows(
     bucket.push(row);
     grouped.set(key, bucket);
   }
-  const out: Partial<Record<ExposureDimension, ExposureAggregate[]>> = {};
+  const out: Partial<Record<ExposureDimension, readonly ExposureAggregate[]>> = {};
   for (const [key, bucket] of grouped) {
     const [dimension, bucketKey] = key.split('::') as [ExposureDimension, string];
     const net = bucket.reduce((sum, row) => sum + row.signedExposureMinor, 0n);
