@@ -1,4 +1,4 @@
-import type { Jurisdiction } from '../../../../domain/src/jurisdiction.ts';
+import type { Jurisdiction } from '@solstice/domain';
 import { M02_REFERENCE_INSTRUMENT_IDS } from '../market-observation/instrument-registry.ts';
 import type { ProviderCapabilityObject } from './types.ts';
 

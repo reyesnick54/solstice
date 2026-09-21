@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 
-import { LIVE_INVESTMENT_EXECUTION, LIVE_TRADING_ENABLED } from '../../../../config/src/flags.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import { LIVE_INVESTMENT_EXECUTION, LIVE_TRADING_ENABLED } from '@solstice/config';
+import type { UtcInstant } from '@solstice/domain';
 import {
   executionRoutingDecisionIdFor,
   executionRoutingEvidenceRef,
