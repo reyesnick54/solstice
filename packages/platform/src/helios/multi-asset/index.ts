@@ -226,3 +226,5 @@ export * from './event-intelligence/index.ts';
 export * from './release-candidate/index.ts';
 export * from './grow-product-contract/index.ts';
 export * from '../grow-intelligence/index.ts';
+export * from './m21/index.ts';
+export * from './m22/index.ts';
