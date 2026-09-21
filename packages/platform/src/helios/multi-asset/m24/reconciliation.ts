@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 
-import type { CustomerId, UtcInstant } from '@solstice/domain';
+import type { CustomerId } from '../../../../../domain/src/customer.ts';
+import type { UtcInstant } from '../../../../../domain/src/time.ts';
 import type { HeliosOrderLifecycleService } from '../../order-lifecycle/service.ts';
 import type { HeliosProviderOrderPort } from '../../order-lifecycle/provider-port.ts';
 import type {

@@ -1,6 +1,9 @@
-import { LIVE_INVESTMENT_EXECUTION, LIVE_TRADING_ENABLED, type Clock } from '@solstice/config';
-import { err, ok, type CustomerId, type Result, type UtcInstant } from '@solstice/domain';
-import type { EvidenceVault } from '@solstice/evidence';
+import { LIVE_INVESTMENT_EXECUTION, LIVE_TRADING_ENABLED } from '../../../../../config/src/flags.ts';
+import type { Clock } from '../../../../../config/src/clock.ts';
+import type { CustomerId } from '../../../../../domain/src/customer.ts';
+import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import { err, ok, type Result } from '../../../../../domain/src/result.ts';
+import type { EvidenceVault } from '../../../../../evidence/src/vault.ts';
 import type { EconomicWorkOrderId } from '../../ids.ts';
 import type { HeliosCapitalPort, HeliosOrderValidationPorts } from '../../order-lifecycle/types.ts';
 import {
