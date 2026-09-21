@@ -7,6 +7,8 @@ import { describe, it } from 'node:test';
 
 import { FrozenClock } from '../packages/config/src/clock.ts';
 import { ENVIRONMENT, LIVE_INVESTMENT_EXECUTION, LIVE_TRADING_ENABLED } from '../packages/config/src/flags.ts';
+import { asCustomerId } from '../packages/domain/src/customer.ts';
+import { asJurisdiction } from '../packages/domain/src/jurisdiction.ts';
 import { asUtcInstant } from '../packages/domain/src/time.ts';
 import { EvidenceVault } from '../packages/evidence/src/vault.ts';
 import {
@@ -25,11 +27,14 @@ import {
   type ExecutionRoutingRequest,
   type ProviderCapabilityObject,
 } from '../packages/platform/src/helios/execution-routing/index.ts';
+import { asEconomicWorkOrderId } from '../packages/platform/src/helios/ids.ts';
 import { M02_REFERENCE_INSTRUMENT_IDS } from '../packages/platform/src/helios/market-observation/instrument-registry.ts';
 import { lintHeliosBoundary } from '../tools/architectural-linter/src/helios-guards.ts';
 
 const T0 = asUtcInstant('2026-09-21T12:00:00.000Z');
 const T1 = asUtcInstant('2026-09-21T12:05:00.000Z');
+const CUSTOMER_M23 = asCustomerId('cust_m23');
+const WORK_ORDER_M23 = asEconomicWorkOrderId('ewo_m23_test');
 
 function permissivePorts(overrides: Partial<ExecutionRoutingIntegrationPorts> = {}): ExecutionRoutingIntegrationPorts {
   return Object.freeze({
@@ -43,7 +48,7 @@ function permissivePorts(overrides: Partial<ExecutionRoutingIntegrationPorts> = 
 
 function account(overrides: Partial<AccountRoutingContext> & Pick<AccountRoutingContext, 'accountId'>): AccountRoutingContext {
   return Object.freeze({
-    customerId: 'cust_m23',
+    customerId: CUSTOMER_M23,
     legalEntityId: 'le_us_demo',
     accountClass: 'BROKERAGE',
     eligible: true,
@@ -56,10 +61,10 @@ function account(overrides: Partial<AccountRoutingContext> & Pick<AccountRouting
 
 function request(overrides: Partial<ExecutionRoutingRequest> & Pick<ExecutionRoutingRequest, 'requestId'>): ExecutionRoutingRequest {
   return Object.freeze({
-    customerId: 'cust_m23',
+    customerId: CUSTOMER_M23,
     legalEntityId: 'le_us_demo',
-    jurisdiction: 'US',
-    workOrderId: 'wo_m23_test',
+    jurisdiction: asJurisdiction('US'),
+    workOrderId: WORK_ORDER_M23,
     instrumentId: M02_REFERENCE_INSTRUMENT_IDS.SPY,
     assetClass: 'etf',
     orderType: 'MARKET',
@@ -208,7 +213,7 @@ describe('HELIOS Multi-Asset M23 execution routing', () => {
     const result = service.resolveRoute(
       request({
         requestId: 'req_bad_jurisdiction',
-        jurisdiction: 'JP',
+        jurisdiction: asJurisdiction('JP'),
         accountContexts: Object.freeze([account({ accountId: 'acct_paper_equity_sandbox' })]),
       }),
     );
@@ -427,7 +432,7 @@ describe('HELIOS Multi-Asset M23 execution routing', () => {
       request({ requestId: 'q_unsupported', instrumentId: 'UNKNOWN:XYZ' }),
     );
     const badJurisdiction = service.resolveRoute(
-      request({ requestId: 'q_jurisdiction', jurisdiction: 'JP' }),
+      request({ requestId: 'q_jurisdiction', jurisdiction: asJurisdiction('JP') }),
     );
     const badOrderType = service.resolveRoute(request({ requestId: 'q_order_type', orderType: 'STOP' }));
     const unfunded = service.resolveRoute(
@@ -491,9 +496,7 @@ describe('HELIOS Multi-Asset M23 execution routing', () => {
         d1.selectedProviderId === d2.selectedProviderId &&
         d1.selectedAccountId === d2.selectedAccountId &&
         d1.selectedVenueId === d2.selectedVenueId,
-      providerFailover:
-        failover.selectedProviderId === 'sunrey-investments-paper-failover' &&
-        failover.selectedProviderId !== 'sunrey-investments-paper',
+      providerFailover: failover.selectedProviderId === 'sunrey-investments-paper-failover',
       evidenceLineage: second.evidence.priorEvidenceRef === first.evidence.evidenceRef,
       restartPersistence: restored.getDecision(first.decisionId)?.selectedRouteId === first.selectedRouteId,
       noExecutionAuthorityIssued:

@@ -25,6 +25,13 @@ import type {
   ProviderEnvironmentState,
 } from './taxonomy.ts';
 
+function lowerPriorityReason(
+  failoverApplied: boolean,
+  healthState: ProviderCapabilityObject['healthState'],
+): ExecutionRoutingRejectionReason {
+  return failoverApplied && healthState === 'DEGRADED' ? 'FAILOVER_SECONDARY' : 'LOWER_PRIORITY_CANDIDATE';
+}
+
 const ROUTE_VALIDITY_SECONDS = 300;
 
 function inputDigest(request: ExecutionRoutingRequest): string {
@@ -368,11 +375,7 @@ export class ExecutionRoutingService {
           accountId: alt.cap.accountId,
           venueId: alt.venueId,
           routeId: alt.cap.routeId,
-          reasons: Object.freeze([
-            failoverApplied && alt.cap.healthState === 'DEGRADED'
-              ? 'FAILOVER_SECONDARY'
-              : 'LOWER_PRIORITY_CANDIDATE',
-          ]),
+          reasons: Object.freeze([lowerPriorityReason(failoverApplied, alt.cap.healthState)]),
         }),
       );
     }
