@@ -224,3 +224,4 @@ export {
 } from './regime/index.ts';
 export * from './event-intelligence/index.ts';
 export * from './grow-product-contract/index.ts';
+export * from '../grow-intelligence/index.ts';
