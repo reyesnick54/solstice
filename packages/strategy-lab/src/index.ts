@@ -191,6 +191,13 @@ export {
   buildHeliosM11StrategyCapsule,
 } from './capsule/m11.ts';
 export {
+  HELIOS_M12_CAPSULE_ID,
+  HELIOS_M12_FAMILY_ID,
+  HELIOS_M12_RULE_ID,
+  buildHeliosM12Material,
+  buildHeliosM12StrategyCapsule,
+} from './capsule/m12-relative-value.ts';
+export {
   HELIOS_M09_STRATEGY_CAPSULE_ID,
   HELIOS_M09_STRATEGY_CAPSULE_VERSION,
   observeM09CapsuleQualification,
@@ -331,6 +338,54 @@ export {
   buildM11StrategySpecification,
 } from './m11-capsule-bridge.ts';
 export type { M11CapsuleQualificationObservation } from './m11-capsule-bridge.ts';
+export {
+  HELIOS_M12_STRATEGY_CAPSULE_ID,
+  HELIOS_M12_STRATEGY_CAPSULE_VERSION,
+  observeM12CapsuleQualification,
+  buildM12ReferenceCapsule,
+  registerM12StrategyCapsuleRecord,
+  m12MaterialFingerprint,
+} from './m12-capsule-bridge.ts';
+export type { M12CapsuleQualificationObservation } from './m12-capsule-bridge.ts';
+export {
+  M12_SPY_QQQ_PAIR_ID,
+  M12_BTC_ETH_PAIR_ID,
+  M12_GLD_GC_RESEARCH_PAIR_ID,
+  M12_PAIR_UNIVERSE,
+  M12_BAR_INTERVAL,
+  M12_PARAMETERS_V1,
+  M12_PARAMETERS_V2,
+  HELIOS_MULTI_ASSET_M12_RELATIVE_VALUE_STAT_ARB_QUALIFIED,
+  HELIOS_MULTI_ASSET_M12_RELATIVE_VALUE_STAT_ARB_BLOCKED,
+  evaluateM12RelativeValueStatArb,
+  validatePair,
+  discoverRelationship,
+  evaluateM12Qualification,
+  syntheticM12BarSeries,
+  m12ChronologicalManifest,
+  buildM12Bar,
+  runM12ChronologicalEvaluation,
+  initialM12LifecycleState,
+  promoteM12ToShadow,
+  promoteM12ToPaper,
+  demoteM12,
+  restartM12Lifecycle,
+  recommendPairAllocation,
+  parameterFingerprint as m12ParameterFingerprint,
+  resolveM12Parameters,
+} from './relative-value/index.ts';
+export type {
+  M12PairId,
+  M12StrategyProposal,
+  M12StrategyLeg,
+  M12BarObservation,
+  M12PairValidationResult,
+  M12QualificationChecks,
+  M12QualificationResult,
+  M12LifecycleState,
+  M12OpenSpreadPosition,
+  M12EvaluationContext,
+} from './relative-value/index.ts';
 export {
   CRYPTO_BTC_USD_ASSET_ID,
   CRYPTO_ETH_USD_ASSET_ID,
