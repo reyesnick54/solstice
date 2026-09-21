@@ -65,29 +65,29 @@ export const EXECUTION_PLAN_POLICY_VERSION = 'helios.execution-plan.v1' as const
 export const LEGAL_EXECUTION_PLAN_TRANSITIONS: Readonly<
   Record<ExecutionPlanStatus, readonly ExecutionPlanStatus[]>
 > = Object.freeze({
-  DRAFT: Object.freeze(['RISK_APPROVED', 'REJECTED', 'EXPIRED', 'CANCELLED']),
-  RISK_APPROVED: Object.freeze(['COMPLIANCE_APPROVED', 'REJECTED', 'EXPIRED', 'CANCELLED']),
-  COMPLIANCE_APPROVED: Object.freeze(['AUTHORIZED', 'REJECTED', 'EXPIRED', 'CANCELLED']),
-  AUTHORIZED: Object.freeze(['READY_FOR_ROUTING', 'REJECTED', 'EXPIRED', 'CANCELLED']),
-  READY_FOR_ROUTING: Object.freeze(['ROUTED', 'REJECTED', 'EXPIRED', 'CANCELLED']),
+  DRAFT: Object.freeze(['RISK_APPROVED', 'REJECTED', 'EXPIRED', 'CANCELLED'] as const),
+  RISK_APPROVED: Object.freeze(['COMPLIANCE_APPROVED', 'REJECTED', 'EXPIRED', 'CANCELLED'] as const),
+  COMPLIANCE_APPROVED: Object.freeze(['AUTHORIZED', 'REJECTED', 'EXPIRED', 'CANCELLED'] as const),
+  AUTHORIZED: Object.freeze(['READY_FOR_ROUTING', 'REJECTED', 'EXPIRED', 'CANCELLED'] as const),
+  READY_FOR_ROUTING: Object.freeze(['ROUTED', 'REJECTED', 'EXPIRED', 'CANCELLED'] as const),
   ROUTED: Object.freeze([
     'PARTIALLY_EXECUTED',
     'EXECUTED',
     'RECONCILIATION_REQUIRED',
     'CANCELLED',
     'EXPIRED',
-  ]),
+  ] as const),
   PARTIALLY_EXECUTED: Object.freeze([
     'EXECUTED',
     'RECONCILIATION_REQUIRED',
     'CANCELLED',
     'EXPIRED',
-  ]),
-  EXECUTED: Object.freeze([]),
-  CANCELLED: Object.freeze([]),
-  EXPIRED: Object.freeze([]),
-  REJECTED: Object.freeze([]),
-  RECONCILIATION_REQUIRED: Object.freeze(['EXECUTED', 'CANCELLED', 'REJECTED']),
+  ] as const),
+  EXECUTED: Object.freeze([] as const),
+  CANCELLED: Object.freeze([] as const),
+  EXPIRED: Object.freeze([] as const),
+  REJECTED: Object.freeze([] as const),
+  RECONCILIATION_REQUIRED: Object.freeze(['EXECUTED', 'CANCELLED', 'REJECTED'] as const),
 });
 
 export function canTransitionExecutionPlan(from: ExecutionPlanStatus, to: ExecutionPlanStatus): boolean {
