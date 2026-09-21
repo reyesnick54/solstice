@@ -11,6 +11,16 @@ import type {
   GrowSummarizerMode,
 } from './taxonomy.ts';
 
+export type {
+  GrowExecutionMode,
+  GrowNotificationChannel,
+  GrowNotificationEventType,
+  GrowNotificationPriority,
+  GrowReportDisclosureFlag,
+  GrowReportType,
+  GrowSummarizerMode,
+} from './taxonomy.ts';
+
 export type { GrowMoneyDto };
 
 export type GrowIntelligencePositionFact = {

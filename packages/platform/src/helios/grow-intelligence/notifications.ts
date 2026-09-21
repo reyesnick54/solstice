@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import type { UtcInstant } from '@solstice/domain';
-import { GROW_NOTIFICATION_PRIORITY_BY_TYPE } from './taxonomy.ts';
+import { GROW_NOTIFICATION_PRIORITY_BY_TYPE, type GrowNotificationChannel } from './taxonomy.ts';
 import type {
   GrowNotificationDeliveryAdapter,
   GrowNotificationDeliveryRecord,
@@ -51,7 +51,7 @@ export function createGrowNotificationEvent(input: GrowNotificationEventInput): 
     userTitle: input.userTitle,
     userBody: input.userBody,
     priority: GROW_NOTIFICATION_PRIORITY_BY_TYPE[input.type],
-    channelHints: Object.freeze(['IN_APP', 'PUSH', 'EMAIL', 'SMS']),
+    channelHints: Object.freeze(['IN_APP', 'PUSH', 'EMAIL', 'SMS'] as readonly GrowNotificationChannel[]),
     deduplicationKey,
     autoNotify: input.autoNotify ?? true,
     environment: 'simulation',

@@ -407,7 +407,9 @@ describe('HELIOS M27 Grow Intelligence', () => {
     if (!persistenceAvailable()) {
       return;
     }
-    const pool = await preparePersistence();
+    const env = await preparePersistence();
+    const runtime = await createDurableRuntime(env);
+    const pool = runtime.session.pools.customer;
     const service = new GrowIntelligenceService({ factsPort: createFixtureFactsPort() });
     service.setPreferences(CUSTOMER_A, { ...DEFAULT_GROW_NOTIFICATION_PREFERENCES, timeZone: 'UTC' });
     const report = service.generateReport({
