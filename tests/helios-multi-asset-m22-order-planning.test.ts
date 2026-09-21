@@ -282,7 +282,7 @@ describe('HELIOS Multi-Asset M22 order planning', () => {
     assert.equal(restarted.findByRequestId('req_restart')?.tactic?.tacticId, result.tactic?.tacticId);
   });
 
-  it('rejects incompatible execution research recommendation', () => {
+  it('ignores incompatible execution research recommendation without refusing plan', () => {
     const research = synthesizeExecutionResearchRecommendation({
       executionPlanId: 'uep_m22_fixture',
       suggestedTacticType: 'MARKET',
@@ -300,10 +300,35 @@ describe('HELIOS Multi-Asset M22 order planning', () => {
         researchRecommendation: research,
       }),
     );
-    assert.equal(result.outcome, 'REFUSED');
-    assert.ok(result.refusalReasons.includes('RESEARCH_RECOMMENDATION_REJECTED'));
+    assert.equal(result.outcome, 'PLANNED');
+    assert.equal(result.researchAccepted, false);
+    assert.equal(result.tactic!.tacticType, 'PASSIVE_LIMIT');
     assert.equal(research.grantsExecutionAuthority, false);
     assert.equal(research.advisoryOnly, true);
+  });
+
+  it('does not let advisory research block urgent exit planning', () => {
+    const research = synthesizeExecutionResearchRecommendation({
+      executionPlanId: 'uep_m22_fixture',
+      suggestedTacticType: 'PASSIVE_LIMIT',
+      suggestedOrderType: 'LIMIT',
+      findings: Object.freeze(['slow down']),
+      confidenceBps: 9000,
+    });
+    const result = planExecutionTactic(
+      orderPlanningFixture({
+        requestId: 'req_urgent_research_conflict',
+        executionPlan: baseExecutionPlan(NOW, {
+          side: 'SELL',
+          urgency: 'URGENT_EXIT',
+          strategyRequirements: Object.freeze(['URGENT_EXIT']),
+        }),
+        researchRecommendation: research,
+      }),
+    );
+    assert.equal(result.outcome, 'PLANNED');
+    assert.equal(result.researchAccepted, false);
+    assert.equal(result.tactic!.tacticType, 'MARKET');
   });
 
   it('accepts compatible execution research recommendation', () => {

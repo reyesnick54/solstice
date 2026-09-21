@@ -43,6 +43,7 @@ export {
   planPermitsExecution,
   customerPermitsPlanning,
   validateExecutionTactic,
+  researchRecommendationAccepted,
   researchRecommendationAdmissible,
 } from './validation.ts';
 

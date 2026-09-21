@@ -103,15 +103,21 @@ export function validateExecutionTactic(
   return Object.freeze([...new Set(reasons)]);
 }
 
+/** Whether the final tactic aligned with an advisory research suggestion. Never blocks planning. */
+export function researchRecommendationAccepted(
+  recommendation: OrderPlanningInput['researchRecommendation'],
+  selectedTacticType: ExecutionTacticType,
+): boolean {
+  if (recommendation == null || recommendation.suggestedTacticType == null) {
+    return false;
+  }
+  return recommendation.suggestedTacticType === selectedTacticType;
+}
+
+/** @deprecated Use researchRecommendationAccepted — advisory research must not refuse planning. */
 export function researchRecommendationAdmissible(
   recommendation: OrderPlanningInput['researchRecommendation'],
   selectedTacticType: ExecutionTacticType,
 ): boolean {
-  if (recommendation == null) {
-    return true;
-  }
-  if (recommendation.suggestedTacticType == null) {
-    return true;
-  }
-  return recommendation.suggestedTacticType === selectedTacticType;
+  return researchRecommendationAccepted(recommendation, selectedTacticType);
 }

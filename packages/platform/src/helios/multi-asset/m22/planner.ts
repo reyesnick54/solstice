@@ -21,7 +21,7 @@ import {
   marketPermitsPlanning,
   planPermitsExecution,
   providerSupportsOrder,
-  researchRecommendationAdmissible,
+  researchRecommendationAccepted,
   validateExecutionTactic,
 } from './validation.ts';
 import type {
@@ -393,19 +393,7 @@ export function planExecutionTactic(input: OrderPlanningInput): OrderPlanningRes
 
   const tactic = buildTactic(input, quantityUnits);
   const validationFailures = validateExecutionTactic(tactic, input);
-  const researchAccepted = researchRecommendationAdmissible(input.researchRecommendation, tactic.tacticType);
-
-  if (!researchAccepted) {
-    return Object.freeze({
-      requestId: input.requestId,
-      outcome: 'REFUSED',
-      tactic: null,
-      refusalReasons: uniqueRefusalReasons(['RESEARCH_RECOMMENDATION_REJECTED'] as const),
-      researchAccepted: false,
-      evidence: Object.freeze(['research_recommendation_incompatible_with_deterministic_plan']),
-      computedAt: input.now,
-    });
-  }
+  const researchAccepted = researchRecommendationAccepted(input.researchRecommendation, tactic.tacticType);
 
   if (validationFailures.length > 0) {
     return Object.freeze({
