@@ -19,8 +19,8 @@ function auth(persona: Parameters<typeof sandboxToken>[0]) {
   return `Bearer ${sandboxToken(persona)}`;
 }
 
-function get(world: ReturnType<typeof createSandboxWorld>, path: string, persona: Parameters<typeof sandboxToken>[0] | null, query: Record<string, string> = {}) {
-  return handleConsumerBff(
+async function get(world: ReturnType<typeof createSandboxWorld>, path: string, persona: Parameters<typeof sandboxToken>[0] | null, query: Record<string, string> = {}) {
+  return await handleConsumerBff(
     { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments, agent: world.agent },
     {
       method: 'GET',
@@ -32,8 +32,8 @@ function get(world: ReturnType<typeof createSandboxWorld>, path: string, persona
   );
 }
 
-function patch(world: ReturnType<typeof createSandboxWorld>, path: string, persona: Parameters<typeof sandboxToken>[0], body: Record<string, unknown>) {
-  return handleConsumerBff(
+async function patch(world: ReturnType<typeof createSandboxWorld>, path: string, persona: Parameters<typeof sandboxToken>[0], body: Record<string, unknown>) {
+  return await handleConsumerBff(
     { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments, agent: world.agent },
     {
       method: 'PATCH',
@@ -46,25 +46,25 @@ function patch(world: ReturnType<typeof createSandboxWorld>, path: string, perso
 }
 
 describe('Consumer BFF', () => {
-  it('requires authentication on Home, bootstrap, and accounts', () => {
+  it('requires authentication on Home, bootstrap, and accounts', async () => {
     const world = createSandboxWorld();
     for (const path of ['/api/v1/me/home', '/api/v1/me/bootstrap', '/api/v1/accounts']) {
-      const res = get(world, path, null);
+      const res = await get(world, path, null);
       assert.equal(res.status, 401);
       assert.equal((res.body as { errorCode: string }).errorCode, 'AUTH_REQUIRED');
     }
   });
 
-  it('rejects another customer account as RESOURCE_NOT_OWNED', () => {
+  it('rejects another customer account as RESOURCE_NOT_OWNED', async () => {
     const world = createSandboxWorld();
-    const res = get(world, '/api/v1/accounts/acct_sandbox_basic_usd', 'restricted');
+    const res = await get(world, '/api/v1/accounts/acct_sandbox_basic_usd', 'restricted');
     assert.equal(res.status, 403);
     assert.equal((res.body as { errorCode: string }).errorCode, 'RESOURCE_NOT_OWNED');
   });
 
-  it('aggregates Home from ledger-derived account positions', () => {
+  it('aggregates Home from ledger-derived account positions', async () => {
     const world = createSandboxWorld();
-    const res = get(world, '/api/v1/me/home', 'basic_verified');
+    const res = await get(world, '/api/v1/me/home', 'basic_verified');
     assert.equal(res.status, 200);
     const home = res.body as {
       schema: string;
@@ -81,9 +81,9 @@ describe('Consumer BFF', () => {
     assert.equal(typeof home.recentActivity.value.hasMore, 'boolean');
   });
 
-  it('does not manufacture a blended wealth total for mixed-currency users', () => {
+  it('does not manufacture a blended wealth total for mixed-currency users', async () => {
     const world = createSandboxWorld();
-    const res = get(world, '/api/v1/me/home', 'multi_currency');
+    const res = await get(world, '/api/v1/me/home', 'multi_currency');
     assert.equal(res.status, 200);
     const home = res.body as {
       wealth: { state: string; value: unknown };
@@ -92,7 +92,7 @@ describe('Consumer BFF', () => {
     assert.equal(home.wealth.state, 'MIXED_CURRENCY_WITHOUT_CONVERSION');
     assert.equal(home.wealth.value, null);
     assert.equal(home.cash.value, null);
-    const accounts = get(world, '/api/v1/accounts', 'multi_currency');
+    const accounts = await get(world, '/api/v1/accounts', 'multi_currency');
     const items = (accounts.body as { items: { currency: string; balance: { value: { ledger: { minorUnits: string } } | null } }[] }).items;
     assert.equal(items.length, 3);
     const usd = items.find((row) => row.currency === 'USD');
@@ -107,9 +107,9 @@ describe('Consumer BFF', () => {
     assert.ok(valuation.value?.rateTimestamp);
   });
 
-  it('returns bootstrap with capabilities and no secrets', () => {
+  it('returns bootstrap with capabilities and no secrets', async () => {
     const world = createSandboxWorld();
-    const res = get(world, '/api/v1/me/bootstrap', 'basic_verified');
+    const res = await get(world, '/api/v1/me/bootstrap', 'basic_verified');
     assert.equal(res.status, 200);
     const body = res.body as {
       schema: string;
@@ -128,11 +128,11 @@ describe('Consumer BFF', () => {
     assert.equal(json.includes('LIVE_PAYMENTS_ENABLED":true'), false);
   });
 
-  it('computes capabilities server-side for restricted and KYC-pending users', () => {
+  it('computes capabilities server-side for restricted and KYC-pending users', async () => {
     const world = createSandboxWorld();
-    const restricted = get(world, '/api/v1/me/capabilities', 'restricted');
-    const pending = get(world, '/api/v1/me/capabilities', 'kyc_pending');
-    const verified = get(world, '/api/v1/me/capabilities', 'basic_verified');
+    const restricted = await get(world, '/api/v1/me/capabilities', 'restricted');
+    const pending = await get(world, '/api/v1/me/capabilities', 'kyc_pending');
+    const verified = await get(world, '/api/v1/me/capabilities', 'basic_verified');
     const r = restricted.body as { paymentsEnabled: boolean; withdrawalsEnabled: boolean; details: { payments: { state: string } } };
     const p = pending.body as { withdrawalsEnabled: boolean; details: { withdrawals: { state: string } } };
     const v = verified.body as { growEnabled: boolean; details: { grow: { state: string }; cards: { availability: string; state: string } } };
@@ -146,9 +146,9 @@ describe('Consumer BFF', () => {
     assert.equal(v.details.cards.state, 'SIMULATION_ONLY');
   });
 
-  it('reads account balances from the ledger projection, not activity sums', () => {
+  it('reads account balances from the ledger projection, not activity sums', async () => {
     const world = createSandboxWorld();
-    const account = get(world, '/api/v1/accounts/acct_sandbox_basic_usd', 'basic_verified');
+    const account = await get(world, '/api/v1/accounts/acct_sandbox_basic_usd', 'basic_verified');
     const owned = world.runtime.accounts.get('acct_sandbox_basic_usd' as Account['id']);
     assert.ok(owned);
     const position = projectBankingPosition(world.runtime.ledger, owned, world.runtime.holds, world.runtime.clock.now());
@@ -163,7 +163,7 @@ describe('Consumer BFF', () => {
     assert.equal(source.includes('reduce'), false);
   });
 
-  it('paginates activity with items, nextCursor, and hasMore', () => {
+  it('paginates activity with items, nextCursor, and hasMore', async () => {
     const items = Array.from({ length: 5 }, (_, i) => i);
     const first = paginate(items, 'test', undefined, 2);
     if ('error' in first) {
@@ -181,11 +181,11 @@ describe('Consumer BFF', () => {
     assert.equal('error' in invalid, true);
   });
 
-  it('represents provider-down as unavailable, never a zero balance', () => {
+  it('represents provider-down as unavailable, never a zero balance', async () => {
     const world = createSandboxWorld({ providerDown: true });
-    const home = get(world, '/api/v1/me/home', 'provider_down');
-    const cards = get(world, '/api/v1/cards', 'provider_down');
-    const capabilities = get(world, '/api/v1/me/capabilities', 'provider_down');
+    const home = await get(world, '/api/v1/me/home', 'provider_down');
+    const cards = await get(world, '/api/v1/cards', 'provider_down');
+    const capabilities = await get(world, '/api/v1/me/capabilities', 'provider_down');
     const wealth = (home.body as { wealth: { state: string; value: { total: { minorUnits: string } } | null } }).wealth;
     assert.equal(wealth.state, 'READY');
     assert.equal(wealth.value?.total.minorUnits, '7500');
@@ -195,29 +195,29 @@ describe('Consumer BFF', () => {
     assert.equal((capabilities.body as { details: { cards: { state: string } } }).details.cards.state, 'PROVIDER_UNAVAILABLE');
   });
 
-  it('exposes restricted user state without hiding the restriction', () => {
+  it('exposes restricted user state without hiding the restriction', async () => {
     const world = createSandboxWorld();
-    const home = get(world, '/api/v1/me/home', 'restricted');
+    const home = await get(world, '/api/v1/me/home', 'restricted');
     const alerts = (home.body as { securityAlerts: { state: string; value: { severity: string }[] | null } }).securityAlerts;
     assert.equal(alerts.state, 'READY');
     assert.equal(alerts.value?.[0]?.severity, 'RESTRICTED');
   });
 
-  it('rejects KYC/legal identity edits on PATCH /me', () => {
+  it('rejects KYC/legal identity edits on PATCH /me', async () => {
     const world = createSandboxWorld();
-    const forbidden = patch(world, '/api/v1/me', 'basic_verified', { legalName: 'Ada Lovelace' });
+    const forbidden = await patch(world, '/api/v1/me', 'basic_verified', { legalName: 'Ada Lovelace' });
     assert.equal(forbidden.status, 403);
     assert.equal((forbidden.body as { errorCode: string }).errorCode, 'FORBIDDEN_PROFILE_FIELD');
-    const ok = patch(world, '/api/v1/me', 'basic_verified', { displayLabel: 'Ada', preferredLanguage: 'en' });
+    const ok = await patch(world, '/api/v1/me', 'basic_verified', { displayLabel: 'Ada', preferredLanguage: 'en' });
     assert.equal(ok.status, 200);
     assert.equal((ok.body as { editable: { displayLabel: string } }).editable.displayLabel, 'Ada');
   });
 
-  it('uses one error envelope across auth, ownership, and validation failures', () => {
+  it('uses one error envelope across auth, ownership, and validation failures', async () => {
     const world = createSandboxWorld();
-    const authFail = get(world, '/api/v1/me', null);
-    const owned = get(world, '/api/v1/accounts/acct_sandbox_basic_usd', 'investment');
-    const cursor = get(world, '/api/v1/accounts/acct_sandbox_basic_usd/activity', 'basic_verified', { cursor: 'not-a-cursor' });
+    const authFail = await get(world, '/api/v1/me', null);
+    const owned = await get(world, '/api/v1/accounts/acct_sandbox_basic_usd', 'investment');
+    const cursor = await get(world, '/api/v1/accounts/acct_sandbox_basic_usd/activity', 'basic_verified', { cursor: 'not-a-cursor' });
     for (const res of [authFail, owned, cursor]) {
       const body = res.body as { errorCode: string; category: string; requestId: string; apiVersion: string };
       assert.equal(body.apiVersion, 'v1');
@@ -227,13 +227,13 @@ describe('Consumer BFF', () => {
     }
   });
 
-  it('cannot create an authoritative balance — no mutator and no activity-sum path', () => {
+  it('cannot create an authoritative balance — no mutator and no activity-sum path', async () => {
     const source = readFileSync(join(HERE, 'consumer/orchestrator.ts'), 'utf8');
     assert.equal(source.includes('postJournal'), false);
     assert.equal(source.includes('AuthorityIssuer'), false);
     assert.equal(/reduce\(.*minorUnits/.test(source), false);
     const world = createSandboxWorld();
-    const posted = handleConsumerBff(
+    const posted = await handleConsumerBff(
       { bff: world.bff, sessions: world.sessions },
       {
         method: 'POST',
@@ -246,21 +246,21 @@ describe('Consumer BFF', () => {
     assert.ok(posted.status === 404 || posted.status === 405);
   });
 
-  it('maps regulated Kernel states onto client action statuses without collapsing them', () => {
+  it('maps regulated Kernel states onto client action statuses without collapsing them', async () => {
     assert.equal(mapInternalActionStatus('REQUIRE_MANUAL_REVIEW').status, 'AWAITING_APPROVAL');
     assert.equal(mapInternalActionStatus('HOLD').approvalRequirement, 'KERNEL_HOLD');
     assert.equal(mapInternalActionStatus('BLOCK').status, 'FAILED');
   });
 
-  it('never caches financial responses publicly', () => {
+  it('never caches financial responses publicly', async () => {
     assert.equal(FINANCIAL_CACHE.public, false);
     assert.match(cachePolicyForPath('/api/v1/me/home').cacheControl, /no-store/);
     assert.match(cachePolicyForPath('/api/v1/me/bootstrap').cacheControl, /private/);
   });
 
-  it('lists sandbox personas as non-production fixtures', () => {
+  it('lists sandbox personas as non-production fixtures', async () => {
     const world = createSandboxWorld();
-    const res = get(world, '/api/v1/sandbox/personas', null);
+    const res = await get(world, '/api/v1/sandbox/personas', null);
     assert.equal(res.status, 200);
     const body = res.body as { production: boolean; label: string; items: { id: string }[] };
     assert.equal(body.production, false);
@@ -268,15 +268,15 @@ describe('Consumer BFF', () => {
     assert.ok(body.items.some((item) => item.id === 'basic_verified'));
   });
 
-  it('quotes and executes USD→SAR without client-side FX math', () => {
+  it('quotes and executes USD→SAR without client-side FX math', async () => {
     const world = createSandboxWorld();
-    const currencies = get(world, '/api/v1/fx/currencies', 'multi_currency');
+    const currencies = await get(world, '/api/v1/fx/currencies', 'multi_currency');
     assert.equal(currencies.status, 200);
     const listed = (currencies.body as { items: { code: string; liveFxAvailable: boolean }[]; liveEnabled: boolean }).items;
     assert.ok(listed.some((row) => row.code === 'SAR'));
     assert.equal((currencies.body as { liveEnabled: boolean }).liveEnabled, false);
 
-    const created = handleConsumerBff(
+    const created = await handleConsumerBff(
       { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
       {
         method: 'POST',
@@ -298,7 +298,7 @@ describe('Consumer BFF', () => {
     assert.equal(quote.requiredApproval, 'CUSTOMER_CONFIRMATION');
     assert.equal(quote.provider.live, false);
 
-    const accepted = handleConsumerBff(
+    const accepted = await handleConsumerBff(
       { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
       {
         method: 'POST',
@@ -310,7 +310,7 @@ describe('Consumer BFF', () => {
     );
     assert.equal(accepted.status, 200);
 
-    const executed = handleConsumerBff(
+    const executed = await handleConsumerBff(
       { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
       {
         method: 'POST',
@@ -327,9 +327,9 @@ describe('Consumer BFF', () => {
     assert.equal((executed.body as { status: string }).status, 'SETTLED');
   });
 
-  it('lists grow opportunities with structured cards and denies cross-user access', () => {
+  it('lists grow opportunities with structured cards and denies cross-user access', async () => {
     const world = createSandboxWorld();
-    const listed = get(world, '/api/v1/grow/opportunities', 'grow');
+    const listed = await get(world, '/api/v1/grow/opportunities', 'grow');
     assert.equal(listed.status, 200);
     const body = listed.body as {
       schema: string;
@@ -340,20 +340,20 @@ describe('Consumer BFF', () => {
     assert.equal(body.productionMoneyMovement, false);
     assert.ok(body.items.length > 0);
     assert.equal(body.items.every((item) => item.achievementPromised === false), true);
-    const other = get(world, `/api/v1/grow/opportunities/${body.items[0]?.opportunityId ?? 'gop_x'}`, 'basic_verified');
+    const other = await get(world, `/api/v1/grow/opportunities/${body.items[0]?.opportunityId ?? 'gop_x'}`, 'basic_verified');
     assert.equal(other.status === 403 || other.status === 404, true);
   });
 
-  it('surfaces agent recommendation counts for the agent-enabled persona', () => {
+  it('surfaces agent recommendation counts for the agent-enabled persona', async () => {
     const world = createSandboxWorld();
-    const home = get(world, '/api/v1/me/home', 'agent_enabled');
+    const home = await get(world, '/api/v1/me/home', 'agent_enabled');
     const agent = (home.body as { agent: { value: { recommendationCount: number } | null } }).agent;
     assert.equal(agent.value?.recommendationCount, 2);
   });
 
-  it('streams Agent conversation events and refuses raw public LLM routes', () => {
+  it('streams Agent conversation events and refuses raw public LLM routes', async () => {
     const world = createSandboxWorld();
-    const posted = handleConsumerBff(
+    const posted = await handleConsumerBff(
       { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
       {
         method: 'POST',
@@ -376,7 +376,7 @@ describe('Consumer BFF', () => {
     assert.equal(body.events.every((event) => event.hiddenReasoning === false), true);
     assert.equal(body.sse.includes('event: message.completed'), true);
 
-    const sse = handleConsumerBff(
+    const sse = await handleConsumerBff(
       { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
       {
         method: 'POST',
@@ -391,7 +391,7 @@ describe('Consumer BFF', () => {
     assert.equal(String(sse.headers['content-type']).startsWith('text/event-stream'), true);
     assert.equal(typeof sse.body, 'string');
 
-    const raw = get(world, '/api/v1/llm', 'agent_enabled');
+    const raw = await get(world, '/api/v1/llm', 'agent_enabled');
     assert.equal(raw.status, 404);
   });
 });
