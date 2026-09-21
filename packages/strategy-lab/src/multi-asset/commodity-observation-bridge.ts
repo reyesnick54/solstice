@@ -1,0 +1,46 @@
+import type { UtcInstant } from '@solstice/domain';
+import { buildChronologicalObservation, type ChronologicalObservation } from '../evaluation/manifest.ts';
+import { HELIOS_COMMODITY_OBSERVATION_SCHEMA } from './constants.ts';
+
+export type CommodityOhlcvBarInput = {
+  readonly observationId: string;
+  readonly instrumentId: string;
+  readonly periodStart: UtcInstant;
+  readonly knowableAt: UtcInstant;
+  readonly providerId: string;
+  readonly providerSequence: number;
+  readonly openMinor: bigint;
+  readonly highMinor: bigint;
+  readonly lowMinor: bigint;
+  readonly closeMinor: bigint;
+  readonly bidMinor?: bigint | null;
+  readonly askMinor?: bigint | null;
+  readonly available?: boolean;
+  readonly sessionOpen?: boolean;
+  readonly degraded?: boolean;
+};
+
+export function commodityBarToChronologicalObservation(
+  input: CommodityOhlcvBarInput,
+): ChronologicalObservation {
+  return buildChronologicalObservation({
+    observationId: input.observationId,
+    instrumentId: input.instrumentId,
+    sourceEventTime: input.periodStart,
+    providerAvailabilityTime: input.knowableAt,
+    sunreyArrivalTime: input.knowableAt,
+    ingestionTime: input.knowableAt,
+    providerId: input.providerId,
+    providerSequence: input.providerSequence,
+    openMinor: input.openMinor,
+    highMinor: input.highMinor,
+    lowMinor: input.lowMinor,
+    closeMinor: input.closeMinor,
+    bidMinor: input.bidMinor ?? input.closeMinor - 10n,
+    askMinor: input.askMinor ?? input.closeMinor + 10n,
+    available: input.available ?? true,
+    sessionOpen: input.sessionOpen ?? true,
+    degraded: input.degraded ?? false,
+    corporateActionVersion: HELIOS_COMMODITY_OBSERVATION_SCHEMA,
+  });
+}
