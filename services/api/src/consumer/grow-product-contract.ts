@@ -3,6 +3,7 @@
  * Server-owned financial truth for mobile/web consumption.
  */
 
+import { asUtcInstant } from '@solstice/domain';
 import {
   buildGrowProductActivityEvents,
   buildGrowProductPerformance,
@@ -119,7 +120,7 @@ export function growProductEvents(
     cycleStatus: summary.cycleStatus,
     attribution: context.attribution,
     deploymentPaused: context.deploymentPaused ?? false,
-    pauseUpdatedAt: options.pauseUpdatedAt ?? null,
+    pauseUpdatedAt: options.pauseUpdatedAt ? asUtcInstant(options.pauseUpdatedAt) : null,
   });
   const page = paginate(items, `grow-events:${principal.customerId}`, query.cursor, pageSizeOf(query.pageSize));
   if ('error' in page) {

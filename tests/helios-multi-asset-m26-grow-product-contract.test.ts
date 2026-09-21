@@ -20,11 +20,13 @@ import { sandboxToken } from '../services/api/src/consumer/fixtures.ts';
 
 type GrowSummary = {
   schema: string;
+  customerId: string;
   operatingMode: string;
   operatingState: string;
   riskState: string;
   totalAuthorizedGrowCapital: { minorUnits: string };
   withdrawableCash: { minorUnits: string };
+  realizedPnl: { minorUnits: string };
   unrealizedPnl: { minorUnits: string };
   economicImprovement: {
     deposits: { minorUnits: string };
@@ -80,8 +82,10 @@ async function fetchM26State(world: PhaseEWorld) {
   return Object.fromEntries(
     await Promise.all(
       paths.map(async (path) => {
-        const [pathname, queryString] = path.split('?');
-        const query = Object.fromEntries(new URLSearchParams(queryString ?? ''));
+        const queryIndex = path.indexOf('?');
+        const pathname = queryIndex >= 0 ? path.slice(0, queryIndex) : path;
+        const queryString = queryIndex >= 0 ? path.slice(queryIndex + 1) : '';
+        const query = Object.fromEntries(new URLSearchParams(queryString)) as Record<string, string>;
         const res = await world.handle({ method: 'GET', path: pathname, query });
         assert.equal(res.status, 200, `${path}: ${JSON.stringify(res.body)}`);
         return [path, res.body] as const;

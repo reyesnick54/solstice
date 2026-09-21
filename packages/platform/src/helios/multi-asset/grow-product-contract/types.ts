@@ -1,5 +1,7 @@
 import type { UtcInstant } from '@solstice/domain';
 import type { GrowMoneyDto, PaperDisclosureContract } from '../../paper-grow/types.ts';
+
+export type { GrowMoneyDto };
 import type { ConsumerGrowStatus } from '../../paper-grow/status-semantics.ts';
 import type { GrowCycleStatus } from '../../paper-grow/taxonomy.ts';
 

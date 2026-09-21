@@ -51,7 +51,7 @@ function deriveRiskState(input: {
   if (input.degradedReasons.length > 0) {
     return 'RESTRICTED';
   }
-  if (input.consumerStatus === 'AWAITING_YOUR_DECISION' || input.consumerStatus === 'UNDER_REVIEW') {
+  if (input.consumerStatus === 'APPROVAL_REQUIRED' || input.consumerStatus === 'ACTION_REQUIRED') {
     return 'ELEVATED';
   }
   return 'NORMAL';
@@ -199,7 +199,7 @@ export function buildGrowProductPositions(context: GrowProductContractContext): 
     deploymentPaused: context.deploymentPaused ?? false,
     degradedReasons: context.readModel.degradedReasons,
   });
-  const pendingClose = context.deploymentPaused;
+  const pendingClose = context.deploymentPaused ?? false;
   const positions: GrowProductPosition[] = [];
 
   if (context.attribution) {
