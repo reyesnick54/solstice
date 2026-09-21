@@ -238,3 +238,4 @@ export * as heliosMultiAsset from './multi-asset/index.ts';
 export * as heliosIntelligence from './intelligence/index.ts';
 export * from './intelligence/index.ts';
 export * from './multi-asset/m18/index.ts';
+export type { MacroEventStoreSnapshot } from './multi-asset/event-intelligence/index.ts';

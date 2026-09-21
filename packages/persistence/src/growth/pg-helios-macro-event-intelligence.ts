@@ -1,7 +1,7 @@
 import type { Pool } from 'pg';
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
-import type { MacroEventStoreSnapshot } from '../../../platform/src/helios/multi-asset/event-intelligence/types.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { MacroEventStoreSnapshot } from '@solstice/platform';
 import { persistenceJsonStringify } from '../json.ts';
 import { withClient } from '../postgres/pools.ts';
 
