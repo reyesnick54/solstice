@@ -230,9 +230,9 @@ describe('Wave 2 Prompt 10 — market reference layer', () => {
     assert.ok(evidence.items.every((item) => item.label === 'REFERENCE_NOT_EXECUTION'));
   });
 
-  it('20. BFF sanitized output hides raw provider payloads', () => {
+  it('20. BFF sanitized output hides raw provider payloads', async () => {
     const world = createSandboxWorld();
-    const response = handleConsumerBff(
+    const response = await handleConsumerBff(
       { ...world, marketReference: undefined },
       {
         method: 'GET',
