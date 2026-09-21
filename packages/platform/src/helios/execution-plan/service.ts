@@ -369,6 +369,10 @@ export class HeliosExecutionPlanService {
       if (current.status === input.targetStatus) {
         return ok(current);
       }
+      return fail(
+        'DUPLICATE_TRANSITION',
+        `idempotency key already consumed for transition to ${input.targetStatus}`,
+      );
     }
 
     if (plan.status === input.targetStatus) {
