@@ -180,6 +180,7 @@ export * from './correlation/index.ts';
 export * from './factor-exposure/index.ts';
 export * from './opportunity-graph/index.ts';
 export * from './m18/index.ts';
+export * from './m24/index.ts';
 export {
   MARKET_REGIME_DIMENSIONS,
   MARKET_REGIME_SCOPES,
