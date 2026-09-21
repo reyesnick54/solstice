@@ -17,7 +17,7 @@ export async function persistGrowIntelligenceState(
              (report_id, customer_id, subject_id, report_type, reporting_date,
               time_zone, body_canonical, facts_hash, generated_at, created_at)
            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
-           ON CONFLICT (report_id) DO NOTHING`,
+           ON CONFLICT (customer_id, reporting_date, report_type) DO NOTHING`,
           [
             report.reportId,
             report.customerId,
@@ -37,7 +37,7 @@ export async function persistGrowIntelligenceState(
           `INSERT INTO growth.helios_grow_notification_delivery
              (delivery_id, customer_id, event_id, deduplication_key, channel, delivered_at, body_canonical, created_at)
            VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
-           ON CONFLICT (delivery_id) DO NOTHING`,
+           ON CONFLICT (deduplication_key) DO NOTHING`,
           [
             delivery.deliveryId,
             delivery.customerId,
