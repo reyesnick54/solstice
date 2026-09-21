@@ -224,6 +224,7 @@ export * from './grow-controls/index.ts';
 export * from './provider-orchestration/index.ts';
 export * from './order-lifecycle/index.ts';
 export * from './execution-routing/index.ts';
+export * from './execution-plan/index.ts';
 export * from './multi-leg/index.ts';
 export * from './capital-lifecycle/index.ts';
 export * from './outcome-attribution/index.ts';
