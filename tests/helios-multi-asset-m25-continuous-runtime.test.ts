@@ -9,7 +9,7 @@ import { describe, it } from 'node:test';
 
 import { ENVIRONMENT, LIVE_TRADING_ENABLED } from '../packages/config/src/flags.ts';
 import { FrozenClock } from '../packages/config/src/clock.ts';
-import { asUtcInstant } from '../packages/domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '../packages/domain/src/time.ts';
 import { asEconomicMandateId, asMandateVersion } from '../packages/platform/src/ids.ts';
 import type { CompiledEconomicMandate } from '../packages/platform/src/mandate/types.ts';
 import {
@@ -21,6 +21,7 @@ import {
   evaluateM25ContinuousRuntimeQualification,
   evaluateMandateEligibility,
   type HeliosRuntimePorts,
+  type HeliosRuntimeCadenceProfile,
   type MandateRuntimeConfig,
   type M25QualificationChecks,
 } from '../packages/platform/src/helios/continuous-runtime/index.ts';
@@ -57,13 +58,13 @@ function baseConfig(overrides: Partial<MandateRuntimeConfig> = {}): MandateRunti
       'EQUITY_SESSION',
       'RECONCILIATION_PERIODIC',
       'RISK_PERIODIC',
-    ]),
+    ] as readonly HeliosRuntimeCadenceProfile[]),
     ...overrides,
   });
 }
 
 function createRuntime(input?: {
-  readonly now?: string;
+  readonly now?: UtcInstant;
   readonly ports?: Partial<HeliosRuntimePorts>;
   readonly subjectId?: string;
 }) {
@@ -166,7 +167,7 @@ describe('HELIOS Multi-Asset M25 — continuous autonomous runtime', () => {
       fundingState: 'PAPER_FUNDED',
       config: baseConfig({
         assetClasses: Object.freeze(['CRYPTO']),
-        cadenceProfiles: Object.freeze(['CONTINUOUS_CRYPTO']),
+        cadenceProfiles: Object.freeze(['CONTINUOUS_CRYPTO'] as readonly HeliosRuntimeCadenceProfile[]),
       }),
     });
     const tick = await runtime.tickOnce({ limit: 20 });
@@ -226,7 +227,9 @@ describe('HELIOS Multi-Asset M25 — continuous autonomous runtime', () => {
       mandateId: 'emd_dup',
       workOrderId: 'ewo_dup',
       fundingState: 'PAPER_FUNDED' as const,
-      config: baseConfig({ cadenceProfiles: Object.freeze(['RISK_PERIODIC']) }),
+      config: baseConfig({
+        cadenceProfiles: Object.freeze(['RISK_PERIODIC'] as readonly HeliosRuntimeCadenceProfile[]),
+      }),
       registeredAt: T0,
       active: true,
     });

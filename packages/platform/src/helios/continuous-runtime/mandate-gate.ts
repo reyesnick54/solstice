@@ -1,3 +1,4 @@
+import type { UtcInstant } from '@solstice/domain';
 import type { CompiledEconomicMandate } from '../../mandate/types.ts';
 import type { HeliosRuntimeState } from './taxonomy.ts';
 import type {
@@ -10,7 +11,7 @@ export function evaluateMandateEligibility(input: {
   readonly registration: MandateRuntimeRegistration;
   readonly mandate: CompiledEconomicMandate | undefined;
   readonly ports: HeliosRuntimePorts;
-  readonly now: string;
+  readonly now: UtcInstant;
 }): MandateEligibilityResult {
   const { registration, mandate, ports } = input;
 
