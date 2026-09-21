@@ -8,10 +8,13 @@ const ROOT = process.cwd();
 export function lintGrowConsumerAuthority(root = ROOT): Finding[] {
   const findings: Finding[] = [];
   const paperCycle = join(root, 'services/api/src/consumer/grow-paper-cycle.ts');
+  const productContract = join(root, 'services/api/src/consumer/grow-product-contract.ts');
   if (!existsSync(paperCycle)) {
     return findings;
   }
-  const source = readFileSync(paperCycle, 'utf8');
+  const source = `${readFileSync(paperCycle, 'utf8')}\n${
+    existsSync(productContract) ? readFileSync(productContract, 'utf8') : ''
+  }`;
   if (!/serverOwned:\s*true/.test(source)) {
     findings.push({
       rule: 'grow-consumer-server-owned',
