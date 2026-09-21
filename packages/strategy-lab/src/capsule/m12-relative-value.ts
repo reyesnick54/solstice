@@ -170,6 +170,21 @@ export function buildHeliosM12Material(): StrategyCapsuleMaterial {
       modelVersionCompatibility: Object.freeze(['helios-m12-relationship-v1']),
       dataVersionCompatibility: Object.freeze(['helios-m12-bar-1h-v1']),
     }),
+    marketRegimePreferences: Object.freeze({
+      permittedRegimes: Object.freeze([
+        'RANGE_BOUND',
+        'NORMAL_VOLATILITY',
+        'LOW_VOLATILITY',
+        'NORMAL_LIQUIDITY',
+      ]),
+      prohibitedRegimes: Object.freeze([
+        'LIQUIDITY_STRESS',
+        'CORRELATION_STRESS',
+        'TRENDING_UP',
+        'TRENDING_DOWN',
+      ]),
+      preferredRegimes: Object.freeze(['RANGE_BOUND', 'NORMAL_VOLATILITY']),
+    }),
     fixedQualifiedParameters: Object.freeze({
       maximumPortfolioAllocationPct: '1.50',
       maximumPositionSizeUnits: '0',

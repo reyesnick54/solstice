@@ -185,6 +185,17 @@ export function buildHeliosM10Material(): StrategyCapsuleMaterial {
       modelVersionCompatibility: Object.freeze(['helios-crypto-momentum-v1']),
       dataVersionCompatibility: Object.freeze([HELIOS_CRYPTO_OBSERVATION_SCHEMA, 'sunrey.crypto-market-reference.v1']),
     }),
+    marketRegimePreferences: Object.freeze({
+      permittedRegimes: Object.freeze([
+        'TRENDING_UP',
+        'TRENDING_DOWN',
+        'HIGH_VOLATILITY',
+        'NORMAL_VOLATILITY',
+        'NORMAL_LIQUIDITY',
+      ]),
+      prohibitedRegimes: Object.freeze(['LIQUIDITY_STRESS', 'RANGE_BOUND']),
+      preferredRegimes: Object.freeze(['TRENDING_UP', 'TRENDING_DOWN', 'HIGH_VOLATILITY']),
+    }),
     fixedQualifiedParameters: Object.freeze({
       lookbackPeriods: DEFAULT_M10_LOOKBACK_PERIODS,
       breakoutBufferBps: DEFAULT_M10_BREAKOUT_BUFFER_BPS,

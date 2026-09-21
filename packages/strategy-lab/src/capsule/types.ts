@@ -147,6 +147,13 @@ export type StrategyCapsuleValidity = {
   readonly dataVersionCompatibility: readonly string[];
 };
 
+/** M13 market regime gating — strategies declare allowed/prohibited/preferred regime dimensions. */
+export type MarketRegimePreferences = {
+  readonly permittedRegimes: readonly string[];
+  readonly prohibitedRegimes: readonly string[];
+  readonly preferredRegimes: readonly string[];
+};
+
 /** Fixed limits established during qualification. Runtime may narrow, never widen. */
 export type FixedQualifiedParameters = {
   readonly maximumPortfolioAllocationPct: string;
@@ -170,6 +177,7 @@ export type StrategyCapsuleMaterial = {
   readonly operatingAssumptions: OperatingAssumptions;
   readonly costModel: StrategyCapsuleCostModel;
   readonly validity: StrategyCapsuleValidity;
+  readonly marketRegimePreferences: MarketRegimePreferences;
   readonly fixedQualifiedParameters: FixedQualifiedParameters;
 };
 

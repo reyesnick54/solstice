@@ -137,6 +137,7 @@ export type {
   DeterministicDecisionRule,
   FixedQualifiedParameters,
   InstrumentUniverseSpec,
+  MarketRegimePreferences,
   StrategyCapsuleComparison,
   StrategyCapsuleEvidence,
   StrategyCapsuleFailure,
@@ -145,6 +146,14 @@ export type {
   StrategyCapsuleRecord,
   StrategyCapsuleScope,
 } from './capsule/types.ts';
+export {
+  STRATEGY_REGIME_GATING_STRENGTH_BPS,
+  evaluateStrategyRegimeGating,
+} from './regime-gating.ts';
+export type {
+  StrategyRegimeGatingResult,
+  StrategyRegimeSignal,
+} from './regime-gating.ts';
 export {
   computeStrategyCapsuleMaterialHash,
   projectMaterialForHash,
