@@ -210,6 +210,7 @@ describe('HELIOS Multi-Asset M13 market regime engine', () => {
       detectedRegimes: trendResult.regime.detectedRegimes,
     });
     assert.equal(trendGate.permitted, false);
+    assert.ok(trendGate.blockReason);
     assert.match(trendGate.blockReason, /PROHIBITED_REGIME/);
   });
 
@@ -229,6 +230,7 @@ describe('HELIOS Multi-Asset M13 market regime engine', () => {
       detectedRegimes: rangeResult.regime.detectedRegimes,
     });
     assert.equal(rangeGate.permitted, false);
+    assert.ok(rangeGate.blockReason);
     assert.match(rangeGate.blockReason, /PROHIBITED_REGIME/);
   });
 

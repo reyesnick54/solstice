@@ -173,7 +173,11 @@ export function evaluateMarketRegime(input: MarketRegimeEvaluationInput): Market
 
   if (staleData) {
     for (let i = 0; i < detected.length; i += 1) {
-      detected[i] = freezeDetected(detected[i].dimension, Math.floor(detected[i].strengthBps / 2));
+      const current = detected[i];
+      if (!current) {
+        continue;
+      }
+      detected[i] = freezeDetected(current.dimension, Math.floor(current.strengthBps / 2));
     }
     if (detected.length === 0) {
       detected.push(freezeDetected('UNKNOWN', 0));
@@ -309,8 +313,13 @@ function classifyRiskRegime(
 function computeReturns(bars: readonly RegimeBarInput[]): number[] {
   const returns: number[] = [];
   for (let i = 1; i < bars.length; i += 1) {
-    const prev = bars[i - 1].closeMinor;
-    const curr = bars[i].closeMinor;
+    const prevBar = bars[i - 1];
+    const currBar = bars[i];
+    if (!prevBar || !currBar) {
+      continue;
+    }
+    const prev = prevBar.closeMinor;
+    const curr = currBar.closeMinor;
     if (prev <= 0n) {
       continue;
     }

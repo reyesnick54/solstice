@@ -225,6 +225,17 @@ export function buildHeliosM11Material(): StrategyCapsuleMaterial {
         'sunrey.helios.wti-energy.v1',
       ]),
     }),
+    marketRegimePreferences: Object.freeze({
+      permittedRegimes: Object.freeze([
+        'TRENDING_UP',
+        'TRENDING_DOWN',
+        'HIGH_VOLATILITY',
+        'NORMAL_VOLATILITY',
+        'NORMAL_LIQUIDITY',
+      ]),
+      prohibitedRegimes: Object.freeze(['LIQUIDITY_STRESS', 'RANGE_BOUND']),
+      preferredRegimes: Object.freeze(['TRENDING_UP', 'TRENDING_DOWN']),
+    }),
     fixedQualifiedParameters: Object.freeze({
       fastMaPeriods: DEFAULT_M11_FAST_MA_PERIODS,
       slowMaPeriods: DEFAULT_M11_SLOW_MA_PERIODS,
