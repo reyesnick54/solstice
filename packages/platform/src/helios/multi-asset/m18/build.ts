@@ -1,6 +1,6 @@
 import type { UtcInstant } from '@solstice/domain';
 
-import { resolveInstrumentEconomicMetadata } from '../m15/metadata.ts';
+import { resolveInstrumentEconomicMetadata } from './economic-relationships/metadata.ts';
 import type { CorrelationCluster, CorrelationMatrix } from '../m17/types.ts';
 import type {
   AppliedEconomicRelationship,

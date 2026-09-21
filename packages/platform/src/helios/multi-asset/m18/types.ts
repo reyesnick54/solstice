@@ -5,7 +5,7 @@
 import type { UtcInstant } from '@solstice/domain';
 
 import type { CorrelationCluster, CorrelationMatrix } from '../m17/types.ts';
-import type { EconomicRelationshipGraph } from '../m15/types.ts';
+import type { EconomicRelationshipGraph } from './economic-relationships/types.ts';
 
 export const EXPOSURE_DIMENSIONS = [
   'GROSS_EXPOSURE',

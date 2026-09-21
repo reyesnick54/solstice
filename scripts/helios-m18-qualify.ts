@@ -5,7 +5,7 @@
 
 import { asUtcInstant } from '../packages/domain/src/time.ts';
 import { InMemoryHeliosMultiAssetBarStore } from '../packages/platform/src/helios/multi-asset/bar-store.ts';
-import { buildEconomicRelationshipGraph } from '../packages/platform/src/helios/multi-asset/m15/index.ts';
+import { buildEconomicRelationshipGraph } from '../packages/platform/src/helios/multi-asset/m18/index.ts';
 import { computeCorrelationMatrix } from '../packages/platform/src/helios/multi-asset/m17/index.ts';
 import {
   buildPortfolioExposureGraph,

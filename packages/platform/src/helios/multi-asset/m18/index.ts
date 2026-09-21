@@ -46,3 +46,15 @@ export {
   type MultiAssetM18QualificationResult,
 } from './qualification.ts';
 export { M18_FIXTURE_INSTRUMENTS, fixturePosition, correlatedBarSeries } from './fixtures.ts';
+export {
+  ECONOMIC_RELATIONSHIP_KINDS,
+  ECONOMIC_FACTOR_TAGS,
+  type EconomicRelationshipKind,
+  type EconomicFactorTag,
+  type InstrumentEconomicMetadata,
+  type EconomicRelationship,
+  type EconomicRelationshipGraph,
+  ENGINEERING_INSTRUMENT_ECONOMIC_METADATA,
+  resolveInstrumentEconomicMetadata,
+  buildEconomicRelationshipGraph,
+} from './economic-relationships/index.ts';
