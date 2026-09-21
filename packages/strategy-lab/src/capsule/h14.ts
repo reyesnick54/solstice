@@ -125,6 +125,11 @@ export function buildHeliosH14Material(): StrategyCapsuleMaterial {
       modelVersionCompatibility: Object.freeze(['helios-paper-fill-v1']),
       dataVersionCompatibility: Object.freeze(['helios-observation-v1']),
     }),
+    marketRegimePreferences: Object.freeze({
+      permittedRegimes: Object.freeze([]),
+      prohibitedRegimes: Object.freeze([]),
+      preferredRegimes: Object.freeze([]),
+    }),
     fixedQualifiedParameters: Object.freeze({
       maximumPortfolioAllocationPct: '2.00',
       maximumPositionSizeUnits: HELIOS_H14_ENTRY_QUANTITY_UNITS,
