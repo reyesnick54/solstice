@@ -222,3 +222,4 @@ export {
   type MultiAssetM13QualificationChecks,
   type MultiAssetM13QualificationResult,
 } from './regime/index.ts';
+export * from './event-intelligence/index.ts';

@@ -119,6 +119,11 @@ export {
   persistRegulatoryEvidenceState,
 } from './growth/pg-helios-regulatory-evidence-store.ts';
 export {
+  loadMacroEventIntelligenceState,
+  persistMacroEventIntelligenceState,
+  queryHeliosMacroEvents,
+} from './growth/pg-helios-macro-event-intelligence.ts';
+export {
   loadWorkOrderState,
   persistWorkOrder,
   persistWorkOrderState,
