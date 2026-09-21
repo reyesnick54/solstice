@@ -1,12 +1,14 @@
 import { LIVE_INVESTMENT_EXECUTION, LIVE_TRADING_ENABLED, type Clock } from '@solstice/config';
 import { err, ok, type CustomerId, type Result, type UtcInstant } from '@solstice/domain';
 import type { EvidenceVault } from '@solstice/evidence';
+import type { DecisionValidityEnvelopeId } from '../../decision-validity/ids.ts';
 import type { EconomicWorkOrderId } from '../../ids.ts';
-import type { HeliosCapitalPort, HeliosOrderValidationPorts } from '../../order-lifecycle/types.ts';
-import {
-  HeliosOrderLifecycleService,
-  type CreateHeliosOrderInput,
-} from '../../order-lifecycle/service.ts';
+import type {
+  CreateHeliosOrderInput,
+  HeliosCapitalPort,
+  HeliosOrderValidationPorts,
+} from '../../order-lifecycle/types.ts';
+import { HeliosOrderLifecycleService } from '../../order-lifecycle/service.ts';
 import type { HeliosProviderOrderPort, ProviderFillEvent } from '../../order-lifecycle/provider-port.ts';
 import type { HeliosOrder, HeliosFill } from '../../order-lifecycle/types.ts';
 import { executionPlanIdFor, exitPlanIdFor, providerPayloadHash } from './ids.ts';
@@ -79,7 +81,15 @@ export class MultiAssetExecutionService {
       this.evidence = input.evidence;
     }
     this.provider = input.provider;
-    this.orderLifecycle = input.orderLifecycle ?? new HeliosOrderLifecycleService(input);
+    this.orderLifecycle =
+      input.orderLifecycle ??
+      new HeliosOrderLifecycleService({
+        clock: input.clock,
+        ...(input.evidence ? { evidence: input.evidence } : {}),
+        provider: input.provider,
+        validation: input.validation,
+        capital: input.capital,
+      });
     this.store = input.store ?? new InMemoryMultiAssetExecutionStore();
   }
 
@@ -95,27 +105,7 @@ export class MultiAssetExecutionService {
     }
 
     const now = this.clock.now();
-    const assetClass = resolveAssetClass(input.instrumentId);
-    const h23Input: CreateHeliosOrderInput = Object.freeze({
-      customerId: input.customerId,
-      providerAccountId: input.accountId,
-      workOrderId: input.workOrderId as EconomicWorkOrderId,
-      strategyCapsuleRef: input.strategyCapsuleRef ?? null,
-      proposalId: input.proposalId,
-      envelopeId: input.envelopeId ?? null,
-      instrumentId: input.instrumentId,
-      side: input.side,
-      quantityUnits: input.quantityUnits,
-      notionalMinorUnits: input.notionalMinorUnits,
-      orderType: input.orderType,
-      limitPriceMinorUnits: input.limitPriceMinorUnits ?? null,
-      timeInForce: 'DAY',
-      currency: input.currency,
-      providerRoute: input.providerRoute,
-      environment: 'SANDBOX',
-      idempotencyKey: input.idempotencyKey,
-      now,
-    });
+    const h23Input = toCreateHeliosOrderInput(input, now);
 
     const created = this.orderLifecycle.createOrder(h23Input);
     if (!created.ok) {
@@ -605,6 +595,32 @@ export class MultiAssetExecutionService {
     if (!this.evidence) return;
     this.evidence.seal(kind, payload);
   }
+}
+
+function toCreateHeliosOrderInput(input: SubmitMultiAssetOrderInput, now: UtcInstant): CreateHeliosOrderInput {
+  const base: CreateHeliosOrderInput = Object.freeze({
+    customerId: input.customerId,
+    providerAccountId: input.accountId,
+    workOrderId: input.workOrderId as EconomicWorkOrderId,
+    strategyCapsuleRef: input.strategyCapsuleRef ?? null,
+    proposalId: input.proposalId,
+    envelopeId: (input.envelopeId ?? null) as DecisionValidityEnvelopeId | null,
+    instrumentId: input.instrumentId,
+    side: input.side,
+    quantityUnits: input.quantityUnits,
+    notionalMinorUnits: input.notionalMinorUnits,
+    orderType: input.orderType,
+    timeInForce: 'DAY',
+    currency: input.currency,
+    providerRoute: input.providerRoute,
+    environment: 'SANDBOX',
+    idempotencyKey: input.idempotencyKey,
+    now,
+  });
+  if (input.limitPriceMinorUnits !== undefined && input.limitPriceMinorUnits !== null) {
+    return Object.freeze({ ...base, limitPriceMinorUnits: input.limitPriceMinorUnits });
+  }
+  return base;
 }
 
 function mapH23Failure(code: string): MultiAssetExecutionFailure['code'] {
