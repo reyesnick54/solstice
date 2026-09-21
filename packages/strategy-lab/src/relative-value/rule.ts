@@ -92,7 +92,7 @@ export function evaluateM12RelativeValueStatArb(input: {
     allBars: input.allBars,
     now: input.now,
     params: input.params,
-    marketRegime: input.marketRegime,
+    ...(input.marketRegime !== undefined ? { marketRegime: input.marketRegime } : {}),
   });
   const relationship = validation.relationship;
 

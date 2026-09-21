@@ -73,7 +73,7 @@ export function buildM12ReferenceCapsule(now: UtcInstant) {
     version: asStrategyVersion(HELIOS_M12_STRATEGY_CAPSULE_VERSION),
     instrumentUniverse: M12_PAIR_UNIVERSE.map((pairId) => `pair:${pairId}`),
     eligibilityFilters: Object.freeze([
-      { instrumentType: 'PAIR', currency: 'USD', requireMembership: true },
+      { instrumentType: 'ETF', currency: 'USD', requireMembership: true },
     ]),
     approvedSignalRefs: Object.freeze([]),
     rebalanceCadence: 'DAILY',

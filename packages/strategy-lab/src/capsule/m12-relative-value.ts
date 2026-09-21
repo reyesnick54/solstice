@@ -82,7 +82,7 @@ export function buildHeliosM12Material(): StrategyCapsuleMaterial {
     modelDependencies: Object.freeze({
       grok: Object.freeze([]),
       s3m: Object.freeze([]),
-      quantitative: Object.freeze(['cointegration_test_hook_v1']),
+      quantitative: Object.freeze([]),
       deterministicRuleId: HELIOS_M12_RULE_ID,
       deterministicRuleVersion: params.version,
       featureEngineVersion: 'helios-m12-relationship-v1',
