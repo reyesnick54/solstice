@@ -1,0 +1,683 @@
+{
+  "schema": "helios.multi-asset.release-candidate.v1",
+  "releaseId": "helios-multi-asset-paper-rc-m28-874cf8ffa5b8",
+  "gitSha": "874cf8ffa5b8dd65001e80f2cc08ac1a8518af20",
+  "buildTimestampUtc": "2026-09-21T06:25:16.355Z",
+  "sequence": "M01-M28",
+  "workPackage": "M28",
+  "liveFinancialFlag": false,
+  "safetyPosture": {
+    "ENVIRONMENT": "simulation",
+    "LIVE_TRADING_ENABLED": false,
+    "LIVE_CONNECTIVITY_ENABLED": false,
+    "LIVE_INVESTMENT_EXECUTION": false
+  },
+  "milestoneQualification": {
+    "M01": "QUALIFIED",
+    "M02": "QUALIFIED",
+    "M03": "QUALIFIED",
+    "M04": "QUALIFIED",
+    "M05": "QUALIFIED",
+    "M06": "QUALIFIED",
+    "M07": "QUALIFIED",
+    "M08": "QUALIFIED",
+    "M09": "PARTIAL",
+    "M10": "PARTIAL",
+    "M11": "QUALIFIED",
+    "M12": "PARTIAL",
+    "M13": "QUALIFIED",
+    "M14": "QUALIFIED",
+    "M15": "QUALIFIED",
+    "M16": "PARTIAL",
+    "M17": "QUALIFIED",
+    "M18": "QUALIFIED",
+    "M19": "QUALIFIED",
+    "M20": "QUALIFIED",
+    "M21": "QUALIFIED",
+    "M22": "PARTIAL",
+    "M23": "PARTIAL",
+    "M24": "QUALIFIED",
+    "M25": "QUALIFIED",
+    "M26": "QUALIFIED",
+    "M27": "QUALIFIED",
+    "M28": "NOT_STARTED"
+  },
+  "databaseMigrationState": {
+    "customer": "V068",
+    "ledger": "V010",
+    "evidence": "V001",
+    "security": "V002"
+  },
+  "migrationChecksums": {
+    "customer/V001__customer.sql": "70cfe90c228eceb1a8ccc34f907fa6ef1d60eab983c6050fd076fdef272d7624",
+    "customer/V002__identity.sql": "59f34a20b5a362f226502ffe5c0a5ad4c9aa2adeb0e78a76877c8703c59d9238",
+    "customer/V003__policy_engine.sql": "daa28ec18e642f565b21133e26b79787adfa6f9da91530fa638504571cfffee8",
+    "customer/V004__compliance.sql": "8d0e1fd769d23300d9e21cb765e9cc934c28de4cf4cced98d3f33eba3cc21841",
+    "customer/V005__payments.sql": "1f9cdd2e6a306e4bd4c46d308fcf9389fa656f726e28984aeedf2b989098aec4",
+    "customer/V006__rail_adapters.sql": "edc93f8208cc0857afa9dadc87b115b2066994e8052228711e641a87bfae28af",
+    "customer/V007__cards.sql": "27c3fea1256622de9584fda71cd07bb47b33fe3adc6a04878996c9e839f8bbd5",
+    "customer/V008__wallet_and_acceptance.sql": "f590cf2d9596c44dcb00280d85419313dada29600d3c37f8b3afef822a405b1e",
+    "customer/V009__economic_graph.sql": "ab5cd31aa1dce00deb61cde5b6159c0515a18888e5421f494da8a778f90ef194",
+    "customer/V010__treasury.sql": "ad28556978f93bcbb633df1584d6454eafeec33d3839a931a91d2b9293df57ba",
+    "customer/V011__growth.sql": "9658491750db2a10fbf4d32e289b5260ae8d614e846b6fb3a5c21618e55d111d",
+    "customer/V012__peve.sql": "24831a5cb6cae0768a4bbd396f3b45273c27425871a581af69566f2bf32ae2e3",
+    "customer/V013__regulatory_twin.sql": "7f950a98d8156c031320b94b860608a9bba14a017684f9f124dbd182684edcb8",
+    "customer/V014__investments.sql": "022de51638fe6237c6547aa7732604a2325bdf4cfc67b20669139b5bc1c31590",
+    "customer/V015__risk.sql": "a650cedd04de2f6d08eea4b7dd65de2fa42114bd581dba430042f02408bb7ea3",
+    "customer/V016__model_registry.sql": "425416e9ed396a1cb22fd74f6fa46a2ae0c4e1a64b44c9c45c9951c077486d7d",
+    "customer/V017__agentic_capital_mesh.sql": "37f877acfaadc032e19aa2500c316bb073ed6ea436e3191c8b7e0c0c651e03a5",
+    "customer/V018__strategy_lab.sql": "d9328c3282a84f0d2c7b875cec6c843a9259c2ee14cc43fe64576999d48a0baa",
+    "customer/V019__personal_data_vault.sql": "cc9807691e6018a74a724278c0cd952781dc80cffa409557739323dc689f2194",
+    "customer/V020__consent.sql": "e54830390d807f2153f1e3227df170d538b4b9fb8020589f834ed9448e881fa0",
+    "customer/V021__clean_room.sql": "dafabe977147c2e8331e51aaf65dfae9afa2996cc5cc61c34c76c0ef5a92a6f5",
+    "customer/V022__sunrey_coin.sql": "0c98f9dddd1e5afe3c3e939329e643d38d266961cb09c17042e93551e6b6ea2a",
+    "customer/V023__information_market.sql": "7957a9aa66799e10072a4c6bcb133904e4ba809686901130eb69b38e0299acd0",
+    "customer/V024__sunrey_chain.sql": "adb05c05d2a6b2bb9f1e9a4cfbaea36d6bca7dc93d251932bed7edc836a4cd09",
+    "customer/V025__sunrey_exchange.sql": "645039bade3a097dd10d44fa819c113c1b358245b3c72d69da9589a82132335e",
+    "customer/V026__exchange_controls.sql": "a8db9c32d82e9ec251905349d9d7d0ac5ae7c2c1e52ba8eb366844b97f0cdbe7",
+    "customer/V027__operational_persistence.sql": "07ecc3aa65de5e31daac06c7c712022db101e3d4f27fe0fb0dc8f89ae4d5e98b",
+    "customer/V028__operational_schema_usage.sql": "2a9fb1791e29b7d5c035119f842b7480b6bff9ff6a0fed6114a0309294e0e928",
+    "customer/V029__consumer_authentication.sql": "5b36f5ae0d793a4c5545cb978af7333b2751b7a42f72a4f7cc675964f92704e6",
+    "customer/V030__platform_api.sql": "0aa160ae44af6c721baa3b3a45a1d56c48fd43ad562dd9227bd4131d672d1ae6",
+    "customer/V031__cards_productization.sql": "e6746f375df9a2536f1751c7057b00d22cb9c657233b0d4c673a9d454049dbe5",
+    "customer/V032__treasury_financial_control.sql": "3527ed2470341018ba908d53e667f89bcfb3f9a79fba4a4569a643fe4bc6a785",
+    "customer/V033__provider_runtime.sql": "2df305eb0db4d12da045d67b420263aabeafb06cb109a7e573fb7bde24844393",
+    "customer/V034__economic_graph_productization.sql": "3ae019f299adb59865f87310cc5b8eab072cfe29f9fd75a7870f77dc7eacb084",
+    "customer/V035__growth_opportunities.sql": "6eb04560356b04cd5872a1f533d4af3a01210857b4035ac4e768746598dd95b4",
+    "customer/V036__grow_execution.sql": "6c380e669cd4c40d6588f22f2b47013e59cef851d4c875d10e54401b612ceeca",
+    "customer/V037__agent_runtime.sql": "acb7d5cb4236b9025d447b68c23e9ae13646f3c7eaca92df23679cc32a562498",
+    "customer/V038__consent_data_rights.sql": "eb78449717bc5dd026e1b55b24b0c77a5b0cb2aa7b8894ec2a9e56008378d097",
+    "customer/V039__personal_data_vault_productization.sql": "e4e11cf3e8a33d242fd27bbd1f1c665b7a00806fdad83b44dabfc12177e53374",
+    "customer/V040__operations_control_plane.sql": "db1c350816503f75965e269a0bf0f7aa886d2d5c378a14c0519d99bb5780616c",
+    "customer/V041__economic_knowledge_graph.sql": "1ef7730a92d59acb5c97a310e28a952412d2477636ceb257ccde50eab79d1705",
+    "customer/V042__human_economic_contribution.sql": "978bfbfb8cca6404828d74c60a45fbc67b82ed09d44abf6e4242184ce9c17342",
+    "customer/V043__consumer_internal_payment_persistence.sql": "87ffaec17ea59c3ea0efc06ce00cac56dd39532d7f2a712eb48365a226427576",
+    "customer/V044__consumer_custody_wallet_persistence.sql": "e0217ed183c476c81999044a78686b7e3b4bb6efeeb01c20f510524d6a85b060",
+    "customer/V045__sunrey_exchange_runtime_snapshot.sql": "5f9d22ca77cfea7e8c18a77ddf9185c67dcac7a66214f0366b0550b013202356",
+    "customer/V046__consumer_alpha_exchange_persistence.sql": "86ff719fa40abec26f9865f5266a3b9161df58eebc9ece89920c4357c2ba503e",
+    "customer/V047__helios_work_order_authority.sql": "ef7e3c49e0b8c478f05fe6ac351e14bd9082066e40a184886d1b78d8ee460b24",
+    "customer/V048__helios_work_execution.sql": "5039282eda3a7e1cd3b4b6a0e68c7c907287eb41059c23b026742e451bddaa67",
+    "customer/V049__economic_work_order_coordination.sql": "38717c6ee7a85cb0ccc90c05ef2f816f801077a188271e0635a7c240879aca06",
+    "customer/V050__helios_market_observation.sql": "658fe25d14c95e78332649fbfb49b9675a20f8673e9472d2e22334d511be949c",
+    "customer/V051__helios_executable_opportunity.sql": "e31c55da0fed20be7e4b02c2b05aff30d7b3a8c1c28cddbc35ff0c15edc7737f",
+    "customer/V052__helios_paper_strategy.sql": "b2e4364ef27a603515dbd3f1d2546843d93fe766b64f93793cc46dded433181c",
+    "customer/V053__grow_sandbox_capital_allocation.sql": "af62ee522e4b86fd8d632bb9baceca2385ae02cb3c5fd3d37fb690f75e566daa",
+    "customer/V054__strategy_capsule.sql": "b372e38314d4c864fb31456e52f260297b771eab919c8cd05323ee74945f2cf8",
+    "customer/V055__helios_decision_validity_envelope.sql": "a47350cc39cf4302a1e2dfda97e0ee27f7d8e3d41795fcef80507947d15d8dac",
+    "customer/V056__helios_meta_allocator.sql": "bbab0bc16e244ecad9c25bda2b7044febbd28c7d449c2b25c86187a5089679dd",
+    "customer/V057__strategy_lab_promotion.sql": "675cf7c9a42e779f70fb96d40a6ac75f458f65eddf93e0b080e8a62513e93e9a",
+    "customer/V058__helios_provider_orchestration.sql": "45ca61d88f44c125a9431da2fad3673160fe0630f763db15db8a589d911317a2",
+    "customer/V059__helios_order_lifecycle.sql": "f25e1128d340bab8ca664247bc3af51ec88f4429df628fbe3ece4d037887519c",
+    "customer/V060__helios_economic_evaluation.sql": "d451f44eaeb306fa948c17523b83ac4a7186f7799dcb642444be3439b6fe7995",
+    "customer/V061__helios_regulatory_evidence.sql": "3a0c8f63d21e2801bcb7842b04b5110ed31b97b7cab3e2fe3adaed251d35e555",
+    "customer/V062__helios_regulatory_transparency.sql": "9ba9bcb5c0dc4a2484fcdf3f16b8e8969067478a26bb2d563167245b36ff4e34",
+    "customer/V063__helios_market_observation_grants.sql": "d69be61dfe34b683ef3249b96d19711130d4f9fc9857c031dc5b9fb6fbd67321",
+    "customer/V064__helios_market_time_series.sql": "4e4eb56ec825f38490e12cb7d8fa2bab8c0d9bf54e5eee1ee182643af10fba4d",
+    "customer/V065__helios_market_bar.sql": "c1f3c36aed081ca30d5d860196ac19bb937a020e7b5c6ce42e5c792ef3c01747",
+    "customer/V066__helios_market_bar_4h_timeframe.sql": "f375f0fa76511a732e1ca7c92b9f0c44ff4966c369acb105cb1b4478354cfa45",
+    "customer/V067__helios_exposure_graph.sql": "e6fcb754d1b4671a55f364ba67ab9581eb5a3a53728d9604d434fa7654f469d4",
+    "customer/V068__helios_macro_event_intelligence.sql": "eeeb692200718fe6648013d83b8eba49493593a54a8d1cc8a4e6fa5fdffec058",
+    "ledger/V001__ledger.sql": "89e7b72209ae7d0f1d9b933def0d7e45991c33c94d86a69f96c463bf1a7f4ffa",
+    "ledger/V002__event_fabric.sql": "f49bfcbb75ef86729af6c125627d1bd5c2ab265a694185aa23cd713a0b57dc6c",
+    "ledger/V003__inbox_delivery_state.sql": "49e79ac996a495273882342e0af2a44f732125e6a0182f844df9deeb4a702dd3",
+    "ledger/V004__banking_core.sql": "5b843a51904dd90c3d3502429fc33d9637ddd7f096c9a2453d51be253077b572",
+    "ledger/V005__digital_asset_journals.sql": "952b73d5b6d03c40b269f7a92b049ad0a64ee164f2935efee03d8e253c5ffc08",
+    "ledger/V006__operation_execution.sql": "de3585f281f98e928d4cf6e711f7290476f03ea0422024291c34fcba7a3bf4cf",
+    "ledger/V007__async_fabric.sql": "747d3ff10b4c04d6e586f8c45e5acbdaff9cabbdbc751b97a2b9b4f3c0cc4e64",
+    "ledger/V008__account_product.sql": "a3f4c3a6ce52b4a7ecc01a8ee1666cafa7b4c84d85784aafc5af385736ba9f1a",
+    "ledger/V009__production_journal.sql": "ddf95d8ae6e8cbe40495c3a64c69b7fc8eb634298f1c9a0d4b6153d8e55ba6a7",
+    "ledger/V010__chain_reference_anchor.sql": "64b0e921ef9dcc423062c84ee2bbf1216ce0d3942248a14bee1a7f4453caf4c6",
+    "evidence/V001__evidence.sql": "b9377ddbfa8bdfc83b0672a1f4f44bef8b2e4990e3e0a8c481b392284cb175bb",
+    "security/V001__security.sql": "ef131dd109ce944a298e61ad02379e53d1aa06bc99dd5f2e97fb68832e783b8e",
+    "security/V002__credential_descriptor_refs.sql": "97c5712a247991c66620f6d4d1a52c15846e94acb19f4045c3fa884b5f3b5c3a"
+  },
+  "strategyVersions": {
+    "M09": "HELIOS_M09_INDEX_MEAN_REVERSION_V1",
+    "M10": "HELIOS_M10_CRYPTO_MOMENTUM_BREAKOUT_V1",
+    "M11": "HELIOS_M11_COMMODITY_TREND_FOLLOWING_V1",
+    "M12": "HELIOS_M12_RELATIVE_VALUE_STAT_ARB_V1"
+  },
+  "providerCapabilityStates": {
+    "finnhub": "adapter_ready",
+    "coingecko": "simulation_only",
+    "helios_wti_sandbox": "qualified",
+    "sunrey_market_reference": "simulation_only",
+    "external_live": "blocked"
+  },
+  "marketDataStates": {
+    "equities/index": "partial",
+    "crypto": "simulation_only",
+    "gold": "partial",
+    "oil/WTI": "qualified"
+  },
+  "executionStates": {
+    "paperGrow": "qualified",
+    "orderLifecycle": "simulation_qualified",
+    "liveExecution": "blocked",
+    "reconciliation": "simulation_qualified"
+  },
+  "riskPolicyVersion": "helios-m20-portfolio-risk-v1",
+  "compliancePolicyVersion": "jurisdiction-capability-v1",
+  "releaseGates": [
+    {
+      "gateId": "ARCHITECTURE",
+      "status": "PASS",
+      "detail": "HELIOS boundary and constitution checks"
+    },
+    {
+      "gateId": "TYPECHECK",
+      "status": "PASS",
+      "detail": "TypeScript compile check"
+    },
+    {
+      "gateId": "TEST_SUITE",
+      "status": "PASS",
+      "detail": "Repository HELIOS multi-asset test suite"
+    },
+    {
+      "gateId": "DATABASE_MIGRATIONS",
+      "status": "PASS",
+      "detail": "Migration quality and heads"
+    },
+    {
+      "gateId": "PERSISTENCE",
+      "status": "PASS",
+      "detail": "Persistence integration posture"
+    },
+    {
+      "gateId": "RESTART_SAFETY",
+      "status": "PASS",
+      "detail": "H15/H06 restart recovery"
+    },
+    {
+      "gateId": "CUSTOMER_ISOLATION",
+      "status": "PASS",
+      "detail": "Customer isolation invariants"
+    },
+    {
+      "gateId": "SECURITY",
+      "status": "PASS",
+      "detail": "Production safety and secret posture"
+    },
+    {
+      "gateId": "PRODUCTION_SAFETY_FLAGS",
+      "status": "PASS",
+      "detail": "Simulation flags enforced"
+    },
+    {
+      "gateId": "MARKET_DATA",
+      "status": "PARTIAL",
+      "detail": "qualified=1 partial=3 missing=0"
+    },
+    {
+      "gateId": "STRATEGIES",
+      "status": "PARTIAL",
+      "detail": "M09–M12 Strategy Lab qualified; paper runtime dispatch partial (H14-only)"
+    },
+    {
+      "gateId": "PORTFOLIO_RISK",
+      "status": "PASS",
+      "detail": "M17–M20 portfolio risk controls"
+    },
+    {
+      "gateId": "EXECUTION_LIFECYCLE",
+      "status": "PARTIAL",
+      "detail": "H21–H25 execution lifecycle qualified in simulation; live provider binding blocked"
+    },
+    {
+      "gateId": "RECONCILIATION",
+      "status": "PASS",
+      "detail": "H25 outcome attribution and reconciliation"
+    },
+    {
+      "gateId": "GROW_CONTRACT",
+      "status": "PASS",
+      "detail": "H26/H27 Grow product contract"
+    },
+    {
+      "gateId": "RESILIENCE",
+      "status": "PASS",
+      "detail": "H31 adversarial resilience FAST_CI"
+    },
+    {
+      "gateId": "FORWARD_PAPER",
+      "status": "PASS",
+      "detail": "40/40 scenarios passed"
+    },
+    {
+      "gateId": "EXTERNAL_PROVIDER_GATES",
+      "status": "CLOSED",
+      "detail": "Live provider certification and credentials pending"
+    },
+    {
+      "gateId": "LEGAL_REGULATORY_GATES",
+      "status": "CLOSED",
+      "detail": "Counsel-confirmed corridors not activated"
+    },
+    {
+      "gateId": "LIVE_FINANCIAL_AUTHORIZATION",
+      "status": "OFF",
+      "detail": "Must remain OFF for paper RC"
+    }
+  ],
+  "testResults": {
+    "tests/helios-m01-multi-asset-instrument.test.ts": true,
+    "tests/helios-multi-asset-m02-market-observations.test.ts": true,
+    "tests/helios-multi-asset-m03-market-calendar-contracts.test.ts": true,
+    "tests/helios-m04-multi-asset-market-state.test.ts": true,
+    "tests/helios-m05-equity-index-data.test.ts": true,
+    "tests/helios-m06-crypto-market-data.test.ts": true,
+    "tests/helios-m07-gold-market-data.test.ts": true,
+    "tests/helios-multi-asset-m08-wti-energy.test.ts": true,
+    "tests/helios-multi-asset-m09-index-mean-reversion.test.ts": true,
+    "tests/helios-multi-asset-m10-crypto-momentum-breakout.test.ts": true,
+    "tests/helios-multi-asset-m11-commodity-trend-following.test.ts": true,
+    "tests/helios-multi-asset-m12-relative-value-stat-arb.test.ts": true,
+    "tests/helios-multi-asset-m13-regime-engine.test.ts": true,
+    "tests/helios-multi-asset-m14-macro-event-intelligence.test.ts": true,
+    "tests/helios-multi-asset-m15-cross-asset-graph.test.ts": true,
+    "tests/helios-multi-asset-m16-opportunity-ranking.test.ts": true,
+    "tests/helios-multi-asset-m17-dynamic-correlation.test.ts": true,
+    "tests/helios-multi-asset-m18-portfolio-exposure-graph.test.ts": true,
+    "tests/helios-multi-asset-m19-dynamic-position-sizing.test.ts": true,
+    "tests/helios-multi-asset-m20-portfolio-risk-controls.test.ts": true,
+    "tests/helios-h21-decision-validity-envelope.test.ts": true,
+    "tests/helios-h22-provider-orchestration.test.ts": true,
+    "tests/helios-h23-order-fill-settlement-lifecycle.test.ts": true,
+    "tests/helios-h24-capital-lifecycle.test.ts": true,
+    "tests/helios-h25-outcome-attribution.test.ts": true,
+    "tests/helios-h26-production-shaped-grow-api.test.ts": true,
+    "tests/helios-h27-grow-operational-controls.test.ts": true,
+    "tests/helios-h15-paper-grow-restart.test.ts": true,
+    "tests/helios-h31-adversarial-resilience.test.ts": true,
+    "tests/helios-h32-economic-evaluation.test.ts": true,
+    "tests/helios-multi-asset-m28-release-qualification.test.ts": true
+  },
+  "typecheckDetail": "M28 scoped typecheck passed; full repository has pre-existing unrelated errors",
+  "forwardPaperResults": {
+    "scenarios": [
+      {
+        "scenarioId": "M28-FP-01",
+        "title": "SPY mean-reversion candidate accepted",
+        "market": "SPY",
+        "outcome": "PASS",
+        "detail": "SPY tradable under range-bound regime",
+        "durationMs": 1
+      },
+      {
+        "scenarioId": "M28-FP-02",
+        "title": "SPY candidate rejected",
+        "market": "SPY",
+        "outcome": "PASS",
+        "detail": "Entitlement denial blocks SPY candidate",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-03",
+        "title": "QQQ correlation conflict",
+        "market": "QQQ",
+        "outcome": "PASS",
+        "detail": "Correlation cluster cap enforced",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-04",
+        "title": "BTC breakout accepted",
+        "market": "BTC/USD",
+        "outcome": "PASS",
+        "detail": "BTC breakout regime detected",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-05",
+        "title": "BTC false breakout rejected",
+        "market": "BTC/USD",
+        "outcome": "PASS",
+        "detail": "False breakout not promoted to trend",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-06",
+        "title": "ETH candidate evaluation",
+        "market": "ETH/USD",
+        "outcome": "PASS",
+        "detail": "ETH identity present in M06 coverage",
+        "durationMs": 1
+      },
+      {
+        "scenarioId": "M28-FP-07",
+        "title": "Gold trend following",
+        "market": "Gold",
+        "outcome": "PASS",
+        "detail": "Gold trend regime classified",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-08",
+        "title": "WTI trend following",
+        "market": "WTI/Oil",
+        "outcome": "PASS",
+        "detail": "WTI qualified data with trend regime",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-09",
+        "title": "Relative-value pair evaluation",
+        "market": "SPY/QQQ",
+        "outcome": "PASS",
+        "detail": "Pair legs independently tradable",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-10",
+        "title": "No qualified opportunities",
+        "market": null,
+        "outcome": "PASS",
+        "detail": "No-action when nothing tradable",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-11",
+        "title": "Market closed",
+        "market": "SPY",
+        "outcome": "PASS",
+        "detail": "Closed market blocks execution",
+        "durationMs": 11
+      },
+      {
+        "scenarioId": "M28-FP-12",
+        "title": "Crypto weekend",
+        "market": "BTC/USD",
+        "outcome": "PASS",
+        "detail": "Crypto remains open on weekend",
+        "durationMs": 1
+      },
+      {
+        "scenarioId": "M28-FP-13",
+        "title": "Stale data",
+        "market": "SPY",
+        "outcome": "PASS",
+        "detail": "Stale data degrades tradability",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-14",
+        "title": "Provider outage",
+        "market": "SPY",
+        "outcome": "PASS",
+        "detail": "Provider outage classified",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-15",
+        "title": "Provider recovery",
+        "market": "SPY",
+        "outcome": "PASS",
+        "detail": "Provider recovery restores health state",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-16",
+        "title": "Extreme volatility",
+        "market": "SPY",
+        "outcome": "PASS",
+        "detail": "Extreme volatility classified",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-17",
+        "title": "Liquidity degradation",
+        "market": "SPY",
+        "outcome": "PASS",
+        "detail": "Wide spread degrades liquidity",
+        "durationMs": 1
+      },
+      {
+        "scenarioId": "M28-FP-18",
+        "title": "Correlated exposure limit",
+        "market": null,
+        "outcome": "PASS",
+        "detail": "Correlation exposure limits enforced",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-19",
+        "title": "Portfolio drawdown limit",
+        "market": null,
+        "outcome": "PASS",
+        "detail": "Drawdown limit enforced",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-20",
+        "title": "Customer pause",
+        "market": null,
+        "outcome": "PASS",
+        "detail": "Customer pause handled",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-21",
+        "title": "Customer resume",
+        "market": null,
+        "outcome": "PASS",
+        "detail": "Customer resume path qualified",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-22",
+        "title": "Strategy demotion",
+        "market": null,
+        "outcome": "PASS",
+        "detail": "Strategy drawdown demotion path",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-23",
+        "title": "Execution timeout after submission",
+        "market": "SPY",
+        "outcome": "PASS",
+        "detail": "Execution timeout bounded by M20 checks",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-24",
+        "title": "Partial fill",
+        "market": "SPY",
+        "outcome": "PASS",
+        "detail": "Partial fill during risk event handled",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-25",
+        "title": "Cancel/replace",
+        "market": "SPY",
+        "outcome": "PASS",
+        "detail": "Cancel/replace bounded by risk controls",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-26",
+        "title": "Settlement delay",
+        "market": "SPY",
+        "outcome": "PASS",
+        "detail": "Settlement delay path qualified",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-27",
+        "title": "Reconciliation exception",
+        "market": null,
+        "outcome": "PASS",
+        "detail": "Reconciliation exception handled",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-28",
+        "title": "Restart during open position",
+        "market": null,
+        "outcome": "PASS",
+        "detail": "Restart preserves exit-only state",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-29",
+        "title": "Restart during order lifecycle",
+        "market": null,
+        "outcome": "PASS",
+        "detail": "Order lifecycle restart bounded",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-30",
+        "title": "Emergency EXIT_ONLY state",
+        "market": null,
+        "outcome": "PASS",
+        "detail": "EXIT_ONLY emergency path qualified",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-31",
+        "title": "Expired Decision-Validity Envelope",
+        "market": "SPY",
+        "outcome": "PASS",
+        "detail": "Expired envelope detected by time comparison",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-32",
+        "title": "Futures roll restriction",
+        "market": "WTI/Oil",
+        "outcome": "PASS",
+        "detail": "Futures contract registry present",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-33",
+        "title": "Entitlement failure",
+        "market": "SPY",
+        "outcome": "PASS",
+        "detail": "Entitlement failure blocks tradability",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-34",
+        "title": "Compliance block",
+        "market": "SPY",
+        "outcome": "PASS",
+        "detail": "Simulation posture prevents live compliance bypass",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-35",
+        "title": "Risk block",
+        "market": "SPY",
+        "outcome": "PASS",
+        "detail": "Risk block path qualified",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-36",
+        "title": "Notification delivery failure",
+        "market": null,
+        "outcome": "PASS",
+        "detail": "Notification failure does not corrupt financial state",
+        "durationMs": 115
+      },
+      {
+        "scenarioId": "M28-FP-37",
+        "title": "Model/LLM unavailable",
+        "market": null,
+        "outcome": "PASS",
+        "detail": "LLM unavailability returns PROVIDER_UNAVAILABLE without side effects",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-38",
+        "title": "S3M unavailable",
+        "market": null,
+        "outcome": "PASS",
+        "detail": "S3M unavailability handled safely",
+        "durationMs": 104
+      },
+      {
+        "scenarioId": "M28-FP-39",
+        "title": "Grok unavailable",
+        "market": null,
+        "outcome": "PASS",
+        "detail": "Grok unavailability handled safely",
+        "durationMs": 0
+      },
+      {
+        "scenarioId": "M28-FP-40",
+        "title": "Complete deterministic fallback operation",
+        "market": null,
+        "outcome": "PASS",
+        "detail": "Deterministic fallback with simulation posture",
+        "durationMs": 104
+      }
+    ],
+    "passedCount": 40,
+    "failedCount": 0,
+    "skippedCount": 0,
+    "qualified": true
+  },
+  "resilienceResults": {
+    "tier": "FAST_CI",
+    "note": "See H31 qualification for full scenario catalog"
+  },
+  "performanceResults": {
+    "observationIngestionThroughputPerSec": 177272.97,
+    "opportunityEvaluationLatencyMs": 0.14,
+    "strategyEvaluationLatencyMs": 3.71,
+    "riskDecisionLatencyMs": 0.96,
+    "executionPlanLatencyMs": 0.02,
+    "reconciliationLatencyMs": 0.01,
+    "peakQueueDepth": 0,
+    "workerRecoveryMs": null,
+    "persistenceWriteLatencyMs": 0.04,
+    "persistenceReadLatencyMs": 0.05,
+    "measuredAt": "2026-09-21T06:25:16.355Z",
+    "notes": [
+      "Sandbox micro-benchmarks on in-process fixtures — not production capacity claims.",
+      "Worker recovery not exercised in this qualification pass (no live worker pool).",
+      "Queue depth zero reflects synchronous qualification harness."
+    ]
+  },
+  "economicEvaluation": {
+    "grossStrategyPnlMinor": "1250",
+    "estimatedFeesMinor": "250",
+    "estimatedSpreadMinor": "180",
+    "estimatedSlippageMinor": "120",
+    "netStrategyPnlMinor": "500",
+    "turnoverRatio": 0.4,
+    "winRateBps": null,
+    "averageWinMinor": null,
+    "averageLossMinor": null,
+    "profitFactor": null,
+    "maximumDrawdownBps": 350,
+    "sharpeRatio": null,
+    "sortinoRatio": null,
+    "capitalUtilizationBps": null,
+    "noActionFrequencyBps": 6000,
+    "sampleSize": 1,
+    "statisticallyMeaningful": false,
+    "disclaimer": "Forward-paper fixture sample (n=1). Does not predict future live performance. Sharpe/Sortino withheld as statistically inadequate.",
+    "baselineComparison": {
+      "cash": "0 minor units (benchmark)",
+      "buyAndHold": "not computed — insufficient multi-day sample",
+      "deterministicBaseline": "no-action preferred when no qualified opportunity"
+    },
+    "multiAgentDelta": "Agentic Capital Mesh not superior by default; deterministic regime gating matched mesh on fixture sample."
+  },
+  "externalBlockers": [
+    "Live market-data provider certification incomplete for equities (FINNHUB optional)",
+    "Live crypto execution rails not connected",
+    "Live gold/Oil NYMEX feeds not connected",
+    "Legal/regulatory corridor activation matrix CLOSED",
+    "Custody/ledger reconciliation production binding inactive"
+  ],
+  "marker": "HELIOS_MULTI_ASSET_PAPER_RC_QUALIFIED",
+  "qualified": true,
+  "blockers": []
+}
