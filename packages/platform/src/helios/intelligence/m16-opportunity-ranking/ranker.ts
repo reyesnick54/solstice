@@ -6,13 +6,12 @@
  */
 
 import type {
-  OpportunityOutputState,
   OpportunityRankingEvaluateInput,
   RankedOpportunity,
   RankingRunResult,
 } from './types.ts';
 import { buildOpportunityScorecard } from './scorecard.ts';
-import type { OpportunityRankingVersion } from './taxonomy.ts';
+import type { OpportunityOutputState, OpportunityRankingVersion } from './taxonomy.ts';
 
 const ALLOCATION_REVIEW_MIN_SCORE = 72;
 const HIGH_PRIORITY_RESEARCH_MIN_SCORE = 60;

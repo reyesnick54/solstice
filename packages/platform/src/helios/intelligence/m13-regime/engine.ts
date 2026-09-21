@@ -15,7 +15,7 @@ import {
 
 function confidenceFromMarketState(input: RegimeEngineInput): RegimeConfidenceBand {
   const { marketState } = input;
-  if (marketState.confidence === 'HIGH' && marketState.dataQuality.state === 'GOOD') {
+  if (marketState.confidence === 'HIGH' && marketState.dataQuality.state === 'HEALTHY') {
     return 'HIGH';
   }
   if (marketState.confidence === 'MEDIUM' || marketState.dataQuality.state === 'DEGRADED') {
@@ -41,7 +41,7 @@ function inferRegime(input: RegimeEngineInput): MarketRegime {
   if (marketState.liquidityState === 'THIN' && marketState.volatilityState === 'NORMAL') {
     return 'RANGE_BOUND';
   }
-  if (marketState.volatilityState === 'NORMAL' && marketState.liquidityState === 'NORMAL') {
+  if (marketState.volatilityState === 'NORMAL' && marketState.liquidityState === 'ILLIQUID') {
     return 'MEAN_REVERTING';
   }
   if (marketState.volatilityState === 'NORMAL' && marketState.liquidityState === 'ADEQUATE') {
@@ -78,7 +78,7 @@ export function assessRegimeCompatibility(
   regime: MarketRegime,
 ): RegimeCompatibilityResult {
   const allowed = REGIME_COMPATIBILITY[strategyFamily];
-  const compatible = allowed.includes(regime);
+  const compatible = (allowed as readonly MarketRegime[]).includes(regime);
   const score = compatible ? 100 : regime === 'UNKNOWN' ? 40 : 15;
   const reason = compatible
     ? `regime ${regime} compatible with ${strategyFamily}`

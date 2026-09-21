@@ -86,7 +86,7 @@ function mapToMetaAllocatorCandidate(
       unresolvedUncertainty: opp.regimeMatch.compatible ? 'LOW' : 'MEDIUM',
       specialistDisagreement: false,
       estimatedOpportunitySizeMinor: '10000',
-      confidenceState: opp.regimeMatch.compatible ? 'CALIBRATED' : 'UNCERTAIN',
+      confidenceState: opp.regimeMatch.compatible ? 'CALIBRATED' : 'LOW_CONFIDENCE',
       calibratedProbabilityBps: rewardFactor?.score !== null ? rewardFactor!.score! * 100 : null,
       estimatedResearchCostMinor: costs.inferenceCostMinor,
       opportunityHalfLifeHours: 48,
