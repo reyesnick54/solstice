@@ -15,6 +15,7 @@ export type StrategyCapsuleMaterialProjection = {
     StrategyCapsuleMaterial['validity'],
     'regimeConstraints' | 'invalidatingConditions' | 'modelVersionCompatibility' | 'dataVersionCompatibility'
   >;
+  readonly marketRegimePreferences: StrategyCapsuleMaterial['marketRegimePreferences'];
   readonly fixedQualifiedParameters: StrategyCapsuleMaterial['fixedQualifiedParameters'];
 };
 
@@ -37,6 +38,7 @@ export function projectMaterialForHash(
       modelVersionCompatibility: material.validity.modelVersionCompatibility,
       dataVersionCompatibility: material.validity.dataVersionCompatibility,
     }),
+    marketRegimePreferences: material.marketRegimePreferences,
     fixedQualifiedParameters: material.fixedQualifiedParameters,
   });
 }
