@@ -1,6 +1,7 @@
 import type { Pool } from 'pg';
 
 import type { PortfolioExposureGraphSnapshot } from '@solstice/platform';
+import { persistenceJsonStringify } from '../json.ts';
 import { withClient } from '../postgres/pools.ts';
 
 export async function persistHeliosPortfolioExposureGraphState(
@@ -18,7 +19,7 @@ export async function persistHeliosPortfolioExposureGraphState(
            ON CONFLICT (graph_id) DO UPDATE SET
              body_canonical = EXCLUDED.body_canonical,
              as_of = EXCLUDED.as_of`,
-          [graph.graphId, graph.portfolioId, graph.asOf, JSON.stringify(graph), graph.asOf],
+          [graph.graphId, graph.portfolioId, graph.asOf, persistenceJsonStringify(graph), graph.asOf],
         );
       }
       await client.query('COMMIT');
