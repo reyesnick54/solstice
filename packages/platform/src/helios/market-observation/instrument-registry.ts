@@ -12,6 +12,8 @@ export const HELIOS_MARKET_INSTRUMENT_REGISTRY_ID = 'sunrey.helios.market-instru
 /** M01-aligned canonical instrument IDs used by M02 time-series fabric. */
 export const M02_REFERENCE_INSTRUMENT_IDS = Object.freeze({
   SPY: 'SECURITY:US:SPY:ARCX',
+  QQQ: 'SECURITY:US:QQQ:XNAS',
+  NVDA: 'SECURITY:US:NVDA:XNAS',
   BTC: 'CRYPTO:GLOBAL:BTC:USD:SIM',
   GOLD: 'COMMODITY:GLOBAL:GOLD:XCEC',
 });
@@ -27,6 +29,13 @@ const VENUE_ARCA: MarketVenue = Object.freeze({
   mic: 'ARCX',
   displayName: 'NYSE Arca',
   exchange: 'ARCA',
+});
+
+const VENUE_NASDAQ: MarketVenue = Object.freeze({
+  venueId: 'XNAS',
+  mic: 'XNAS',
+  displayName: 'NASDAQ',
+  exchange: 'NASDAQ',
 });
 
 const VENUE_SIM: MarketVenue = Object.freeze({
@@ -57,6 +66,28 @@ export const REGISTERED_MARKET_INSTRUMENTS: readonly RegisteredMarketInstrument[
     providerNativeId: 'SPY',
     displayName: 'SPDR S&P 500 ETF Trust',
     providerSymbols: Object.freeze({ finnhub: 'SPY', fixture: 'SPY' }),
+    orderBookSupported: false,
+  }),
+  instrument({
+    instrumentId: M02_REFERENCE_INSTRUMENT_IDS.QQQ,
+    symbol: 'QQQ',
+    assetClass: 'etf',
+    venue: VENUE_NASDAQ,
+    currency: 'USD',
+    providerNativeId: 'QQQ',
+    displayName: 'Invesco QQQ Trust',
+    providerSymbols: Object.freeze({ finnhub: 'QQQ', fixture: 'QQQ' }),
+    orderBookSupported: false,
+  }),
+  instrument({
+    instrumentId: M02_REFERENCE_INSTRUMENT_IDS.NVDA,
+    symbol: 'NVDA',
+    assetClass: 'equity',
+    venue: VENUE_NASDAQ,
+    currency: 'USD',
+    providerNativeId: 'NVDA',
+    displayName: 'NVIDIA Corporation',
+    providerSymbols: Object.freeze({ finnhub: 'NVDA', fixture: 'NVDA' }),
     orderBookSupported: false,
   }),
   instrument({

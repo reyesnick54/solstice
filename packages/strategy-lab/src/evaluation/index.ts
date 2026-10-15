@@ -81,3 +81,10 @@ export {
   chronologicalEvaluationManifest,
   buildReferenceCapsule,
 } from './fixtures.ts';
+export {
+  attachPointInTimeManifestToEvaluation,
+  pitManifestMatchesEvaluation,
+  resolvePointInTimeVectorsForEvaluation,
+  type ChronologicalEvaluationPitConfig,
+  type PointInTimeFeatureEvaluationAttachment,
+} from './point-in-time-feature-fabric-seam.ts';
