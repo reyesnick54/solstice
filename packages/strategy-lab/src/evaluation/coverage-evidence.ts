@@ -7,7 +7,7 @@ import {
   type EligibleUniverseMember,
   type FeatureCoverageProbe,
 } from '../../../platform/src/helios/feature-fabric/coverage/index.ts';
-import { membersAt } from '../dataset.ts';
+import { activeInstrumentIds } from '../dataset.ts';
 import type { EvaluationDatasetManifest } from './manifest.ts';
 import { isKnowableAt } from './information-time.ts';
 
@@ -61,7 +61,7 @@ export function buildStrategyEvaluationCoverageManifest(input: {
   if (input.featureIds.length === 0) {
     return null;
   }
-  const membership = membersAt(input.manifest.membership, input.evaluationTimestamp);
+  const membership = activeInstrumentIds(input.manifest.membership, input.evaluationTimestamp);
   const eligibleMembers = membership.map((instrumentId) =>
     memberFromInstrument(instrumentId, input.evaluationTimestamp),
   );
