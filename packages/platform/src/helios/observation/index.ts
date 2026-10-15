@@ -81,3 +81,13 @@ export {
 } from './store.ts';
 
 export { HeliosObservationFabric, type HeliosObservationFabricOptions } from './fabric.ts';
+
+export {
+  HELIOS_AAF07_EXTERNAL_MARKET_DATA_CERTIFICATION_QUALIFIED,
+  HELIOS_AAF07_EXTERNAL_MARKET_DATA_CERTIFICATION_BLOCKED,
+  evaluateAaf07MarketDataQualification,
+  createHeliosExternalMarketDataCertificationService,
+  HeliosExternalMarketDataCertificationService,
+  type Aaf07MarketDataQualificationResult,
+  type HeliosExternalMarketDataCertificationServiceOptions,
+} from './market-data-certification/index.ts';
