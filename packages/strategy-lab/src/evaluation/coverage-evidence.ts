@@ -6,7 +6,7 @@ import {
   type CoverageManifest,
   type EligibleUniverseMember,
   type FeatureCoverageProbe,
-} from '../../../platform/src/helios/feature-fabric/coverage/index.ts';
+} from '../../../platform/src/helios/feature-fabric/feature-coverage/index.ts';
 import { membersAt } from '../dataset.ts';
 import type { EvaluationDatasetManifest } from './manifest.ts';
 import { isKnowableAt } from './information-time.ts';

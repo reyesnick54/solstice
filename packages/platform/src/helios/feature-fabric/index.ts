@@ -82,4 +82,4 @@ export * from './macro-intelligence/index.ts';
 
 export * from './entity-resolution/index.ts';
 export { computeFeatureWithResolvedEntity, type ComputeFeatureWithResolutionInput } from './entity-binding.ts';
-export * from './coverage/index.ts';
+export * from './feature-coverage/index.ts';
