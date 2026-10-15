@@ -1,41 +1,32 @@
 /**
- * AAF05 — coverage tensor and missingness intelligence domain types.
- * Builds on AAF02 feature fabric; does not grant Execution Authority.
+ * AAF05 — feature coverage tensor and manifest types (strategy-lab integration).
  */
 
 import type { UtcInstant } from '../../../../../domain/src/time.ts';
-import type { HELIOS_FEATURE_FABRIC_SCHEMA } from '../types.ts';
 
-export const HELIOS_COVERAGE_TENSOR_SCHEMA = 'sunrey.helios.coverage-tensor.v1' as const;
+export const HELIOS_FEATURE_COVERAGE_SCHEMA = 'sunrey.helios.feature-coverage.v1' as const;
 
-export const MISSINGNESS_REASONS = [
-  'NOT_YET_PUBLISHED',
-  'PROVIDER_UNAVAILABLE',
-  'NOT_COVERED_BY_PROVIDER',
-  'ENTITLEMENT_RESTRICTED',
-  'ENTITY_UNRESOLVED',
-  'NOT_APPLICABLE',
-  'SOURCE_STALE',
-  'QUALITY_REJECTED',
-  'HISTORICAL_GAP',
-  'UNKNOWN',
-] as const;
+export type CoverageEntitlementState = 'USABLE' | 'RESTRICTED' | 'UNAVAILABLE' | 'UNKNOWN';
 
-export type MissingnessReason = (typeof MISSINGNESS_REASONS)[number];
+export type CoverageQualityState =
+  | 'VALID'
+  | 'DEGRADED_STALE'
+  | 'DEGRADED_GAP'
+  | 'DEGRADED_ENTITLEMENT'
+  | 'UNAVAILABLE';
 
-export type CoverageDimension =
-  | 'entity'
-  | 'instrument'
-  | 'timestamp'
-  | 'feature'
-  | 'provider'
-  | 'sector'
-  | 'industry'
-  | 'marketCapBucket'
-  | 'liquidityBucket'
-  | 'geography'
-  | 'venue'
-  | 'assetClass';
+export type FeatureCoverageSignal = {
+  readonly published: boolean;
+  readonly providerAvailable: boolean;
+  readonly providerCoversInstrument: boolean;
+  readonly entitlementState: CoverageEntitlementState;
+  readonly entityResolved: boolean;
+  readonly applicable: boolean;
+  readonly qualityState: CoverageQualityState;
+  readonly historicalGap: boolean;
+  readonly knowableAtEvaluationTime: boolean;
+  readonly valuePresent: boolean;
+};
 
 export type EligibleUniverseMember = {
   readonly canonicalEntityId: string;
@@ -50,122 +41,52 @@ export type EligibleUniverseMember = {
   readonly assetClass: string | null;
 };
 
-export type FeatureCoverageDisposition = 'USABLE' | 'MISSING';
-
-export type FeatureCoverageCell = {
-  readonly canonicalEntityId: string;
-  readonly canonicalInstrumentId: string;
-  readonly evaluationTimestamp: UtcInstant;
+export type FeatureCoverageProbe = {
+  readonly member: EligibleUniverseMember;
   readonly featureId: string;
   readonly providerId: string | null;
-  readonly sector: string | null;
-  readonly industry: string | null;
-  readonly marketCapBucket: string | null;
-  readonly liquidityBucket: string | null;
-  readonly geography: string | null;
-  readonly venue: string | null;
-  readonly assetClass: string | null;
-  readonly disposition: FeatureCoverageDisposition;
-  readonly missingnessReason: MissingnessReason | null;
-  readonly imputed: false;
-};
-
-export type MissingnessCountByReason = Readonly<Record<MissingnessReason, number>>;
-
-export type CoverageSliceAggregate = {
-  readonly sliceKey: string;
-  readonly dimension: CoverageDimension;
-  readonly dimensionValue: string;
-  readonly eligibleUniverseCount: number;
-  readonly usableFeatureCount: number;
-  readonly expectedCellCount: number;
-  readonly coverageRatioBps: number;
-  readonly missingnessByReason: MissingnessCountByReason;
-};
-
-export type CoverageMetricSet = {
-  readonly coverageRatioBps: number;
-  readonly rollingCoverageRatioBps: number | null;
-  readonly providerCoverageRatioBps: Readonly<Record<string, number>>;
-  readonly crossSectionalCoverageRatioBps: number;
-  readonly featureCompletenessRatioBps: Readonly<Record<string, number>>;
-  readonly coverageStabilityBps: number | null;
-  readonly coverageDriftBps: number | null;
+  readonly signal: FeatureCoverageSignal;
 };
 
 export type CoverageTensor = {
-  readonly schemaVersion: typeof HELIOS_COVERAGE_TENSOR_SCHEMA;
-  readonly tensorId: string;
+  readonly schemaVersion: typeof HELIOS_FEATURE_COVERAGE_SCHEMA;
   readonly universeId: string;
   readonly universeDefinition: string;
   readonly evaluationTimestamp: UtcInstant;
+  readonly eligibleMemberCount: number;
   readonly featureIds: readonly string[];
-  readonly eligibleUniverseCount: number;
-  readonly usableFeatureCount: number;
-  readonly expectedCellCount: number;
-  readonly cells: readonly FeatureCoverageCell[];
-  readonly slices: readonly CoverageSliceAggregate[];
-  readonly metrics: CoverageMetricSet;
-  readonly featureFabricSchema: typeof HELIOS_FEATURE_FABRIC_SCHEMA;
-  readonly grantsExecutionAuthority: false;
+  readonly probes: readonly FeatureCoverageProbe[];
+  readonly coverageRatioBps: number;
+  readonly driftFromBaselineBps: number | null;
 };
 
 export type CoverageSnapshot = {
+  readonly schemaVersion: typeof HELIOS_FEATURE_COVERAGE_SCHEMA;
   readonly snapshotId: string;
   readonly capturedAt: UtcInstant;
-  readonly tensorId: string;
-  readonly universeId: string;
-  readonly evaluationTimestamp: UtcInstant;
-  readonly eligibleUniverseCount: number;
-  readonly usableFeatureCount: number;
-  readonly expectedCellCount: number;
-  readonly metrics: CoverageMetricSet;
-  readonly tensorFingerprint: string;
-  readonly grantsExecutionAuthority: false;
+  readonly tensorDigest: string;
+  readonly coverageRatioBps: number;
+};
+
+export type CoverageManifestMetrics = {
+  readonly coverageRatioBps: number;
+  readonly driftFromBaselineBps: number | null;
+  readonly eligibleMemberCount: number;
+  readonly probeCount: number;
 };
 
 export type CoverageManifest = {
-  readonly schemaVersion: typeof HELIOS_COVERAGE_TENSOR_SCHEMA;
-  readonly manifestId: string;
+  readonly schemaVersion: typeof HELIOS_FEATURE_COVERAGE_SCHEMA;
   readonly evaluationId: string | null;
+  readonly universeId: string;
   readonly universeDefinition: string;
-  readonly universeId: string;
   readonly featureIds: readonly string[];
-  readonly eligibleUniverseCount: number;
-  readonly usableFeatureCount: number;
-  readonly expectedCellCount: number;
-  readonly exclusionByReason: MissingnessCountByReason;
-  readonly snapshotIds: readonly string[];
-  readonly metrics: CoverageMetricSet;
-  readonly trainingSnapshotId: string | null;
-  readonly evaluationSnapshotId: string;
-  readonly manifestFingerprint: string;
-  readonly grantsExecutionAuthority: false;
-};
-
-export type CoverageDriftEvent = {
-  readonly eventId: string;
-  readonly detectedAt: UtcInstant;
-  readonly universeId: string;
-  readonly featureId: string | null;
-  readonly baselineSnapshotId: string;
-  readonly currentSnapshotId: string;
-  readonly metric: 'coverageRatioBps' | 'crossSectionalCoverageRatioBps' | 'featureCompletenessRatioBps';
-  readonly baselineValueBps: number;
-  readonly currentValueBps: number;
-  readonly driftBps: number;
-  readonly material: boolean;
-  readonly grantsExecutionAuthority: false;
+  readonly metrics: CoverageManifestMetrics;
+  readonly evaluationSnapshot: CoverageSnapshot;
+  readonly trainingSnapshot: CoverageSnapshot | null;
 };
 
 export type CoverageQualificationThresholds = {
   readonly minimumCoverageRatioBps: number;
   readonly maximumCoverageDriftBps: number;
-};
-
-export type CoverageQualificationVerdict = {
-  readonly passed: boolean;
-  readonly blockers: readonly string[];
-  readonly eligibleUniverseCount: number;
-  readonly usableFeatureCount: number;
 };
