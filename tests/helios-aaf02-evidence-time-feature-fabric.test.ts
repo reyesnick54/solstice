@@ -13,7 +13,6 @@ import {
   HeliosFeatureFabric,
   assertKnowableNotFromEventTimeAlone,
   availabilityAt,
-  buildInformationTime,
   computeFeatureObservation,
   createHeliosFeatureFabricStore,
   evaluateAaf02Qualification,
@@ -23,7 +22,8 @@ import {
   transformationVersionChangeCreatesNewLineage,
   type FeatureContributionInput,
   type FeatureDefinition,
-} from '../packages/platform/src/helios/index.ts';
+} from '../packages/platform/src/helios/feature-fabric/index.ts';
+import { buildInformationTime } from '../packages/platform/src/helios/observation/information-time.ts';
 import {
   loadHeliosFeatureFabricState,
   persistHeliosFeatureFabricState,
