@@ -1,7 +1,7 @@
 import { asUtcInstant } from '../../../../../domain/src/time.ts';
 import {
   heliosIssuerCanonicalEntityId,
-} from '../../../../../economic-asset-registry/src/knowledge-graph/helios-temporal-bridge.ts';
+} from './ekg-bridge.ts';
 import type { TemporalEntityGraphStore } from './graph-store.ts';
 import { temporalEntityNodeIdFor } from './ids.ts';
 

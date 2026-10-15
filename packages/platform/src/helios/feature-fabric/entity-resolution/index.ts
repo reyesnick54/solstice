@@ -45,3 +45,10 @@ export {
   type TemporalEntityResolutionQualificationResult,
 } from './qualification.ts';
 export { AAF03_CANONICAL_OWNER_REUSE, AAF03_EXPLICIT_NON_OWNERS } from './canonical-owners.ts';
+export {
+  HELIOS_EKG_ISSUER_MATERIAL_PREFIX,
+  heliosIssuerCanonicalEntityId,
+  heliosExternalIdentifier,
+  type EconomicKnowledgeCanonicalEntityId,
+  type HeliosExternalIdentifier,
+} from './ekg-bridge.ts';
