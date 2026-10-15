@@ -31,7 +31,7 @@ function entity(
   return Object.freeze({
     entityId: id,
     marketCapMinor: overrides.marketCapMinor ?? 1_000_000_000n,
-    liquidityScore: overrides.liquidityScore ?? 0.5,
+    liquidityScore: overrides.liquidityScore ?? 50,
     volatilityBps: overrides.volatilityBps ?? 1_200,
     sector: overrides.sector ?? 'TECH',
     geography: overrides.geography ?? 'US',
@@ -50,7 +50,7 @@ function syntheticUniverse(): UniverseEntityCharacteristics[] {
         marketCapMinor: largeCap ? 50_000_000_000n : 200_000_000n,
         sector: largeCap ? 'TECH' : 'ENERGY',
         geography: largeCap ? 'US' : 'EM',
-        liquidityScore: largeCap ? 0.9 : 0.2,
+        liquidityScore: largeCap ? 90 : 20,
         volatilityBps: largeCap ? 800 : 2_400,
         listingAgeDays: largeCap ? 3_000 : 200,
         historicalReturnBps: largeCap ? 700 : -200,
@@ -117,7 +117,7 @@ describe('HELIOS AAF06 coverage-bias sentinel', () => {
       marketCapMinor: 50_000_000n,
       sector: 'RETAIL',
       listingAgeDays: 50,
-      liquidityScore: 0.05,
+      liquidityScore: 5,
     });
     const withDelisted = [...eligible, delisted];
     const covered = eligible.map((row) => row.entityId);
