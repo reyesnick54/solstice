@@ -3,7 +3,7 @@ import type { PromotionCapsule } from './promotion-capsule.ts';
 import type { EvaluationQualificationResult } from './evaluation-qualification.ts';
 import type { ForwardShadowEvidenceSummary } from './forward-shadow.ts';
 import type { QualificationPolicy } from './qualification-policy.ts';
-import type { CoverageManifest } from '../../platform/src/helios/feature-fabric/coverage/index.ts';
+import type { CoverageManifest } from '../../platform/src/helios/feature-fabric/feature-coverage/index.ts';
 import { evaluateCoveragePromotionGate } from './evaluation/coverage-policy.ts';
 import type { StrategyFailure } from './types.ts';
 

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-15T10:05:12.725727+00:00",
+  "generatedAt": "2026-10-15T11:30:43.222023+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -543,14 +543,14 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 5171,
+      "packageDeepImport": 5173,
       "serviceDeepImport": 652,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 5171,
+      "relativeCrossPackage": 5173,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5823
+      "total": 5825
     }
   },
   "violations": [
@@ -27501,6 +27501,24 @@
       "spec": "../../../../domain/src/time.ts"
     },
     {
+      "file": "packages/platform/src/helios/feature-fabric/feature-coverage/tensor.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/feature-fabric/feature-coverage/tensor.ts' deep-imports 'domain' internals via '../../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/feature-fabric/feature-coverage/types.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/feature-fabric/feature-coverage/types.ts' deep-imports 'domain' internals via '../../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../../domain/src/time.ts"
+    },
+    {
       "file": "packages/platform/src/helios/feature-fabric/knowable-at.ts",
       "line": 5,
       "rule": "package-deep-import",
@@ -31887,19 +31905,19 @@
       "file": "packages/strategy-lab/src/evaluation/coverage-evidence.ts",
       "line": 9,
       "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/evaluation/coverage-evidence.ts' deep-imports 'platform' internals via '../../../platform/src/helios/feature-fabric/coverage/index.ts'",
+      "message": "'packages/strategy-lab/src/evaluation/coverage-evidence.ts' deep-imports 'platform' internals via '../../../platform/src/helios/feature-fabric/feature-coverage/index.ts'",
       "sourcePackage": "strategy-lab",
       "targetPackage": "platform",
-      "spec": "../../../platform/src/helios/feature-fabric/coverage/index.ts"
+      "spec": "../../../platform/src/helios/feature-fabric/feature-coverage/index.ts"
     },
     {
       "file": "packages/strategy-lab/src/evaluation/coverage-policy.ts",
       "line": 5,
       "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/evaluation/coverage-policy.ts' deep-imports 'platform' internals via '../../../platform/src/helios/feature-fabric/coverage/index.ts'",
+      "message": "'packages/strategy-lab/src/evaluation/coverage-policy.ts' deep-imports 'platform' internals via '../../../platform/src/helios/feature-fabric/feature-coverage/index.ts'",
       "sourcePackage": "strategy-lab",
       "targetPackage": "platform",
-      "spec": "../../../platform/src/helios/feature-fabric/coverage/index.ts"
+      "spec": "../../../platform/src/helios/feature-fabric/feature-coverage/index.ts"
     },
     {
       "file": "packages/strategy-lab/src/evaluation/engine.ts",
@@ -32319,10 +32337,10 @@
       "file": "packages/strategy-lab/src/promotion-gates.ts",
       "line": 6,
       "rule": "package-deep-import",
-      "message": "'packages/strategy-lab/src/promotion-gates.ts' deep-imports 'platform' internals via '../../platform/src/helios/feature-fabric/coverage/index.ts'",
+      "message": "'packages/strategy-lab/src/promotion-gates.ts' deep-imports 'platform' internals via '../../platform/src/helios/feature-fabric/feature-coverage/index.ts'",
       "sourcePackage": "strategy-lab",
       "targetPackage": "platform",
-      "spec": "../../platform/src/helios/feature-fabric/coverage/index.ts"
+      "spec": "../../platform/src/helios/feature-fabric/feature-coverage/index.ts"
     },
     {
       "file": "packages/strategy-lab/src/promotion-service.ts",
