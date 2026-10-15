@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-15T10:14:44.753775+00:00",
+  "generatedAt": "2026-10-15T10:17:08.272056+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -352,7 +352,6 @@
         "agent",
         "config",
         "domain",
-        "economic-asset-registry",
         "events",
         "evidence",
         "external-data",
@@ -543,14 +542,14 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 5171,
+      "packageDeepImport": 5165,
       "serviceDeepImport": 652,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 5171,
+      "relativeCrossPackage": 5165,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5823
+      "total": 5817
     }
   },
   "violations": [
@@ -27384,15 +27383,6 @@
       "spec": "../../../../../domain/src/time.ts"
     },
     {
-      "file": "packages/platform/src/helios/feature-fabric/entity-resolution/fixtures.ts",
-      "line": 4,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/feature-fabric/entity-resolution/fixtures.ts' deep-imports 'economic-asset-registry' internals via '../../../../../economic-asset-registry/src/knowledge-graph/helios-temporal-bridge.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "economic-asset-registry",
-      "spec": "../../../../../economic-asset-registry/src/knowledge-graph/helios-temporal-bridge.ts"
-    },
-    {
       "file": "packages/platform/src/helios/feature-fabric/entity-resolution/graph-store.ts",
       "line": 3,
       "rule": "package-deep-import",
@@ -27409,33 +27399,6 @@
       "sourcePackage": "platform",
       "targetPackage": "domain",
       "spec": "../../../../../domain/src/brand.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/feature-fabric/entity-resolution/resolver.ts",
-      "line": 1,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/feature-fabric/entity-resolution/resolver.ts' deep-imports 'economic-asset-registry' internals via '../../../../../economic-asset-registry/src/knowledge-graph/helios-temporal-bridge.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "economic-asset-registry",
-      "spec": "../../../../../economic-asset-registry/src/knowledge-graph/helios-temporal-bridge.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/feature-fabric/entity-resolution/resolver.ts",
-      "line": 2,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/feature-fabric/entity-resolution/resolver.ts' deep-imports 'economic-asset-registry' internals via '../../../../../economic-asset-registry/src/knowledge-graph/ids.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "economic-asset-registry",
-      "spec": "../../../../../economic-asset-registry/src/knowledge-graph/ids.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/feature-fabric/entity-resolution/resolver.ts",
-      "line": 3,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/feature-fabric/entity-resolution/resolver.ts' deep-imports 'economic-asset-registry' internals via '../../../../../economic-asset-registry/src/knowledge-graph/types.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "economic-asset-registry",
-      "spec": "../../../../../economic-asset-registry/src/knowledge-graph/types.ts"
     },
     {
       "file": "packages/platform/src/helios/feature-fabric/entity-resolution/service.ts",
@@ -27463,24 +27426,6 @@
       "sourcePackage": "platform",
       "targetPackage": "domain",
       "spec": "../../../../../domain/src/time.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/feature-fabric/entity-resolution/types.ts",
-      "line": 7,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/feature-fabric/entity-resolution/types.ts' deep-imports 'economic-asset-registry' internals via '../../../../../economic-asset-registry/src/knowledge-graph/ids.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "economic-asset-registry",
-      "spec": "../../../../../economic-asset-registry/src/knowledge-graph/ids.ts"
-    },
-    {
-      "file": "packages/platform/src/helios/feature-fabric/entity-resolution/types.ts",
-      "line": 8,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/feature-fabric/entity-resolution/types.ts' deep-imports 'economic-asset-registry' internals via '../../../../../economic-asset-registry/src/knowledge-graph/types.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "economic-asset-registry",
-      "spec": "../../../../../economic-asset-registry/src/knowledge-graph/types.ts"
     },
     {
       "file": "packages/platform/src/helios/feature-fabric/fabric.ts",
