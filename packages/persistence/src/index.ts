@@ -124,6 +124,10 @@ export {
   queryHeliosMacroEvents,
 } from './growth/pg-helios-macro-event-intelligence.ts';
 export {
+  loadHeliosFeatureFabricState,
+  persistHeliosFeatureFabricState,
+} from './growth/pg-helios-feature-fabric-store.ts';
+export {
   loadGrowIntelligenceState,
   persistGrowIntelligenceState,
 } from './growth/pg-helios-grow-intelligence.ts';

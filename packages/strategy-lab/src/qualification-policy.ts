@@ -38,6 +38,9 @@ export type QualificationPolicy = {
   readonly paperEligibilityExpiryDays: number;
   readonly reviewIntervalDays: number;
   readonly authorityRequired: 'QUALIFICATION_SERVICE' | 'HUMAN_GOVERNANCE';
+  readonly minimumCoverageRatioBps: number | null;
+  readonly maximumCoverageDriftBps: number | null;
+  readonly requireCoverageManifestForNonUniversalFeatures: true;
   readonly liveExecutionPermitted: false;
 };
 
@@ -65,6 +68,9 @@ const DEFAULT_POLICY_BODY = Object.freeze({
   paperEligibilityExpiryDays: 90,
   reviewIntervalDays: 30,
   authorityRequired: 'QUALIFICATION_SERVICE' as const,
+  minimumCoverageRatioBps: null as number | null,
+  maximumCoverageDriftBps: null as number | null,
+  requireCoverageManifestForNonUniversalFeatures: true as const,
   liveExecutionPermitted: false as const,
 });
 

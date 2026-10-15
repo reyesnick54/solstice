@@ -3,6 +3,8 @@ import type { PromotionCapsule } from './promotion-capsule.ts';
 import type { EvaluationQualificationResult } from './evaluation-qualification.ts';
 import type { ForwardShadowEvidenceSummary } from './forward-shadow.ts';
 import type { QualificationPolicy } from './qualification-policy.ts';
+import type { CoverageManifest } from '../../platform/src/helios/feature-fabric/coverage/index.ts';
+import { evaluateCoveragePromotionGate } from './evaluation/coverage-policy.ts';
 import type { StrategyFailure } from './types.ts';
 
 export type GateResult = {
@@ -43,6 +45,9 @@ export function gateResearchToEvaluation(input: {
 export function gateEvaluationToShadow(input: {
   readonly qualification: EvaluationQualificationResult;
   readonly policy: QualificationPolicy;
+  readonly coverageManifest?: CoverageManifest | null;
+  readonly trainingCoverageManifest?: CoverageManifest | null;
+  readonly nonUniversalFeaturesUsed?: boolean;
 }): Result<GateResult, StrategyFailure> {
   const missing: string[] = [];
   if (input.qualification.policyHash !== input.policy.policyHash) {
@@ -50,6 +55,15 @@ export function gateEvaluationToShadow(input: {
   }
   if (!input.qualification.passed) {
     missing.push('declared evaluation qualification result');
+  }
+  const coverageGate = evaluateCoveragePromotionGate({
+    policy: input.policy,
+    evaluationManifest: input.coverageManifest ?? null,
+    trainingManifest: input.trainingCoverageManifest ?? null,
+    nonUniversalFeaturesUsed: input.nonUniversalFeaturesUsed ?? false,
+  });
+  if (!coverageGate.passed) {
+    missing.push(...coverageGate.blockers);
   }
   return ok(
     Object.freeze({

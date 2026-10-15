@@ -42,6 +42,10 @@ export type StrategyEvaluationRecord = {
   readonly failureCode: string | null;
   readonly failureMessage: string | null;
   readonly artifactRefs: readonly string[];
+  readonly coverageManifestId: string | null;
+  readonly coverageManifestHash: string | null;
+  readonly eligibleUniverseCount: number | null;
+  readonly usableFeatureCount: number | null;
   readonly createdAt: UtcInstant;
   readonly immutable: true;
 };
@@ -59,6 +63,10 @@ export function sealEvaluationRecord(input: {
   readonly failureCode?: string | null;
   readonly failureMessage?: string | null;
   readonly artifactRefs?: readonly string[];
+  readonly coverageManifestId?: string | null;
+  readonly coverageManifestHash?: string | null;
+  readonly eligibleUniverseCount?: number | null;
+  readonly usableFeatureCount?: number | null;
   readonly createdAt: UtcInstant;
 }): StrategyEvaluationRecord {
   const material = JSON.stringify(
@@ -76,6 +84,9 @@ export function sealEvaluationRecord(input: {
       net: input.metrics.netEconomicsMinor.toString(),
       outcome: input.qualificationOutcome,
       succeeded: input.succeeded,
+      coverageManifestHash: input.coverageManifestHash ?? null,
+      eligibleUniverseCount: input.eligibleUniverseCount ?? null,
+      usableFeatureCount: input.usableFeatureCount ?? null,
     },
     (_key, value) => (typeof value === 'bigint' ? value.toString() : value),
   );
@@ -106,6 +117,10 @@ export function sealEvaluationRecord(input: {
     failureCode: input.failureCode ?? null,
     failureMessage: input.failureMessage ?? null,
     artifactRefs: Object.freeze([...(input.artifactRefs ?? [])]),
+    coverageManifestId: input.coverageManifestId ?? null,
+    coverageManifestHash: input.coverageManifestHash ?? null,
+    eligibleUniverseCount: input.eligibleUniverseCount ?? null,
+    usableFeatureCount: input.usableFeatureCount ?? null,
     createdAt: input.createdAt,
     immutable: true,
   });
