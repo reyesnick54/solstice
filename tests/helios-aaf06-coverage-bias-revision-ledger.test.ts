@@ -31,7 +31,7 @@ function entity(
   return Object.freeze({
     entityId: id,
     marketCapMinor: overrides.marketCapMinor ?? 1_000_000_000n,
-    liquidityScore: overrides.liquidityScore ?? 0.5,
+    liquidityScore: overrides.liquidityScore ?? 5_000,
     volatilityBps: overrides.volatilityBps ?? 1_200,
     sector: overrides.sector ?? 'TECH',
     geography: overrides.geography ?? 'US',
