@@ -69,7 +69,7 @@ function loadParityVectors(): ParityVectorFile {
 describe('HELIOS NATIVE04 matching engine', () => {
   it('vendor assimilation manifest is present', () => {
     const manifest = JSON.parse(
-      readFileSync(join(ROOT, 'vendor/assimilation/bytex/ASSIMILATION_MANIFEST.json'), 'utf8'),
+      readFileSync(join(ROOT, 'vendor/assimilation/bytex/native04-matching.manifest.json'), 'utf8'),
     ) as { workPackage: string };
     assert.equal(manifest.workPackage, 'HELIOS_NATIVE04');
   });

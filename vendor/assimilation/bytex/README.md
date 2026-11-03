@@ -1,15 +1,24 @@
-# BYTEX assimilation reference (NATIVE04)
+# BYTEX assimilation reference
 
-Clean-room TypeScript execution simulation lives in
-`packages/platform/src/helios/execution-twin/simulation/`. This directory holds
-upstream lock metadata and deterministic parity vectors — not a runtime dependency
-on BYTEX .NET packages.
+Assimilation workspace for HELIOS clean-room ports from [BYTEX-TRADE/bytex](https://github.com/BYTEX-TRADE/bytex). **No runtime import of upstream C# assemblies.**
 
 | Field | Value |
-|-------|-------|
+| --- | --- |
 | Upstream | https://github.com/BYTEX-TRADE/bytex |
-| Reference release | 0.11.0 |
-| Reference commit | `67b3e103043476a0490bb7afa146ec9ac339b116` |
+| Pinned SHA | `67b3e103043476a0490bb7afa146ec9ac339b116` |
 | License | Apache-2.0 |
 
-See `ASSIMILATION_MANIFEST.json` and `parity-vectors.json` for qualification inputs.
+## NATIVE04 — matching engine / execution simulation
+
+Canonical TypeScript owner: `packages/platform/src/helios/execution-twin/simulation/`.
+
+- `native04-matching.manifest.json` — capability list and qualification marker
+- `parity-vectors.json` — HELIOS-authored golden vectors for deterministic parity tests
+
+## NATIVE06 — strategy documents + indicators → Strategy Genome
+
+- `ASSIMILATION_MANIFEST.json` — BYTEX node type → HELIOS catalog refs
+- `INDICATOR_PORT_INDEX.json` — indicator class → native module map
+- `documents/` — small strategy document fixtures for translation golden tests
+
+Full upstream trees stay in the OS00 reference workspace (`/tmp/_helios_upstream_reference/bytex` or `../_helios_upstream_reference/bytex`), not in this repository.
