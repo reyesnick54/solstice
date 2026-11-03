@@ -23,6 +23,8 @@ git -C vendor/assimilation/<name> checkout <sha>
 
 Authoritative lock metadata: [`docs/helios/open-source/upstream-lock.json`](../../docs/helios/open-source/upstream-lock.json).
 
+Native TypeScript ports (including NATIVE03 BYTEX deterministic runtime) live under canonical HELIOS owners — see [`docs/helios/open-source/NATIVE03_BYTEX_DETERMINISTIC_RUNTIME.md`](../docs/helios/open-source/NATIVE03_BYTEX_DETERMINISTIC_RUNTIME.md).
+
 ## Git policy
 
 Cloned upstream directories are **gitignored**. Committed artifacts are under [`docs/helios/native-assimilation/`](../docs/helios/native-assimilation/) and root [`THIRD_PARTY_NOTICES`](../THIRD_PARTY_NOTICES).

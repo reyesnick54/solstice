@@ -71,3 +71,7 @@ export {
 /** OS03 — institutional paper execution and order-book simulation. */
 export * as heliosExecutionSimulation from './simulation/index.ts';
 export * from './simulation/index.ts';
+
+/** NATIVE03 — native BYTEX deterministic trading runtime (TypeScript port, study-only upstream). */
+export * as heliosNativeBytexRuntime from './bytex-native/index.ts';
+export * from './bytex-native/index.ts';
