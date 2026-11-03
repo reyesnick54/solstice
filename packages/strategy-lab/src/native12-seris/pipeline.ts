@@ -2,8 +2,6 @@ import { createHash, randomUUID } from 'node:crypto';
 
 import { err, ok, type Result } from '@solstice/domain';
 import type { UtcInstant } from '@solstice/domain';
-import type { VerifiedActorContext } from '../../../identity/src/actor-context.ts';
-import type { RiskBudget } from '../../../risk/src/types.ts';
 import { DEFAULT_PARAMETER_SET } from '../fixtures.ts';
 import { overfittingWarnings } from '../overfitting.ts';
 import { countStrategyParameters } from '../dsl.ts';
@@ -93,12 +91,13 @@ export class SerisNativeStrategyPipeline {
   processProposal(input: {
     readonly proposal: SerisAiStrategyProposal;
     readonly dataset: MarketDataset;
-    readonly riskBudget: RiskBudget;
+    readonly riskBudget: Parameters<StrategyLab['compile']>[2];
     readonly subjectId: string;
     readonly startingCapitalMinor: bigint;
     readonly sealedAt: UtcInstant;
     readonly featureCatalog: SerisFeatureCatalogPort;
-    readonly governanceActor?: VerifiedActorContext;
+    /** Human governance actor for shadow/paper simulation gates only. */
+    readonly governanceActor?: unknown;
     readonly investmentAccountId?: string;
     readonly maxDrawdownBps?: number;
   }): Result<SerisNative12PipelineOutcome, StrategyFailure> {
