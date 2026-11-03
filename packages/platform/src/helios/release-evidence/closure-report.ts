@@ -19,6 +19,7 @@ export function buildHeliosClosureReport(input: {
   readonly livePilotGate?: LivePilotGate | null;
 }): HeliosClosureReport {
   const registry = buildHeliosWorkPackageRegistry(input.root);
+  const h01ThroughH36 = registry.filter((row) => /^H\d+$/.test(row.workPackage));
   const engineering = input.releaseEvidence.engineering;
 
   const recommendedNext =
@@ -43,7 +44,7 @@ export function buildHeliosClosureReport(input: {
     releaseSha: input.releaseEvidence.identity.gitSha,
     baseSha: input.releaseEvidence.identity.baseSha ?? null,
     releaseArtifactDigest: input.releaseEvidence.identity.artifactDigest,
-    h01ThroughH36: registry,
+    h01ThroughH36,
     architectureQualification: engineering.architectureChecks.qualified ? 'QUALIFIED' : 'BLOCKED',
     dataProviderStatus: input.releaseEvidence.data.externalQualificationStatus,
     modelsStatus: input.releaseEvidence.intelligence.qualifiedModelProviderState,
