@@ -1,5 +1,5 @@
 /**
- * HELIOS OS04 — binds venue adapter conformance to execution routing posture.
+ * HELIOS OS04 / NATIVE05 — binds venue adapter conformance to execution routing posture.
  *
  * Routing may reference venue market-data routes; it never places live orders.
  */
@@ -9,7 +9,7 @@ import { LIVE_TRADING_ENABLED } from '@solstice/config';
 import {
   assertOs04VenueRegistryComplete,
   HELIOS_OS04_VENUE_ADAPTERS,
-  KRAKEN_VENUE_ADAPTER,
+  getHeliosVenueAdapter,
 } from '@solstice/external-data';
 import {
   evaluateOs04VenueAdapterConformanceQualification,
@@ -43,18 +43,12 @@ export async function runHeliosOs04VenueConformanceSuite(input: {
     );
   }
 
-  const krakenReport = reports.find((row) => row.venueId === 'kraken');
-  const skeletonReports = reports.filter((row) => row.venueId !== 'kraken');
-  const skeletonsFailClosed = skeletonReports.every((report) =>
-    report.checks.some(
-      (check) => check.checkId === 'skeleton_no_assumed_orders' && check.outcome === 'PASS',
-    ),
-  );
+  const allNativeQualified = reports.every((report) => report.adapterQualified === true);
 
   const qualification = evaluateOs04VenueAdapterConformanceQualification({
-    krakenAdapterQualified: krakenReport?.adapterQualified === true,
+    krakenAdapterQualified: reports.find((row) => row.venueId === 'kraken')?.adapterQualified === true,
     allVenueSkeletonsRegistered: assertOs04VenueRegistryComplete(),
-    skeletonsFailClosed,
+    skeletonsFailClosed: allNativeQualified,
     noLiveOrderPlacement: HELIOS_OS04_VENUE_ADAPTERS.every(
       (adapter) => adapter.liveOrderPlacementEnabled === false,
     ),
@@ -77,10 +71,7 @@ export function describeVenueRoutingPosture(venueId: string): Readonly<{
   readonly executionEnabled: false;
   readonly healthState: string;
 }> {
-  const adapter =
-    venueId === 'kraken'
-      ? KRAKEN_VENUE_ADAPTER
-      : (HELIOS_OS04_VENUE_ADAPTERS.find((row) => row.venueId === venueId) ?? null);
+  const adapter = getHeliosVenueAdapter(venueId);
   if (!adapter) {
     return Object.freeze({
       routeId: `route_venue_${venueId}_unknown`,
