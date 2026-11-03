@@ -4,15 +4,11 @@ import {
   ResearchMeshBudgetController,
   ResearchMeshStore,
   SpecialistResearchMesh,
+  type EvidenceReference,
   type OpportunityKind,
 } from '../research-mesh/index.ts';
 
-export type ProactiveMeshEvidenceRef = {
-  readonly evidenceId: string;
-  readonly sourceRef: string;
-  readonly sourceKind: string;
-  readonly contentHash: string;
-};
+export type ProactiveMeshEvidenceRef = EvidenceReference;
 
 export type ProactiveTriggeredResearchInput = {
   readonly workOrderId: string;
@@ -117,12 +113,7 @@ export function createProactiveResearchMeshBridge(
         opportunityKind: input.opportunityKind,
         privacyClass: 'PUBLIC_RESEARCH',
         contextRef: `proactive_ctx_${input.workOrderId}`,
-        evidenceBundle: input.evidenceBundle.map((row) =>
-          Object.freeze({
-            ...row,
-            sourceKind: row.sourceKind as 'MARKET_OBSERVATION',
-          }),
-        ),
+        evidenceBundle: Object.freeze([...input.evidenceBundle]),
       });
       if (!result.ok) {
         return { ok: false, message: result.error.message };

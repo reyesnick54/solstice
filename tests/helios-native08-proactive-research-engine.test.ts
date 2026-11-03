@@ -50,8 +50,18 @@ function adaptMeshBridgeToOs08(
           Object.freeze({
             evidenceId: row.evidenceId,
             sourceRef: row.sourceRef,
-            sourceKind: row.sourceKind,
-            contentHash: row.contentHash,
+            sourceKind:
+              row.sourceKind === 'MARKET_OBSERVATION' ||
+              row.sourceKind === 'MANDATE' ||
+              row.sourceKind === 'PORTFOLIO' ||
+              row.sourceKind === 'EXTERNAL_PUBLIC' ||
+              row.sourceKind === 'ASSERTION'
+                ? row.sourceKind
+                : 'EXTERNAL_PUBLIC',
+            observedAt: row.observedAt,
+            freshnessOk: row.freshnessOk,
+            entitlementOk: row.entitlementOk,
+            provenanceRef: row.provenanceRef,
           }),
         ),
       });
