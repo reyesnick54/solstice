@@ -1,6 +1,6 @@
 {
   "state": "QUARANTINED",
-  "purpose": "Temporary full-source assimilation inputs for HELIOS native conversion. Not executed at runtime.",
+  "purpose": "Legal and provenance stubs for HELIOS native assimilation. Upstream source is reference-only outside this tree. Not executed at runtime.",
   "excludedFrom": [
     "typescript_compile",
     "npm_workspaces",
