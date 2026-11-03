@@ -10,7 +10,8 @@ export type OpportunityCandidateSource =
   | 'COMMODITY_TREND'
   | 'RELATIVE_VALUE_STAT_ARB'
   | 'AGENTIC_CAPITAL_MESH'
-  | 'GROK_RESEARCH';
+  | 'GROK_RESEARCH'
+  | 'CROSS_MARKET_INTELLIGENCE_NATIVE14';
 
 export type AssembledOpportunityCandidate = {
   readonly opportunityId: string;
