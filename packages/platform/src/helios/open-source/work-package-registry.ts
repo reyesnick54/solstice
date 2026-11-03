@@ -92,7 +92,7 @@ export const OPEN_SOURCE_WORK_PACKAGE_EVIDENCE: Readonly<
     'packages/platform/src/helios/open-source-integration/os13-ai-strategy-sandbox/os13.test.ts',
   ]),
   OS14: Object.freeze([
-    'packages/platform/src/helios/open-source/prediction-market-research/index.ts',
+    'packages/platform/src/helios/open-source/os14-prediction-market/index.ts',
     'tests/helios-os14-prediction-market-research.test.ts',
   ]),
 });
