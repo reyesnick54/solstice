@@ -15,5 +15,8 @@
   },
   "engines": {
     "node": ">=22"
+  },
+  "dependencies": {
+    "@solstice/config": "0.1.0"
   }
 }
