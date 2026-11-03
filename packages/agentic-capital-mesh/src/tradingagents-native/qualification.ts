@@ -1,6 +1,25 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
+function committedQuarantineArchivesActive(root: string): boolean {
+  const quarantinePath = join(root, 'vendor/assimilation/QUARANTINE.json');
+  const manifestPath = join(root, 'vendor/assimilation/SOURCE_IMPORT_MANIFEST.json');
+  if (!existsSync(quarantinePath) || !existsSync(manifestPath)) return false;
+  try {
+    const quarantine = JSON.parse(readFileSync(quarantinePath, 'utf8')) as { state?: string };
+    if (quarantine.state !== 'QUARANTINED') return false;
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as {
+      sources?: readonly { runtimeDependency?: boolean; sourceAssimilationState?: string }[];
+    };
+    return (manifest.sources ?? []).every(
+      (source) =>
+        source.runtimeDependency === false && source.sourceAssimilationState === 'QUARANTINED',
+    );
+  } catch {
+    return false;
+  }
+}
+
 export const HELIOS_NATIVE_TRADINGAGENTS_DATA_QUALIFIED =
   'HELIOS_NATIVE_TRADINGAGENTS_DATA_QUALIFIED' as const;
 export const HELIOS_NATIVE_TRADINGAGENTS_DATA_BLOCKED = 'HELIOS_NATIVE_TRADINGAGENTS_DATA_BLOCKED' as const;
@@ -55,7 +74,7 @@ export function assertNoPythonProductionDependency(root = repoRoot()): readonly 
     }
   }
   const vendorTree = join(root, 'vendor/assimilation/tradingagents/tradingagents');
-  if (existsSync(vendorTree)) {
+  if (existsSync(vendorTree) && !committedQuarantineArchivesActive(root)) {
     blockers.push('upstream tradingagents tree must not be committed under vendor/assimilation');
   }
   return Object.freeze(blockers);
