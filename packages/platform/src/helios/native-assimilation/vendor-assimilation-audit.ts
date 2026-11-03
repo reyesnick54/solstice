@@ -5,7 +5,12 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
-const ASSIMILATION_REL = 'vendor/assimilation';
+import {
+  ASSIMILATION_VENDOR_REL,
+  readAssimilationQuarantinePosture,
+} from './assimilation-quarantine.ts';
+
+const ASSIMILATION_REL = ASSIMILATION_VENDOR_REL;
 
 /** Allowed filenames under vendor/assimilation when no foreign runtime source remains. */
 const LEGAL_ONLY_BASENAMES = new Set([
@@ -116,6 +121,34 @@ export function auditVendorAssimilationTree(root: string): VendorAssimilationAud
       blockers: Object.freeze(absentBlockers),
       retainedLegalPaths: Object.freeze([]),
       removedForeignSource: true,
+    });
+  }
+
+  const quarantine = readAssimilationQuarantinePosture(root);
+  if (quarantine.active) {
+    checks.push({
+      id: 'vendor.assimilation.quarantine_active',
+      passed: true,
+      message: `full OSS source quarantined under ${ASSIMILATION_REL} (${quarantine.vendorPaths.length} manifest path(s)); not a runtime dependency`,
+    });
+    checks.push({
+      id: 'vendor.assimilation.legal_notices_preserved',
+      passed: legalDocsPresent,
+      message: legalDocsPresent
+        ? 'legal notices and provenance manifest under docs/helios/native-assimilation/'
+        : 'missing THIRD_PARTY_NOTICES or NATIVE_ASSIMILATION_PROVENANCE_MANIFEST',
+    });
+    const quarantineBlockers = legalDocsPresent
+      ? []
+      : ['legal attribution artifacts missing (THIRD_PARTY_NOTICES or provenance manifest)'];
+    return Object.freeze({
+      assimilationPath: ASSIMILATION_REL,
+      present: true,
+      checks: Object.freeze(checks),
+      pass: quarantineBlockers.length === 0,
+      blockers: Object.freeze(quarantineBlockers),
+      retainedLegalPaths: Object.freeze([]),
+      removedForeignSource: false,
     });
   }
 

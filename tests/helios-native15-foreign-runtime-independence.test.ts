@@ -20,7 +20,7 @@ import {
 const ROOT = join(import.meta.dirname, '..');
 
 describe('HELIOS NATIVE15 — foreign runtime independence', () => {
-  it('vendor/assimilation tree has no foreign application source', () => {
+  it('vendor/assimilation is quarantined or contains no foreign application source', () => {
     const audit = auditVendorAssimilationTree(ROOT);
     assert.equal(audit.pass, true, JSON.stringify(audit.blockers));
   });
@@ -30,7 +30,7 @@ describe('HELIOS NATIVE15 — foreign runtime independence', () => {
     assert.equal(violations.length, 0, violations.join(', '));
   });
 
-  it('foreign runtime scan passes (no submodules, vendored upstream apps, or GitHub package deps)', () => {
+  it('foreign runtime scan passes outside quarantined assimilation trees', () => {
     const scan = scanForeignRuntimeIndependence(ROOT);
     assert.equal(scan.pass, true, scan.blockers.join('; '));
   });

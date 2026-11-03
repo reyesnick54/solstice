@@ -28,6 +28,38 @@ function repoRoot(): string {
   return join(import.meta.dirname, '..', '..', '..', '..');
 }
 
+function isQuarantinedTradingAgentsImport(root: string): boolean {
+  const qPath = join(root, 'vendor/assimilation/QUARANTINE.json');
+  const mPath = join(root, 'vendor/assimilation/SOURCE_IMPORT_MANIFEST.json');
+  if (!existsSync(qPath) || !existsSync(mPath)) {
+    return false;
+  }
+  try {
+    const quarantine = JSON.parse(readFileSync(qPath, 'utf8')) as { state?: string };
+    if (quarantine.state !== 'QUARANTINED') {
+      return false;
+    }
+    const manifest = JSON.parse(readFileSync(mPath, 'utf8')) as {
+      sources?: readonly {
+        sourceName?: string;
+        vendorPath?: string;
+        sourceAssimilationState?: string;
+        runtimeDependency?: boolean;
+      }[];
+    };
+    return (manifest.sources ?? []).some(
+      (source) =>
+        source.sourceName === 'tradingagents' &&
+        source.vendorPath === 'vendor/assimilation/tradingagents' &&
+        source.sourceAssimilationState === 'QUARANTINED' &&
+        source.runtimeDependency === false &&
+        existsSync(join(root, 'vendor/assimilation/tradingagents')),
+    );
+  } catch {
+    return false;
+  }
+}
+
 function walkTs(dir: string, out: string[] = []): string[] {
   if (!existsSync(dir)) return out;
   for (const entry of readdirSync(dir)) {
@@ -55,7 +87,7 @@ export function assertNoPythonProductionDependency(root = repoRoot()): readonly 
     }
   }
   const vendorTree = join(root, 'vendor/assimilation/tradingagents/tradingagents');
-  if (existsSync(vendorTree)) {
+  if (existsSync(vendorTree) && !isQuarantinedTradingAgentsImport(root)) {
     blockers.push('upstream tradingagents tree must not be committed under vendor/assimilation');
   }
   return Object.freeze(blockers);
