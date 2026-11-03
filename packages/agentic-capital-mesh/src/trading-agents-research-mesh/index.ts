@@ -37,7 +37,7 @@ export {
   appendInvestDebateTurn,
   appendRiskDebateTurn,
 } from './debate.ts';
-export { TradingAgentsDecisionMemory, type DecisionMemoryEntry } from './memory.ts';
+export { TradingAgentsDecisionMemory } from './memory.ts';
 export { TradingAgentsResearchMesh } from './mesh-service.ts';
 export {
   HELIOS_NATIVE_INSTITUTIONAL_AGENT_MESH_QUALIFIED,
