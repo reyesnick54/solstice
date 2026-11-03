@@ -1,0 +1,146 @@
+SunRey / Solstice — Third-Party Notices
+=========================================
+
+This file satisfies legal attribution for open-source components referenced or
+ported into the Solstice repository. It does not grant operational permission to
+run upstream trading bots, store customer private keys, or bypass the Compliance
+Kernel or Execution Authority.
+
+Last updated: 2026-11-03 (HELIOS NATIVE02)
+
+---
+
+1. SunRey proprietary
+
+   Unless a file carries an explicit SPDX license identifier or is listed in
+   sections 2–3 below, Solstice source is proprietary SunRey product code.
+   See repository governance in AGENTS.md and docs/architecture/constitution.md.
+
+---
+
+2. Apache-2.0 components (reference / future port)
+
+   The following upstream projects are pinned for HELIOS native assimilation
+   review. No vendor tree is committed as an operational dependency.
+
+   ### BYTEX
+
+   - Project: BYTEX (https://github.com/BYTEX-TRADE/bytex)
+   - License: Apache License 2.0
+   - Pin SHA: 67b3e103043476a0490bb7afa146ec9ac339b116
+   - Upstream LICENSE: vendor/assimilation/bytex/LICENSE (quarantine clone)
+   - Upstream NOTICE: vendor/assimilation/bytex/NOTICE (quarantine clone)
+   - Solstice paths derived from upstream: (none at NATIVE02 — audit only)
+   - Audit: docs/helios/native-assimilation/NATIVE_SOURCE_SECURITY_AUDIT.md
+
+   ### TradingAgents
+
+   - Project: TradingAgents (https://github.com/TauricResearch/TradingAgents)
+   - License: Apache License 2.0
+   - Pin SHA: c4544913a14ed3df5f1ed7b9e8483270ce20682a
+   - Upstream LICENSE: vendor/assimilation/tradingagents/LICENSE (quarantine clone)
+   - Solstice paths derived from upstream: (none at NATIVE02 — audit only)
+   - Audit: docs/helios/native-assimilation/NATIVE_SOURCE_SECURITY_AUDIT.md
+
+   ### Seris
+
+   - Project: Seris (https://github.com/aowang-ai/seris)
+   - License: Apache License 2.0
+   - Pin SHA: f73dbbb0cd7e3b52601abf905bb871cdb9098550
+   - Upstream LICENSE: vendor/assimilation/seris/LICENSE (quarantine clone)
+   - Upstream NOTICE: vendor/assimilation/seris/NOTICE (quarantine clone)
+   - Solstice paths derived from upstream: (none at NATIVE02 — audit only)
+   - Audit: docs/helios/native-assimilation/NATIVE_SOURCE_SECURITY_AUDIT.md
+
+   Apache License 2.0 (full text)
+   --------------------------------
+   Copyright notices and license text are reproduced from each upstream LICENSE
+   file at the pin SHA above. The standard Apache License, Version 2.0, is
+   available at https://www.apache.org/licenses/LICENSE-2.0
+
+   When porting Apache-2.0 source into Solstice, include the upstream copyright
+   notice and state modifications per section 4 of the Apache-2.0 license.
+
+---
+
+3. MIT components (reference / future port)
+
+   ### OpenChart
+
+   - Project: OpenChart (https://github.com/longsurf-ai/openchart)
+   - License: MIT
+   - Copyright (c) 2026 Longsurf, Inc.
+   - Pin SHA: 8109466bfb5d44c32e0e03e9337eaca48b837ab4
+   - Upstream LICENSE: vendor/assimilation/openchart/LICENSE (quarantine clone)
+   - Solstice paths derived from upstream: (none at NATIVE02 — audit only)
+   - Audit: docs/helios/native-assimilation/NATIVE_SOURCE_SECURITY_AUDIT.md
+
+   MIT License (OpenChart — text from upstream LICENSE at pin)
+   ------------------------------------------------------------
+   MIT License
+
+   Copyright (c) 2026 Longsurf, Inc.
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in all
+   copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+
+   ### Polymarket Prediction Bot (attribution only — DO NOT PORT)
+
+   - Project: Polymarket-Prediction-Bot
+     (https://github.com/semrincaballero/Polymarket-Prediction-Bot)
+   - License: MIT
+   - Copyright (c) 2026 Polymarket Prediction Bot contributors
+   - Pin SHA: 1f7c9761ddd26863242e3ed4f83c230ee38aebeb
+   - Solstice paths derived from upstream: none — NATIVE02 classifies as DO_NOT_PORT
+   - Security: docs/helios/native-assimilation/NATIVE_SOURCE_SECURITY_AUDIT.md
+
+   MIT License (Polymarket bot — text from upstream LICENSE at pin)
+   ----------------------------------------------------------------
+   MIT License
+
+   Copyright (c) 2026 Polymarket Prediction Bot contributors
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in all
+   copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+
+---
+
+4. Transitive runtime dependencies
+
+   npm, pnpm, and other package-manager dependencies retain their licenses in
+   each package's metadata. This file does not duplicate those notices unless
+   source is ported into Solstice tree paths listed in sections 2–3.
+
+---
+
+Register and capability map: docs/helios/native-assimilation/
