@@ -193,3 +193,4 @@ export { classifyAiProviderFailure } from './certification/classify-failure.ts';
 export { runAiCertificationHarness } from './certification/harness.ts';
 export { runSyntheticEvaluationHarness } from './certification/evaluation-harness.ts';
 export { resolveCostControls, DEFAULT_AI_COST_CONTROLS } from './certification/cost-controls.ts';
+export * from './trading-agents-research/index.ts';
