@@ -262,12 +262,6 @@ export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPacka
           : 'BLOCKED',
       'tests/helios-h36-release-evidence-live-pilot-gate.test.ts',
     ),
-    statusFrom(
-      'OS12',
-      'Agent permission and model gateway (Seris integration)',
-      testExists(root, 'helios-os12-agent-permission-gateway.test.ts') ? 'QUALIFIED' : 'BLOCKED',
-      'tests/helios-os12-agent-permission-gateway.test.ts',
-    ),
   );
 
   return Object.freeze(rows);
