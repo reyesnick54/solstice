@@ -1,3 +1,0 @@
-indicator("Balance of Power", overlay = false)
-source = input.source(close, "Source")
-plot("value", high == low ? 0 : (close - open) / (high - low), "Value")
