@@ -6,7 +6,8 @@
   "auditedAt": "2026-11-03T09:20:00Z",
   "solsticeGitSha": "e44ef7fd18288e1e95fad6744b755630f237c8d2",
   "quarantineRoot": "vendor/assimilation",
-  "gitPolicy": "upstream_trees_gitignored_audit_docs_committed",
+  "gitPolicy": "committed_quarantine_archives_no_runtime",
+  "sourceImportManifest": "vendor/assimilation/SOURCE_IMPORT_MANIFEST.json",
   "packages": [
     {
       "id": "bytex",

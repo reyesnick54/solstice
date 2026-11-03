@@ -1,0 +1,12 @@
+{
+  "state": "QUARANTINED",
+  "purpose": "Temporary full-source assimilation inputs for HELIOS native conversion. Not executed at runtime.",
+  "excludedFrom": [
+    "typescript_compile",
+    "npm_workspaces",
+    "repository_test_globs",
+    "helios_runtime_load",
+    "production_container_bundle"
+  ],
+  "manifest": "vendor/assimilation/SOURCE_IMPORT_MANIFEST.json"
+}
