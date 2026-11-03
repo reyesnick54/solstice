@@ -8,7 +8,7 @@ import {
   HELIOS_FUNDAMENTAL_FEATURE_SCHEMA,
   type FundamentalFeatureId,
   type PointInTimeFundamentalSnapshot,
-} from '../types.ts';
+} from '../fundamental-types.ts';
 import {
   HELIOS_UNIVERSAL_FEATURE_FABRIC_SCHEMA,
   type FeatureDefinition,

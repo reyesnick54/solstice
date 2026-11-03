@@ -3,7 +3,7 @@
  * Composes with OS10 fundamental fabric and AAF revision ledger — does not duplicate AAF feature architecture.
  */
 
-import { HELIOS_FUNDAMENTAL_FEATURE_SCHEMA } from './types.ts';
+import { HELIOS_FUNDAMENTAL_FEATURE_SCHEMA } from './fundamental-types.ts';
 
 export const HELIOS_RESEARCH_DATA_MANIFEST_SCHEMA = 'sunrey.helios.research-data-manifest.v1' as const;
 
