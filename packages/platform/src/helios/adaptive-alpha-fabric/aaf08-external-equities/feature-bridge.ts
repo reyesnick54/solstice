@@ -3,7 +3,7 @@
  * Bridge sealed M02 quotes into AAF02 feature fabric (optional downstream).
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { HeliosFeatureFabric } from '../../feature-fabric/fabric.ts';
 import { HELIOS_FEATURE_FABRIC_SCHEMA, type FeatureDefinition } from '../../feature-fabric/types.ts';
 import { buildInformationTime } from '../../observation/information-time.ts';

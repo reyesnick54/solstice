@@ -53527,6 +53527,78 @@
       "sourcePackage": "platform",
       "targetPackage": "domain",
       "spec": "../../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/adaptive-alpha-fabric/aaf08-external-equities/trust.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/adaptive-alpha-fabric/aaf08-external-equities/trust.ts' deep-imports 'provider-sdk' internals via '../../../../../provider-sdk/src/trust/engine.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../../provider-sdk/src/trust/engine.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/adaptive-alpha-fabric/aaf08-external-equities/trust.ts",
+      "line": 7,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/adaptive-alpha-fabric/aaf08-external-equities/trust.ts' deep-imports 'provider-sdk' internals via '../../../../../provider-sdk/src/trust/domain-policies.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../../provider-sdk/src/trust/domain-policies.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/adaptive-alpha-fabric/aaf08-external-equities/trust.ts",
+      "line": 8,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/adaptive-alpha-fabric/aaf08-external-equities/trust.ts' deep-imports 'provider-sdk' internals via '../../../../../provider-sdk/src/trust/types.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../../provider-sdk/src/trust/types.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/adaptive-alpha-fabric/aaf08-external-equities/trust.ts",
+      "line": 9,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/adaptive-alpha-fabric/aaf08-external-equities/trust.ts' deep-imports 'provider-sdk' internals via '../../../../../provider-sdk/src/index.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../../provider-sdk/src/index.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/adaptive-alpha-fabric/aaf09-external-crypto/multi-source.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/adaptive-alpha-fabric/aaf09-external-crypto/multi-source.ts' deep-imports 'provider-sdk' internals via '../../../../../provider-sdk/src/trust/engine.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../../provider-sdk/src/trust/engine.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/adaptive-alpha-fabric/aaf09-external-crypto/multi-source.ts",
+      "line": 7,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/adaptive-alpha-fabric/aaf09-external-crypto/multi-source.ts' deep-imports 'provider-sdk' internals via '../../../../../provider-sdk/src/trust/types.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../../provider-sdk/src/trust/types.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/adaptive-alpha-fabric/aaf09-external-crypto/multi-source.ts",
+      "line": 8,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/adaptive-alpha-fabric/aaf09-external-crypto/multi-source.ts' deep-imports 'provider-sdk' internals via '../../../../../provider-sdk/src/index.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "provider-sdk",
+      "spec": "../../../../../provider-sdk/src/index.ts"
+    },
+    {
+      "file": "packages/strategy-lab/src/evaluation/point-in-time-feature-fabric-seam.ts",
+      "line": 12,
+      "rule": "package-deep-import",
+      "message": "'packages/strategy-lab/src/evaluation/point-in-time-feature-fabric-seam.ts' deep-imports 'platform' internals via '../../../platform/src/helios/feature-fabric/compiler/strategy-lab-bridge.ts'",
+      "sourcePackage": "strategy-lab",
+      "targetPackage": "platform",
+      "spec": "../../../platform/src/helios/feature-fabric/compiler/strategy-lab-bridge.ts"
     }
   ]
 }

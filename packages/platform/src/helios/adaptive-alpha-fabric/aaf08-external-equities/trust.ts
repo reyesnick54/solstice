@@ -7,7 +7,7 @@ import { createExternalDataTrustEngine } from '../../../../../provider-sdk/src/t
 import { assessMarketReferenceTrust } from '../../../../../provider-sdk/src/trust/domain-policies.ts';
 import type { CanonicalTrustResult } from '../../../../../provider-sdk/src/trust/types.ts';
 import { buildExternalObservation, MARKET_PRICE_FRESHNESS_POLICY } from '../../../../../provider-sdk/src/index.ts';
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { ExternalEquitiesQuotePayload } from './types.ts';
 
 export type Aaf08TrustEngine = ReturnType<typeof createExternalDataTrustEngine>;

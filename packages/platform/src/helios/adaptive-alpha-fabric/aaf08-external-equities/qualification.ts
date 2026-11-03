@@ -3,8 +3,8 @@
  * AAF08 qualification harness — contract fixtures only unless live flag set.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../../domain/src/time.ts';
-import { FrozenClock } from '../../../../../config/src/clock.ts';
+import { FrozenClock } from '@solstice/config';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { createTemporalEntityGraphStore } from '../../feature-fabric/entity-resolution/graph-store.ts';
 import { HeliosMarketObservationFabric } from '../../market-observation/ingest.ts';
 import { createHeliosFeatureFabricStore, HeliosFeatureFabric } from '../../feature-fabric/index.ts';

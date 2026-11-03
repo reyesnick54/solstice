@@ -8,7 +8,7 @@ import type { TrustObservationContext } from '../../../../../provider-sdk/src/tr
 import { buildExternalObservation } from '../../../../../provider-sdk/src/index.ts';
 import { countIndependentWitnesses, classifyWitness } from './lineage.ts';
 import type { MultiSourceDisagreementReport, NormalizedCryptoMarketObservation } from './types.ts';
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { isReferenceAggregate } from './taxonomy.ts';
 
 const LARGE_DISAGREEMENT_BPS = 150;

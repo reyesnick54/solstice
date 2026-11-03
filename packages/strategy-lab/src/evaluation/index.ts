@@ -86,3 +86,9 @@ export {
   type ChronologicalEvaluationPitConfig,
   type PointInTimeDatasetManifestSeal,
 } from './point-in-time-dataset-seal.ts';
+export {
+  attachPointInTimeManifestToEvaluation,
+  resolvePointInTimeVectorsForEvaluation,
+  type ChronologicalEvaluationPointInTimeFeatureConfig,
+  type PointInTimeFeatureEvaluationAttachment,
+} from './point-in-time-feature-fabric-seam.ts';
