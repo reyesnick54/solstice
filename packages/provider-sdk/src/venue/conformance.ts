@@ -88,6 +88,13 @@ export const KRAKEN_OS04_QUALIFICATION_PROFILE: VenueAdapterQualificationProfile
   minimumAvailableMarketDataTypes: 2,
 });
 
+/** NATIVE05 — full native adapter qualification (all reference crypto venues). */
+export const NATIVE05_VENUE_QUALIFICATION_PROFILE: VenueAdapterQualificationProfile = Object.freeze({
+  requiresMarketDataProbe: true,
+  requiresMarketDataManifest: true,
+  minimumAvailableMarketDataTypes: 3,
+});
+
 export const SKELETON_OS04_QUALIFICATION_PROFILE: VenueAdapterQualificationProfile = Object.freeze({
   requiresMarketDataProbe: false,
   requiresMarketDataManifest: false,
