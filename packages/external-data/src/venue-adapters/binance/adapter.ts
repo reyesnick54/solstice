@@ -1,6 +1,1 @@
-import { createSkeletonVenueAdapter } from '../common/skeleton-adapter.ts';
-
-export const BINANCE_VENUE_ADAPTER = createSkeletonVenueAdapter({
-  venueId: 'binance',
-  displayName: 'Binance',
-});
+export { BINANCE_VENUE_ADAPTER } from './native-config.ts';

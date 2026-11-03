@@ -63,6 +63,14 @@ export type { ExecutionRoutingProviderAdapterPort } from './adapters/port.ts';
 export { createSandboxPaperEquityAdapter } from './adapters/sandbox-paper-equity.ts';
 export { createSandboxCryptoExecutionAdapter } from './adapters/sandbox-crypto.ts';
 export { createExternalFuturesAdapter } from './adapters/external-futures.ts';
+export { createVenueRoutingAdapter } from './adapters/venue-routing-factory.ts';
+
+export {
+  HELIOS_NATIVE_MULTI_VENUE_ADAPTERS_QUALIFIED,
+  HELIOS_NATIVE_MULTI_VENUE_ADAPTERS_BLOCKED,
+  runHeliosNativeMultiVenueAdapterSuite,
+  type NativeMultiVenueSuiteResult,
+} from './venue-native/index.ts';
 export { createKrakenVenueRoutingAdapter } from './adapters/kraken-venue.ts';
 
 export {

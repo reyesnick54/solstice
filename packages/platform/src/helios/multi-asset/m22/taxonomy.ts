@@ -12,7 +12,7 @@ export const EXECUTION_ORDER_TYPES = [
 ] as const;
 export type ExecutionOrderType = (typeof EXECUTION_ORDER_TYPES)[number];
 
-export const EXECUTION_TIME_IN_FORCE = ['DAY', 'GTC', 'IOC', 'FOK'] as const;
+export const EXECUTION_TIME_IN_FORCE = ['DAY', 'GTC', 'IOC', 'FOK', 'POST_ONLY'] as const;
 export type ExecutionTimeInForce = (typeof EXECUTION_TIME_IN_FORCE)[number];
 
 export const EXECUTION_TACTIC_TYPES = [
