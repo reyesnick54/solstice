@@ -43,11 +43,10 @@ export const OPEN_SOURCE_WORK_PACKAGE_EVIDENCE: Readonly<
     'tests/helios-os00-upstream-provenance.test.ts',
   ]),
   OS01: Object.freeze([
-    'packages/platform/src/helios/open-source/bytex-map/index.ts',
-    'tests/helios-os01-bytex-map.test.ts',
+    'docs/helios/open-source/BYTEX_HELIOS_INTEGRATION_MAP.md',
   ]),
   OS02: Object.freeze([
-    'packages/platform/src/helios/open-source/execution-twin/index.ts',
+    'packages/platform/src/helios/execution-twin/index.ts',
     'tests/helios-os02-execution-twin.test.ts',
   ]),
   OS03: Object.freeze([
@@ -75,15 +74,15 @@ export const OPEN_SOURCE_WORK_PACKAGE_EVIDENCE: Readonly<
     'tests/helios-os08-triggered-research.test.ts',
   ]),
   OS09: Object.freeze([
-    'packages/platform/src/helios/open-source/institutional-research-mesh/index.ts',
+    'packages/agentic-capital-mesh/src/institutional-research-mesh/index.ts',
     'tests/helios-os09-institutional-research-mesh.test.ts',
   ]),
   OS10: Object.freeze([
-    'packages/platform/src/helios/open-source/point-in-time-fundamentals/index.ts',
+    'packages/platform/src/helios/feature-fabric/index.ts',
     'tests/helios-os10-point-in-time-fundamentals.test.ts',
   ]),
   OS11: Object.freeze([
-    'packages/platform/src/helios/open-source/adversarial-research/index.ts',
+    'packages/platform/src/helios/open-source/os11-adversarial-research/index.ts',
     'tests/helios-os11-adversarial-research.test.ts',
   ]),
   OS12: Object.freeze([

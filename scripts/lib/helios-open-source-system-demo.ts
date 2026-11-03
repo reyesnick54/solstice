@@ -107,7 +107,7 @@ export function runOpenSourceIntegrationSystemDemo(root: string = ROOT): OpenSou
     push('market_observations', 'FAIL', error instanceof Error ? error.message : String(error));
   }
 
-  if (integrationPending('packages/platform/src/helios/open-source/feature-fabric/index.ts')) {
+  if (integrationPending('packages/platform/src/helios/feature-fabric/index.ts')) {
     push(
       'feature_fabric',
       'INTEGRATION_PENDING',
@@ -150,13 +150,13 @@ export function runOpenSourceIntegrationSystemDemo(root: string = ROOT): OpenSou
     push('h20_research_value', 'FAIL', error instanceof Error ? error.message : String(error));
   }
 
-  if (integrationPending('packages/platform/src/helios/open-source/institutional-research-mesh/index.ts')) {
+  if (integrationPending('packages/agentic-capital-mesh/src/institutional-research-mesh/index.ts')) {
     push('multi_agent_research', 'INTEGRATION_PENDING', 'OS09 institutional research mesh not integrated');
   } else {
     push('multi_agent_research', 'PASS', 'Institutional research mesh module present');
   }
 
-  if (integrationPending('packages/platform/src/helios/open-source/adversarial-research/index.ts')) {
+  if (integrationPending('packages/platform/src/helios/open-source/os11-adversarial-research/index.ts')) {
     push('bull_bear_challenge', 'INTEGRATION_PENDING', 'OS11 adversarial research not integrated');
   } else {
     push('bull_bear_challenge', 'PASS', 'Adversarial research module present');
@@ -174,7 +174,7 @@ export function runOpenSourceIntegrationSystemDemo(root: string = ROOT): OpenSou
     push('strategy_lab_evaluation', 'PASS', 'Strategy Lab owner present for qualification/backtest path');
   }
 
-  if (integrationPending('packages/platform/src/helios/open-source/execution-twin/index.ts')) {
+  if (integrationPending('packages/platform/src/helios/execution-twin/index.ts')) {
     push('execution_twin', 'INTEGRATION_PENDING', 'OS02 Execution Twin not integrated');
   } else {
     push('execution_twin', 'PASS', 'Execution Twin module present');

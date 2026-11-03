@@ -50,7 +50,7 @@ const CANONICAL_COMPONENTS: readonly {
   },
   {
     component: 'Feature Fabric',
-    canonicalOwnerPath: 'packages/platform/src/helios/open-source/feature-fabric',
+    canonicalOwnerPath: 'packages/platform/src/helios/feature-fabric',
     competingPaths: Object.freeze(['packages/feature-fabric', 'packages/helios-feature-fabric']),
   },
   {

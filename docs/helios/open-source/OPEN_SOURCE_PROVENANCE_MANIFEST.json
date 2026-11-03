@@ -1,8 +1,8 @@
 {
   "schema": "sunrey.helios.open-source-provenance.v1",
-  "scannedAt": "2026-11-03T06:41:04.346Z",
+  "scannedAt": "2026-11-03T07:18:59.000Z",
   "repositoryRoot": "/agent/repos/solstice",
-  "gitSha": "00a51dfd1c5771e9d65c74b0b4a8917d76db0a20",
+  "gitSha": "3548c94fb26f61420713d933032e12475a221d92",
   "upstreamPackages": [],
   "scanRoots": [
     "packages/platform/src/helios/open-source",
