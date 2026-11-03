@@ -27,4 +27,16 @@ export class ResearchTriggerRouterStore {
         .filter((row): row is ResearchTriggerEvidenceRecord => row !== null),
     );
   }
+
+  listRuns(): readonly ResearchTriggerRunResult[] {
+    return Object.freeze([...this.runs.values()]);
+  }
+
+  restoreRuns(runs: readonly ResearchTriggerRunResult[]): void {
+    this.runs.clear();
+    this.workOrders.clear();
+    for (const run of runs) {
+      this.putRun(run);
+    }
+  }
 }
