@@ -108,10 +108,10 @@ export class HeliosOs12AgentPermissionGatewayService {
     const session = openAgentResearchSession({
       grant,
       permittedToolIds: input.permittedToolIds,
-      modelProviderRef: input.modelProviderRef,
-      modelId: input.modelId,
-      modelVersion: input.modelVersion,
       now: this.clock.now(),
+      ...(input.modelProviderRef !== undefined ? { modelProviderRef: input.modelProviderRef } : {}),
+      ...(input.modelId !== undefined ? { modelId: input.modelId } : {}),
+      ...(input.modelVersion !== undefined ? { modelVersion: input.modelVersion } : {}),
     });
     this.store.putSession(session);
     this.store.appendAudit(
@@ -330,7 +330,7 @@ export class HeliosOs12AgentPermissionGatewayService {
     const closed = closeAgentResearchSession({
       session,
       now: this.clock.now(),
-      researchOutcomeRef,
+      ...(researchOutcomeRef !== undefined ? { researchOutcomeRef } : {}),
     });
     this.store.putSession(closed);
     this.store.appendAudit(
