@@ -110,12 +110,19 @@ export function freezeMarketDataset(
   );
 }
 
-export function membersAt(dataset: MarketDataset, at: UtcInstant): readonly string[] {
+export function activeInstrumentIds(
+  membership: readonly UniverseMembership[],
+  at: UtcInstant,
+): readonly string[] {
   return Object.freeze(
-    dataset.membership
+    membership
       .filter((row) => row.enteredAt <= at && (row.leftAt === null || row.leftAt > at))
       .map((row) => row.instrumentId),
   );
+}
+
+export function membersAt(dataset: MarketDataset, at: UtcInstant): readonly string[] {
+  return activeInstrumentIds(dataset.membership, at);
 }
 
 export function pointInTime(dataset: MarketDataset, at: UtcInstant): PointInTimeView {

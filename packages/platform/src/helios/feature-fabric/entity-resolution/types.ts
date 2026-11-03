@@ -4,8 +4,7 @@
  */
 
 import type { UtcInstant } from '../../../../../domain/src/time.ts';
-import type { CanonicalEntityId } from '../../../../../economic-asset-registry/src/knowledge-graph/ids.ts';
-import type { ExternalIdentifier } from '../../../../../economic-asset-registry/src/knowledge-graph/types.ts';
+import type { EconomicKnowledgeCanonicalEntityId, HeliosExternalIdentifier } from './ekg-bridge.ts';
 
 export const HELIOS_TEMPORAL_ENTITY_GRAPH_SCHEMA = 'sunrey.helios.temporal-entity-graph.v1' as const;
 
@@ -67,7 +66,7 @@ export type TemporalEntityNode = {
   readonly displayName: string;
   readonly jurisdiction: string | null;
   /** When set, links ORGANIZATION-class EKG canonical identity (not customer identity). */
-  readonly economicKnowledgeEntityId: CanonicalEntityId | null;
+  readonly economicKnowledgeEntityId: EconomicKnowledgeCanonicalEntityId | null;
   readonly payload: Readonly<Record<string, string>>;
   readonly grantsExecutionAuthority: false;
 };
@@ -122,11 +121,11 @@ export type ResolveProviderSymbolInput = {
 
 export type ResolvedEntityBinding = {
   readonly resolutionState: EntityResolutionState;
-  readonly canonicalEntityId: CanonicalEntityId | null;
+  readonly canonicalEntityId: EconomicKnowledgeCanonicalEntityId | null;
   readonly canonicalInstrumentId: string | null;
   readonly resolvedNodeIds: readonly string[];
   readonly candidateNodeIds: readonly string[];
-  readonly externalIdentifiers: readonly ExternalIdentifier[];
+  readonly externalIdentifiers: readonly HeliosExternalIdentifier[];
   readonly message: string | null;
   readonly grantsExecutionAuthority: false;
 };

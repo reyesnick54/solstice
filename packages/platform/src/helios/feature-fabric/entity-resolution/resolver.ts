@@ -1,6 +1,8 @@
-import { heliosExternalIdentifier } from '../../../../../economic-asset-registry/src/knowledge-graph/helios-temporal-bridge.ts';
-import type { CanonicalEntityId } from '../../../../../economic-asset-registry/src/knowledge-graph/ids.ts';
-import type { ExternalIdentifier } from '../../../../../economic-asset-registry/src/knowledge-graph/types.ts';
+import {
+  heliosExternalIdentifier,
+  type EconomicKnowledgeCanonicalEntityId,
+  type HeliosExternalIdentifier,
+} from './ekg-bridge.ts';
 import { canonicalHeliosInstrumentId } from './ids.ts';
 import type { TemporalEntityGraphStore } from './graph-store.ts';
 import { mappingActive } from './temporal.ts';
@@ -39,7 +41,7 @@ function instrumentIdForNode(node: TemporalEntityNode): string | null {
   });
 }
 
-function entityIdForNode(node: TemporalEntityNode): CanonicalEntityId | null {
+function entityIdForNode(node: TemporalEntityNode): EconomicKnowledgeCanonicalEntityId | null {
   return node.economicKnowledgeEntityId;
 }
 
@@ -54,7 +56,7 @@ function binding(
   const canonicalInstrumentId =
     instrumentNodes.length === 1 ? instrumentIdForNode(instrumentNodes[0]!) : instrumentNodes[0] ? instrumentIdForNode(instrumentNodes[0]) : null;
 
-  const externalIdentifiers: ExternalIdentifier[] = [];
+  const externalIdentifiers: HeliosExternalIdentifier[] = [];
   for (const node of nodes) {
     if (node.payload.cik) {
       externalIdentifiers.push(heliosExternalIdentifier('cik', node.payload.cik, 'AUTHORITATIVE'));
@@ -123,7 +125,7 @@ export function resolveProviderSymbol(
     related
       .filter((n) => n.kind === 'ISSUER' || n.kind === 'LEGAL_ENTITY')
       .map((n) => n.economicKnowledgeEntityId)
-      .filter((id): id is CanonicalEntityId => id !== null),
+      .filter((id): id is EconomicKnowledgeCanonicalEntityId => id !== null),
   );
   if (entityIds.size > 1) {
     return binding('CONFLICTING_EVIDENCE', related, 'conflicting issuer / legal entity evidence');

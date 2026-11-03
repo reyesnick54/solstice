@@ -72,7 +72,11 @@ export function buildStrategyEvaluationCoverageManifest(input: {
   if (input.featureIds.length === 0) {
     return null;
   }
+<<<<<<< HEAD
   const membership = instrumentIdsAtMembership(input.manifest.membership, input.evaluationTimestamp);
+=======
+  const membership = activeInstrumentIds(input.manifest.membership, input.evaluationTimestamp);
+>>>>>>> origin/helios/adaptive-alpha-fabric
   const eligibleMembers = membership.map((instrumentId) =>
     memberFromInstrument(instrumentId, input.evaluationTimestamp),
   );
