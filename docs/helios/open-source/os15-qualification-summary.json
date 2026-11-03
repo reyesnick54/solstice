@@ -1,0 +1,29 @@
+{
+  "marker": "HELIOS_OPEN_SOURCE_INTEGRATION_WAVE1_BLOCKED",
+  "qualified": false,
+  "blockers": [
+    "OS00: Upstream provenance registry",
+    "OS01: BYTEX venue and symbology map",
+    "OS02: Execution Twin",
+    "OS03: Execution simulation realism",
+    "OS04: Venue conformance harness",
+    "OS05: Strategy Genome foundation",
+    "OS06: OpenChart symbology map",
+    "OS07: Research Monitor DSL",
+    "OS08: Triggered research automation",
+    "OS09: Institutional research mesh",
+    "OS10: Point-in-time fundamentals",
+    "OS11: Adversarial research (bull/bear challenge)",
+    "OS12: Agent permission gateway",
+    "OS13: Strategy sandbox",
+    "OS14: Prediction-market research",
+    "platform gate aaf_qualification: AAF qualification tests absent on this branch (found 0/2); merge helios/adaptive-alpha-fabric for AAF gates",
+    "platform gate open_source_work_packages: missing OS00–OS14 integration artifacts",
+    "platform gate system_demo: 7 open-source stages pending or failure",
+    "AAF qualification: AAF qualification tests absent on this branch (found 0/2); merge helios/adaptive-alpha-fabric for AAF gates",
+    "system demo incomplete (7 open-source stages pending or hard failure)"
+  ],
+  "report": "docs/helios/open-source/OPEN_SOURCE_INTEGRATION_RELEASE_REPORT.md",
+  "manifest": "docs/helios/open-source/OPEN_SOURCE_PROVENANCE_MANIFEST.json",
+  "delta": "docs/helios/open-source/HELIOS_CAPABILITY_DELTA.md"
+}
