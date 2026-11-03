@@ -1,0 +1,15 @@
+{
+  "repository": "https://github.com/aowang-ai/seris",
+  "referenceSha": "f73dbbb0cd7e3b52601abf905bb871cdb9098550",
+  "license": "Apache-2.0",
+  "assimilation": "HELIOS_NATIVE11",
+  "inspectedPaths": [
+    "apps/core/src/runtime/",
+    "apps/core/src/gateway/",
+    "apps/core/src/tools/",
+    "apps/core/src/loop/",
+    "apps/core/src/memory/",
+    "apps/core/src/proactive/",
+    "apps/core/src/compaction/"
+  ]
+}
