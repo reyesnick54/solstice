@@ -506,7 +506,10 @@
         "packages/agent",
         "packages/permissions",
         "packages/security",
-        "packages/provider-sdk"
+        "packages/provider-sdk",
+        "packages/strategy-lab",
+        "packages/risk",
+        "packages/model-registry"
       ],
       "codeowners": [
         "@reyesnick54"
