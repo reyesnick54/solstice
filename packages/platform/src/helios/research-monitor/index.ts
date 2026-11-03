@@ -88,5 +88,19 @@ export {
   type Os07ResearchMonitorQualificationChecks,
   type Os07ResearchMonitorQualificationResult,
 } from './qualification.ts';
-
+export {
+  buildProactiveInvestigationFromTrigger,
+  type SerisProactiveInvestigation,
+} from './seris-proactive-bridge.ts';
+export {
+  SerisResearchAutopilotLoop,
+  type SerisMarketObservationPort,
+  type SerisResearchAutopilotSchedule,
+  type SerisResearchAutopilotTick,
+} from './seris-research-autopilot-loop.ts';
+export {
+  evaluateResearchMonitorNative12Qualification,
+  type ResearchMonitorNative12QualificationChecks,
+  type ResearchMonitorNative12QualificationResult,
+} from './native12-qualification.ts';
 export * from './proactive/index.ts';
