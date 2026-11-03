@@ -1,5 +1,5 @@
 /**
- * HELIOS OS04 — multi-venue provider adapter conformance.
+ * HELIOS OS04 — multi-venue provider adapter conformance (extended by NATIVE05).
  */
 
 import assert from 'node:assert/strict';
@@ -28,7 +28,7 @@ import { lintHeliosBoundary } from '../tools/architectural-linter/src/helios-gua
 const NOW = asUtcInstant('2026-09-21T12:00:00.000Z');
 
 describe('HELIOS OS04 venue adapter conformance', () => {
-  it('registers all reference venues with Kraken qualified and skeletons fail-closed', async () => {
+  it('registers all reference venues with NATIVE05 native adapters qualified', async () => {
     assert.equal(assertOs04VenueRegistryComplete(), true);
     assert.equal(HELIOS_OS04_VENUE_ADAPTERS.length, HELIOS_OS04_VENUE_IDS.length);
 
@@ -36,18 +36,10 @@ describe('HELIOS OS04 venue adapter conformance', () => {
     assert.equal(suite.marker, HELIOS_OS04_VENUE_ADAPTER_CONFORMANCE_QUALIFIED);
     assert.equal(suite.qualified, true);
 
-    const kraken = suite.reports.find((row) => row.venueId === 'kraken');
-    assert.ok(kraken?.adapterQualified);
-    assert.ok(kraken?.checks.some((check) => check.checkId === 'market_data_probe' && check.outcome === 'PASS'));
-
     for (const venueId of HELIOS_OS04_VENUE_IDS) {
-      if (venueId === 'kraken') {
-        continue;
-      }
       const report = suite.reports.find((row) => row.venueId === venueId);
-      assert.ok(report?.conformancePassed, `${venueId} skeleton conformance must pass`);
-      assert.equal(report?.adapterQualified, false);
-      assert.equal(report?.manifest.marketData.restAvailable.availability, 'UNAVAILABLE');
+      assert.ok(report?.adapterQualified, `${venueId} must be adapter qualified`);
+      assert.equal(report?.manifest.marketData.restAvailable.availability, 'AVAILABLE');
     }
   });
 
@@ -79,7 +71,7 @@ describe('HELIOS OS04 venue adapter conformance', () => {
     assert.equal(manifest.liveOrderPlacementEnabled, false);
   });
 
-  it('execution route catalog documents OS04 venue routes without enabling trading', () => {
+  it('execution route catalog documents venue routes without enabling trading', () => {
     const krakenRoute = EXECUTION_PROVIDER_ROUTE_CATALOG.find(
       (row) => row.routeId === 'route_venue_kraken_market_data',
     );
