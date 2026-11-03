@@ -49,12 +49,12 @@ export const OPEN_SOURCE_WORK_PACKAGE_EVIDENCE: Readonly<
     'tests/helios-os02-execution-twin.test.ts',
   ]),
   OS03: Object.freeze([
-    'packages/platform/src/helios/open-source/execution-simulation/index.ts',
+    'packages/platform/src/helios/execution-twin/simulation/index.ts',
     'tests/helios-os03-execution-simulation.test.ts',
   ]),
   OS04: Object.freeze([
-    'packages/platform/src/helios/open-source/venue-conformance/index.ts',
-    'tests/helios-os04-venue-conformance.test.ts',
+    'packages/platform/src/helios/execution-routing/venue-conformance/index.ts',
+    'tests/helios-os04-venue-adapter-conformance.test.ts',
   ]),
   OS05: Object.freeze([
     'packages/strategy-lab/src/os05/index.ts',
@@ -64,7 +64,7 @@ export const OPEN_SOURCE_WORK_PACKAGE_EVIDENCE: Readonly<
     'docs/helios/open-source/OPENCHART_HELIOS_MONITOR_MAP.md',
   ]),
   OS07: Object.freeze([
-    'packages/platform/src/helios/open-source/research-monitor/index.ts',
+    'packages/platform/src/helios/research-monitor/index.ts',
     'tests/helios-os07-research-monitor-dsl.test.ts',
   ]),
   OS08: Object.freeze([
