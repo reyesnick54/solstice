@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "nativeModule": "packages/platform/src/helios/feature-fabric/technical/index.ts",
+  "ports": [
+    { "bytex": "SimpleMovingAverage", "heliosId": "indicator.sma", "category": "moving_average" },
+    { "bytex": "ExponentialMovingAverage", "heliosId": "indicator.ema", "category": "moving_average" },
+    { "bytex": "WeightedMovingAverage", "heliosId": "indicator.wma", "category": "moving_average" },
+    { "bytex": "RelativeStrengthIndex", "heliosId": "indicator.rsi", "category": "oscillator" },
+    { "bytex": "RateOfChange", "heliosId": "indicator.roc", "category": "momentum" },
+    { "bytex": "AverageTrueRange", "heliosId": "indicator.atr", "category": "volatility" },
+    { "bytex": "BollingerBands", "heliosId": "indicator.bollinger_bands", "category": "volatility" },
+    { "bytex": "MovingAverageConvergenceDivergence", "heliosId": "indicator.macd", "category": "momentum" },
+    { "bytex": "OnBalanceVolume", "heliosId": "indicator.obv", "category": "volume" },
+    { "bytex": "DonchianChannel", "heliosId": "indicator.donchian_channel", "category": "price_level" }
+  ]
+}
