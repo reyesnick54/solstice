@@ -43,7 +43,7 @@ export function semiconductorVolatilityDislocationExpression(): ResearchMonitorE
 export function semiconductorVolatilityDislocationDefinition(
   overrides: Partial<ResearchMonitorDefinition> = {},
 ): ResearchMonitorDefinition {
-  return Object.freeze({
+  const base: ResearchMonitorDefinition = {
     monitorId: asResearchMonitorId('monitor_semiconductor_volatility_dislocation'),
     name: 'semiconductor_volatility_dislocation',
     version: Object.freeze({
@@ -76,8 +76,8 @@ export function semiconductorVolatilityDislocationDefinition(
       { featureId: 'NVDA_relative_volume', maxAgeMs: 900_000, requiredKind: 'relative_volume' },
     ]),
     staleDataPolicy: 'FAIL_CLOSED',
-    ...overrides,
-  });
+  };
+  return Object.freeze({ ...base, ...overrides });
 }
 
 function featureObservation(input: {

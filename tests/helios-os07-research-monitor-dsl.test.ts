@@ -47,7 +47,7 @@ function evaluateMonitor(
   const budget = createH20ResearchBudgetPort(
     initialBudgetSnapshot({
       ceilingAmount: options?.budgetCeiling ?? '1000',
-      unitKind: 'MICROS',
+      unitKind: 'MONETARY_MINOR',
       currency: 'USD',
     }),
   );
@@ -57,7 +57,7 @@ function evaluateMonitor(
     featureFabric: featureFabric(features),
     observationFabric: Object.freeze({ observationStoreRef: 'helios-observation-fabric-fixture' }),
     researchBudget: budget,
-    evidenceVault: options?.evidence,
+    ...(options?.evidence !== undefined ? { evidenceVault: options.evidence } : {}),
   });
 }
 
@@ -119,7 +119,7 @@ describe('HELIOS OS07 Research Monitor DSL', () => {
     const definition = semiconductorVolatilityDislocationDefinition({ cooldownMs: 3_600_000, maxTriggers: 10 });
     const service = new HeliosResearchMonitorService();
     const budget = createH20ResearchBudgetPort(
-      initialBudgetSnapshot({ ceilingAmount: '10000', unitKind: 'MICROS', currency: 'USD' }),
+      initialBudgetSnapshot({ ceilingAmount: '10000', unitKind: 'MONETARY_MINOR', currency: 'USD' }),
     );
     const evaluateAt = (at: string) =>
       service.evaluate({
@@ -138,7 +138,7 @@ describe('HELIOS OS07 Research Monitor DSL', () => {
     const definition = semiconductorVolatilityDislocationDefinition({ cooldownMs: 0, maxTriggers: 10 });
     const service = new HeliosResearchMonitorService();
     const budget = createH20ResearchBudgetPort(
-      initialBudgetSnapshot({ ceilingAmount: '10000', unitKind: 'MICROS', currency: 'USD' }),
+      initialBudgetSnapshot({ ceilingAmount: '10000', unitKind: 'MONETARY_MINOR', currency: 'USD' }),
     );
     const evaluateAt = (at: string) =>
       service.evaluate({
@@ -177,7 +177,7 @@ describe('HELIOS OS07 Research Monitor DSL', () => {
     const service = new HeliosResearchMonitorService();
     const definition = semiconductorVolatilityDislocationDefinition({ cooldownMs: 0, maxTriggers: 3 });
     const budget = createH20ResearchBudgetPort(
-      initialBudgetSnapshot({ ceilingAmount: '5000', unitKind: 'MICROS', currency: 'USD' }),
+      initialBudgetSnapshot({ ceilingAmount: '5000', unitKind: 'MONETARY_MINOR', currency: 'USD' }),
     );
     service.evaluate({
       definition,

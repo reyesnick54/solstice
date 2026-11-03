@@ -9,7 +9,9 @@ export function parseMonitorDecimal(value: string): { readonly ok: true; readonl
   }
   const negative = trimmed.startsWith('-');
   const unsigned = negative ? trimmed.slice(1) : trimmed;
-  const [wholePart, fracPart = ''] = unsigned.split('.');
+  const parts = unsigned.split('.');
+  const wholePart = parts[0] && parts[0].length > 0 ? parts[0] : '0';
+  const fracPart = parts[1] ?? '';
   const frac = (fracPart + '000000').slice(0, 6);
   const scaled = BigInt(wholePart) * SCALE + BigInt(frac.padEnd(6, '0').slice(0, 6));
   return { ok: true, scaled: negative ? -scaled : scaled };

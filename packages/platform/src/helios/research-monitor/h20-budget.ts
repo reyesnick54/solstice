@@ -1,5 +1,6 @@
 import type { UtcInstant } from '@solstice/domain';
-import { applyReservation, canReserveBudget, computeRemainingBudget, type ResearchBudgetSnapshot } from '../budget.ts';
+import { applyReservation, canReserveBudget, computeRemainingBudget } from '../budget.ts';
+import type { ResearchBudgetSnapshot } from '../execution-types.ts';
 import type { H20ResearchBudgetPort } from './types.ts';
 import type { ResearchMonitorId } from './ids.ts';
 
