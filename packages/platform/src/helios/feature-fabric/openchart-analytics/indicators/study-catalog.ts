@@ -26,72 +26,74 @@ export type NativeStudyDefinition = {
   readonly outputs: readonly string[];
 };
 
+function study(definition: NativeStudyDefinition): NativeStudyDefinition {
+  return Object.freeze(definition);
+}
+
 export const NATIVE_STUDY_CATALOG: Readonly<Record<OpenChartNativeStudyId, NativeStudyDefinition>> =
   Object.freeze({
-    sma: Object.freeze({
+    sma: study({
       id: 'sma',
       name: 'SMA',
       category: 'Moving Averages',
       overlay: true,
-      parameters: Object.freeze([
+      parameters: [
         { name: 'source', type: 'source', defaultValue: 'close' },
         { name: 'length', type: 'int', defaultValue: 14, min: 1, max: 500 },
-      ]),
-      outputs: Object.freeze(['value']),
+      ],
+      outputs: ['value'],
     }),
-    ema: Object.freeze({
+    ema: study({
       id: 'ema',
       name: 'EMA',
       category: 'Moving Averages',
       overlay: true,
-      parameters: Object.freeze([
+      parameters: [
         { name: 'source', type: 'source', defaultValue: 'close' },
         { name: 'length', type: 'int', defaultValue: 14, min: 1, max: 500 },
-      ]),
-      outputs: Object.freeze(['value']),
+      ],
+      outputs: ['value'],
     }),
-    rsi: Object.freeze({
+    rsi: study({
       id: 'rsi',
       name: 'RSI',
       category: 'Momentum',
       overlay: false,
-      parameters: Object.freeze([
+      parameters: [
         { name: 'source', type: 'source', defaultValue: 'close' },
         { name: 'length', type: 'int', defaultValue: 14, min: 1, max: 500 },
-      ]),
-      outputs: Object.freeze(['value']),
+      ],
+      outputs: ['value'],
     }),
-    atr: Object.freeze({
+    atr: study({
       id: 'atr',
       name: 'ATR',
       category: 'Volatility',
       overlay: false,
-      parameters: Object.freeze([
-        { name: 'length', type: 'int', defaultValue: 14, min: 1, max: 500 },
-      ]),
-      outputs: Object.freeze(['value']),
+      parameters: [{ name: 'length', type: 'int', defaultValue: 14, min: 1, max: 500 }],
+      outputs: ['value'],
     }),
-    macd: Object.freeze({
+    macd: study({
       id: 'macd',
       name: 'MACD',
       category: 'Momentum',
       overlay: false,
-      parameters: Object.freeze([
+      parameters: [
         { name: 'fastLength', type: 'int', defaultValue: 12, min: 1, max: 500 },
         { name: 'slowLength', type: 'int', defaultValue: 26, min: 1, max: 500 },
         { name: 'signalLength', type: 'int', defaultValue: 9, min: 1, max: 500 },
-      ]),
-      outputs: Object.freeze(['macd', 'signal', 'histogram']),
+      ],
+      outputs: ['macd', 'signal', 'histogram'],
     }),
-    'bollinger-bands': Object.freeze({
+    'bollinger-bands': study({
       id: 'bollinger-bands',
       name: 'Bollinger Bands',
       category: 'Volatility',
       overlay: true,
-      parameters: Object.freeze([
+      parameters: [
         { name: 'source', type: 'source', defaultValue: 'close' },
         { name: 'length', type: 'int', defaultValue: 20, min: 1, max: 500 },
-      ]),
-      outputs: Object.freeze(['basis', 'upper', 'lower']),
+      ],
+      outputs: ['basis', 'upper', 'lower'],
     }),
   });

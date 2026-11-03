@@ -107,14 +107,15 @@ function resolveNumericSeriesFromExpression(
   if (expression.kind !== 'value') {
     return bars.map(() => Number.NaN);
   }
-  if (expression.ref.kind === 'literal') {
-    return bars.map(() => expression.ref.value);
+  const ref = expression.ref;
+  if (ref.kind === 'literal') {
+    return bars.map(() => ref.value);
   }
-  if (expression.ref.kind === 'bar') {
-    return bars.map((bar) => bar[expression.ref.field]);
+  if (ref.kind === 'bar') {
+    return bars.map((bar) => bar[ref.field]);
   }
-  if (expression.ref.kind === 'study' && expression.ref.studyId === 'sma') {
-    const length = expression.ref.params?.length ?? 14;
+  if (ref.kind === 'study' && ref.studyId === 'sma') {
+    const length = ref.params?.length ?? 14;
     return computeSma(resolveCloseSeries(bars), length);
   }
   return bars.map(() => Number.NaN);
