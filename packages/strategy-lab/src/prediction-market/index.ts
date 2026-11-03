@@ -6,6 +6,7 @@ export {
   DEFAULT_MAX_SPREAD_BPS,
   DEFAULT_MIN_BID_DEPTH,
   DEFAULT_MAX_COMPLEMENT_GAP_MINOR,
+  PREDICTION_PROBABILITY_SCALE_MINOR,
 } from './constants.ts';
 export type {
   PredictionStrategyBookView,
