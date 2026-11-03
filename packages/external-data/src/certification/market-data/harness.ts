@@ -128,37 +128,36 @@ export async function runMarketDataQualificationHarness(input: {
   } else {
     normalizedObservation = await input.provider.getQuote(instrumentId, input.nowUtc);
     quoteOk = normalizedObservation.ok;
-    const samplePayload =
-      input.sampleRawPayload ??
-      (quoteOk
-        ? {
-            instrumentId: normalizedObservation.value.instrument.instrumentId,
-            lastMinorUnits: String(normalizedObservation.value.lastMinorUnits),
-            sourceTimestamp: normalizedObservation.value.sourceTimestamp,
-          }
-        : { code: normalizedObservation.code });
 
-    rawPayloadEvidenceHash = hashRawJsonPayload(samplePayload).digest;
+    if (normalizedObservation.ok) {
+      const observation = normalizedObservation.value;
+      const samplePayload =
+        input.sampleRawPayload ??
+        Object.freeze({
+          instrumentId: observation.instrument.instrumentId,
+          lastMinorUnits: String(observation.lastMinorUnits),
+          sourceTimestamp: observation.sourceTimestamp,
+        });
+      rawPayloadEvidenceHash = hashRawJsonPayload(samplePayload).digest;
 
-    proofs.push(
-      proof(
-        'schema_normalization',
-        quoteOk && normalizedObservation.value.schema === 'sunrey.capital-market.v1',
-        quoteOk ? 'normalized capital-market schema emitted' : `fetch failed: ${normalizedObservation.code}`,
-        checkedAtUtc,
-      ),
-      proof(
-        'timestamp_normalization',
-        quoteOk && Boolean(normalizedObservation.value.sourceTimestamp),
-        quoteOk ? 'source timestamp present on observation' : 'missing source timestamp',
-        checkedAtUtc,
-      ),
-    );
+      proofs.push(
+        proof(
+          'schema_normalization',
+          observation.schema === 'sunrey.capital-market.v1',
+          'normalized capital-market schema emitted',
+          checkedAtUtc,
+        ),
+        proof(
+          'timestamp_normalization',
+          Boolean(observation.sourceTimestamp),
+          'source timestamp present on observation',
+          checkedAtUtc,
+        ),
+      );
 
-    if (quoteOk) {
-      const arrival = normalizedObservation.value.arrivalTimestamp;
+      const arrival = observation.arrivalTimestamp;
       const knowableAt = computeKnowableAtForCertification({
-        providerAvailabilityTime: normalizedObservation.value.availabilityTimestamp,
+        providerAvailabilityTime: observation.availabilityTimestamp,
         sunreyArrivalTime: arrival,
         ingestionTime: input.nowUtc,
       });
@@ -175,35 +174,54 @@ export async function runMarketDataQualificationHarness(input: {
         ),
         proof(
           'entitlement_propagation',
-          Boolean(normalizedObservation.value.entitlement?.entitlementClass),
-          `entitlement=${normalizedObservation.value.entitlement?.entitlementClass ?? 'missing'}`,
+          Boolean(observation.entitlement?.entitlementClass),
+          `entitlement=${observation.entitlement?.entitlementClass ?? 'missing'}`,
           checkedAtUtc,
         ),
         proof(
           'stale_data_detection',
-          Date.parse(normalizedObservation.value.sourceTimestamp) <= Date.parse(input.nowUtc),
-          `sourceTimestamp=${normalizedObservation.value.sourceTimestamp}`,
+          Date.parse(observation.sourceTimestamp) <= Date.parse(input.nowUtc),
+          `sourceTimestamp=${observation.sourceTimestamp}`,
+          checkedAtUtc,
+        ),
+        proof(
+          'rate_limit_behavior',
+          true,
+          'rate limit not triggered in this probe',
           checkedAtUtc,
         ),
       );
     } else {
+      const failure = normalizedObservation;
+      const samplePayload = input.sampleRawPayload ?? Object.freeze({ code: failure.code });
+      rawPayloadEvidenceHash = hashRawJsonPayload(samplePayload).digest;
+
       proofs.push(
+        proof(
+          'schema_normalization',
+          false,
+          `fetch failed: ${failure.code}`,
+          checkedAtUtc,
+        ),
+        proof(
+          'timestamp_normalization',
+          false,
+          'missing source timestamp',
+          checkedAtUtc,
+        ),
         proof('knowable_at_correctness', false, 'no observation to assess', checkedAtUtc),
         proof('entitlement_propagation', false, 'no observation to assess', checkedAtUtc),
-        proof('stale_data_detection', normalizedObservation.code !== 'SILENT_FIXTURE', 'explicit failure code', checkedAtUtc),
+        proof('stale_data_detection', failure.code !== 'SILENT_FIXTURE', 'explicit failure code', checkedAtUtc),
+        proof(
+          'rate_limit_behavior',
+          failure.code !== 'RATE_LIMITED',
+          failure.code === 'RATE_LIMITED'
+            ? 'rate limit surfaced explicitly'
+            : 'rate limit not triggered in this probe',
+          checkedAtUtc,
+        ),
       );
     }
-
-    proofs.push(
-      proof(
-        'rate_limit_behavior',
-        normalizedObservation.code !== 'RATE_LIMITED' || !quoteOk,
-        normalizedObservation.code === 'RATE_LIMITED'
-          ? 'rate limit surfaced explicitly'
-          : 'rate limit not triggered in this probe',
-        checkedAtUtc,
-      ),
-    );
   }
 
   const registry = createInMemoryDeduplicationRegistry();

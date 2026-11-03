@@ -151,13 +151,13 @@ export function computeAaf09Features(input: {
     const mid = midMinor(latestVenue);
     if (mid !== null) {
       pushFeature(
-        AAF09_FEATURE_DEFINITIONS[3],
+        AAF09_FEATURE_DEFINITIONS[3]!,
         [contributionFromObservation(latestVenue, latestVenue.spreadMinorUnits ?? 0n)],
         latestVenue.spreadMinorUnits ?? 0n,
       );
       if (latestVenue.volumeMinorUnits !== null) {
         pushFeature(
-          AAF09_FEATURE_DEFINITIONS[2],
+          AAF09_FEATURE_DEFINITIONS[2]!,
           [contributionFromObservation(latestVenue, latestVenue.volumeMinorUnits)],
           latestVenue.volumeMinorUnits,
         );
@@ -169,14 +169,14 @@ export function computeAaf09Features(input: {
         const delta = Number(mid - priorMid) / Number(priorMid);
         const bps = BigInt(Math.round(delta * 10_000));
         pushFeature(
-          AAF09_FEATURE_DEFINITIONS[0],
+          AAF09_FEATURE_DEFINITIONS[0]!,
           [contributionFromObservation(latestVenue, bps), contributionFromObservation(priorVenue, priorMid)],
           bps,
         );
         const retBps = Math.abs(delta * 10_000);
         const volMinor = BigInt(Math.round(Math.sqrt(retBps) * 100));
         pushFeature(
-          AAF09_FEATURE_DEFINITIONS[1],
+          AAF09_FEATURE_DEFINITIONS[1]!,
           [contributionFromObservation(latestVenue, volMinor)],
           volMinor,
         );
@@ -184,7 +184,7 @@ export function computeAaf09Features(input: {
     }
     const health = latestVenue.sourceHealth;
     pushFeature(
-      AAF09_FEATURE_DEFINITIONS[6],
+      AAF09_FEATURE_DEFINITIONS[6]!,
       [contributionFromObservation(latestVenue, 0n)],
       0n,
     );
@@ -207,7 +207,7 @@ export function computeAaf09Features(input: {
   if (input.dispersionBps !== null && latestVenue) {
     const bps = BigInt(input.dispersionBps);
     pushFeature(
-      AAF09_FEATURE_DEFINITIONS[4],
+      AAF09_FEATURE_DEFINITIONS[4]!,
       visible.map((row) => {
         const mid = midMinor(row);
         return contributionFromObservation(row, mid ?? 0n);
@@ -219,7 +219,7 @@ export function computeAaf09Features(input: {
   if (input.venueDislocationBps !== null && latestVenue && latestReference) {
     const bps = BigInt(input.venueDislocationBps);
     pushFeature(
-      AAF09_FEATURE_DEFINITIONS[5],
+      AAF09_FEATURE_DEFINITIONS[5]!,
       [
         contributionFromObservation(latestVenue, midMinor(latestVenue) ?? 0n),
         contributionFromObservation(latestReference, midMinor(latestReference) ?? 0n),

@@ -96,7 +96,7 @@ export function toLeakageViolationV2(
   return Object.freeze({
     code: mapLegacyLeakageToAafv203(violation, observation),
     message: violation.message,
-    observationRef: violation.observationRef,
+    ...(violation.observationRef !== undefined ? { observationRef: violation.observationRef } : {}),
     decisionTime,
   });
 }

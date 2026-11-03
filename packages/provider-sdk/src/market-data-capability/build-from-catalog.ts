@@ -8,7 +8,7 @@ import {
   MARKET_DATA_CAPABILITY_SCHEMA_VERSION,
   type MarketDataAssetClass,
   type MarketDataCredentialState,
-  type MarketDataDataFamily,
+  type MarketDataFamily,
   type MarketDataEstimatedCost,
   type MarketDataFeedTiming,
   type MarketDataProviderCapability,
@@ -45,15 +45,16 @@ export type HeliosMarketDataCatalogOverlayEntry = {
 function mapCommercial(status: string): CommercialUseStatus {
   switch (status) {
     case 'verified_allowed':
-      return 'verified_allowed';
+    case 'allowed':
+    case 'permitted':
+      return 'permitted';
     case 'restricted':
-      return 'restricted';
     case 'attribution_required':
-      return 'attribution_required';
     case 'noncommercial_only':
-      return 'noncommercial_only';
     case 'requires_legal_review':
-      return 'requires_legal_review';
+      return 'restricted';
+    case 'prohibited':
+      return 'prohibited';
     default:
       return 'unknown';
   }
@@ -62,9 +63,9 @@ function mapCommercial(status: string): CommercialUseStatus {
 function mapRedistribution(status: string): RedistributionStatus {
   switch (status) {
     case 'allowed':
-      return 'allowed';
+    case 'permitted':
+      return 'permitted';
     case 'attribution_required':
-      return 'attribution_required';
     case 'restricted':
       return 'restricted';
     case 'prohibited':

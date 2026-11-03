@@ -333,7 +333,7 @@ export function assessCoverageBias(input: CoverageBiasAssessmentInput): Coverage
       featureCoveredCount: coveredCount,
       overallCoverageRate: eligibleCount === 0 ? 0 : coveredCount / eligibleCount,
       severity: 'INSUFFICIENT_DATA',
-      factors: Object.freeze(['OVERALL_COVERAGE']),
+      factors: Object.freeze(['OVERALL_COVERAGE' as const]),
       evidence: Object.freeze([]),
       grantsExecutionAuthority: false,
     });

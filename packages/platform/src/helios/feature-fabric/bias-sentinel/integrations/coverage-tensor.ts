@@ -1,39 +1,27 @@
 import { coverageTensorContentDigest } from '../../coverage/tensor.ts';
-import type { CoverageTensor, EligibleUniverseMember, FeatureCoverageProbe } from '../../coverage/types.ts';
+import type { CoverageTensor, FeatureCoverageCell } from '../../coverage/types.ts';
 import type { UniverseMemberProfile } from '../types.ts';
 
-function probeUsable(probe: FeatureCoverageProbe): boolean {
-  return (
-    probe.signal.published &&
-    probe.signal.providerAvailable &&
-    probe.signal.providerCoversInstrument &&
-    probe.signal.entityResolved &&
-    probe.signal.applicable &&
-    probe.signal.knowableAtEvaluationTime &&
-    probe.signal.valuePresent &&
-    probe.signal.qualityState === 'VALID'
-  );
+function cellUsable(cell: FeatureCoverageCell): boolean {
+  return cell.disposition === 'USABLE';
 }
 
-function memberToProfile(
-  member: EligibleUniverseMember,
-  probes: readonly FeatureCoverageProbe[],
-): UniverseMemberProfile {
-  const usableCount = probes.filter(probeUsable).length;
-  const rateBps =
-    probes.length === 0 ? null : Math.round((usableCount * 10_000) / probes.length);
-  const providerId = probes.find((row) => row.providerId)?.providerId ?? null;
+function cellToProfile(entityId: string, cells: readonly FeatureCoverageCell[]): UniverseMemberProfile {
+  const sample = cells[0]!;
+  const usableCount = cells.filter(cellUsable).length;
+  const rateBps = cells.length === 0 ? null : Math.round((usableCount * 10_000) / cells.length);
+  const providerId = cells.find((row) => row.providerId)?.providerId ?? null;
   return Object.freeze({
-    canonicalEntityId: member.canonicalEntityId,
+    canonicalEntityId: entityId,
     marketCapMinor: null,
     liquidityScore: null,
     volatilityBps: null,
-    sector: member.sector,
-    industry: member.industry,
-    geography: member.geography,
-    jurisdiction: member.geography,
-    venue: member.venue,
-    assetClass: member.assetClass,
+    sector: sample.sector,
+    industry: sample.industry,
+    geography: sample.geography,
+    jurisdiction: sample.geography,
+    venue: sample.venue,
+    assetClass: sample.assetClass,
     listingAgeDays: null,
     assetAgeDays: null,
     historicalReturnBps: null,
@@ -52,21 +40,19 @@ export function biasSentinelInputFromCoverageTensor(input: {
   readonly observedUsableEntityIds: readonly string[];
   readonly coverageTensorDigest: string;
 } {
-  const byEntity = new Map<string, FeatureCoverageProbe[]>();
-  for (const probe of input.tensor.probes) {
-    const list = byEntity.get(probe.member.canonicalEntityId) ?? [];
-    list.push(probe);
-    byEntity.set(probe.member.canonicalEntityId, list);
+  const byEntity = new Map<string, FeatureCoverageCell[]>();
+  for (const cell of input.tensor.cells) {
+    const list = byEntity.get(cell.canonicalEntityId) ?? [];
+    list.push(cell);
+    byEntity.set(cell.canonicalEntityId, list);
   }
   const intendedEligibleUniverse: UniverseMemberProfile[] = [];
-  for (const [entityId, probes] of byEntity) {
-    const member = probes[0]!.member;
-    intendedEligibleUniverse.push(memberToProfile(member, probes));
-    void entityId;
+  for (const [entityId, cells] of byEntity) {
+    intendedEligibleUniverse.push(cellToProfile(entityId, cells));
   }
   const observedUsableEntityIds = Object.freeze(
     [...byEntity.entries()]
-      .filter(([, probes]) => probes.some(probeUsable))
+      .filter(([, cells]) => cells.some(cellUsable))
       .map(([entityId]) => entityId),
   );
   const coverageTensorDigest = coverageTensorContentDigest(input.tensor);

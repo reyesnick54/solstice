@@ -16,9 +16,18 @@ import type {
 } from './types.ts';
 import { HELIOS_TEMPORAL_ENTITY_GRAPH_SCHEMA } from './types.ts';
 
+export type UpsertTemporalEntityNodeInput = {
+  readonly nodeId?: string;
+  readonly kind: TemporalEntityNode['kind'];
+  readonly displayName: string;
+  readonly jurisdiction: string | null;
+  readonly economicKnowledgeEntityId: TemporalEntityNode['economicKnowledgeEntityId'];
+  readonly payload: Readonly<Record<string, string>>;
+};
+
 export type TemporalEntityGraphStore = {
   readonly graphVersion: () => number;
-  readonly upsertNode: (input: Omit<TemporalEntityNode, 'grantsExecutionAuthority'> & { readonly nodeId?: string }) => TemporalEntityNode;
+  readonly upsertNode: (input: UpsertTemporalEntityNodeInput) => TemporalEntityNode;
   readonly getNode: (nodeId: string) => TemporalEntityNode | undefined;
   readonly listNodes: () => readonly TemporalEntityNode[];
   readonly appendEdge: (input: AppendTemporalEdgeInput) => TemporalEntityEdge;

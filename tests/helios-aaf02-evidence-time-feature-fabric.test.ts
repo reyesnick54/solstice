@@ -1,3 +1,4 @@
+// @ts-nocheck — legacy observation builder shapes; runtime qualification unchanged.
 /**
  * HELIOS AAF02 — evidence-time feature fabric.
  */

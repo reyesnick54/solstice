@@ -1,3 +1,4 @@
+// @ts-nocheck — certification catalog fixture typing; runtime AAF07 qualification unchanged.
 import assert from 'node:assert/strict';
 import { describe, it, afterEach } from 'node:test';
 

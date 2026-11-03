@@ -48,7 +48,7 @@ export class PointInTimeDatasetCompiler {
       entityResolutionVersion: request.universe.entityGraphVersion,
       revisionPolicy,
       missingnessPolicy: request.informationTimePolicy.missingnessPolicy,
-      indexId: request.universe.indexId,
+      ...(request.universe.indexId !== undefined ? { indexId: request.universe.indexId } : {}),
     });
 
     const vectors: CompiledFeatureVector[] = [];
@@ -64,7 +64,7 @@ export class PointInTimeDatasetCompiler {
           tickerHistory: request.context.tickerHistory ?? [],
           corporateActionRevisions: request.context.corporateActionRevisions ?? [],
           instrumentId: member.instrumentId,
-          indexId: request.universe.indexId,
+          ...(request.universe.indexId !== undefined ? { indexId: request.universe.indexId } : {}),
         });
         if (scan) {
           return err({
@@ -74,7 +74,7 @@ export class PointInTimeDatasetCompiler {
             decisionTime,
             entityId: member.entityId,
             instrumentId: member.instrumentId,
-          });
+          } satisfies Aafv203CompilerFailure);
         }
 
         const compiled = compileFeatureVector({
@@ -108,10 +108,16 @@ export class PointInTimeDatasetCompiler {
                   leakageObservation ?? null,
                 )
               : undefined;
+          const failureCode: Aafv203CompilerFailure['code'] =
+            compiled.error.code === 'LEAKAGE_DETECTED'
+              ? 'LEAKAGE_DETECTED'
+              : compiled.error.code === 'MISSING_FEATURE'
+                ? 'MISSING_FEATURE'
+                : 'INVALID_MANIFEST';
           return err({
-            code: compiled.error.code === 'LEAKAGE_DETECTED' ? 'LEAKAGE_DETECTED' : compiled.error.code,
+            code: failureCode,
             message: compiled.error.message,
-            leakageCode,
+            ...(leakageCode !== undefined ? { leakageCode } : {}),
             decisionTime,
             entityId: member.entityId,
             instrumentId: member.instrumentId,

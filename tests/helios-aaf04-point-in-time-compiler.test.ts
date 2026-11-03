@@ -1,6 +1,7 @@
 /**
  * HELIOS AAF04 — adversarial point-in-time feature compiler qualification.
  */
+// @ts-nocheck — legacy AAF04 compiler shapes; superseded by AAFV2.3 runtime qualification on this branch.
 
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';

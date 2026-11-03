@@ -464,11 +464,11 @@ export function runChronologicalEvaluation(input: {
       succeeded: false,
       failureCode: loop.error.code,
       failureMessage: loop.error.message,
-      coverageManifestId: coverage.coverageManifestId ?? null,
-      coverageManifestHash: coverage.coverageManifestHash ?? null,
-      eligibleUniverseCount: coverage.eligibleUniverseCount ?? null,
-      usableFeatureCount: coverage.usableFeatureCount ?? null,
-      artifactRefs: coverage.artifactRefs,
+      ...(coverage.coverageManifestId !== undefined ? { coverageManifestId: coverage.coverageManifestId } : {}),
+      ...(coverage.coverageManifestHash !== undefined ? { coverageManifestHash: coverage.coverageManifestHash } : {}),
+      ...(coverage.eligibleUniverseCount !== undefined ? { eligibleUniverseCount: coverage.eligibleUniverseCount } : {}),
+      ...(coverage.usableFeatureCount !== undefined ? { usableFeatureCount: coverage.usableFeatureCount } : {}),
+      ...(coverage.artifactRefs !== undefined ? { artifactRefs: coverage.artifactRefs } : {}),
       createdAt: input.createdAt,
     });
     const store = input.store ?? new ChronologicalEvaluationStore();

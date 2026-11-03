@@ -3,7 +3,9 @@
  */
 
 import type { UtcInstant } from '../../../../../domain/src/time.ts';
-import type { CoingeckoReferenceAdapter } from './adapters/coingecko-reference.ts';
+import type { createCoingeckoReferenceAdapter } from './adapters/coingecko-reference.ts';
+
+type CoingeckoReferenceAdapter = ReturnType<typeof createCoingeckoReferenceAdapter>;
 import type { CryptoVenueMarketDataAdapter } from './adapters/types.ts';
 import { assessMultiSourceDisagreement } from './multi-source.ts';
 import type { Aaf09ObservationStore } from './store.ts';

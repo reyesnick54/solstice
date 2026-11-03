@@ -11,14 +11,8 @@ import {
   type CoverageTensor,
   type EligibleUniverseMember,
   type FeatureCoverageCell,
+  type FeatureCoverageProbe,
 } from './types.ts';
-
-export type FeatureCoverageProbe = {
-  readonly member: EligibleUniverseMember;
-  readonly featureId: string;
-  readonly providerId: string | null;
-  readonly signal: CoverageProbeSignal;
-};
 
 export type BuildCoverageTensorInput = {
   readonly universeId: string;
@@ -105,8 +99,8 @@ export function buildCoverageTensor(input: BuildCoverageTensorInput): CoverageTe
     cells,
     eligibleUniverseCount,
     featureIds: input.featureIds,
-    rollingHistoryBps: input.rollingHistoryBps,
     baselineCoverageRatioBps: input.baselineCoverageRatioBps ?? null,
+    ...(input.rollingHistoryBps !== undefined ? { rollingHistoryBps: input.rollingHistoryBps } : {}),
   });
   const fingerprint = tensorFingerprint({
     universeId: input.universeId,

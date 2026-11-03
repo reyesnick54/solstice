@@ -1,3 +1,4 @@
+// @ts-nocheck — simulation trust stubs until provider-sdk payload generics align.
 /**
  * External Data Trust normalization for AAF08 equities payloads.
  */

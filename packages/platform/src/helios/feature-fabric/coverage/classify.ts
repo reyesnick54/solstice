@@ -2,17 +2,16 @@
  * Missingness classification — nulls are never collapsed into a single bucket.
  */
 
-import type { FeatureEntitlementState, FeatureQualityState } from '../types.ts';
-import type { MissingnessReason } from './types.ts';
+import type { MissingnessReason, CoverageEntitlementState, CoverageQualityState } from './types.ts';
 
 export type CoverageProbeSignal = {
   readonly published: boolean;
   readonly providerAvailable: boolean;
   readonly providerCoversInstrument: boolean;
-  readonly entitlementState: FeatureEntitlementState;
+  readonly entitlementState: CoverageEntitlementState;
   readonly entityResolved: boolean;
   readonly applicable: boolean;
-  readonly qualityState: FeatureQualityState;
+  readonly qualityState: CoverageQualityState;
   readonly historicalGap: boolean;
   readonly knowableAtEvaluationTime: boolean;
   readonly valuePresent: boolean;
@@ -75,6 +74,6 @@ export function dispositionFromMissingness(reason: MissingnessReason | null): 'U
 }
 
 /** Entitlement failure is missingness, not a numeric zero. */
-export function entitlementFailureIsMissingNotZero(entitlementState: FeatureEntitlementState): boolean {
+export function entitlementFailureIsMissingNotZero(entitlementState: CoverageEntitlementState): boolean {
   return entitlementState === 'RESTRICTED' || entitlementState === 'UNAVAILABLE';
 }

@@ -16,11 +16,10 @@ import { sealAaf08IngestFailure, sealAaf08SourceStateEvidence } from './evidence
 import { isAaf08UniverseInstrument } from './universe.ts';
 import { requireAaf07Certification } from '../aaf07/certification.ts';
 import type {
-  ExternalEquitiesHistoricalRange,
   ExternalEquitiesIngestOutcome,
   ExternalEquitiesProviderHealth,
 } from './types.ts';
-import type { ExternalEquitiesProviderPort } from './provider-port.ts';
+import type { ExternalEquitiesHistoricalRange, ExternalEquitiesProviderPort } from './provider-port.ts';
 
 export type HeliosExternalEquitiesObservationPlaneOptions = {
   readonly clock: Clock;

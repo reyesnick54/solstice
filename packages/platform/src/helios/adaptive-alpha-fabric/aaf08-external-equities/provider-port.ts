@@ -12,6 +12,14 @@ import type {
   ExternalEquitiesSessionPayload,
 } from './types.ts';
 
+export type {
+  ExternalEquitiesBarPayload,
+  ExternalEquitiesInstrumentMetadata,
+  ExternalEquitiesProviderHealth,
+  ExternalEquitiesQuotePayload,
+  ExternalEquitiesSessionPayload,
+} from './types.ts';
+
 export type ExternalEquitiesProviderResult<T> =
   | { readonly ok: true; readonly value: T }
   | { readonly ok: false; readonly code: string; readonly message: string };

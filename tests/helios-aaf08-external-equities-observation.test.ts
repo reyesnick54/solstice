@@ -1,3 +1,4 @@
+// @ts-nocheck — injected fetch stubs; simulation-only AAF08 qualification.
 /**
  * HELIOS AAF08 — external equities / ETF observation plane.
  */

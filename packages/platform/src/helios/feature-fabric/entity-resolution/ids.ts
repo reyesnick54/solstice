@@ -15,15 +15,15 @@ function digest(material: string): string {
 }
 
 export function temporalEntityNodeIdFor(material: string): TemporalEntityNodeId {
-  return brandAs<string, TemporalEntityNodeId>(`${NODE_PREFIX}${digest(material)}`);
+  return brandAs<string, 'TemporalEntityNodeId'>(`${NODE_PREFIX}${digest(material)}`);
 }
 
 export function temporalEntityEdgeIdFor(material: string): TemporalEntityEdgeId {
-  return brandAs<string, TemporalEntityEdgeId>(`${EDGE_PREFIX}${digest(material)}`);
+  return brandAs<string, 'TemporalEntityEdgeId'>(`${EDGE_PREFIX}${digest(material)}`);
 }
 
 export function providerMappingIdFor(material: string): ProviderMappingId {
-  return brandAs<string, ProviderMappingId>(`${MAP_PREFIX}${digest(material)}`);
+  return brandAs<string, 'ProviderMappingId'>(`${MAP_PREFIX}${digest(material)}`);
 }
 
 export function canonicalHeliosInstrumentId(input: {
