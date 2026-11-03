@@ -13,9 +13,11 @@ import type {
   MarketDataInputGranularity,
   OhlcPathSequence,
 } from './taxonomy.ts';
-import { FEE_MODEL_VERSION, FILL_MODEL_VERSION } from './taxonomy.ts';
+import { bookStateFromMarketBook } from './book-state.ts';
+import { simulationFidelityFromEngineLevel } from './fidelity.ts';
+import { EXECUTION_MODEL_VERSION, FEE_MODEL_VERSION, FILL_MODEL_VERSION } from './taxonomy.ts';
 import type { ObservationRef, SimulatedFillEvidence } from './types.ts';
-import { computeFeeMinor, type FeeModelConfig } from './fee-model.ts';
+import { computeFeeMinor, feeAssumptionLabel, type FeeModelConfig } from './fee-model.ts';
 import { slippageAssumptionLabel } from './slippage-model.ts';
 import { latencyAssumptionLabel, type LatencyModelConfig } from './latency-model.ts';
 
@@ -53,8 +55,14 @@ export function matchAgainstBook(input: {
   readonly fillModel: FillModelConfig;
   readonly slippageModel: SlippageModelConfig;
   readonly applyImpact: boolean;
+  readonly maxBookDepthLevels?: number | null;
 }): { readonly slices: readonly ProposedFillSlice[]; readonly unfilledUnits: bigint } {
-  const rawWalk = walkBookForSide(input.book, input.side, input.quantityUnits);
+  const rawWalk = walkBookForSide(
+    input.book,
+    input.side,
+    input.quantityUnits,
+    input.maxBookDepthLevels ?? null,
+  );
   const slices: ProposedFillSlice[] = [];
   let filled = 0n;
   for (const row of rawWalk) {
@@ -106,15 +114,29 @@ export function buildFillEvidence(input: {
   readonly evidenceRefs: readonly string[];
   readonly barExecutionMode: BarExecutionMode | null;
   readonly ohlcPathSequence: OhlcPathSequence | null;
+  readonly book: MarketBook;
+  readonly maxBookDepthLevels: number | null;
 }): SimulatedFillEvidence {
+  const bookState = bookStateFromMarketBook(input.book, input.maxBookDepthLevels);
+  const latencyLabel = latencyAssumptionLabel(input.latencyModel);
+  const feeLabel = feeAssumptionLabel(input.feeModel);
+  const slippageLabel = slippageAssumptionLabel(input.slippageModel);
+  const fidelityLevel = simulationFidelityFromEngineLevel(input.executionFidelityLevel);
   return Object.freeze({
-    schema: 'sunrey.helios.execution-twin.simulation.fill-evidence.v1',
+    schema: 'sunrey.helios.execution-twin.simulation.fill-evidence.v2',
+    executionModelVersion: EXECUTION_MODEL_VERSION,
+    marketEvidence: Object.freeze([...input.observationRefs]),
+    bookState,
+    latencyModel: latencyLabel,
+    feeModel: feeLabel,
+    slippageModel: slippageLabel,
+    fidelityLevel,
     observationRefs: Object.freeze([...input.observationRefs]),
     executionFidelityLevel: input.executionFidelityLevel,
     fillModelVersion: FILL_MODEL_VERSION,
     feeModelVersion: FEE_MODEL_VERSION,
-    latencyAssumption: latencyAssumptionLabel(input.latencyModel),
-    slippageAssumption: slippageAssumptionLabel(input.slippageModel),
+    latencyAssumption: latencyLabel,
+    slippageAssumption: slippageLabel,
     evidenceRefs: Object.freeze([...input.evidenceRefs]),
     barExecutionMode: input.barExecutionMode,
     ohlcPathSequence: input.ohlcPathSequence,
