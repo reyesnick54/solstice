@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { AgentCapabilityGrant, AgentResearchSession, ResearchAutopilotStrategy } from './types.ts';
 import { isForbiddenPermission } from './permission-catalog.ts';
 import { newResearchAutopilotId } from './ids.ts';

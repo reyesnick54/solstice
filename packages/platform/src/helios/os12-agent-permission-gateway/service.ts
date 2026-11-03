@@ -1,6 +1,5 @@
-import type { Clock } from '../../../../config/src/clock.ts';
-import type { CustomerId } from '../../../../domain/src/customer.ts';
-import { err, ok, type Result } from '../../../../domain/src/result.ts';
+import type { Clock } from '@solstice/config';
+import { err, ok, type CustomerId, type Result } from '@solstice/domain';
 import type { EconomicWorkOrderId } from '../ids.ts';
 import { recordAgentActionAudit } from './audit.ts';
 import { createResearchAutopilotStrategy, tickResearchAutopilot } from './autopilot.ts';

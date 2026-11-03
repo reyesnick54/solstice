@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { HELIOS_OS12_SERIS_UPSTREAM } from './upstream-attribution.ts';
 import {
   AGENT_RESEARCH_PERMISSIONS,
