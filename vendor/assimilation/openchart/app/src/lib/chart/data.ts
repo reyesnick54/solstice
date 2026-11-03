@@ -1,0 +1,232 @@
+// Purpose: Convert the Feed's columns and millisecond windows into chart coordinates.
+import { v2 } from "@openchart/chart-core";
+import { Chart } from "@openchart/chart-core/chart/state";
+import {
+  resolutionMs,
+  type BarsRequest,
+  type BarsSeries,
+} from "@openchart/feed";
+import type { TradingDay } from "@openchart/market";
+import type { DataFrame } from "@openchart/timeseries";
+
+import type { ChartPreferences } from "./preferences";
+
+/** Renderer rows retain every source field; only time changes units. */
+export type ChartRow = Readonly<{ time: number } & Record<string, unknown>>;
+
+/** Freeze each new row before handing it to Immer. @example const rows = toRows(frame); */
+export function toRows(frame: DataFrame): ChartRow[] {
+  return Array.from(frame, (row) =>
+    Object.freeze({
+      ...row,
+      time: row.time / 1000,
+    }),
+  );
+}
+
+/**
+ * The whole UTC days of calendar a series needs for session shading, or
+ * undefined when it has none: only intraday Extended/24h bars are shaded.
+ * Whole days keep the window stable while live bars arrive. Times are Unix ms.
+ * @example const window = sessionDaysWindow(series, firstBarTime, lastBarTime);
+ */
+export function sessionDaysWindow(
+  series: Pick<BarsSeries, "resolution" | "session">,
+  first: number | undefined,
+  last: number | undefined,
+): { start: number; end: number } | undefined {
+  const day = resolutionMs["1d"];
+  const step = resolutionMs[series.resolution];
+  if (step >= day || series.session === "regular") return undefined;
+  if (first === undefined || last === undefined) return undefined;
+  const start = Math.floor(first / day) * day;
+  return { start, end: Math.ceil((last + step) / day) * day };
+}
+
+/**
+ * Tag each row whose open time falls inside a calendar session with that
+ * session's type and bounds in seconds, the fields the renderer shades extended
+ * sessions from. Rows outside every session, or outside the days, stay as they
+ * are. Rows and days ascend; sessions never overlap.
+ * @example const tagged = tagSessions(toRows(frame), calendar.days);
+ */
+export function tagSessions(
+  rows: readonly ChartRow[],
+  days: readonly TradingDay[],
+): ChartRow[] {
+  const sessions = days.flatMap((day) => day.sessions);
+  let next = 0;
+  return rows.map((row) => {
+    const time = row.time * 1000;
+    while (next < sessions.length && sessions[next]!.end <= time) next++;
+    const session = sessions[next];
+    return session && session.start <= time
+      ? Object.freeze({
+          ...row,
+          sessionType: session.type,
+          sessionStart: session.start / 1000,
+          sessionEnd: session.end / 1000,
+        })
+      : row;
+  });
+}
+
+/** The open time in milliseconds of the main series' bar at `index`, counting back from -1 for the newest, if it has one. @example const newest = mainBarTime(chart.store.getState(), -1); */
+export function mainBarTime(
+  state: v2.Chart.State,
+  index: number,
+): number | undefined {
+  const bar = v2.ChartStateModel.mainSeries(state)?.data.at(index);
+  return bar ? (bar as ChartRow).time * 1000 : undefined;
+}
+
+/** Read the timeline used by the current ordinal axis. @example const time = mainTimeline(chart.store.getState()); */
+export function mainTimeline(state: v2.Chart.State): number[] {
+  return (v2.ChartStateModel.mainSeries(state)?.data ?? []).map(
+    (row) => (row as ChartRow).time * 1000,
+  );
+}
+
+/** Interpolate fractional indices and extrapolate the future margin. @example const from = indexToTime(times, range.from, resolutionMs['1d']); */
+export function indexToTime(
+  time: readonly number[],
+  index: number,
+  step: number,
+): number {
+  if (!time.length) return NaN;
+  if (index <= 0) return time[0]! + index * step;
+  if (index >= time.length - 1)
+    return time[time.length - 1]! + (index - time.length + 1) * step;
+  const floor = Math.floor(index);
+  return time[floor]! + (time[floor + 1]! - time[floor]!) * (index - floor);
+}
+
+/** Find a fractional position without losing a viewport while history is prepended. @example const index = timeToIndex(times, saved.from, step); */
+export function timeToIndex(
+  time: readonly number[],
+  target: number,
+  step: number,
+): number {
+  if (!time.length) return 0;
+  if (target <= time[0]!) return (target - time[0]!) / step;
+  if (target >= time[time.length - 1]!)
+    return time.length - 1 + (target - time[time.length - 1]!) / step;
+  let lo = 0,
+    hi = time.length - 1;
+  while (lo + 1 < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (time[mid]! <= target) lo = mid;
+    else hi = mid;
+  }
+  return lo + (target - time[lo]!) / (time[hi]! - time[lo]!);
+}
+
+/**
+ * Derive the initial request from display intent, not from a fixed history limit.
+ * It covers a quarter more than the bars that fit at the saved spacing, so neither
+ * loading more history nor an indicator window widens it on the first visible
+ * range. The count rounds up to a power of two, so a width that is still settling
+ * while the chart mounts asks for the same window and reuses an open one.
+ * @example const request = initialBarsRequest(series, preferences.getState(), width);
+ */
+export function initialBarsRequest(
+  series: BarsSeries,
+  { viewport, barSpacing }: Pick<ChartPreferences, "viewport" | "barSpacing">,
+  width: number,
+): BarsRequest {
+  const countBack =
+    2 ** Math.ceil(Math.log2(Math.max(120, (width / barSpacing) * 1.25)));
+  const step = resolutionMs[series.resolution];
+  const end = viewport?.to ?? Date.now();
+  return {
+    ...series,
+    from: Math.floor(viewport?.from ?? end - countBack * step),
+    to: viewport && end < Date.now() - step ? Math.ceil(end + step) : "now",
+    countBack,
+  };
+}
+
+/**
+ * Whether a saved viewport sits far enough outside the current bars window
+ * to replace the subscription. A window that already covers it, or a nearby
+ * pan, keeps the subscription so history can extend.
+ * @example viewportNeedsReload({ from: 100, to: "now" }, { from: 0, to: 10 });
+ */
+export function viewportNeedsReload(
+  window: { readonly from: number; readonly to: number | "now" },
+  viewport: { readonly from: number; readonly to: number },
+): boolean {
+  const end = window.to === "now" ? Number.POSITIVE_INFINITY : window.to;
+  if (window.from <= viewport.from && end >= viewport.to) return false;
+  const span = Math.max(1, viewport.to - viewport.from);
+  if (viewport.to <= window.from) return window.from - viewport.to > span;
+  if (viewport.from >= end) return viewport.from - end > span;
+  return false;
+}
+
+/**
+ * Read the current ordinal time viewport in milliseconds without rounding its
+ * boundaries to bars. This is the inverse of the renderer's setVisibleRange,
+ * including its extra boundary bar; the axis's full data length owns offsets,
+ * while the main timeline owns time interpolation across trading gaps.
+ * Returns undefined for an empty main timeline or a non-ordinal axis. This
+ * synchronous read owns no resources and does not change saved preferences.
+ * @example const beforeUpdate = readTimeViewport(chart.store.getState(), 60_000);
+ */
+export function readTimeViewport(
+  state: v2.Chart.State,
+  step: number,
+): NonNullable<ChartPreferences["viewport"]> | undefined {
+  const time = mainTimeline(state);
+  const axis = v2.XScale.getAxis(state.config.xAxis);
+  if (!time.length || axis.mode !== "ordinal") return;
+  const { barSpacing, rightOffset } = axis.spacing;
+  const to =
+    v2.ChartStateUtils.getDataLength(state, axis.id) + rightOffset / barSpacing;
+  const from =
+    to - 1 - Chart.computeLayout(state.config).areaWidth / barSpacing;
+  return {
+    from: indexToTime(time, from, step),
+    to: indexToTime(time, to, step),
+  };
+}
+
+/** Re-anchor only when the target actually changed. @example applyTimeViewport(draft, saved, step); */
+export function applyTimeViewport(
+  state: v2.Chart.State,
+  viewport: ChartPreferences["viewport"],
+  step: number,
+) {
+  const time = mainTimeline(state);
+  if (!time.length) return;
+  if (!viewport) {
+    v2.ChartStateUtils.scrollToRealTime(state);
+    return;
+  }
+  const from = timeToIndex(time, viewport.from, step),
+    to = timeToIndex(time, viewport.to, step);
+  const current = readTimeViewport(state, step);
+  if (!current || current.from !== viewport.from || current.to !== viewport.to)
+    v2.ChartStateUtils.setVisibleRange(state, from, to);
+}
+
+/** Remove an owned display and its interaction references; missing IDs are harmless. @example removeOwnedSeries(state, id); */
+export function removeOwnedSeries(state: v2.Chart.State, id: string) {
+  // React owns pane membership; a renderer remount must not compact empty panes.
+  v2.ChartStateModel.removeSeriesObject(state, id);
+  const axes = new Set(
+    Object.values(state.objects)
+      .filter((object) => object.kind === "series")
+      .map((object) => object.axisId),
+  );
+  state.config.yAxis.axes = state.config.yAxis.axes.filter((axis) =>
+    axes.has(axis.id),
+  );
+  for (const field of [
+    "hoveredSeriesId",
+    "focusedSeriesId",
+    "lockedSeriesId",
+    "magnetSeriesId",
+  ] as const)
+    if (state[field] === id) delete state[field];
+}

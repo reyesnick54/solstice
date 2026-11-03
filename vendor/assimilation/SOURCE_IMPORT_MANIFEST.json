@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "helios.native-oss-assimilation.source-import.v1",
+  "integrationBranch": "helios/native-oss-assimilation-v1",
+  "sources": [
+    {
+      "sourceName": "bytex",
+      "sourceRepository": "https://github.com/BYTEX-TRADE/bytex",
+      "importedCommitForProvenance": "67b3e103043476a0490bb7afa146ec9ac339b116",
+      "importedAt": "2026-11-03T09:11:55Z",
+      "license": "Apache-2.0",
+      "vendorPath": "vendor/assimilation/bytex",
+      "runtimeDependency": false,
+      "upstreamRequiredAtRuntime": false,
+      "submodule": false,
+      "sourceAssimilationState": "QUARANTINED"
+    },
+    {
+      "sourceName": "openchart",
+      "sourceRepository": "https://github.com/longsurf-ai/openchart",
+      "importedCommitForProvenance": "8109466bfb5d44c32e0e03e9337eaca48b837ab4",
+      "importedAt": "2026-11-03T09:11:55Z",
+      "license": "MIT",
+      "vendorPath": "vendor/assimilation/openchart",
+      "runtimeDependency": false,
+      "upstreamRequiredAtRuntime": false,
+      "submodule": false,
+      "sourceAssimilationState": "QUARANTINED"
+    },
+    {
+      "sourceName": "tradingagents",
+      "sourceRepository": "https://github.com/TauricResearch/TradingAgents",
+      "importedCommitForProvenance": "c4544913a14ed3df5f1ed7b9e8483270ce20682a",
+      "importedAt": "2026-11-03T09:11:55Z",
+      "license": "Apache-2.0",
+      "vendorPath": "vendor/assimilation/tradingagents",
+      "runtimeDependency": false,
+      "upstreamRequiredAtRuntime": false,
+      "submodule": false,
+      "sourceAssimilationState": "QUARANTINED"
+    },
+    {
+      "sourceName": "seris",
+      "sourceRepository": "https://github.com/aowang-ai/seris",
+      "importedCommitForProvenance": "f73dbbb0cd7e3b52601abf905bb871cdb9098550",
+      "importedAt": "2026-11-03T09:11:55Z",
+      "license": "Apache-2.0",
+      "vendorPath": "vendor/assimilation/seris",
+      "runtimeDependency": false,
+      "upstreamRequiredAtRuntime": false,
+      "submodule": false,
+      "sourceAssimilationState": "QUARANTINED"
+    },
+    {
+      "sourceName": "polymarket-prediction-bot",
+      "sourceRepository": "https://github.com/semrincaballero/Polymarket-Prediction-Bot",
+      "importedCommitForProvenance": "ca008196853447e1a24114f38417db1378f9a938",
+      "importedAt": "2026-11-03T09:11:55Z",
+      "license": "MIT",
+      "vendorPath": "vendor/assimilation/polymarket-prediction-bot",
+      "runtimeDependency": false,
+      "upstreamRequiredAtRuntime": false,
+      "submodule": false,
+      "sourceAssimilationState": "QUARANTINED"
+    }
+  ]
+}
