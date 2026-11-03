@@ -25,3 +25,4 @@ export * from './trust-engine/index.ts';
 export * from './wave7/index.ts';
 export * from './wave6/index.ts';
 export * from './access-live/index.ts';
+export * from './sec-fundamentals/index.ts';
