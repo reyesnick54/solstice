@@ -1,4 +1,4 @@
-import { err, ok, type Result } from '../../../domain/src/result.ts';
+import { err, ok, type Result } from '@solstice/domain';
 import { LIVE_STRATEGY_EXECUTION } from '../types.ts';
 import { materializeStrategyCapsuleCandidate, type StrategyGenomeCapsuleCandidate } from './materialize.ts';
 import type { StrategyGenome, StrategyGenomeFailure } from './types.ts';

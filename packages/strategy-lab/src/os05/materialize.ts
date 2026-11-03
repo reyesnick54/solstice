@@ -1,4 +1,4 @@
-import { err, ok, type Result } from '../../../domain/src/result.ts';
+import { err, ok, type Result } from '@solstice/domain';
 import { computeStrategyCapsuleMaterialHash } from '../capsule/fingerprint.ts';
 import type { StrategyCapsuleMaterial, StrategyCapsuleQualificationState } from '../capsule/types.ts';
 import type { StrategyGenome, StrategyGenomeFailure } from './types.ts';

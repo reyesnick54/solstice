@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { StrategyGenomeId, StrategyGenomeVersion, STRATEGY_GENOME_SCHEMA } from './ids.ts';
 
 export const STRATEGY_NODE_KINDS = [

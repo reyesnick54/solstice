@@ -1,4 +1,4 @@
-import { asUtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant } from '@solstice/domain';
 import {
   STRATEGY_GENOME_FEATURE_MANIFEST_VERSION,
   STRATEGY_GENOME_NODE_CATALOG_VERSION,

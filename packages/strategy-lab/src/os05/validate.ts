@@ -1,4 +1,4 @@
-import { err, ok, type Result } from '../../../domain/src/result.ts';
+import { err, ok, type Result } from '@solstice/domain';
 import { FORBIDDEN_STRATEGY_CODE } from '../dsl.ts';
 import {
   STRATEGY_GENOME_FEATURE_MANIFEST_VERSION,
