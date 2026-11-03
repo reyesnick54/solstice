@@ -18,6 +18,10 @@ import { defaultSimulationBudget, RiskEngine } from '../packages/risk/src/engine
 import { createSimulationKeyProvider } from '../packages/security/src/simulation.ts';
 import { lintStrategyPromotionAuthority } from '../packages/strategy-lab/src/architecture-guards.ts';
 import {
+  certifyStrategyLabBaselineDataset,
+  toStrategyLabAdaptiveAlphaQualificationRef,
+} from '../packages/platform/src/helios/adaptive-alpha-v2/index.ts';
+import {
   buildH14ReferenceCapsule,
   createQualificationPolicy,
   DEFAULT_PARAMETER_SET,
@@ -95,12 +99,29 @@ function registerCapsuleWithLab(ctx: Harness, subjectId = 'cust_h18_a') {
   assert.equal(compiled.ok, true);
   const spec = ctx.lab.store.getSpecification('str_two_etf_cash', 'v1');
   if (!spec || !compiled.ok) throw new Error('spec');
-  return ctx.promotion.registerCapsule({
+  const capsule = ctx.promotion.registerCapsule({
     specification: spec,
     plan: compiled.value,
     evidenceRefs: [{ evidenceKind: 'VALIDATION', refId: 'pending', hash: 'pending' }],
     subjectId,
   });
+  if (!capsule.ok) {
+    return capsule;
+  }
+  const aaf = certifyStrategyLabBaselineDataset({
+    strategyId: spec.strategyId,
+    strategyVersion: spec.version,
+    strategyEvaluationId: `eval_${spec.strategyId}_${spec.version}`,
+    qualifiedAt: ctx.clock.now(),
+    evidenceVault: ctx.evidence,
+  });
+  const recorded = ctx.promotion.recordAdaptiveAlphaQualification({
+    strategyId: spec.strategyId,
+    version: spec.version,
+    qualification: toStrategyLabAdaptiveAlphaQualificationRef(aaf),
+  });
+  assert.equal(recorded.ok, true);
+  return capsule;
 }
 
 function runEvaluation(ctx: Harness) {

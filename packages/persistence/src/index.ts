@@ -76,6 +76,10 @@ export {
   persistHeliosMarketBarState,
 } from './growth/pg-helios-market-bar-store.ts';
 export {
+  loadHeliosUniversalFeatureFabricState,
+  persistHeliosUniversalFeatureFabricState,
+} from './growth/pg-helios-feature-fabric-store.ts';
+export {
   queryHeliosMarketBars,
   queryHeliosMarketObservations,
   queryLatestHeliosMarketObservation,
@@ -123,6 +127,10 @@ export {
   persistMacroEventIntelligenceState,
   queryHeliosMacroEvents,
 } from './growth/pg-helios-macro-event-intelligence.ts';
+export {
+  loadHeliosFeatureFabricState,
+  persistHeliosFeatureFabricState,
+} from './growth/pg-helios-feature-fabric-store.ts';
 export {
   loadGrowIntelligenceState,
   persistGrowIntelligenceState,

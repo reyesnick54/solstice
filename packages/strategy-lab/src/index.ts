@@ -525,6 +525,7 @@ export {
   informationTimeLeakFixture,
   chronologicalEvaluationManifest,
   buildReferenceCapsule,
+  attachPointInTimeDatasetSeal,
 } from './evaluation/index.ts';
 export type {
   StrategyCapsuleId,
@@ -554,6 +555,8 @@ export type {
   StrategyEvaluationRecord,
   EvaluationRecordStore,
   ChronologicalEvaluationResult,
+  ChronologicalEvaluationPitConfig,
+  PointInTimeDatasetManifestSeal,
 } from './evaluation/index.ts';
 export {
   STRATEGY_GENOME_SCHEMA,

@@ -4,8 +4,8 @@
 
 import type { UtcInstant } from '../../../../domain/src/time.ts';
 import { buildPointInTimeFundamentalSnapshot } from './features.ts';
-import { createFundamentalObservationStore, type FundamentalObservationStore } from './store.ts';
-import type { FundamentalFactRecord, PointInTimeFundamentalSnapshot } from './types.ts';
+import { createFundamentalObservationStore, type FundamentalObservationStore } from './fundamental-store.ts';
+import type { FundamentalFactRecord, PointInTimeFundamentalSnapshot } from './fundamental-types.ts';
 
 export type HeliosFundamentalFeatureFabric = {
   ingestFacts(facts: readonly FundamentalFactRecord[]): void;

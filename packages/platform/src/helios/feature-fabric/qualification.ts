@@ -1,63 +1,53 @@
 /**
- * HELIOS OS10 qualification gate (checks supplied by integration tests / orchestration).
+ * AAF02 qualification gate.
  */
 
-export const HELIOS_OS10_POINT_IN_TIME_FUNDAMENTALS_QUALIFIED =
-  'HELIOS_OS10_POINT_IN_TIME_FUNDAMENTALS_QUALIFIED' as const;
-export const HELIOS_OS10_POINT_IN_TIME_FUNDAMENTALS_BLOCKED =
-  'HELIOS_OS10_POINT_IN_TIME_FUNDAMENTALS_BLOCKED' as const;
+export const HELIOS_AAF02_EVIDENCE_TIME_FEATURE_FABRIC_QUALIFIED =
+  'HELIOS_AAF02_EVIDENCE_TIME_FEATURE_FABRIC_QUALIFIED' as const;
 
-export type HeliosOs10QualificationChecks = {
-  readonly noQ2BeforeFiling: boolean;
-  readonly q2OriginalRevenueAtBacktest: boolean;
-  readonly noFutureLeakQ2Window: boolean;
-  readonly restatementUpdatesEffectiveRevenue: boolean;
-  readonly restatementPreservesOriginalFacts: boolean;
-  readonly aafRevisionLedgerTracksAmendment: boolean;
-  readonly pitEffectiveFactBeforeRestatement: boolean;
-  readonly derivedMarginsWhenFactsSupport: boolean;
+export const HELIOS_AAF02_EVIDENCE_TIME_FEATURE_FABRIC_BLOCKED =
+  'HELIOS_AAF02_EVIDENCE_TIME_FEATURE_FABRIC_BLOCKED' as const;
+
+export type Aaf02QualificationChecks = {
+  readonly q2FilingBlockedBeforePublication: boolean;
+  readonly macroRevisionPreservesHistory: boolean;
+  readonly futureObservationRejected: boolean;
+  readonly delayedMarketKnowabilityPreserved: boolean;
+  readonly staleProducesDegradedFeature: boolean;
+  readonly restrictedEntitlementPropagates: boolean;
+  readonly restartPreservesIdentity: boolean;
+  readonly recomputationDeterministic: boolean;
+  readonly transformationVersionNewLineage: boolean;
+  readonly noCustomerFinancialAuthority: boolean;
 };
 
-export type HeliosOs10QualificationResult = {
+export type Aaf02QualificationResult = {
   readonly marker:
-    | typeof HELIOS_OS10_POINT_IN_TIME_FUNDAMENTALS_QUALIFIED
-    | typeof HELIOS_OS10_POINT_IN_TIME_FUNDAMENTALS_BLOCKED;
+    | typeof HELIOS_AAF02_EVIDENCE_TIME_FEATURE_FABRIC_QUALIFIED
+    | typeof HELIOS_AAF02_EVIDENCE_TIME_FEATURE_FABRIC_BLOCKED;
   readonly qualified: boolean;
   readonly blockers: readonly string[];
 };
 
-const CHECK_LABELS: Record<keyof HeliosOs10QualificationChecks, string> = {
-  noQ2BeforeFiling: 'no_q2_before_filing',
-  q2OriginalRevenueAtBacktest: 'q2_original_revenue_at_backtest',
-  noFutureLeakQ2Window: 'no_future_leak_q2_window',
-  restatementUpdatesEffectiveRevenue: 'restatement_updates_effective_revenue',
-  restatementPreservesOriginalFacts: 'restatement_preserves_original_facts',
-  aafRevisionLedgerTracksAmendment: 'aaf_revision_ledger_tracks_amendment',
-  pitEffectiveFactBeforeRestatement: 'pit_effective_fact_before_restatement',
-  derivedMarginsWhenFactsSupport: 'derived_margins_when_facts_support',
-};
-
-export function evaluateHeliosOs10PointInTimeFundamentalsQualification(
-  checks: HeliosOs10QualificationChecks,
-): HeliosOs10QualificationResult {
+export function evaluateAaf02Qualification(checks: Aaf02QualificationChecks): Aaf02QualificationResult {
   const blockers: string[] = [];
-  for (const [key, pass] of Object.entries(checks) as [keyof HeliosOs10QualificationChecks, boolean][]) {
-    if (!pass) {
-      blockers.push(CHECK_LABELS[key]);
-    }
-  }
+  if (!checks.q2FilingBlockedBeforePublication) blockers.push('q2_filing_before_publication');
+  if (!checks.macroRevisionPreservesHistory) blockers.push('macro_revision_history');
+  if (!checks.futureObservationRejected) blockers.push('future_observation');
+  if (!checks.delayedMarketKnowabilityPreserved) blockers.push('delayed_market_knowability');
+  if (!checks.staleProducesDegradedFeature) blockers.push('stale_degraded');
+  if (!checks.restrictedEntitlementPropagates) blockers.push('restricted_entitlement');
+  if (!checks.restartPreservesIdentity) blockers.push('restart_identity');
+  if (!checks.recomputationDeterministic) blockers.push('recomputation_deterministic');
+  if (!checks.transformationVersionNewLineage) blockers.push('transformation_lineage');
+  if (!checks.noCustomerFinancialAuthority) blockers.push('no_financial_authority');
 
-  if (blockers.length === 0) {
-    return Object.freeze({
-      marker: HELIOS_OS10_POINT_IN_TIME_FUNDAMENTALS_QUALIFIED,
-      qualified: true,
-      blockers: Object.freeze([]),
-    });
-  }
-
+  const qualified = blockers.length === 0;
   return Object.freeze({
-    marker: HELIOS_OS10_POINT_IN_TIME_FUNDAMENTALS_BLOCKED,
-    qualified: false,
+    marker: qualified
+      ? HELIOS_AAF02_EVIDENCE_TIME_FEATURE_FABRIC_QUALIFIED
+      : HELIOS_AAF02_EVIDENCE_TIME_FEATURE_FABRIC_BLOCKED,
+    qualified,
     blockers: Object.freeze(blockers),
   });
 }

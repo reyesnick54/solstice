@@ -10,8 +10,8 @@ import {
   type FundamentalFeatureId,
   type FundamentalFeatureValue,
   type PointInTimeFundamentalSnapshot,
-} from './types.ts';
-import { effectiveFactsAt } from './store.ts';
+} from './fundamental-types.ts';
+import { effectiveFactsAt } from './fundamental-store.ts';
 
 function findFact(
   facts: readonly FundamentalFactRecord[],

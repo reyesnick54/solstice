@@ -3,6 +3,10 @@ import type { PromotionCapsule } from './promotion-capsule.ts';
 import type { EvaluationQualificationResult } from './evaluation-qualification.ts';
 import type { ForwardShadowEvidenceSummary } from './forward-shadow.ts';
 import type { QualificationPolicy } from './qualification-policy.ts';
+import type { CoverageManifest } from '../../platform/src/helios/feature-fabric/feature-coverage/index.ts';
+import { evaluateCoveragePromotionGate } from './evaluation/coverage-policy.ts';
+import { gatePromotionOnAdaptiveAlphaQualification } from './evaluation/adaptive-alpha-promotion-gate.ts';
+import type { AdaptiveAlphaQualificationRecord } from './adaptive-alpha-qualification-record.ts';
 import type { StrategyFailure } from './types.ts';
 
 export type GateResult = {
@@ -17,6 +21,7 @@ export type GateResult = {
 export function gateResearchToEvaluation(input: {
   readonly capsule: PromotionCapsule;
   readonly policy: QualificationPolicy;
+  readonly adaptiveAlphaQualification?: AdaptiveAlphaQualificationRecord | null;
 }): Result<GateResult, StrategyFailure> {
   const missing: string[] = [];
   if (!input.capsule.fingerprint) missing.push('strategy fingerprint');
@@ -27,6 +32,14 @@ export function gateResearchToEvaluation(input: {
   if (input.capsule.evidenceRefs.length === 0) missing.push('evidence references');
   if (input.capsule.schemaDefects.length > 0) missing.push('schema/config defects unresolved');
   if (!input.capsule.compiledHash) missing.push('immutable compiled Strategy Capsule version');
+
+  const aafGate = gatePromotionOnAdaptiveAlphaQualification({
+    qualification: input.adaptiveAlphaQualification ?? null,
+    requireQualification: input.policy.requireAdaptiveAlphaQualification,
+  });
+  if (!aafGate.permitted) {
+    missing.push(...aafGate.blockers);
+  }
 
   return ok(
     Object.freeze({
@@ -43,6 +56,9 @@ export function gateResearchToEvaluation(input: {
 export function gateEvaluationToShadow(input: {
   readonly qualification: EvaluationQualificationResult;
   readonly policy: QualificationPolicy;
+  readonly coverageManifest?: CoverageManifest | null;
+  readonly trainingCoverageManifest?: CoverageManifest | null;
+  readonly nonUniversalFeaturesUsed?: boolean;
 }): Result<GateResult, StrategyFailure> {
   const missing: string[] = [];
   if (input.qualification.policyHash !== input.policy.policyHash) {
@@ -50,6 +66,15 @@ export function gateEvaluationToShadow(input: {
   }
   if (!input.qualification.passed) {
     missing.push('declared evaluation qualification result');
+  }
+  const coverageGate = evaluateCoveragePromotionGate({
+    policy: input.policy,
+    evaluationManifest: input.coverageManifest ?? null,
+    trainingManifest: input.trainingCoverageManifest ?? null,
+    nonUniversalFeaturesUsed: input.nonUniversalFeaturesUsed ?? false,
+  });
+  if (!coverageGate.passed) {
+    missing.push(...coverageGate.blockers);
   }
   return ok(
     Object.freeze({
