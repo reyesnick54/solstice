@@ -103,3 +103,4 @@ export {
   type ResearchMonitorNative12QualificationChecks,
   type ResearchMonitorNative12QualificationResult,
 } from './native12-qualification.ts';
+export * from './proactive/index.ts';
