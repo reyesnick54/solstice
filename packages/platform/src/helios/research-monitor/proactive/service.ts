@@ -28,8 +28,9 @@ import type {
   ProactiveResearchEngineSnapshot,
   ProactiveEngineTickResult,
 } from './types.ts';
-import type { ResearchMonitorDefinition } from '../types.ts';
+import type { ResearchMonitorDefinition, CanonicalFeatureObservation } from '../types.ts';
 import type { EconomicWorkOrder } from '../../types.ts';
+import { computeKnowableAt } from '../../observation/information-time.ts';
 
 export type RegisterProactiveMonitorInput = {
   readonly customerId: string;
@@ -326,25 +327,36 @@ export class HeliosProactiveResearchEngine {
     registration: ProactiveMonitorRegistration,
   ): import('../types.ts').AafFeatureFabricPort {
     return Object.freeze({
-      resolveFeatures: () =>
-        Object.freeze(
-          registration.definition.pointInTimeFeatureRequirements.map((req) =>
-            Object.freeze({
+      resolveFeatures: (): readonly CanonicalFeatureObservation[] => {
+        const now = this.now();
+        return Object.freeze(
+          registration.definition.pointInTimeFeatureRequirements.map((req) => {
+            const informationTime = Object.freeze({
+              sourceEventTime: now,
+              sourcePublishedTime: null,
+              providerAvailabilityTime: null,
+              sunreyArrivalTime: now,
+              ingestionTime: now,
+              knowableAt: computeKnowableAt({
+                providerAvailabilityTime: null,
+                sunreyArrivalTime: now,
+                ingestionTime: now,
+              }),
+            });
+            return Object.freeze({
               featureId: req.featureId,
               kind: req.requiredKind ?? 'realized_volatility',
               instrumentId: registration.definition.watch[0] ?? null,
               value: '0',
-              asOf: this.now(),
-              informationTime: Object.freeze({
-                knowableAt: this.now(),
-                observationTime: this.now(),
-              }),
+              asOf: now,
+              informationTime,
               observationRef: null,
               stale: true,
               missing: true,
-            }),
-          ),
-        ),
+            });
+          }),
+        );
+      },
     });
   }
 
