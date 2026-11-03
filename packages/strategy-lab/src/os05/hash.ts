@@ -1,8 +1,19 @@
 import { createHash } from 'node:crypto';
 
-import type { StrategyGenome } from './types.ts';
+import type { StrategyGenome, StrategyGenomeLineage } from './types.ts';
 
-function canonicalGenomeBody(genome: Omit<StrategyGenome, 'lineage'> & { readonly lineage: Omit<StrategyGenome['lineage'], 'genomeHash'> }): string {
+export type StrategyGenomeHashMaterial = Omit<StrategyGenome, 'lineage'> & {
+  readonly lineage: Omit<StrategyGenomeLineage, 'genomeHash'>;
+};
+
+export function lineageWithoutGenomeHash(
+  lineage: StrategyGenomeLineage,
+): Omit<StrategyGenomeLineage, 'genomeHash'> {
+  const { genomeHash: _genomeHash, ...rest } = lineage;
+  return rest;
+}
+
+function canonicalGenomeBody(genome: StrategyGenomeHashMaterial): string {
   return JSON.stringify(
     {
       schema: genome.schema,
@@ -18,15 +29,11 @@ function canonicalGenomeBody(genome: Omit<StrategyGenome, 'lineage'> & { readonl
   );
 }
 
-export function computeStrategyGenomeHash(
-  genome: Omit<StrategyGenome, 'lineage'> & { readonly lineage: Omit<StrategyGenome['lineage'], 'genomeHash'> },
-): string {
+export function computeStrategyGenomeHash(genome: StrategyGenomeHashMaterial): string {
   return createHash('sha256').update(canonicalGenomeBody(genome)).digest('hex');
 }
 
-export function attachGenomeHash(
-  genome: Omit<StrategyGenome, 'lineage'> & { readonly lineage: Omit<StrategyGenome['lineage'], 'genomeHash'> },
-): StrategyGenome {
+export function attachGenomeHash(genome: StrategyGenomeHashMaterial): StrategyGenome {
   const genomeHash = computeStrategyGenomeHash(genome);
   return Object.freeze({
     ...genome,

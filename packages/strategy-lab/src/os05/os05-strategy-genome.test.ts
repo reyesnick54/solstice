@@ -8,7 +8,7 @@ import {
   STRATEGY_GENOME_NODE_CATALOG_VERSION,
 } from './catalog.ts';
 import { buildOs05ExampleStrategyGenome } from './fixtures.ts';
-import { computeStrategyGenomeHash } from './hash.ts';
+import { computeStrategyGenomeHash, lineageWithoutGenomeHash } from './hash.ts';
 import { asStrategyGenomeId, asStrategyGenomeVersion, STRATEGY_GENOME_SCHEMA } from './ids.ts';
 import { compileStrategyGenome, GENOME_COMPILER_FORBIDDEN_STAGES } from './pipeline.ts';
 import {
@@ -26,11 +26,11 @@ describe('HELIOS OS05 — Strategy Genome foundation', () => {
     assert.equal(validated.ok, true, !validated.ok ? validated.error.message : '');
     const hashA = computeStrategyGenomeHash({
       ...genome,
-      lineage: { ...genome.lineage, genomeHash: '' },
+      lineage: lineageWithoutGenomeHash(genome.lineage),
     });
     const hashB = computeStrategyGenomeHash({
       ...genome,
-      lineage: { ...genome.lineage, genomeHash: '' },
+      lineage: lineageWithoutGenomeHash(genome.lineage),
     });
     assert.equal(hashA, hashB);
     assert.match(genome.lineage.genomeHash, /^[a-f0-9]{64}$/);
@@ -81,10 +81,7 @@ describe('HELIOS OS05 — Strategy Genome foundation', () => {
         ...base.parameters,
         evil: 'eval("hack")',
       }),
-      lineage: {
-        ...base.lineage,
-        genomeHash: '',
-      },
+      lineage: lineageWithoutGenomeHash(base.lineage),
     });
     const validated = validateStrategyGenome(poisoned);
     assert.equal(validated.ok, false);
@@ -100,11 +97,11 @@ describe('HELIOS OS05 — Strategy Genome foundation', () => {
     const paperPlan = compileStrategyGenome(genome, 'PAPER');
     const hashA = computeStrategyGenomeHash({
       ...genome,
-      lineage: { ...genome.lineage, genomeHash: '' },
+      lineage: lineageWithoutGenomeHash(genome.lineage),
     });
     const hashB = computeStrategyGenomeHash({
       ...genome,
-      lineage: { ...genome.lineage, genomeHash: '' },
+      lineage: lineageWithoutGenomeHash(genome.lineage),
     });
     const result = evaluateOs05StrategyGenomeQualification({
       genomeTypesPresent: true,
@@ -125,7 +122,6 @@ describe('HELIOS OS05 — Strategy Genome foundation', () => {
             createdAt: asUtcInstant('2026-11-03T06:00:00.000Z'),
             featureManifestVersion: STRATEGY_GENOME_FEATURE_MANIFEST_VERSION,
             nodeCatalogVersion: STRATEGY_GENOME_NODE_CATALOG_VERSION,
-            genomeHash: '',
           },
         }),
       ).ok,

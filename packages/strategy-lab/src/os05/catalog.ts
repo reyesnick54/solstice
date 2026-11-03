@@ -20,7 +20,7 @@ export type CatalogNodeDefinition = {
   readonly params: readonly CatalogParamSpec[];
 };
 
-export const STRATEGY_GENOME_NODE_CATALOG: Readonly<Record<string, CatalogNodeDefinition>> = Object.freeze({
+export const STRATEGY_GENOME_NODE_CATALOG = Object.freeze({
   'feature.realized_volatility': Object.freeze({
     catalogRef: 'feature.realized_volatility',
     kind: 'FEATURE',
@@ -84,7 +84,7 @@ export const STRATEGY_GENOME_NODE_CATALOG: Readonly<Record<string, CatalogNodeDe
     description: 'Gate strategy activity to permitted market regimes.',
     params: Object.freeze([]),
   }),
-});
+}) as Readonly<Record<string, CatalogNodeDefinition>>;
 
 export function catalogDefinitionFor(ref: string): CatalogNodeDefinition | undefined {
   return STRATEGY_GENOME_NODE_CATALOG[ref];
