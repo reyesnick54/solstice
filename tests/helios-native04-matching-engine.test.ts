@@ -56,6 +56,7 @@ type ParityVectorFile = {
       readonly status?: string;
       readonly fidelityLevel?: string;
       readonly reason?: string;
+      readonly notEquivalentTo?: string;
     };
   }[];
 };
