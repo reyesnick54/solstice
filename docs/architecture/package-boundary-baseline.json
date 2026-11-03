@@ -51885,6 +51885,168 @@
       "sourcePackage": "treasury",
       "targetPackage": "treasury",
       "spec": "../../../packages/treasury/src/index.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'domain' internals via '../../../domain/src/customer.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/customer.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'domain' internals via '../../../domain/src/jurisdiction.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/jurisdiction.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 7,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'events' internals via '../../../events/src/events.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "events",
+      "spec": "../../../events/src/events.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 8,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'identity' internals via '../../../identity/src/simulation.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "identity",
+      "spec": "../../../identity/src/simulation.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 9,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'model-registry' internals via '../../../model-registry/src/registry.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "model-registry",
+      "spec": "../../../model-registry/src/registry.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 10,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'security' internals via '../../../security/src/simulation.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "security",
+      "spec": "../../../security/src/simulation.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/qualification.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/qualification.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/session-gateway.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/session-gateway.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/result.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/session-usage.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/session-usage.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/audit.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/audit.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/audit.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/audit.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'ai-runtime' internals via '../../../ai-runtime/src/native-agent-runtime/taxonomy.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "ai-runtime",
+      "spec": "../../../ai-runtime/src/native-agent-runtime/taxonomy.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/qualification.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/qualification.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/qualification.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/qualification.ts' deep-imports 'ai-runtime' internals via '../../../ai-runtime/src/native-agent-runtime/taxonomy.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "ai-runtime",
+      "spec": "../../../ai-runtime/src/native-agent-runtime/taxonomy.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/service.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/service.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/session.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/session.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
     }
   ]
 }
