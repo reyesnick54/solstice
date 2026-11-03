@@ -162,10 +162,10 @@ export function runOpenSourceIntegrationSystemDemo(root: string = ROOT): OpenSou
     push('bull_bear_challenge', 'PASS', 'Adversarial research module present');
   }
 
-  if (integrationPending('packages/platform/src/helios/open-source/strategy-genome/index.ts')) {
+  if (integrationPending('packages/strategy-lab/src/os05/index.ts')) {
     push('strategy_genome_proposal', 'INTEGRATION_PENDING', 'OS05 Strategy Genome not integrated');
   } else {
-    push('strategy_genome_proposal', 'PASS', 'Strategy Genome module present');
+    push('strategy_genome_proposal', 'PASS', 'Strategy Genome module present (canonical Strategy Lab os05 owner)');
   }
 
   if (integrationPending('packages/strategy-lab/src/index.ts')) {
