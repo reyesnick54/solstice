@@ -9,10 +9,9 @@ import type {
   CloOrderBookSnapshot,
   ExecutionTwinOrder,
   PaperPositionRecord,
-  PredictionOutcomeSide,
   SimulatedFillResult,
 } from './types.ts';
-import type { PredictionExecutionTwinMode } from './taxonomy.ts';
+import type { PredictionExecutionTwinMode, PredictionOutcomeSide } from './taxonomy.ts';
 import { computeExposureMetrics } from './exposure.ts';
 import { applyPaperFill } from './paper-position.ts';
 

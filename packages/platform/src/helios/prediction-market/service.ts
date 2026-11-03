@@ -7,14 +7,13 @@ import { browsePredictionMarkets, findEventBySlug } from './market-browser.ts';
 import { resolvePolymarketTokenEntity } from './entity-resolution.ts';
 import { extractYesNoPairFeatures } from './features.ts';
 import { sealPredictionMarketEvidence } from './evidence.ts';
-import { submitExecutionTwinOrder } from './execution-twin.ts';
+import { submitExecutionTwinOrder, type TwinSubmitResult } from './execution-twin.ts';
 import { fixtureClobBooks, fixturePredictionEvents, FIXTURE_CONDITION_FED_DEC } from './fixtures.ts';
 import type { PredictionMarketStore } from './store.ts';
 import type {
   CloBookMetrics,
   PredictionMarketBrowserQuery,
   PredictionMarketEvidenceRecord,
-  TwinSubmitResult,
 } from './types.ts';
 import { computeClobBookMetrics } from './clob-metrics.ts';
 import type { PredictionOutcomeSide } from './taxonomy.ts';

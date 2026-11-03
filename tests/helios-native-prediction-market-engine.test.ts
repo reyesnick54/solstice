@@ -22,7 +22,7 @@ import {
   HELIOS_NATIVE_PREDICTION_MARKET_ENGINE_QUALIFIED,
   resolvePolymarketTokenEntity,
   simulateClobFill,
-} from '../packages/platform/src/helios/index.ts';
+} from '../packages/platform/src/helios/prediction-market/index.ts';
 import { lintHeliosBoundary } from '../tools/architectural-linter/src/helios-guards.ts';
 import {
   DEFAULT_MAX_COMPLEMENT_GAP_MINOR,

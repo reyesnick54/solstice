@@ -3,7 +3,8 @@
  */
 
 import type { UtcInstant } from '@solstice/domain';
-import type { PaperPositionLeg, PaperPositionRecord, PredictionOutcomeSide } from './types.ts';
+import type { PredictionOutcomeSide } from './taxonomy.ts';
+import type { PaperPositionLeg, PaperPositionRecord } from './types.ts';
 
 export type ApplyPaperFillInput = {
   readonly positions: readonly PaperPositionRecord[];

@@ -3,7 +3,8 @@
  */
 
 import { PREDICTION_PROBABILITY_SCALE } from './taxonomy.ts';
-import type { ExposureMetrics, PaperPositionRecord, PredictionOutcomeSide } from './types.ts';
+import type { PredictionOutcomeSide } from './taxonomy.ts';
+import type { ExposureMetrics, PaperPositionRecord } from './types.ts';
 
 const SIDES: readonly PredictionOutcomeSide[] = ['YES', 'NO'];
 
@@ -38,7 +39,10 @@ export function computeExposureMetrics(
     netYesContracts: netYes,
     notionalAtRiskMinor: notional,
     maxLossMinor: maxLoss > PREDICTION_PROBABILITY_SCALE ? maxLoss : maxLoss,
-    concentrationBySide: Object.freeze({ ...concentration }),
+    concentrationBySide: Object.freeze({
+      YES: concentration.YES,
+      NO: concentration.NO,
+    }),
   });
 }
 
