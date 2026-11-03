@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-import { asUtcInstant, type UtcInstant } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
 import type { HeliosProviderOrderPort, ProviderSubmitRequest, ProviderSubmitResult } from '../order-lifecycle/provider-port.ts';
 import { SandboxHeliosProviderPort } from '../order-lifecycle/sandbox-provider.ts';
 import type { ExecutionTwinEnvironmentKind, ExecutionTwinProviderKind } from './taxonomy.ts';
