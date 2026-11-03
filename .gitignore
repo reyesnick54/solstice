@@ -16,3 +16,4 @@ packages/sunrey-chain/node/target/
 packages/sunrey-chain/rust/target/
 artifacts/sunrey-range/
 performance/helios/results/
+vendor/assimilation/

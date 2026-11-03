@@ -611,3 +611,12 @@ export type {
   Os05QualificationChecks,
   Os05QualificationResult,
 } from './os05/index.ts';
+export {
+  OPENCHART_GENOME_CATALOG_PREFIX,
+  OPENCHART_GENOME_STUDY_REFS,
+  OPENCHART_PARITY_UPSTREAM_SHA,
+  OPENCHART_TEA_SMA_LENGTH2_CLOSES,
+  OPENCHART_TEA_SMA_LENGTH2_EXPECTED,
+  buildOpenChartFeatureNode,
+  buildOpenChartThresholdCondition,
+} from './openchart-analytics/index.ts';
