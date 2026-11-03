@@ -415,6 +415,15 @@ export {
   cryptoBarToChronologicalObservation,
 } from './multi-asset/index.ts';
 export {
+  HELIOS_OS14_PREDICTION_MARKET_RESEARCH_SCHEMA,
+  HELIOS_OS14_STRATEGY_LAB_BRIDGE_SCHEMA,
+  OS14_STRATEGY_LAB_RESEARCH_ONLY,
+  buildOs14StrategyLabResearchContext,
+  os14ResearchLiquidityStress,
+  type Os14StrategyLabFeatureRow,
+  type Os14StrategyLabResearchContext,
+} from './os14-prediction-market/index.ts';
+export {
   DEFAULT_M10_CONFIG,
   HELIOS_MULTI_ASSET_M10_CRYPTO_MOMENTUM_BREAKOUT_QUALIFIED,
   evaluateCryptoMomentumBreakoutRule,
