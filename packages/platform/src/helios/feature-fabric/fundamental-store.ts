@@ -3,7 +3,7 @@
  */
 
 import type { UtcInstant } from '../../../../domain/src/time.ts';
-import type { FundamentalFactRecord } from './types.ts';
+import type { FundamentalFactRecord } from './fundamental-types.ts';
 
 export type FundamentalObservationStore = {
   appendFacts(facts: readonly FundamentalFactRecord[]): void;

@@ -192,7 +192,7 @@ export function computeCoverageMetricSet(input: {
       input.featureIds,
     ),
     featureCompletenessRatioBps: computeFeatureCompletenessBps(input.cells, input.eligibleUniverseCount),
-    coverageStabilityBps: coverageStabilityBps(stabilityWindow),
+    coverageStabilityBps: coverageStabilityBps(stabilityWindow) ?? 0,
     coverageDriftBps:
       input.baselineCoverageRatioBps === undefined || input.baselineCoverageRatioBps === null
         ? null

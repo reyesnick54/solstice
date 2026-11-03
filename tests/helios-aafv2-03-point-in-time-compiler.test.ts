@@ -25,6 +25,9 @@ import {
   resolvePointInTimeVectorsForEvaluation,
 } from '../packages/platform/src/helios/feature-fabric/compiler/strategy-lab-bridge.ts';
 import { attachPointInTimeDatasetSeal } from '../packages/strategy-lab/src/evaluation/point-in-time-dataset-seal.ts';
+import {
+  LATENCY_MODEL_VERSION,
+} from '../packages/strategy-lab/src/evaluation/types.ts';
 
 const GENOME = 'sg_aafv203_demo';
 const ENTITY = 'ent_acme';
@@ -82,7 +85,9 @@ function compileRequest(input: {
     decisionTimes: Object.freeze([input.decisionTime ?? DECISION]),
     featureDefinitions: input.featureDefinitions ?? Object.freeze([closeFeature]),
     informationTimePolicy: INFORMATION_TIME_POLICY_DEFAULT,
-    universe: universe({ membershipRows: input.membershipRows }),
+    universe: universe(
+      input.membershipRows !== undefined ? { membershipRows: input.membershipRows } : undefined,
+    ),
     context: Object.freeze({
       observations: input.observations,
       sourceProviders: Object.freeze(['simulation']),
@@ -448,19 +453,26 @@ describe('HELIOS AAFV2.3 point-in-time dataset compiler', () => {
 
     const sealedConfig = attachPointInTimeDatasetSeal(
       {
-        mode: 'CHRONOLOGICAL_REALISTIC',
-        runKind: 'BACKTEST',
+        mode: 'HISTORICAL_BACKTEST',
+        runKind: 'OFFICIAL_QUALIFICATION',
         partition: 'TRAIN',
         period: { start: decisionTimes[0]!, end: decisionTimes[2]! },
         startingCapitalMinor: 1_000_000n,
         latency: {
+          version: LATENCY_MODEL_VERSION,
+          observationToDecisionMs: 250,
+          decisionToProposalMs: 0,
+          proposalToExecutionEligibilityMs: 500,
           zeroLatencyAssumed: false,
-          decisionDelayMs: 250,
-          executionDelayMs: 500,
-          quoteStalenessMs: 0,
-          feedEntitlement: 'SIMULATION',
         },
-        costs: { spreadBps: 5, slippageBps: 2, commissionMinorPerShare: 0n },
+        costs: {
+          mode: 'EXPLICIT_COSTS',
+          commissionMinorPerShare: 0n,
+          spreadMinor: 5n,
+          slippageMinor: 2n,
+          otherCostMinor: 0n,
+          namedExplicitly: true,
+        },
         operatingResearchCostMinor: 0n,
         seed: 'aafv203',
         customerId: null,

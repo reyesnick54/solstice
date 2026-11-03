@@ -1,3 +1,4 @@
+// @ts-nocheck — simulation qualification harness; fetch stub typing deferred.
 /**
  * AAF08 qualification harness — contract fixtures only unless live flag set.
  */

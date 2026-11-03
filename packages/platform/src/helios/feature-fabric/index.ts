@@ -112,7 +112,7 @@ export { createRevisionLedgerStore as createPointInTimeRevisionLedgerStore } fro
 export * from './aaf06/index.ts';
 export * from './macro-intelligence/index.ts';
 
-export * from './entity-resolution/index.ts';
+export * as entityResolution from './entity-resolution/index.ts';
 export { computeFeatureWithResolvedEntity, type ComputeFeatureWithResolutionInput } from './entity-binding.ts';
 export * from './feature-coverage/index.ts';
 
@@ -125,5 +125,5 @@ export {
 } from './research-data-manifest.ts';
 export * from './technical/index.ts';
 export * from './universal/index.ts';
-export * from './coverage/index.ts';
-export * from './bias-sentinel/index.ts';
+export * as aaf05Coverage from './coverage/index.ts';
+export * as biasSentinel from './bias-sentinel/index.ts';

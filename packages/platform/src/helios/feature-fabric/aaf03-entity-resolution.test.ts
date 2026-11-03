@@ -222,6 +222,9 @@ describe('HELIOS AAF03 temporal entity resolution', () => {
     const owners = AAF03_CANONICAL_OWNER_REUSE.map((row) => row.owner);
     assert.ok(owners.some((o) => o.includes('packages/identity')));
     assert.ok(owners.some((o) => o.includes('economic-asset-registry')));
-    assert.equal(owners.includes('packages/platform/src/helios/feature-fabric/entity-resolution'), false);
+    assert.equal(
+      (owners as readonly string[]).includes('packages/platform/src/helios/feature-fabric/entity-resolution'),
+      false,
+    );
   });
 });

@@ -76,7 +76,7 @@ export class ExternalMarketDataCertificationRuntime {
     if (!overlay) {
       return null;
     }
-    const catalogEntry = resolveFreeApiEntry(this.#catalogIndex.catalog, providerId);
+    const catalogEntry = resolveFreeApiEntry(this.#catalogIndex.catalog, providerId) ?? null;
     const provider = createMarketDataCertificationProvider(overlay, this.#adapterOptions);
     const credentialConfigured = provider.credentialConfigured();
     const harness = await runMarketDataQualificationHarness({

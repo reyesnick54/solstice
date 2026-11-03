@@ -7,6 +7,8 @@ import { temporalEntityNodeIdFor } from './ids.ts';
 
 const T = (iso: string) => asUtcInstant(iso);
 
+const EMPTY_PAYLOAD = Object.freeze({}) as Readonly<Record<string, string>>;
+
 export type ReferenceGraphHandles = {
   readonly appleListingNasdaq: string;
   readonly aaplCommon: string;
@@ -37,7 +39,7 @@ export function seedReferenceTemporalEntityGraph(store: TemporalEntityGraphStore
     displayName: 'Apple Inc. (issuer)',
     jurisdiction: 'US',
     economicKnowledgeEntityId: appleEkg,
-    payload: Object.freeze({}),
+    payload: EMPTY_PAYLOAD,
   });
   const aapl = store.upsertNode({
     nodeId: temporalEntityNodeIdFor('security:aapl_common'),
@@ -125,7 +127,7 @@ export function seedReferenceTemporalEntityGraph(store: TemporalEntityGraphStore
     displayName: 'Meta Platforms',
     jurisdiction: 'US',
     economicKnowledgeEntityId: metaEkg,
-    payload: Object.freeze({}),
+    payload: EMPTY_PAYLOAD,
   });
   const fbListing = store.upsertNode({
     nodeId: temporalEntityNodeIdFor('listing:fb'),
@@ -186,14 +188,14 @@ export function seedReferenceTemporalEntityGraph(store: TemporalEntityGraphStore
     displayName: 'Acquirer Corp',
     jurisdiction: 'US',
     economicKnowledgeEntityId: heliosIssuerCanonicalEntityId('acquirer_corp'),
-    payload: Object.freeze({}),
+    payload: EMPTY_PAYLOAD,
   });
   const acquired = store.upsertNode({
     kind: 'ISSUER',
     displayName: 'Acquired Co',
     jurisdiction: 'US',
     economicKnowledgeEntityId: heliosIssuerCanonicalEntityId('acquired_co'),
-    payload: Object.freeze({}),
+    payload: EMPTY_PAYLOAD,
   });
   store.appendEdge({
     ...edgeBase,
@@ -211,14 +213,14 @@ export function seedReferenceTemporalEntityGraph(store: TemporalEntityGraphStore
     displayName: 'Spin Parent',
     jurisdiction: 'US',
     economicKnowledgeEntityId: heliosIssuerCanonicalEntityId('spin_parent'),
-    payload: Object.freeze({}),
+    payload: EMPTY_PAYLOAD,
   });
   const spinChild = store.upsertNode({
     kind: 'ISSUER',
     displayName: 'Spin Child Co',
     jurisdiction: 'US',
     economicKnowledgeEntityId: heliosIssuerCanonicalEntityId('spin_child'),
-    payload: Object.freeze({}),
+    payload: EMPTY_PAYLOAD,
   });
   store.appendEdge({
     ...edgeBase,
@@ -235,7 +237,7 @@ export function seedReferenceTemporalEntityGraph(store: TemporalEntityGraphStore
     displayName: 'Dual Listed PLC',
     jurisdiction: 'GB',
     economicKnowledgeEntityId: heliosIssuerCanonicalEntityId('dual_listed_plc'),
-    payload: Object.freeze({}),
+    payload: EMPTY_PAYLOAD,
   });
   const dualNy = store.upsertNode({
     kind: 'LISTING',
@@ -275,7 +277,7 @@ export function seedReferenceTemporalEntityGraph(store: TemporalEntityGraphStore
     displayName: 'Alphabet Inc.',
     jurisdiction: 'US',
     economicKnowledgeEntityId: heliosIssuerCanonicalEntityId('alphabet_inc'),
-    payload: Object.freeze({}),
+    payload: EMPTY_PAYLOAD,
   });
   const googC = store.upsertNode({
     nodeId: temporalEntityNodeIdFor('security:goog_c'),
@@ -315,14 +317,14 @@ export function seedReferenceTemporalEntityGraph(store: TemporalEntityGraphStore
     displayName: 'Conglomerate Holdings',
     jurisdiction: 'US',
     economicKnowledgeEntityId: heliosIssuerCanonicalEntityId('conglomerate_holdings'),
-    payload: Object.freeze({}),
+    payload: EMPTY_PAYLOAD,
   });
   const consumerBrand = store.upsertNode({
     kind: 'BRAND',
     displayName: 'Famous Brand',
     jurisdiction: 'US',
     economicKnowledgeEntityId: null,
-    payload: Object.freeze({}),
+    payload: EMPTY_PAYLOAD,
   });
   store.appendEdge({
     ...edgeBase,
@@ -500,7 +502,7 @@ export function seedReferenceTemporalEntityGraph(store: TemporalEntityGraphStore
     displayName: 'ETF Sponsor LLC',
     jurisdiction: 'US',
     economicKnowledgeEntityId: heliosIssuerCanonicalEntityId('etf_sponsor'),
-    payload: Object.freeze({}),
+    payload: EMPTY_PAYLOAD,
   });
   const etf = store.upsertNode({
     kind: 'SECURITY',
@@ -531,7 +533,7 @@ export function seedReferenceTemporalEntityGraph(store: TemporalEntityGraphStore
     displayName: 'Toyota Motor Corp',
     jurisdiction: 'JP',
     economicKnowledgeEntityId: heliosIssuerCanonicalEntityId('toyota_motor'),
-    payload: Object.freeze({}),
+    payload: EMPTY_PAYLOAD,
   });
   store.appendEdge({
     ...edgeBase,

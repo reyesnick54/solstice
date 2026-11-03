@@ -23,7 +23,7 @@ function baseReading(overrides: Partial<MacroSeriesReadingInput> & Pick<MacroSer
     evidenceRef: overrides.evidenceRef ?? `evidence://${overrides.observationRef}`,
     source: overrides.source ?? Object.freeze({ providerId: 'fred', seriesId: 'CPIAUCSL', capability: 'macroeconomic_indicators' }),
     entitlement: overrides.entitlement ?? ENTITLEMENT,
-    releaseType: overrides.releaseType,
+    ...(overrides.releaseType !== undefined ? { releaseType: overrides.releaseType } : {}),
   });
 }
 

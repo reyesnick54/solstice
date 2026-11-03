@@ -52,7 +52,7 @@ export function createOperationsCollectors(): OperationsCollectors {
   productiveOps.openChallenge({
     challengeId: 'challenge.sandbox.productive.001',
     claimId: 'claim.sandbox.productive.001',
-    reason: 'SOURCE_INDEPENDENCE_INSUFFICIENT',
+    reason: 'DATA_INTEGRITY',
     challengerId: 'actor.sandbox.reviewer',
     evidenceCommitment: 'commitment.sandbox.challenge.001',
   });

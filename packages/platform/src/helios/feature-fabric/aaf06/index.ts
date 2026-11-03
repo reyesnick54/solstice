@@ -23,7 +23,7 @@ export {
 
 export {
   createRevisionLedgerRecordStore,
-  type RevisionLedgerRecordStore,
+  type RevisionLedgerStore as RevisionLedgerRecordStore,
 } from './revision-ledger-store.ts';
 
 export {

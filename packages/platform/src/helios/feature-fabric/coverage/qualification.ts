@@ -51,7 +51,7 @@ export function assessCoverageManifestQualification(input: {
   if (input.manifest.metrics.coverageRatioBps < input.thresholds.minimumCoverageRatioBps) {
     blockers.push('coverage_ratio_below_minimum');
   }
-  const drift = input.manifest.metrics.driftFromBaselineBps;
+  const drift = input.manifest.metrics.coverageDriftBps;
   if (drift !== null && Math.abs(drift) > input.thresholds.maximumCoverageDriftBps) {
     blockers.push('coverage_drift_exceeds_maximum');
   }

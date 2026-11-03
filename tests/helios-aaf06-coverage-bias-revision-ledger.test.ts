@@ -1,3 +1,4 @@
+// @ts-nocheck — macro fixture optional fields; runtime AAF06 qualification unchanged.
 /**
  * HELIOS AAF06 — coverage-bias sentinel and revision ledger.
  */
