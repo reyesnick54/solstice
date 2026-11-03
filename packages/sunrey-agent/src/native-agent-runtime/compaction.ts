@@ -1,5 +1,6 @@
-import { asAgentConversationId } from '../ids.ts';
+import { asAgentConversationId, asAgentMessageId } from '../ids.ts';
 import type { AgentMessage } from '../types.ts';
+import { asUtcInstant } from '../../../domain/src/time.ts';
 
 export const DEFAULT_COMPACTION_TOKEN_BUDGET = 4000;
 export const DEFAULT_COMPACTION_KEEP_RECENT = 8;
@@ -129,11 +130,11 @@ export function compactConversationMessages(input: {
 
 function systemCompactionMessage(summary: string): AgentMessage {
   return Object.freeze({
-    messageId: `compaction_${summary.length}`,
+    messageId: asAgentMessageId(`amg_compaction_${summary.length}`),
     conversationId: asAgentConversationId('acv_native_compaction'),
     role: 'SYSTEM',
     content: summary,
-    createdAt: '1970-01-01T00:00:00.000Z',
+    createdAt: asUtcInstant('1970-01-01T00:00:00.000Z'),
     visible: true,
     proposalRef: null,
     toolEventId: null,

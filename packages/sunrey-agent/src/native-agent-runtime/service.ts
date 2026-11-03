@@ -56,10 +56,10 @@ export class NativeAgentRuntimeService {
     const session = openNativeAgentSession({
       grant: input.grant,
       sessionId: input.sessionId,
-      conversationId: input.conversationId,
       permittedToolIds: input.permittedToolIds,
-      activeToolIds: input.initialActiveToolIds,
       now: this.clock.now(),
+      ...(input.conversationId !== undefined ? { conversationId: input.conversationId } : {}),
+      ...(input.initialActiveToolIds !== undefined ? { activeToolIds: input.initialActiveToolIds } : {}),
     });
     this.sessions.put(session);
     this.loops.set(session.sessionId, new BoundedNativeAgentLoop(this.loopLimits));
