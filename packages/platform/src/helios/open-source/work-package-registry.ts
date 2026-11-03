@@ -64,7 +64,7 @@ export const OPEN_SOURCE_WORK_PACKAGE_EVIDENCE: Readonly<
     'docs/helios/open-source/OPENCHART_HELIOS_MONITOR_MAP.md',
   ]),
   OS07: Object.freeze([
-    'packages/platform/src/helios/open-source/research-monitor/index.ts',
+    'packages/platform/src/helios/research-monitor/index.ts',
     'tests/helios-os07-research-monitor-dsl.test.ts',
   ]),
   OS08: Object.freeze([

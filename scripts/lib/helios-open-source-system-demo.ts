@@ -117,7 +117,7 @@ export function runOpenSourceIntegrationSystemDemo(root: string = ROOT): OpenSou
     push('feature_fabric', 'PASS', 'Feature Fabric module present');
   }
 
-  if (integrationPending('packages/platform/src/helios/open-source/research-monitor/index.ts')) {
+  if (integrationPending('packages/platform/src/helios/research-monitor/index.ts')) {
     push('research_monitor_trigger', 'INTEGRATION_PENDING', 'OS07 Research Monitor DSL not integrated');
   } else {
     push('research_monitor_trigger', 'PASS', 'Research Monitor DSL available');
