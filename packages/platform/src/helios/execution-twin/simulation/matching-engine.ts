@@ -1,5 +1,9 @@
 /**
- * HELIOS OS03 — order-type matching against simulated market inputs.
+ * HELIOS OS03 / NATIVE04 — order-type matching against simulated market inputs.
+ *
+ * SPDX-Provenance: Adapted from BYTEX (Apache-2.0)
+ * Upstream: https://github.com/BYTEX-TRADE/bytex @ 67b3e103043476a0490bb7afa146ec9ac339b116
+ * Clean-room TypeScript reimplementation; golden vectors in vendor/assimilation/bytex/.
  */
 
 import type { UtcInstant } from '@solstice/domain';
@@ -39,6 +43,7 @@ export type MatchingContext = {
   readonly latencyModel: LatencyModelConfig;
   readonly barExecutionMode: BarExecutionMode;
   readonly ohlcPathSequence: OhlcPathSequence;
+  readonly maxBookDepthLevels: number | null;
   readonly nextFillSeq: () => string;
 };
 
@@ -221,6 +226,7 @@ function matchOrderAgainstBook(
     fillModel: ctx.fillModel,
     slippageModel: ctx.slippageModel,
     applyImpact: matchRole === 'TAKER' && fidelity !== 'BAR',
+    maxBookDepthLevels: ctx.maxBookDepthLevels,
   });
 
   let allowedSlices = slices;
@@ -244,6 +250,8 @@ function matchOrderAgainstBook(
     evidenceRefs: Object.freeze([`sim-fill@${ctx.asOf}`]),
     barExecutionMode: barMode,
     ohlcPathSequence: ohlcPath,
+    book,
+    maxBookDepthLevels: ctx.maxBookDepthLevels,
   });
 
   const newFills: SimulatedFill[] = [];

@@ -15,6 +15,7 @@ export {
   LATENCY_MODEL_VERSION,
   SLIPPAGE_MODEL_VERSION,
   MATCHING_ENGINE_VERSION,
+  EXECUTION_MODEL_VERSION,
   SIMULATION_SCHEMA,
   EXECUTION_ORDER_TYPES,
   EXECUTION_TIME_IN_FORCE,
@@ -46,6 +47,8 @@ export type {
   SubmitOrderRequest,
   SubmitOrderResult,
   CancelOrderResult,
+  ReplaceOrderRequest,
+  ReplaceOrderResult,
 } from './types.ts';
 
 export { bookLevel, consumeLevel, type BookLevel } from './book-level.ts';
@@ -84,6 +87,7 @@ export {
   matchAgainstBook,
   buildFillEvidence,
   materializeFill,
+  availableAtLevelAfterQueue,
   type FillModelConfig,
   type ProposedFillSlice,
 } from './fill-model.ts';
@@ -125,3 +129,21 @@ export {
   type Os03QualificationChecks,
   type Os03QualificationResult,
 } from './qualification.ts';
+
+export {
+  SIMULATION_FIDELITY_LEVELS,
+  simulationFidelityFromEngineLevel,
+  barFidelityEquivalentToOrderBook,
+  assertBarNotClaimedAsOrderBook,
+  type SimulationFidelityLevel,
+} from './fidelity.ts';
+
+export { bookStateFromMarketBook, type BookStateSnapshot } from './book-state.ts';
+
+export {
+  HELIOS_NATIVE_MATCHING_ENGINE_QUALIFIED,
+  HELIOS_NATIVE_MATCHING_ENGINE_BLOCKED,
+  evaluateNative04MatchingEngineQualification,
+  type Native04QualificationChecks,
+  type Native04QualificationResult,
+} from './native04-qualification.ts';
