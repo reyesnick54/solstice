@@ -333,7 +333,9 @@ describe('HELIOS H36 — release evidence and live-pilot gate', () => {
       qualification,
       livePilotGate: gate,
     });
-    assert.equal(report.h01ThroughH36.length, 36);
+    const hCore = report.h01ThroughH36.filter((row) => /^H\d+$/.test(row.workPackage));
+    assert.equal(hCore.length, 36);
+    assert.equal(report.h01ThroughH36.length, 38);
     assert.equal(report.releaseSha, sha);
     assert.ok(report.recommendedNextAuthorizedAction.includes('external live-pilot gate'));
   });
@@ -385,10 +387,15 @@ describe('HELIOS H36 — release evidence and live-pilot gate', () => {
 
   it('11. work-package registry reflects repository evidence', () => {
     const registry = buildHeliosWorkPackageRegistry(ROOT);
-    assert.equal(registry.length, 36);
+    const hCore = registry.filter((row) => /^H\d+$/.test(row.workPackage));
+    assert.equal(hCore.length, 36);
+    assert.equal(registry.length, 38);
     const h36 = registry.find((row) => row.workPackage === 'H36');
     assert.ok(h36);
     assert.equal(h36!.status, 'QUALIFIED');
+    const os13 = registry.find((row) => row.workPackage === 'OS13');
+    assert.ok(os13);
+    assert.equal(os13!.status, 'QUALIFIED');
   });
 
   it('12. chunk marker identity', () => {
