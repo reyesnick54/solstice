@@ -3,7 +3,11 @@
  */
 
 import type { UtcInstant } from '@solstice/domain';
-import { buildHeliosWorkPackageRegistry, registryHasBlockers } from './work-package-registry.ts';
+import {
+  buildHeliosWorkPackageRegistry,
+  heliosH01ThroughH36WorkPackages,
+  registryHasBlockers,
+} from './work-package-registry.ts';
 import type {
   HeliosClosureReport,
   HELIOSReleaseEvidencePackage,
@@ -43,7 +47,7 @@ export function buildHeliosClosureReport(input: {
     releaseSha: input.releaseEvidence.identity.gitSha,
     baseSha: input.releaseEvidence.identity.baseSha ?? null,
     releaseArtifactDigest: input.releaseEvidence.identity.artifactDigest,
-    h01ThroughH36: registry,
+    h01ThroughH36: heliosH01ThroughH36WorkPackages(registry),
     architectureQualification: engineering.architectureChecks.qualified ? 'QUALIFIED' : 'BLOCKED',
     dataProviderStatus: input.releaseEvidence.data.externalQualificationStatus,
     modelsStatus: input.releaseEvidence.intelligence.qualifiedModelProviderState,

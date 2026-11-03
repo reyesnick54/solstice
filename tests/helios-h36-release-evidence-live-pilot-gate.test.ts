@@ -385,7 +385,11 @@ describe('HELIOS H36 — release evidence and live-pilot gate', () => {
 
   it('11. work-package registry reflects repository evidence', () => {
     const registry = buildHeliosWorkPackageRegistry(ROOT);
-    assert.equal(registry.length, 36);
+    const h01ThroughH36 = registry.filter((row) => /^H\d{2}$/.test(row.workPackage));
+    assert.equal(h01ThroughH36.length, 36);
+    const os12 = registry.find((row) => row.workPackage === 'OS12');
+    assert.ok(os12);
+    assert.equal(os12!.status, 'QUALIFIED');
     const h36 = registry.find((row) => row.workPackage === 'H36');
     assert.ok(h36);
     assert.equal(h36!.status, 'QUALIFIED');

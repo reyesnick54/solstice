@@ -273,6 +273,13 @@ export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPacka
   return Object.freeze(rows);
 }
 
+/** H01–H36 numbered work packages only (excludes supplemental rows such as OS12). */
+export function heliosH01ThroughH36WorkPackages(
+  rows: readonly WorkPackageStatusRow[],
+): readonly WorkPackageStatusRow[] {
+  return Object.freeze(rows.filter((row) => /^H\d{2}$/.test(row.workPackage)));
+}
+
 export function registryHasBlockers(rows: readonly WorkPackageStatusRow[]): boolean {
   return rows.some((row) => row.status === 'BLOCKED');
 }
