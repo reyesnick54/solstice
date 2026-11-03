@@ -1,19 +1,19 @@
 import type { TriggerSpecialistClass } from '../os07/research-monitor-contract.ts';
 import type { MeshSpecialistRoleName } from './taxonomy.ts';
 
-const CLASS_TO_ROLES: Readonly<Record<TriggerSpecialistClass, readonly MeshSpecialistRoleName[]>> = Object.freeze({
-  TECHNICAL: Object.freeze(['OPPORTUNITY_RESEARCH', 'MICROSTRUCTURE']),
-  FUNDAMENTAL: Object.freeze(['OPPORTUNITY_RESEARCH']),
-  EARNINGS: Object.freeze(['OPPORTUNITY_RESEARCH']),
-  MACRO: Object.freeze(['MACRO_FX', 'VOLATILITY']),
-  NEWS: Object.freeze(['OPPORTUNITY_RESEARCH']),
-  OPTIONS: Object.freeze(['VOLATILITY']),
-  FLOW: Object.freeze(['MICROSTRUCTURE']),
-  CRYPTO_ONCHAIN: Object.freeze(['OPPORTUNITY_RESEARCH', 'MICROSTRUCTURE']),
-  ALTERNATIVE_DATA: Object.freeze(['OPPORTUNITY_RESEARCH', 'EVIDENCE_VERIFIER']),
-  RISK: Object.freeze(['EVIDENCE_VERIFIER']),
-  ADVERSARIAL_CRITIC: Object.freeze(['ADVERSARIAL_CRITIC']),
-});
+const CLASS_TO_ROLES = {
+  TECHNICAL: ['OPPORTUNITY_RESEARCH', 'MICROSTRUCTURE'],
+  FUNDAMENTAL: ['OPPORTUNITY_RESEARCH'],
+  EARNINGS: ['OPPORTUNITY_RESEARCH'],
+  MACRO: ['MACRO_FX', 'VOLATILITY'],
+  NEWS: ['OPPORTUNITY_RESEARCH'],
+  OPTIONS: ['VOLATILITY'],
+  FLOW: ['MICROSTRUCTURE'],
+  CRYPTO_ONCHAIN: ['OPPORTUNITY_RESEARCH', 'MICROSTRUCTURE'],
+  ALTERNATIVE_DATA: ['OPPORTUNITY_RESEARCH', 'EVIDENCE_VERIFIER'],
+  RISK: ['EVIDENCE_VERIFIER'],
+  ADVERSARIAL_CRITIC: ['ADVERSARIAL_CRITIC'],
+} as const satisfies Readonly<Record<TriggerSpecialistClass, readonly MeshSpecialistRoleName[]>>;
 
 /** Roles that must never run from monitor triggers (no execution research path). */
 const FORBIDDEN_FROM_TRIGGER: ReadonlySet<string> = new Set([

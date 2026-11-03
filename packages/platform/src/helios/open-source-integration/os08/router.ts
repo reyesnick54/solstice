@@ -43,8 +43,12 @@ export class ResearchTriggerRouter {
   constructor(ports: ResearchTriggerRouterPorts) {
     const limits = ports.budgetLimits ?? DEFAULT_RESEARCH_TRIGGER_BUDGET_LIMITS;
     this.mesh = ports.mesh;
-    this.evidenceVault = ports.evidenceVault;
-    this.strategyEvaluation = ports.strategyEvaluation;
+    if (ports.evidenceVault !== undefined) {
+      this.evidenceVault = ports.evidenceVault;
+    }
+    if (ports.strategyEvaluation !== undefined) {
+      this.strategyEvaluation = ports.strategyEvaluation;
+    }
     this.store = new ResearchTriggerRouterStore();
     this.budget = new ResearchTriggerBudget(limits);
     this.dedupe = new ResearchTriggerDedupe(limits);
@@ -65,13 +69,12 @@ export class ResearchTriggerRouter {
     if (prior) {
       const replay = this.store.getRun(prior.runId);
       if (replay) {
-        return ok(
-          Object.freeze({
-            ...replay,
-            outcome: 'IDEMPOTENT_REPLAY',
-            reasonCodes: Object.freeze(['IDEMPOTENCY_REPLAY', ...replay.reasonCodes]),
-          }),
-        );
+        const replayResult: ResearchTriggerRunResult = Object.freeze({
+          ...replay,
+          outcome: 'IDEMPOTENT_REPLAY',
+          reasonCodes: Object.freeze(['IDEMPOTENCY_REPLAY', ...replay.reasonCodes] as TriggerRouterReasonCode[]),
+        });
+        return ok(replayResult);
       }
     }
 

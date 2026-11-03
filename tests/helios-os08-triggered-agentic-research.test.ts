@@ -15,18 +15,21 @@ import { asCustomerId } from '../packages/domain/src/customer.ts';
 import { asUtcInstant } from '../packages/domain/src/time.ts';
 import { EvidenceVault } from '../packages/evidence/src/vault.ts';
 import {
-  HELIOS_OS08_TRIGGERED_AGENTIC_RESEARCH_QUALIFIED,
-  ResearchTriggerRouter,
-  aggregateMeshCost,
   createEconomicWorkOrderDraft,
   initialBudgetSnapshot,
   mandateBindingRefFromCompiled,
-  meshRolesPermittedForTrigger,
-  routeTriggerSpecialistClasses,
-  type ResearchMonitorTriggerEvent,
-  type ResearchTriggerMeshPort,
   type WorkOrderScope,
 } from '../packages/platform/src/helios/index.ts';
+import {
+  HELIOS_OS08_TRIGGERED_AGENTIC_RESEARCH_QUALIFIED,
+  ResearchTriggerRouter,
+  aggregateMeshCost,
+  meshRolesPermittedForTrigger,
+  routeTriggerSpecialistClasses,
+  type MeshSpecialistRoleName,
+  type ResearchMonitorTriggerEvent,
+  type ResearchTriggerMeshPort,
+} from '../packages/platform/src/helios/open-source-integration/index.ts';
 import { compileEconomicMandate, mandateDraftFromInterpretation } from '../packages/platform/src/mandate/compiler.ts';
 import type { CompiledEconomicMandate } from '../packages/platform/src/mandate/types.ts';
 import { workOrderIdFor } from '../packages/platform/src/helios/ids.ts';
@@ -86,7 +89,7 @@ function activeResearchWorkOrder(customerId: string, subjectId: string) {
 }
 
 function baseTrigger(overrides: Partial<ResearchMonitorTriggerEvent> = {}): ResearchMonitorTriggerEvent {
-  return Object.freeze({
+  const base: ResearchMonitorTriggerEvent = Object.freeze({
     triggerEventId: 'rt_trig_1',
     idempotencyKey: overrides.idempotencyKey ?? 'idem_os08_1',
     dedupeFingerprint: overrides.dedupeFingerprint ?? 'fp_os08_1',
@@ -106,7 +109,7 @@ function baseTrigger(overrides: Partial<ResearchMonitorTriggerEvent> = {}): Rese
       summary: 'Vol z-score 2.4 with fresh quote',
       capturedAt: NOW,
     }),
-    requestedSpecialistClasses: Object.freeze(['TECHNICAL', 'OPTIONS', 'ADVERSARIAL_CRITIC']),
+    requestedSpecialistClasses: Object.freeze(['TECHNICAL', 'OPTIONS', 'ADVERSARIAL_CRITIC'] as const),
     requestedBudgetMinor: '5000',
     requestedBudgetCurrency: 'USD',
     cooldownKey: 'cooldown:mon_vol_spike:subj_os08',
@@ -114,8 +117,8 @@ function baseTrigger(overrides: Partial<ResearchMonitorTriggerEvent> = {}): Rese
     confidenceBefore: 'LOW_CONFIDENCE',
     opportunityKind: 'GENERIC',
     emittedAt: NOW,
-    ...overrides,
   });
+  return Object.freeze({ ...base, ...overrides });
 }
 
 function defaultVoiContext() {
@@ -155,7 +158,7 @@ function meshPort(clock: FrozenClock): ResearchTriggerMeshPort {
       }
       const agents = result.value.outputs.map((row) =>
         Object.freeze({
-          role: row.specialistRole,
+          role: row.specialistRole as MeshSpecialistRoleName,
           taskId: row.taskId,
           modelProvider: row.model.provider,
           modelId: row.model.modelId,
@@ -198,14 +201,14 @@ describe('HELIOS OS08 event-triggered agentic research', () => {
       /^import .* from '.*(?:order-lifecycle|custody|execution-routing|postJournal)/m.test(routerSource),
       false,
     );
-    assert.ok(meshRolesPermittedForTrigger().every((role) => role !== 'EXECUTION_RESEARCH'));
+    assert.ok(meshRolesPermittedForTrigger().every((role) => (role as string) !== 'EXECUTION_RESEARCH'));
   });
 
   it('maps monitor specialist classes without execution research roles', () => {
     const roles = routeTriggerSpecialistClasses(['MACRO', 'FLOW', 'CRYPTO_ONCHAIN']);
     assert.ok(roles.includes('MACRO_FX'));
     assert.ok(roles.includes('MICROSTRUCTURE'));
-    assert.ok(!roles.includes('EXECUTION_RESEARCH' as (typeof roles)[number]));
+    assert.equal(roles.some((role) => role === ('EXECUTION_RESEARCH' as string)), false);
   });
 
   it('routes monitor trigger through VoI, work order, mesh, and evidence vault', () => {
@@ -219,7 +222,7 @@ describe('HELIOS OS08 event-triggered agentic research', () => {
       mandateBoundWorkOrder: workOrder,
       researchBudget: initialBudgetSnapshot({
         ceilingAmount: '50000',
-        unitKind: 'USD_MINOR',
+        unitKind: 'MONETARY_MINOR',
         currency: 'USD',
       }),
       voiContext: defaultVoiContext(),
@@ -249,7 +252,7 @@ describe('HELIOS OS08 event-triggered agentic research', () => {
       },
     });
     const workOrder = activeResearchWorkOrder('cust_os08_idem', 'subj_os08_idem');
-    const budget = initialBudgetSnapshot({ ceilingAmount: '50000', unitKind: 'USD_MINOR', currency: 'USD' });
+    const budget = initialBudgetSnapshot({ ceilingAmount: '50000', unitKind: 'MONETARY_MINOR', currency: 'USD' });
     const input = {
       trigger: baseTrigger({
         idempotencyKey: 'idem_os08_dup',
@@ -276,7 +279,7 @@ describe('HELIOS OS08 event-triggered agentic research', () => {
     const clock = new FrozenClock(NOW);
     const router = new ResearchTriggerRouter({ mesh: meshPort(clock) });
     const workOrder = activeResearchWorkOrder('cust_os08_dedupe', 'subj_os08_dedupe');
-    const budget = initialBudgetSnapshot({ ceilingAmount: '50000', unitKind: 'USD_MINOR', currency: 'USD' });
+    const budget = initialBudgetSnapshot({ ceilingAmount: '50000', unitKind: 'MONETARY_MINOR', currency: 'USD' });
     const sharedFingerprint = 'fp_shared_dedupe';
     const first = router.route({
       trigger: baseTrigger({
@@ -315,7 +318,7 @@ describe('HELIOS OS08 event-triggered agentic research', () => {
     const clock = new FrozenClock(NOW);
     const router = new ResearchTriggerRouter({ mesh: meshPort(clock) });
     const workOrder = activeResearchWorkOrder('cust_os08_cd', 'subj_os08_cd');
-    const budget = initialBudgetSnapshot({ ceilingAmount: '50000', unitKind: 'USD_MINOR', currency: 'USD' });
+    const budget = initialBudgetSnapshot({ ceilingAmount: '50000', unitKind: 'MONETARY_MINOR', currency: 'USD' });
     const cooldownKey = 'cooldown:shared';
     const first = router.route({
       trigger: baseTrigger({
@@ -372,7 +375,7 @@ describe('HELIOS OS08 event-triggered agentic research', () => {
       }),
       now: NOW,
       mandateBoundWorkOrder: workOrder,
-      researchBudget: initialBudgetSnapshot({ ceilingAmount: '50000', unitKind: 'USD_MINOR', currency: 'USD' }),
+      researchBudget: initialBudgetSnapshot({ ceilingAmount: '50000', unitKind: 'MONETARY_MINOR', currency: 'USD' }),
       voiContext: defaultVoiContext(),
     });
     assert.equal(routed.ok, true);
@@ -403,7 +406,7 @@ describe('HELIOS OS08 event-triggered agentic research', () => {
       }),
       now: NOW,
       mandateBoundWorkOrder: workOrder,
-      researchBudget: initialBudgetSnapshot({ ceilingAmount: '50000', unitKind: 'USD_MINOR', currency: 'USD' }),
+      researchBudget: initialBudgetSnapshot({ ceilingAmount: '50000', unitKind: 'MONETARY_MINOR', currency: 'USD' }),
       voiContext: defaultVoiContext(),
       requestStrategyEvaluation: true,
     });
