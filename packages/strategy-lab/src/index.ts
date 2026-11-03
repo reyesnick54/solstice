@@ -612,6 +612,15 @@ export type {
   Os05QualificationResult,
 } from './os05/index.ts';
 export {
+  OPENCHART_GENOME_CATALOG_PREFIX,
+  OPENCHART_GENOME_STUDY_REFS,
+  OPENCHART_PARITY_UPSTREAM_SHA,
+  OPENCHART_TEA_SMA_LENGTH2_CLOSES,
+  OPENCHART_TEA_SMA_LENGTH2_EXPECTED,
+  buildOpenChartFeatureNode,
+  buildOpenChartThresholdCondition,
+} from './openchart-analytics/index.ts';
+export {
   HELIOS_NATIVE12_SERIS_UPSTREAM,
   SERIS_NATIVE12_PIPELINE_STAGES,
   SERIS_NATIVE12_FORBIDDEN_TERMINAL_STAGES,
