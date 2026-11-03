@@ -244,3 +244,4 @@ export type { MacroEventStoreSnapshot } from './multi-asset/event-intelligence/i
 export * from './multi-asset/grow-product-contract/index.ts';
 export * from './grow-intelligence/index.ts';
 export * from './continuous-runtime/index.ts';
+export * from './execution-twin/index.ts';
