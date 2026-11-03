@@ -244,8 +244,5 @@ export type { MacroEventStoreSnapshot } from './multi-asset/event-intelligence/i
 export * from './multi-asset/grow-product-contract/index.ts';
 export * from './grow-intelligence/index.ts';
 export * from './continuous-runtime/index.ts';
-<<<<<<< HEAD
-export * from './open-source-integration/os13-ai-strategy-sandbox/index.ts';
-=======
 export * from './feature-fabric/index.ts';
->>>>>>> origin/main
+export * from './open-source-integration/os13-ai-strategy-sandbox/index.ts';
