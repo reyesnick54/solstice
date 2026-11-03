@@ -507,7 +507,10 @@
         "packages/permissions",
         "packages/security",
         "packages/provider-sdk",
-        "packages/external-data"
+        "packages/external-data",
+        "packages/strategy-lab",
+        "packages/risk",
+        "packages/model-registry"
       ],
       "codeowners": [
         "@reyesnick54"

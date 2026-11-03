@@ -67,3 +67,7 @@ export {
   type Os02ExecutionTwinQualificationChecks,
   type Os02ExecutionTwinQualificationResult,
 } from './qualification.ts';
+
+/** OS03 — institutional paper execution and order-book simulation. */
+export * as heliosExecutionSimulation from './simulation/index.ts';
+export * from './simulation/index.ts';
