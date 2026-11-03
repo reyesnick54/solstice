@@ -641,7 +641,6 @@ export type {
   SerisNative12QualificationChecks,
   SerisNative12QualificationResult,
 } from './native12-seris/index.ts';
-=======
 
 export {
   NATIVE06_STRATEGY_GENOME_SCHEMA,
@@ -715,4 +714,3 @@ export type {
   CrossMarketConsistencyInput,
   CrossMarketConsistencyResult,
 } from './prediction-market/index.ts';
->>>>>>> origin/main
