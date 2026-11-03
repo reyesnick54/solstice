@@ -19,6 +19,12 @@ HELIOS is an integrated intelligence and orchestration capability built through 
 - **Workspace version:** `sunrey@0.1.0`
 - **Migration heads:** customer `V046`, ledger `V010`, evidence `V001`, security `V002`
 
+## Open-source integration (architecture)
+
+| Document | Purpose |
+|----------|---------|
+| [BYTEX → HELIOS integration map (OS01)](./open-source/BYTEX_HELIOS_INTEGRATION_MAP.md) | Capability classification for BYTEX reference SHA `67b3e10` — no runtime import |
+
 ## Scope boundary
 
 H01 is audit-only. H02 covers quantitative/statistical correctness. H03 covers agent proposal and execution-state correctness. Do not pull H04+ work into Phase 1.
