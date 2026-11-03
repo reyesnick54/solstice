@@ -117,7 +117,7 @@ export function runOpenSourceIntegrationSystemDemo(root: string = ROOT): OpenSou
     push('feature_fabric', 'PASS', 'Feature Fabric module present');
   }
 
-  if (integrationPending('packages/platform/src/helios/open-source/research-monitor/index.ts')) {
+  if (integrationPending('packages/platform/src/helios/research-monitor/index.ts')) {
     push('research_monitor_trigger', 'INTEGRATION_PENDING', 'OS07 Research Monitor DSL not integrated');
   } else {
     push('research_monitor_trigger', 'PASS', 'Research Monitor DSL available');
@@ -162,7 +162,7 @@ export function runOpenSourceIntegrationSystemDemo(root: string = ROOT): OpenSou
     push('bull_bear_challenge', 'PASS', 'Adversarial research module present');
   }
 
-  if (integrationPending('packages/platform/src/helios/open-source/strategy-genome/index.ts')) {
+  if (integrationPending('packages/strategy-lab/src/os05/index.ts')) {
     push('strategy_genome_proposal', 'INTEGRATION_PENDING', 'OS05 Strategy Genome not integrated');
   } else {
     push('strategy_genome_proposal', 'PASS', 'Strategy Genome module present');
@@ -241,12 +241,11 @@ export function runOpenSourceIntegrationSystemDemo(root: string = ROOT): OpenSou
     push('risk_engine', 'FAIL', error instanceof Error ? error.message : String(error));
   }
 
+  const executionSimulationPath = 'packages/platform/src/helios/execution-twin/simulation/index.ts';
   push(
     'settlement_simulation',
-    integrationPending('packages/platform/src/helios/open-source/execution-simulation/index.ts')
-      ? 'INTEGRATION_PENDING'
-      : 'PASS',
-    integrationPending('packages/platform/src/helios/open-source/execution-simulation/index.ts')
+    integrationPending(executionSimulationPath) ? 'INTEGRATION_PENDING' : 'PASS',
+    integrationPending(executionSimulationPath)
       ? 'OS03 execution simulation not integrated; M24 canonical path remains available separately'
       : 'Execution simulation module present',
   );
