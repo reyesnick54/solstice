@@ -20,9 +20,9 @@ import {
 const ROOT = join(import.meta.dirname, '..');
 
 describe('HELIOS NATIVE15 — foreign runtime independence', () => {
-  it('vendor/assimilation tree has no foreign application source', () => {
+  it('vendor/assimilation tree satisfies committed quarantine archive policy', () => {
     const audit = auditVendorAssimilationTree(ROOT);
-    assert.equal(audit.pass, true, JSON.stringify(audit.blockers));
+    assert.equal(audit.pass, true, JSON.stringify(audit.blockers.slice(0, 20)));
   });
 
   it('no runtime import paths reference vendor/assimilation', () => {

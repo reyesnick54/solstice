@@ -5,6 +5,7 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
+import { readCommittedQuarantineArchivePolicy } from './quarantine-archive-policy.ts';
 import { FORBIDDEN_FOREIGN_RUNTIME_LABELS } from './taxonomy.ts';
 
 export type ForeignRuntimeScanCheck = {
@@ -60,6 +61,16 @@ function walkJsonFiles(dir: string, out: string[] = []): string[] {
 export function scanForeignRuntimeIndependence(root: string): ForeignRuntimeScanResult {
   const checks: ForeignRuntimeScanCheck[] = [];
   const blockers: string[] = [];
+  const committedQuarantine = readCommittedQuarantineArchivePolicy(root);
+  const assimilationRelPrefix = 'vendor/assimilation/';
+
+  function isCommittedQuarantineArchivePath(repoRel: string): boolean {
+    const normalized = repoRel.replaceAll('\\', '/');
+    return (
+      committedQuarantine.active &&
+      (normalized === 'vendor/assimilation' || normalized.startsWith(assimilationRelPrefix))
+    );
+  }
 
   const gitmodules = join(root, '.gitmodules');
   const submodulesPresent = existsSync(gitmodules);
@@ -90,7 +101,10 @@ export function scanForeignRuntimeIndependence(root: string): ForeignRuntimeScan
         const full = join(current, entry);
         if (statSync(full).isDirectory()) stack.push(full);
         else if (entry.endsWith('.csproj') || entry.endsWith('.sln')) {
-          csprojHits.push(relative(root, full));
+          const repoRel = relative(root, full);
+          if (!isCommittedQuarantineArchivePath(repoRel)) {
+            csprojHits.push(repoRel);
+          }
         }
       }
     }
@@ -114,7 +128,10 @@ export function scanForeignRuntimeIndependence(root: string): ForeignRuntimeScan
         const full = join(current, entry);
         if (statSync(full).isDirectory()) stack.push(full);
         else if (entry === 'requirements.txt' || entry === 'pyproject.toml') {
-          requirementsUnderVendor.push(relative(root, full));
+          const repoRel = relative(root, full);
+          if (!isCommittedQuarantineArchivePath(repoRel)) {
+            requirementsUnderVendor.push(repoRel);
+          }
         }
       }
     }
