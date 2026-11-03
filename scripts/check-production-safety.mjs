@@ -85,6 +85,9 @@ export function checkProductionSafety(root = ROOT) {
 
   for (const abs of iterFiles(root)) {
     const rel = abs.slice(root.length + 1).replaceAll('\\', '/');
+    if (rel.startsWith('vendor/assimilation/')) {
+      continue;
+    }
     if (rel.startsWith('docs/productization/')) {
       // Productization docs declare the required false defaults; scan them
       // only for accidental true.

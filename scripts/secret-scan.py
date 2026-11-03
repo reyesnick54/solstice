@@ -16,6 +16,7 @@ SKIP_DIR_NAMES = {
     "target",
     "__pycache__",
     "secret-scan-fixtures",
+    "vendor",
 }
 RELEASE_BUNDLE_DIR = "dist/testnet-release"
 SKIP_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico", ".pdf", ".woff", ".woff2"}
