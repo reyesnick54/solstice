@@ -31,3 +31,4 @@ export {
 } from './qualification.ts';
 
 export * from './openchart-analytics/index.ts';
+export * from './technical/index.ts';

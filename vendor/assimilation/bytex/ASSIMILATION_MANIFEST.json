@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "helios.native06.bytex-assimilation.v1",
+  "upstream": {
+    "repository": "https://github.com/BYTEX-TRADE/bytex",
+    "sha": "67b3e103043476a0490bb7afa146ec9ac339b116",
+    "license": "Apache-2.0"
+  },
+  "targets": {
+    "strategyGenome": "packages/strategy-lab/src/native06",
+    "featureFabric": "packages/platform/src/helios/feature-fabric/technical"
+  },
+  "bytexNodeTypeToCatalogRef": {
+    "data.bars": "data.ohlcv_bars",
+    "ind.sma": "indicator.sma",
+    "ind.ema": "indicator.ema",
+    "ind.wma": "indicator.wma",
+    "ind.rsi": "indicator.rsi",
+    "ind.roc": "indicator.roc",
+    "ind.atr": "indicator.atr",
+    "ind.obv": "indicator.obv",
+    "ind.macd": "indicator.macd",
+    "ind.bbands": "indicator.bollinger_bands",
+    "cond.cross": "condition.series_cross",
+    "cond.compare": "condition.threshold_compare",
+    "act.order": "entry.market_or_limit",
+    "act.close": "exit.close_position",
+    "risk.max_exposure": "risk.max_gross_exposure_bps"
+  },
+  "qualificationMarker": "HELIOS_NATIVE_STRATEGY_GENOME_BYTEX_QUALIFIED"
+}
