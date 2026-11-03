@@ -1,0 +1,63 @@
+schema_version: 1.0.0
+catalog_id: helios-external-market-data-certification
+notes: >
+  HELIOS AAF07 external market-data certification overlay. Composes with
+  config/providers/free-api-catalog.yaml. Credentials never appear in this file.
+providers:
+  - provider_id: finnhub
+    route_class: external_live
+    adapter_binding: finnhub_capital_market
+    data_families:
+      - equity_quotes
+      - equity_ohlcv
+    asset_classes:
+      - equity
+      - etf
+      - index
+    instrument_coverage:
+      - SECURITY:US:AAPL:XNAS
+      - SECURITY:US:SPY:ARCX
+      - SECURITY:US:QQQ:XNAS
+      - SECURITY:US:NVDA:XNAS
+    venue_coverage:
+      - XNAS
+      - ARCX
+    quote_capability: true
+    bar_capability: true
+    trade_capability: false
+    feed_timing: realtime
+    timestamp_semantics: vendor_epoch_seconds_utc
+    sequence_support: false
+    heartbeat_support: true
+    historical_availability: true
+    revision_behavior: append_only
+    entitlement_refs:
+      - ent:finnhub:free_tier
+    qualification_instrument_id: SECURITY:US:AAPL:XNAS
+    estimated_cost_notes: Free tier per-minute limits; paid tiers available.
+  - provider_id: coingecko
+    route_class: external_live
+    adapter_binding: coingecko_crypto_spot
+    data_families:
+      - crypto_spot_quotes
+      - crypto_spot_ohlcv
+    asset_classes:
+      - crypto
+    instrument_coverage:
+      - CRYPTO:GLOBAL:BTC:USD:SIM
+      - CRYPTO:GLOBAL:ETH:USD:SIM
+    venue_coverage:
+      - GLOBAL
+    quote_capability: true
+    bar_capability: true
+    trade_capability: false
+    feed_timing: delayed
+    timestamp_semantics: ingestion_wall_clock
+    sequence_support: false
+    heartbeat_support: false
+    historical_availability: true
+    revision_behavior: revisable
+    entitlement_refs:
+      - ent:coingecko:public_api
+    qualification_instrument_id: CRYPTO:GLOBAL:BTC:USD:SIM
+    estimated_cost_notes: Public API rate limits apply.

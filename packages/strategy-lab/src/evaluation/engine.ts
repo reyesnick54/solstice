@@ -21,6 +21,7 @@ import {
   type ChronologicalObservation,
   type EvaluationDatasetManifest,
 } from './manifest.ts';
+import { buildStrategyEvaluationCoverageManifest } from './coverage-evidence.ts';
 import { sealEvaluationRecord, type StrategyEvaluationRecord } from './record.ts';
 import { ChronologicalEvaluationStore } from './store.ts';
 import type {
@@ -34,6 +35,34 @@ export type ChronologicalEvaluationResult = {
   readonly record: StrategyEvaluationRecord;
   readonly walkForwardRunId?: string;
 };
+
+function coverageEvidenceForEvaluation(input: {
+  readonly capsule: StrategyCapsule;
+  readonly manifest: EvaluationDatasetManifest;
+  readonly evaluationId: string | null;
+  readonly evaluationTimestamp: UtcInstant;
+}) {
+  const featureIds = input.capsule.specification.requiredData;
+  const coverageManifest = buildStrategyEvaluationCoverageManifest({
+    evaluationId: input.evaluationId,
+    manifest: input.manifest,
+    evaluationTimestamp: input.evaluationTimestamp,
+    featureIds,
+  });
+  if (!coverageManifest) {
+    return {};
+  }
+  return {
+    coverageManifestId: coverageManifest.manifestId,
+    coverageManifestHash: coverageManifest.manifestFingerprint,
+    eligibleUniverseCount: coverageManifest.eligibleUniverseCount,
+    usableFeatureCount: coverageManifest.usableFeatureCount,
+    artifactRefs: Object.freeze([
+      `coverage:${coverageManifest.manifestFingerprint}`,
+      `coverage-manifest:${coverageManifest.manifestId}`,
+    ]),
+  };
+}
 
 function latestKnowableObservation(
   manifest: EvaluationDatasetManifest,
@@ -391,6 +420,13 @@ export function runChronologicalEvaluation(input: {
 
   const loop = runChronologicalLoop(input);
   if (!loop.ok) {
+    const provisionalId = `seval_pending_${input.capsule.fingerprint.slice(0, 12)}`;
+    const coverage = coverageEvidenceForEvaluation({
+      capsule: input.capsule,
+      manifest: input.manifest,
+      evaluationId: provisionalId,
+      evaluationTimestamp: input.config.period.end,
+    });
     const record = sealEvaluationRecord({
       capsule: input.capsule,
       manifest: input.manifest,
@@ -428,6 +464,11 @@ export function runChronologicalEvaluation(input: {
       succeeded: false,
       failureCode: loop.error.code,
       failureMessage: loop.error.message,
+      coverageManifestId: coverage.coverageManifestId ?? null,
+      coverageManifestHash: coverage.coverageManifestHash ?? null,
+      eligibleUniverseCount: coverage.eligibleUniverseCount ?? null,
+      usableFeatureCount: coverage.usableFeatureCount ?? null,
+      artifactRefs: coverage.artifactRefs,
       createdAt: input.createdAt,
     });
     const store = input.store ?? new ChronologicalEvaluationStore();
@@ -442,6 +483,13 @@ export function runChronologicalEvaluation(input: {
         ? 'INCONCLUSIVE'
         : 'FAILED';
 
+  const provisionalId = `seval_pending_${input.capsule.fingerprint.slice(0, 12)}`;
+  const coverage = coverageEvidenceForEvaluation({
+    capsule: input.capsule,
+    manifest: input.manifest,
+    evaluationId: provisionalId,
+    evaluationTimestamp: input.config.period.end,
+  });
   const record = sealEvaluationRecord({
     capsule: input.capsule,
     manifest: input.manifest,
@@ -454,7 +502,15 @@ export function runChronologicalEvaluation(input: {
     succeeded: true,
     failureCode: loop.value.failureCode,
     failureMessage: loop.value.failureMessage,
-    artifactRefs: Object.freeze([`manifest:${input.manifest.hash}`, `capsule:${input.capsule.fingerprint}`]),
+    artifactRefs: Object.freeze([
+      `manifest:${input.manifest.hash}`,
+      `capsule:${input.capsule.fingerprint}`,
+      ...(coverage.artifactRefs ?? []),
+    ]),
+    coverageManifestId: coverage.coverageManifestId ?? null,
+    coverageManifestHash: coverage.coverageManifestHash ?? null,
+    eligibleUniverseCount: coverage.eligibleUniverseCount ?? null,
+    usableFeatureCount: coverage.usableFeatureCount ?? null,
     createdAt: input.createdAt,
   });
 

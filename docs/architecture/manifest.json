@@ -510,7 +510,8 @@
         "packages/external-data",
         "packages/strategy-lab",
         "packages/risk",
-        "packages/model-registry"
+        "packages/model-registry",
+        "packages/economic-asset-registry"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -555,7 +556,8 @@
         "packages/security",
         "packages/sunrey-chain",
         "packages/sunrey-exchange",
-        "packages/payments"
+        "packages/payments",
+        "packages/platform"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -789,7 +791,8 @@
         "packages/identity",
         "packages/risk",
         "packages/model-registry",
-        "packages/regulatory-twin"
+        "packages/regulatory-twin",
+        "packages/platform"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -6229,6 +6232,14 @@
       "packages/domain",
       "packages/permissions",
       "packages/config"
+    ],
+    [
+      "packages/external-data",
+      "packages/platform"
+    ],
+    [
+      "packages/platform",
+      "packages/strategy-lab"
     ]
   ],
   "forbiddenWorkspaceRoots": [

@@ -1,0 +1,37 @@
+{
+  "schema": "sunrey.helios.adaptive-alpha-v2.release-manifest.v1",
+  "version": "2.6.0",
+  "branch": "helios/aaf-v2",
+  "qualificationMarker": "HELIOS_ADAPTIVE_ALPHA_FABRIC_V2_QUALIFIED",
+  "blockedMarker": "HELIOS_ADAPTIVE_ALPHA_FABRIC_V2_BLOCKED",
+  "supersededPullRequests": [579, 580, 581],
+  "canonicalOwners": [
+    "packages/platform/src/helios/feature-fabric",
+    "packages/platform/src/helios/adaptive-alpha-fabric",
+    "packages/platform/src/helios/adaptive-alpha-v2",
+    "packages/strategy-lab/src/evaluation/adaptive-alpha-promotion-gate.ts"
+  ],
+  "mandatoryGates": [
+    "POINT_IN_TIME_INTEGRITY",
+    "ENTITY_RESOLUTION_INTEGRITY",
+    "REVISION_INTEGRITY",
+    "FEATURE_LINEAGE_INTEGRITY",
+    "COVERAGE_INTEGRITY",
+    "MISSINGNESS_INTEGRITY",
+    "BIAS_INTEGRITY",
+    "ENTITLEMENT_INTEGRITY",
+    "REPRODUCIBILITY"
+  ],
+  "qualificationTests": [
+    "tests/helios-aaf-v2-strategy-lab-final-qualification.test.ts",
+    "tests/helios-aaf02-evidence-time-feature-fabric.test.ts",
+    "tests/helios-aaf04-point-in-time-compiler.test.ts",
+    "tests/helios-aaf06-coverage-bias-revision-ledger.test.ts",
+    "tests/helios-h18-strategy-promotion.test.ts"
+  ],
+  "documentation": [
+    "docs/helios/adaptive-alpha-v2/HELIOS_AAF_V2_FINAL_REPORT.md",
+    "docs/helios/adaptive-alpha-v2/HELIOS_AAF_V2_CAPABILITY_MATRIX.md",
+    "docs/helios/adaptive-alpha-v2/OLD_AAF_SUPERSESSION_REPORT.md"
+  ]
+}

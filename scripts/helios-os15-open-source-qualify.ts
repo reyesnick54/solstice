@@ -62,6 +62,7 @@ function evaluateAafQualification(): { readonly pass: boolean; readonly detail: 
   const aafTests = [
     'tests/helios-aaf02-evidence-time-feature-fabric.test.ts',
     'tests/helios-aaf04-point-in-time-compiler.test.ts',
+    'tests/helios-aaf-v2-strategy-lab-final-qualification.test.ts',
   ];
   const present = aafTests.filter((rel) => existsSync(join(ROOT, rel)));
   if (present.length === aafTests.length) {

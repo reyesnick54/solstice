@@ -56,6 +56,12 @@ export {
 } from './types.ts';
 export { AliasRegistry, aliasRegistryDigest } from './alias-registry.ts';
 export {
+  HELIOS_TEMPORAL_ENTITY_BRIDGE_ID,
+  HELIOS_EKG_ISSUER_MATERIAL_PREFIX,
+  heliosIssuerCanonicalEntityId,
+  heliosExternalIdentifier,
+} from './helios-temporal-bridge.ts';
+export {
   resolveDeterministic,
   scoreProbableMatch,
   probabilisticOutcome,

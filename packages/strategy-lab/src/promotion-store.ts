@@ -5,6 +5,7 @@ import type { ForwardShadowDecision, ForwardShadowRun } from './forward-shadow.t
 import type { PromotionEvidenceRecord } from './promotion-evidence.ts';
 import type { StrategyPromotionState } from './promotion-state.ts';
 import type { QualificationPolicy } from './qualification-policy.ts';
+import type { AdaptiveAlphaQualificationRecord } from './adaptive-alpha-qualification-record.ts';
 
 export type StrategyPromotionRecord = {
   readonly strategyId: string;
@@ -29,6 +30,7 @@ export type StrategyPromotionSnapshot = {
   readonly evidence: readonly PromotionEvidenceRecord[];
   readonly demotions: readonly DemotionRecord[];
   readonly policies: readonly QualificationPolicy[];
+  readonly adaptiveAlphaQualifications: readonly AdaptiveAlphaQualificationRecord[];
 };
 
 export function createEmptyPromotionSnapshot(): StrategyPromotionSnapshot {
@@ -41,6 +43,7 @@ export function createEmptyPromotionSnapshot(): StrategyPromotionSnapshot {
     evidence: Object.freeze([]),
     demotions: Object.freeze([]),
     policies: Object.freeze([]),
+    adaptiveAlphaQualifications: Object.freeze([]),
   });
 }
 
@@ -53,6 +56,7 @@ export class StrategyPromotionStore {
   private readonly evidence: PromotionEvidenceRecord[] = [];
   private readonly demotions: DemotionRecord[] = [];
   private readonly policies = new Map<string, QualificationPolicy>();
+  private readonly adaptiveAlphaQualifications: AdaptiveAlphaQualificationRecord[] = [];
 
   private key(id: string, version: string): string {
     return `${id}@${version}`;
@@ -88,6 +92,19 @@ export class StrategyPromotionStore {
 
   getLatestQualification(id: string, version: string): EvaluationQualificationResult | undefined {
     return [...this.qualifications]
+      .reverse()
+      .find((row) => row.strategyId === id && row.strategyVersion === version);
+  }
+
+  putAdaptiveAlphaQualification(record: AdaptiveAlphaQualificationRecord): void {
+    this.adaptiveAlphaQualifications.push(record);
+  }
+
+  getLatestAdaptiveAlphaQualification(
+    id: string,
+    version: string,
+  ): AdaptiveAlphaQualificationRecord | undefined {
+    return [...this.adaptiveAlphaQualifications]
       .reverse()
       .find((row) => row.strategyId === id && row.strategyVersion === version);
   }
@@ -143,6 +160,7 @@ export class StrategyPromotionStore {
       evidence: Object.freeze([...this.evidence]),
       demotions: Object.freeze([...this.demotions]),
       policies: Object.freeze([...this.policies.values()]),
+      adaptiveAlphaQualifications: Object.freeze([...this.adaptiveAlphaQualifications]),
     });
   }
 
@@ -155,6 +173,7 @@ export class StrategyPromotionStore {
     this.evidence.length = 0;
     this.demotions.length = 0;
     this.policies.clear();
+    this.adaptiveAlphaQualifications.length = 0;
     for (const policy of state.policies) this.putPolicy(policy);
     for (const capsule of state.capsules) this.putCapsule(capsule);
     for (const promotion of state.promotions) this.putPromotion(promotion);
@@ -163,5 +182,8 @@ export class StrategyPromotionStore {
     for (const decision of state.forwardShadowDecisions) this.putForwardShadowDecision(decision);
     for (const row of state.evidence) this.putEvidence(row);
     for (const row of state.demotions) this.putDemotion(row);
+    for (const row of state.adaptiveAlphaQualifications ?? []) {
+      this.putAdaptiveAlphaQualification(row);
+    }
   }
 }
