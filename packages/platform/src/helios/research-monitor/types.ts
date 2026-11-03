@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { ResearchBudgetSnapshot } from '../execution-types.ts';
 import type { InformationTime } from '../observation/types.ts';
 import type {
@@ -186,7 +186,7 @@ export type ResearchMonitorEvaluateInput = {
   readonly featureFabric: AafFeatureFabricPort;
   readonly observationFabric?: HeliosObservationFabricPort;
   readonly researchBudget: H20ResearchBudgetPort;
-  readonly evidenceVault?: import('../../../../evidence/src/vault.ts').EvidenceVault;
+  readonly evidenceVault?: import('@solstice/evidence').EvidenceVault;
 };
 
 export type CompileResearchMonitorResult =

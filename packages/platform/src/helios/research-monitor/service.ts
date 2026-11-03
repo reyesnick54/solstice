@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { compileResearchMonitorDefinition } from './compiler.ts';
 import { evaluateResearchMonitorExpression } from './evaluate-expression.ts';
 import {

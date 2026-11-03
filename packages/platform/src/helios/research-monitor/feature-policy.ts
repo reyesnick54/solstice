@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { isKnowableAt } from '../observation/information-time.ts';
 import type { ResearchMonitorBlockReason, StaleFeaturePolicy } from './taxonomy.ts';
 import type {

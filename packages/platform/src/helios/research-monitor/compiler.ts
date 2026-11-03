@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { sha256CanonicalJson } from '../release-evidence/hash.ts';
 import { asResearchMonitorManifestId } from './ids.ts';
 import { validateResearchMonitorExpression } from './expression.ts';

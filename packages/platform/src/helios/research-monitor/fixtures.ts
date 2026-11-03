@@ -1,4 +1,4 @@
-import { asUtcInstant } from '../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { asResearchMonitorId } from './ids.ts';
 import { RESEARCH_MONITOR_SCHEMA_VERSION } from './taxonomy.ts';
 import type { CanonicalFeatureObservation, ResearchMonitorDefinition, ResearchMonitorExpression } from './types.ts';
@@ -117,7 +117,7 @@ function featureObservation(input: {
 }
 
 export function triggeredSemiconductorFeatureSet(
-  asOf: import('../../../../domain/src/time.ts').UtcInstant = FIXTURE_MONITOR_NOW,
+  asOf: UtcInstant = FIXTURE_MONITOR_NOW,
 ): readonly CanonicalFeatureObservation[] {
   return Object.freeze([
     featureObservation({
