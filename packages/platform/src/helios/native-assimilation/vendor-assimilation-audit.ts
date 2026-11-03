@@ -5,6 +5,11 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
+import {
+  isPathUnderCommittedQuarantineArchive,
+  readCommittedQuarantineArchivePolicy,
+} from './quarantine-archive-policy.ts';
+
 const ASSIMILATION_REL = 'vendor/assimilation';
 
 /** Allowed filenames under vendor/assimilation when no foreign runtime source remains. */
@@ -116,6 +121,62 @@ export function auditVendorAssimilationTree(root: string): VendorAssimilationAud
       blockers: Object.freeze(absentBlockers),
       retainedLegalPaths: Object.freeze([]),
       removedForeignSource: true,
+    });
+  }
+
+  const committedQuarantine = readCommittedQuarantineArchivePolicy(root);
+
+  if (committedQuarantine.active) {
+    for (const prefix of committedQuarantine.vendorPathPrefixes) {
+      if (!existsSync(join(root, prefix))) {
+        blockers.push(`committed quarantine archive missing at ${prefix}`);
+      }
+    }
+
+    const assimilationRootArtifacts = new Set([
+      'vendor/assimilation/QUARANTINE.json',
+      'vendor/assimilation/SOURCE_IMPORT_MANIFEST.json',
+      'vendor/assimilation/README.md',
+    ]);
+
+    const files = walk(assimilationAbs);
+    for (const abs of files) {
+      const rel = relative(assimilationAbs, abs);
+      const repoRel = join(ASSIMILATION_REL, rel).replaceAll('\\', '/');
+      if (assimilationRootArtifacts.has(repoRel)) continue;
+      if (!isPathUnderCommittedQuarantineArchive(repoRel, committedQuarantine)) {
+        blockers.push(`file outside committed quarantine manifest paths: ${repoRel}`);
+      }
+    }
+
+    checks.push({
+      id: 'vendor.assimilation.committed_quarantine_archives',
+      passed: blockers.length === 0,
+      message:
+        blockers.length === 0
+          ? `committed QUARANTINED OSS archives under ${committedQuarantine.vendorPathPrefixes.length} manifest path(s); excluded from runtime`
+          : 'committed quarantine archive layout invalid',
+    });
+    checks.push({
+      id: 'vendor.assimilation.legal_notices_preserved',
+      passed: legalDocsPresent,
+      message: legalDocsPresent
+        ? 'legal notices and provenance manifest under docs/helios/native-assimilation/'
+        : 'missing THIRD_PARTY_NOTICES or NATIVE_ASSIMILATION_PROVENANCE_MANIFEST',
+    });
+    if (!legalDocsPresent) {
+      blockers.push('legal attribution artifacts missing (THIRD_PARTY_NOTICES or provenance manifest)');
+    }
+
+    const pass = blockers.length === 0;
+    return Object.freeze({
+      assimilationPath: ASSIMILATION_REL,
+      present: true,
+      checks: Object.freeze(checks),
+      pass,
+      blockers: Object.freeze(blockers),
+      retainedLegalPaths: Object.freeze([]),
+      removedForeignSource: false,
     });
   }
 
