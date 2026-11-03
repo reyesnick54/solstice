@@ -93,7 +93,11 @@ export {
 export { buildLivePilotAuthorization, refuseAiAuthorization } from './authorization.ts';
 export { buildPilotActivationCeremonyContract, refuseUnauthorizedActivationCeremony } from './activation-ceremony.ts';
 export { HELIOS_PILOT_ABORT_POLICY, shouldAbortPilot } from './abort-policy.ts';
-export { buildHeliosWorkPackageRegistry, registryHasBlockers } from './work-package-registry.ts';
+export {
+  buildHeliosWorkPackageRegistry,
+  heliosEngineeringWorkPackages,
+  registryHasBlockers,
+} from './work-package-registry.ts';
 export { buildHeliosClosureReport } from './closure-report.ts';
 export { sha256CanonicalJson } from './hash.ts';
 export {

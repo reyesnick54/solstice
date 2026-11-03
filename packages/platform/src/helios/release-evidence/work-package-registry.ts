@@ -25,6 +25,15 @@ function statusFrom(
   return Object.freeze({ workPackage, title, status, evidenceRef, ...(notes ? { notes } : {}) });
 }
 
+const HELIOS_ENGINEERING_WORK_PACKAGE = /^H\d{2}$/;
+
+/** H01–H36 engineering closure rows; excludes open-source qualification packages (OS*). */
+export function heliosEngineeringWorkPackages(
+  rows: readonly WorkPackageStatusRow[],
+): readonly WorkPackageStatusRow[] {
+  return rows.filter((row) => HELIOS_ENGINEERING_WORK_PACKAGE.test(row.workPackage));
+}
+
 export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPackageStatusRow[] {
   const rows: WorkPackageStatusRow[] = [];
 
@@ -261,6 +270,12 @@ export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPacka
           ? 'IMPLEMENTED'
           : 'BLOCKED',
       'tests/helios-h36-release-evidence-live-pilot-gate.test.ts',
+    ),
+    statusFrom(
+      'OS12',
+      'Agent permission and model gateway (Seris integration)',
+      testExists(root, 'helios-os12-agent-permission-gateway.test.ts') ? 'QUALIFIED' : 'BLOCKED',
+      'tests/helios-os12-agent-permission-gateway.test.ts',
     ),
   );
 
