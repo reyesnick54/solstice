@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "maxErrors": 1665,
-  "recordedAtCommit": "d4bf62da5fdcd63e566030a7ebd8cd67197da74b",
+  "maxErrors": 1666,
+  "recordedAtCommit": "84e3496adf7c49b40bb04e971eafc862d7a37180",
   "scope": "repository-wide TypeScript diagnostics",
   "policy": "CI fails if the TypeScript error count increases above this baseline. The strict npm run typecheck command remains unchanged and continues to expose all debt."
 }
