@@ -13,6 +13,16 @@ export type LiveSafetyAssertion = {
   readonly pass: boolean;
 };
 
+function postureActual(value: unknown): boolean | string {
+  if (value === undefined) {
+    return 'unset';
+  }
+  if (typeof value === 'boolean' || typeof value === 'string') {
+    return value;
+  }
+  return JSON.stringify(value);
+}
+
 function readConstFlag(source: string, name: string): string | null {
   const re = new RegExp(`export const ${name} = ([^;]+);`);
   const match = source.match(re);
@@ -67,25 +77,25 @@ export function evaluateLiveSafetyAssertions(root: string): {
     {
       name: 'PRODUCTION_ACTIVE (productization freeze)',
       expected: false,
-      actual: freezePosture.PRODUCTION_ACTIVE ?? 'unset',
+      actual: postureActual(freezePosture.PRODUCTION_ACTIVE),
       pass: freezePosture.PRODUCTION_ACTIVE === false,
     },
     {
       name: 'production_authorized (authority map)',
       expected: false,
-      actual: mapPosture.production_authorized ?? 'unset',
+      actual: postureActual(mapPosture.production_authorized),
       pass: mapPosture.production_authorized === false,
     },
     {
       name: 'authority_map.PRODUCTION_ACTIVE',
       expected: false,
-      actual: mapPosture.PRODUCTION_ACTIVE ?? 'unset',
+      actual: postureActual(mapPosture.PRODUCTION_ACTIVE),
       pass: mapPosture.PRODUCTION_ACTIVE === false,
     },
     {
       name: 'freeze.PRODUCTION_ACTIVE',
       expected: false,
-      actual: freezePosture.PRODUCTION_ACTIVE ?? 'unset',
+      actual: postureActual(freezePosture.PRODUCTION_ACTIVE),
       pass: freezePosture.PRODUCTION_ACTIVE === false,
     },
   ];

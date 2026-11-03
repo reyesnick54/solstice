@@ -138,7 +138,7 @@ export function runOpenSourceIntegrationSystemDemo(root: string = ROOT): OpenSou
         accountSizeFeasible: true,
         calibratedProbabilityBps: 5500,
       },
-      initialBudgetSnapshot({ ceilingAmount: '50000', unitKind: 'MINOR_UNITS', currency: 'USD' }),
+      initialBudgetSnapshot({ ceilingAmount: '50000', unitKind: 'MONETARY_MINOR', currency: 'USD' }),
       null,
     );
     push(
