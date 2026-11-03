@@ -1,3 +1,0 @@
-indicator("Net Volume", overlay = false)
-value = close > close[1] ? volume : close < close[1] ? -volume : 0
-plot("histogram", value, "Histogram", style = "histogram")

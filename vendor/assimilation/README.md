@@ -2,7 +2,7 @@
 
 **Work packages:** NATIVE01 (full tracked-source import), NATIVE02 (static security audit)
 
-These directories contain **committed snapshots** of upstream repositories (via `git archive`, not submodules). They are **not** npm/pnpm/Cargo workspace packages, **not** runtime dependencies, and **must not** be executed in Solstice CI or production paths.
+Each project directory retains **provenance READMEs and parity JSON fixtures** only. Full upstream application source (`.py`, `.cs`, `.csproj`, and similar) is **not** committed after native assimilation — refresh snapshots locally via `git archive` when needed for offline study. These paths are **not** npm/pnpm/Cargo workspace packages, **not** runtime dependencies, and **must not** be executed in Solstice CI or production paths.
 
 ## Provenance
 
@@ -24,7 +24,7 @@ Native TypeScript ports (including NATIVE03 BYTEX deterministic runtime) live un
 
 ## Git policy
 
-Snapshots are **tracked in this repository** for offline assimilation. They are excluded from TypeScript compile, workspace install, repository tests, container images, and HELIOS runtime load (see `QUARANTINE.json` and `scripts/check-assimilation-quarantine.mjs`).
+Legal and parity artifacts under `vendor/assimilation/` are tracked for attribution and regression vectors. They are excluded from TypeScript compile, workspace install, repository tests, container images, and HELIOS runtime load (see `QUARANTINE.json` and `scripts/check-assimilation-quarantine.mjs`). HELIOS NATIVE15 foreign-runtime independence requires no foreign application source in this tree.
 
 Attribution: root [`THIRD_PARTY_NOTICES`](../THIRD_PARTY_NOTICES) and [`docs/helios/native-assimilation/NATIVE_LICENSE_REGISTER.md`](../docs/helios/native-assimilation/NATIVE_LICENSE_REGISTER.md).
 
