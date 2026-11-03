@@ -39,3 +39,5 @@ export {
 } from './research-data-manifest.ts';
 export * from './technical/index.ts';
 export * from './universal/index.ts';
+export * from './coverage/index.ts';
+export * from './bias-sentinel/index.ts';
