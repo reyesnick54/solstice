@@ -72,3 +72,4 @@ export * from './research-mesh/index.ts';
 export * from './native-research-agent/index.ts';
 export * from './institutional-research-mesh/index.ts';
 export * from './trading-agents-research-mesh/index.ts';
+export * from './proactive-research/index.ts';

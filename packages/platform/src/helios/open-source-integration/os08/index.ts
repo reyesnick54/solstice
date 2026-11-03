@@ -34,7 +34,7 @@ export {
 } from './types.ts';
 
 export { ResearchTriggerBudget, aggregateMeshCost } from './budget.ts';
-export { ResearchTriggerDedupe } from './dedupe.ts';
+export { ResearchTriggerDedupe, type ResearchTriggerDedupeSnapshot } from './dedupe.ts';
 export { ResearchTriggerEvidence } from './evidence.ts';
 export { ResearchTriggerRouter, type ResearchTriggerRouterPorts } from './router.ts';
 export { ResearchTriggerRouterStore } from './store.ts';
