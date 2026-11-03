@@ -6,6 +6,21 @@ import type { UtcInstant } from '../../../../domain/src/time.ts';
 
 export const HELIOS_FUNDAMENTAL_FEATURE_SCHEMA = 'sunrey.helios.fundamental-feature.v1' as const;
 
+/** Provider-neutral fact row ingested into HELIOS feature fabric (mapped from SEC observations in external-data). */
+export type FundamentalFactRecord = {
+  readonly factId: string;
+  readonly filingId: string;
+  readonly canonicalEntityId: string;
+  readonly concept: string;
+  readonly unit: string;
+  readonly valueMinor: bigint | null;
+  readonly numericValue: number | null;
+  readonly periodEnd: string;
+  readonly fiscalPeriod: string;
+  readonly evidenceRef: string;
+  readonly knowableAt: UtcInstant;
+};
+
 export const FUNDAMENTAL_FEATURE_IDS = [
   'revenue',
   'revenue_growth',

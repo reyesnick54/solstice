@@ -1,19 +1,23 @@
 /**
- * Derive point-in-time fundamental features from SEC facts when supported.
+ * Derive point-in-time fundamental features from facts when supported.
  */
 
-import type { FinancialFactObservation } from '../../../../external-data/src/sec-fundamentals/types.ts';
 import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
 import {
   FUNDAMENTAL_FEATURE_IDS,
   HELIOS_FUNDAMENTAL_FEATURE_SCHEMA,
+  type FundamentalFactRecord,
   type FundamentalFeatureId,
   type FundamentalFeatureValue,
   type PointInTimeFundamentalSnapshot,
 } from './types.ts';
 import { effectiveFactsAt } from './store.ts';
 
-function findFact(facts: readonly FinancialFactObservation[], concept: string, periodEnd?: string): FinancialFactObservation | undefined {
+function findFact(
+  facts: readonly FundamentalFactRecord[],
+  concept: string,
+  periodEnd?: string,
+): FundamentalFactRecord | undefined {
   const matches = facts.filter((f) => f.concept === concept && (!periodEnd || f.periodEnd === periodEnd));
   if (matches.length === 0) {
     return undefined;
@@ -40,7 +44,7 @@ function unsupported(featureId: FundamentalFeatureId): FundamentalFeatureValue {
 
 function supportedFromFact(
   featureId: FundamentalFeatureId,
-  fact: FinancialFactObservation,
+  fact: FundamentalFactRecord,
   extras: { ratio?: string | null; valueMinor?: bigint | null; unit?: string | null } = {},
 ): FundamentalFeatureValue {
   return Object.freeze({
@@ -70,8 +74,8 @@ function ratioString(numerator: bigint, denominator: bigint): string | null {
 export function buildPointInTimeFundamentalSnapshot(input: {
   readonly canonicalEntityId: string;
   readonly evaluationTimeUtc: UtcInstant;
-  readonly facts: readonly FinancialFactObservation[];
-  readonly priorPeriodFacts?: readonly FinancialFactObservation[];
+  readonly facts: readonly FundamentalFactRecord[];
+  readonly priorPeriodFacts?: readonly FundamentalFactRecord[];
 }): PointInTimeFundamentalSnapshot {
   const effective = effectiveFactsAt(input.facts, input.evaluationTimeUtc);
   const priorEffective = input.priorPeriodFacts

@@ -12,6 +12,7 @@ export * as events from './events/index.ts';
 export * as federation from './federation/index.ts';
 export * as entities from './entities/index.ts';
 export * as revisions from './revisions/index.ts';
+export * as integrations from './integrations/index.ts';
 export * as graph from './graph/index.ts';
 export * as reputation from './reputation/index.ts';
 export * as evidence from './evidence/index.ts';

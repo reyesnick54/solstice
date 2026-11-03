@@ -2,14 +2,13 @@
  * HELIOS point-in-time fundamental feature fabric service.
  */
 
-import type { SecFundamentalObservation } from '../../../../external-data/src/sec-fundamentals/types.ts';
 import type { UtcInstant } from '../../../../domain/src/time.ts';
 import { buildPointInTimeFundamentalSnapshot } from './features.ts';
 import { createFundamentalObservationStore, type FundamentalObservationStore } from './store.ts';
-import type { PointInTimeFundamentalSnapshot } from './types.ts';
+import type { FundamentalFactRecord, PointInTimeFundamentalSnapshot } from './types.ts';
 
 export type HeliosFundamentalFeatureFabric = {
-  ingest(observations: readonly SecFundamentalObservation[]): void;
+  ingestFacts(facts: readonly FundamentalFactRecord[]): void;
   snapshotAt(input: {
     readonly canonicalEntityId: string;
     readonly evaluationTimeUtc: UtcInstant;
@@ -23,8 +22,8 @@ export function createHeliosFundamentalFeatureFabric(): HeliosFundamentalFeature
   const store = createFundamentalObservationStore();
 
   return {
-    ingest(observations) {
-      store.append(observations);
+    ingestFacts(facts) {
+      store.appendFacts(facts);
     },
     snapshotAt(input) {
       const allFacts = store.knowableFactsAt(input.canonicalEntityId, input.evaluationTimeUtc);

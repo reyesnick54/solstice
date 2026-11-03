@@ -26,6 +26,11 @@ export {
 } from './edgar-dataflow.ts';
 
 export { ingestSecFundamentalSubmissions, type SecFundamentalsIngestResult } from './ingest.ts';
+export { mapSecObservationsToHeliosFacts, type HeliosFundamentalFactRecord } from './helios-mapper.ts';
+export {
+  mapSecObservationsToAafFilingSources,
+  type SecFilingRevisionSource,
+} from './aaf-sources.ts';
 
 export {
   SIMCORP_CIK,

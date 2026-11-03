@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { asUtcInstant } from '../../../domain/src/time.ts';
-import { resolveSecCorporateEntity } from '../../../economic-awareness-fabric/src/entities/sec-corporate.ts';
-import { createAafRevisionLedger } from '../../../economic-awareness-fabric/src/revisions/ledger.ts';
 import {
   filterKnowableObservations,
   ingestSecFundamentalSubmissions,
+  mapSecObservationsToHeliosFacts,
+  mapSecObservationsToAafFilingSources,
   SIMCORP_ENTITY_ID,
   SIMCORP_Q2_2024_10Q,
   SIMCORP_SUBMISSION_TIMELINE,
@@ -45,30 +45,17 @@ describe('SEC fundamentals external-data plane', () => {
     assert.equal(filingIds.has('simcorp-fy2024q3-10q'), false);
   });
 
-  it('resolves CIK to canonical entity id via AAF entity resolution', () => {
-    const resolved = resolveSecCorporateEntity({ cik: '999999', ticker: 'SIMC' });
-    assert.equal(resolved.canonicalEntityId, SIMCORP_ENTITY_ID);
+  it('maps financial facts for HELIOS feature fabric ingestion', () => {
+    const result = ingestSecFundamentalSubmissions([SIMCORP_Q2_2024_10Q]);
+    const facts = mapSecObservationsToHeliosFacts(result.observations);
+    assert.ok(facts.length > 0);
+    assert.ok(facts.every((f) => f.knowableAt && f.concept.startsWith('us-gaap:')));
   });
 
-  it('append-only AAF revision ledger rejects duplicate filing ids', () => {
-    const ledger = createAafRevisionLedger();
-    ledger.append({
-      filingId: 'f1',
-      rootFilingId: 'f1',
-      knowableAtUtc: '2024-01-01T00:00:00.000Z',
-      amendmentKind: 'original',
-      evidenceRef: 'sec-edgar:test',
-      payloadMaterial: ['f1'],
-    });
-    assert.throws(() =>
-      ledger.append({
-        filingId: 'f1',
-        rootFilingId: 'f1',
-        knowableAtUtc: '2024-02-01T00:00:00.000Z',
-        amendmentKind: 'restatement',
-        evidenceRef: 'sec-edgar:test2',
-        payloadMaterial: ['f1'],
-      }),
-    );
+  it('maps company filings for AAF revision ledger sources', () => {
+    const result = ingestSecFundamentalSubmissions(SIMCORP_SUBMISSION_TIMELINE);
+    const sources = mapSecObservationsToAafFilingSources(result.observations);
+    assert.ok(sources.length >= SIMCORP_SUBMISSION_TIMELINE.length);
+    assert.ok(sources.every((s) => s.rootFilingId && s.evidenceRef));
   });
 });

@@ -2,7 +2,7 @@
  * AAF entity resolution for US SEC registrants (CIK / ticker → canonical entity id).
  */
 
-import { entityCommitmentFromRefs } from '../../../sunrey-chain/src/economic-proof/index.ts';
+import { entityCommitmentFromRefs } from '@solstice/sunrey-chain/economic-proof';
 
 export type SecCorporateAliasInput = {
   readonly cik: string;

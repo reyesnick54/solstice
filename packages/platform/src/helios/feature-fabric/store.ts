@@ -1,48 +1,55 @@
 /**
- * Append-only store for SEC fundamental observations (no restatement overwrite).
+ * Append-only store for fundamental facts (no restatement overwrite).
  */
 
-import type { SecFundamentalObservation, FinancialFactObservation } from '../../../../external-data/src/sec-fundamentals/types.ts';
 import type { UtcInstant } from '../../../../domain/src/time.ts';
-import { filterKnowableObservations } from '../../../../external-data/src/sec-fundamentals/edgar-dataflow.ts';
+import type { FundamentalFactRecord } from './types.ts';
 
 export type FundamentalObservationStore = {
-  append(observations: readonly SecFundamentalObservation[]): void;
-  all(): readonly SecFundamentalObservation[];
-  factsForEntity(entityId: string): readonly FinancialFactObservation[];
-  knowableFactsAt(entityId: string, evaluationTimeUtc: UtcInstant): readonly FinancialFactObservation[];
+  appendFacts(facts: readonly FundamentalFactRecord[]): void;
+  allFacts(): readonly FundamentalFactRecord[];
+  factsForEntity(entityId: string): readonly FundamentalFactRecord[];
+  knowableFactsAt(entityId: string, evaluationTimeUtc: UtcInstant): readonly FundamentalFactRecord[];
   filingIdsForEntity(entityId: string): readonly string[];
 };
 
+export function filterKnowableFacts<T extends { readonly knowableAt: UtcInstant }>(
+  rows: readonly T[],
+  evaluationTimeUtc: UtcInstant,
+): readonly T[] {
+  const evalMs = Date.parse(evaluationTimeUtc);
+  if (!Number.isFinite(evalMs)) {
+    return Object.freeze([]);
+  }
+  return Object.freeze(
+    rows.filter((row) => {
+      const knowMs = Date.parse(row.knowableAt);
+      return Number.isFinite(knowMs) && knowMs <= evalMs;
+    }),
+  );
+}
+
 export function createFundamentalObservationStore(): FundamentalObservationStore {
-  const observations: SecFundamentalObservation[] = [];
+  const facts: FundamentalFactRecord[] = [];
 
   return {
-    append(batch) {
-      observations.push(...batch);
+    appendFacts(batch) {
+      facts.push(...batch);
     },
-    all() {
-      return Object.freeze([...observations]);
+    allFacts() {
+      return Object.freeze([...facts]);
     },
     factsForEntity(entityId) {
-      return Object.freeze(
-        observations.filter(
-          (obs): obs is FinancialFactObservation =>
-            obs.observationKind === 'financial_fact' && obs.canonicalEntityId === entityId,
-        ),
-      );
+      return Object.freeze(facts.filter((f) => f.canonicalEntityId === entityId));
     },
     knowableFactsAt(entityId, evaluationTimeUtc) {
-      const entityFacts = observations.filter(
-        (obs): obs is FinancialFactObservation =>
-          obs.observationKind === 'financial_fact' && obs.canonicalEntityId === entityId,
+      return filterKnowableFacts(
+        facts.filter((f) => f.canonicalEntityId === entityId),
+        evaluationTimeUtc,
       );
-      return filterKnowableObservations(entityFacts, evaluationTimeUtc);
     },
     filingIdsForEntity(entityId) {
-      const ids = new Set(
-        observations.filter((o) => o.canonicalEntityId === entityId).map((o) => o.filingId),
-      );
+      const ids = new Set(facts.filter((f) => f.canonicalEntityId === entityId).map((f) => f.filingId));
       return Object.freeze([...ids]);
     },
   };
@@ -50,11 +57,11 @@ export function createFundamentalObservationStore(): FundamentalObservationStore
 
 /** Select effective fact per concept+periodEnd at evaluation time (latest knowable filing wins). */
 export function effectiveFactsAt(
-  facts: readonly FinancialFactObservation[],
+  facts: readonly FundamentalFactRecord[],
   evaluationTimeUtc: UtcInstant,
-): readonly FinancialFactObservation[] {
-  const knowable = filterKnowableObservations(facts, evaluationTimeUtc);
-  const byKey = new Map<string, FinancialFactObservation>();
+): readonly FundamentalFactRecord[] {
+  const knowable = filterKnowableFacts(facts, evaluationTimeUtc);
+  const byKey = new Map<string, FundamentalFactRecord>();
   for (const fact of knowable) {
     const key = `${fact.concept}:${fact.periodEnd}`;
     const existing = byKey.get(key);
