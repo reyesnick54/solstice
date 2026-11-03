@@ -268,6 +268,14 @@ export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPacka
       testExists(root, 'helios-os12-agent-permission-gateway.test.ts') ? 'QUALIFIED' : 'BLOCKED',
       'tests/helios-os12-agent-permission-gateway.test.ts',
     ),
+    statusFrom(
+      'OS13',
+      'AI strategy generation sandbox',
+      repoFile(root, 'packages/platform/src/helios/open-source-integration/os13-ai-strategy-sandbox/os13.test.ts')
+        ? 'QUALIFIED'
+        : 'BLOCKED',
+      'packages/platform/src/helios/open-source-integration/os13-ai-strategy-sandbox/os13.test.ts',
+    ),
   );
 
   return Object.freeze(rows);
