@@ -1,5 +1,5 @@
 /**
- * HELIOS H36 — H01-H36 work-package status from repository/evidence truth.
+ * HELIOS H36 — H01-H36 plus open-source integration work-package status from repository truth.
  */
 
 import { existsSync } from 'node:fs';
@@ -261,6 +261,12 @@ export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPacka
           ? 'IMPLEMENTED'
           : 'BLOCKED',
       'tests/helios-h36-release-evidence-live-pilot-gate.test.ts',
+    ),
+    statusFrom(
+      'OS08',
+      'Event-triggered agentic research routing',
+      testExists(root, 'helios-os08-triggered-agentic-research.test.ts') ? 'QUALIFIED' : 'BLOCKED',
+      'tests/helios-os08-triggered-agentic-research.test.ts',
     ),
     statusFrom(
       'OS12',
