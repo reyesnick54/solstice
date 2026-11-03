@@ -38,9 +38,8 @@ export const OPEN_SOURCE_WORK_PACKAGE_EVIDENCE: Readonly<
   Record<Exclude<OpenSourceWorkPackageId, 'OS15'>, readonly string[]>
 > = Object.freeze({
   OS00: Object.freeze([
-    'docs/helios/open-source/os00-upstream-provenance.md',
-    'packages/platform/src/helios/open-source/provenance/upstream-registry.ts',
-    'tests/helios-os00-upstream-provenance.test.ts',
+    'docs/helios/open-source/UPSTREAM_INTEGRATION_MANIFEST.md',
+    'docs/helios/open-source/upstream-lock.json',
   ]),
   OS01: Object.freeze([
     'docs/helios/open-source/BYTEX_HELIOS_INTEGRATION_MAP.md',
@@ -58,20 +57,19 @@ export const OPEN_SOURCE_WORK_PACKAGE_EVIDENCE: Readonly<
     'tests/helios-os04-venue-conformance.test.ts',
   ]),
   OS05: Object.freeze([
-    'packages/platform/src/helios/open-source/strategy-genome/index.ts',
+    'packages/strategy-lab/src/os05/index.ts',
     'tests/helios-os05-strategy-genome.test.ts',
   ]),
   OS06: Object.freeze([
-    'packages/platform/src/helios/open-source/openchart-map/index.ts',
-    'tests/helios-os06-openchart-map.test.ts',
+    'docs/helios/open-source/OPENCHART_HELIOS_MONITOR_MAP.md',
   ]),
   OS07: Object.freeze([
     'packages/platform/src/helios/open-source/research-monitor/index.ts',
     'tests/helios-os07-research-monitor-dsl.test.ts',
   ]),
   OS08: Object.freeze([
-    'packages/platform/src/helios/open-source/triggered-research/index.ts',
-    'tests/helios-os08-triggered-research.test.ts',
+    'packages/platform/src/helios/open-source-integration/os08/index.ts',
+    'tests/helios-os08-triggered-agentic-research.test.ts',
   ]),
   OS09: Object.freeze([
     'packages/agentic-capital-mesh/src/institutional-research-mesh/index.ts',
@@ -90,8 +88,8 @@ export const OPEN_SOURCE_WORK_PACKAGE_EVIDENCE: Readonly<
     'tests/helios-os12-agent-permission-gateway.test.ts',
   ]),
   OS13: Object.freeze([
-    'packages/platform/src/helios/open-source/strategy-sandbox/index.ts',
-    'tests/helios-os13-strategy-sandbox.test.ts',
+    'packages/platform/src/helios/open-source-integration/os13-ai-strategy-sandbox/index.ts',
+    'packages/platform/src/helios/open-source-integration/os13-ai-strategy-sandbox/os13.test.ts',
   ]),
   OS14: Object.freeze([
     'packages/platform/src/helios/open-source/prediction-market-research/index.ts',
