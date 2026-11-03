@@ -53,37 +53,36 @@ async function probeKrakenReadonlyLive(symbol: string): Promise<VenueMarketDataP
 }
 
 export function createKrakenVenueAdapter(): HeliosVenueAdapterContract {
-  return createVenueAdapterContract(
-    Object.freeze({
-      venueId: 'kraken',
-      adapterSchemaVersion: HELIOS_VENUE_ADAPTER_SCHEMA_VERSION,
-      liveOrderPlacementEnabled: false,
-      manifest() {
-        return KRAKEN_VENUE_MANIFEST;
-      },
-      async runConformance(runInput: VenueConformanceRunInput) {
-        return runVenueAdapterConformance(this, runInput, KRAKEN_OS04_QUALIFICATION_PROFILE);
-      },
-      async probeMarketData(request: VenueMarketDataProbeRequest): Promise<VenueMarketDataProbeResult> {
-        if (request.qualificationMode === 'readonly_live') {
-          return probeKrakenReadonlyLive(request.symbol);
-        }
-        const price = krakenFixtureLastPrice(request.symbol);
-        if (!price) {
-          return Object.freeze({
-            ok: false,
-            reason: `no fixture for symbol ${request.symbol}`,
-          });
-        }
+  const adapter: HeliosVenueAdapterContract = {
+    venueId: 'kraken',
+    adapterSchemaVersion: HELIOS_VENUE_ADAPTER_SCHEMA_VERSION,
+    liveOrderPlacementEnabled: false,
+    manifest() {
+      return KRAKEN_VENUE_MANIFEST;
+    },
+    async runConformance(runInput: VenueConformanceRunInput) {
+      return runVenueAdapterConformance(adapter, runInput, KRAKEN_OS04_QUALIFICATION_PROFILE);
+    },
+    async probeMarketData(request: VenueMarketDataProbeRequest): Promise<VenueMarketDataProbeResult> {
+      if (request.qualificationMode === 'readonly_live') {
+        return probeKrakenReadonlyLive(request.symbol);
+      }
+      const price = krakenFixtureLastPrice(request.symbol);
+      if (!price) {
         return Object.freeze({
-          ok: true,
-          symbol: request.symbol,
-          lastPrice: price,
-          observedAt: '2026-09-21T12:00:00.000Z',
+          ok: false,
+          reason: `no fixture for symbol ${request.symbol}`,
         });
-      },
-    }),
-  );
+      }
+      return Object.freeze({
+        ok: true,
+        symbol: request.symbol,
+        lastPrice: price,
+        observedAt: '2026-09-21T12:00:00.000Z',
+      });
+    },
+  };
+  return createVenueAdapterContract(adapter);
 }
 
 export const KRAKEN_VENUE_ADAPTER = createKrakenVenueAdapter();

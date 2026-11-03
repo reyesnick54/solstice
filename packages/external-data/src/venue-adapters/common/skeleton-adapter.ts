@@ -18,19 +18,18 @@ export function createSkeletonVenueAdapter(input: {
   readonly displayName: string;
 }): HeliosVenueAdapterContract {
   const manifest = createSkeletonVenueManifest(input);
-  return createVenueAdapterContract(
-    Object.freeze({
-      venueId: input.venueId,
-      adapterSchemaVersion: HELIOS_VENUE_ADAPTER_SCHEMA_VERSION,
-      liveOrderPlacementEnabled: false,
-      manifest() {
-        return manifest;
-      },
-      runConformance(runInput: VenueConformanceRunInput) {
-        return Promise.resolve(
-          runVenueAdapterConformanceSync(this, runInput, SKELETON_OS04_QUALIFICATION_PROFILE),
-        );
-      },
-    }),
-  );
+  const adapter: HeliosVenueAdapterContract = {
+    venueId: input.venueId,
+    adapterSchemaVersion: HELIOS_VENUE_ADAPTER_SCHEMA_VERSION,
+    liveOrderPlacementEnabled: false,
+    manifest() {
+      return manifest;
+    },
+    runConformance(runInput: VenueConformanceRunInput) {
+      return Promise.resolve(
+        runVenueAdapterConformanceSync(adapter, runInput, SKELETON_OS04_QUALIFICATION_PROFILE),
+      );
+    },
+  };
+  return createVenueAdapterContract(adapter);
 }

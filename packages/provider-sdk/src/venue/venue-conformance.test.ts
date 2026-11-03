@@ -2,45 +2,71 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { unavailableField, availableField } from './types.ts';
+import type {
+  VenueAccountCapability,
+  VenueCapabilityManifest,
+  VenueFeeDeclaration,
+  VenueMarketDataCapability,
+  VenueMinimumNotionalDeclaration,
+  VenueMinimumQuantityDeclaration,
+  VenueOrderCapability,
+  VenuePrecisionDeclaration,
+  VenueRateLimitDeclaration,
+  VenueReconciliationCapability,
+} from './types.ts';
 import { evaluateVenueManifestQualification, SKELETON_OS04_QUALIFICATION_PROFILE } from './conformance.ts';
-import type { VenueCapabilityManifest } from './types.ts';
+import type {
+  VenueAssetClass,
+  VenueMarketDataType,
+  VenueOrderType,
+  VenueTimeInForce,
+  VenueTimestampSemantics,
+} from './taxonomy.ts';
+
+const UNAVAILABLE_MARKET_DATA = Object.freeze({
+  marketDataTypes: unavailableField<readonly VenueMarketDataType[]>(),
+  websocketAvailable: unavailableField<boolean>(),
+  restAvailable: unavailableField<boolean>(),
+  historicalDataSupport: unavailableField<boolean>(),
+  timestampSemantics: unavailableField<VenueTimestampSemantics>(),
+  rateLimits: unavailableField<VenueRateLimitDeclaration>(),
+}) satisfies VenueMarketDataCapability;
+
+const UNAVAILABLE_ORDERS = Object.freeze({
+  orderTypes: unavailableField<readonly VenueOrderType[]>(),
+  tifTypes: unavailableField<readonly VenueTimeInForce[]>(),
+  precision: unavailableField<VenuePrecisionDeclaration>(),
+  minimumQuantity: unavailableField<VenueMinimumQuantityDeclaration>(),
+  minimumNotional: unavailableField<VenueMinimumNotionalDeclaration>(),
+  makerTakerFees: unavailableField<VenueFeeDeclaration>(),
+  reduceOnlySupport: unavailableField<boolean>(),
+  postOnlySupport: unavailableField<boolean>(),
+  fundingSupport: unavailableField<boolean>(),
+}) satisfies VenueOrderCapability;
+
+const UNAVAILABLE_ACCOUNT = Object.freeze({
+  sandboxAvailability: unavailableField<boolean>(),
+  subAccountSupport: unavailableField<boolean>(),
+  portfolioMarginSupport: unavailableField<boolean>(),
+}) satisfies VenueAccountCapability;
+
+const UNAVAILABLE_RECON = Object.freeze({
+  reconciliationSupport: unavailableField<boolean>(),
+  fillHistoryAvailable: unavailableField<boolean>(),
+  ledgerExportAvailable: unavailableField<boolean>(),
+}) satisfies VenueReconciliationCapability;
 
 function minimalSkeletonManifest(): VenueCapabilityManifest {
   return Object.freeze({
     venueId: 'binance',
     displayName: 'Binance',
-    assetClasses: unavailableField(),
-    instruments: unavailableField(),
-    venues: unavailableField(),
-    marketData: Object.freeze({
-      marketDataTypes: unavailableField(),
-      websocketAvailable: unavailableField(),
-      restAvailable: unavailableField(),
-      historicalDataSupport: unavailableField(),
-      timestampSemantics: unavailableField(),
-      rateLimits: unavailableField(),
-    }),
-    orders: Object.freeze({
-      orderTypes: unavailableField(),
-      tifTypes: unavailableField(),
-      precision: unavailableField(),
-      minimumQuantity: unavailableField(),
-      minimumNotional: unavailableField(),
-      makerTakerFees: unavailableField(),
-      reduceOnlySupport: unavailableField(),
-      postOnlySupport: unavailableField(),
-      fundingSupport: unavailableField(),
-    }),
-    account: Object.freeze({
-      sandboxAvailability: unavailableField(),
-      subAccountSupport: unavailableField(),
-      portfolioMarginSupport: unavailableField(),
-    }),
-    reconciliation: Object.freeze({
-      reconciliationSupport: unavailableField(),
-      fillHistoryAvailable: unavailableField(),
-      ledgerExportAvailable: unavailableField(),
-    }),
+    assetClasses: unavailableField<readonly VenueAssetClass[]>(),
+    instruments: unavailableField<readonly string[]>(),
+    venues: unavailableField<readonly string[]>(),
+    marketData: UNAVAILABLE_MARKET_DATA,
+    orders: UNAVAILABLE_ORDERS,
+    account: UNAVAILABLE_ACCOUNT,
+    reconciliation: UNAVAILABLE_RECON,
     healthState: 'UNAVAILABLE',
     liveOrderPlacementEnabled: false,
     qualificationNotes: Object.freeze([]),

@@ -4,42 +4,56 @@
 
 import {
   unavailableField,
+  type VenueAccountCapability,
   type VenueCapabilityManifest,
+  type VenueFeeDeclaration,
+  type VenueMarketDataCapability,
+  type VenueMinimumNotionalDeclaration,
+  type VenueMinimumQuantityDeclaration,
+  type VenueOrderCapability,
+  type VenuePrecisionDeclaration,
+  type VenueRateLimitDeclaration,
+  type VenueReconciliationCapability,
   type HeliosOs04VenueId,
+  type VenueAssetClass,
+  type VenueMarketDataType,
+  type VenueOrderType,
+  type VenueTimeInForce,
+  type VenueTimestampSemantics,
 } from '@solstice/provider-sdk';
 
 const UNAVAILABLE_MARKET_DATA = Object.freeze({
-  marketDataTypes: unavailableField(),
-  websocketAvailable: unavailableField(),
-  restAvailable: unavailableField(),
-  historicalDataSupport: unavailableField(),
-  timestampSemantics: unavailableField(),
-  rateLimits: unavailableField(),
-});
+  marketDataTypes: unavailableField<readonly VenueMarketDataType[]>(),
+  websocketAvailable: unavailableField<boolean>(),
+  restAvailable: unavailableField<boolean>(),
+  historicalDataSupport: unavailableField<boolean>(),
+  timestampSemantics: unavailableField<VenueTimestampSemantics>(),
+  rateLimits: unavailableField<VenueRateLimitDeclaration>(),
+}) satisfies VenueMarketDataCapability;
 
 const UNAVAILABLE_ORDERS = Object.freeze({
-  orderTypes: unavailableField(),
-  tifTypes: unavailableField(),
-  precision: unavailableField(),
-  minimumQuantity: unavailableField(),
-  minimumNotional: unavailableField(),
-  makerTakerFees: unavailableField(),
-  reduceOnlySupport: unavailableField(),
-  postOnlySupport: unavailableField(),
-  fundingSupport: unavailableField(),
-});
+  orderTypes: unavailableField<readonly VenueOrderType[]>(),
+  tifTypes: unavailableField<readonly VenueTimeInForce[]>(),
+  precision: unavailableField<VenuePrecisionDeclaration>(),
+  minimumQuantity: unavailableField<VenueMinimumQuantityDeclaration>(),
+  minimumNotional: unavailableField<VenueMinimumNotionalDeclaration>(),
+  makerTakerFees: unavailableField<VenueFeeDeclaration>(),
+  reduceOnlySupport: unavailableField<boolean>(),
+  postOnlySupport: unavailableField<boolean>(),
+  fundingSupport: unavailableField<boolean>(),
+}) satisfies VenueOrderCapability;
 
 const UNAVAILABLE_ACCOUNT = Object.freeze({
-  sandboxAvailability: unavailableField(),
-  subAccountSupport: unavailableField(),
-  portfolioMarginSupport: unavailableField(),
-});
+  sandboxAvailability: unavailableField<boolean>(),
+  subAccountSupport: unavailableField<boolean>(),
+  portfolioMarginSupport: unavailableField<boolean>(),
+}) satisfies VenueAccountCapability;
 
 const UNAVAILABLE_RECON = Object.freeze({
-  reconciliationSupport: unavailableField(),
-  fillHistoryAvailable: unavailableField(),
-  ledgerExportAvailable: unavailableField(),
-});
+  reconciliationSupport: unavailableField<boolean>(),
+  fillHistoryAvailable: unavailableField<boolean>(),
+  ledgerExportAvailable: unavailableField<boolean>(),
+}) satisfies VenueReconciliationCapability;
 
 export function createSkeletonVenueManifest(input: {
   readonly venueId: HeliosOs04VenueId;
@@ -48,9 +62,9 @@ export function createSkeletonVenueManifest(input: {
   return Object.freeze({
     venueId: input.venueId,
     displayName: input.displayName,
-    assetClasses: unavailableField(),
-    instruments: unavailableField(),
-    venues: unavailableField(),
+    assetClasses: unavailableField<readonly VenueAssetClass[]>(),
+    instruments: unavailableField<readonly string[]>(),
+    venues: unavailableField<readonly string[]>(),
     marketData: UNAVAILABLE_MARKET_DATA,
     orders: UNAVAILABLE_ORDERS,
     account: UNAVAILABLE_ACCOUNT,
