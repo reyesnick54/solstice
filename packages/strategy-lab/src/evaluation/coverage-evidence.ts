@@ -7,12 +7,23 @@ import {
   type EligibleUniverseMember,
   type FeatureCoverageProbe,
 } from '../../../platform/src/helios/feature-fabric/feature-coverage/index.ts';
-import { membersAt } from '../dataset.ts';
+import type { UniverseMembership } from '../dataset.ts';
 import type { EvaluationDatasetManifest } from './manifest.ts';
 import { isKnowableAt } from './information-time.ts';
 
 export function strategyUsesNonUniversalFeatures(requiredData: readonly string[]): boolean {
   return requiredData.length > 0;
+}
+
+function instrumentIdsAtMembership(
+  membership: readonly UniverseMembership[],
+  at: UtcInstant,
+): readonly string[] {
+  return Object.freeze(
+    membership
+      .filter((row) => row.enteredAt <= at && (row.leftAt === null || row.leftAt > at))
+      .map((row) => row.instrumentId),
+  );
 }
 
 function memberFromInstrument(
@@ -61,7 +72,7 @@ export function buildStrategyEvaluationCoverageManifest(input: {
   if (input.featureIds.length === 0) {
     return null;
   }
-  const membership = membersAt(input.manifest.membership, input.evaluationTimestamp);
+  const membership = instrumentIdsAtMembership(input.manifest.membership, input.evaluationTimestamp);
   const eligibleMembers = membership.map((instrumentId) =>
     memberFromInstrument(instrumentId, input.evaluationTimestamp),
   );
