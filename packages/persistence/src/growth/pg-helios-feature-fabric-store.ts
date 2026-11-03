@@ -1,8 +1,8 @@
 import { createHash } from 'node:crypto';
 import type { Pool } from 'pg';
 
-import type { HeliosFeatureFabricStoreSnapshot } from '../../../platform/src/helios/feature-fabric/store.ts';
-import type { FeatureManifest, FeatureObservation } from '../../../platform/src/helios/feature-fabric/types.ts';
+import type { FeatureManifest, FeatureObservation } from '../../../platform/src/helios/feature-fabric/universal/types.ts';
+import type { HeliosUniversalFeatureFabricStoreSnapshot } from '../../../platform/src/helios/feature-fabric/universal/store.ts';
 import { persistenceJsonStringify } from '../json.ts';
 import { withClient } from '../postgres/pools.ts';
 
@@ -13,9 +13,9 @@ function evidenceRefHash(observation: FeatureObservation): string | null {
   return createHash('sha256').update(observation.evidenceRefs.join('|')).digest('hex');
 }
 
-export async function persistHeliosFeatureFabricState(
+export async function persistHeliosUniversalFeatureFabricState(
   pool: Pool,
-  snapshot: HeliosFeatureFabricStoreSnapshot,
+  snapshot: HeliosUniversalFeatureFabricStoreSnapshot,
 ): Promise<void> {
   await withClient(pool, async (client) => {
     await client.query('BEGIN');
@@ -52,12 +52,7 @@ export async function persistHeliosFeatureFabricState(
              (manifest_id, evaluation_timestamp, body_canonical, created_at)
            VALUES ($1,$2,$3,$4)
            ON CONFLICT (manifest_id) DO NOTHING`,
-          [
-            manifest.manifestId,
-            manifest.evaluationTimestamp,
-            persistenceJsonStringify(manifest),
-            manifest.evaluationTimestamp,
-          ],
+          [manifest.manifestId, manifest.decisionTime, persistenceJsonStringify(manifest), manifest.createdAt],
         );
       }
       await client.query('COMMIT');
@@ -68,7 +63,9 @@ export async function persistHeliosFeatureFabricState(
   });
 }
 
-export async function loadHeliosFeatureFabricState(pool: Pool): Promise<HeliosFeatureFabricStoreSnapshot> {
+export async function loadHeliosUniversalFeatureFabricState(
+  pool: Pool,
+): Promise<HeliosUniversalFeatureFabricStoreSnapshot> {
   return withClient(pool, async (client) => {
     const obsRows = await client.query(
       `SELECT body_canonical FROM growth.helios_feature_observation ORDER BY knowable_at ASC`,
@@ -76,13 +73,9 @@ export async function loadHeliosFeatureFabricState(pool: Pool): Promise<HeliosFe
     const manifestRows = await client.query(
       `SELECT body_canonical FROM growth.helios_feature_manifest ORDER BY evaluation_timestamp ASC`,
     );
-    const observations = obsRows.rows.map(
-      (row) => JSON.parse(String(row.body_canonical)) as FeatureObservation,
-    );
-    const manifests = manifestRows.rows.map(
-      (row) => JSON.parse(String(row.body_canonical)) as FeatureManifest,
-    );
-    const definitionByKey = new Map<string, import('../../../platform/src/helios/feature-fabric/types.ts').FeatureDefinition>();
+    const observations = obsRows.rows.map((row) => JSON.parse(String(row.body_canonical)) as FeatureObservation);
+    const manifests = manifestRows.rows.map((row) => JSON.parse(String(row.body_canonical)) as FeatureManifest);
+    const definitionByKey = new Map<string, import('../../../platform/src/helios/feature-fabric/universal/types.ts').FeatureDefinition>();
     for (const manifest of manifests) {
       for (const definition of manifest.featureDefinitions) {
         definitionByKey.set(`${definition.featureId}@${definition.featureVersion}`, definition);
@@ -95,3 +88,9 @@ export async function loadHeliosFeatureFabricState(pool: Pool): Promise<HeliosFe
     });
   });
 }
+
+/** Legacy AAF02 aliases for Strategy Lab / AAF04 persistence tests. */
+export {
+  persistHeliosUniversalFeatureFabricState as persistHeliosFeatureFabricState,
+  loadHeliosUniversalFeatureFabricState as loadHeliosFeatureFabricState,
+};

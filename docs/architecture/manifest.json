@@ -507,8 +507,11 @@
         "packages/permissions",
         "packages/security",
         "packages/provider-sdk",
-        "packages/economic-asset-registry",
-        "packages/external-data"
+        "packages/external-data",
+        "packages/strategy-lab",
+        "packages/risk",
+        "packages/model-registry",
+        "packages/economic-asset-registry"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -6233,6 +6236,10 @@
     [
       "packages/external-data",
       "packages/platform"
+    ],
+    [
+      "packages/platform",
+      "packages/strategy-lab"
     ]
   ],
   "forbiddenWorkspaceRoots": [

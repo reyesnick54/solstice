@@ -1,0 +1,22 @@
+{
+  "schema": "sunrey.helios.open-source-provenance.v1",
+  "scannedAt": "2026-11-03T07:18:59.000Z",
+  "repositoryRoot": "/agent/repos/solstice",
+  "gitSha": "3548c94fb26f61420713d933032e12475a221d92",
+  "upstreamPackages": [],
+  "scanRoots": [
+    "packages/platform/src/helios/open-source",
+    "docs/helios/open-source"
+  ],
+  "findings": [
+    {
+      "severity": "WARN",
+      "code": "NO_UPSTREAM_REGISTRY",
+      "path": "packages/platform/src/helios/open-source/provenance/upstream-registry.ts",
+      "detail": "OS00 upstream registry not present; third-party provenance cannot be verified"
+    }
+  ],
+  "binaryFilesFound": [],
+  "credentialPatternHits": [],
+  "pass": true
+}

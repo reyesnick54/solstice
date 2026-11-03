@@ -41,6 +41,7 @@ export type QualificationPolicy = {
   readonly minimumCoverageRatioBps: number | null;
   readonly maximumCoverageDriftBps: number | null;
   readonly requireCoverageManifestForNonUniversalFeatures: true;
+  readonly requireAdaptiveAlphaQualification: true;
   readonly liveExecutionPermitted: false;
 };
 
@@ -71,6 +72,7 @@ const DEFAULT_POLICY_BODY = Object.freeze({
   minimumCoverageRatioBps: null as number | null,
   maximumCoverageDriftBps: null as number | null,
   requireCoverageManifestForNonUniversalFeatures: true as const,
+  requireAdaptiveAlphaQualification: true as const,
   liveExecutionPermitted: false as const,
 });
 

@@ -42,6 +42,8 @@ import type { StrategyValidationReport } from './validation.ts';
 import type { ForwardShadowEvidenceSummary } from './forward-shadow.ts';
 import type { GateResult } from './promotion-gates.ts';
 import type { EvaluationQualificationResult } from './evaluation-qualification.ts';
+import type { AdaptiveAlphaQualificationRecord } from './adaptive-alpha-qualification-record.ts';
+import type { StrategyLabAdaptiveAlphaQualificationRef } from './evaluation/adaptive-alpha-promotion-gate.ts';
 
 function addDays(instant: UtcInstant, days: number): UtcInstant {
   const date = new Date(instant);
@@ -109,13 +111,37 @@ export class StrategyPromotionService {
     return capsule;
   }
 
+  recordAdaptiveAlphaQualification(input: {
+    readonly strategyId: string;
+    readonly version: string;
+    readonly qualification: StrategyLabAdaptiveAlphaQualificationRef;
+    readonly recordedAt?: UtcInstant;
+  }): Result<AdaptiveAlphaQualificationRecord, StrategyFailure> {
+    const capsule = this.store.getCapsule(input.strategyId, input.version);
+    if (!capsule) {
+      return err({ code: 'UNVERSIONED_STRATEGY', message: 'Strategy Capsule is missing' });
+    }
+    const record: AdaptiveAlphaQualificationRecord = Object.freeze({
+      ...input.qualification,
+      strategyId: input.strategyId,
+      strategyVersion: input.version,
+      recordedAt: input.recordedAt ?? this.clock.now(),
+    });
+    this.store.putAdaptiveAlphaQualification(record);
+    return ok(record);
+  }
+
   assessEvaluationEligibility(strategyId: string, version: string): Result<StrategyPromotionRecord, StrategyFailure> {
     const capsule = this.store.getCapsule(strategyId, version);
     const current = this.store.getPromotion(strategyId, version);
     if (!capsule || !current) {
       return err({ code: 'UNVERSIONED_STRATEGY', message: 'Strategy Capsule is missing' });
     }
-    const gate = gateResearchToEvaluation({ capsule, policy: this.policy });
+    const gate = gateResearchToEvaluation({
+      capsule,
+      policy: this.policy,
+      adaptiveAlphaQualification: this.store.getLatestAdaptiveAlphaQualification(strategyId, version) ?? null,
+    });
     if (!gate.ok) {
       return gate;
     }

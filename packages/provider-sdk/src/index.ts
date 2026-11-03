@@ -395,3 +395,4 @@ export * from './trust/index.ts';
 export * from './certification/index.ts';
 export * from './market-data-capability/index.ts';
 export * from './connector/index.ts';
+export * from './venue/index.ts';

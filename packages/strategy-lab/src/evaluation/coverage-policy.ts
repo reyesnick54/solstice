@@ -2,7 +2,7 @@ import {
   assessCoverageManifestQualification,
   type CoverageManifest,
   type CoverageQualificationThresholds,
-} from '../../../platform/src/helios/feature-fabric/coverage/index.ts';
+} from '../../../platform/src/helios/feature-fabric/feature-coverage/index.ts';
 import type { QualificationPolicy } from '../qualification-policy.ts';
 
 export function coverageThresholdsFromPolicy(

@@ -1,7 +1,9 @@
-import { canonicalJsonStringify, hashRawJsonPayload } from '../../../../../provider-sdk/src/hash.ts';
+import { createHash } from 'node:crypto';
+
+import type { UtcInstant } from '@solstice/domain';
+
 import type { CoverageTensor, FeatureCoverageProbe } from './types.ts';
 import { HELIOS_FEATURE_COVERAGE_SCHEMA } from './types.ts';
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
 
 function probeSatisfied(probe: FeatureCoverageProbe): boolean {
   return (
@@ -14,6 +16,10 @@ function probeSatisfied(probe: FeatureCoverageProbe): boolean {
     probe.signal.valuePresent &&
     probe.signal.qualityState === 'VALID'
   );
+}
+
+function canonicalTensorJson(tensor: CoverageTensor): string {
+  return JSON.stringify(tensor, (_key, value) => (typeof value === 'bigint' ? value.toString() : value));
 }
 
 export function buildCoverageTensor(input: {
@@ -45,11 +51,15 @@ export function buildCoverageTensor(input: {
   });
 }
 
+export function coverageTensorContentDigest(tensor: CoverageTensor): string {
+  return createHash('sha256').update(canonicalTensorJson(tensor)).digest('hex');
+}
+
 export function sealCoverageSnapshot(input: {
   readonly tensor: CoverageTensor;
   readonly capturedAt: UtcInstant;
 }): import('./types.ts').CoverageSnapshot {
-  const digest = hashRawJsonPayload(canonicalJsonStringify(input.tensor)).digest;
+  const digest = coverageTensorContentDigest(input.tensor);
   return Object.freeze({
     schemaVersion: HELIOS_FEATURE_COVERAGE_SCHEMA,
     snapshotId: `coverage:${input.tensor.universeId}:${input.capturedAt}`,

@@ -3,8 +3,10 @@ import type { PromotionCapsule } from './promotion-capsule.ts';
 import type { EvaluationQualificationResult } from './evaluation-qualification.ts';
 import type { ForwardShadowEvidenceSummary } from './forward-shadow.ts';
 import type { QualificationPolicy } from './qualification-policy.ts';
-import type { CoverageManifest } from '../../platform/src/helios/feature-fabric/coverage/index.ts';
+import type { CoverageManifest } from '../../platform/src/helios/feature-fabric/feature-coverage/index.ts';
 import { evaluateCoveragePromotionGate } from './evaluation/coverage-policy.ts';
+import { gatePromotionOnAdaptiveAlphaQualification } from './evaluation/adaptive-alpha-promotion-gate.ts';
+import type { AdaptiveAlphaQualificationRecord } from './adaptive-alpha-qualification-record.ts';
 import type { StrategyFailure } from './types.ts';
 
 export type GateResult = {
@@ -19,6 +21,7 @@ export type GateResult = {
 export function gateResearchToEvaluation(input: {
   readonly capsule: PromotionCapsule;
   readonly policy: QualificationPolicy;
+  readonly adaptiveAlphaQualification?: AdaptiveAlphaQualificationRecord | null;
 }): Result<GateResult, StrategyFailure> {
   const missing: string[] = [];
   if (!input.capsule.fingerprint) missing.push('strategy fingerprint');
@@ -29,6 +32,14 @@ export function gateResearchToEvaluation(input: {
   if (input.capsule.evidenceRefs.length === 0) missing.push('evidence references');
   if (input.capsule.schemaDefects.length > 0) missing.push('schema/config defects unresolved');
   if (!input.capsule.compiledHash) missing.push('immutable compiled Strategy Capsule version');
+
+  const aafGate = gatePromotionOnAdaptiveAlphaQualification({
+    qualification: input.adaptiveAlphaQualification ?? null,
+    requireQualification: input.policy.requireAdaptiveAlphaQualification,
+  });
+  if (!aafGate.permitted) {
+    missing.push(...aafGate.blockers);
+  }
 
   return ok(
     Object.freeze({

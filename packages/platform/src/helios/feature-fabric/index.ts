@@ -1,4 +1,36 @@
 export {
+  HELIOS_FUNDAMENTAL_FEATURE_SCHEMA,
+  FUNDAMENTAL_FEATURE_IDS,
+  type FundamentalFeatureId,
+  type FundamentalFeatureValue,
+  type FundamentalFactRecord,
+  type PointInTimeFundamentalSnapshot,
+} from './fundamental-types.ts';
+
+export {
+  createFundamentalObservationStore,
+  effectiveFactsAt,
+  filterKnowableFacts,
+  type FundamentalObservationStore,
+} from './fundamental-store.ts';
+
+export {
+  buildPointInTimeFundamentalSnapshot,
+  assertNoFutureFundamentalLeak,
+  parseEvaluationUtc,
+} from './features.ts';
+
+export { createHeliosFundamentalFeatureFabric, type HeliosFundamentalFeatureFabric } from './service.ts';
+
+export {
+  HELIOS_OS10_POINT_IN_TIME_FUNDAMENTALS_QUALIFIED,
+  HELIOS_OS10_POINT_IN_TIME_FUNDAMENTALS_BLOCKED,
+  evaluateHeliosOs10PointInTimeFundamentalsQualification,
+  type HeliosOs10QualificationChecks,
+  type HeliosOs10QualificationResult,
+} from './os10-qualification.ts';
+
+export {
   HELIOS_FEATURE_FABRIC_SCHEMA,
   FEATURE_VALUE_KINDS,
   FEATURE_QUALITY_STATES,
@@ -82,4 +114,16 @@ export * from './macro-intelligence/index.ts';
 
 export * from './entity-resolution/index.ts';
 export { computeFeatureWithResolvedEntity, type ComputeFeatureWithResolutionInput } from './entity-binding.ts';
+export * from './feature-coverage/index.ts';
+
+export * from './openchart-analytics/index.ts';
+export {
+  HELIOS_RESEARCH_DATA_MANIFEST_SCHEMA,
+  defaultTradingAgentsResearchDataManifest,
+  type ResearchDataManifestEntry,
+  type HeliosResearchDataManifest,
+} from './research-data-manifest.ts';
+export * from './technical/index.ts';
+export * from './universal/index.ts';
 export * from './coverage/index.ts';
+export * from './bias-sentinel/index.ts';

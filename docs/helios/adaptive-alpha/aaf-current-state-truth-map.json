@@ -1,0 +1,448 @@
+{
+  "schemaVersion": 1,
+  "id": "helios.adaptive-alpha.aaf01.truth-map.v1",
+  "workPackage": "AAF01",
+  "auditedAt": "2026-10-15T10:55:00Z",
+  "repository": {
+    "remote": "https://github.com/reyesnick54/solstice",
+    "baseSha": "00a51dfd1c5771e9d65c74b0b4a8917d76db0a20",
+    "branch": "main",
+    "workspaceVersion": "0.1.0",
+    "workingTreeClean": true,
+    "localMatchesOriginMain": true
+  },
+  "migrationHeads": {
+    "customer": "V071__helios_feature_fabric.sql",
+    "source": "db/customer/migrations/"
+  },
+  "posture": {
+    "ENVIRONMENT": "simulation",
+    "check": "npm run check:production-safety",
+    "result": "PRODUCTION_READY=false PRODUCTION_ACTIVE=false LIVE_CONNECTIVITY_ENABLED=false production_authorized=false",
+    "source": "packages/config/src/flags.ts"
+  },
+  "qualificationGates": {
+    "lintArchitecture": {
+      "command": "npm run lint:architecture",
+      "exitCode": 0,
+      "violations": 2,
+      "notes": "package-deep-import warnings in packages/platform/src/helios/feature-fabric/knowable-at.ts and types.ts"
+    },
+    "typecheck": {
+      "command": "npm run typecheck",
+      "status": "INCONCLUSIVE_LOCAL",
+      "notes": "First run: tsc not found before npm ci. After npm ci: FatalProcessOutOfMemory without NODE_OPTIONS; re-run with NODE_OPTIONS=--max-old-space-size=8192 did not complete within audit window. Prior failure observed: feature-fabric/index.ts missing re-export selectKnowableRevisionAt required by packages/platform/src/helios/index.ts"
+    },
+    "integrityJson": {
+      "command": "node scripts/check-json-integrity.mjs",
+      "exitCode": 0
+    },
+    "productionSafety": {
+      "command": "npm run check:production-safety",
+      "exitCode": 0
+    },
+    "heliosAafTests": {
+      "command": "node --test tests/helios-aaf*.test.ts",
+      "status": "PARTIAL_FAIL",
+      "failures": [
+        "tests/helios-aaf10-point-in-time-macro-intelligence.test.ts — timezone normalization assertion",
+        "tests/helios-aaf08-external-equities-observation.test.ts — qualification marker BLOCKED vs QUALIFIED"
+      ]
+    },
+    "heliosAaf02QualifyScript": {
+      "path": "scripts/helios-aaf02-qualify.ts",
+      "status": "FAIL",
+      "notes": "SyntaxError: feature-fabric/index.ts does not export selectKnowableRevisionAt (exported from revision-ledger/index.ts but not re-exported at feature-fabric barrel)"
+    }
+  },
+  "nonDuplication": {
+    "observationFabric": "packages/platform/src/helios/observation/fabric.ts — extend; do not create parallel fabric",
+    "featureFabric": "packages/platform/src/helios/feature-fabric/ — extends observation semantics",
+    "trustEngine": "packages/provider-sdk/src/trust/engine.ts (canonical); packages/external-data/src/trust-engine/service.ts wraps provider-sdk",
+    "strategyLab": "packages/strategy-lab/",
+    "metaAllocator": "packages/platform/src/helios/meta-allocator/",
+    "riskEngine": "packages/risk/",
+    "evidenceVault": "packages/evidence/",
+    "ledgerKernelExchange": "no second owners per AGENTS.md"
+  },
+  "capabilities": [
+    {
+      "id": "point_in_time_information_time",
+      "status": "IMPLEMENTED",
+      "paths": [
+        "packages/platform/src/helios/observation/types.ts",
+        "packages/platform/src/helios/observation/information-time.ts",
+        "packages/platform/src/helios/feature-fabric/knowable-at.ts",
+        "packages/strategy-lab/src/evaluation/information-time.ts",
+        "packages/strategy-lab/src/evaluation/chronology.ts"
+      ]
+    },
+    {
+      "id": "external_market_observations",
+      "status": "IMPLEMENTED",
+      "paths": [
+        "packages/platform/src/helios/observation/",
+        "packages/platform/src/helios/market-observation/",
+        "packages/platform/src/helios/multi-asset/",
+        "packages/platform/src/helios/adaptive-alpha-fabric/aaf08-external-equities/",
+        "packages/platform/src/helios/adaptive-alpha-fabric/aaf09-external-crypto/"
+      ]
+    },
+    {
+      "id": "external_data_trust_engine",
+      "status": "IMPLEMENTED",
+      "paths": [
+        "packages/provider-sdk/src/trust/engine.ts",
+        "packages/external-data/src/trust-engine/service.ts",
+        "packages/platform/src/helios/observation/trust-integration.ts",
+        "docs/providers/EXTERNAL_DATA_TRUST_ENGINE.md"
+      ]
+    },
+    {
+      "id": "entity_resolution",
+      "status": "PARTIAL",
+      "paths": [
+        "packages/platform/src/helios/feature-fabric/entity-resolution/",
+        "packages/economic-asset-registry/src/knowledge-graph/entity-resolution/",
+        "packages/platform/src/helios/feature-fabric/entity-resolution/canonical-owners.ts"
+      ]
+    },
+    {
+      "id": "feature_generation",
+      "status": "IMPLEMENTED",
+      "paths": [
+        "packages/platform/src/helios/feature-fabric/fabric.ts",
+        "packages/platform/src/helios/feature-fabric/compute.ts",
+        "packages/platform/src/helios/feature-fabric/compiler/compile.ts"
+      ]
+    },
+    {
+      "id": "feature_persistence",
+      "status": "PARTIAL",
+      "paths": [
+        "packages/platform/src/helios/feature-fabric/store.ts",
+        "packages/persistence/src/growth/pg-helios-feature-fabric-store.ts",
+        "db/customer/migrations/V071__helios_feature_fabric.sql"
+      ]
+    },
+    {
+      "id": "coverage_missingness",
+      "status": "IMPLEMENTED",
+      "paths": [
+        "packages/platform/src/helios/feature-fabric/coverage/",
+        "packages/strategy-lab/src/evaluation/coverage-evidence.ts"
+      ]
+    },
+    {
+      "id": "historical_revisions",
+      "status": "PARTIAL",
+      "paths": [
+        "packages/platform/src/helios/feature-fabric/revision-ledger/",
+        "packages/platform/src/helios/feature-fabric/aaf06/revision-ledger-store.ts",
+        "packages/platform/src/helios/feature-fabric/macro-intelligence/ingest.ts"
+      ]
+    },
+    {
+      "id": "market_data_provider_adapters",
+      "status": "PARTIAL",
+      "paths": [
+        "packages/provider-sdk/src/market-data-capability/",
+        "packages/external-data/src/certification/market-data/",
+        "config/providers/helios-external-market-data-certification.yaml",
+        "packages/platform/src/helios/adaptive-alpha-fabric/aaf09-external-crypto/adapters/",
+        "tests/helios-h07-market-data-adapter.test.ts"
+      ]
+    },
+    {
+      "id": "fundamental_earnings_data",
+      "status": "SIMULATION_ONLY",
+      "paths": [
+        "packages/external-data/src/bridges.ts",
+        "config/providers/wave2-catalog-entries.yaml",
+        "packages/platform/src/helios/feature-fabric/aaf06/revision-ledger-types.ts",
+        "packages/platform/src/helios/multi-asset/event-intelligence/taxonomy.ts"
+      ]
+    },
+    {
+      "id": "strategy_capsules",
+      "status": "IMPLEMENTED",
+      "paths": [
+        "packages/strategy-lab/src/capsule/",
+        "packages/platform/src/helios/strategy-capsule/",
+        "db/customer/migrations/V054__strategy_capsule.sql"
+      ]
+    },
+    {
+      "id": "strategy_lab_evaluation",
+      "status": "IMPLEMENTED",
+      "paths": [
+        "packages/strategy-lab/src/evaluation/",
+        "tests/helios-h17-chronological-strategy-evaluation.test.ts"
+      ]
+    },
+    {
+      "id": "h20_meta_allocator_research_spend",
+      "status": "IMPLEMENTED",
+      "paths": [
+        "packages/platform/src/helios/meta-allocator/",
+        "db/customer/migrations/V056__helios_meta_allocator.sql",
+        "tests/helios-h20-meta-allocator.test.ts"
+      ]
+    },
+    {
+      "id": "portfolio_risk",
+      "status": "IMPLEMENTED",
+      "paths": [
+        "packages/risk/src/portfolio/",
+        "packages/platform/src/helios/multi-asset/m18/",
+        "db/customer/migrations/V067__helios_exposure_graph.sql"
+      ]
+    },
+    {
+      "id": "outcome_attribution",
+      "status": "IMPLEMENTED",
+      "paths": [
+        "packages/platform/src/helios/outcome-attribution/",
+        "tests/helios-h25-outcome-attribution.test.ts"
+      ]
+    },
+    {
+      "id": "counterfactual_analysis",
+      "status": "PARTIAL",
+      "paths": [
+        "packages/platform/src/value/",
+        "packages/strategy-lab/src/bridges.ts",
+        "packages/regulatory-twin/",
+        "packages/platform/src/helios/grow-intelligence/types.ts"
+      ]
+    }
+  ],
+  "namedPrimitives": [
+    {
+      "name": "FeatureObservation",
+      "status": "IMPLEMENTED",
+      "paths": ["packages/platform/src/helios/feature-fabric/types.ts"]
+    },
+    {
+      "name": "FeatureDefinition",
+      "status": "IMPLEMENTED",
+      "paths": ["packages/platform/src/helios/feature-fabric/types.ts"]
+    },
+    {
+      "name": "FeatureManifest",
+      "status": "IMPLEMENTED",
+      "paths": ["packages/platform/src/helios/feature-fabric/types.ts", "packages/platform/src/helios/feature-fabric/manifest.ts"]
+    },
+    {
+      "name": "point_in_time_feature_vector",
+      "status": "IMPLEMENTED",
+      "paths": ["packages/platform/src/helios/feature-fabric/types.ts#FeatureVector", "packages/platform/src/helios/feature-fabric/compiler/compile.ts"]
+    },
+    {
+      "name": "as_of_temporal_join",
+      "status": "IMPLEMENTED",
+      "paths": ["packages/platform/src/helios/feature-fabric/compiler/as-of.ts", "packages/platform/src/helios/feature-fabric/compiler/leakage.ts"]
+    },
+    {
+      "name": "entity_resolution_graph",
+      "status": "IMPLEMENTED",
+      "paths": ["packages/platform/src/helios/feature-fabric/entity-resolution/graph-store.ts", "packages/platform/src/helios/feature-fabric/entity-resolution/temporal.ts"]
+    },
+    {
+      "name": "coverage_tensor",
+      "status": "IMPLEMENTED",
+      "paths": ["packages/platform/src/helios/feature-fabric/coverage/types.ts", "packages/platform/src/helios/feature-fabric/coverage/engine.ts"]
+    },
+    {
+      "name": "missingness_taxonomy",
+      "status": "IMPLEMENTED",
+      "paths": ["packages/platform/src/helios/feature-fabric/coverage/types.ts#MISSINGNESS_REASONS"]
+    },
+    {
+      "name": "coverage_bias_detection",
+      "status": "IMPLEMENTED",
+      "paths": ["packages/platform/src/helios/feature-fabric/aaf06/coverage-bias-assess.ts", "packages/strategy-lab/src/evaluation/coverage-bias-promotion-gate.ts"]
+    },
+    {
+      "name": "data_revision_ledger",
+      "status": "IMPLEMENTED",
+      "paths": ["packages/platform/src/helios/feature-fabric/revision-ledger/", "packages/platform/src/helios/feature-fabric/aaf06/revision-ledger-store.ts"]
+    },
+    {
+      "name": "historical_universe_membership",
+      "status": "PARTIAL",
+      "paths": ["packages/platform/src/helios/feature-fabric/temporal-types.ts#UniverseMembershipRow", "packages/platform/src/helios/feature-fabric/compiler/leakage.ts", "packages/strategy-lab/src/evaluation/manifest.ts"]
+    },
+    {
+      "name": "DCF_engine",
+      "status": "ABSENT",
+      "paths": []
+    },
+    {
+      "name": "earnings_intelligence_engine",
+      "status": "ABSENT",
+      "paths": ["packages/ai-runtime/src/market-research.ts — prompt-level fundamentalScoreBps only"]
+    },
+    {
+      "name": "alternative_data_feature_service",
+      "status": "PARTIAL",
+      "paths": ["packages/external-data/src/wave6/", "config/providers/wave2-catalog-entries.yaml"]
+    },
+    {
+      "name": "research_value_of_information",
+      "status": "IMPLEMENTED",
+      "paths": ["packages/platform/src/helios/meta-allocator/research-value.ts", "packages/platform/src/helios/meta-allocator/types.ts#ResearchValueInput"]
+    },
+    {
+      "name": "specialist_research_bidding",
+      "status": "PARTIAL",
+      "paths": ["packages/agentic-capital-mesh/src/research-mesh/routing.ts", "packages/agentic-capital-mesh/src/research-mesh/service.ts"]
+    },
+    {
+      "name": "Strategy_Genome",
+      "status": "ABSENT",
+      "paths": []
+    },
+    {
+      "name": "champion_challenger_strategy_evolution",
+      "status": "PARTIAL",
+      "paths": ["packages/strategy-lab/src/demotion.ts", "packages/strategy-lab/src/promotion-service.ts"]
+    },
+    {
+      "name": "rejected_opportunity_shadow_book",
+      "status": "PARTIAL",
+      "paths": ["packages/strategy-lab/src/forward-shadow.ts", "packages/platform/src/helios/grow-intelligence/taxonomy.ts"]
+    },
+    {
+      "name": "counterfactual_investment_attribution",
+      "status": "PARTIAL",
+      "paths": ["packages/platform/src/value/store.ts", "packages/platform/src/helios/outcome-attribution/engine.ts"]
+    },
+    {
+      "name": "customer_savings_sleeves_capital_firewall",
+      "status": "PARTIAL",
+      "paths": ["packages/platform/src/work-order/sandbox-allocation/", "tests/helios-h13-sandbox-capital-allocation.test.ts", "packages/platform/src/growth/product/assumptions.ts — simulation sleeves only"]
+    },
+    {
+      "name": "HeliosObservationFabric",
+      "status": "IMPLEMENTED",
+      "paths": ["packages/platform/src/helios/observation/fabric.ts"]
+    },
+    {
+      "name": "ResearchValueInput",
+      "status": "IMPLEMENTED",
+      "paths": ["packages/platform/src/helios/meta-allocator/types.ts"]
+    },
+    {
+      "name": "ResearchValueAssessment",
+      "status": "IMPLEMENTED",
+      "paths": ["packages/platform/src/helios/meta-allocator/types.ts", "packages/platform/src/helios/meta-allocator/research-value.ts"]
+    },
+    {
+      "name": "portfolio_exposure_graph",
+      "status": "IMPLEMENTED",
+      "paths": ["packages/platform/src/helios/multi-asset/m18/build.ts", "packages/risk/src/portfolio/exposure-graph.ts"]
+    },
+    {
+      "name": "Evidence_Vault",
+      "status": "IMPLEMENTED",
+      "paths": ["packages/evidence/src/vault.ts", "packages/platform/src/helios/adaptive-alpha-fabric/aaf08-external-equities/evidence.ts"]
+    }
+  ],
+  "aafWorkPackagesOnMain": {
+    "AAF02": {
+      "title": "Evidence-time feature fabric",
+      "status": "IMPLEMENTED",
+      "canonicalOwner": "packages/platform/src/helios/feature-fabric",
+      "qualificationMarker": "HELIOS_AAF02_EVIDENCE_TIME_FEATURE_FABRIC_QUALIFIED",
+      "tests": ["tests/helios-aaf02-evidence-time-feature-fabric.test.ts"]
+    },
+    "AAF03": {
+      "title": "Temporal entity resolution",
+      "status": "IMPLEMENTED",
+      "canonicalOwner": "packages/platform/src/helios/feature-fabric/entity-resolution",
+      "qualificationMarker": "HELIOS_AAF03_TEMPORAL_ENTITY_RESOLUTION_QUALIFIED",
+      "tests": ["packages/platform/src/helios/feature-fabric/aaf03-entity-resolution.test.ts"]
+    },
+    "AAF04": {
+      "title": "Point-in-time compiler",
+      "status": "IMPLEMENTED",
+      "canonicalOwner": "packages/platform/src/helios/feature-fabric/compiler",
+      "qualificationMarker": "HELIOS_AAF04_POINT_IN_TIME_COMPILER_QUALIFIED",
+      "tests": ["tests/helios-aaf04-point-in-time-compiler.test.ts"]
+    },
+    "AAF05": {
+      "title": "Coverage tensor and missingness",
+      "status": "IMPLEMENTED",
+      "canonicalOwner": "packages/platform/src/helios/feature-fabric/coverage",
+      "qualificationMarker": "HELIOS_AAF05_COVERAGE_TENSOR_QUALIFIED",
+      "tests": ["packages/platform/src/helios/feature-fabric/coverage/coverage.test.ts"]
+    },
+    "AAF06": {
+      "title": "Coverage bias and revision ledger",
+      "status": "IMPLEMENTED",
+      "canonicalOwner": "packages/platform/src/helios/feature-fabric/aaf06",
+      "qualificationMarker": "HELIOS_AAF06_COVERAGE_BIAS_AND_REVISION_LEDGER_QUALIFIED",
+      "tests": ["tests/helios-aaf06-coverage-bias-revision-ledger.test.ts"]
+    },
+    "AAF07": {
+      "title": "External market-data certification",
+      "status": "IMPLEMENTED",
+      "canonicalOwner": "packages/external-data/src/certification/market-data",
+      "qualificationMarker": "HELIOS_AAF07_EXTERNAL_MARKET_DATA_CERTIFICATION_QUALIFIED",
+      "tests": ["tests/helios-aaf07-external-market-data-certification.test.ts"]
+    },
+    "AAF08": {
+      "title": "External equities observation plane",
+      "status": "PARTIAL",
+      "canonicalOwner": "packages/platform/src/helios/adaptive-alpha-fabric/aaf08-external-equities",
+      "qualificationMarker": "HELIOS_AAF08_EXTERNAL_EQUITIES_DATA_QUALIFIED",
+      "tests": ["tests/helios-aaf08-external-equities-observation.test.ts"],
+      "notes": "Qualification harness returned BLOCKED in audit test run"
+    },
+    "AAF09": {
+      "title": "External crypto multi-venue observation",
+      "status": "IMPLEMENTED",
+      "canonicalOwner": "packages/platform/src/helios/adaptive-alpha-fabric/aaf09-external-crypto",
+      "qualificationMarker": "HELIOS_AAF09_EXTERNAL_CRYPTO_DATA_QUALIFIED",
+      "tests": ["tests/helios-aaf09-external-crypto-data.test.ts"]
+    },
+    "AAF10": {
+      "title": "Point-in-time macro intelligence",
+      "status": "PARTIAL",
+      "canonicalOwner": "packages/platform/src/helios/feature-fabric/macro-intelligence",
+      "qualificationMarker": "HELIOS_AAF10_POINT_IN_TIME_MACRO_INTELLIGENCE_QUALIFIED",
+      "tests": ["tests/helios-aaf10-point-in-time-macro-intelligence.test.ts"],
+      "notes": "Timezone normalization unit test failed in audit run"
+    }
+  },
+  "aafForwardOwnership": {
+    "disclaimer": "AAF11–AAF36 identifiers are not declared in repository source at this SHA. Rows are proposed canonical extension targets for future work packages (non-binding planning map).",
+    "AAF11": { "theme": "Corporate fundamental observation plane", "extend": "packages/platform/src/helios/adaptive-alpha-fabric" },
+    "AAF12": { "theme": "Earnings intelligence features", "extend": "packages/platform/src/helios/feature-fabric" },
+    "AAF13": { "theme": "Alternative-data feature ingestion", "extend": "packages/external-data" },
+    "AAF14": { "theme": "Intrinsic value / DCF simulation", "extend": "packages/platform/src/helios/feature-fabric" },
+    "AAF15": { "theme": "Durable universe membership history", "extend": "packages/persistence" },
+    "AAF16": { "theme": "Coverage tensor persistence", "extend": "packages/persistence" },
+    "AAF17": { "theme": "Revision ledger federation (macro + fundamental)", "extend": "packages/platform/src/helios/feature-fabric/revision-ledger" },
+    "AAF18": { "theme": "HELIOS observation ↔ feature fabric runtime wiring", "extend": "packages/platform/src/helios/observation" },
+    "AAF19": { "theme": "Provider orchestration for research feeds", "extend": "packages/platform/src/helios/provider-orchestration" },
+    "AAF20": { "theme": "Strategy Capsule qualification binding", "extend": "packages/platform/src/helios/strategy-capsule" },
+    "AAF21": { "theme": "Strategy Lab evaluation manifests", "extend": "packages/strategy-lab" },
+    "AAF22": { "theme": "Research → shadow → paper promotion", "extend": "packages/strategy-lab/src/promotion-service.ts" },
+    "AAF23": { "theme": "H20 meta-allocator capital coordination", "extend": "packages/platform/src/helios/meta-allocator" },
+    "AAF24": { "theme": "Research spend / VOI policy", "extend": "packages/platform/src/helios/meta-allocator/research-value.ts" },
+    "AAF25": { "theme": "Specialist research mesh", "extend": "packages/agentic-capital-mesh/src/research-mesh" },
+    "AAF26": { "theme": "Portfolio risk controls", "extend": "packages/risk" },
+    "AAF27": { "theme": "Portfolio exposure graph", "extend": "packages/platform/src/helios/multi-asset/m18" },
+    "AAF28": { "theme": "Outcome attribution", "extend": "packages/platform/src/helios/outcome-attribution" },
+    "AAF29": { "theme": "Counterfactual baselines (PEVE)", "extend": "packages/platform/src/value" },
+    "AAF30": { "theme": "Grow intelligence / rejected opportunity semantics", "extend": "packages/platform/src/helios/grow-intelligence" },
+    "AAF31": { "theme": "Forward shadow / shadow book", "extend": "packages/strategy-lab/src/forward-shadow.ts" },
+    "AAF32": { "theme": "Strategy genome specification", "extend": "packages/strategy-lab" },
+    "AAF33": { "theme": "Champion/challenger lifecycle", "extend": "packages/strategy-lab/src/demotion.ts" },
+    "AAF34": { "theme": "Sandbox capital firewall", "extend": "packages/platform/src/work-order/sandbox-allocation" },
+    "AAF35": { "theme": "AAF evidence sealing", "extend": "packages/evidence" },
+    "AAF36": { "theme": "AAF integrated qualification / release evidence", "extend": "packages/platform/src/helios/release-evidence" }
+  }
+}

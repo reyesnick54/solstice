@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "id": "helios.native-assimilation.quarantine.v1",
+  "workPackage": "NATIVE02",
+  "auditMethod": "static_source_review_no_upstream_execution",
+  "auditedAt": "2026-11-03T09:20:00Z",
+  "solsticeGitSha": "e44ef7fd18288e1e95fad6744b755630f237c8d2",
+  "quarantineRoot": "vendor/assimilation",
+  "gitPolicy": "committed_quarantine_archives_no_runtime",
+  "sourceImportManifest": "vendor/assimilation/SOURCE_IMPORT_MANIFEST.json",
+  "packages": [
+    {
+      "id": "bytex",
+      "path": "vendor/assimilation/bytex",
+      "upstreamRepository": "https://github.com/BYTEX-TRADE/bytex",
+      "upstreamSha": "67b3e103043476a0490bb7afa146ec9ac339b116",
+      "license": "Apache-2.0",
+      "overallVerdict": "REFERENCE_ONLY_WITH_SELECTIVE_MATH_PORT",
+      "criticalFindings": [
+        "Live venue adapters and CLI key commands handle API secrets and order submission",
+        "Hyperliquid adapter includes private-key signing"
+      ]
+    },
+    {
+      "id": "openchart",
+      "path": "vendor/assimilation/openchart",
+      "upstreamRepository": "https://github.com/longsurf-ai/openchart",
+      "upstreamSha": "8109466bfb5d44c32e0e03e9337eaca48b837ab4",
+      "license": "MIT",
+      "overallVerdict": "SELECTIVE_SAFE_TO_PORT_WITH_REWRITE",
+      "criticalFindings": [
+        "Full server/desktop/agent stack stores integration API keys and spawns provider CLIs",
+        "Custom widgets and workflow load paths use dynamic code evaluation under CSP",
+        "Onboarding downloads third-party provider archives from the network"
+      ]
+    },
+    {
+      "id": "tradingagents",
+      "path": "vendor/assimilation/tradingagents",
+      "upstreamRepository": "https://github.com/TauricResearch/TradingAgents",
+      "upstreamSha": "c4544913a14ed3df5f1ed7b9e8483270ce20682a",
+      "license": "Apache-2.0",
+      "overallVerdict": "REFERENCE_ONLY_GRAPH_AND_FIXTURES",
+      "criticalFindings": [
+        "Trader and portfolio manager emit buy/sell/hold proposals (research text, not Kernel-gated)",
+        "dataflows read vendor API keys from environment and call external HTTP APIs",
+        "CLI may invoke subprocess login helpers for LLM providers"
+      ]
+    },
+    {
+      "id": "seris",
+      "path": "vendor/assimilation/seris",
+      "upstreamRepository": "https://github.com/aowang-ai/seris",
+      "upstreamSha": "f73dbbb0cd7e3b52601abf905bb871cdb9098550",
+      "license": "Apache-2.0",
+      "overallVerdict": "REFERENCE_ONLY_WORKFLOW_PATTERNS",
+      "criticalFindings": [
+        "Desktop Tauri shell exposes OS keychain credential pipe",
+        "Core gateway runs shell/exec tools and dynamic extension loaders",
+        "prepare script bundles desktop runtime resources"
+      ]
+    },
+    {
+      "id": "polymarket-prediction-bot",
+      "path": "vendor/assimilation/polymarket-prediction-bot",
+      "upstreamRepository": "https://github.com/semrincaballero/Polymarket-Prediction-Bot",
+      "upstreamSha": "1f7c9761ddd26863242e3ed4f83c230ee38aebeb",
+      "license": "MIT",
+      "overallVerdict": "DO_NOT_PORT",
+      "criticalFindings": [
+        "support/ performs background sync to obfuscated remote host, downloads sealed PE payload, spawns headless worker",
+        "Embedded release.pkg (~14MB zip) and hard-coded signing key in site.py",
+        "main entry wraps TUI with engage() provisioning hook — RCE supply-chain risk"
+      ]
+    }
+  ],
+  "scanCategories": [
+    "private_key_handling",
+    "wallet_signing",
+    "api_key_handling",
+    "credential_persistence",
+    "environment_secret_reads",
+    "network_endpoints",
+    "shell_execution",
+    "arbitrary_eval",
+    "dynamic_imports",
+    "subprocess_spawning",
+    "binary_executables",
+    "telemetry_analytics",
+    "downloaders_auto_update",
+    "remote_code_execution",
+    "package_install_hooks",
+    "direct_brokerage_execution",
+    "direct_exchange_execution",
+    "blockchain_transaction_signing"
+  ],
+  "operationalDependencies": false,
+  "liveTradingEnabled": false
+}

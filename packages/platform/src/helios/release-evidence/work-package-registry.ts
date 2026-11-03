@@ -262,6 +262,27 @@ export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPacka
           : 'BLOCKED',
       'tests/helios-h36-release-evidence-live-pilot-gate.test.ts',
     ),
+    statusFrom(
+      'AAFV2.6',
+      'Adaptive Alpha Fabric V2 Strategy Lab binding',
+      testExists(root, 'helios-aaf-v2-strategy-lab-final-qualification.test.ts') ? 'QUALIFIED' : 'BLOCKED',
+      'docs/helios/adaptive-alpha-v2/aaf-v2-release-manifest.json',
+      'Marker HELIOS_ADAPTIVE_ALPHA_FABRIC_V2_QUALIFIED',
+    ),
+    statusFrom(
+      'OS12',
+      'Agent permission and model gateway (Seris integration)',
+      testExists(root, 'helios-os12-agent-permission-gateway.test.ts') ? 'QUALIFIED' : 'BLOCKED',
+      'tests/helios-os12-agent-permission-gateway.test.ts',
+    ),
+    statusFrom(
+      'OS13',
+      'AI strategy generation sandbox',
+      repoFile(root, 'packages/platform/src/helios/open-source-integration/os13-ai-strategy-sandbox/os13.test.ts')
+        ? 'QUALIFIED'
+        : 'BLOCKED',
+      'packages/platform/src/helios/open-source-integration/os13-ai-strategy-sandbox/os13.test.ts',
+    ),
   );
 
   return Object.freeze(rows);

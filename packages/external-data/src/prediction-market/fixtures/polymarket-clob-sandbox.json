@@ -1,0 +1,30 @@
+{
+  "markets": [
+    {
+      "conditionId": "0xfixture_fed_dec_2026",
+      "question": "Will the Fed cut rates at the December 2026 meeting?",
+      "category": "macro",
+      "expiresAt": "2026-12-17T00:00:00.000Z",
+      "yesTokenId": "0xfixture_yes_token",
+      "noTokenId": "0xfixture_no_token"
+    }
+  ],
+  "books": [
+    {
+      "tokenId": "0xfixture_yes_token",
+      "conditionId": "0xfixture_fed_dec_2026",
+      "bids": [{ "price": "0.64", "size": "50000" }, { "price": "0.635", "size": "80000" }],
+      "asks": [{ "price": "0.645", "size": "40000" }, { "price": "0.65", "size": "60000" }],
+      "volume24h": "250000",
+      "observedAt": "2026-11-03T09:00:00.000Z"
+    },
+    {
+      "tokenId": "0xfixture_no_token",
+      "conditionId": "0xfixture_fed_dec_2026",
+      "bids": [{ "price": "0.35", "size": "30000" }, { "price": "0.345", "size": "55000" }],
+      "asks": [{ "price": "0.36", "size": "45000" }, { "price": "0.365", "size": "70000" }],
+      "volume24h": "180000",
+      "observedAt": "2026-11-03T09:00:00.000Z"
+    }
+  ]
+}

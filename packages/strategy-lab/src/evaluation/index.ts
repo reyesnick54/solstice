@@ -82,9 +82,7 @@ export {
   buildReferenceCapsule,
 } from './fixtures.ts';
 export {
-  attachPointInTimeManifestToEvaluation,
-  pitManifestMatchesEvaluation,
-  resolvePointInTimeVectorsForEvaluation,
+  attachPointInTimeDatasetSeal,
   type ChronologicalEvaluationPitConfig,
-  type PointInTimeFeatureEvaluationAttachment,
-} from './point-in-time-feature-fabric-seam.ts';
+  type PointInTimeDatasetManifestSeal,
+} from './point-in-time-dataset-seal.ts';

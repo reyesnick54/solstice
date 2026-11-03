@@ -71,4 +71,29 @@ export const EXECUTION_PROVIDER_ROUTE_CATALOG: readonly ProviderRouteCatalogEntr
     externallyRequired: false,
     notes: 'Secondary sandbox equity route for deterministic failover qualification.',
   }),
+  ...(
+    [
+      'kraken',
+      'binance',
+      'bybit',
+      'okx',
+      'bitget',
+      'gate',
+      'kucoin',
+      'hyperliquid',
+    ] as const
+  ).map((providerId) =>
+    Object.freeze({
+      routeId: `route_venue_${providerId}_market_data`,
+      providerId,
+      assetClasses: Object.freeze(['crypto']),
+      implementationStatus: 'SANDBOX_QUALIFIED' as const,
+      sandboxQualified: true,
+      credentialDependent: false,
+      productionDisabled: true,
+      externallyRequired: false,
+      notes:
+        'NATIVE05 venue adapter — read-only market-data + normalization via fixtures. Not an execution route.',
+    }),
+  ),
 ]);
