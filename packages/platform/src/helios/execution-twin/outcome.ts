@@ -37,7 +37,7 @@ export function computeOutcomeFingerprint(input: {
     tacticId: input.planning?.tactic?.tacticId ?? null,
     tacticType: input.planning?.tactic?.tacticType ?? null,
     routingOutcome: input.routing?.outcome ?? null,
-    selectedProvider: input.routing?.selectedRoute?.providerId ?? null,
+    selectedProvider: input.routing?.selectedProviderId ?? null,
     orderState: input.orderState,
     transitions: input.transitions.map((row) => `${row.from}->${row.to}:${row.reason}`),
     risk: gateDecisionDigest(input.riskDecision),

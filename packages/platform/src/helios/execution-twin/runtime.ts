@@ -198,6 +198,8 @@ export class ExecutionTwinRuntime {
             const externalOperationId = externalOperationIdForStep(input.randomSeed, 'submit_primary');
             const operationId = asHeliosOperationId(`op_twin_${planning.tactic.tacticId}`);
             const orderId = asHeliosOrderId(`ord_twin_${planning.tactic.tacticId}`);
+            const providerOrderType =
+              planning.tactic.orderType === 'MARKET' ? ('MARKET' as const) : ('LIMIT' as const);
             const submitResult = provider.heliosProviderPort.submit({
               externalOperationId,
               operationId,
@@ -205,7 +207,7 @@ export class ExecutionTwinRuntime {
               instrumentId: input.orderPlanning.executionPlan.instrumentId,
               side: planning.tactic.side,
               quantityUnits: planning.tactic.quantityUnits.toString(),
-              orderType: planning.tactic.orderType,
+              orderType: providerOrderType,
               limitPriceMinorUnits: planning.tactic.limitPriceMinor?.toString() ?? null,
               currency: input.orderPlanning.executionPlan.currency,
               timeInForce: planning.tactic.timeInForce,
