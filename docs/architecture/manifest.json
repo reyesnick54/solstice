@@ -507,16 +507,11 @@
         "packages/permissions",
         "packages/security",
         "packages/provider-sdk",
-<<<<<<< HEAD
         "packages/external-data",
         "packages/strategy-lab",
         "packages/risk",
         "packages/model-registry",
         "packages/economic-asset-registry"
-=======
-        "packages/economic-asset-registry",
-        "packages/external-data"
->>>>>>> origin/helios/adaptive-alpha-fabric
       ],
       "codeowners": [
         "@reyesnick54"
@@ -6241,13 +6236,10 @@
     [
       "packages/external-data",
       "packages/platform"
-<<<<<<< HEAD
     ],
     [
       "packages/platform",
       "packages/strategy-lab"
-=======
->>>>>>> origin/helios/adaptive-alpha-fabric
     ]
   ],
   "forbiddenWorkspaceRoots": [

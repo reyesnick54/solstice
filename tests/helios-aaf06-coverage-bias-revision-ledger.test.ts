@@ -50,11 +50,7 @@ function syntheticUniverse(): UniverseEntityCharacteristics[] {
         marketCapMinor: largeCap ? 50_000_000_000n : 200_000_000n,
         sector: largeCap ? 'TECH' : 'ENERGY',
         geography: largeCap ? 'US' : 'EM',
-<<<<<<< HEAD
         liquidityScore: largeCap ? 90 : 20,
-=======
-        liquidityScore: largeCap ? 9_000 : 2_000,
->>>>>>> origin/helios/adaptive-alpha-fabric
         volatilityBps: largeCap ? 800 : 2_400,
         listingAgeDays: largeCap ? 3_000 : 200,
         historicalReturnBps: largeCap ? 700 : -200,
@@ -121,11 +117,7 @@ describe('HELIOS AAF06 coverage-bias sentinel', () => {
       marketCapMinor: 50_000_000n,
       sector: 'RETAIL',
       listingAgeDays: 50,
-<<<<<<< HEAD
       liquidityScore: 5,
-=======
-      liquidityScore: 500,
->>>>>>> origin/helios/adaptive-alpha-fabric
     });
     const withDelisted = [...eligible, delisted];
     const covered = eligible.map((row) => row.entityId);
