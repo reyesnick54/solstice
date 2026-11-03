@@ -1,9 +1,11 @@
-import { err, ok, type Result } from '../../../../../domain/src/result.ts';
-import { isKnowableAt } from '../../../../../strategy-lab/src/evaluation/information-time.ts';
-import { validateStrategyAst } from '../../../../../strategy-lab/src/dsl.ts';
-import { expandParameterGrid } from '../../../../../strategy-lab/src/experiment.ts';
-import { freezeSpecification } from '../../../../../strategy-lab/src/specification.ts';
-import type { StrategyFailure } from '../../../../../strategy-lab/src/types.ts';
+import { err, ok, type Result, type UtcInstant } from '@solstice/domain';
+import {
+  expandParameterGrid,
+  freezeSpecification,
+  isKnowableAt,
+  validateStrategyAst,
+  type StrategyFailure,
+} from '@solstice/strategy-lab';
 import type { StrategyProposal } from './strategy-proposal.ts';
 import {
   collectSafetyViolations,
@@ -33,7 +35,7 @@ export type StrategyProposalValidationResult = {
   readonly specificationReady: boolean;
 };
 
-function windowMs(instant: import('../../../../../domain/src/time.ts').UtcInstant): number {
+function windowMs(instant: UtcInstant): number {
   return Date.parse(instant);
 }
 

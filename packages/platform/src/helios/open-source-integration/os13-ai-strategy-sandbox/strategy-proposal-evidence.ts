@@ -1,11 +1,13 @@
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
-import type { EvidenceVault } from '../../../../../evidence/src/vault.ts';
-import type { BacktestRun } from '../../../../../strategy-lab/src/backtest.ts';
-import type { PromotionCapsule } from '../../../../../strategy-lab/src/promotion-capsule.ts';
-import type { StrategyValidationReport } from '../../../../../strategy-lab/src/validation.ts';
-import type { WalkForwardRun } from '../../../../../strategy-lab/src/walk-forward.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { EvidenceVault } from '@solstice/evidence';
+import type {
+  BacktestRun,
+  PromotionCapsule,
+  StrategyValidationReport,
+  WalkForwardRun,
+} from '@solstice/strategy-lab';
 import { STRATEGY_PROPOSAL_EVIDENCE_KIND } from './taxonomy.ts';
 import type { StrategyProposal } from './strategy-proposal.ts';
 import type { StrategyProposalValidationResult } from './strategy-proposal-validator.ts';

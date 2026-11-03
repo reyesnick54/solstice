@@ -1,5 +1,7 @@
-import { FORBIDDEN_STRATEGY_CODE } from '../../../../../strategy-lab/src/dsl.ts';
-import { STRATEGY_RESOURCE_LIMITS } from '../../../../../strategy-lab/src/types.ts';
+import {
+  FORBIDDEN_STRATEGY_CODE,
+  STRATEGY_RESOURCE_LIMITS,
+} from '@solstice/strategy-lab';
 import { PROHIBITED_GENOME_NODE_OPS } from './taxonomy.ts';
 
 export const STRATEGY_SAFETY_POLICY_VERSION = 'helios-os13-safety-v1' as const;

@@ -1,18 +1,20 @@
-import { err, ok, type Result } from '../../../../../domain/src/result.ts';
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
-import type { EvidenceVault } from '../../../../../evidence/src/vault.ts';
-import type { RiskBudget } from '../../../../../risk/src/types.ts';
-import type { BacktestRun, ParameterSet } from '../../../../../strategy-lab/src/backtest.ts';
-import type { MarketDataset } from '../../../../../strategy-lab/src/dataset.ts';
-import { expandParameterGrid } from '../../../../../strategy-lab/src/experiment.ts';
-import { overfittingWarnings } from '../../../../../strategy-lab/src/overfitting.ts';
-import { freezePromotionCapsule } from '../../../../../strategy-lab/src/promotion-capsule.ts';
-import { DEFAULT_PARAMETER_SET } from '../../../../../strategy-lab/src/fixtures.ts';
-import type { StrategyLab } from '../../../../../strategy-lab/src/service.ts';
-import type { StrategyFailure } from '../../../../../strategy-lab/src/types.ts';
-import { buildValidationReport } from '../../../../../strategy-lab/src/validation.ts';
-import { runWalkForward } from '../../../../../strategy-lab/src/walk-forward.ts';
-import { countStrategyParameters } from '../../../../../strategy-lab/src/dsl.ts';
+import { err, ok, type Result, type UtcInstant } from '@solstice/domain';
+import type { EvidenceVault } from '@solstice/evidence';
+import type { RiskBudget } from '@solstice/risk';
+import {
+  buildValidationReport,
+  countStrategyParameters,
+  DEFAULT_PARAMETER_SET,
+  expandParameterGrid,
+  freezePromotionCapsule,
+  overfittingWarnings,
+  runWalkForward,
+  type BacktestRun,
+  type MarketDataset,
+  type ParameterSet,
+  type StrategyFailure,
+  type StrategyLab,
+} from '@solstice/strategy-lab';
 import {
   buildStrategyProposalEvidence,
   sealStrategyProposalEvidence,

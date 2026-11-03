@@ -53,6 +53,7 @@ export {
   STRATEGY_RESOURCE_LIMITS,
 } from './types.ts';
 export type {
+  ChronologicalWindow,
   CostMode,
   DataSnoopingRecord,
   EvaluationPartition,

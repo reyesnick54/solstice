@@ -5,22 +5,20 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { FrozenClock } from '../../../../../config/src/clock.ts';
-import { asCustomerId } from '../../../../../domain/src/customer.ts';
-import { asJurisdiction } from '../../../../../domain/src/jurisdiction.ts';
-import { asUtcInstant, type UtcInstant } from '../../../../../domain/src/time.ts';
-import { DomainEventLog } from '../../../../../events/src/events.ts';
-import { EvidenceVault } from '../../../../../evidence/src/vault.ts';
-import { SimulatedIdentityAdapter } from '../../../../../identity/src/simulation.ts';
-import { ModelRegistry, seedCanonicalRiskModel } from '../../../../../model-registry/src/registry.ts';
-import { defaultSimulationBudget, RiskEngine } from '../../../../../risk/src/engine.ts';
-import { createSimulationKeyProvider } from '../../../../../security/src/simulation.ts';
+import { FrozenClock } from '@solstice/config';
+import { asCustomerId, asJurisdiction, asUtcInstant, type UtcInstant } from '@solstice/domain';
+import { DomainEventLog } from '@solstice/events';
+import { EvidenceVault } from '@solstice/evidence';
+import { SimulatedIdentityAdapter } from '@solstice/identity';
+import { ModelRegistry, seedCanonicalRiskModel } from '@solstice/model-registry';
+import { defaultSimulationBudget, RiskEngine } from '@solstice/risk';
+import { createSimulationKeyProvider } from '@solstice/security';
 import {
   EXPLICIT_COSTS,
   equalWeightSpec,
   syntheticTwoEtfDataset,
-} from '../../../../../strategy-lab/src/fixtures.ts';
-import { StrategyLab } from '../../../../../strategy-lab/src/service.ts';
+  StrategyLab,
+} from '@solstice/strategy-lab';
 import { lintHeliosBoundary } from '../../../../../../tools/architectural-linter/src/helios-guards.ts';
 import {
   HELIOS_OS13_AI_STRATEGY_SANDBOX_QUALIFIED,

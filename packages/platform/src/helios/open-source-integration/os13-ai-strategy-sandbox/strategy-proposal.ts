@@ -1,8 +1,7 @@
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
-import type { StrategySpecification } from '../../../../../strategy-lab/src/specification.ts';
-import type { ChronologicalWindow } from '../../../../../strategy-lab/src/types.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { ChronologicalWindow, StrategySpecification } from '@solstice/strategy-lab';
 import { PROPOSED_STRATEGY_GENOME_SCHEMA, STRATEGY_PROPOSAL_SCHEMA } from './taxonomy.ts';
 
 export type ProposedStrategyGenome = {
