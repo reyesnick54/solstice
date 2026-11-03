@@ -30,4 +30,11 @@ export {
   type HeliosOs10QualificationResult,
 } from './qualification.ts';
 
+export {
+  HELIOS_RESEARCH_DATA_MANIFEST_SCHEMA,
+  defaultTradingAgentsResearchDataManifest,
+  type ResearchDataManifestEntry,
+  type HeliosResearchDataManifest,
+} from './research-data-manifest.ts';
+
 export * from './technical/index.ts';
