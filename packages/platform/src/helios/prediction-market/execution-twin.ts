@@ -2,7 +2,7 @@
  * Execution Twin — simulates CLOB order lifecycle without live Polymarket connectivity.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { assessPredictionMarketRisk, DEFAULT_PREDICTION_RISK_LIMITS } from './risk.ts';
 import { simulateClobFill } from './simulated-fill.ts';
 import type {

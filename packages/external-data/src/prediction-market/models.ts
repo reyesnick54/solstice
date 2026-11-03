@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { POLYMARKET_CLOB_RESEARCH_PROVIDER_ID } from './taxonomy.ts';
 
 export type PolymarketResearchMarketRow = {

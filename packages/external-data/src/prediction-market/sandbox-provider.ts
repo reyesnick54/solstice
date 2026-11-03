@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { asUtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant } from '@solstice/domain';
 import type { PolymarketResearchBookRow, PolymarketResearchMarketRow, PolymarketResearchSnapshot } from './models.ts';
 import {
   POLYMARKET_CLOB_RESEARCH_PROVIDER_ID,

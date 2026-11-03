@@ -2,7 +2,7 @@
  * HELIOS Prediction Market research service (paper + observation only).
  */
 
-import type { Clock } from '../../../../config/src/clock.ts';
+import type { Clock } from '@solstice/config';
 import { browsePredictionMarkets, findEventBySlug } from './market-browser.ts';
 import { resolvePolymarketTokenEntity } from './entity-resolution.ts';
 import { extractYesNoPairFeatures } from './features.ts';

@@ -2,7 +2,7 @@
  * Sandbox fixtures — assimilated Polymarket CLOB shapes without private keys or live trading.
  */
 
-import { asUtcInstant } from '../../../../domain/src/time.ts';
+import { asUtcInstant } from '@solstice/domain';
 import { normalizeOrderBookLevels } from '../market-observation/order-book.ts';
 import type { OrderBookLevel } from '../market-observation/types.ts';
 import {

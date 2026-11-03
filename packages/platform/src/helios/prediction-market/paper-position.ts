@@ -2,7 +2,7 @@
  * Paper position tracking for prediction-market research (not a wallet subsystem).
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { PaperPositionLeg, PaperPositionRecord, PredictionOutcomeSide } from './types.ts';
 
 export type ApplyPaperFillInput = {

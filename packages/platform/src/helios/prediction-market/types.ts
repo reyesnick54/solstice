@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { OrderBookLevel, OrderBookSnapshot } from '../market-observation/types.ts';
 import type {
   HELIOS_PREDICTION_MARKET_AUTHORITY,

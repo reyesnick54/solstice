@@ -2,7 +2,7 @@
  * Entity resolution — Polymarket native IDs → canonical HELIOS prediction instruments.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { entityResolutionKey, yesNoContractInstrumentId } from './ids.ts';
 import type { PredictionOutcomeSide } from './taxonomy.ts';
 import type { EntityResolutionBinding } from './types.ts';

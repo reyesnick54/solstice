@@ -2,7 +2,7 @@
  * Feature Fabric — native prediction-market feature definitions and extraction.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { computeClobBookMetrics, complementGapMinor } from './clob-metrics.ts';
 import { PREDICTION_FEATURE_KEYS, PREDICTION_PROBABILITY_SCALE } from './taxonomy.ts';
 import type { CloOrderBookSnapshot, PredictionFeatureVector } from './types.ts';
