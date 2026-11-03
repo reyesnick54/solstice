@@ -6,11 +6,11 @@ import {
   createVenueAdapterContract,
   runVenueAdapterConformanceSync,
   SKELETON_OS04_QUALIFICATION_PROFILE,
+  HELIOS_VENUE_ADAPTER_SCHEMA_VERSION,
   type HeliosVenueAdapterContract,
   type VenueConformanceRunInput,
-} from '../../../../provider-sdk/src/venue/index.ts';
-import { HELIOS_VENUE_ADAPTER_SCHEMA_VERSION } from '../../../../provider-sdk/src/venue/taxonomy.ts';
-import type { HeliosOs04VenueId } from '../../../../provider-sdk/src/venue/taxonomy.ts';
+  type HeliosOs04VenueId,
+} from '@solstice/provider-sdk';
 import { createSkeletonVenueManifest } from './skeleton-manifest.ts';
 
 export function createSkeletonVenueAdapter(input: {

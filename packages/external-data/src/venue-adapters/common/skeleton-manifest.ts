@@ -2,9 +2,11 @@
  * Provider-neutral skeleton manifest — every unknown capability is UNAVAILABLE.
  */
 
-import type { VenueCapabilityManifest } from '../../../../provider-sdk/src/venue/types.ts';
-import { unavailableField } from '../../../../provider-sdk/src/venue/types.ts';
-import type { HeliosOs04VenueId } from '../../../../provider-sdk/src/venue/taxonomy.ts';
+import {
+  unavailableField,
+  type VenueCapabilityManifest,
+  type HeliosOs04VenueId,
+} from '@solstice/provider-sdk';
 
 const UNAVAILABLE_MARKET_DATA = Object.freeze({
   marketDataTypes: unavailableField(),

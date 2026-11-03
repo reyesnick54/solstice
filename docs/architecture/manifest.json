@@ -506,7 +506,8 @@
         "packages/agent",
         "packages/permissions",
         "packages/security",
-        "packages/provider-sdk"
+        "packages/provider-sdk",
+        "packages/external-data"
       ],
       "codeowners": [
         "@reyesnick54"

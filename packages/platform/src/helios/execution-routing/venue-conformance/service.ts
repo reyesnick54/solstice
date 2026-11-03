@@ -5,18 +5,18 @@
  */
 
 import type { UtcInstant } from '@solstice/domain';
-import {
-  evaluateOs04VenueAdapterConformanceQualification,
-  HELIOS_OS04_VENUE_ADAPTER_CONFORMANCE_QUALIFIED,
-  type VenueConformanceReport,
-} from '../../../../../provider-sdk/src/venue/index.ts';
+import { LIVE_TRADING_ENABLED } from '@solstice/config';
 import {
   assertOs04VenueRegistryComplete,
   HELIOS_OS04_VENUE_ADAPTERS,
   KRAKEN_VENUE_ADAPTER,
-} from '../../../../../external-data/src/venue-adapters/index.ts';
-import { LIVE_TRADING_ENABLED } from '../../../../../config/src/flags.ts';
-import { capabilityAvailability } from '../../../../../provider-sdk/src/venue/types.ts';
+} from '@solstice/external-data';
+import {
+  evaluateOs04VenueAdapterConformanceQualification,
+  HELIOS_OS04_VENUE_ADAPTER_CONFORMANCE_QUALIFIED,
+  capabilityAvailability,
+  type VenueConformanceReport,
+} from '@solstice/provider-sdk';
 
 export type VenueConformanceSuiteResult = Readonly<{
   readonly evaluatedAt: UtcInstant;

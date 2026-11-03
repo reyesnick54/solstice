@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { HELIOS_OS04_VENUE_IDS } from '../../../provider-sdk/src/venue/taxonomy.ts';
+import { HELIOS_OS04_VENUE_IDS } from '@solstice/provider-sdk';
+import { KRAKEN_VENUE_ADAPTER } from './kraken/adapter.ts';
 import {
   HELIOS_OS04_VENUE_ADAPTERS,
-  KRAKEN_VENUE_ADAPTER,
   assertOs04VenueRegistryComplete,
 } from './registry.ts';
 

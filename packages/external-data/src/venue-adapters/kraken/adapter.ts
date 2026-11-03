@@ -8,12 +8,12 @@ import {
   createVenueAdapterContract,
   KRAKEN_OS04_QUALIFICATION_PROFILE,
   runVenueAdapterConformance,
+  HELIOS_VENUE_ADAPTER_SCHEMA_VERSION,
   type HeliosVenueAdapterContract,
   type VenueConformanceRunInput,
   type VenueMarketDataProbeRequest,
   type VenueMarketDataProbeResult,
-} from '../../../../provider-sdk/src/venue/index.ts';
-import { HELIOS_VENUE_ADAPTER_SCHEMA_VERSION } from '../../../../provider-sdk/src/venue/taxonomy.ts';
+} from '@solstice/provider-sdk';
 import { KRAKEN_VENUE_MANIFEST } from './manifest.ts';
 import { krakenFixtureLastPrice } from './fixtures.ts';
 

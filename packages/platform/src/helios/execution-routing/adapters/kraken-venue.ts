@@ -1,5 +1,5 @@
 import type { UtcInstant } from '@solstice/domain';
-import { KRAKEN_VENUE_ADAPTER } from '../../../../../external-data/src/venue-adapters/kraken/adapter.ts';
+import { KRAKEN_VENUE_ADAPTER } from '@solstice/external-data';
 import type { ExecutionRoutingProviderAdapterPort } from './port.ts';
 
 /**

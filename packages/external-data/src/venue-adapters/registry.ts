@@ -2,8 +2,7 @@
  * OS04 multi-venue adapter registry — fixture/skeleton only in CI.
  */
 
-import { HELIOS_OS04_VENUE_IDS } from '../../../provider-sdk/src/venue/taxonomy.ts';
-import type { HeliosVenueAdapterContract } from '../../../provider-sdk/src/venue/contract.ts';
+import { HELIOS_OS04_VENUE_IDS, type HeliosVenueAdapterContract } from '@solstice/provider-sdk';
 import { BINANCE_VENUE_ADAPTER } from './binance/adapter.ts';
 import { BYBIT_VENUE_ADAPTER } from './bybit/adapter.ts';
 import { OKX_VENUE_ADAPTER } from './okx/adapter.ts';

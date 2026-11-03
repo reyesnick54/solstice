@@ -2,8 +2,7 @@
  * Kraken venue capability manifest — declared from public API surface, fail-closed elsewhere.
  */
 
-import { availableField, unavailableField } from '../../../../provider-sdk/src/venue/types.ts';
-import type { VenueCapabilityManifest } from '../../../../provider-sdk/src/venue/types.ts';
+import { availableField, unavailableField, type VenueCapabilityManifest } from '@solstice/provider-sdk';
 
 export const KRAKEN_VENUE_MANIFEST: VenueCapabilityManifest = Object.freeze({
   venueId: 'kraken',
