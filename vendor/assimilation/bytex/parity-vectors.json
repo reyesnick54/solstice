@@ -1,0 +1,39 @@
+{
+  "schema": "sunrey.helios.assimilation.bytex.parity-vectors.v1",
+  "upstreamCommit": "67b3e103043476a0490bb7afa146ec9ac339b116",
+  "vectors": [
+    {
+      "id": "thin-book-partial-market-buy",
+      "description": "Market buy exceeds top-of-book size; partial fill at ask touch",
+      "book": {
+        "asks": [{ "priceMinorUnits": "10010000", "sizeUnits": "2" }],
+        "bids": [{ "priceMinorUnits": "9990000", "sizeUnits": "1" }]
+      },
+      "order": { "side": "BUY", "orderType": "MARKET", "timeInForce": "GTC", "quantityUnits": "10" },
+      "expect": { "filledUnits": "2", "status": "PARTIALLY_FILLED", "fidelityLevel": "ORDER_BOOK" }
+    },
+    {
+      "id": "post-only-reject-would-take",
+      "description": "POST_ONLY limit crossing spread is rejected without fill",
+      "book": {
+        "asks": [{ "priceMinorUnits": "10005000", "sizeUnits": "50" }],
+        "bids": [{ "priceMinorUnits": "9995000", "sizeUnits": "50" }]
+      },
+      "order": {
+        "side": "BUY",
+        "orderType": "LIMIT",
+        "timeInForce": "POST_ONLY",
+        "quantityUnits": "1",
+        "limitPriceMinorUnits": "10010000"
+      },
+      "expect": { "filledUnits": "0", "status": "REJECTED", "reason": "POST_ONLY_WOULD_TAKE" }
+    },
+    {
+      "id": "bar-close-only-not-order-book",
+      "description": "Bar close-only fill uses BAR fidelity, not ORDER_BOOK equivalence",
+      "bar": { "closeMinorUnits": "10050000", "volumeUnits": "250" },
+      "order": { "side": "BUY", "orderType": "MARKET", "timeInForce": "GTC", "quantityUnits": "1" },
+      "expect": { "filledUnits": "1", "fidelityLevel": "BAR", "notEquivalentTo": "ORDER_BOOK" }
+    }
+  ]
+}
