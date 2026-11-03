@@ -52007,10 +52007,28 @@
       "file": "packages/sunrey-agent/src/native-agent-runtime/native-agent-runtime.test.ts",
       "line": 5,
       "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 6,
+      "rule": "package-deep-import",
       "message": "'packages/sunrey-agent/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'ai-runtime' internals via '../../../ai-runtime/src/native-agent-runtime/taxonomy.ts'",
       "sourcePackage": "sunrey-agent",
       "targetPackage": "ai-runtime",
       "spec": "../../../ai-runtime/src/native-agent-runtime/taxonomy.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/compaction.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/compaction.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
     },
     {
       "file": "packages/sunrey-agent/src/native-agent-runtime/qualification.ts",
