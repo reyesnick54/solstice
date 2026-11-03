@@ -124,8 +124,6 @@ export function buildFillEvidence(input: {
   });
 }
 
-// Fix the feeModelVersion in buildFillEvidence - I made an error. Let me fix when writing matching-engine.
-
 export function materializeFill(input: {
   readonly fillId: string;
   readonly orderId: string;
