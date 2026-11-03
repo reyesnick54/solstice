@@ -5,7 +5,7 @@
 
 import { createHash } from 'node:crypto';
 
-import { normalizeSymbol } from '../../../external-data/src/tradingagents-native/symbols.ts';
+import { normalizeSymbol } from './symbols.ts';
 
 export type PortfolioPosition = {
   readonly ticker: string;
