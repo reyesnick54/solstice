@@ -2,7 +2,7 @@
 
 **Work packages:** NATIVE01 (full tracked-source import), NATIVE02 (static security audit)
 
-These directories contain **committed snapshots** of upstream repositories (via `git archive`, not submodules). They are **not** npm/pnpm/Cargo workspace packages, **not** runtime dependencies, and **must not** be executed in Solstice CI or production paths.
+These directories retain **legal attribution**, **provenance manifests**, and **native parity fixtures** (JSON/MD only) after NATIVE15 foreign-runtime independence. Full upstream application source is **not** committed. Trees are **not** npm/pnpm/Cargo workspace packages, **not** runtime dependencies, and **must not** be executed in Solstice CI or production paths.
 
 ## Provenance
 
