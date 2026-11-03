@@ -323,3 +323,11 @@ export * from './open-source-integration/os13-ai-strategy-sandbox/index.ts';
 export * from './open-source/os14-prediction-market/index.ts';
 export * from './native-assimilation/native14-cross-market-intelligence/index.ts';
 export * from './research-monitor/index.ts';
+export * as heliosNative13PredictionMarket from './prediction-market/index.ts';
+export {
+  HELIOS_NATIVE_PREDICTION_MARKET_ENGINE_QUALIFIED,
+  HELIOS_NATIVE_PREDICTION_MARKET_ENGINE_BLOCKED,
+  evaluatePredictionMarketEngineQualification,
+  type PredictionMarketEngineQualificationChecks,
+  type PredictionMarketEngineQualificationResult,
+} from './prediction-market/qualification.ts';

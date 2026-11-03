@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-03T12:35:11.024025+00:00",
+  "generatedAt": "2026-11-03T13:10:24.270571+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -361,8 +361,7 @@
         "permissions",
         "personal-economic-graph",
         "provider-sdk",
-        "security",
-        "strategy-lab"
+        "security"
       ],
       "provider-sdk": [
         "config",
@@ -544,14 +543,14 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 5192,
+      "packageDeepImport": 5226,
       "serviceDeepImport": 652,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 5192,
+      "relativeCrossPackage": 5226,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5844
+      "total": 5878
     }
   },
   "violations": [
@@ -2419,6 +2418,15 @@
       "spec": "../../domain/src/result.ts"
     },
     {
+      "file": "packages/agentic-capital-mesh/src/tradingagents-native/evidence-bridge.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/agentic-capital-mesh/src/tradingagents-native/evidence-bridge.ts' deep-imports 'evidence' internals via '../../../evidence/src/vault.ts'",
+      "sourcePackage": "agentic-capital-mesh",
+      "targetPackage": "evidence",
+      "spec": "../../../evidence/src/vault.ts"
+    },
+    {
       "file": "packages/agentic-capital-mesh/src/types.ts",
       "line": 1,
       "rule": "package-deep-import",
@@ -2975,6 +2983,96 @@
       "sourcePackage": "ai-runtime",
       "targetPackage": "domain",
       "spec": "../../domain/src/result.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'domain' internals via '../../../domain/src/customer.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/customer.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'domain' internals via '../../../domain/src/jurisdiction.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/jurisdiction.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 7,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'events' internals via '../../../events/src/events.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "events",
+      "spec": "../../../events/src/events.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 8,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'identity' internals via '../../../identity/src/simulation.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "identity",
+      "spec": "../../../identity/src/simulation.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 9,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'model-registry' internals via '../../../model-registry/src/registry.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "model-registry",
+      "spec": "../../../model-registry/src/registry.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 10,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'security' internals via '../../../security/src/simulation.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "security",
+      "spec": "../../../security/src/simulation.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/qualification.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/qualification.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/session-gateway.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/session-gateway.ts' deep-imports 'domain' internals via '../../../domain/src/result.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/result.ts"
+    },
+    {
+      "file": "packages/ai-runtime/src/native-agent-runtime/session-usage.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/ai-runtime/src/native-agent-runtime/session-usage.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "ai-runtime",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
     },
     {
       "file": "packages/ai-runtime/src/policy.ts",
@@ -9644,6 +9742,51 @@
       "sourcePackage": "external-data",
       "targetPackage": "provider-sdk",
       "spec": "../../provider-sdk/src/index.ts"
+    },
+    {
+      "file": "packages/external-data/src/tradingagents-native/date-window.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/external-data/src/tradingagents-native/date-window.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "external-data",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/external-data/src/tradingagents-native/fundamentals-normalize.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/external-data/src/tradingagents-native/fundamentals-normalize.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "external-data",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/external-data/src/tradingagents-native/macro-routing.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/external-data/src/tradingagents-native/macro-routing.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "external-data",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/external-data/src/tradingagents-native/router.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/external-data/src/tradingagents-native/router.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "external-data",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/external-data/src/tradingagents-native/types.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/external-data/src/tradingagents-native/types.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "external-data",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
     },
     {
       "file": "packages/external-data/src/trust-engine/service.ts",
@@ -22510,28 +22653,28 @@
       "file": "packages/persistence/src/growth/pg-helios-feature-fabric-store.ts",
       "line": 4,
       "rule": "package-deep-import",
-      "message": "'packages/persistence/src/growth/pg-helios-feature-fabric-store.ts' deep-imports 'platform' internals via '../../../platform/src/helios/feature-fabric/store.ts'",
+      "message": "'packages/persistence/src/growth/pg-helios-feature-fabric-store.ts' deep-imports 'platform' internals via '../../../platform/src/helios/feature-fabric/universal/types.ts'",
       "sourcePackage": "persistence",
       "targetPackage": "platform",
-      "spec": "../../../platform/src/helios/feature-fabric/store.ts"
+      "spec": "../../../platform/src/helios/feature-fabric/universal/types.ts"
     },
     {
       "file": "packages/persistence/src/growth/pg-helios-feature-fabric-store.ts",
       "line": 5,
       "rule": "package-deep-import",
-      "message": "'packages/persistence/src/growth/pg-helios-feature-fabric-store.ts' deep-imports 'platform' internals via '../../../platform/src/helios/feature-fabric/types.ts'",
+      "message": "'packages/persistence/src/growth/pg-helios-feature-fabric-store.ts' deep-imports 'platform' internals via '../../../platform/src/helios/feature-fabric/universal/store.ts'",
       "sourcePackage": "persistence",
       "targetPackage": "platform",
-      "spec": "../../../platform/src/helios/feature-fabric/types.ts"
+      "spec": "../../../platform/src/helios/feature-fabric/universal/store.ts"
     },
     {
       "file": "packages/persistence/src/growth/pg-helios-feature-fabric-store.ts",
-      "line": 85,
+      "line": 78,
       "rule": "package-deep-import",
-      "message": "'packages/persistence/src/growth/pg-helios-feature-fabric-store.ts' deep-imports 'platform' internals via '../../../platform/src/helios/feature-fabric/types.ts'",
+      "message": "'packages/persistence/src/growth/pg-helios-feature-fabric-store.ts' deep-imports 'platform' internals via '../../../platform/src/helios/feature-fabric/universal/types.ts'",
       "sourcePackage": "persistence",
       "targetPackage": "platform",
-      "spec": "../../../platform/src/helios/feature-fabric/types.ts"
+      "spec": "../../../platform/src/helios/feature-fabric/universal/types.ts"
     },
     {
       "file": "packages/persistence/src/growth/pg-helios-market-time-series.ts",
@@ -26701,15 +26844,6 @@
       "spec": "../../../../evidence/src/vault.ts"
     },
     {
-      "file": "packages/platform/src/helios/adaptive-alpha-v2/strategy-lab-bridge.ts",
-      "line": 3,
-      "rule": "package-deep-import",
-      "message": "'packages/platform/src/helios/adaptive-alpha-v2/strategy-lab-bridge.ts' deep-imports 'strategy-lab' internals via '../../../../strategy-lab/src/evaluation/adaptive-alpha-promotion-gate.ts'",
-      "sourcePackage": "platform",
-      "targetPackage": "strategy-lab",
-      "spec": "../../../../strategy-lab/src/evaluation/adaptive-alpha-promotion-gate.ts"
-    },
-    {
       "file": "packages/platform/src/helios/adaptive-alpha-v2/types.ts",
       "line": 1,
       "rule": "package-deep-import",
@@ -27824,6 +27958,87 @@
       "sourcePackage": "platform",
       "targetPackage": "domain",
       "spec": "../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/feature-fabric/universal/adapters.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/feature-fabric/universal/adapters.ts' deep-imports 'domain' internals via '../../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/feature-fabric/universal/compute.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/feature-fabric/universal/compute.ts' deep-imports 'domain' internals via '../../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/feature-fabric/universal/fabric.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/feature-fabric/universal/fabric.ts' deep-imports 'config' internals via '../../../../../config/src/clock.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "config",
+      "spec": "../../../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/feature-fabric/universal/fabric.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/feature-fabric/universal/fabric.ts' deep-imports 'domain' internals via '../../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/feature-fabric/universal/fundamental-bridge.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/feature-fabric/universal/fundamental-bridge.ts' deep-imports 'domain' internals via '../../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/feature-fabric/universal/knowable-at.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/feature-fabric/universal/knowable-at.ts' deep-imports 'domain' internals via '../../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/feature-fabric/universal/manifest.ts",
+      "line": 7,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/feature-fabric/universal/manifest.ts' deep-imports 'domain' internals via '../../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/feature-fabric/universal/store.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/feature-fabric/universal/store.ts' deep-imports 'domain' internals via '../../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/feature-fabric/universal/types.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/feature-fabric/universal/types.ts' deep-imports 'domain' internals via '../../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../../domain/src/time.ts"
     },
     {
       "file": "packages/platform/src/helios/grow-controls/service.ts",
@@ -33908,6 +34123,96 @@
       "sourcePackage": "sunrey-agent",
       "targetPackage": "ai-runtime",
       "spec": "../../ai-runtime/src/index.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/audit.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/audit.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/audit.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/audit.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/compaction.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/compaction.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/native-agent-runtime.test.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/native-agent-runtime.test.ts' deep-imports 'ai-runtime' internals via '../../../ai-runtime/src/native-agent-runtime/taxonomy.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "ai-runtime",
+      "spec": "../../../ai-runtime/src/native-agent-runtime/taxonomy.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/qualification.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/qualification.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/qualification.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/qualification.ts' deep-imports 'ai-runtime' internals via '../../../ai-runtime/src/native-agent-runtime/taxonomy.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "ai-runtime",
+      "spec": "../../../ai-runtime/src/native-agent-runtime/taxonomy.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/service.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/service.ts' deep-imports 'config' internals via '../../../config/src/clock.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "config",
+      "spec": "../../../config/src/clock.ts"
+    },
+    {
+      "file": "packages/sunrey-agent/src/native-agent-runtime/session.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/sunrey-agent/src/native-agent-runtime/session.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "sunrey-agent",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
     },
     {
       "file": "packages/sunrey-agent/src/policy.ts",

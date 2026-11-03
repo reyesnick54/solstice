@@ -73,4 +73,61 @@ export class ResearchTriggerDedupe {
       }
     }
   }
+
+  snapshot(): ResearchTriggerDedupeSnapshot {
+    return Object.freeze({
+      idempotency: Object.freeze(
+        [...this.idempotency.entries()].map(([key, row]) =>
+          Object.freeze({ key, runId: row.runId, recordedAt: row.recordedAt }),
+        ),
+      ),
+      dedupe: Object.freeze(
+        [...this.dedupe.values()].map((row) =>
+          Object.freeze({
+            fingerprint: row.fingerprint,
+            runId: row.runId,
+            expiresAtMs: row.expiresAtMs,
+          }),
+        ),
+      ),
+      cooldowns: Object.freeze(
+        [...this.cooldowns.entries()].map(([key, row]) =>
+          Object.freeze({ key, expiresAtMs: row.expiresAtMs }),
+        ),
+      ),
+    });
+  }
+
+  restore(snapshot: ResearchTriggerDedupeSnapshot): void {
+    this.idempotency.clear();
+    this.dedupe.clear();
+    this.cooldowns.clear();
+    for (const row of snapshot.idempotency) {
+      this.idempotency.set(row.key, Object.freeze({ runId: row.runId, recordedAt: row.recordedAt }));
+    }
+    for (const row of snapshot.dedupe) {
+      this.dedupe.set(row.fingerprint, {
+        fingerprint: row.fingerprint,
+        runId: row.runId,
+        expiresAtMs: row.expiresAtMs,
+      });
+    }
+    for (const row of snapshot.cooldowns) {
+      this.cooldowns.set(row.key, { expiresAtMs: row.expiresAtMs });
+    }
+  }
 }
+
+export type ResearchTriggerDedupeSnapshot = {
+  readonly idempotency: readonly {
+    readonly key: string;
+    readonly runId: ResearchTriggerRunId;
+    readonly recordedAt: UtcInstant;
+  }[];
+  readonly dedupe: readonly {
+    readonly fingerprint: string;
+    readonly runId: ResearchTriggerRunId;
+    readonly expiresAtMs: number;
+  }[];
+  readonly cooldowns: readonly { readonly key: string; readonly expiresAtMs: number }[];
+};

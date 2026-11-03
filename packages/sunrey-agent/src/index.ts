@@ -228,3 +228,4 @@ export type {
   ToolSession,
   AgentToolDomainPorts,
 } from './tools/index.ts';
+export * from './native-agent-runtime/index.ts';

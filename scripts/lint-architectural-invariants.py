@@ -24,6 +24,7 @@ SKIP_DIR_NAMES = {
     "build",
     "coverage",
     "__pycache__",
+    "vendor",
 }
 
 CODE_SUFFIXES = {".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".sql"}

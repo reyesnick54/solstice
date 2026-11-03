@@ -76,6 +76,10 @@ export {
   persistHeliosMarketBarState,
 } from './growth/pg-helios-market-bar-store.ts';
 export {
+  loadHeliosUniversalFeatureFabricState,
+  persistHeliosUniversalFeatureFabricState,
+} from './growth/pg-helios-feature-fabric-store.ts';
+export {
   queryHeliosMarketBars,
   queryHeliosMarketObservations,
   queryLatestHeliosMarketObservation,

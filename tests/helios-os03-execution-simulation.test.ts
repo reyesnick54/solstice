@@ -450,6 +450,13 @@ describe('HELIOS OS03 execution simulation', () => {
 
     const sampleFill = thinOrder.fills[0]!;
     const evidenceComplete =
+      sampleFill.evidence.executionModelVersion.length > 0 &&
+      sampleFill.evidence.marketEvidence.length > 0 &&
+      sampleFill.evidence.bookState.snapshotId.length > 0 &&
+      sampleFill.evidence.latencyModel.length > 0 &&
+      sampleFill.evidence.feeModel.length > 0 &&
+      sampleFill.evidence.slippageModel.length > 0 &&
+      sampleFill.evidence.fidelityLevel === 'ORDER_BOOK' &&
       sampleFill.evidence.observationRefs.length > 0 &&
       sampleFill.evidence.fillModelVersion.length > 0 &&
       sampleFill.evidence.feeModelVersion.length > 0 &&

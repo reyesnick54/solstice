@@ -1,4 +1,4 @@
--- V071 HELIOS AAF02 — evidence-time feature fabric durable records.
+-- V071 HELIOS AAFV2 — evidence-time universal feature fabric durable records.
 -- Research / Strategy Lab artifacts only. Does not post journals or issue Execution Authority.
 
 CREATE TABLE growth.helios_feature_observation (

@@ -83,8 +83,13 @@ export function walkBookForSide(
   book: MarketBook,
   side: 'BUY' | 'SELL',
   quantityUnits: bigint,
+  maxDepthLevels: number | null = null,
 ): readonly { readonly level: BookLevel; readonly filledUnits: bigint }[] {
-  const levels = side === 'BUY' ? book.asks : book.bids;
+  const allLevels = side === 'BUY' ? book.asks : book.bids;
+  const levels =
+    maxDepthLevels != null && maxDepthLevels >= 0
+      ? allLevels.slice(0, maxDepthLevels)
+      : allLevels;
   const fills: { level: BookLevel; filledUnits: bigint }[] = [];
   let remaining = quantityUnits;
   for (const level of levels) {

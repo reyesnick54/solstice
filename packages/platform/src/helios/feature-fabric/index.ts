@@ -115,3 +115,15 @@ export * from './macro-intelligence/index.ts';
 export * from './entity-resolution/index.ts';
 export { computeFeatureWithResolvedEntity, type ComputeFeatureWithResolutionInput } from './entity-binding.ts';
 export * from './feature-coverage/index.ts';
+
+export * from './openchart-analytics/index.ts';
+export {
+  HELIOS_RESEARCH_DATA_MANIFEST_SCHEMA,
+  defaultTradingAgentsResearchDataManifest,
+  type ResearchDataManifestEntry,
+  type HeliosResearchDataManifest,
+} from './research-data-manifest.ts';
+export * from './technical/index.ts';
+export * from './universal/index.ts';
+export * from './coverage/index.ts';
+export * from './bias-sentinel/index.ts';
