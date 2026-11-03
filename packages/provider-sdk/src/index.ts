@@ -394,3 +394,4 @@ export * from './mocks/index.ts';
 export * from './trust/index.ts';
 export * from './certification/index.ts';
 export * from './connector/index.ts';
+export * from './venue/index.ts';

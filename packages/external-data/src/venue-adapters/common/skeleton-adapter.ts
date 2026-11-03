@@ -1,0 +1,36 @@
+/**
+ * Provider-neutral venue adapter skeleton for OS04 conformance registration.
+ */
+
+import {
+  createVenueAdapterContract,
+  runVenueAdapterConformanceSync,
+  SKELETON_OS04_QUALIFICATION_PROFILE,
+  type HeliosVenueAdapterContract,
+  type VenueConformanceRunInput,
+} from '../../../../provider-sdk/src/venue/index.ts';
+import { HELIOS_VENUE_ADAPTER_SCHEMA_VERSION } from '../../../../provider-sdk/src/venue/taxonomy.ts';
+import type { HeliosOs04VenueId } from '../../../../provider-sdk/src/venue/taxonomy.ts';
+import { createSkeletonVenueManifest } from './skeleton-manifest.ts';
+
+export function createSkeletonVenueAdapter(input: {
+  readonly venueId: HeliosOs04VenueId;
+  readonly displayName: string;
+}): HeliosVenueAdapterContract {
+  const manifest = createSkeletonVenueManifest(input);
+  return createVenueAdapterContract(
+    Object.freeze({
+      venueId: input.venueId,
+      adapterSchemaVersion: HELIOS_VENUE_ADAPTER_SCHEMA_VERSION,
+      liveOrderPlacementEnabled: false,
+      manifest() {
+        return manifest;
+      },
+      runConformance(runInput: VenueConformanceRunInput) {
+        return Promise.resolve(
+          runVenueAdapterConformanceSync(this, runInput, SKELETON_OS04_QUALIFICATION_PROFILE),
+        );
+      },
+    }),
+  );
+}
