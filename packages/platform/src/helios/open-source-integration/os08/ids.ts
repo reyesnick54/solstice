@@ -1,22 +1,28 @@
 import { createHash } from 'node:crypto';
 
-import type { Brand } from '../../../../../domain/src/brand.ts';
+import { type Brand, brandAs } from '@solstice/domain';
 
 export type TriggeredResearchWorkOrderId = Brand<string, 'TriggeredResearchWorkOrderId'>;
 export type ResearchTriggerRunId = Brand<string, 'ResearchTriggerRunId'>;
 
-export function asTriggeredResearchWorkOrderId(value: string): TriggeredResearchWorkOrderId {
-  if (!value.startsWith('trwo_')) {
-    throw new Error('TriggeredResearchWorkOrderId must use trwo_ prefix');
+const PREFIX = {
+  TriggeredResearchWorkOrderId: 'trwo_',
+  ResearchTriggerRunId: 'rtrun_',
+} as const;
+
+function brandPrefixed<Name extends keyof typeof PREFIX>(value: string, name: Name): Brand<string, Name> {
+  if (value.length === 0 || !value.startsWith(PREFIX[name])) {
+    throw new TypeError(`${name} must start with ${PREFIX[name]}`);
   }
-  return value as TriggeredResearchWorkOrderId;
+  return brandAs<string, Name>(value);
+}
+
+export function asTriggeredResearchWorkOrderId(value: string): TriggeredResearchWorkOrderId {
+  return brandPrefixed(value, 'TriggeredResearchWorkOrderId');
 }
 
 export function asResearchTriggerRunId(value: string): ResearchTriggerRunId {
-  if (!value.startsWith('rtrun_')) {
-    throw new Error('ResearchTriggerRunId must use rtrun_ prefix');
-  }
-  return value as ResearchTriggerRunId;
+  return brandPrefixed(value, 'ResearchTriggerRunId');
 }
 
 export function triggeredResearchWorkOrderIdFor(idempotencyKey: string): TriggeredResearchWorkOrderId {

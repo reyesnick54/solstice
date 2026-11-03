@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { ResearchTriggerRunId } from './ids.ts';
 import type { ResearchTriggerBudgetLimits } from './types.ts';
 import type { TriggerRouterReasonCode } from './taxonomy.ts';

@@ -3,7 +3,7 @@
  * Monitors emit bounded trigger events; OS08 routes them into HELIOS research work orders.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const TRIGGER_SPECIALIST_CLASSES = [
   'TECHNICAL',

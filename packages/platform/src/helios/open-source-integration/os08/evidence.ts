@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 
-import type { EvidenceVault } from '../../../../../evidence/src/vault.ts';
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { EvidenceVault } from '@solstice/evidence';
 import type { ResearchMonitorTriggerEvent } from '../os07/research-monitor-contract.ts';
 import type { ResearchSpendDecision } from '../../meta-allocator/taxonomy.ts';
 import type { ResearchValueAssessment } from '../../meta-allocator/types.ts';

@@ -1,5 +1,5 @@
-import { err, ok, type Result } from '../../../../../domain/src/result.ts';
-import type { EvidenceVault } from '../../../../../evidence/src/vault.ts';
+import { err, ok, type Result } from '@solstice/domain';
+import type { EvidenceVault } from '@solstice/evidence';
 import type { ResearchMonitorTriggerEvent } from '../os07/research-monitor-contract.ts';
 import { ResearchTriggerBudget } from './budget.ts';
 import { ResearchTriggerDedupe } from './dedupe.ts';
