@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-03T06:47:15.744577+00:00",
+  "generatedAt": "2026-11-03T09:25:28.042424+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -539,14 +539,14 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 5052,
+      "packageDeepImport": 5058,
       "serviceDeepImport": 652,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 5052,
+      "relativeCrossPackage": 5058,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5704
+      "total": 5710
     }
   },
   "violations": [
@@ -2412,6 +2412,15 @@
       "sourcePackage": "agentic-capital-mesh",
       "targetPackage": "domain",
       "spec": "../../domain/src/result.ts"
+    },
+    {
+      "file": "packages/agentic-capital-mesh/src/tradingagents-native/evidence-bridge.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/agentic-capital-mesh/src/tradingagents-native/evidence-bridge.ts' deep-imports 'evidence' internals via '../../../evidence/src/vault.ts'",
+      "sourcePackage": "agentic-capital-mesh",
+      "targetPackage": "evidence",
+      "spec": "../../../evidence/src/vault.ts"
     },
     {
       "file": "packages/agentic-capital-mesh/src/types.ts",
@@ -9234,6 +9243,51 @@
       "sourcePackage": "external-data",
       "targetPackage": "provider-sdk",
       "spec": "../../provider-sdk/src/index.ts"
+    },
+    {
+      "file": "packages/external-data/src/tradingagents-native/date-window.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/external-data/src/tradingagents-native/date-window.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "external-data",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/external-data/src/tradingagents-native/fundamentals-normalize.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/external-data/src/tradingagents-native/fundamentals-normalize.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "external-data",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/external-data/src/tradingagents-native/macro-routing.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/external-data/src/tradingagents-native/macro-routing.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "external-data",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/external-data/src/tradingagents-native/router.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/external-data/src/tradingagents-native/router.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "external-data",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/external-data/src/tradingagents-native/types.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/external-data/src/tradingagents-native/types.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "external-data",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
     },
     {
       "file": "packages/external-data/src/trust-engine/service.ts",
