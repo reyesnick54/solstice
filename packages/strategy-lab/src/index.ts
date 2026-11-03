@@ -611,3 +611,33 @@ export type {
   Os05QualificationChecks,
   Os05QualificationResult,
 } from './os05/index.ts';
+export {
+  HELIOS_NATIVE12_SERIS_UPSTREAM,
+  SERIS_NATIVE12_PIPELINE_STAGES,
+  SERIS_NATIVE12_FORBIDDEN_TERMINAL_STAGES,
+  HELIOS_NATIVE_SERIS_STRATEGY_AUTOPILOT_QUALIFIED,
+  HELIOS_NATIVE_SERIS_STRATEGY_AUTOPILOT_BLOCKED,
+  SERIS_STRATEGY_RUN_HISTORY_CAP,
+  SERIS_AI_STRATEGY_PROPOSAL_SCHEMA,
+  isValidSerisStyleStrategyName,
+  reviewStrategySource,
+  buildSimulationMarketContext,
+  buildSerisAiStrategyProposal,
+  SerisStrategyRunStore,
+  summarizeBacktestRun,
+  SerisNativeStrategyPipeline,
+  serisPipelineRunFingerprint,
+  evaluateSerisNative12Qualification,
+} from './native12-seris/index.ts';
+export type {
+  SerisNative12PipelineStage,
+  StrategySourceReview,
+  SerisSimulationMarketContext,
+  SerisAiStrategyProposal,
+  SerisStrategyRunRecord,
+  SerisBacktestRunSummary,
+  SerisFeatureCatalogPort,
+  SerisNative12PipelineOutcome,
+  SerisNative12QualificationChecks,
+  SerisNative12QualificationResult,
+} from './native12-seris/index.ts';
