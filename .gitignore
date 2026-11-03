@@ -16,3 +16,9 @@ packages/sunrey-chain/node/target/
 packages/sunrey-chain/rust/target/
 artifacts/sunrey-range/
 performance/helios/results/
+# HELIOS native assimilation — quarantined upstream clones (NATIVE02)
+/vendor/assimilation/bytex/
+/vendor/assimilation/openchart/
+/vendor/assimilation/tradingagents/
+/vendor/assimilation/seris/
+/vendor/assimilation/polymarket-prediction-bot/
