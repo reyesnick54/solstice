@@ -91,42 +91,52 @@ export function validateBytexStrategyDocument(raw: unknown): Result<BytexStrateg
       }
     }
   }
-  return ok(
-    Object.freeze({
-      schemaVersion: BYTEX_STRATEGY_DOCUMENT_SCHEMA_VERSION,
-      id: raw.id,
-      name: raw.name,
-      description: typeof raw.description === 'string' ? raw.description : undefined,
-      nodes: Object.freeze(
-        raw.nodes.map((node) =>
-          Object.freeze({
-            id: String((node as Record<string, unknown>).id),
-            type: String((node as Record<string, unknown>).type),
-            params: isRecord((node as Record<string, unknown>).params)
-              ? Object.freeze({ ...(node as Record<string, unknown>).params })
-              : undefined,
-          }),
-        ),
-      ),
-      edges: Object.freeze(
-        raw.edges.map((edge) =>
-          Object.freeze({
-            from: String((edge as Record<string, unknown>).from),
-            to: String((edge as Record<string, unknown>).to),
-          }),
-        ),
-      ),
-      parameters: Array.isArray(raw.parameters)
-        ? Object.freeze(
-            raw.parameters.map((param) =>
-              Object.freeze({
-                name: String((param as Record<string, unknown>).name),
-                type: String((param as Record<string, unknown>).type),
-                value: String((param as Record<string, unknown>).value),
-              }),
-            ),
-          )
-        : undefined,
+  const nodes = Object.freeze(
+    raw.nodes.map((node) => {
+      const record = node as Record<string, unknown>;
+      const base = Object.freeze({
+        id: String(record.id),
+        type: String(record.type),
+      });
+      const paramsRaw = record.params;
+      if (isRecord(paramsRaw)) {
+        return Object.freeze({
+          ...base,
+          params: Object.freeze({ ...paramsRaw }),
+        });
+      }
+      return base;
     }),
   );
+  const edges = Object.freeze(
+    raw.edges.map((edge) =>
+      Object.freeze({
+        from: String((edge as Record<string, unknown>).from),
+        to: String((edge as Record<string, unknown>).to),
+      }),
+    ),
+  );
+  const parameters = Array.isArray(raw.parameters)
+    ? Object.freeze(
+        raw.parameters.map((param) =>
+          Object.freeze({
+            name: String((param as Record<string, unknown>).name),
+            type: String((param as Record<string, unknown>).type),
+            value: String((param as Record<string, unknown>).value),
+          }),
+        ),
+      )
+    : undefined;
+
+  const documentBase = Object.freeze({
+    schemaVersion: BYTEX_STRATEGY_DOCUMENT_SCHEMA_VERSION,
+    id: String(raw.id),
+    name: String(raw.name),
+    nodes,
+    edges,
+    ...(parameters ? { parameters } : {}),
+    ...(typeof raw.description === 'string' ? { description: raw.description } : {}),
+  }) satisfies BytexStrategyDocument;
+
+  return ok(documentBase);
 }

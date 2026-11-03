@@ -203,10 +203,10 @@ export function translateBytexDocumentToNative06Genome(input: {
     nodes.push(
       Object.freeze({
         nodeId: `flow_${parsed.fromNodeId}_${parsed.toNodeId}_${parsed.toPort ?? 'default'}`,
-        kind: 'FLOW',
+        kind: 'FLOW' as const,
         fromNodeId: parsed.fromNodeId,
         toNodeId: parsed.toNodeId,
-        port: parsed.toPort,
+        ...(parsed.toPort ? { port: parsed.toPort } : {}),
       }),
     );
   }

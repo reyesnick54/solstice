@@ -87,7 +87,7 @@ export function computeMacdSeries(
   for (let i = 0; i < bars.length; i += 1) {
     const f = fast[i];
     const s = slow[i];
-    if (f === null || s === null) {
+    if (f == null || s == null) {
       macdLine.push(null);
     } else {
       macdLine.push(f - s);
@@ -115,7 +115,7 @@ export function computeMacdSeries(
   for (let i = 0; i < macdLine.length; i += 1) {
     const m = macdLine[i];
     const s = signalLine[i];
-    if (m === null || s === null) {
+    if (m == null || s == null) {
       histogram.push(null);
     } else {
       histogram.push(m - s);

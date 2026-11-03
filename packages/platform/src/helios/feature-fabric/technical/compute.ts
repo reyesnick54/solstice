@@ -107,7 +107,16 @@ export function detectSeriesCross(input: {
   const prevRef = input.reference[index - 1];
   const currValue = input.value[index];
   const currRef = input.reference[index];
-  if (prevValue === null || prevRef === null || currValue === null || currRef === null) {
+  if (
+    prevValue === null ||
+    prevValue === undefined ||
+    prevRef === null ||
+    prevRef === undefined ||
+    currValue === null ||
+    currValue === undefined ||
+    currRef === null ||
+    currRef === undefined
+  ) {
     return false;
   }
   if (direction === 'above') {
