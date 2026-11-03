@@ -10,10 +10,18 @@ import {
   cancelEffectiveBy,
   DEFAULT_LATENCY_MODEL,
   effectiveCancelAt,
+  effectiveReplaceAt,
   effectiveSubmitAt,
   isActiveBy,
   type LatencyModelConfig,
 } from './latency-model.ts';
+import {
+  bestAsk,
+  bestBid,
+  isBookStale,
+  marketBookFromLevel2,
+  marketBookFromQuote,
+} from './market-book.ts';
 import {
   matchOrderAgainstBar,
   matchOrderAgainstLevel2,
@@ -21,12 +29,13 @@ import {
   matchOrderAgainstTrade,
   type MatchingContext,
 } from './matching-engine.ts';
-import { isBookStale, marketBookFromLevel2, marketBookFromQuote } from './market-book.ts';
 import { DEFAULT_SLIPPAGE_MODEL, type SlippageModelConfig } from './slippage-model.ts';
 import type { BarExecutionMode, OhlcPathSequence } from './taxonomy.ts';
 import type {
   CancelOrderResult,
   MarketUpdate,
+  ReplaceOrderRequest,
+  ReplaceOrderResult,
   SimulatedFill,
   SimulatedWorkingOrder,
   SubmitOrderRequest,
@@ -42,6 +51,7 @@ export type SimulatedVenueConfig = {
   readonly barExecutionMode?: BarExecutionMode;
   readonly ohlcPathSequence?: OhlcPathSequence;
   readonly maxBookAgeMs?: number;
+  readonly maxBookDepthLevels?: number | null;
 };
 
 export class SimulatedVenue {
@@ -53,6 +63,7 @@ export class SimulatedVenue {
   private readonly barExecutionMode: BarExecutionMode;
   private readonly ohlcPathSequence: OhlcPathSequence;
   private readonly maxBookAgeMs: number;
+  private readonly maxBookDepthLevels: number | null;
 
   private now: UtcInstant;
   private orderSeq = 0;
@@ -60,6 +71,7 @@ export class SimulatedVenue {
   private readonly orders = new Map<string, SimulatedWorkingOrder>();
   private readonly fills: SimulatedFill[] = [];
   private lastMarketUpdate: MarketUpdate | null = null;
+  private readonly positionUnitsByInstrument = new Map<string, bigint>();
 
   constructor(initialNow: UtcInstant, config: SimulatedVenueConfig) {
     this.now = initialNow;
@@ -71,6 +83,11 @@ export class SimulatedVenue {
     this.barExecutionMode = config.barExecutionMode ?? 'CLOSE_ONLY';
     this.ohlcPathSequence = config.ohlcPathSequence ?? 'O_H_L_C';
     this.maxBookAgeMs = config.maxBookAgeMs ?? 60_000;
+    this.maxBookDepthLevels = config.maxBookDepthLevels ?? null;
+  }
+
+  getPositionUnits(instrumentId: string): bigint {
+    return this.positionUnitsByInstrument.get(instrumentId) ?? 0n;
   }
 
   getFills(): readonly SimulatedFill[] {
@@ -88,6 +105,7 @@ export class SimulatedVenue {
   advanceClock(asOf: UtcInstant): void {
     this.now = asOf;
     this.processPendingActivations();
+    this.processPendingReplaces();
     this.processPendingCancels();
   }
 
@@ -100,6 +118,21 @@ export class SimulatedVenue {
   submitOrder(request: SubmitOrderRequest): SubmitOrderResult {
     this.orderSeq += 1;
     const orderId = `${this.venueId}:ord:${this.orderSeq}`;
+    const reduceOnly = request.reduceOnly === true;
+    if (reduceOnly && violatesReduceOnly(this.getPositionUnits(request.instrumentId), request.side)) {
+      return Object.freeze({
+        accepted: false,
+        reason: 'REDUCE_ONLY_WOULD_INCREASE_EXPOSURE',
+        orderId: null,
+      });
+    }
+    if (request.timeInForce === 'POST_ONLY' && this.postOnlyWouldTake(request)) {
+      return Object.freeze({
+        accepted: false,
+        reason: 'POST_ONLY_WOULD_TAKE',
+        orderId: null,
+      });
+    }
     const activeAt = effectiveSubmitAt(this.now, this.latencyModel);
     const order: SimulatedWorkingOrder = Object.freeze({
       orderId,
@@ -118,6 +151,11 @@ export class SimulatedVenue {
       activeAt,
       cancelRequestedAt: null,
       cancelEffectiveAt: null,
+      replaceRequestedAt: null,
+      replaceEffectiveAt: null,
+      pendingLimitPriceMinorUnits: null,
+      pendingQuantityUnits: null,
+      reduceOnly,
       currency: request.currency,
       fills: Object.freeze([]),
     });
@@ -125,6 +163,33 @@ export class SimulatedVenue {
     this.processPendingActivations();
     this.tryMatchWorkingOrders();
     return Object.freeze({ accepted: true, order: this.orders.get(orderId)! });
+  }
+
+  replaceOrder(orderId: string, request: ReplaceOrderRequest): ReplaceOrderResult {
+    const current = this.orders.get(orderId);
+    if (!current) {
+      return Object.freeze({ status: 'NOT_FOUND', reason: 'order not found', order: null });
+    }
+    if (current.status === 'FILLED' || current.status === 'CANCELLED' || current.status === 'REJECTED') {
+      return Object.freeze({ status: 'REPLACE_REJECTED', reason: 'terminal order', order: current });
+    }
+    const replaceEffectiveAt = effectiveReplaceAt(this.now, this.latencyModel);
+    const pending = Object.freeze({
+      ...current,
+      replaceRequestedAt: this.now,
+      replaceEffectiveAt,
+      pendingLimitPriceMinorUnits:
+        request.limitPriceMinorUnits !== undefined ? request.limitPriceMinorUnits : current.limitPriceMinorUnits,
+      pendingQuantityUnits:
+        request.quantityUnits !== undefined ? request.quantityUnits : current.remainingQuantityUnits,
+    });
+    this.orders.set(orderId, pending);
+    this.processPendingReplaces();
+    const latest = this.orders.get(orderId)!;
+    return Object.freeze({
+      status: latest.replaceEffectiveAt && !isActiveBy(this.now, latest.replaceEffectiveAt) ? 'REPLACE_PENDING' : 'REPLACED',
+      order: latest,
+    });
   }
 
   cancelOrder(orderId: string): CancelOrderResult {
@@ -161,6 +226,7 @@ export class SimulatedVenue {
       latencyModel: this.latencyModel,
       barExecutionMode: this.barExecutionMode,
       ohlcPathSequence: this.ohlcPathSequence,
+      maxBookDepthLevels: this.maxBookDepthLevels,
       nextFillSeq: () => {
         this.fillSeq += 1;
         return `${this.venueId}:fill:${this.fillSeq}`;
@@ -185,6 +251,33 @@ export class SimulatedVenue {
           }),
         );
       }
+    }
+  }
+
+  private processPendingReplaces(): void {
+    for (const [orderId, order] of this.orders) {
+      if (!order.replaceEffectiveAt || !isActiveBy(this.now, order.replaceEffectiveAt)) {
+        continue;
+      }
+      const nextQty = order.pendingQuantityUnits ?? order.remainingQuantityUnits;
+      const filled = order.quantityUnits - order.remainingQuantityUnits;
+      const nextRemaining = nextQty > filled ? nextQty - filled : 0n;
+      this.orders.set(
+        orderId,
+        Object.freeze({
+          ...order,
+          limitPriceMinorUnits:
+            order.pendingLimitPriceMinorUnits !== undefined
+              ? order.pendingLimitPriceMinorUnits
+              : order.limitPriceMinorUnits,
+          quantityUnits: nextQty + filled,
+          remainingQuantityUnits: nextRemaining,
+          replaceRequestedAt: null,
+          replaceEffectiveAt: null,
+          pendingLimitPriceMinorUnits: null,
+          pendingQuantityUnits: null,
+        }),
+      );
     }
   }
 
@@ -230,6 +323,40 @@ export class SimulatedVenue {
       return isBookStale(book, this.now, this.maxBookAgeMs);
     }
     return false;
+  }
+
+  private postOnlyWouldTake(request: SubmitOrderRequest): boolean {
+    const update = this.lastMarketUpdate;
+    if (!update) {
+      return request.orderType === 'MARKET';
+    }
+    let book;
+    if (update.kind === 'LEVEL_2_BOOK') {
+      book = marketBookFromLevel2(update.snapshot);
+    } else if (update.kind === 'QUOTE') {
+      book = marketBookFromQuote(update.quote);
+    } else {
+      return request.orderType === 'MARKET';
+    }
+    if (request.orderType === 'MARKET' || request.orderType === 'STOP') {
+      return true;
+    }
+    const limit = request.limitPriceMinorUnits ?? null;
+    if (limit == null) {
+      return false;
+    }
+    if (request.side === 'BUY') {
+      const ask = bestAsk(book);
+      return ask != null && limit >= ask.priceMinorUnits;
+    }
+    const bid = bestBid(book);
+    return bid != null && limit <= bid.priceMinorUnits;
+  }
+
+  private applyFillToPosition(instrumentId: string, side: 'BUY' | 'SELL', quantityUnits: bigint): void {
+    const current = this.getPositionUnits(instrumentId);
+    const delta = side === 'BUY' ? quantityUnits : -quantityUnits;
+    this.positionUnitsByInstrument.set(instrumentId, current + delta);
   }
 
   private tryMatchWorkingOrders(): void {
@@ -278,7 +405,18 @@ export class SimulatedVenue {
       this.orders.set(orderId, result.order);
       for (const fill of result.newFills) {
         this.fills.push(fill);
+        this.applyFillToPosition(fill.instrumentId, fill.side, fill.quantityUnits);
       }
     }
   }
+}
+
+function violatesReduceOnly(positionUnits: bigint, side: 'BUY' | 'SELL'): boolean {
+  if (side === 'BUY' && positionUnits >= 0n) {
+    return true;
+  }
+  if (side === 'SELL' && positionUnits <= 0n) {
+    return true;
+  }
+  return false;
 }

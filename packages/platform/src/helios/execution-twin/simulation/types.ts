@@ -15,6 +15,8 @@ import type {
   SimulatedOrderType,
   SimulatedTimeInForce,
 } from './taxonomy.ts';
+import type { BookStateSnapshot } from './book-state.ts';
+import type { SimulationFidelityLevel } from './fidelity.ts';
 
 export type ObservationRef = {
   readonly refId: string;
@@ -23,7 +25,14 @@ export type ObservationRef = {
 };
 
 export type SimulatedFillEvidence = {
-  readonly schema: 'sunrey.helios.execution-twin.simulation.fill-evidence.v1';
+  readonly schema: 'sunrey.helios.execution-twin.simulation.fill-evidence.v2';
+  readonly executionModelVersion: string;
+  readonly marketEvidence: readonly ObservationRef[];
+  readonly bookState: BookStateSnapshot;
+  readonly latencyModel: string;
+  readonly feeModel: string;
+  readonly slippageModel: string;
+  readonly fidelityLevel: SimulationFidelityLevel;
   readonly observationRefs: readonly ObservationRef[];
   readonly executionFidelityLevel: ExecutionFidelityLevel;
   readonly fillModelVersion: string;
@@ -71,6 +80,11 @@ export type SimulatedWorkingOrder = {
   readonly activeAt: UtcInstant | null;
   readonly cancelRequestedAt: UtcInstant | null;
   readonly cancelEffectiveAt: UtcInstant | null;
+  readonly replaceRequestedAt: UtcInstant | null;
+  readonly replaceEffectiveAt: UtcInstant | null;
+  readonly pendingLimitPriceMinorUnits: bigint | null;
+  readonly pendingQuantityUnits: bigint | null;
+  readonly reduceOnly: boolean;
   readonly currency: string;
   readonly fills: readonly SimulatedFill[];
 };
@@ -169,8 +183,18 @@ export type SubmitOrderRequest = {
   readonly quantityUnits: bigint;
   readonly limitPriceMinorUnits?: bigint | null;
   readonly stopPriceMinorUnits?: bigint | null;
+  readonly reduceOnly?: boolean;
   readonly currency: string;
 };
+
+export type ReplaceOrderRequest = {
+  readonly limitPriceMinorUnits?: bigint | null;
+  readonly quantityUnits?: bigint;
+};
+
+export type ReplaceOrderResult =
+  | { readonly status: 'REPLACE_PENDING' | 'REPLACED'; readonly order: SimulatedWorkingOrder }
+  | { readonly status: 'NOT_FOUND' | 'REPLACE_REJECTED'; readonly reason: string; readonly order: SimulatedWorkingOrder | null };
 
 export type SubmitOrderResult =
   | { readonly accepted: true; readonly order: SimulatedWorkingOrder }
