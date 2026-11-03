@@ -76,8 +76,25 @@ function sourceFor(subjectId: string): ContextSource {
               minimumBrokerageCashMinor: 0n,
             },
             registeredModels: Object.freeze([]),
-            universe: Object.freeze([{ instrumentId: 'SIM-EQ-1', assetClass: 'EQUITY' }]),
-            market: Object.freeze([{ instrumentId: 'SIM-EQ-1', last: 100 }]),
+            universe: Object.freeze([
+              {
+                instrumentId: 'SIM-EQ-1',
+                instrumentType: 'EQUITY',
+                available: true,
+                fractionalSupported: true,
+                incrementUnits: 1n,
+                currency: 'USD',
+              },
+            ]),
+            market: Object.freeze([
+              {
+                instrumentId: 'SIM-EQ-1',
+                priceMinor: 10_000n,
+                currency: 'USD',
+                quotedAt: NOW,
+                stale: false,
+              },
+            ]),
             rdt: {
               state: 'RESEARCH_REQUIRED',
               legalReviewStatus: 'RESEARCH_REQUIRED',
