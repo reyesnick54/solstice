@@ -20,6 +20,8 @@ Security audit and capability mapping: [`docs/helios/native-assimilation/`](../d
 
 `polymarket-prediction-bot` is pinned to the NATIVE02 audit SHA (not upstream `main`); see `pinNote` in [`docs/helios/open-source/upstream-lock.json`](../docs/helios/open-source/upstream-lock.json).
 
+Native TypeScript ports (including NATIVE03 BYTEX deterministic runtime) live under canonical HELIOS owners — see [`docs/helios/open-source/NATIVE03_BYTEX_DETERMINISTIC_RUNTIME.md`](../docs/helios/open-source/NATIVE03_BYTEX_DETERMINISTIC_RUNTIME.md).
+
 ## Git policy
 
 Snapshots are **tracked in this repository** for offline assimilation. They are excluded from TypeScript compile, workspace install, repository tests, container images, and HELIOS runtime load (see `QUARANTINE.json` and `scripts/check-assimilation-quarantine.mjs`).
