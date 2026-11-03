@@ -1,3 +1,0 @@
-[submodule "vendor/tea"]
-	path = vendor/tea
-	url = https://github.com/longsurf-ai/tea.git

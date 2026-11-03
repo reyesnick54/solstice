@@ -24,6 +24,7 @@ HELIOS is an integrated intelligence and orchestration capability built through 
 | Document | Purpose |
 |----------|---------|
 | [BYTEX → HELIOS integration map (OS01)](./open-source/BYTEX_HELIOS_INTEGRATION_MAP.md) | Capability classification for BYTEX reference SHA `67b3e10` — no runtime import |
+| [NATIVE11 Seris AI runtime assimilation](./NATIVE11_SERIS_ASSIMILATION.md) | Canonical `ai-runtime` / `sunrey-agent` / Capital Mesh native agent plane — `HELIOS_NATIVE_AGENT_RUNTIME_QUALIFIED` |
 
 ## Native assimilation (foreign runtime retirement)
 
