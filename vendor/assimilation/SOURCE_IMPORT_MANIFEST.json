@@ -53,7 +53,8 @@
     {
       "sourceName": "polymarket-prediction-bot",
       "sourceRepository": "https://github.com/semrincaballero/Polymarket-Prediction-Bot",
-      "importedCommitForProvenance": "ca008196853447e1a24114f38417db1378f9a938",
+      "importedCommitForProvenance": "1f7c9761ddd26863242e3ed4f83c230ee38aebeb",
+      "pinNote": "NATIVE02 audit SHA; not upstream main",
       "importedAt": "2026-11-03T09:11:55Z",
       "license": "MIT",
       "vendorPath": "vendor/assimilation/polymarket-prediction-bot",

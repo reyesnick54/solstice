@@ -44,6 +44,15 @@ function main() {
     findings.push('.dockerignore must exclude vendor/assimilation from container contexts');
   }
 
+  const gitignore = readFileSync(join(ROOT, '.gitignore'), 'utf8');
+  for (const line of gitignore.split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    if (/^\/vendor\/assimilation\//.test(trimmed)) {
+      findings.push(`.gitignore must not exclude committed assimilation snapshots (${trimmed})`);
+    }
+  }
+
   const testRunner = readFileSync(join(ROOT, 'scripts/run-repository-tests.mjs'), 'utf8');
   if (/vendor\/assimilation/.test(testRunner)) {
     findings.push('repository test globs must not include vendor/assimilation');
