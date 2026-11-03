@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { DebateEvidenceRef, FrozenEvidencePack } from './types.ts';
 
 function stableEvidenceDigest(evidence: readonly DebateEvidenceRef[]): string {
