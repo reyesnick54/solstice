@@ -127,17 +127,3 @@ export * from './technical/index.ts';
 export * from './universal/index.ts';
 export * from './coverage/index.ts';
 export * from './bias-sentinel/index.ts';
-export {
-  FEATURE_COMPUTE_KINDS,
-  TEMPORAL_OBSERVATION_KINDS,
-  type CorporateActionRevisionRow,
-  type FeatureComputeKind,
-  type MissingnessPolicy as TemporalMissingnessPolicy,
-  type RevisionPolicy,
-  type TemporalFeatureDefinition,
-  type TemporalObservation,
-  type TemporalObservationKind,
-  type TickerSymbolRow,
-  type UniverseMembershipRow,
-} from './temporal-types.ts';
-export * from './compiler/index.ts';
