@@ -1,0 +1,55 @@
+{
+  "schema": "sunrey.helios.native-assimilation-provenance.v1",
+  "purpose": "historical_and_legal_attribution_only",
+  "runtimePin": false,
+  "recordedAt": "2026-11-03T09:16:25.305Z",
+  "gitSha": "e44ef7fd18288e1e95fad6744b755630f237c8d2",
+  "upstream": [
+    {
+      "upstreamId": "bytex",
+      "repository": "https://github.com/BYTEX-TRADE/bytex",
+      "historicalReferenceSha": "67b3e103043476a0490bb7afa146ec9ac339b116",
+      "license": "Apache-2.0",
+      "assimilationMode": "native_reimplementation",
+      "nativeOwnerSummary": "see docs/helios/native-assimilation/NATIVE_CAPABILITY_PARITY_MATRIX.md",
+      "runtimePin": false
+    },
+    {
+      "upstreamId": "openchart",
+      "repository": "https://github.com/longsurf-ai/openchart",
+      "historicalReferenceSha": "8109466bfb5d44c32e0e03e9337eaca48b837ab4",
+      "license": "MIT",
+      "assimilationMode": "native_reimplementation",
+      "nativeOwnerSummary": "see docs/helios/native-assimilation/NATIVE_CAPABILITY_PARITY_MATRIX.md",
+      "runtimePin": false
+    },
+    {
+      "upstreamId": "tradingagents",
+      "repository": "https://github.com/TauricResearch/TradingAgents",
+      "historicalReferenceSha": "c4544913a14ed3df5f1ed7b9e8483270ce20682a",
+      "license": "Apache-2.0",
+      "assimilationMode": "native_reimplementation",
+      "nativeOwnerSummary": "see docs/helios/native-assimilation/NATIVE_CAPABILITY_PARITY_MATRIX.md",
+      "runtimePin": false
+    },
+    {
+      "upstreamId": "seris",
+      "repository": "https://github.com/aowang-ai/seris",
+      "historicalReferenceSha": "f73dbbb0cd7e3b52601abf905bb871cdb9098550",
+      "license": "Apache-2.0",
+      "assimilationMode": "native_reimplementation",
+      "nativeOwnerSummary": "see docs/helios/native-assimilation/NATIVE_CAPABILITY_PARITY_MATRIX.md",
+      "runtimePin": false
+    },
+    {
+      "upstreamId": "polymarket-prediction-bot",
+      "repository": "https://github.com/semrincaballero/Polymarket-Prediction-Bot",
+      "historicalReferenceSha": "1f7c9761ddd26863242e3ed4f83c230ee38aebeb",
+      "license": "MIT",
+      "assimilationMode": "native_reimplementation",
+      "nativeOwnerSummary": "see docs/helios/native-assimilation/NATIVE_CAPABILITY_PARITY_MATRIX.md",
+      "runtimePin": false
+    }
+  ],
+  "noticesPath": "docs/helios/native-assimilation/THIRD_PARTY_NOTICES.md"
+}
