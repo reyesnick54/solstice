@@ -11,6 +11,8 @@ import { runWalkForward } from '../walk-forward.ts';
 import type { MarketDataset } from '../dataset.ts';
 import type { StrategyFailure } from '../types.ts';
 import { StrategyLab } from '../service.ts';
+
+type SerisPipelineRiskBudget = Parameters<StrategyLab['compile']>[2];
 import { summarizeBacktestRun } from './backtest-orchestrator.ts';
 import type { SerisAiStrategyProposal } from './proposal.ts';
 import { SerisStrategyRunStore } from './run-store.ts';
@@ -91,12 +93,12 @@ export class SerisNativeStrategyPipeline {
   processProposal(input: {
     readonly proposal: SerisAiStrategyProposal;
     readonly dataset: MarketDataset;
-    readonly riskBudget: Parameters<StrategyLab['compile']>[2];
+    readonly riskBudget: SerisPipelineRiskBudget;
     readonly subjectId: string;
     readonly startingCapitalMinor: bigint;
     readonly sealedAt: UtcInstant;
     readonly featureCatalog: SerisFeatureCatalogPort;
-    /** Human governance actor for shadow/paper simulation gates only. */
+    /** Human governance actor for shadow/paper simulation gates (StrategyLab validates at promote time). */
     readonly governanceActor?: unknown;
     readonly investmentAccountId?: string;
     readonly maxDrawdownBps?: number;
