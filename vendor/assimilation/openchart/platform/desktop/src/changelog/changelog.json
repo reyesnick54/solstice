@@ -1,0 +1,185 @@
+[
+  {
+    "version": "0.1.22",
+    "date": "2026-10-27",
+    "items": [
+      "Use TradingView data in charts, watchlists, indicators, agents and alerts.",
+      "Connect TradingView in your browser using your existing Google sign-in or passkey.",
+      "Charts show the market session and time until the next open or close when calendar data is available.",
+      "OpenChart is now available under the MIT license."
+    ]
+  },
+  {
+    "version": "0.1.20",
+    "date": "2026-10-17",
+    "items": [
+      "Grok is now available as a model provider, alongside Codex, Claude Code and Antigravity.",
+      "CAGR measurements also show the number of bars and the elapsed time of the selected range.",
+      "Fixed scheduled sessions that read earlier transcripts growing until the backend ran out of memory."
+    ]
+  },
+  {
+    "version": "0.1.19",
+    "date": "2026-10-13",
+    "items": [
+      "Charts have a CAGR tool to measure growth, volatility, price return and Sharpe over a selected time range.",
+      "Saved scripts can be added directly to the selected chart from the indicator library."
+    ]
+  },
+  {
+    "version": "0.1.18",
+    "date": "2026-10-13",
+    "items": [
+      "Watchlists can run AI research for each symbol and show the answers in custom columns.",
+      "Fixed hidden indicator outputs affecting their panel's automatic scale.",
+      "Fixed Shift-wheel direction for vertical-axis zoom and horizontal chart scrolling."
+    ]
+  },
+  {
+    "version": "0.1.17",
+    "date": "2026-10-12",
+    "items": [
+      "Hide individual indicator outputs and edit each output's color and style in Series settings.",
+      "Watchlists highlight changed digits in live prices and Formula values.",
+      "Indicator and watchlist Formula symbol inputs now open the symbol picker.",
+      "Fixed Workspace files reopening with stale text after changes on disk.",
+      "Fixed busy live charts requiring repeated resyncs and replaying every tick when returning to a dashboard.",
+      "Fixed Codex subagent follow-ups losing replies or failing on tool calls."
+    ]
+  },
+  {
+    "version": "0.1.16",
+    "date": "2026-10-12",
+    "items": [
+      "Ask the Agent to build custom dashboard widgets, or write and publish them from Workspace.",
+      "Watchlists now support Formula columns with configurable indicator outputs, parameters, and bar settings.",
+      "Measure price changes, bar counts, elapsed time, and volume from the chart toolbar or with Shift-click.",
+      "Drag shared dashboard dividers to resize adjacent widgets; watchlist symbols stay visible as you scroll.",
+      "Comparison symbols now default to candlesticks with distinct colors.",
+      "Fixed native Agent runs stopping during quiet periods and losing completed work after a failure."
+    ]
+  },
+  {
+    "version": "0.1.15",
+    "date": "2026-10-11",
+    "items": [
+      "Browse one workspace at a time, preview files with Quick Look, and open documents, spreadsheets, PDFs, and media.",
+      "Click a watchlist symbol or press Enter to show it in the dashboard's chart.",
+      "Watchlists now show price history sparklines; hover to compare every row at the same time.",
+      "OpenChart now checks for new releases at startup and every 10 minutes."
+    ]
+  },
+  {
+    "version": "0.1.14",
+    "date": "2026-10-11",
+    "items": [
+      "Ask the Agent to collect CSV data, plot it on charts, and refresh it on demand or on a schedule.",
+      "Add watchlists to dashboards with nested sections, sortable quotes, and configurable columns.",
+      "Cloud charts in Extended or 24 hr mode now shade pre-market and after-hours sessions.",
+      "Fixed incomplete Yahoo Finance data appearing complete; live charts retry failed updates automatically.",
+      "Dashboards now allow one widget of each kind; extra widgets move to new dashboards without losing saved charts.",
+      "Watchlist and alert symbols now use full-size logo images."
+    ]
+  },
+  {
+    "version": "0.1.13",
+    "date": "2026-10-06",
+    "items": [
+      "You can now use OpenChart without signing in; sign in from the sidebar when you want OpenChart Cloud.",
+      "Settings → Data Providers offers Sign in for OpenChart Cloud instead of an error while you're signed out.",
+      "Fixed deleting the open dashboard getting stuck on Deleting… or ending on a load error.",
+      "Opening a deleted dashboard now says it's no longer available, with a link home."
+    ]
+  },
+  {
+    "version": "0.1.12",
+    "date": "2026-10-05",
+    "items": [
+      "New chart tours show how to change intervals, tune studies and create indicators with the Agent.",
+      "Open Indicators or add a Workspace widget to see how to convert Pine Script into a chart indicator.",
+      "New installs ask to enable notifications before starting the dashboard tour.",
+      "Fixed provider sign-in failures leaving expired links and instructions on screen.",
+      "Fixed symbol searches failing when distinct listings share the same symbol and venue.",
+      "Fixed Markdown tables with empty cells opening in Source instead of the visual editor."
+    ]
+  },
+  {
+    "version": "0.1.11",
+    "date": "2026-10-05",
+    "items": [
+      "Saved alerts have an Events tab with each trigger's history and links to the sessions it started.",
+      "Interval, session and adjustment choices your data source lacks now show a lock and offer OpenChart Cloud.",
+      "New installs include two editable example studies in My scripts, and clicking a script opens its file.",
+      "Suggested prompts in new chats now finish their work without stopping for follow-up questions.",
+      "Fixed live Cloud charts stopping after an interval change, and charts that wouldn't reload after panning too far.",
+      "Fixed scripts failing to find Yahoo Finance symbols, and neutral agent annotations hidden in the light theme."
+    ]
+  },
+  {
+    "version": "0.1.10",
+    "date": "2026-10-05",
+    "items": [
+      "OpenChart Cloud adds US stock, ETF and crypto data; subscribe or redeem an invite in Settings → Subscription.",
+      "The indicator library previews every study on real market history, with how to read it and its inputs.",
+      "Add Volume Profile from the chart menu and Session Volume Profile from the library, with their own bars and colors.",
+      "Antigravity joins Claude Code and Codex as a model provider, and the model picker offers Sonnet 5.5 and Sol 6.1.",
+      "New installs start with a short tour, and new chats suggest prompts to start from.",
+      "Fixed symbol search hiding exact matches, and error messages hidden behind open dialogs."
+    ]
+  },
+  {
+    "version": "0.1.9",
+    "date": "2026-09-28",
+    "items": [
+      "Feed posts show attachments in a carousel, with live read-only charts opened at the alert.",
+      "Give an agent a new instruction from any Feed post and follow its reply in Copilot.",
+      "The Feed loads older posts as you scroll, and links in agent posts open the rule or dashboard.",
+      "Chats show a blue dot when a finished run hasn't been read yet.",
+      "New installs open a sample Bitcoin dashboard with alerts.",
+      "Fixed Copy buttons in the desktop app and chart errors when Yahoo has no data for older dates."
+    ]
+  },
+  {
+    "version": "0.1.8",
+    "date": "2026-09-27",
+    "items": [
+      "Build dashboards from chart, workspace and alert widgets, with Copilot aware of what you're viewing.",
+      "Create alerts on chart indicators, open their code beside charts, and reload edits when ready.",
+      "Existing chart indicators must be added again after this update.",
+      "Alerts show monitoring interruptions and notify you after 60 seconds while the app is running.",
+      "Workflows are editable Workspace files, and large workspaces load faster.",
+      "Fixed link previews appearing behind Copilot and MACD bars using the same color above and below zero."
+    ]
+  },
+  {
+    "version": "0.1.7",
+    "date": "2026-09-24",
+    "items": [
+      "Create alerts from the sidebar and edit conditions, code, notifications and Agent actions.",
+      "Chart drawing alerts support channels, Fibonacci levels, curves and freehand paths.",
+      "Feed brings alert events and Agent posts together, including images, audio and video.",
+      "View schedules on a calendar and create alerts or schedules with your Copilot.",
+      "Run research workflows and ask Agents to explain chart selections using real market data.",
+      "Preview cited links, sort sidebar lists and choose alert notification sounds in Settings."
+    ]
+  },
+  {
+    "version": "0.1.6",
+    "date": "2026-09-23",
+    "items": [
+      "Error messages now close on their own after a few seconds instead of piling up.",
+      "A ready update now appears as a button beside your account instead of a dialog.",
+      "Settings → Changelog lists what changed in each release."
+    ]
+  },
+  {
+    "version": "0.1.5",
+    "date": "2026-09-23",
+    "items": [
+      "Settings → Models installs Codex and Claude Code for you and walks through signing in.",
+      "Codex and Claude Code follow the new Permissions setting: Ask, Auto, or Always allow (the default).",
+      "GPT-6 Sol and Luna are available, and Claude models now show full names such as Opus 5.5.",
+      "Fixed a dark band above the message box when content scrolled beneath it."
+    ]
+  }
+]
