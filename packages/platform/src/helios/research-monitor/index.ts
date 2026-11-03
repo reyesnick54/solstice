@@ -52,7 +52,7 @@ export type {
   CanonicalFeatureObservation,
   FeatureResolutionDiagnostic,
   ResearchMonitorState,
-  ResearchMonitorTriggerEvent,
+  HeliosResearchMonitorTriggerRecord,
   ResearchMonitorEvaluation,
   ResearchMonitorStoreSnapshot,
   AafFeatureFabricPort,

@@ -3,14 +3,14 @@ import type {
   ResearchMonitorManifest,
   ResearchMonitorState,
   ResearchMonitorStoreSnapshot,
-  ResearchMonitorTriggerEvent,
+  HeliosResearchMonitorTriggerRecord,
 } from './types.ts';
 import type { ResearchMonitorId } from './ids.ts';
 
 export class InMemoryResearchMonitorStore {
   readonly #states = new Map<string, ResearchMonitorState>();
   readonly #manifests = new Map<string, ResearchMonitorManifest>();
-  readonly #triggers = new Map<string, ResearchMonitorTriggerEvent>();
+  readonly #triggers = new Map<string, HeliosResearchMonitorTriggerRecord>();
   readonly #evaluations: ResearchMonitorEvaluation[] = [];
   #evaluationSequence = 0;
 
@@ -41,7 +41,7 @@ export class InMemoryResearchMonitorStore {
     this.#states.set(state.monitorId, Object.freeze({ ...state }));
   }
 
-  putTrigger(trigger: ResearchMonitorTriggerEvent): void {
+  putTrigger(trigger: HeliosResearchMonitorTriggerRecord): void {
     this.#triggers.set(trigger.triggerEventId, trigger);
   }
 

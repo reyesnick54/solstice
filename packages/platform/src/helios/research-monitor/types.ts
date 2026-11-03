@@ -117,7 +117,8 @@ export type ResearchMonitorState = {
   readonly manifestId: ResearchMonitorManifestId | null;
 };
 
-export type ResearchMonitorTriggerEvent = {
+/** DSL runtime trigger record (distinct from OS07→OS08 integration `ResearchMonitorTriggerEvent`). */
+export type HeliosResearchMonitorTriggerRecord = {
   readonly triggerEventId: ResearchMonitorTriggerEventId;
   readonly monitorId: ResearchMonitorId;
   readonly manifestId: ResearchMonitorManifestId;
@@ -143,14 +144,14 @@ export type ResearchMonitorEvaluation = {
   readonly outcome: ResearchMonitorEvalOutcome;
   readonly blockReason: ResearchMonitorBlockReason | null;
   readonly featureDiagnostics: readonly FeatureResolutionDiagnostic[];
-  readonly triggerEvent: ResearchMonitorTriggerEvent | null;
+  readonly triggerEvent: HeliosResearchMonitorTriggerRecord | null;
   readonly evidenceRefs: readonly string[];
   readonly deterministic: true;
 };
 
 export type ResearchMonitorStoreSnapshot = {
   readonly states: readonly ResearchMonitorState[];
-  readonly triggers: readonly ResearchMonitorTriggerEvent[];
+  readonly triggers: readonly HeliosResearchMonitorTriggerRecord[];
   readonly evaluations: readonly ResearchMonitorEvaluation[];
   readonly manifests: readonly ResearchMonitorManifest[];
 };

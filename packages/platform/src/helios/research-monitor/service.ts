@@ -24,7 +24,7 @@ import type {
   ResearchMonitorEvaluation,
   ResearchMonitorManifest,
   ResearchMonitorState,
-  ResearchMonitorTriggerEvent,
+  HeliosResearchMonitorTriggerRecord,
 } from './types.ts';
 
 function instantMs(value: UtcInstant | null): number | null {
@@ -163,7 +163,7 @@ export class HeliosResearchMonitorService {
     }
 
     const triggerEvidence: string[] = [];
-    const triggerEvent: ResearchMonitorTriggerEvent = Object.freeze({
+    const triggerEvent: HeliosResearchMonitorTriggerRecord = Object.freeze({
       triggerEventId: researchMonitorTriggerEventIdFor(input.definition.monitorId, fingerprint),
       monitorId: input.definition.monitorId,
       manifestId: manifest.manifestId,
@@ -182,7 +182,7 @@ export class HeliosResearchMonitorService {
     const triggerRef = sealResearchMonitorTrigger(input.evidenceVault, triggerEvent);
     if (triggerRef) triggerEvidence.push(triggerRef);
 
-    const sealedTrigger: ResearchMonitorTriggerEvent = Object.freeze({
+    const sealedTrigger: HeliosResearchMonitorTriggerRecord = Object.freeze({
       ...triggerEvent,
       evidenceRefs: Object.freeze([...triggerEvidence]),
     });
@@ -265,7 +265,7 @@ export class HeliosResearchMonitorService {
       readonly conditionMet: boolean;
       readonly triggerEmitted: boolean;
       readonly diagnostics: readonly import('./types.ts').FeatureResolutionDiagnostic[];
-      readonly triggerEvent: ResearchMonitorTriggerEvent | null;
+      readonly triggerEvent: HeliosResearchMonitorTriggerRecord | null;
       readonly evidenceRefs: readonly string[];
     },
   ): ResearchMonitorEvaluation {

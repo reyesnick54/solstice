@@ -1,5 +1,9 @@
 import type { EvidenceVault } from '@solstice/evidence';
-import type { ResearchMonitorEvaluation, ResearchMonitorManifest, ResearchMonitorTriggerEvent } from './types.ts';
+import type {
+  HeliosResearchMonitorTriggerRecord,
+  ResearchMonitorEvaluation,
+  ResearchMonitorManifest,
+} from './types.ts';
 
 export function sealResearchMonitorManifest(
   vault: EvidenceVault | undefined,
@@ -42,7 +46,7 @@ export function sealResearchMonitorEvaluation(
 
 export function sealResearchMonitorTrigger(
   vault: EvidenceVault | undefined,
-  trigger: ResearchMonitorTriggerEvent,
+  trigger: HeliosResearchMonitorTriggerRecord,
 ): string | null {
   if (!vault) {
     return null;
