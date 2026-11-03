@@ -1,6 +1,6 @@
 import type { UtcInstant } from '@solstice/domain';
 import type { AgentCapabilityGrant, AgentResearchSession, ResearchAutopilotStrategy } from './types.ts';
-import { isForbiddenPermission } from './permission-catalog.ts';
+import { isForbiddenPermission, isResearchPermission } from './permission-catalog.ts';
 import { newResearchAutopilotId } from './ids.ts';
 import type { ResearchAutopilotKind } from './taxonomy.ts';
 
@@ -68,6 +68,19 @@ export function tickResearchAutopilot(input: {
         ok: false,
         code: 'FORBIDDEN_PERMISSION',
         message: 'autopilot cannot invoke forbidden financial permissions',
+      }),
+    };
+  }
+  if (
+    !isResearchPermission(input.requestedPermission as never) ||
+    !input.grant.permissions.includes(input.requestedPermission as never)
+  ) {
+    return {
+      strategy: input.strategy,
+      result: Object.freeze({
+        ok: false,
+        code: 'FORBIDDEN_PERMISSION',
+        message: 'autopilot permission is not granted on the active capability grant',
       }),
     };
   }

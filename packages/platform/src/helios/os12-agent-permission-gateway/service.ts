@@ -192,8 +192,77 @@ export class HeliosOs12AgentPermissionGatewayService {
   infer(request: ModelGatewayInferRequest): ModelGatewayInferResult {
     const session = this.store.getSession(request.sessionId);
     const grant = this.store.getGrant(request.grantId);
-    const workOrderId = session?.workOrderId ?? grant?.workOrderId ?? null;
-    const customerId = session?.customerId ?? grant?.customerId;
+    if (!session || !grant) {
+      return Object.freeze({
+        ok: false,
+        telemetry: Object.freeze({
+          model: request.modelId,
+          modelVersion: request.modelVersion,
+          latencyMs: 0,
+          costMicros: 0n,
+          contextTokens: request.promptTokens,
+          toolCalls: request.toolCallsRequested,
+          failures: 1,
+          retries: 0,
+          outcome: 'FAILURE' as const,
+          researchSessionId: request.sessionId,
+          workOrderId: null,
+          researchOutcomeRef: request.researchOutcomeRef,
+          recordedAt: this.clock.now(),
+          providerGrantsExecutionAuthority: false as const,
+        }),
+        code: 'SESSION_OR_GRANT_MISSING',
+        message: 'model inference requires an active research session and capability grant',
+      });
+    }
+    if (session.grantId !== grant.grantId || session.customerId !== grant.customerId) {
+      return Object.freeze({
+        ok: false,
+        telemetry: Object.freeze({
+          model: request.modelId,
+          modelVersion: request.modelVersion,
+          latencyMs: 0,
+          costMicros: 0n,
+          contextTokens: request.promptTokens,
+          toolCalls: request.toolCallsRequested,
+          failures: 1,
+          retries: 0,
+          outcome: 'FAILURE' as const,
+          researchSessionId: request.sessionId,
+          workOrderId: session.workOrderId,
+          researchOutcomeRef: request.researchOutcomeRef,
+          recordedAt: this.clock.now(),
+          providerGrantsExecutionAuthority: false as const,
+        }),
+        code: 'SESSION_GRANT_MISMATCH',
+        message: 'research session is not bound to the supplied capability grant',
+      });
+    }
+    if (grant.state !== 'ACTIVE' || session.state === 'CLOSED') {
+      return Object.freeze({
+        ok: false,
+        telemetry: Object.freeze({
+          model: request.modelId,
+          modelVersion: request.modelVersion,
+          latencyMs: 0,
+          costMicros: 0n,
+          contextTokens: request.promptTokens,
+          toolCalls: request.toolCallsRequested,
+          failures: 1,
+          retries: 0,
+          outcome: 'FAILURE' as const,
+          researchSessionId: request.sessionId,
+          workOrderId: session.workOrderId,
+          researchOutcomeRef: request.researchOutcomeRef,
+          recordedAt: this.clock.now(),
+          providerGrantsExecutionAuthority: false as const,
+        }),
+        code: 'INVALID_RESEARCH_SESSION',
+        message: 'model inference requires an active grant and non-closed session',
+      });
+    }
+    const workOrderId = session.workOrderId ?? grant.workOrderId ?? null;
+    const customerId = session.customerId;
     const result = this.modelGateway.infer(request, workOrderId);
     this.store.appendTelemetry(result.telemetry);
     if (customerId) {
