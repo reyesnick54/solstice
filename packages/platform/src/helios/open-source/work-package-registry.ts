@@ -86,7 +86,7 @@ export const OPEN_SOURCE_WORK_PACKAGE_EVIDENCE: Readonly<
     'tests/helios-os11-adversarial-research.test.ts',
   ]),
   OS12: Object.freeze([
-    'packages/platform/src/helios/open-source/agent-permission-gateway/index.ts',
+    'packages/platform/src/helios/os12-agent-permission-gateway/index.ts',
     'tests/helios-os12-agent-permission-gateway.test.ts',
   ]),
   OS13: Object.freeze([
