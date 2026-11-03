@@ -27,3 +27,4 @@ export * from './wave6/index.ts';
 export * from './access-live/index.ts';
 export * from './sec-fundamentals/index.ts';
 export * from './venue-adapters/index.ts';
+export * from './prediction-market/index.ts';

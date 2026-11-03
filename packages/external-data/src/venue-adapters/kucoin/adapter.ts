@@ -1,6 +1,1 @@
-import { createSkeletonVenueAdapter } from '../common/skeleton-adapter.ts';
-
-export const KUCOIN_VENUE_ADAPTER = createSkeletonVenueAdapter({
-  venueId: 'kucoin',
-  displayName: 'KuCoin',
-});
+export { KUCOIN_VENUE_ADAPTER } from './native-config.ts';

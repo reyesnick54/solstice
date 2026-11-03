@@ -1,6 +1,1 @@
-import { createSkeletonVenueAdapter } from '../common/skeleton-adapter.ts';
-
-export const HYPERLIQUID_VENUE_ADAPTER = createSkeletonVenueAdapter({
-  venueId: 'hyperliquid',
-  displayName: 'Hyperliquid',
-});
+export { HYPERLIQUID_VENUE_ADAPTER, hyperliquidEngineInstrumentId } from './native-config.ts';
