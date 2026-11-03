@@ -69,4 +69,5 @@ export { materializeStrategyDraft, refusePaperOrderFromMesh } from './materializ
 export { CapitalMeshStore } from './store.ts';
 export { CapitalMeshService, type CandidateSpec, type EvaluatedCandidate, type MeshFailure } from './service.ts';
 export * from './research-mesh/index.ts';
+export * from './native-research-agent/index.ts';
 export * from './institutional-research-mesh/index.ts';
