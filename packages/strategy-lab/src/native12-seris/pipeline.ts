@@ -7,6 +7,7 @@ import { overfittingWarnings } from '../overfitting.ts';
 import { countStrategyParameters } from '../dsl.ts';
 import { materializeStrategyCapsuleCandidate } from '../os05/materialize.ts';
 import { validateStrategyGenome } from '../os05/validate.ts';
+import type { StrategyGenomeFailure } from '../os05/types.ts';
 import { runWalkForward } from '../walk-forward.ts';
 import type { MarketDataset } from '../dataset.ts';
 import type { StrategyFailure } from '../types.ts';
@@ -48,6 +49,13 @@ function stageIndex(stage: SerisNative12PipelineStage): number {
 function completedThrough(stage: SerisNative12PipelineStage): readonly SerisNative12PipelineStage[] {
   const idx = stageIndex(stage);
   return Object.freeze(SERIS_NATIVE12_PIPELINE_STAGES.slice(0, idx + 1));
+}
+
+function mapGenomeFailure(failure: StrategyGenomeFailure): StrategyFailure {
+  return Object.freeze({
+    code: 'PROMOTION_GATE_FAILED',
+    message: `${failure.code}: ${failure.message}`,
+  });
 }
 
 function validateFeatureAvailability(
@@ -112,7 +120,7 @@ export class SerisNativeStrategyPipeline {
 
     const genomeValidated = validateStrategyGenome(input.proposal.genome);
     if (!genomeValidated.ok) {
-      return genomeValidated;
+      return err(mapGenomeFailure(genomeValidated.error));
     }
     stages.push('GENOME_VALIDATION');
 
@@ -124,7 +132,7 @@ export class SerisNativeStrategyPipeline {
 
     const capsule = materializeStrategyCapsuleCandidate(genomeValidated.value);
     if (!capsule.ok) {
-      return capsule;
+      return err(mapGenomeFailure(capsule.error));
     }
 
     this.lab.store.putDataset(input.dataset);

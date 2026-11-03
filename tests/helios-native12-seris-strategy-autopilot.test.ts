@@ -32,6 +32,9 @@ import {
 import { EXPLICIT_COSTS, equalWeightSpec, syntheticTwoEtfDataset } from '../packages/strategy-lab/src/fixtures.ts';
 import { StrategyLab } from '../packages/strategy-lab/src/service.ts';
 import {
+  asResearchMonitorId,
+  asResearchMonitorManifestId,
+  asResearchMonitorTriggerEventId,
   buildProactiveInvestigationFromTrigger,
   evaluateResearchMonitorNative12Qualification,
   SerisResearchAutopilotLoop,
@@ -147,9 +150,9 @@ describe('HELIOS NATIVE12 — Seris strategy + research autopilot', () => {
 
   it('proactive monitor bridge + research autopilot loop request research only', async () => {
     const trigger: HeliosResearchMonitorTriggerRecord = Object.freeze({
-      triggerEventId: 'hrmt_native12_demo',
-      monitorId: 'hrm_native12_demo',
-      manifestId: 'hrm_mf_native12',
+      triggerEventId: asResearchMonitorTriggerEventId('hrmt_native12_demo'),
+      monitorId: asResearchMonitorId('hrm_native12_demo'),
+      manifestId: asResearchMonitorManifestId('hrm_mf_native12'),
       action: 'REQUEST_RESEARCH',
       researchTopic: 'Semiconductor vol dislocation follow-up',
       triggeredAt: NOW,

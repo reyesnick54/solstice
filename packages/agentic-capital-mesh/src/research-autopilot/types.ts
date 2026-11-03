@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../domain/src/time.ts';
+import type { UtcInstant } from '../imports.ts';
 
 export const RESEARCH_AUTOPILOT_TASK_KINDS = Object.freeze([
   'MARKET_INVESTIGATION',
