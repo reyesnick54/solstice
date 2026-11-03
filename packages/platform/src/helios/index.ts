@@ -249,3 +249,4 @@ export * from './feature-fabric/index.ts';
 export * from './open-source-integration/index.ts';
 export * from './os12-agent-permission-gateway/index.ts';
 export * from './open-source-integration/os13-ai-strategy-sandbox/index.ts';
+export * from './research-monitor/index.ts';
