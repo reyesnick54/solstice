@@ -25,6 +25,15 @@ function statusFrom(
   return Object.freeze({ workPackage, title, status, evidenceRef, ...(notes ? { notes } : {}) });
 }
 
+const HELIOS_ENGINEERING_WORK_PACKAGE = /^H\d{2}$/;
+
+/** H01–H36 engineering closure rows; excludes open-source qualification packages (OS*). */
+export function heliosEngineeringWorkPackages(
+  rows: readonly WorkPackageStatusRow[],
+): readonly WorkPackageStatusRow[] {
+  return rows.filter((row) => HELIOS_ENGINEERING_WORK_PACKAGE.test(row.workPackage));
+}
+
 export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPackageStatusRow[] {
   const rows: WorkPackageStatusRow[] = [];
 
