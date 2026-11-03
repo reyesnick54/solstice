@@ -263,6 +263,12 @@ export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPacka
       'tests/helios-h36-release-evidence-live-pilot-gate.test.ts',
     ),
     statusFrom(
+      'OS08',
+      'Event-triggered agentic research integration',
+      testExists(root, 'helios-os08-triggered-agentic-research.test.ts') ? 'QUALIFIED' : 'BLOCKED',
+      'tests/helios-os08-triggered-agentic-research.test.ts',
+    ),
+    statusFrom(
       'OS12',
       'Agent permission and model gateway (Seris integration)',
       testExists(root, 'helios-os12-agent-permission-gateway.test.ts') ? 'QUALIFIED' : 'BLOCKED',
