@@ -257,7 +257,6 @@ export class StrategySandbox {
       dataset: input.dataset,
       parameterSet,
       startingCapitalMinor: input.startingCapitalMinor,
-      range: { start: train.start, end: holdout.end },
       trainDays: wfPlan.trainDays,
       testDays: wfPlan.testDays,
       generatedAt: input.sealedAt,

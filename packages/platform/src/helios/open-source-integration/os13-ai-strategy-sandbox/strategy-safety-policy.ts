@@ -49,12 +49,12 @@ export const DEFAULT_STRATEGY_SAFETY_POLICY: StrategySafetyPolicy = Object.freez
   maximumRuntimeMs: STRATEGY_RESOURCE_LIMITS.maximumRuntimeMs,
   deployFromSandboxForbidden: true,
   promoteOnMaxBacktestReturnOnlyForbidden: true,
-  requiredEvaluationPartitions: Object.freeze(['TRAIN', 'VALIDATION', 'OUT_OF_SAMPLE_TEST']),
+  requiredEvaluationPartitions: Object.freeze(['TRAIN', 'VALIDATION', 'OUT_OF_SAMPLE_TEST'] as const),
   walkForwardRequired: true,
   explicitCostsRequired: true,
   coverageReportRequired: true,
   regimeBreakdownRequired: true,
-});
+} satisfies StrategySafetyPolicy);
 
 export const SAFETY_FORBIDDEN_TOKENS = Object.freeze([
   ...FORBIDDEN_STRATEGY_CODE,
