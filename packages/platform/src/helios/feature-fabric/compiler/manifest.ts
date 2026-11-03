@@ -13,15 +13,29 @@ export function asPointInTimeDatasetManifestId(value: string): PointInTimeDatase
 
 export type PointInTimeDatasetManifest = {
   readonly manifestId: PointInTimeDatasetManifestId;
+  /** Stable dataset identity; AAFV2.3 sets explicitly (defaults to manifestId for AAF04-only manifests). */
+  readonly datasetId?: string;
   readonly strategyEvaluationId: string;
+  /** Strategy Genome that owns the compiled historical feature plane (AAFV2.3). */
+  readonly strategyGenomeId?: string;
   readonly decisionTimeRange: { readonly start: UtcInstant; readonly end: UtcInstant };
   readonly universeVersion: string;
-  readonly featureVersions: Readonly<Record<string, string>>;
-  readonly observationRefs: readonly string[];
+  readonly universeDefinition?: string;
   readonly entityResolutionVersion: string;
+  readonly entityGraphVersion?: string;
+  readonly featureVersions: Readonly<Record<string, string>>;
+  readonly featureDefinitionRefs?: readonly string[];
+  readonly observationRefs: readonly string[];
+  readonly revisionRefs?: readonly string[];
+  readonly sourceProviders?: readonly string[];
+  readonly qualityPolicies?: readonly string[];
+  readonly entitlementState?: string;
+  readonly transformVersions?: Readonly<Record<string, string>>;
+  readonly temporalJoinPolicy?: string;
+  readonly revisionSelectionPolicy?: string;
   readonly revisionPolicy: RevisionPolicy;
   readonly missingnessPolicy: MissingnessPolicy;
-  readonly compilerVersion: typeof AAF04_COMPILER_VERSION;
+  readonly compilerVersion: typeof AAF04_COMPILER_VERSION | string;
   readonly contentHash: string;
 };
 
