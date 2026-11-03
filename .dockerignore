@@ -1,5 +1,6 @@
 .git
 .github
+vendor/assimilation/**
 **/.git
 **/node_modules
 **/target

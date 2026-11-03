@@ -21,5 +21,8 @@
     "tools/**/*.ts",
     "tests/**/*.ts",
     "scripts/lib/**/*.d.ts"
+  ],
+  "exclude": [
+    "vendor/**"
   ]
 }

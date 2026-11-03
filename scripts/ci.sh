@@ -26,6 +26,7 @@ node scripts/check-build-status.mjs
 echo "==> [PRODUCTION SAFETY] deployment posture"
 python3 scripts/check-deployment-posture.py
 node scripts/check-production-safety.mjs
+node scripts/check-assimilation-quarantine.mjs
 
 echo "==> [ARCHITECTURE] kernel gating"
 npm run gate
