@@ -5,6 +5,8 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
+import { loadCommittedAssimilationQuarantine } from '@solstice/config/committed-assimilation-quarantine';
+
 const ASSIMILATION_REL = 'vendor/assimilation';
 
 /** Allowed filenames under vendor/assimilation when no foreign runtime source remains. */
@@ -117,6 +119,47 @@ export function auditVendorAssimilationTree(root: string): VendorAssimilationAud
       retainedLegalPaths: Object.freeze([]),
       removedForeignSource: true,
     });
+  }
+
+  const committedQuarantine = loadCommittedAssimilationQuarantine(root);
+  if (committedQuarantine.active) {
+    for (const vendorPath of committedQuarantine.vendorPaths) {
+      if (!existsSync(join(root, vendorPath))) {
+        blockers.push(`committed quarantine vendor path missing: ${vendorPath}`);
+      }
+    }
+    checks.push({
+      id: 'vendor.assimilation.committed_quarantine_archives',
+      passed: blockers.length === 0,
+      message:
+        blockers.length === 0
+          ? `${committedQuarantine.vendorPaths.length} committed quarantine archive(s) under vendor/assimilation (not executed at runtime)`
+          : 'committed quarantine manifest paths incomplete',
+    });
+    checks.push({
+      id: 'vendor.assimilation.legal_notices_preserved',
+      passed: legalDocsPresent,
+      message: legalDocsPresent
+        ? 'legal notices and provenance manifest under docs/helios/native-assimilation/'
+        : 'missing THIRD_PARTY_NOTICES or NATIVE_ASSIMILATION_PROVENANCE_MANIFEST',
+    });
+    if (!legalDocsPresent) {
+      blockers.push('legal attribution artifacts missing (THIRD_PARTY_NOTICES or provenance manifest)');
+    }
+    const pass = blockers.length === 0;
+    return Object.freeze({
+      assimilationPath: ASSIMILATION_REL,
+      present: true,
+      checks: Object.freeze(checks),
+      pass,
+      blockers: Object.freeze(blockers),
+      retainedLegalPaths: Object.freeze(committedQuarantine.vendorPaths),
+      removedForeignSource: false,
+    });
+  }
+
+  if (committedQuarantine.blockers.length > 0) {
+    blockers.push(...committedQuarantine.blockers);
   }
 
   const files = walk(assimilationAbs);

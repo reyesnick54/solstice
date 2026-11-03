@@ -1,3 +1,4 @@
+import { loadCommittedAssimilationQuarantine } from '@solstice/config/committed-assimilation-quarantine';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -55,8 +56,12 @@ export function assertNoPythonProductionDependency(root = repoRoot()): readonly 
     }
   }
   const vendorTree = join(root, 'vendor/assimilation/tradingagents/tradingagents');
-  if (existsSync(vendorTree)) {
+  const quarantine = loadCommittedAssimilationQuarantine(root);
+  if (existsSync(vendorTree) && !quarantine.active) {
     blockers.push('upstream tradingagents tree must not be committed under vendor/assimilation');
+  }
+  if (quarantine.blockers.length > 0) {
+    blockers.push(...quarantine.blockers);
   }
   return Object.freeze(blockers);
 }

@@ -5,7 +5,10 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
+import { loadCommittedAssimilationQuarantine } from '@solstice/config/committed-assimilation-quarantine';
 import { FORBIDDEN_FOREIGN_RUNTIME_LABELS } from './taxonomy.ts';
+
+const ASSIMILATION_REL = 'vendor/assimilation';
 
 export type ForeignRuntimeScanCheck = {
   readonly id: string;
@@ -57,9 +60,15 @@ function walkJsonFiles(dir: string, out: string[] = []): string[] {
   return out;
 }
 
+function isRepoVendorAssimilationPath(root: string, absPath: string): boolean {
+  const repoRel = relative(root, absPath).replace(/\\/g, '/');
+  return repoRel === ASSIMILATION_REL || repoRel.startsWith(`${ASSIMILATION_REL}/`);
+}
+
 export function scanForeignRuntimeIndependence(root: string): ForeignRuntimeScanResult {
   const checks: ForeignRuntimeScanCheck[] = [];
   const blockers: string[] = [];
+  const committedQuarantine = loadCommittedAssimilationQuarantine(root);
 
   const gitmodules = join(root, '.gitmodules');
   const submodulesPresent = existsSync(gitmodules);
@@ -90,6 +99,7 @@ export function scanForeignRuntimeIndependence(root: string): ForeignRuntimeScan
         const full = join(current, entry);
         if (statSync(full).isDirectory()) stack.push(full);
         else if (entry.endsWith('.csproj') || entry.endsWith('.sln')) {
+          if (committedQuarantine.active && isRepoVendorAssimilationPath(root, full)) continue;
           csprojHits.push(relative(root, full));
         }
       }
@@ -114,6 +124,7 @@ export function scanForeignRuntimeIndependence(root: string): ForeignRuntimeScan
         const full = join(current, entry);
         if (statSync(full).isDirectory()) stack.push(full);
         else if (entry === 'requirements.txt' || entry === 'pyproject.toml') {
+          if (committedQuarantine.active && isRepoVendorAssimilationPath(root, full)) continue;
           requirementsUnderVendor.push(relative(root, full));
         }
       }
@@ -131,9 +142,11 @@ export function scanForeignRuntimeIndependence(root: string): ForeignRuntimeScan
     blockers.push('Python foreign runtime manifests under vendor/');
   }
 
-  const packageJsonFiles = walkJsonFiles(root).filter(
-    (p) => !p.includes('node_modules') && !p.includes('/vendor/'),
-  );
+  const packageJsonFiles = walkJsonFiles(root).filter((p) => {
+    if (p.includes('node_modules')) return false;
+    const repoRel = relative(root, p).replace(/\\/g, '/');
+    return !repoRel.startsWith('vendor/');
+  });
   const badDeps: string[] = [];
   for (const file of packageJsonFiles) {
     const text = readFileSync(file, 'utf8');
@@ -190,6 +203,19 @@ export function scanForeignRuntimeIndependence(root: string): ForeignRuntimeScan
     id: 'foreign.runtime.labels',
     passed: true,
     message: `retired runtimes: ${FORBIDDEN_FOREIGN_RUNTIME_LABELS.join('; ')}`,
+  });
+
+  if (committedQuarantine.blockers.length > 0) {
+    blockers.push(...committedQuarantine.blockers);
+  }
+  checks.push({
+    id: 'foreign.committed_assimilation_quarantine',
+    passed: committedQuarantine.active || committedQuarantine.blockers.length === 0,
+    message: committedQuarantine.active
+      ? 'committed vendor/assimilation archives quarantined (no runtime wiring)'
+      : committedQuarantine.blockers.length > 0
+        ? committedQuarantine.blockers.join('; ')
+        : 'no committed assimilation quarantine manifest',
   });
 
   const pass = blockers.length === 0;
