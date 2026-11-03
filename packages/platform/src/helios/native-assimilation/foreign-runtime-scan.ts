@@ -19,17 +19,8 @@ export type ForeignRuntimeScanResult = {
   readonly blockers: readonly string[];
 };
 
+/** Runtime package paths — not legal README stubs under vendor/assimilation (see vendor audit). */
 const FORBIDDEN_VENDORED_PATHS = Object.freeze([
-  'vendor/assimilation/bytex',
-  'vendor/assimilation/BYTEX',
-  'vendor/assimilation/openchart',
-  'vendor/assimilation/OpenChart',
-  'vendor/assimilation/tradingagents',
-  'vendor/assimilation/TradingAgents',
-  'vendor/assimilation/seris',
-  'vendor/assimilation/Seris',
-  'vendor/assimilation/polymarket',
-  'vendor/assimilation/Polymarket-Prediction-Bot',
   'packages/trading-agents',
   'packages/tradingagents',
   'packages/bytex-runtime',

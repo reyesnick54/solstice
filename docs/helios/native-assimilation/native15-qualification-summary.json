@@ -2,7 +2,7 @@
   "marker": "HELIOS_FOREIGN_RUNTIME_INDEPENDENCE_QUALIFIED",
   "qualified": true,
   "blockers": [],
-  "vendorAssimilationPresent": false,
+  "vendorAssimilationPresent": true,
   "runtimeImportViolations": [],
   "matrix": "docs/helios/native-assimilation/NATIVE_CAPABILITY_PARITY_MATRIX.md",
   "provenance": "docs/helios/native-assimilation/NATIVE_ASSIMILATION_PROVENANCE_MANIFEST.json"

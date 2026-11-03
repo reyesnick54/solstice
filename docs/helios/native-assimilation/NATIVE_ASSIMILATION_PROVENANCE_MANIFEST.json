@@ -2,8 +2,8 @@
   "schema": "sunrey.helios.native-assimilation-provenance.v1",
   "purpose": "historical_and_legal_attribution_only",
   "runtimePin": false,
-  "recordedAt": "2026-11-03T09:16:25.305Z",
-  "gitSha": "e44ef7fd18288e1e95fad6744b755630f237c8d2",
+  "recordedAt": "2026-11-03T09:31:30.756Z",
+  "gitSha": "fd104f57064fbc13ad9fd22709ad20eaad093192",
   "upstream": [
     {
       "upstreamId": "bytex",
