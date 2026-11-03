@@ -38,8 +38,13 @@ export type VenueReconciliationSemantics = Readonly<{
   readonly unknownStateFailsClosed: boolean;
 }>;
 
+const DEFAULT_RECONCILIATION_MODES: readonly VenueReconciliationMode[] = Object.freeze([
+  'startup_mass_status',
+  'periodic_mass_status',
+]);
+
 export const DEFAULT_RECONCILIATION_SEMANTICS: VenueReconciliationSemantics = Object.freeze({
-  supportedModes: Object.freeze(['startup_mass_status', 'periodic_mass_status']),
+  supportedModes: DEFAULT_RECONCILIATION_MODES,
   blockDuringOpenSubmit: true,
   adoptExternalWorkingOrders: false,
   unknownStateFailsClosed: true,

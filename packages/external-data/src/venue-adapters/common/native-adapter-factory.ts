@@ -27,7 +27,17 @@ import {
   type VenueMarketDataProbeRequest,
   type VenueMarketDataProbeResult,
   type VenueReconciliationSemantics,
+  type VenueWebSocketLifecycleState,
 } from '@solstice/provider-sdk';
+
+const DEFAULT_WEBSOCKET_LIFECYCLE: readonly VenueWebSocketLifecycleState[] = Object.freeze([
+  'disconnected',
+  'connecting',
+  'connected',
+  'reconnecting',
+  'paused',
+  'closed',
+]);
 
 export type VenueSymbolCodec = Readonly<{
   resolve(input: { kind: 'canonical'; value: string } | { kind: 'raw'; value: string }): HeliosCanonicalSymbol;
@@ -60,14 +70,7 @@ function defaultConnectivity(manifest: VenueCapabilityManifest): VenueConnectivi
       ? manifest.marketData.rateLimits.value
       : { restRequestsPerSecond: null, websocketSubscriptionsMax: null, notes: null };
   return Object.freeze({
-    websocketLifecycle: Object.freeze([
-      'disconnected',
-      'connecting',
-      'connected',
-      'reconnecting',
-      'paused',
-      'closed',
-    ]),
+    websocketLifecycle: DEFAULT_WEBSOCKET_LIFECYCLE,
     sequence: DEFAULT_VENUE_SEQUENCE_POLICY,
     heartbeat: DEFAULT_VENUE_HEARTBEAT_POLICY,
     rateLimits: Object.freeze({

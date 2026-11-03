@@ -3,10 +3,20 @@ import {
   HELIOS_VENUE_NORMALIZATION_SCHEMA_VERSION,
   unavailableField,
   type HeliosCanonicalSymbol,
+  type HeliosInstrumentMetadata,
   type HeliosVenueNormalizationFixture,
+  type VenueAssetClass,
   type VenueCapabilityManifest,
+  type VenueMarketDataType,
+  type VenueOrderType,
+  type VenueTimeInForce,
 } from '@solstice/provider-sdk';
-import { createNativeVenueAdapter, type NativeVenueModule } from '../common/native-adapter-factory.ts';
+import {
+  createNativeVenueAdapter,
+  type NativeVenueModule,
+  type VenueNormalizerBundle,
+  type VenueSymbolCodec,
+} from '../common/native-adapter-factory.ts';
 import { requireDecimalString } from '../common/parse-decimal.ts';
 import { HELIOS_ENGINE_PERP_SUFFIX } from '../common/symbol-suffix.ts';
 
@@ -56,16 +66,25 @@ const FIXTURES: HeliosVenueNormalizationFixture = Object.freeze({
   }),
 });
 
-const MANIFEST: VenueCapabilityManifest = Object.freeze({
+const HYPERLIQUID_ASSET_CLASSES: readonly VenueAssetClass[] = Object.freeze(['crypto_perpetual']);
+const HYPERLIQUID_MARKET_DATA_TYPES: readonly VenueMarketDataType[] = Object.freeze([
+  'ticker',
+  'order_book',
+  'trades',
+  'candles',
+  'funding_rate',
+]);
+const HYPERLIQUID_ORDER_TYPES: readonly VenueOrderType[] = Object.freeze(['MARKET', 'LIMIT']);
+const HYPERLIQUID_TIF_TYPES: readonly VenueTimeInForce[] = Object.freeze(['GTC', 'IOC']);
+
+const MANIFEST_BODY = {
   venueId: 'hyperliquid',
   displayName: 'Hyperliquid',
-  assetClasses: availableField(Object.freeze(['crypto_perpetual'] as const)),
-  instruments: availableField(Object.freeze(['BTC/USD'] as const)),
-  venues: availableField(Object.freeze(['hyperliquid_perp'] as const)),
-  marketData: Object.freeze({
-    marketDataTypes: availableField(
-      Object.freeze(['ticker', 'order_book', 'trades', 'candles', 'funding_rate'] as const),
-    ),
+  assetClasses: availableField(HYPERLIQUID_ASSET_CLASSES),
+  instruments: availableField(Object.freeze(['BTC/USD'])),
+  venues: availableField(Object.freeze(['hyperliquid_perp'])),
+  marketData: {
+    marketDataTypes: availableField(HYPERLIQUID_MARKET_DATA_TYPES),
     websocketAvailable: availableField(true),
     restAvailable: availableField(true),
     historicalDataSupport: availableField(false),
@@ -75,10 +94,10 @@ const MANIFEST: VenueCapabilityManifest = Object.freeze({
       websocketSubscriptionsMax: 50,
       notes: 'Hyperliquid public info endpoints; signing not enabled.',
     }),
-  }),
-  orders: Object.freeze({
-    orderTypes: availableField(Object.freeze(['MARKET', 'LIMIT'] as const)),
-    tifTypes: availableField(Object.freeze(['GTC', 'IOC'] as const)),
+  },
+  orders: {
+    orderTypes: availableField(HYPERLIQUID_ORDER_TYPES),
+    tifTypes: availableField(HYPERLIQUID_TIF_TYPES),
     precision: availableField({ priceDecimals: 6, quantityDecimals: 6, notionalDecimals: 2 }),
     minimumQuantity: availableField({ value: '0.0001', unit: 'BTC' }),
     minimumNotional: availableField({ valueMinor: '1000', currency: 'USD' }),
@@ -86,24 +105,26 @@ const MANIFEST: VenueCapabilityManifest = Object.freeze({
     reduceOnlySupport: availableField(true),
     postOnlySupport: availableField(true),
     fundingSupport: availableField(true),
-  }),
-  account: Object.freeze({
+  },
+  account: {
     sandboxAvailability: unavailableField<boolean>(),
     subAccountSupport: availableField(false),
     portfolioMarginSupport: unavailableField<boolean>(),
-  }),
-  reconciliation: Object.freeze({
+  },
+  reconciliation: {
     reconciliationSupport: availableField(true),
     fillHistoryAvailable: availableField(true),
     ledgerExportAvailable: unavailableField<boolean>(),
-  }),
+  },
   healthState: 'HEALTHY',
   liveOrderPlacementEnabled: false,
-  qualificationNotes: Object.freeze([
+  qualificationNotes: [
     'NATIVE05 Hyperliquid perpetual adapter — BYTEX coin + -PERP engine id mapping',
     'Live execution disabled',
-  ]),
-});
+  ],
+} satisfies VenueCapabilityManifest;
+
+const MANIFEST: VenueCapabilityManifest = Object.freeze(MANIFEST_BODY) as VenueCapabilityManifest;
 
 function resolveSymbol(input: { kind: 'canonical'; value: string } | { kind: 'raw'; value: string }): HeliosCanonicalSymbol {
   if (input.kind === 'canonical') {
@@ -128,28 +149,25 @@ function resolveSymbol(input: { kind: 'canonical'; value: string } | { kind: 'ra
   });
 }
 
-const MODULE: NativeVenueModule = Object.freeze({
-  venueId: 'hyperliquid',
-  displayName: 'Hyperliquid',
-  manifest: MANIFEST,
-  symbols: Object.freeze({
-    resolve: resolveSymbol,
-    describe(symbol) {
-      return Object.freeze({
-        symbol,
-        priceDecimals: 6,
-        quantityDecimals: 6,
-        minQuantity: '0.0001',
-        minNotionalMinor: '1000',
-        quoteCurrency: 'USD',
-        tickSize: '0.1',
-        stepSize: '0.0001',
-        status: 'tradable',
-      });
-    },
-  }),
-  normalizers: Object.freeze({
-    normalizeQuote(raw, symbol) {
+const SYMBOL_CODEC: VenueSymbolCodec = {
+  resolve: resolveSymbol,
+  describe(symbol: HeliosCanonicalSymbol): HeliosInstrumentMetadata {
+    return Object.freeze({
+      symbol,
+      priceDecimals: 6,
+      quantityDecimals: 6,
+      minQuantity: '0.0001',
+      minNotionalMinor: '1000',
+      quoteCurrency: 'USD',
+      tickSize: '0.1',
+      stepSize: '0.0001',
+      status: 'tradable',
+    });
+  },
+};
+
+const NORMALIZERS: VenueNormalizerBundle = {
+  normalizeQuote(raw: unknown, symbol: HeliosCanonicalSymbol) {
       const row = raw as Record<string, unknown>;
       return Object.freeze({
         schemaVersion: HELIOS_VENUE_NORMALIZATION_SCHEMA_VERSION,
@@ -162,8 +180,8 @@ const MODULE: NativeVenueModule = Object.freeze({
         eventTimeUtc: new Date(Number(row.time)).toISOString(),
         sequence: null,
       });
-    },
-    normalizeTrade(raw, symbol) {
+  },
+  normalizeTrade(raw: unknown, symbol: HeliosCanonicalSymbol) {
       const row = raw as Record<string, unknown>;
       return Object.freeze({
         schemaVersion: HELIOS_VENUE_NORMALIZATION_SCHEMA_VERSION,
@@ -176,8 +194,8 @@ const MODULE: NativeVenueModule = Object.freeze({
         eventTimeUtc: new Date(Number(row.time)).toISOString(),
         sequence: null,
       });
-    },
-    normalizeBook(raw, symbol) {
+  },
+  normalizeBook(raw: unknown, symbol: HeliosCanonicalSymbol) {
       const row = raw as { levels: [[unknown, unknown][], [unknown, unknown][]]; time?: number };
       const [bids, asks] = row.levels;
       return Object.freeze({
@@ -204,8 +222,8 @@ const MODULE: NativeVenueModule = Object.freeze({
         sequence: null,
         isSnapshot: true,
       });
-    },
-    normalizeCandle(raw, symbol) {
+  },
+  normalizeCandle(raw: unknown, symbol: HeliosCanonicalSymbol) {
       const row = raw as Record<string, unknown>;
       return Object.freeze({
         schemaVersion: HELIOS_VENUE_NORMALIZATION_SCHEMA_VERSION,
@@ -220,8 +238,8 @@ const MODULE: NativeVenueModule = Object.freeze({
         volume: requireDecimalString(row.v, 'volume'),
         interval: String(row.i),
       });
-    },
-    normalizeOrderState(raw, symbol) {
+  },
+  normalizeOrderState(raw: unknown, symbol: HeliosCanonicalSymbol) {
       const row = raw as Record<string, unknown>;
       const status = String(row.status);
       return Object.freeze({
@@ -235,13 +253,20 @@ const MODULE: NativeVenueModule = Object.freeze({
         lastUpdateTimeUtc: new Date(Number(row.timestamp)).toISOString(),
         rawStatus: status,
       });
-    },
-  }),
+  },
+};
+
+const MODULE: NativeVenueModule = {
+  venueId: 'hyperliquid',
+  displayName: 'Hyperliquid',
+  manifest: MANIFEST,
+  symbols: SYMBOL_CODEC,
+  normalizers: NORMALIZERS,
   normalizationFixtures: Object.freeze([FIXTURES]),
-  fixtureLastPrice(symbol) {
+  fixtureLastPrice(symbol: string) {
     return symbol === 'BTC/USD' ? '67234.5' : null;
   },
-});
+};
 
 export const HYPERLIQUID_VENUE_ADAPTER = createNativeVenueAdapter(MODULE);
 
