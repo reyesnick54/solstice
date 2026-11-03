@@ -1,4 +1,4 @@
-import { err, ok, type Result } from '../../../domain/src/result.ts';
+import { err, ok, type Result } from '@solstice/domain';
 
 export const PORTFOLIO_RESEARCH_RATINGS = [
   'Buy',

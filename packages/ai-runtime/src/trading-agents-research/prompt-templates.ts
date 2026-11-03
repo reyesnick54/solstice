@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const TRADING_AGENTS_PROMPT_SCHEMA = 'sunrey.trading-agents-research.prompt.v1' as const;
 
