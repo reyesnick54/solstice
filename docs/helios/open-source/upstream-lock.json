@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "id": "helios.open-source.upstream-lock.v1",
+  "workPackage": "OS00",
+  "solsticeBase": {
+    "remote": "origin/main",
+    "sha": "00a51dfd1c5771e9d65c74b0b4a8917d76db0a20",
+    "recordedAt": "2026-11-03T06:31:35Z"
+  },
+  "referenceWorkspace": {
+    "preferredPath": "../_helios_upstream_reference/",
+    "auditPathUsed": "/tmp/_helios_upstream_reference/",
+    "note": "Reference clones only. Never subtree or commit upstream trees into Solstice."
+  },
+  "adaptiveAlphaFabricRecovery": {
+    "preferredIntegrationBase": "aaf01-current-state-truth-map",
+    "headSha": "cbfd6b5540843a4ed0209888de038560d20936f1",
+    "pullRequest": "https://github.com/reyesnick54/solstice/pull/581",
+    "containsAaf02ThroughAaf10": true,
+    "qualificationStatus": "RED",
+    "ciStatus": "RED",
+    "typecheckStatus": "RED",
+    "blockersSummary": "CI typecheck failures on economic-asset-registry knowledge-graph and related packages; HELIOS release candidate BUILD→QUALIFY→MANIFEST failed; AAF08/AAF10 qualification gaps documented in AAF01_GAP_REGISTER.",
+    "alternateBranches": [
+      {
+        "ref": "helios/adaptive-alpha-fabric",
+        "headSha": "a0a9552bd378edca0f161075fbe3ced396b1b072",
+        "pullRequest": "https://github.com/reyesnick54/solstice/pull/579",
+        "notes": "Latest AAF05 export fix; does not include AAF01 truth-map artifacts."
+      },
+      {
+        "ref": "helios-aaf-adaptive-alpha-fabric-merge",
+        "headSha": "a051b3d808ed6034110e2c88d660810b0b5c4fb0",
+        "pullRequest": "https://github.com/reyesnick54/solstice/pull/580",
+        "notes": "CI repair commits merged into PR 581."
+      }
+    ]
+  },
+  "upstream": [
+    {
+      "id": "bytex",
+      "repository": "https://github.com/BYTEX-TRADE/bytex",
+      "upstreamSha": "67b3e103043476a0490bb7afa146ec9ac339b116",
+      "upstreamMainSha": "67b3e103043476a0490bb7afa146ec9ac339b116",
+      "shaMatchesUpstreamMain": true,
+      "fetchTimestamp": "2026-11-03T06:31:35Z",
+      "license": "Apache-2.0",
+      "licenseFile": "LICENSE",
+      "languageStack": [".NET 10", "C#"],
+      "relevantDirectories": [
+        "src/Bytex.Core",
+        "src/Bytex.Backtest",
+        "src/Bytex.Indicators",
+        "src/Bytex.Data",
+        "src/Bytex.Adapters.*",
+        "docs/concepts"
+      ],
+      "directCodeReusePermissible": true,
+      "attributionRequired": true
+    },
+    {
+      "id": "openchart",
+      "repository": "https://github.com/longsurf-ai/openchart",
+      "upstreamSha": "8109466bfb5d44c32e0e03e9337eaca48b837ab4",
+      "upstreamMainSha": "8109466bfb5d44c32e0e03e9337eaca48b837ab4",
+      "shaMatchesUpstreamMain": true,
+      "fetchTimestamp": "2026-11-03T06:31:35Z",
+      "license": "MIT",
+      "licenseFile": "LICENSE",
+      "languageStack": ["TypeScript", "Bun", "Node 24"],
+      "relevantDirectories": [
+        "server/indicators",
+        "server/feed",
+        "server/data",
+        "server/alert",
+        "common",
+        "docs/architecture"
+      ],
+      "directCodeReusePermissible": true,
+      "attributionRequired": true
+    },
+    {
+      "id": "tradingagents",
+      "repository": "https://github.com/TauricResearch/TradingAgents",
+      "upstreamSha": "c4544913a14ed3df5f1ed7b9e8483270ce20682a",
+      "upstreamMainSha": "c4544913a14ed3df5f1ed7b9e8483270ce20682a",
+      "shaMatchesUpstreamMain": true,
+      "fetchTimestamp": "2026-11-03T06:31:35Z",
+      "license": "Apache-2.0",
+      "licenseFile": "LICENSE",
+      "languageStack": ["Python 3.11+", "LangGraph"],
+      "relevantDirectories": [
+        "tradingagents/graph",
+        "tradingagents/agents",
+        "tradingagents/dataflows",
+        "tradingagents/memory",
+        "tradingagents/llm_clients"
+      ],
+      "directCodeReusePermissible": true,
+      "attributionRequired": true
+    },
+    {
+      "id": "seris",
+      "repository": "https://github.com/aowang-ai/seris",
+      "upstreamSha": "f73dbbb0cd7e3b52601abf905bb871cdb9098550",
+      "upstreamMainSha": "f73dbbb0cd7e3b52601abf905bb871cdb9098550",
+      "shaMatchesUpstreamMain": true,
+      "fetchTimestamp": "2026-11-03T06:31:35Z",
+      "license": "Apache-2.0",
+      "licenseFile": "LICENSE",
+      "languageStack": ["TypeScript", "pnpm", "Tauri desktop"],
+      "relevantDirectories": [
+        "apps/core",
+        "apps/desktop-ui",
+        "apps/desktop"
+      ],
+      "directCodeReusePermissible": true,
+      "attributionRequired": true
+    },
+    {
+      "id": "polymarket-prediction-bot",
+      "repository": "https://github.com/semrincaballero/Polymarket-Prediction-Bot",
+      "upstreamSha": "1f7c9761ddd26863242e3ed4f83c230ee38aebeb",
+      "upstreamMainSha": "e863a9b3bca7235e0f5489178a911120446373d1",
+      "shaMatchesUpstreamMain": false,
+      "fetchTimestamp": "2026-11-03T06:31:35Z",
+      "license": "MIT",
+      "licenseFile": "LICENSE",
+      "languageStack": ["Python 3.11+", "Textual TUI"],
+      "relevantDirectories": [
+        "polymarket_bot/core",
+        "polymarket_bot/config.py",
+        "support/data"
+      ],
+      "directCodeReusePermissible": true,
+      "attributionRequired": true,
+      "pinNote": "Pinned SHA is behind upstream main; re-verify diff before any OS11+ port."
+    }
+  ],
+  "integrationGate": {
+    "behavioralIntegrationBlocked": true,
+    "reason": "Adaptive Alpha Fabric recovery branch is not CI/typecheck/HELIOS qualification green.",
+    "allowedDuringBlock": [
+      "docs/helios/open-source/*",
+      "upstream-lock.json maintenance",
+      "design-only integration maps"
+    ]
+  }
+}
