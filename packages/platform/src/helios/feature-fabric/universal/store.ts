@@ -2,7 +2,7 @@
  * In-memory universal feature fabric store with restart snapshot support.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { isFeatureVisibleAt } from './knowable-at.ts';
 import type { FeatureDefinition, FeatureManifest, FeatureObservation } from './types.ts';
 

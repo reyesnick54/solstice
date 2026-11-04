@@ -1,4 +1,11 @@
-export { QUANTITY_SCALE, quantityFromScaledString, quantityFromWholeString, wholeShares, zeroQuantity } from './quantity.ts';
+export {
+  QUANTITY_SCALE,
+  quantityFromScaledString,
+  quantityFromWholeString,
+  quantityScaleFactor,
+  wholeShares,
+  zeroQuantity,
+} from './quantity.ts';
 export { priceFromMinorUnits, priceFromMinorUnitsString, notionalMoney } from './price.ts';
 export {
   LIVE_INVESTMENT_EXECUTION,

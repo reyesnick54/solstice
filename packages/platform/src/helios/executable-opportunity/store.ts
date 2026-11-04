@@ -1,4 +1,4 @@
-import type { CustomerId } from '../../../../domain/src/customer.ts';
+import type { CustomerId } from '@solstice/domain';
 import type { ExecutableOpportunity, OpportunityCandidate } from './types.ts';
 
 export type ExecutableOpportunityStoreSnapshot = {

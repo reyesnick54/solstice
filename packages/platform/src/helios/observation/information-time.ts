@@ -2,8 +2,8 @@
  * Information-time rule — separates "when did it happen" from "when could SunRey know it".
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
-import type { ExternalObservation } from '../../../../provider-sdk/src/types.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
+import type { ExternalObservation } from '@solstice/provider-sdk';
 import type { InformationTime } from './types.ts';
 
 export function buildInformationTime(input: {

@@ -1,6 +1,6 @@
-import { err, ok, type Result } from '../../domain/src/result.ts';
-import { quantityScaleFactor } from '../../investments/src/quantity.ts';
-import { RATIO_SCALE, RATIO_UNIT, applyRatio, ratioFromUnits, type Ratio } from '../../risk/src/arithmetic.ts';
+import { err, ok, type Result } from '@solstice/domain';
+import { quantityScaleFactor } from '@solstice/investments';
+import { RATIO_SCALE, RATIO_UNIT, applyRatio, ratioFromUnits, type Ratio } from '@solstice/risk';
 import { asCapitalAllocationCandidateId } from './ids.ts';
 import type {
   AllocationSlice,

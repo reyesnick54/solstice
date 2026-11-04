@@ -2,7 +2,7 @@
  * AAF09 — real crypto multi-venue market observation plane (market data only).
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const HELIOS_AAF09_SCHEMA = 'sunrey.helios.aaf09.external-crypto-observation.v1' as const;
 export const HELIOS_AAF09_AUTHORITY = 'MARKET_DATA_OBSERVATION_ONLY' as const;

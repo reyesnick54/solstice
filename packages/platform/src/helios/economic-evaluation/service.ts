@@ -1,6 +1,6 @@
-import type { Clock } from '../../../../config/src/clock.ts';
-import type { CustomerId } from '../../../../domain/src/customer.ts';
-import { err, ok, type Result } from '../../../../domain/src/result.ts';
+import type { Clock } from '@solstice/config';
+import type { CustomerId } from '@solstice/domain';
+import { err, ok, type Result } from '@solstice/domain';
 import { allocateResearchCost } from './cost-accounting.ts';
 import {
   assertExperimentFrozen,

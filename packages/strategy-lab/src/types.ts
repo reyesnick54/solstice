@@ -1,6 +1,6 @@
-import type { UtcInstant } from '../../domain/src/time.ts';
-import type { ModelId, ModelVersion } from '../../model-registry/src/ids.ts';
-import type { RiskBudgetId, RiskModelId, RiskModelVersion } from '../../risk/src/ids.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { ModelId, ModelVersion } from '@solstice/model-registry';
+import type { RiskBudgetId, RiskModelId, RiskModelVersion } from '@solstice/risk';
 import type {
   BacktestRunId,
   ExperimentId,

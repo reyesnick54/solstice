@@ -5,7 +5,7 @@
  * Observations only — no execution authority.
  */
 
-import type { ExternalObservation } from '../../provider-sdk/src/index.ts';
+import type { ExternalObservation } from '@solstice/provider-sdk';
 
 // ── Canonical Geography ───────────────────────────────────────────────────────
 

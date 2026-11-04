@@ -4,7 +4,7 @@
  * External observations never grant Execution Authority.
  */
 
-import { toAgentEvidenceRef, type ExternalObservationEvidenceRef } from '../../provider-sdk/src/agent-evidence.ts';
+import { toAgentEvidenceRef, type ExternalObservationEvidenceRef } from '@solstice/provider-sdk';
 import type { ExternalDataPlane } from './plane.ts';
 
 export const AGENT_EVIDENCE_CATEGORIES = [

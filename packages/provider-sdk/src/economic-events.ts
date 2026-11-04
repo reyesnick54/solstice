@@ -4,8 +4,8 @@
  * Integrates with the canonical events taxonomy.
  */
 
-import type { UtcInstant } from '../../domain/src/time.ts';
-import type { VersionedEvent } from '../../events/src/events.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { VersionedEvent } from '@solstice/events';
 
 export const ECONOMIC_PROVENANCE_EVENT_TYPES = [
   'ProviderRecordReceived',

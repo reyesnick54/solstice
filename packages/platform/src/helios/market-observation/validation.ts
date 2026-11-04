@@ -2,7 +2,7 @@
  * M02 market observation validation and quarantine.
  */
 
-import { isUtcInstant } from '../../../../domain/src/time.ts';
+import { isUtcInstant } from '@solstice/domain';
 import { BAR_TIMEFRAMES, type BarTimeframe, type CanonicalMarketObservation, type OhlcvBar, type QuarantineReason } from './types.ts';
 import { providerSupportsOrderBook, resolveMarketInstrument } from './instrument-registry.ts';
 import { validateOrderBookSnapshot } from './order-book.ts';

@@ -2,7 +2,7 @@
  * AAF10 point-in-time macro feature plane — research and strategy inputs only.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { filterKnowableObservations } from '../compiler/as-of.ts';
 import type { RevisionPolicy, TemporalObservation } from '../temporal-types.ts';
 import { createRevisionLedgerStore, type RevisionLedgerStore } from '../revision-ledger/store.ts';

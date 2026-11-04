@@ -9,7 +9,7 @@ import type { ChronologicalEvaluationConfig } from './types.ts';
 import {
   resolvePointInTimeVectorsForEvaluation as resolvePlatformPointInTimeVectors,
   type PointInTimeFeatureEvaluationAttachment,
-} from '../../../platform/src/helios/feature-fabric/compiler/strategy-lab-bridge.ts';
+} from '@solstice/platform/helios/strategy-lab-bridge';
 
 export type { PointInTimeFeatureEvaluationAttachment };
 

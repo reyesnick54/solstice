@@ -1,4 +1,4 @@
-import { err, ok, type Result } from '../../domain/src/result.ts';
+import { err, ok, type Result } from '@solstice/domain';
 import { STRATEGY_RESOURCE_LIMITS, type StrategyFailure } from './types.ts';
 
 export const APPROVED_OPERATORS = [

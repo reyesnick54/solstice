@@ -13,7 +13,7 @@ import {
   type ProductDataState,
   type ProductSectionEnvelope,
 } from './product-data-state.ts';
-import { DATA_MODE } from '../../config/src/data-mode.ts';
+import { DATA_MODE } from '@solstice/config';
 
 export type ProductiveEconomySnapshot = {
   readonly schema: 'sunrey.productive-economy.snapshot.v1';

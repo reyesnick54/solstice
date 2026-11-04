@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { fillIdFor, type HeliosOperationId, type HeliosOrderId } from './ids.ts';
 import type { HeliosFill, HeliosOrder } from './types.ts';
 import type { HeliosProviderOutcomeKind } from './taxonomy.ts';

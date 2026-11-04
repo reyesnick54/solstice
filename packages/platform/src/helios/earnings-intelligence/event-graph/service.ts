@@ -2,9 +2,9 @@
  * HELIOS EARN02 earnings event graph service — ingest, project, compile PIT snapshots.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
-import type { EarningsExternalObservation } from '../../../../../external-data/src/earnings/types.ts';
-import type { EarningsDataPorts } from '../../../../../external-data/src/earnings/ports.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { EarningsExternalObservation } from '@solstice/external-data';
+import type { EarningsDataPorts } from '@solstice/external-data';
 import { bindEarningsEventToTemporalEntity } from './aaf-temporal-bridge.ts';
 import { appendEarningsSecRevisionIfAbsent } from './revision-bridge.ts';
 import { compilePointInTimeEarningsEventSnapshot } from './snapshot.ts';

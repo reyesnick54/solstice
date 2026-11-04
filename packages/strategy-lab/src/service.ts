@@ -1,13 +1,13 @@
-import type { Clock } from '../../config/src/clock.ts';
-import { err, ok, type Result } from '../../domain/src/result.ts';
-import type { UtcInstant } from '../../domain/src/time.ts';
-import type { EvidenceVault } from '../../evidence/src/vault.ts';
-import type { DomainEventLog } from '../../events/src/events.ts';
-import type { ModelRegistry } from '../../model-registry/src/registry.ts';
-import { RiskEngine } from '../../risk/src/engine.ts';
-import { DEFAULT_STRESS_SCENARIOS } from '../../risk/src/stress.ts';
-import { asPortfolioRiskSnapshotId } from '../../risk/src/ids.ts';
-import type { PortfolioRiskSnapshot, ProposedPaperTrade, RiskBudget, StressRun } from '../../risk/src/types.ts';
+import type { Clock } from '@solstice/config';
+import { err, ok, type Result } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
+import type { EvidenceVault } from '@solstice/evidence';
+import type { DomainEventLog } from '@solstice/events';
+import type { ModelRegistry } from '@solstice/model-registry';
+import { RiskEngine } from '@solstice/risk';
+import { DEFAULT_STRESS_SCENARIOS } from '@solstice/risk';
+import { asPortfolioRiskSnapshotId } from '@solstice/risk';
+import type { PortfolioRiskSnapshot, ProposedPaperTrade, RiskBudget, StressRun } from '@solstice/risk';
 import { runBacktest, type BacktestRun, type ParameterSet } from './backtest.ts';
 import {
   draftFromMeshProposal,
@@ -525,7 +525,7 @@ export class StrategyLab {
     readonly snapshot: PortfolioRiskSnapshot;
     readonly proposed: ProposedPaperTrade;
     readonly budget: RiskBudget;
-  }): Result<{ readonly orderId: string; readonly fillId?: string | undefined; readonly risk: import('../../risk/src/types.ts').RiskDecision }, StrategyFailure> {
+  }): Result<{ readonly orderId: string; readonly fillId?: string | undefined; readonly risk: import('@solstice/risk').RiskDecision }, StrategyFailure> {
     if (this.store.killSwitch.active) {
       return err({
         code: 'KILL_SWITCH_ACTIVE',

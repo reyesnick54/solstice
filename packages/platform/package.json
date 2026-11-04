@@ -4,7 +4,11 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./helios/aaf08-external-equities": "./src/helios/adaptive-alpha-fabric/aaf08-external-equities/provider-port.ts",
+    "./helios/market-observation": "./src/helios/market-observation/types.ts",
+    "./helios/feature-coverage": "./src/helios/feature-fabric/feature-coverage/index.ts",
+    "./helios/strategy-lab-bridge": "./src/helios/feature-fabric/compiler/strategy-lab-bridge.ts"
   },
   "files": [
     "src"
@@ -17,8 +21,22 @@
     "node": ">=22"
   },
   "dependencies": {
+    "@solstice/agent": "0.1.0",
     "@solstice/config": "0.1.0",
     "@solstice/domain": "0.1.0",
-    "@solstice/evidence": "0.1.0"
+    "@solstice/events": "0.1.0",
+    "@solstice/evidence": "0.1.0",
+    "@solstice/external-data": "0.1.0",
+    "@solstice/identity": "0.1.0",
+    "@solstice/investments": "0.1.0",
+    "@solstice/model-registry": "0.1.0",
+    "@solstice/money": "0.1.0",
+    "@solstice/permissions": "0.1.0",
+    "@solstice/provider-sdk": "0.1.0",
+    "@solstice/regulatory-twin": "0.1.0",
+    "@solstice/risk": "0.1.0",
+    "@solstice/security": "0.1.0",
+    "@solstice/sunrey-chain": "0.1.0",
+    "@solstice/sunrey-exchange": "0.1.0"
   }
 }

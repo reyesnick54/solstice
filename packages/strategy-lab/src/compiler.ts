@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-import { err, ok, type Result } from '../../domain/src/result.ts';
+import { err, ok, type Result } from '@solstice/domain';
 import { APPROVED_OPERATORS, validateStrategyAst, type ApprovedOperator } from './dsl.ts';
 import { asStrategyCompilerVersion, type StrategyCompilerVersion } from './ids.ts';
 import type { StrategySpecification } from './specification.ts';

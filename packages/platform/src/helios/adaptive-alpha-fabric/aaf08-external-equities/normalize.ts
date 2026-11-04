@@ -1,4 +1,3 @@
-// @ts-nocheck — simulation normalization until M02 entitlement metadata union aligns.
 /**
  * Map provider-neutral AAF08 payloads into M02 canonical market observations.
  */
@@ -27,7 +26,7 @@ function entitlementFromFeed(input: {
 }): MarketEntitlementMetadata {
   const entitlementClass =
     input.feedClassification === 'realtime'
-      ? 'provider_feed_realtime'
+      ? 'provider_feed_real_time'
       : input.feedClassification === 'delayed'
         ? 'provider_feed_delayed'
         : input.feedClassification === 'end_of_day'

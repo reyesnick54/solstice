@@ -6,7 +6,7 @@
  * explicit feature flags, and credential availability.
  */
 
-import { ENVIRONMENT } from '../../config/src/flags.ts';
+import { ENVIRONMENT } from '@solstice/config';
 import type { CatalogProviderEntry } from './catalog/types.ts';
 import type {
   ProviderActivationMode,

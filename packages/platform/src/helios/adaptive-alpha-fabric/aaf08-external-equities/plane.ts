@@ -2,9 +2,9 @@
  * AAF08 observation plane — adapter → trust → M02 fabric → optional AAF02 features.
  */
 
-import type { Clock } from '../../../../../config/src/clock.ts';
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
-import type { EvidenceVault } from '../../../../../evidence/src/vault.ts';
+import type { Clock } from '@solstice/config';
+import type { UtcInstant } from '@solstice/domain';
+import type { EvidenceVault } from '@solstice/evidence';
 import { resolveProviderSymbol } from '../../feature-fabric/entity-resolution/resolver.ts';
 import type { TemporalEntityGraphStore } from '../../feature-fabric/entity-resolution/graph-store.ts';
 import { HeliosMarketObservationFabric } from '../../market-observation/ingest.ts';
@@ -35,7 +35,7 @@ export class HeliosExternalEquitiesObservationPlane {
   readonly #marketFabric: HeliosMarketObservationFabric;
   readonly #entityGraph: TemporalEntityGraphStore;
   readonly #provider: ExternalEquitiesProviderPort;
-  readonly #evidenceVault?: EvidenceVault;
+  readonly #evidenceVault: EvidenceVault | undefined;
   readonly #trust: Aaf08TrustEngine;
   readonly #staleQuoteThresholdMs: number;
 

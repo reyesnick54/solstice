@@ -1,5 +1,5 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
-import type { Ratio } from '../../../risk/src/arithmetic.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { Ratio } from '@solstice/risk';
 import type { PerformanceMetrics } from '../metrics.ts';
 import type { EvaluationPartition, TransactionCostAssumptions } from '../types.ts';
 

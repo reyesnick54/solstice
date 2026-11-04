@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
-import type { EvidenceVault } from '../../../../evidence/src/vault.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { EvidenceVault } from '@solstice/evidence';
 import {
   ADAPTIVE_ALPHA_V2_SCHEMA,
   type AdaptiveAlphaDatasetCertification,

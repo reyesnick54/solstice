@@ -1,5 +1,5 @@
-import type { StaffRole } from '../../../../identity/src/admin-roles.ts';
-import { capabilitiesForStaffRoles } from '../../../../identity/src/admin-roles.ts';
+import type { StaffRole } from '@solstice/identity';
+import { capabilitiesForStaffRoles } from '@solstice/identity';
 import type { ExportMode, SupervisoryRole } from './taxonomy.ts';
 import type { ExportAuthorizationResult, SupervisoryActor } from './types.ts';
 

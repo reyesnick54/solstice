@@ -4,7 +4,7 @@
 
 import { randomUUID } from 'node:crypto';
 
-import { asUtcInstant, type UtcInstant } from '../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { assertValidConfidence, buildConfidence } from './confidence.ts';
 import {
   assessFreshness,

@@ -1,4 +1,3 @@
-// @ts-nocheck — simulation qualification harness; fetch stub typing deferred.
 /**
  * AAF08 qualification harness — contract fixtures only unless live flag set.
  */
@@ -45,8 +44,8 @@ const RANGE = Object.freeze({
 });
 
 function harnessFetch(mode: 'success' | 'rate_limit' | 'timeout' | 'invalid' | 'closed' = 'success') {
-  return async (input: string | URL): Promise<Response> => {
-    const url = String(input);
+  return async (input: string | URL | Request, _init?: RequestInit): Promise<Response> => {
+    const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
     if (mode === 'timeout') {
       throw Object.assign(new Error('timeout'), { name: 'AbortError' });
     }
@@ -174,7 +173,16 @@ export async function runAaf08Qualification(
     checks.push({
       id: failure.id,
       passed,
-      message: failure.mode === 'closed' ? (outcome.ok ? 'closed session ingested' : outcome.code) : outcome.code,
+      message:
+        failure.mode === 'closed'
+          ? outcome.ok
+            ? 'closed session ingested'
+            : !outcome.ok
+              ? outcome.code
+              : 'unexpected'
+          : !outcome.ok
+            ? outcome.code
+            : 'unexpected success',
     });
   }
 

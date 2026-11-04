@@ -4,7 +4,7 @@
 
 import { randomUUID } from 'node:crypto';
 
-import { DATA_MODE } from '../../../../config/src/data-mode.ts';
+import { DATA_MODE } from '@solstice/config';
 import {
   createFetchProviderTransport,
   createProviderTransportConfig,
@@ -12,7 +12,7 @@ import {
   type FetchLike,
   type HttpProviderTransportResult,
   type ProviderTransportEnvironment,
-} from '../../../../provider-sdk/src/index.ts';
+} from '@solstice/provider-sdk';
 import type { ProviderExecutionProvenance } from '../../certification/types.ts';
 import { deriveExecutionProvenance } from '../../certification/types.ts';
 

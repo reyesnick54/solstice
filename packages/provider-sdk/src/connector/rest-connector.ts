@@ -29,7 +29,7 @@ import { createProviderTransportConfig } from '../config.ts';
 import { NO_AUTH_PROVIDER_RESOLVER } from '../auth.ts';
 import type { ProviderAuthStrategy } from '../auth.ts';
 import { SecretBackedProviderAuthResolver } from '../auth.ts';
-import type { SecretProvider } from '../../../security/src/secrets.ts';
+import type { SecretProvider } from '@solstice/security';
 import { hashRawPayload } from '../hash.ts';
 
 export type RestConnectorFixture = {

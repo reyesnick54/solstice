@@ -1,4 +1,4 @@
-import type { EvidenceVault } from '../../../evidence/src/vault.ts';
+import type { EvidenceVault } from '@solstice/evidence';
 
 import type { ResearchRunContextPackage } from './research-history.ts';
 import type { DecisionMemoryEntry } from './decision-memory.ts';

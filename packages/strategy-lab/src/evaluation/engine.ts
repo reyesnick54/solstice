@@ -1,8 +1,8 @@
 import { createHash } from 'node:crypto';
 
-import { err, ok, type Result } from '../../../domain/src/result.ts';
-import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
-import { RATIO_UNIT, ratioFromUnits } from '../../../risk/src/arithmetic.ts';
+import { err, ok, type Result } from '@solstice/domain';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
+import { RATIO_UNIT, ratioFromUnits } from '@solstice/risk';
 import { applyDividend, applySplit } from '../simulator.ts';
 import { evaluateDecision } from '../evaluate.ts';
 import { membersAt } from '../dataset.ts';

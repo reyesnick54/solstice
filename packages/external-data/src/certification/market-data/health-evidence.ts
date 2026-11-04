@@ -2,8 +2,8 @@
  * Provider-health evidence sealed for certification reports.
  */
 
-import { hashRawJsonPayload } from '../../../../provider-sdk/src/hash.ts';
-import type { MarketDataProviderHealth } from '../../../../provider-sdk/src/market-data-capability/types.ts';
+import { hashRawJsonPayload } from '@solstice/provider-sdk';
+import type { MarketDataProviderHealth } from '@solstice/provider-sdk';
 import type { MarketDataQualificationHarnessResult } from './harness.ts';
 
 export const MARKET_DATA_HEALTH_EVIDENCE_SCHEMA = 'sunrey.market-data-health-evidence.v1' as const;

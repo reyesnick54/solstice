@@ -1,4 +1,4 @@
-import { type Brand, brandAs } from '../../../domain/src/brand.ts';
+import { type Brand, brandAs } from '@solstice/domain';
 
 export type { StrategyCapsuleId, StrategyCapsuleVersion } from '../evaluation/ids.ts';
 export { asStrategyCapsuleId, asStrategyCapsuleVersion } from '../evaluation/ids.ts';

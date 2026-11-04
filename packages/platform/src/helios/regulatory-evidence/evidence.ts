@@ -1,4 +1,4 @@
-import type { EvidenceVault } from '../../../../evidence/src/vault.ts';
+import type { EvidenceVault } from '@solstice/evidence';
 import type { RegulatoryEvidencePackage, ReportingObligation, StructuredReportPackage } from './types.ts';
 
 export function sealRegulatoryEvidencePackage(

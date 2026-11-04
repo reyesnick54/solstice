@@ -2,7 +2,7 @@
  * Append-only store for fundamental facts (no restatement overwrite).
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { FundamentalFactRecord } from './fundamental-types.ts';
 
 export type FundamentalObservationStore = {

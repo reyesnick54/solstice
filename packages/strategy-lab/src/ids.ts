@@ -1,4 +1,4 @@
-import { type Brand, brandAs } from '../../domain/src/brand.ts';
+import { type Brand, brandAs } from '@solstice/domain';
 
 export type StrategyId = Brand<string, 'StrategyId'>;
 export type StrategyVersion = Brand<string, 'StrategyVersion'>;

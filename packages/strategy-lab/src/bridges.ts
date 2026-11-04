@@ -1,5 +1,5 @@
-import { err, ok, type Result } from '../../domain/src/result.ts';
-import type { ReadinessState } from '../../regulatory-twin/src/taxonomy.ts';
+import { err, ok, type Result } from '@solstice/domain';
+import type { ReadinessState } from '@solstice/regulatory-twin';
 import type { StrategyFailure } from './types.ts';
 
 type ValueRealizationState = 'REALIZED' | 'OBSERVED' | 'ESTIMATED' | 'PROJECTED' | 'COUNTERFACTUAL';

@@ -1,5 +1,5 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
-import type { EvidenceVault } from '../../../../evidence/src/vault.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { EvidenceVault } from '@solstice/evidence';
 import { assessCoverageBias, type CoverageBiasAssessment } from '../feature-fabric/aaf06/index.ts';
 import {
   compileFeatureVector,

@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { EntitlementClass } from '../../observation/types.ts';
 import type { RevisionPolicy } from '../temporal-types.ts';
 import type { TemporalObservation } from '../temporal-types.ts';

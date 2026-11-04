@@ -7,13 +7,13 @@ import {
   type ProductiveEconomyProviderRuntime,
   WAVE5_ADAPTER_IDS,
   wave5CoverageReport,
-} from '../../sunrey-chain/src/productive-economy-providers/index.ts';
+} from '@solstice/sunrey-chain/productive-economy-providers';
 import type {
   EnergyObservation,
   ProductiveEconomicObservation,
   ResourceObservation,
-} from '../../sunrey-chain/src/productive-economy-providers/types.ts';
-import type { ExternalObservation } from '../../provider-sdk/src/index.ts';
+} from '@solstice/sunrey-chain/productive-economy-providers/types';
+import type { ExternalObservation } from '@solstice/provider-sdk';
 
 export { WAVE5_ADAPTER_IDS, wave5CoverageReport };
 

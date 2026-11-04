@@ -1,4 +1,4 @@
-import type { EvidenceVault } from '../../../../evidence/src/vault.ts';
+import type { EvidenceVault } from '@solstice/evidence';
 import type { HeliosPaperGrowProposal, HeliosPaperGrowResult, HeliosPaperPosition, HeliosPaperResearchResult } from './types.ts';
 import type { HeliosStrategyDecision } from './types.ts';
 

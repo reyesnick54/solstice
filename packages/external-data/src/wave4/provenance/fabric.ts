@@ -5,7 +5,7 @@
 
 import { randomUUID } from 'node:crypto';
 
-import { asUtcInstant } from '../../../../domain/src/time.ts';
+import { asUtcInstant } from '@solstice/domain';
 import {
   type ProvenanceEnvelopeToolkit,
   type ProvenanceEventBus,
@@ -15,9 +15,9 @@ import {
   createEconomicProvenanceEvent,
   type EconomicProvenanceEvent,
   type EconomicProvenanceRefs,
-} from '../../../../provider-sdk/src/economic-events.ts';
-import type { ExternalObservation } from '../../../../provider-sdk/src/types.ts';
-import { buildDeduplicationKey, DEFAULT_DEDUPLICATION_POLICIES } from '../../../../provider-sdk/src/deduplication.ts';
+} from '@solstice/provider-sdk';
+import type { ExternalObservation } from '@solstice/provider-sdk';
+import { buildDeduplicationKey, DEFAULT_DEDUPLICATION_POLICIES } from '@solstice/provider-sdk';
 import { commitPublicContent, commitTransformation } from './content-hash.ts';
 import { createInMemoryProvenanceGraphStore, type ProvenanceGraphStore } from './graph.ts';
 import {

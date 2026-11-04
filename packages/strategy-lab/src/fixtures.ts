@@ -1,6 +1,6 @@
-import { asUtcInstant, type UtcInstant } from '../../domain/src/time.ts';
-import { asModelId, asModelVersion } from '../../model-registry/src/ids.ts';
-import { asRiskBudgetId } from '../../risk/src/ids.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
+import { asModelId, asModelVersion } from '@solstice/model-registry';
+import { asRiskBudgetId } from '@solstice/risk';
 import { freezeMarketDataset, type MarketDataset, type MarketObservation } from './dataset.ts';
 import type { StrategyExpr } from './dsl.ts';
 import { asMarketDatasetVersion, asParameterSetId, asStrategyId, asStrategyVersion } from './ids.ts';

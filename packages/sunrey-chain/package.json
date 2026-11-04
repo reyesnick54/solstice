@@ -8,7 +8,16 @@
     "./exchange-clearing": "./src/exchange-clearing/index.ts",
     "./economic-awareness-fabric": "./src/economic-awareness-fabric/index.ts",
     "./economic-proof": "./src/economic-proof/index.ts",
-    "./economics/proof-bound": "./src/economics/proof-bound/index.ts"
+    "./economics/proof-bound": "./src/economics/proof-bound/index.ts",
+    "./health-reference": "./src/health-reference/index.ts",
+    "./productive-economy-providers": "./src/productive-economy-providers/index.ts",
+    "./productive-economy-providers/types": "./src/productive-economy-providers/types.ts",
+    "./productive-economy-providers/catalog-entries": "./src/productive-economy-providers/catalog-entries.ts",
+    "./provider-runtime/data-delivery": "./src/provider-runtime/data-delivery/index.ts",
+    "./provider-runtime/universal/governance": "./src/provider-runtime/universal/governance.ts",
+    "./provider-runtime/universal/store": "./src/provider-runtime/universal/store.ts",
+    "./chain-intelligence/catalog-entries": "./src/chain-intelligence/catalog-entries.ts",
+    "./environmental/catalog-entries": "./src/environmental/catalog-entries.ts"
   },
   "files": [
     "src"

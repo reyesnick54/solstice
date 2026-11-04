@@ -1,12 +1,12 @@
 import { createHash } from 'node:crypto';
 
-import { err, ok, type Result } from '../../domain/src/result.ts';
-import type { UtcInstant } from '../../domain/src/time.ts';
-import type { AccountId } from '../../domain/src/account.ts';
-import type { CreatePaperOrderIntent } from '../../permissions/src/action-types.ts';
-import { ACTION_TYPES } from '../../permissions/src/action-types.ts';
-import { asIntentId, type PurposeCode } from '../../permissions/src/action-intent.ts';
-import type { RiskDecision } from '../../risk/src/types.ts';
+import { err, ok, type Result } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
+import type { AccountId } from '@solstice/domain';
+import type { CreatePaperOrderIntent } from '@solstice/permissions';
+import { ACTION_TYPES } from '@solstice/permissions';
+import { asIntentId, type PurposeCode } from '@solstice/permissions';
+import type { RiskDecision } from '@solstice/risk';
 import { asPaperStrategyRunId, type PaperStrategyRunId } from './ids.ts';
 import type { KillSwitchReason, StrategyFailure, StrategyLifecycleState } from './types.ts';
 

@@ -2,7 +2,7 @@
  * Provider routing with explicit fallback chains (simulation fixtures only).
  */
 
-import { asUtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant } from '@solstice/domain';
 import {
   filterKnowableObservations,
   runSecEdgarAsFiledDataflow,

@@ -4,7 +4,7 @@
 
 import { createHash, randomUUID } from 'node:crypto';
 
-import { asUtcInstant, type UtcInstant } from '../../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { computeKnowableAt } from '../../observation/information-time.ts';
 import type { Aaf09InstrumentDefinition } from './instruments.ts';
 import { sourceClassForProvider, sourceFamilyFor, venueIdForKraken } from './taxonomy.ts';

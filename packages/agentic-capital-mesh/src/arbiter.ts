@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 
-import type { ModelRegistry } from '../../model-registry/src/registry.ts';
-import type { RiskOutcome } from '../../risk/src/types.ts';
+import type { ModelRegistry } from '@solstice/model-registry';
+import type { RiskOutcome } from '@solstice/risk';
 import { asCapitalArbitrationId } from './ids.ts';
 import type {
   ArbiterOutcome,

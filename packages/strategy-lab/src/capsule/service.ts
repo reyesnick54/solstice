@@ -1,8 +1,8 @@
-import type { Clock } from '../../../config/src/clock.ts';
-import { err, ok, type Result } from '../../../domain/src/result.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
-import type { EvidenceVault } from '../../../evidence/src/vault.ts';
-import type { DomainEventLog } from '../../../events/src/events.ts';
+import type { Clock } from '@solstice/config';
+import { err, ok, type Result } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
+import type { EvidenceVault } from '@solstice/evidence';
+import type { DomainEventLog } from '@solstice/events';
 import type { StrategyLabStore } from '../store.ts';
 import { computeStrategyCapsuleMaterialHash } from './fingerprint.ts';
 import {

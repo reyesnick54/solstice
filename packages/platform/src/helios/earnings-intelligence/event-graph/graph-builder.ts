@@ -2,7 +2,7 @@
  * Project external earnings observations into AAF V2 temporal entity graph nodes/edges.
  */
 
-import type { EarningsExternalObservation } from '../../../../../external-data/src/earnings/types.ts';
+import type { EarningsExternalObservation } from '@solstice/external-data';
 import type { EarningsGraphEdge, EarningsGraphNode } from './types.ts';
 
 function nodeIdFor(observation: EarningsExternalObservation): string {

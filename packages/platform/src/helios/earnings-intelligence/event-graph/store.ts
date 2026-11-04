@@ -2,9 +2,9 @@
  * In-memory earnings event graph store — append-only observations and projected graph.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
-import type { EarningsExternalObservation } from '../../../../../external-data/src/earnings/types.ts';
-import { ingestEarningsObservation, createEarningsObservationStore, type EarningsObservationStore } from '../../../../../external-data/src/earnings/ingest.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { EarningsExternalObservation } from '@solstice/external-data';
+import { ingestEarningsObservation, createEarningsObservationStore, type EarningsObservationStore } from '@solstice/external-data';
 import { projectObservationToGraph } from './graph-builder.ts';
 import type { EarningsEventGraphSnapshot, EarningsGraphEdge, EarningsGraphNode, SealedEarningsGraphObservation } from './types.ts';
 import { HELIOS_EARNINGS_EVENT_GRAPH_SCHEMA } from './taxonomy.ts';

@@ -6,7 +6,7 @@
  * look-ahead bias.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { MarketTimeSeriesStore } from './time-series-store.ts';
 import type { BarTimeframe, MarketSnapshot, OhlcvBar, MarketQuoteObservation } from './types.ts';
 

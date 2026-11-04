@@ -1,19 +1,19 @@
-import { FrozenClock } from '../../config/src/clock.ts';
-import { asCurrencyCode } from '../../domain/src/currency.ts';
-import { asJurisdiction } from '../../domain/src/jurisdiction.ts';
-import { asLegalEntityId } from '../../domain/src/legal-entity.ts';
-import { asProductId } from '../../domain/src/product.ts';
-import { asUtcInstant } from '../../domain/src/time.ts';
-import { Money } from '../../money/src/money.ts';
-import { asIntentId } from '../../permissions/src/action-intent.ts';
-import { ACTION_TYPES } from '../../permissions/src/action-types.ts';
+import { FrozenClock } from '@solstice/config';
+import { asCurrencyCode } from '@solstice/domain';
+import { asJurisdiction } from '@solstice/domain';
+import { asLegalEntityId } from '@solstice/domain';
+import { asProductId } from '@solstice/domain';
+import { asUtcInstant } from '@solstice/domain';
+import { Money } from '@solstice/money';
+import { asIntentId } from '@solstice/permissions';
+import { ACTION_TYPES } from '@solstice/permissions';
 import { seedSimulationCatalog } from '../../../services/accounts/src/catalog.ts';
 import { createSimulationRuntime } from '../../../services/accounts/src/runtime.ts';
 import { activateCustomer, openIntent } from '../../../services/accounts/src/test-helpers.ts';
-import { asInstrumentId, asInvestmentAccountId } from '../../investments/src/ids.ts';
-import { InvestmentsService } from '../../investments/src/service.ts';
-import { ModelRegistry, seedCanonicalRiskModel } from '../../model-registry/src/registry.ts';
-import { defaultSimulationBudget, RiskEngine } from '../../risk/src/engine.ts';
+import { asInstrumentId, asInvestmentAccountId } from '@solstice/investments';
+import { InvestmentsService } from '@solstice/investments';
+import { ModelRegistry, seedCanonicalRiskModel } from '@solstice/model-registry';
+import { defaultSimulationBudget, RiskEngine } from '@solstice/risk';
 import { classifyPeveStrategyValue } from './bridges.ts';
 import {
   DEFAULT_PARAMETER_SET,

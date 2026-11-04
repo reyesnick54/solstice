@@ -6,7 +6,7 @@
  * live "current fundamentals" snapshots into historical evaluation.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import type {
   AmendmentKind,
   CompanyFilingObservation,

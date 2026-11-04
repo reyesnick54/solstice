@@ -2,8 +2,8 @@
  * Bind AAF07 certification evidence to the canonical Provider Runtime store.
  */
 
-import { recordCertification } from '../../../../sunrey-chain/src/provider-runtime/universal/governance.ts';
-import type { InMemoryUniversalProviderStore } from '../../../../sunrey-chain/src/provider-runtime/universal/store.ts';
+import { recordCertification } from '@solstice/sunrey-chain/provider-runtime/universal/governance';
+import type { InMemoryUniversalProviderStore } from '@solstice/sunrey-chain/provider-runtime/universal/store';
 import type { MarketDataHealthEvidence } from './health-evidence.ts';
 
 export function bindMarketDataCertificationToProviderRuntime(input: {

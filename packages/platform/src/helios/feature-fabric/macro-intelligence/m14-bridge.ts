@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { IngestMacroEventInput } from '../../multi-asset/event-intelligence/types.ts';
 import type { MacroOfficialReleaseEvent } from './types.ts';
 

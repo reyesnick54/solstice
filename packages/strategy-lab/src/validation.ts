@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../domain/src/time.ts';
-import type { StressRun } from '../../risk/src/types.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { StressRun } from '@solstice/risk';
 import type { BacktestRun } from './backtest.ts';
 import type { SimulationPlan } from './compiler.ts';
 import type { Experiment } from './experiment.ts';

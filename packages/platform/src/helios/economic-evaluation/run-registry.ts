@@ -1,5 +1,5 @@
-import type { CustomerId } from '../../../../domain/src/customer.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { CustomerId } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
 import { evaluationRunIdFor, type HeliosEvaluationRunId, type HeliosExperimentId } from './ids.ts';
 import { detectHiddenCapital, rejectHiddenCapital } from './hidden-capital.ts';
 import { computeNetEconomics } from './net-economics.ts';

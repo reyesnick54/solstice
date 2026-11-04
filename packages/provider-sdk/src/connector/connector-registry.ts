@@ -15,7 +15,7 @@ import {
   createProviderLineageRegistry,
   type ProviderLineageRegistry,
 } from './lineage.ts';
-import { secretRef } from '../../../security/src/secrets.ts';
+import { secretRef } from '@solstice/security';
 import type { ExtensibleSourceClass } from './source-class.ts';
 
 export type ConnectorRegistryOptions = {

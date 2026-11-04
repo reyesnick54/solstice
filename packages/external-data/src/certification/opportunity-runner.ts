@@ -2,7 +2,7 @@
  * Live provider certification runner for opportunity and economic data adapters.
  */
 
-import { asUtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant } from '@solstice/domain';
 import {
   createAllOpportunityAdapters,
   createOpportunityAdapter,

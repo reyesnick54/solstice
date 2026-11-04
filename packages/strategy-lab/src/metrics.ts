@@ -1,4 +1,4 @@
-import { RATIO_UNIT, integerSqrt, ratioFromUnits, type Ratio } from '../../risk/src/arithmetic.ts';
+import { RATIO_UNIT, integerSqrt, ratioFromUnits, type Ratio } from '@solstice/risk';
 
 /**
  * Analytical statistics use the Risk Engine's deterministic scale-8 ratio.

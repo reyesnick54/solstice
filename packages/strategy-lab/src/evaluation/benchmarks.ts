@@ -1,5 +1,5 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
-import { ratioFromUnits, type Ratio } from '../../../risk/src/arithmetic.ts';
+import type { UtcInstant } from '@solstice/domain';
+import { ratioFromUnits, type Ratio } from '@solstice/risk';
 import type { ParameterSet } from '../backtest.ts';
 import type { SimulationPlan } from '../compiler.ts';
 import { calculateMetrics, type EquityPoint, type PerformanceMetrics } from '../metrics.ts';

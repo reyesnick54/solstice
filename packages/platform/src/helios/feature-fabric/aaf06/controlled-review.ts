@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { CoverageBiasAssessment, CoverageBiasSeverity } from './coverage-bias-types.ts';
 
 export type CoverageBiasControlledReviewState = {

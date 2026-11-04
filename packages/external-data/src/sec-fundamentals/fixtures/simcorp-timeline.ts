@@ -3,7 +3,7 @@
  * Values are synthetic — not live or "current" SEC fundamentals.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import type { SecEdgarSubmissionRecord } from '../edgar-dataflow.ts';
 
 export const SIMCORP_CIK = '0000999999';

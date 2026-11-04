@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { RevisionLedgerRecord, RevisionRecordKind } from '../aaf06/revision-ledger-types.ts';
 import {
   HELIOS_AAF06_REVISION_LEDGER_SCHEMA,

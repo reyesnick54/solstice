@@ -2,10 +2,10 @@
  * Bind HELIOS overlay adapter_binding values to Exchange capital-market adapters.
  */
 
-import { createFinnhubCapitalMarketAdapter } from '../../../../sunrey-exchange/src/capital-market/adapters/finnhub-adapter.ts';
-import type { CapitalMarketProvider } from '../../../../sunrey-exchange/src/capital-market/provider.ts';
-import { CoingeckoCryptoSpotAdapter } from '../../../../sunrey-exchange/src/crypto-market/spot/adapters/coingecko-adapter.ts';
-import type { HeliosMarketDataCatalogOverlayEntry } from '../../../../provider-sdk/src/market-data-capability/build-from-catalog.ts';
+import { createFinnhubCapitalMarketAdapter } from '@solstice/sunrey-exchange/capital-market';
+import type { CapitalMarketProvider } from '@solstice/sunrey-exchange/capital-market';
+import { CoingeckoCryptoSpotAdapter } from '@solstice/sunrey-exchange/crypto-market/coingecko-adapter';
+import type { HeliosMarketDataCatalogOverlayEntry } from '@solstice/provider-sdk';
 
 export type MarketDataAdapterBindingOptions = {
   readonly fetchFn?: typeof fetch;

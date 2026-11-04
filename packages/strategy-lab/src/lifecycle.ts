@@ -1,4 +1,4 @@
-import { err, ok, type Result } from '../../domain/src/result.ts';
+import { err, ok, type Result } from '@solstice/domain';
 import {
   FORBIDDEN_STRATEGY_STATES,
   STRATEGY_LIFECYCLE_STATES,

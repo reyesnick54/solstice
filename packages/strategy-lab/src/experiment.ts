@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 
-import { err, ok, type Result } from '../../domain/src/result.ts';
-import type { UtcInstant } from '../../domain/src/time.ts';
+import { err, ok, type Result } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
 import { runBacktest, type BacktestRun, type ParameterSet } from './backtest.ts';
 import type { SimulationPlan } from './compiler.ts';
 import type { MarketDataset } from './dataset.ts';
@@ -71,7 +71,7 @@ export function runExperiment(input: {
   readonly dataset: MarketDataset;
   readonly parameterSets: readonly ParameterSet[];
   readonly startingCapitalMinor: bigint;
-  readonly period: { readonly start: import('../../domain/src/time.ts').UtcInstant; readonly end: import('../../domain/src/time.ts').UtcInstant };
+  readonly period: { readonly start: import('@solstice/domain').UtcInstant; readonly end: import('@solstice/domain').UtcInstant };
   readonly partition: EvaluationPartition;
   readonly selectionCriteria: string;
   readonly generatedAt: UtcInstant;

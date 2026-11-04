@@ -1,5 +1,5 @@
-import { err, ok, type Result } from '../../domain/src/result.ts';
-import { isVerifiedActorContext, type VerifiedActorContext } from '../../identity/src/actor-context.ts';
+import { err, ok, type Result } from '@solstice/domain';
+import { isVerifiedActorContext, type VerifiedActorContext } from '@solstice/identity';
 import type { AuthoritativePromotionKind, PromotionDecisionKind } from './promotion-state.ts';
 import type { StrategyFailure } from './types.ts';
 

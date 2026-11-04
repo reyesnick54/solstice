@@ -1,8 +1,8 @@
-import type { EvidenceVault } from '../../../../evidence/src/vault.ts';
-import type { Clock } from '../../../../config/src/clock.ts';
-import type { CustomerId } from '../../../../domain/src/customer.ts';
-import type { Jurisdiction } from '../../../../domain/src/jurisdiction.ts';
-import { err, ok, type Result } from '../../../../domain/src/result.ts';
+import type { EvidenceVault } from '@solstice/evidence';
+import type { Clock } from '@solstice/config';
+import type { CustomerId } from '@solstice/domain';
+import type { Jurisdiction } from '@solstice/domain';
+import { err, ok, type Result } from '@solstice/domain';
 import type { OpportunityDiscoveryContext } from '../../growth/opportunity/types.ts';
 import type { CompiledEconomicMandate } from '../../mandate/types.ts';
 import type { EconomicWorkOrder } from '../types.ts';

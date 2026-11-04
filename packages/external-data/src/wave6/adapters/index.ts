@@ -2,7 +2,7 @@
  * Wave 6 — opportunity provider adapters with live HTTP + fixture simulation.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import type { OpportunityProvider, OpportunityCapability } from '../provider.ts';
 import type {
   JobOpportunity,

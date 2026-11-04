@@ -2,7 +2,7 @@
  * AAF09 observation fabric — ingest venue and reference crypto market data (no execution).
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { createCoingeckoReferenceAdapter } from './adapters/coingecko-reference.ts';
 
 type CoingeckoReferenceAdapter = ReturnType<typeof createCoingeckoReferenceAdapter>;

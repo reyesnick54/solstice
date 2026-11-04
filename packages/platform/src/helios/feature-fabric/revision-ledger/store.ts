@@ -2,7 +2,7 @@
  * In-memory AAF06 revision ledger with snapshot/restore. Entries are never overwritten.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { RevisionLedgerEntry, RevisionLedgerSnapshot } from './types.ts';
 
 export type RevisionLedgerStore = {

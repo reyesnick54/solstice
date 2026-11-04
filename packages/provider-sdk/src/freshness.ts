@@ -3,7 +3,7 @@
  * TTL is never global — each capability supplies its own policy.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import type { FreshnessStatus } from './types.ts';
 
 export type FreshnessPolicy = {

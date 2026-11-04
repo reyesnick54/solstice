@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import {
   buildCoverageManifest,
   buildCoverageTensor,
@@ -6,7 +6,7 @@ import {
   type CoverageManifest,
   type EligibleUniverseMember,
   type FeatureCoverageProbe,
-} from '../../../platform/src/helios/feature-fabric/feature-coverage/index.ts';
+} from '@solstice/platform/helios/feature-coverage';
 import { activeInstrumentIds } from '../dataset.ts';
 import type { EvaluationDatasetManifest } from './manifest.ts';
 import { isKnowableAt } from './information-time.ts';

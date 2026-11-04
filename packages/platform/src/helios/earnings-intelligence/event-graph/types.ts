@@ -2,9 +2,9 @@
  * HELIOS EARN02 — temporal earnings event graph types.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
-import type { EarningsExternalObservation, EarningsFiscalIdentity } from '../../../../../external-data/src/earnings/types.ts';
-import type { EarningsSessionTiming } from '../../../../../external-data/src/earnings/taxonomy.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { EarningsExternalObservation, EarningsFiscalIdentity } from '@solstice/external-data';
+import type { EarningsSessionTiming } from '@solstice/external-data';
 import type {
   EarningsGraphEdgeKind,
   EarningsGraphNodeKind,

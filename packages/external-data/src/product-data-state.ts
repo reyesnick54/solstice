@@ -4,8 +4,8 @@
  * Vendor-neutral. No API keys, internal provider risk scores, or raw payloads.
  */
 
-import { DATA_MODE, type DataMode } from '../../config/src/data-mode.ts';
-import type { ExternalObservation } from '../../provider-sdk/src/types.ts';
+import { DATA_MODE, type DataMode } from '@solstice/config';
+import type { ExternalObservation } from '@solstice/provider-sdk';
 
 export const PRODUCT_DATA_STATES = [
   'LIVE',

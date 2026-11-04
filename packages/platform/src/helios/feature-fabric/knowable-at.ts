@@ -2,7 +2,7 @@
  * Feature knowability — derived from contributing observations, never period-end alone.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import type { FeatureContributionInput } from './types.ts';
 
 export function maxKnowableAt(contributions: readonly FeatureContributionInput[]): UtcInstant {

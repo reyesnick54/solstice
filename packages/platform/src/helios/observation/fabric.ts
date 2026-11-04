@@ -4,7 +4,7 @@
  * Never invents synthetic fallback values.
  */
 
-import type { Clock } from '../../../../config/src/clock.ts';
+import type { Clock } from '@solstice/config';
 import { buildObservationEntitlement } from './entitlement.ts';
 import { checkDuplicate } from './deduplication.ts';
 import { assessHeliosFreshness } from './freshness-policies.ts';

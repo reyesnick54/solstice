@@ -7,7 +7,7 @@ import {
   HEALTH_ADAPTER_IDS,
   healthCoverageReport,
   type HealthReferenceService,
-} from '../../sunrey-chain/src/health-reference/index.ts';
+} from '@solstice/sunrey-chain/health-reference';
 
 export { HEALTH_ADAPTER_IDS, healthCoverageReport };
 

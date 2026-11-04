@@ -1,11 +1,10 @@
-// @ts-nocheck — trust context typing deferred for simulation crypto fabric.
 /**
  * External Data Trust Engine alignment — compare sources with lineage-aware independence.
  */
 
-import { ExternalDataTrustEngine } from '../../../../../provider-sdk/src/trust/engine.ts';
-import type { TrustObservationContext } from '../../../../../provider-sdk/src/trust/types.ts';
-import { buildExternalObservation } from '../../../../../provider-sdk/src/index.ts';
+import { ExternalDataTrustEngine } from '@solstice/provider-sdk';
+import type { TrustObservationContext } from '@solstice/provider-sdk';
+import { buildExternalObservation } from '@solstice/provider-sdk';
 import { countIndependentWitnesses, classifyWitness } from './lineage.ts';
 import type { MultiSourceDisagreementReport, NormalizedCryptoMarketObservation } from './types.ts';
 import type { UtcInstant } from '@solstice/domain';
@@ -24,10 +23,11 @@ function midPrice(observation: NormalizedCryptoMarketObservation): number | null
 
 export function buildTrustContexts(
   observations: readonly NormalizedCryptoMarketObservation[],
-): TrustObservationContext<number>[] {
-  const contexts: TrustObservationContext<number>[] = [];
+): TrustObservationContext<{ readonly priceMinor: number }>[] {
+  const contexts: TrustObservationContext<{ readonly priceMinor: number }>[] = [];
   for (const observation of observations) {
     const price = midPrice(observation);
+    if (price === null) continue;
     const built = buildExternalObservation({
       observationId: observation.observationId,
       providerId: observation.providerId,

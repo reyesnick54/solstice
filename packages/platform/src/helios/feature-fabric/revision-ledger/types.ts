@@ -2,7 +2,7 @@
  * AAF06 — append-only revision ledger for macro and temporal observations.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const HELIOS_AAF06_REVISION_LEDGER_SCHEMA = 'sunrey.helios.aaf06.revision-ledger.v1' as const;
 

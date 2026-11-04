@@ -1,23 +1,23 @@
 import { createHash } from 'node:crypto';
 
-import type { Clock } from '../../config/src/clock.ts';
-import { addMs } from '../../config/src/clock.ts';
-import { err, ok, type Result } from '../../domain/src/result.ts';
-import type { UtcInstant } from '../../domain/src/time.ts';
-import type { EvidenceVault } from '../../evidence/src/vault.ts';
-import type { DomainEventLog } from '../../events/src/events.ts';
-import { interpretMandateLanguage } from '../../agent/src/interpretation.ts';
-import { isVerifiedActorContext } from '../../identity/src/actor-context.ts';
-import type { ModelRegistry } from '../../model-registry/src/registry.ts';
-import { asPortfolioRiskSnapshotId } from '../../risk/src/ids.ts';
-import { defaultSimulationBudget, RiskEngine } from '../../risk/src/engine.ts';
+import type { Clock } from '@solstice/config';
+import { addMs } from '@solstice/config';
+import { err, ok, type Result } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
+import type { EvidenceVault } from '@solstice/evidence';
+import type { DomainEventLog } from '@solstice/events';
+import { interpretMandateLanguage } from '@solstice/agent';
+import { isVerifiedActorContext } from '@solstice/identity';
+import type { ModelRegistry } from '@solstice/model-registry';
+import { asPortfolioRiskSnapshotId } from '@solstice/risk';
+import { defaultSimulationBudget, RiskEngine } from '@solstice/risk';
 import type {
   PortfolioRiskSnapshot,
   ProposedPaperTrade,
   RiskBudget,
   RiskDecision,
   RiskOutcome,
-} from '../../risk/src/types.ts';
+} from '@solstice/risk';
 import { compileAllocation, createAllocationCandidate } from './allocation.ts';
 import { arbitrate, refuseAgentVoteAuthorization } from './arbiter.ts';
 import { assembleCapitalContext, type ContextSource } from './context.ts';

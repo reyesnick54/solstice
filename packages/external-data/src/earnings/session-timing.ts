@@ -2,7 +2,7 @@
  * Classify earnings session timing from release vs market calendar (US equity default).
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { EarningsSessionTiming } from './taxonomy.ts';
 
 const US_MARKET_OPEN_UTC = { hour: 13, minute: 30 };

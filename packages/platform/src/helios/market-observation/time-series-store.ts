@@ -2,7 +2,7 @@
  * In-memory time-series store with knowableAt-aware query semantics.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { HeliosObservationStoreSnapshot } from '../observation/store.ts';
 import type {
   BarTimeframe,

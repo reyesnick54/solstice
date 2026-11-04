@@ -2,8 +2,8 @@
  * Seal AAF08 source-state outcomes into the Evidence Vault.
  */
 
-import type { EvidenceVault } from '../../../../../evidence/src/vault.ts';
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { EvidenceVault } from '@solstice/evidence';
+import type { UtcInstant } from '@solstice/domain';
 
 export function sealAaf08SourceStateEvidence(
   vault: EvidenceVault | undefined,

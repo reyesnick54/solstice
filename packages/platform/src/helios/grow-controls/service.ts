@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
 
-import type { Clock } from '../../../../config/src/clock.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
-import { err, ok, type Result } from '../../../../domain/src/result.ts';
+import type { Clock } from '@solstice/config';
+import type { UtcInstant } from '@solstice/domain';
+import { err, ok, type Result } from '@solstice/domain';
 import { authorizeConfirmMandate, authorizeViewGrowthPlan } from '../../access.ts';
 import type { GrowLifecycleService } from '../../grow/service.ts';
 import type { InMemoryGrowStore } from '../../grow/store.ts';

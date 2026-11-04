@@ -3,7 +3,7 @@
  * Domain-specific schemas belong with canonical domain owners.
  */
 
-import { isUtcInstant } from '../../domain/src/time.ts';
+import { isUtcInstant } from '@solstice/domain';
 import type { ProviderResult } from './types.ts';
 
 const ISO_CURRENCY = /^[A-Z]{3}$/;

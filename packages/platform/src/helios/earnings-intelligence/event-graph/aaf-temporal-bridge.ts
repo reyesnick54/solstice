@@ -2,8 +2,8 @@
  * Bridge earnings events to AAF V2 temporal entity resolution (issuer binding).
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
-import type { EarningsExternalObservation } from '../../../../../external-data/src/earnings/types.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { EarningsExternalObservation } from '@solstice/external-data';
 import { HELIOS_TEMPORAL_ENTITY_GRAPH_SCHEMA } from '../../feature-fabric/entity-resolution/types.ts';
 
 export const HELIOS_EARNINGS_TEMPORAL_ENTITY_BRIDGE_ID =

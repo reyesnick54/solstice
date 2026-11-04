@@ -2,7 +2,7 @@
  * AAF08 provider port — strategies must not call vendor HTTP; adapters implement this port.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { BarTimeframe } from '../../market-observation/types.ts';
 import type {
   ExternalEquitiesBarPayload,

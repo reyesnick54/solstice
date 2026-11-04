@@ -2,7 +2,7 @@
  * Minimal knowable-at rule for certification harness (mirrors HELIOS observation fabric).
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export function computeKnowableAtForCertification(input: {
   readonly providerAvailabilityTime: UtcInstant | null;

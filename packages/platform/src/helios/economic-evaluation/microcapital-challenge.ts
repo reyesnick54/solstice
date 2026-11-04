@@ -1,5 +1,5 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
-import { err, ok, type Result } from '../../../../domain/src/result.ts';
+import type { UtcInstant } from '@solstice/domain';
+import { err, ok, type Result } from '@solstice/domain';
 import { microcapitalChallengeIdFor, type HeliosExperimentId, type HeliosMicrocapitalChallengeId } from './ids.ts';
 import { evaluationMoney } from './money.ts';
 import { MICROCAPITAL_DEFAULTS } from './taxonomy.ts';

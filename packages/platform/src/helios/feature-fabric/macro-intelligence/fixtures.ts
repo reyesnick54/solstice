@@ -1,4 +1,4 @@
-import { asUtcInstant, type UtcInstant } from '../../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import type { MacroSeriesReadingInput } from './types.ts';
 
 const ENTITLEMENT = Object.freeze({

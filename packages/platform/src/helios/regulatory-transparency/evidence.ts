@@ -1,4 +1,4 @@
-import type { EvidenceVault } from '../../../../evidence/src/vault.ts';
+import type { EvidenceVault } from '@solstice/evidence';
 import type { SupervisoryExportRequest, SupervisoryExportPackage, RegulatoryChangeRequest } from './types.ts';
 
 export function sealExportRequest(
