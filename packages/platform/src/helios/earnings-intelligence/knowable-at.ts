@@ -2,7 +2,7 @@
  * EARN01 — point-in-time visibility for earnings intelligence (no leakage).
  */
 
-import type { UtcInstant } from '@solstice/domain';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 
 export function isEarningsArtifactKnowableAt<T extends { readonly knowableAt: UtcInstant }>(
   evaluationTimeUtc: UtcInstant,

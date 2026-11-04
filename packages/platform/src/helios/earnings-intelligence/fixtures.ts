@@ -2,7 +2,7 @@
  * Simulation fixtures for EARN01 domain qualification (not production data).
  */
 
-import { asUtcInstant, type UtcInstant } from '@solstice/domain';
+import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
 import type { EarningsEvent, EarningsActualObservation, EarningsConsensusSnapshot } from './types.ts';
 import { asEarningsEventId } from './types.ts';
 import {

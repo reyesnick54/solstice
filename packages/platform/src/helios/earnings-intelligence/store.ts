@@ -8,7 +8,7 @@ import type {
   EarningsIntelligenceStoreSnapshot,
 } from './types.ts';
 import { filterKnowableEarningsArtifacts } from './knowable-at.ts';
-import type { UtcInstant } from '@solstice/domain';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type { EarningsEventId } from './types.ts';
 
 export type EarningsIntelligenceStore = {

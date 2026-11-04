@@ -2,7 +2,7 @@
  * EARN01 — canonical earnings intelligence domain types.
  */
 
-import type { UtcInstant } from '@solstice/domain';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type {
   EarningsAnnouncementState,
   EarningsObservationKind,

@@ -2,7 +2,7 @@
  * Shared temporal and provenance fields for earnings intelligence artifacts.
  */
 
-import type { UtcInstant } from '@solstice/domain';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type { QualityState } from '../observation/types.ts';
 
 export type EarningsFiscalPeriod = {
