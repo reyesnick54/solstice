@@ -53,7 +53,7 @@ export abstract class BaseLiveAccessAdapter implements LiveAccessProviderAdapter
     this.providerId = adapterConfig.providerId;
     this.adapterConfig = adapterConfig;
     this.envConfig = deps.config ?? resolveLiveProviderEnvConfig();
-    this.http = new LiveProviderHttpClient({ fetchFn: deps.fetchFn });
+    this.http = new LiveProviderHttpClient(deps.fetchFn !== undefined ? { fetchFn: deps.fetchFn } : {});
     this.nowUtc = deps.nowUtc ?? (() => new Date().toISOString());
   }
 

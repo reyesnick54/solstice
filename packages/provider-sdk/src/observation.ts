@@ -93,7 +93,7 @@ export function buildExternalObservation<T>(
   const freshness = assessFreshness({
     referenceTimestamp: referenceForPolicy,
     nowUtc: input.time.retrievedAt,
-    policy: input.freshnessPolicy,
+    ...(input.freshnessPolicy !== undefined ? { policy: input.freshnessPolicy } : {}),
   });
   const validationStatus = input.validationStatus ?? 'valid';
 
@@ -112,8 +112,8 @@ export function buildExternalObservation<T>(
     authorityClass: input.authorityClass,
     freshnessStatus: freshness.status,
     validationStatus,
-    corroborationCount: input.corroborationCount,
-    providerTrustScore: input.providerTrustScore,
+    ...(input.corroborationCount !== undefined ? { corroborationCount: input.corroborationCount } : {}),
+    ...(input.providerTrustScore !== undefined ? { providerTrustScore: input.providerTrustScore } : {}),
   });
   try {
     assertValidConfidence(confidence);
@@ -146,12 +146,14 @@ export function buildExternalObservation<T>(
     }),
     authority: Object.freeze({ authorityClass: input.authorityClass }),
     provenance: buildProvenance({
-      requestId: input.provenance.requestId,
       rawPayload: input.provenance.rawPayload,
       providerSchemaVersion: input.provenance.providerSchemaVersion,
       normalizationVersion:
         input.provenance.normalizationVersion ?? `sunrey.external-normalization.v${NORMALIZATION_SCHEMA_VERSION}`,
-      canonicalModelVersion: input.provenance.canonicalModelVersion ?? null,
+      ...(input.provenance.requestId !== undefined ? { requestId: input.provenance.requestId } : {}),
+      ...(input.provenance.canonicalModelVersion !== undefined
+        ? { canonicalModelVersion: input.provenance.canonicalModelVersion }
+        : {}),
     }),
     licensing: Object.freeze({
       commercialUseStatus: input.licensing?.commercialUseStatus ?? 'unknown',

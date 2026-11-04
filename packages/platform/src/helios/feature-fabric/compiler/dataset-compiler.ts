@@ -164,10 +164,12 @@ export class PointInTimeDatasetCompiler {
       missingnessPolicy: request.informationTimePolicy.missingnessPolicy,
     });
     if (!manifest.ok) {
-      return err({
-        code: 'INVALID_MANIFEST',
-        message: manifest.error.message,
-      });
+      const failure = manifest.error;
+      const mapped: Aafv203CompilerFailure = {
+        code: failure.code,
+        message: failure.message,
+      };
+      return err(mapped);
     }
 
     const qualification: DatasetQualification = Object.freeze({

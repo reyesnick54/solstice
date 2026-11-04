@@ -100,15 +100,30 @@ export type EconomicProvenanceEvent =
   | ClaimChallengedV1
   | ClaimResolvedV1;
 
+export type EconomicProvenancePayloadMap = {
+  readonly ProviderRecordReceived: ProviderRecordReceivedPayload;
+  readonly ObservationNormalized: ObservationLifecyclePayload;
+  readonly ObservationRejected: ObservationLifecyclePayload;
+  readonly ObservationDeduplicated: ObservationLifecyclePayload;
+  readonly ObservationLinked: ObservationLifecyclePayload;
+  readonly EntityResolved: EntityResolvedPayload;
+  readonly EvidenceCreated: EvidenceCreatedPayload;
+  readonly FactVerified: FactVerifiedPayload;
+  readonly ClaimCreated: ClaimLifecyclePayload;
+  readonly ClaimChallenged: ClaimLifecyclePayload;
+  readonly ClaimResolved: ClaimLifecyclePayload;
+};
+
 export function createEconomicProvenanceEvent<T extends EconomicProvenanceEventType>(
   eventType: T,
   occurredAt: UtcInstant,
-  payload: EconomicProvenanceEvent extends VersionedEvent<T, 1, infer P> ? P : never,
-): Extract<EconomicProvenanceEvent, VersionedEvent<T, 1, unknown>> {
-  return Object.freeze({
+  payload: EconomicProvenancePayloadMap[T],
+): VersionedEvent<T, 1, EconomicProvenancePayloadMap[T]> {
+  const event: VersionedEvent<T, 1, EconomicProvenancePayloadMap[T]> = {
     eventType,
-    schemaVersion: 1 as const,
+    schemaVersion: 1,
     occurredAt,
-    payload: Object.freeze(payload),
-  }) as Extract<EconomicProvenanceEvent, VersionedEvent<T, 1, unknown>>;
+    payload,
+  };
+  return Object.freeze(event);
 }

@@ -25,11 +25,11 @@ export const AUTHORITY_CLASSES = [
   'derived_estimate',
   'simulation_fixture',
 ] as const;
-export type AuthorityClass = (typeof AUTHORITY_CLASSES)[number];
+export type ProductAuthorityClass = (typeof AUTHORITY_CLASSES)[number];
 
 export type SanitizedSourceMetadata = {
   readonly displayName: string;
-  readonly authorityClass: AuthorityClass;
+  readonly authorityClass: ProductAuthorityClass;
 };
 
 export type ProductDataTimestamps = {
@@ -59,14 +59,14 @@ export function sanitizeSourceFromObservation(
   observation: ExternalObservation<unknown>,
 ): SanitizedSourceMetadata {
   return Object.freeze({
-    displayName: observation.source.displayName || providerDisplayName(observation.providerId),
+    displayName: providerDisplayName(observation.providerId),
     authorityClass: mapAuthorityClass(observation.authority.authorityClass),
   });
 }
 
-function mapAuthorityClass(value: string): AuthorityClass {
+function mapAuthorityClass(value: string): ProductAuthorityClass {
   if ((AUTHORITY_CLASSES as readonly string[]).includes(value)) {
-    return value as AuthorityClass;
+    return value as ProductAuthorityClass;
   }
   if (value === 'official' || value === 'government') {
     return 'official_statistics';

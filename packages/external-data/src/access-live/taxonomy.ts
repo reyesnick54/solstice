@@ -46,18 +46,17 @@ export const CAPACITY_TO_CONSUMER: Readonly<Record<AccessCapacityCategory, Consu
   EXPERIENCES: 'EXPERIENCES',
 });
 
-export const CONSUMER_TO_CAPACITY: Readonly<Partial<Record<ConsumerAccessCategory, readonly AccessCapacityCategory[]>>> =
-  Object.freeze({
-    MOBILITY: Object.freeze(['TRANSPORTATION', 'VEHICLE_HOURS']),
-    TRAVEL: Object.freeze(['TRAVEL']),
-    STAY_HOUSING: Object.freeze(['HOUSING_ROOM_NIGHTS']),
-    FOOD: Object.freeze(['FOOD']),
-    EXPERIENCES: Object.freeze(['EXPERIENCES']),
-    COMPUTE_AI: Object.freeze(['COMPUTE']),
-    ROBOTS_SERVICES: Object.freeze(['ROBOTICS', 'MANUFACTURING', 'SERVICES']),
-    ENERGY: Object.freeze(['ENERGY']),
-    GOODS: Object.freeze(['GOODS']),
-  });
+export const CONSUMER_TO_CAPACITY = Object.freeze({
+  MOBILITY: Object.freeze(['TRANSPORTATION', 'VEHICLE_HOURS'] as const),
+  TRAVEL: Object.freeze(['TRAVEL'] as const),
+  STAY_HOUSING: Object.freeze(['HOUSING_ROOM_NIGHTS'] as const),
+  FOOD: Object.freeze(['FOOD'] as const),
+  EXPERIENCES: Object.freeze(['EXPERIENCES'] as const),
+  COMPUTE_AI: Object.freeze(['COMPUTE'] as const),
+  ROBOTS_SERVICES: Object.freeze(['ROBOTICS', 'MANUFACTURING', 'SERVICES'] as const),
+  ENERGY: Object.freeze(['ENERGY'] as const),
+  GOODS: Object.freeze(['GOODS'] as const),
+}) satisfies Readonly<Partial<Record<ConsumerAccessCategory, readonly AccessCapacityCategory[]>>>;
 
 export function toConsumerCategory(category: AccessCapacityCategory): ConsumerAccessCategory {
   return CAPACITY_TO_CONSUMER[category];
@@ -82,7 +81,7 @@ export function matchesCategoryFilter(
   if (!filter) return true;
   if ((CONSUMER_ACCESS_CATEGORIES as readonly string[]).includes(filter)) {
     const mapped = CONSUMER_TO_CAPACITY[filter as ConsumerAccessCategory];
-    return mapped?.includes(capacityCategory) ?? false;
+    return mapped?.some((category) => category === capacityCategory) ?? false;
   }
   return capacityCategory === filter;
 }

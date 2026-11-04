@@ -17,8 +17,8 @@ import {
   FIXTURE_SERVICE_INCIDENTS,
   FIXTURE_THREAT_INDICATORS,
   FIXTURE_VULNERABILITIES,
-  MALFORMED_JSON_FIXTURE,
-  TIMEOUT_PROVIDER,
+  WAVE4_MALFORMED_JSON_FIXTURE,
+  WAVE4_TIMEOUT_PROVIDER,
 } from './fixtures.ts';
 import { WAVE4_IMPLEMENTED_PROVIDER_IDS } from './catalog-entries.ts';
 import type {
@@ -76,7 +76,7 @@ function guardProvider(ctx: Wave4AdapterContext, providerId: string): string | n
   if (!state.enabled) {
     return 'PROVIDER_DISABLED';
   }
-  if (state.down || providerId === TIMEOUT_PROVIDER) {
+  if (state.down || providerId === WAVE4_TIMEOUT_PROVIDER) {
     return 'PROVIDER_UNAVAILABLE';
   }
   if (state.rateLimited) {
@@ -228,7 +228,7 @@ export function fetchVulnerabilityObservations(
       capability: 'vulnerability_intelligence',
       dataset: 'cve-feed',
       data: vuln,
-      rawPayload: failure === 'INVALID_PAYLOAD' ? MALFORMED_JSON_FIXTURE : canonicalJsonStringify(vuln),
+      rawPayload: failure === 'INVALID_PAYLOAD' ? WAVE4_MALFORMED_JSON_FIXTURE : canonicalJsonStringify(vuln),
       authorityClass: 'authoritative_official',
     });
     if (obs) {
@@ -316,7 +316,7 @@ export function mapDependencyVulnerabilities(
         if (product.toLowerCase().includes(dep.dependencyName.toLowerCase())) {
           exposureStatus = 'DEPENDENCY_POTENTIALLY_AFFECTED';
           const versionMatch = product.match(/<\s*([\d.]+)/);
-          if (versionMatch && dep.dependencyVersion < versionMatch[1]) {
+          if (versionMatch?.[1] && dep.dependencyVersion < versionMatch[1]) {
             exposureStatus = 'CONFIRMED_VULNERABLE';
           }
         }

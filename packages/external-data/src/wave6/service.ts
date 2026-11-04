@@ -68,7 +68,7 @@ export class OpportunityService {
 
     const deduped = detectDuplicateJobs(allJobs);
     const recommendable = deduped.filter((j) => isRecommendableFreshness(j.freshness));
-    this.#setCache(cacheKey, recommendable, OPPORTUNITY_CACHE_CAPABILITIES.jobSearch);
+    this.#setCache(cacheKey, recommendable, 'jobSearch');
     return { ok: true, value: Object.freeze(recommendable), fromCache: false, providersUsed: Object.freeze(providersUsed) };
   }
 
@@ -86,11 +86,13 @@ export class OpportunityService {
       const search = await this.searchJobs({}, nowUtc);
       if (!search.ok) return search;
       const found = search.value.find((j) => j.opportunityId === opportunityId);
-      if (!found) return { ok: false, code: 'NOT_FOUND', message: `job ${opportunityId} not found`, providerId };
+      if (!found) {
+        return { ok: false, code: 'NOT_FOUND', message: `job ${opportunityId} not found`, providerId: providerId ?? null };
+      }
       return { ok: true, value: found, fromCache: false, providersUsed: search.providersUsed };
     }
     const result = await provider.getJob(providerJobId!, nowUtc);
-    if (result.ok) this.#setCache(cacheKey, result.value, OPPORTUNITY_CACHE_CAPABILITIES.jobDetail);
+    if (result.ok) this.#setCache(cacheKey, result.value, 'jobDetail');
     return result;
   }
 
@@ -120,7 +122,7 @@ export class OpportunityService {
       }
     }
     const merged = Object.freeze([...byCanonical.values()]);
-    this.#setCache(cacheKey, merged, OPPORTUNITY_CACHE_CAPABILITIES.skillSearch);
+    this.#setCache(cacheKey, merged, 'skillSearch');
     return { ok: true, value: merged, fromCache: false, providersUsed: Object.freeze(providersUsed) };
   }
 
@@ -159,7 +161,7 @@ export class OpportunityService {
       }
     }
     const frozen = Object.freeze(occupations);
-    this.#setCache(cacheKey, frozen, OPPORTUNITY_CACHE_CAPABILITIES.occupationSearch);
+    this.#setCache(cacheKey, frozen, 'occupationSearch');
     return { ok: true, value: frozen, fromCache: false, providersUsed: Object.freeze(providersUsed) };
   }
 
@@ -202,7 +204,7 @@ export class OpportunityService {
       }
     }
     const frozen = Object.freeze(observations);
-    this.#setCache(cacheKey, frozen, OPPORTUNITY_CACHE_CAPABILITIES.publicIntelligence);
+    this.#setCache(cacheKey, frozen, 'publicIntelligence');
     return { ok: true, value: frozen, fromCache: false, providersUsed: Object.freeze(providersUsed) };
   }
 

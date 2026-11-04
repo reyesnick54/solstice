@@ -16,6 +16,8 @@ import type {
   ServiceIncidentObservation,
 } from './models.ts';
 
+export type { ProviderRiskScore } from './models.ts';
+
 export type ProviderRiskInput = {
   readonly providerId: string;
   readonly adapterState: ProviderAdapterState;
@@ -161,7 +163,7 @@ export class ProviderRiskMonitor {
     if (!history || history.length === 0) {
       return null;
     }
-    return history[history.length - 1].reason;
+    return history[history.length - 1]!.reason;
   }
 
   /** Quarantine a provider — no new live requests, cache subject to freshness policy. */
@@ -189,6 +191,9 @@ export class ProviderRiskMonitor {
       return Object.freeze({ allowed: false, reason: 'No quarantine history' });
     }
     const latest = history[history.length - 1];
+    if (!latest) {
+      return Object.freeze({ allowed: false, reason: 'No quarantine history' });
+    }
     if (latest.restoredAt) {
       return Object.freeze({ allowed: false, reason: 'Already restored' });
     }
@@ -201,6 +206,9 @@ export class ProviderRiskMonitor {
       return null;
     }
     const latest = history[history.length - 1];
+    if (!latest) {
+      return null;
+    }
     if (latest.restoredAt) {
       return latest;
     }
@@ -209,7 +217,11 @@ export class ProviderRiskMonitor {
     }
     this.#quarantined.delete(providerId);
     const restored: ProviderQuarantineRecord = Object.freeze({
-      ...latest,
+      providerId: latest.providerId,
+      quarantinedAt: latest.quarantinedAt,
+      reason: latest.reason,
+      triggeredBy: latest.triggeredBy,
+      previousState: latest.previousState,
       restoredAt: this.#nowUtc,
       restorationValidated: true,
     });

@@ -19,7 +19,7 @@ export type EvaluationFixture = {
   readonly purpose: AiApprovedPurpose;
   readonly taskClass: 'GROWTH_PLANNING' | 'FINANCIAL_EXPLANATION' | 'GENERAL_ASSISTANT';
   readonly privacyClass: 'PUBLIC' | 'INTERNAL';
-  readonly context: readonly Readonly<Record<string, unknown>>;
+  readonly context: readonly Record<string, unknown>[];
   readonly untrustedProviderText?: string;
   readonly expect: {
     readonly schemaValid: boolean;
@@ -186,10 +186,11 @@ export const EVALUATION_FIXTURES: readonly EvaluationFixture[] = Object.freeze([
 ]);
 
 export function syntheticGrowthProposal(fixture: EvaluationFixture): Readonly<Record<string, unknown>> {
-  const available = fixture.context[0]?.availableMinorUnits ?? '0';
-  const currency = typeof fixture.context[0]?.currency === 'string' && fixture.context[0].currency.length > 0
-    ? fixture.context[0].currency
-    : 'GBP';
+  const ctx0 = fixture.context[0];
+  const available =
+    ctx0 && typeof ctx0.availableMinorUnits === 'string' ? ctx0.availableMinorUnits : '0';
+  const currency =
+    ctx0 && typeof ctx0.currency === 'string' && ctx0.currency.length > 0 ? ctx0.currency : 'GBP';
   const risk =
     fixture.id === 'high_risk_investment'
       ? 'HIGH'
@@ -206,7 +207,8 @@ export function syntheticGrowthProposal(fixture: EvaluationFixture): Readonly<Re
     assumptions: Object.freeze(['simulation_only']),
     recommendedAmount: Object.freeze({ minorUnits: available, currency }),
     currency,
-    timeHorizon: fixture.context[0]?.horizon ?? 'unknown',
+    timeHorizon:
+      ctx0 && typeof ctx0.horizon === 'string' && ctx0.horizon.length > 0 ? ctx0.horizon : 'unknown',
     requiredUserApproval: true,
     providerDataReferences: Object.freeze(
       fixture.context.length > 0 ? ['ctx:0'] : [],

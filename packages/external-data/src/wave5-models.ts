@@ -286,4 +286,4 @@ export type ProductiveEconomicGraphSnapshot = {
   readonly grantsIssuanceAuthority: false;
 };
 
-export type ExternalDataObservation<T> = ExternalObservation<T>;
+export type { ExternalDataObservation } from './models.ts';

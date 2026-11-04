@@ -14,7 +14,7 @@ import { AiModelGateway, type AiGatewayRequest } from '../gateway.ts';
 import { requestIdFor } from '../ids.ts';
 import { buildBoundedPromptSegments, formatSeparatedPrompt } from '../prompt-boundary.ts';
 import { LocalTestAiProvider } from '../providers/local-test.ts';
-import { seedCanonicalAiModels } from '../registry.ts';
+import { CANONICAL_GROK_MODEL_ID, CANONICAL_GROK_MODEL_VERSION, seedCanonicalAiModels } from '../registry.ts';
 import { minimizeContext } from '../envelope.ts';
 import { parseStructuredOutput } from '../structured.ts';
 import { FixtureHttpsTransport, httpsFail } from '../transport.ts';
@@ -76,6 +76,8 @@ describe('Wave 4 Prompt 12 AI safety controls', () => {
         {
           objectId: 'ctx_1',
           dataClass: 'PUBLIC',
+          authorizedProviders: Object.freeze([]),
+          userApproved: true,
           payload: Object.freeze({
             goalId: 'g1',
             horizon: '12m',
@@ -157,6 +159,7 @@ describe('Wave 4 Prompt 12 AI safety controls', () => {
       jurisdictionRef: 'GB',
       authorization: Object.freeze({
         actorId: 'cert_op',
+        subjectId: 'subject_cert',
         agentId: null,
         mandateId: null,
         userApprovedExternal: true,
@@ -196,7 +199,10 @@ describe('Wave 4 Prompt 12 AI safety controls', () => {
       Object.freeze({
         requestId: requestIdFor('billing-test'),
         taskClass: 'GENERAL_ASSISTANT',
-        modelRef: Object.freeze({ modelId: 'grok-4.6-sandbox-v1', version: '1' }),
+        modelRef: Object.freeze({
+          modelId: CANONICAL_GROK_MODEL_ID,
+          version: CANONICAL_GROK_MODEL_VERSION,
+        }),
         promptHash: 'sha256:test',
         releasedContext: Object.freeze([]),
         purpose: 'GENERAL_ASSISTANT',

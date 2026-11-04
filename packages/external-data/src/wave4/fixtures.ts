@@ -236,6 +236,6 @@ export const SUNREY_DEPENDENCIES = Object.freeze([
   { dependencyId: 'dep-example-lib', dependencyName: 'example-library', dependencyVersion: '1.2.0' },
 ]);
 
-export const MALFORMED_JSON_FIXTURE = '{"invalid": true, "cve": ';
-export const RATE_LIMIT_FIXTURE = 'RATE_LIMITED';
-export const TIMEOUT_PROVIDER = 'wave4-timeout-provider';
+export const WAVE4_MALFORMED_JSON_FIXTURE = '{"invalid": true, "cve": ';
+export const WAVE4_RATE_LIMIT_FIXTURE = 'RATE_LIMITED';
+export const WAVE4_TIMEOUT_PROVIDER = 'wave4-timeout-provider';

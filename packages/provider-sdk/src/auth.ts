@@ -199,10 +199,14 @@ export function unresolvedSecretMessage(reference: SecretReference): string {
 
 export const NO_AUTH_PROVIDER_RESOLVER: ProviderAuthResolver = Object.freeze({
   resolverId: 'provider-sdk.no-auth',
-  async resolve(strategy) {
+  async resolve(strategy, context) {
     if (strategy.kind === 'none') {
       return Object.freeze({ headers: Object.freeze({}), queryParams: Object.freeze({}) });
     }
-    return securityError('AUTH_UNSUPPORTED', `unsupported auth strategy: ${strategy.kind}`);
+    return securityError(
+      context.providerId,
+      context.requestId,
+      `unsupported auth strategy: ${strategy.kind}`,
+    );
   },
 });
