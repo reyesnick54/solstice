@@ -49,7 +49,10 @@ export function createHeliosObservationStore(): HeliosObservationStore {
     observations.set(envelope.observationId, envelope);
     const list = byInstrument.get(envelope.canonicalInstrumentId) ?? [];
     list.push(envelope);
-    trimObservationHistory(list, HELIOS_OBSERVATION_BUFFER_MAX_PER_INSTRUMENT);
+    const evicted = trimObservationHistory(list, HELIOS_OBSERVATION_BUFFER_MAX_PER_INSTRUMENT);
+    for (const prior of evicted) {
+      observations.delete(prior.observationId);
+    }
     byInstrument.set(envelope.canonicalInstrumentId, list);
     if (envelope.lineage.upstreamSourceRef) {
       upstreamRefs.add(envelope.lineage.upstreamSourceRef);

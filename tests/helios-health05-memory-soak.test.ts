@@ -42,6 +42,7 @@ describe('HELIOS HEALTH05 platform memory bounds', () => {
     }
     const listed = fabric.store().listByInstrument('SIM-ETF-1');
     assert.equal(listed.length, HELIOS_OBSERVATION_BUFFER_MAX_PER_INSTRUMENT);
+    assert.equal(fabric.store().list().length, HELIOS_OBSERVATION_BUFFER_MAX_PER_INSTRUMENT);
   });
 
   it('caps execution-twin order history in the prediction market service store', () => {
