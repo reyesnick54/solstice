@@ -6,8 +6,8 @@ import { createHash } from 'node:crypto';
 
 import type { UtcInstant } from '@solstice/domain';
 import { assertNoEarningsLeakage } from './knowable-at.ts';
-import type { EarningsIntelligenceManifest, EarningsIntelligenceStoreSnapshot } from './types.ts';
-import { HELIOS_EARNINGS_INTELLIGENCE_SCHEMA } from './taxonomy.ts';
+import type { EarningsIntelligenceManifest, EarningsIntelligenceStoreSnapshot } from './earn01-canonical-domain.ts';
+import { HELIOS_EARN01_CANONICAL_DOMAIN_SCHEMA } from './taxonomy.ts';
 
 export function compileEarningsIntelligenceManifest(input: {
   readonly evaluationTime: UtcInstant;
@@ -23,7 +23,7 @@ export function compileEarningsIntelligenceManifest(input: {
     .slice(0, 24)}`;
 
   return Object.freeze({
-    schema: HELIOS_EARNINGS_INTELLIGENCE_SCHEMA,
+    schema: HELIOS_EARN01_CANONICAL_DOMAIN_SCHEMA,
     manifestId,
     compiledAt: input.compiledAt,
     evaluationTime: input.evaluationTime,

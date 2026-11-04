@@ -1,111 +1,83 @@
-/**
- * Simulation fixtures for EARN01 domain qualification (not production data).
- */
+import { asUtcInstant } from '@solstice/domain';
+import type { RegimeTaggedOutcome } from './regime-slices.ts';
+import type { ChronologicalEarningsObservation } from './chronology.ts';
+import type { EarningsCalendarEvent, EarningsIssuerProfile } from './types.ts';
 
-import { asUtcInstant, type UtcInstant } from '@solstice/domain';
-import type { EarningsEvent, EarningsActualObservation, EarningsConsensusSnapshot } from './types.ts';
-import { asEarningsEventId } from './types.ts';
-import {
-  HELIOS_EARNINGS_INTELLIGENCE_AUTHORITY,
-  HELIOS_EARNINGS_INTELLIGENCE_SCHEMA,
-} from './taxonomy.ts';
+const BASE = Date.parse('2024-01-15T21:00:00.000Z');
 
-const ENTITY = 'entity.simcorp.demo';
-const INSTRUMENT = 'instrument.simcorp.demo';
+export const FIXTURE_ISSUER: EarningsIssuerProfile = Object.freeze({
+  issuerId: 'issuer_acme',
+  sector: 'TECH',
+  marketCapTier: 'LARGE',
+  analystCoverageScore: 82,
+  liquidityScore: 78,
+  volatilityBps: 1_800,
+});
 
-export function demoFiscalPeriodQ2_2024() {
-  return Object.freeze({
-    fiscalYear: 2024,
-    fiscalQuarter: 2 as const,
-    periodLabel: 'FY2024-Q2',
-    periodEndDate: '2024-06-30',
-  });
-}
+export function buildFixtureEarningsUniverse(eventCount = 48): {
+  readonly calendar: readonly EarningsCalendarEvent[];
+  readonly chronology: readonly ChronologicalEarningsObservation[];
+  readonly labeledOutcomes: readonly RegimeTaggedOutcome[];
+} {
+  const calendar: EarningsCalendarEvent[] = [];
+  const chronology: ChronologicalEarningsObservation[] = [];
+  const labeled: RegimeTaggedOutcome[] = [];
 
-function baseTemporal(knowableAt: UtcInstant) {
-  return Object.freeze({
-    canonicalEntityId: ENTITY,
-    canonicalInstrumentId: INSTRUMENT,
-    fiscalPeriod: demoFiscalPeriodQ2_2024(),
-    eventTime: asUtcInstant('2024-08-15T21:00:00.000Z'),
-    publishedTime: asUtcInstant('2024-08-15T21:05:00.000Z'),
-    providerAvailabilityTime: asUtcInstant('2024-08-15T21:04:00.000Z'),
-    sunreyArrivalTime: asUtcInstant('2024-08-15T21:06:00.000Z'),
-    knowableAt,
-    revisionId: null,
-    sourceRefs: Object.freeze([
+  for (let i = 0; i < eventCount; i += 1) {
+    const scheduledMs = BASE + i * 14 * 86_400_000;
+    const scheduledAt = asUtcInstant(new Date(scheduledMs).toISOString());
+    const reportMs = scheduledMs + 86_400_000;
+    const knowableAt = asUtcInstant(new Date(reportMs).toISOString());
+    const decisionMs = scheduledMs - 86_400_000;
+    const decisionAt = asUtcInstant(new Date(decisionMs).toISOString());
+    const eventId = `earn_evt_${i}`;
+
+    calendar.push(
       Object.freeze({
-        sourceId: 'fixture.earnings.vendor',
-        providerId: 'simulation.earnings',
-        capability: 'earnings.release',
-        upstreamRef: null,
+        eventId,
+        issuerId: `issuer_${i % 8}`,
+        fiscalPeriod: `2024-Q${(i % 4) + 1}`,
+        scheduledAt,
+        reportKnowableAt: knowableAt,
       }),
-    ]),
-    evidenceRefs: Object.freeze(['evidence.fixture.earnings.demo']),
-    qualityState: 'VALID' as const,
-  });
-}
+    );
 
-export function demoEarningsEventReleased(input?: { readonly knowableAt?: UtcInstant }): EarningsEvent {
-  const knowableAt = input?.knowableAt ?? asUtcInstant('2024-08-15T21:06:00.000Z');
-  return Object.freeze({
-    schema: HELIOS_EARNINGS_INTELLIGENCE_SCHEMA,
-    authority: HELIOS_EARNINGS_INTELLIGENCE_AUTHORITY,
-    eventId: asEarningsEventId('earn.event.simcorp.fy2024q2'),
-    announcementState: 'RELEASED',
-    sessionClassification: 'AFTER_MARKET',
-    scheduledReleaseTime: asUtcInstant('2024-08-15T21:00:00.000Z'),
-    confirmedReleaseTime: asUtcInstant('2024-08-15T21:00:00.000Z'),
-    earningsCallScheduledTime: asUtcInstant('2024-08-16T14:00:00.000Z'),
-    earningsCallCompletedTime: null,
-    grantsExecutionAuthority: false,
-    grantsFinancialMutation: false,
-    ...baseTemporal(knowableAt),
-  });
-}
-
-export function demoConsensusBeforeRelease(): EarningsConsensusSnapshot {
-  return Object.freeze({
-    observationKind: 'consensus',
-    snapshotId: 'earn.consensus.simcorp.fy2024q2.pre',
-    eventId: asEarningsEventId('earn.event.simcorp.fy2024q2'),
-    metrics: Object.freeze([
+    const issuerId = `issuer_${i % 8}`;
+    chronology.push(
       Object.freeze({
-        metricId: 'eps',
-        unit: 'USD/share_minor',
-        valueMinor: 125n,
-        valueText: null,
+        eventId,
+        issuerId,
+        scheduledAt,
+        decisionAt,
+        knowableAt,
       }),
-    ]),
-    analystCount: 12,
-    grantsExecutionAuthority: false,
-    ...baseTemporal(asUtcInstant('2024-08-14T23:59:59.000Z')),
-  });
-}
+    );
 
-export function demoActualAfterRelease(): EarningsActualObservation {
-  return Object.freeze({
-    observationKind: 'actual',
-    observationId: 'earn.actual.simcorp.fy2024q2',
-    eventId: asEarningsEventId('earn.event.simcorp.fy2024q2'),
-    metrics: Object.freeze([
+    const consensus = 100n + BigInt(i % 7);
+    const actual = consensus + BigInt(i % 3 === 0 ? 2 : -1);
+    labeled.push(
       Object.freeze({
-        metricId: 'eps',
-        unit: 'USD/share_minor',
-        valueMinor: 132n,
-        valueText: null,
+        epsActualMinor: actual,
+        revenueActualMinor: 1_000_000n + BigInt(i * 1_000),
+        epsConsensusMinor: consensus,
+        revenueConsensusMinor: 1_000_000n + BigInt(i * 950),
+        beatObserved: actual >= consensus,
+        residualReturnBps: (i % 5) - 2,
+        fundamentalsSignalBps: 40 + (i % 10),
+        transcriptToneBps: 5_100 + (i % 20) * 10,
+        optionsImpliedBps: 180 + (i % 15),
+        seasonalEpsMinor: consensus - 1n,
+        lastQuarterEpsMinor: consensus,
+        issuer: FIXTURE_ISSUER,
+        marketRegime: i % 2 === 0 ? 'BULL' : 'BEAR',
+        preMajorRegime: i < eventCount / 2,
       }),
-    ]),
-    grantsExecutionAuthority: false,
-    ...baseTemporal(asUtcInstant('2024-08-15T21:06:00.000Z')),
-  });
-}
+    );
+  }
 
-/** Actual with knowableAt after public release — must stay hidden until knowable. */
-export function demoFutureLeakingActual(): EarningsActualObservation {
   return Object.freeze({
-    ...demoActualAfterRelease(),
-    observationId: 'earn.actual.simcorp.fy2024q2.leak',
-    knowableAt: asUtcInstant('2024-08-16T12:00:00.000Z'),
+    calendar: Object.freeze(calendar),
+    chronology: Object.freeze(chronology),
+    labeledOutcomes: Object.freeze(labeled),
   });
 }

@@ -9,7 +9,7 @@ import type {
   EarningsActualObservation,
   EarningsConsensusSnapshot,
   EarningsIntelligenceManifest,
-} from '../../earnings-intelligence/types.ts';
+} from '../../earnings-intelligence/earn01-canonical-domain.ts';
 import { filterKnowableEarningsArtifacts } from '../../earnings-intelligence/knowable-at.ts';
 import type { EarningsFeaturePlaneSnapshot, EarningsFeatureValue } from './types.ts';
 import {

@@ -1,157 +1,148 @@
-/**
- * EARN01 — canonical earnings intelligence domain types.
- */
-
 import type { UtcInstant } from '@solstice/domain';
 import type {
-  EarningsAnnouncementState,
-  EarningsObservationKind,
-  EarningsSessionClassification,
-  HELIOS_EARNINGS_INTELLIGENCE_AUTHORITY,
-  HELIOS_EARNINGS_INTELLIGENCE_SCHEMA,
+  EarnWorkPackageId,
+  EarningsBenchmarkStrategy,
+  EarningsRealityGateStatus,
+  EarningsRegimeSlice,
 } from './taxonomy.ts';
-import type { EarningsFiscalPeriod, EarningsTemporalEnvelope } from './temporal-envelope.ts';
+import type { TrialId } from './ids.ts';
 
-export type { EarningsFiscalPeriod } from './temporal-envelope.ts';
-
-export type EarningsEventId = string & { readonly __brand: 'EarningsEventId' };
-
-export function asEarningsEventId(value: string): EarningsEventId {
-  if (!value.trim()) {
-    throw new Error('EarningsEventId required');
-  }
-  return value as EarningsEventId;
-}
-
-export type EarningsEvent = EarningsTemporalEnvelope & {
-  readonly schema: typeof HELIOS_EARNINGS_INTELLIGENCE_SCHEMA;
-  readonly authority: typeof HELIOS_EARNINGS_INTELLIGENCE_AUTHORITY;
-  readonly eventId: EarningsEventId;
-  readonly announcementState: EarningsAnnouncementState;
-  readonly sessionClassification: EarningsSessionClassification;
-  readonly scheduledReleaseTime: UtcInstant | null;
-  readonly confirmedReleaseTime: UtcInstant | null;
-  readonly earningsCallScheduledTime: UtcInstant | null;
-  readonly earningsCallCompletedTime: UtcInstant | null;
-  readonly grantsExecutionAuthority: false;
-  readonly grantsFinancialMutation: false;
+export type EarningsIssuerProfile = {
+  readonly issuerId: string;
+  readonly sector: string;
+  readonly marketCapTier: 'LARGE' | 'MID' | 'SMALL';
+  readonly analystCoverageScore: number;
+  readonly liquidityScore: number;
+  readonly volatilityBps: number;
 };
 
-export type EarningsMetricValue = {
-  readonly metricId: string;
-  readonly unit: string;
-  readonly valueMinor: bigint | null;
-  readonly valueText: string | null;
+export type EarningsCalendarEvent = {
+  readonly eventId: string;
+  readonly issuerId: string;
+  readonly fiscalPeriod: string;
+  readonly scheduledAt: UtcInstant;
+  readonly reportKnowableAt: UtcInstant;
 };
 
-export type EarningsReleaseObservation = EarningsTemporalEnvelope & {
-  readonly observationKind: Extract<EarningsObservationKind, 'release'>;
-  readonly observationId: string;
-  readonly eventId: EarningsEventId;
-  readonly headline: string | null;
-  readonly releaseChannel: string | null;
-  readonly grantsExecutionAuthority: false;
+export type EarningsEventGraphNode = {
+  readonly nodeId: string;
+  readonly eventId: string;
+  readonly layer: 'CALENDAR' | 'CONSENSUS' | 'FILING' | 'TRANSCRIPT' | 'OPTIONS' | 'PEER';
+  readonly knowableAt: UtcInstant;
 };
 
-export type EarningsActualObservation = EarningsTemporalEnvelope & {
-  readonly observationKind: Extract<EarningsObservationKind, 'actual'>;
-  readonly observationId: string;
-  readonly eventId: EarningsEventId;
-  readonly metrics: readonly EarningsMetricValue[];
-  readonly grantsExecutionAuthority: false;
+export type SurpriseTensorCell = {
+  readonly metric: 'EPS' | 'REVENUE';
+  readonly actualMinor: bigint;
+  readonly consensusMinor: bigint;
+  readonly surpriseBps: number;
 };
 
-export type EarningsExpectationSnapshot = EarningsTemporalEnvelope & {
-  readonly observationKind: Extract<EarningsObservationKind, 'expectation'>;
-  readonly snapshotId: string;
-  readonly eventId: EarningsEventId;
-  readonly metrics: readonly EarningsMetricValue[];
-  readonly asOfPolicy: 'point_in_time' | 'latest_knowable';
-  readonly grantsExecutionAuthority: false;
+export type EarningsForecast = {
+  readonly epsMinor: bigint;
+  readonly revenueMinor: bigint;
+  readonly beatProbabilityBps: number;
+  readonly intervalLowEpsMinor: bigint;
+  readonly intervalHighEpsMinor: bigint;
 };
 
-export type EarningsConsensusSnapshot = EarningsTemporalEnvelope & {
-  readonly observationKind: Extract<EarningsObservationKind, 'consensus'>;
-  readonly snapshotId: string;
-  readonly eventId: EarningsEventId;
-  readonly metrics: readonly EarningsMetricValue[];
-  readonly analystCount: number | null;
-  readonly grantsExecutionAuthority: false;
+export type EarningsTrialRecord = {
+  readonly trialId: TrialId;
+  readonly recordedAt: UtcInstant;
+  readonly outcome: 'SUCCESS' | 'FAILURE';
+  readonly featureCombination: readonly string[];
+  readonly thresholds: Readonly<Record<string, number>>;
+  readonly genomeRef: string | null;
+  readonly modelRef: string;
+  readonly hyperparameters: Readonly<Record<string, number | string | boolean>>;
+  readonly failureReason: string | null;
 };
 
-export type EarningsGuidanceSnapshot = EarningsTemporalEnvelope & {
-  readonly observationKind: Extract<EarningsObservationKind, 'guidance'>;
-  readonly snapshotId: string;
-  readonly eventId: EarningsEventId;
-  readonly metric: string;
-  readonly guidanceLowMinor: bigint | null;
-  readonly guidanceHighMinor: bigint | null;
-  readonly guidanceText: string | null;
-  readonly grantsExecutionAuthority: false;
+export type ForecastMetrics = {
+  readonly epsMaeMinor: bigint;
+  readonly revenueMaeMinor: bigint;
+  readonly directionalAccuracyBps: number;
+  readonly beatMissBrier: number;
+  readonly logLoss: number;
+  readonly calibrationDriftBps: number;
+  readonly intervalCoverageBps: number;
 };
 
-export type EarningsTranscriptObservation = EarningsTemporalEnvelope & {
-  readonly observationKind: Extract<EarningsObservationKind, 'transcript'>;
-  readonly observationId: string;
-  readonly eventId: EarningsEventId;
-  readonly transcriptRef: string;
-  readonly language: string;
-  readonly grantsExecutionAuthority: false;
+export type InvestmentResearchMetrics = {
+  readonly abnormalReturnRankCorrelation: number;
+  readonly residualReturn1dBps: number;
+  readonly residualReturn5dBps: number;
+  readonly residualReturn20dBps: number;
+  readonly maxDrawdownBps: number;
+  readonly turnoverBps: number;
+  readonly transactionCostBps: number;
+  readonly slippageBps: number;
+  readonly capacityUtilizationBps: number;
+  readonly returnPredictabilitySignificant: boolean;
 };
 
-export type EarningsOptionsSnapshot = EarningsTemporalEnvelope & {
-  readonly observationKind: Extract<EarningsObservationKind, 'options'>;
-  readonly snapshotId: string;
-  readonly eventId: EarningsEventId;
-  readonly impliedMoveBps: bigint | null;
-  readonly putCallSkewBps: bigint | null;
-  readonly grantsExecutionAuthority: false;
+export type AntiOverfittingDiagnostics = {
+  readonly deflatedSharpeRatio: number | null;
+  readonly probabilityOfBacktestOverfitting: number | null;
+  readonly trialCount: number;
+  readonly multipleTestingAdjusted: boolean;
+  readonly sampleSizePermitsDiagnostics: boolean;
 };
 
-export type EarningsMarketReaction = EarningsTemporalEnvelope & {
-  readonly observationKind: Extract<EarningsObservationKind, 'market_reaction'>;
-  readonly reactionId: string;
-  readonly eventId: EarningsEventId;
-  readonly windowStart: UtcInstant;
-  readonly windowEnd: UtcInstant;
-  readonly priceChangeBps: bigint | null;
-  readonly volumeMultiple: string | null;
-  readonly grantsExecutionAuthority: false;
+export type RegimeSliceReport = {
+  readonly slice: EarningsRegimeSlice;
+  readonly sliceKey: string;
+  readonly eventCount: number;
+  readonly forecast: ForecastMetrics;
+  readonly investment: InvestmentResearchMetrics;
 };
 
-export type EarningsPeerContext = EarningsTemporalEnvelope & {
-  readonly observationKind: Extract<EarningsObservationKind, 'peer_context'>;
-  readonly contextId: string;
-  readonly eventId: EarningsEventId;
-  readonly peerEntityIds: readonly string[];
-  readonly peerInstrumentIds: readonly string[];
-  readonly relativeSurpriseRank: number | null;
-  readonly grantsExecutionAuthority: false;
+export type BenchmarkComparisonRow = {
+  readonly strategy: EarningsBenchmarkStrategy;
+  readonly forecast: ForecastMetrics;
+  readonly investment: InvestmentResearchMetrics;
 };
 
-export type EarningsIntelligenceArtifact =
-  | EarningsEvent
-  | EarningsReleaseObservation
-  | EarningsActualObservation
-  | EarningsExpectationSnapshot
-  | EarningsConsensusSnapshot
-  | EarningsGuidanceSnapshot
-  | EarningsTranscriptObservation
-  | EarningsOptionsSnapshot
-  | EarningsMarketReaction
-  | EarningsPeerContext;
-
-export type EarningsIntelligenceManifest = {
-  readonly schema: typeof HELIOS_EARNINGS_INTELLIGENCE_SCHEMA;
-  readonly manifestId: string;
-  readonly compiledAt: UtcInstant;
-  readonly evaluationTime: UtcInstant;
-  readonly events: readonly EarningsEvent[];
-  readonly observations: readonly Exclude<EarningsIntelligenceArtifact, EarningsEvent>[];
-  readonly grantsExecutionAuthority: false;
+export type EarningsValidationReport = {
+  readonly schema: string;
+  readonly generatedAt: UtcInstant;
+  readonly gitSha: string;
+  readonly chronology: ChronologySummary;
+  readonly benchmarks: readonly BenchmarkComparisonRow[];
+  readonly heliosVsNaiveEpsMaeImprovementBps: number;
+  readonly regimeSlices: readonly RegimeSliceReport[];
+  readonly antiOverfitting: AntiOverfittingDiagnostics;
+  readonly realityGate: EarningsRealityGateStatus;
+  readonly realityGateNotes: readonly string[];
+  readonly insignificantAlphaNotPromoted: boolean;
 };
 
-export type EarningsIntelligenceStoreSnapshot = {
-  readonly events: readonly EarningsEvent[];
-  readonly observations: readonly Exclude<EarningsIntelligenceArtifact, EarningsEvent>[];
+export type ChronologySummary = {
+  readonly trainEventCount: number;
+  readonly validationEventCount: number;
+  readonly holdoutEventCount: number;
+  readonly walkForwardFoldCount: number;
+  readonly embargoViolations: number;
+  readonly issuerLeakageViolations: number;
+};
+
+export type EarnWorkPackageRow = {
+  readonly workPackage: EarnWorkPackageId;
+  readonly title: string;
+  readonly status: 'QUALIFIED' | 'BLOCKED';
+  readonly moduleRef: string;
+};
+
+export type EarningsPipelineStageResult = {
+  readonly stage: EarnWorkPackageId;
+  readonly ok: boolean;
+  readonly detail: string;
+};
+
+export type EarningsPipelineResult = {
+  readonly ok: boolean;
+  readonly stages: readonly EarningsPipelineStageResult[];
+  readonly forecast: EarningsForecast | null;
+  readonly validationReport: EarningsValidationReport | null;
+  readonly evidenceRef: string | null;
 };

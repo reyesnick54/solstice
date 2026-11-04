@@ -6,10 +6,10 @@ import type {
   EarningsEvent,
   EarningsIntelligenceArtifact,
   EarningsIntelligenceStoreSnapshot,
-} from './types.ts';
+} from './earn01-canonical-domain.ts';
 import { filterKnowableEarningsArtifacts } from './knowable-at.ts';
 import type { UtcInstant } from '@solstice/domain';
-import type { EarningsEventId } from './types.ts';
+import type { EarningsEventId } from './earn01-canonical-domain.ts';
 
 export type EarningsIntelligenceStore = {
   upsertEvent(event: EarningsEvent): void;
