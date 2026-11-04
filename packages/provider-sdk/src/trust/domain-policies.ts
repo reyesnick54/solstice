@@ -6,20 +6,32 @@ import type { ExternalObservation } from '../types.ts';
 import type { ExternalDataTrustEngine } from './engine.ts';
 import type { CanonicalTrustResult, TrustObservationContext } from './types.ts';
 
+type FxObservationData = {
+  readonly baseCurrency: string;
+  readonly quoteCurrency: string;
+  readonly rate: string;
+  readonly asOf: string;
+  readonly sourceProvider: string;
+};
+
+type FxCanonicalValue = {
+  readonly rate: string;
+  readonly baseCurrency: string;
+  readonly quoteCurrency: string;
+  readonly asOf: string;
+  readonly sourceProvider: string;
+};
+
 export type FxTrustInput = {
-  readonly observations: readonly ExternalObservation<{
-    readonly baseCurrency: string;
-    readonly quoteCurrency: string;
-    readonly rate: string;
-    readonly asOf: string;
-    readonly sourceProvider: string;
-  }>[];
+  readonly observations: readonly ExternalObservation<FxObservationData>[];
   readonly baseCurrency: string;
   readonly quoteCurrency: string;
   readonly providerRisk?: Readonly<Record<string, { readonly state?: string; readonly quarantined?: boolean }>>;
 };
 
-export function buildFxTrustContexts(input: FxTrustInput): readonly TrustObservationContext[] {
+export function buildFxTrustContexts(
+  input: FxTrustInput,
+): readonly TrustObservationContext<FxObservationData>[] {
   const semanticKey = `${input.baseCurrency}/${input.quoteCurrency}`;
   return Object.freeze(
     input.observations
@@ -45,9 +57,9 @@ export function buildFxTrustContexts(input: FxTrustInput): readonly TrustObserva
 export function assessFxReferenceTrust(
   engine: ExternalDataTrustEngine,
   input: FxTrustInput,
-): CanonicalTrustResult<{ readonly rate: string; readonly baseCurrency: string; readonly quoteCurrency: string; readonly asOf: string; readonly sourceProvider: string }> {
+): CanonicalTrustResult<FxCanonicalValue> {
   const contexts = buildFxTrustContexts(input);
-  return engine.assess({
+  return engine.assess<FxObservationData, FxCanonicalValue>({
     contexts,
     policyProfile: 'FX_REFERENCE',
     semanticKey: `${input.baseCurrency}/${input.quoteCurrency}`,
@@ -67,20 +79,32 @@ export function assessFxReferenceTrust(
   });
 }
 
+type MarketObservationData = {
+  readonly symbol: string;
+  readonly priceMinor: bigint;
+  readonly currency: string;
+  readonly asOf: string;
+  readonly sourceProvider: string;
+  readonly exchange?: string | null;
+};
+
+type MarketCanonicalValue = {
+  readonly priceMinor: string;
+  readonly currency: string;
+  readonly symbol: string;
+  readonly asOf: string;
+  readonly sourceProvider: string;
+};
+
 export type MarketTrustInput = {
-  readonly observations: readonly ExternalObservation<{
-    readonly symbol: string;
-    readonly priceMinor: bigint;
-    readonly currency: string;
-    readonly asOf: string;
-    readonly sourceProvider: string;
-    readonly exchange?: string | null;
-  }>[];
+  readonly observations: readonly ExternalObservation<MarketObservationData>[];
   readonly assetId: string;
   readonly providerRisk?: Readonly<Record<string, { readonly state?: string; readonly quarantined?: boolean }>>;
 };
 
-export function buildMarketTrustContexts(input: MarketTrustInput): readonly TrustObservationContext[] {
+export function buildMarketTrustContexts(
+  input: MarketTrustInput,
+): readonly TrustObservationContext<MarketObservationData>[] {
   return Object.freeze(
     input.observations
       .filter((o) => o.data.symbol === input.assetId || inferAssetId(o) === input.assetId)
@@ -106,9 +130,9 @@ function inferAssetId(observation: ExternalObservation<{ readonly symbol: string
 export function assessMarketReferenceTrust(
   engine: ExternalDataTrustEngine,
   input: MarketTrustInput,
-): CanonicalTrustResult<{ readonly priceMinor: string; readonly currency: string; readonly symbol: string; readonly asOf: string; readonly sourceProvider: string }> {
+): CanonicalTrustResult<MarketCanonicalValue> {
   const contexts = buildMarketTrustContexts(input);
-  return engine.assess({
+  return engine.assess<MarketObservationData, MarketCanonicalValue>({
     contexts,
     policyProfile: 'MARKET_REFERENCE',
     semanticKey: input.assetId,
@@ -129,14 +153,21 @@ export function assessMarketReferenceTrust(
   });
 }
 
+type ResourceEnergyObservationData = {
+  readonly value: number;
+  readonly unit: string;
+  readonly geography?: string;
+  readonly measurementKind?: string;
+  readonly resourceType?: string;
+};
+
+type ResourceEnergyCanonicalValue = {
+  readonly value: number;
+  readonly unit: string;
+};
+
 export type ResourceEnergyTrustInput = {
-  readonly observations: readonly ExternalObservation<{
-    readonly value: number;
-    readonly unit: string;
-    readonly geography?: string;
-    readonly measurementKind?: string;
-    readonly resourceType?: string;
-  }>[];
+  readonly observations: readonly ExternalObservation<ResourceEnergyObservationData>[];
   readonly semanticKey: string;
   readonly unit: string;
   readonly policyProfile: 'ENERGY' | 'RESOURCE';
@@ -146,8 +177,9 @@ export type ResourceEnergyTrustInput = {
 export function assessResourceEnergyTrust(
   engine: ExternalDataTrustEngine,
   input: ResourceEnergyTrustInput,
-): CanonicalTrustResult<{ readonly value: number; readonly unit: string }> {
-  const contexts: TrustObservationContext[] = input.observations.map((observation) => {
+): CanonicalTrustResult<ResourceEnergyCanonicalValue> {
+  const contexts: TrustObservationContext<ResourceEnergyObservationData>[] = input.observations.map(
+    (observation) => {
     const risk = input.providerRisk?.[observation.providerId];
     return Object.freeze({
       observation,
@@ -157,8 +189,9 @@ export function assessResourceEnergyTrust(
       providerRiskState: mapRiskState(risk?.state),
       quarantined: risk?.quarantined ?? false,
     });
-  });
-  return engine.assess({
+    },
+  );
+  return engine.assess<ResourceEnergyObservationData, ResourceEnergyCanonicalValue>({
     contexts: Object.freeze(contexts),
     policyProfile: input.policyProfile,
     semanticKey: input.semanticKey,
@@ -170,9 +203,9 @@ export function assessResourceEnergyTrust(
   });
 }
 
-function mapRiskState(
-  state?: string,
-): TrustObservationContext['providerRiskState'] {
+type TrustProviderRiskState = NonNullable<TrustObservationContext['providerRiskState']> | null;
+
+function mapRiskState(state?: string): TrustProviderRiskState {
   switch (state) {
     case 'NORMAL':
       return 'NORMAL';

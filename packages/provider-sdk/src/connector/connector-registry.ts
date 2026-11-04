@@ -113,10 +113,11 @@ export function bootstrapWave4MigratedConnectors(
     sourceClass: 'PRIMARY_OPERATOR',
   });
   if (nationalGridDef) {
+    const nationalGridLineage = lineage.get('national-grid-eso');
     const connector = new RestGovernedConnector({
       definition: nationalGridDef,
       fixtures: [{ operation: 'generation', filename: 'generation.json' }],
-      lineage: lineage.get('national-grid-eso'),
+      ...(nationalGridLineage !== undefined ? { lineage: nationalGridLineage } : {}),
     });
     registry.registerConnector(connector);
     connectors.push(connector);
@@ -143,10 +144,11 @@ export function bootstrapWave4MigratedConnectors(
     sourceClass: 'AGGREGATOR',
   });
   if (arbeitnowDef) {
+    const arbeitnowLineage = lineage.get('arbeitnow');
     const connector = new RestGovernedConnector({
       definition: arbeitnowDef,
       fixtures: [{ operation: 'jobs', filename: 'jobs.json' }],
-      lineage: lineage.get('arbeitnow') ?? undefined,
+      ...(arbeitnowLineage !== undefined ? { lineage: arbeitnowLineage } : {}),
     });
     registry.registerConnector(connector);
     connectors.push(connector);

@@ -462,7 +462,7 @@ export function createWave5DataDelivery(clockMs: number) {
           capability,
           resourceId,
           schemaVersion: '1.0.0',
-          normalizedValue: Object.freeze({ cached: true }),
+          normalizedValue: Object.freeze({ cached: 'true' }),
           provenance: {
             sourceId: providerId,
             collectedAtUtc: nowUtc,

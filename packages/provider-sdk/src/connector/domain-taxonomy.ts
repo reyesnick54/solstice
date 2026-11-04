@@ -108,8 +108,6 @@ export function economicDomainsForCategory(category: ProviderCategory): readonly
     case 'kyb_identity':
     case 'fraud_risk':
       return ['regulatory'];
-    case 'manufacturing':
-      return ['manufacturing'];
     case 'blockchain':
     case 'cybersecurity':
       return ['other_reference'];

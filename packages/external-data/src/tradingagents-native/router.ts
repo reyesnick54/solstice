@@ -33,14 +33,14 @@ const METHOD_CATEGORY: Record<TradingAgentsDataMethod, TradingAgentsDataCategory
 });
 
 const DEFAULT_CHAINS: Record<TradingAgentsDataMethod, readonly SimulationVendorId[]> = Object.freeze({
-  get_stock_data: Object.freeze(['yfinance']),
-  get_indicators: Object.freeze(['yfinance']),
-  get_fundamentals: Object.freeze(['sec_edgar', 'yfinance']),
-  get_balance_sheet: Object.freeze(['sec_edgar', 'yfinance']),
-  get_cashflow: Object.freeze(['sec_edgar', 'yfinance']),
-  get_income_statement: Object.freeze(['sec_edgar', 'yfinance']),
-  get_news: Object.freeze(['yfinance']),
-  get_macro_indicators: Object.freeze(['fred']),
+  get_stock_data: Object.freeze(['yfinance'] as const),
+  get_indicators: Object.freeze(['yfinance'] as const),
+  get_fundamentals: Object.freeze(['sec_edgar', 'yfinance'] as const),
+  get_balance_sheet: Object.freeze(['sec_edgar', 'yfinance'] as const),
+  get_cashflow: Object.freeze(['sec_edgar', 'yfinance'] as const),
+  get_income_statement: Object.freeze(['sec_edgar', 'yfinance'] as const),
+  get_news: Object.freeze(['yfinance'] as const),
+  get_macro_indicators: Object.freeze(['fred'] as const),
 });
 
 export type TradingAgentsNativeRouterPorts = {

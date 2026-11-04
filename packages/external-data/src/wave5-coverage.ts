@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { parse as parseYaml } from 'yaml';
 
 import { WAVE5_BLOCKED_PROVIDER_IDS, WAVE5_IMPLEMENTED_PROVIDER_IDS } from './wave5-adapters.ts';
+import { loadCatalogProviders } from './coverage.ts';
 import type { Wave5CoverageStatus, Wave5ProviderCoverage } from './wave5-models.ts';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../../..');
@@ -29,11 +30,6 @@ export const WAVE5_CATEGORIES = new Set([
 
 const DEPRECATED_IDS = new Set<string>([]);
 const UNAVAILABLE_IDS = new Set<string>([]);
-
-export function loadCatalogProviders(): readonly Record<string, unknown>[] {
-  const catalog = parseYaml(readFileSync(CATALOG_PATH, 'utf8')) as { providers: Record<string, unknown>[] };
-  return Object.freeze(catalog.providers ?? []);
-}
 
 export function classifyWave5Provider(provider: Record<string, unknown>): Wave5ProviderCoverage {
   const providerId = String(provider.provider_id);

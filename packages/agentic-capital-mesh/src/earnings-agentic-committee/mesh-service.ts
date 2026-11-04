@@ -67,7 +67,9 @@ export class EarningsAgenticCommittee {
     const h20Assignments = assignEarningsSpecialists({
       currentUncertainty: probabilisticState.uncertaintyScore,
       decisionImportance,
-      forceAllSpecialists: input.request.forceAllSpecialists,
+      ...(input.request.forceAllSpecialists !== undefined
+        ? { forceAllSpecialists: input.request.forceAllSpecialists }
+        : {}),
     });
     const assigned = new Set(assignedRoles(h20Assignments));
 

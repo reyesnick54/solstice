@@ -3,20 +3,13 @@
  */
 
 import type { UtcInstant } from '@solstice/domain';
+import { PROVIDER_CATEGORIES } from './registry-types.ts';
 
 export const EXTERNAL_OBSERVATION_SCHEMA = 'sunrey.external-observation.v1' as const;
 export const NORMALIZATION_SCHEMA_VERSION = 1 as const;
 
-/** Catalog-aligned and regulated-provider categories for external observations. */
-export const OBSERVATION_PROVIDER_CATEGORIES = [
-  'macroeconomics',
-  'foreign_exchange',
-  'markets',
-  'securities',
-  'commodities',
-  'corporate_filings',
-  'government_open_data',
-  'research',
+/** Regulated-provider categories beyond the free/public API catalog. */
+const REGULATED_OBSERVATION_EXTRA_CATEGORIES = [
   'banking',
   'payments',
   'fx',
@@ -34,7 +27,12 @@ export const OBSERVATION_PROVIDER_CATEGORIES = [
   'oracle',
   'economic_data',
   'regulatory',
-  'other',
+] as const;
+
+/** Catalog-aligned and regulated-provider categories for external observations. */
+export const OBSERVATION_PROVIDER_CATEGORIES = [
+  ...PROVIDER_CATEGORIES,
+  ...REGULATED_OBSERVATION_EXTRA_CATEGORIES,
 ] as const;
 export type ObservationProviderCategory = (typeof OBSERVATION_PROVIDER_CATEGORIES)[number];
 

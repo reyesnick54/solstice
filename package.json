@@ -83,6 +83,7 @@
     "helios:native15:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-native15-foreign-runtime-qualify.ts",
     "test:helios-h31-fast": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-h31-adversarial-resilience.test.ts packages/platform/src/helios/resilience/resilience.test.ts",
     "helios:release-package:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-h34-release-qualify.ts",
+    "helios:health02:typecheck:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-health02-typecheck-qualify.ts",
     "helios:h35:accept": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-h35-accept.ts",
     "smoke:helios-integrated": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/smoke-helios-integrated.mjs",
     "test:helios-h35": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-h35-integrated-acceptance.test.ts",

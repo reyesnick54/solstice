@@ -4,6 +4,8 @@
  */
 
 import { asUtcInstant, type UtcInstant } from '@solstice/domain';
+
+export { asUtcInstant };
 import type { FreshnessStatus } from './types.ts';
 
 export type FreshnessPolicy = {

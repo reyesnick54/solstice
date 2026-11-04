@@ -16,9 +16,9 @@ type ReferenceAdapterSpec = {
   readonly parse: (data: unknown, retrievedAt: string) => readonly AccessLiveOffer[];
 };
 
-function createReferenceAdapter(spec: ReferenceAdapterSpec, deps: BaseLiveAdapterDeps = {}) {
+function createReferenceAdapter(spec: ReferenceAdapterSpec, defaultDeps: BaseLiveAdapterDeps = {}) {
   return class extends BaseLiveAccessAdapter {
-    constructor() {
+    constructor(deps: BaseLiveAdapterDeps = defaultDeps) {
       super(
         {
           providerId: spec.providerId,

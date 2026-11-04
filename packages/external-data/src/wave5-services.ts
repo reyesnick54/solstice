@@ -62,7 +62,7 @@ function detectWeatherConflicts(
     existing.push(obs);
     byLocation.set(key, existing);
   }
-  const conflicts: Wave5ServiceResult<WeatherObservation>['conflicts'] = [];
+  const conflicts: { readonly providerId: string; readonly field: string; readonly message: string }[] = [];
   for (const [locationId, group] of byLocation) {
     if (group.length < 2) continue;
     const temps = group.map((o) => o.data.temperatureCelsius);

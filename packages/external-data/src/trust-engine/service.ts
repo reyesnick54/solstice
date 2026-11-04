@@ -24,6 +24,8 @@ import type { ExternalObservation } from '@solstice/provider-sdk';
 import type { ExternalDataPlane } from '../plane.ts';
 import type { FxReferenceRate, MarketQuote } from '../models.ts';
 
+type TrustPolicyProfile = Parameters<ExternalDataTrustEngine['assess']>[0]['policyProfile'];
+
 export type ExternalDataTrustPlaneOptions = {
   readonly nowUtc?: () => string;
 };
@@ -33,7 +35,9 @@ export class ExternalDataTrustPlane {
   readonly #auditLog: TrustResultRecord[] = [];
 
   constructor(options: ExternalDataTrustPlaneOptions = {}) {
-    this.#engine = createExternalDataTrustEngine({ nowUtc: options.nowUtc });
+    this.#engine = createExternalDataTrustEngine(
+      options.nowUtc !== undefined ? { nowUtc: options.nowUtc } : {},
+    );
   }
 
   engine(): ExternalDataTrustEngine {
@@ -134,16 +138,15 @@ export class ExternalDataTrustPlane {
 
   assessObservations<T>(
     contexts: readonly TrustObservationContext<T>[],
-    policyProfile: import('@solstice/provider-sdk').TrustPolicyProfile,
+    policyProfile: TrustPolicyProfile,
     semanticKey: string,
     unit?: string | null,
   ): CanonicalTrustResult<T> {
-    const result = this.#engine.assess({
-      contexts,
-      policyProfile,
-      semanticKey,
-      unit,
-    });
+    const assessInput =
+      unit !== undefined && unit !== null
+        ? { contexts, policyProfile, semanticKey, unit }
+        : { contexts, policyProfile, semanticKey };
+    const result = this.#engine.assess(assessInput);
     this.#record(result);
     return result;
   }
@@ -187,6 +190,10 @@ export class ExternalDataTrustPlane {
   #providerRiskMap(plane: ExternalDataPlane): Record<string, { readonly state?: string; readonly quarantined?: boolean }> {
     const map: Record<string, { readonly state?: string; readonly quarantined?: boolean }> = {};
     for (const health of plane.health()) {
+      const circuitState =
+        health.circuitState === 'OPEN' || health.circuitState === 'CLOSED' || health.circuitState === 'HALF_OPEN'
+          ? health.circuitState
+          : 'CLOSED';
       const score = plane.providerRisk.monitor.assess({
         providerId: health.providerId,
         adapterState: {
@@ -194,7 +201,7 @@ export class ExternalDataTrustPlane {
           down: health.health === 'unhealthy',
           malformed: false,
           rateLimited: health.health === 'degraded',
-          circuitState: health.circuitState,
+          circuitState,
           lastSuccess: health.lastSuccess,
           lastError: health.lastError,
         },

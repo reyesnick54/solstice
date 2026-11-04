@@ -301,7 +301,7 @@ describe('provider-sdk external observation framework', () => {
             source: {
               provider: raw.providerId,
               dataset: 'spot/USD-EUR',
-              sourceUrl: raw.sourceUrl,
+              ...(raw.sourceUrl !== undefined ? { sourceUrl: raw.sourceUrl } : {}),
             },
             time: { retrievedAt: asUtcInstant(raw.retrievedAt), sourceTimestamp: SOURCE_TIME },
             authorityClass: 'reference_data',

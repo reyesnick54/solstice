@@ -7,6 +7,8 @@
 import type { AuthorityClass, ExternalObservation, FreshnessStatus } from '../types.ts';
 import type { TrustReason, TrustReasonCode } from './reason-codes.ts';
 
+export type { TrustReason, TrustReasonCode } from './reason-codes.ts';
+
 export const TRUST_RESULT_STATUSES = [
   'TRUSTED',
   'SUPPORTED',
