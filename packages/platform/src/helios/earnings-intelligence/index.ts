@@ -192,6 +192,7 @@ export {
   HELIOS_EARNINGS_INTELLIGENCE_EVIDENCE_KIND,
 } from './evidence.ts';
 
+export * from './event-graph/index.ts';
 export * from './analyst-expectations/index.ts';
 export * from './event-network/index.ts';
 

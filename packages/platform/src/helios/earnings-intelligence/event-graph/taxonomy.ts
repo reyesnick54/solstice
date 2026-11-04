@@ -1,0 +1,40 @@
+/**
+ * HELIOS EARN02 — point-in-time earnings event graph taxonomy.
+ */
+
+export const HELIOS_EARNINGS_EVENT_GRAPH_SCHEMA = 'sunrey.helios.earnings-event-graph.v1' as const;
+
+export const EARNINGS_GRAPH_NODE_KINDS = [
+  'COMPANY',
+  'FISCAL_PERIOD',
+  'EXPECTED_EARNINGS_EVENT',
+  'CONFIRMED_ANNOUNCEMENT',
+  'EARNINGS_RELEASE',
+  'SEC_FILING',
+  'FINANCIAL_SUPPLEMENT',
+  'CONFERENCE_CALL',
+  'GUIDANCE',
+  'ANALYST_REVISION',
+  'MARKET_REACTION',
+] as const;
+export type EarningsGraphNodeKind = (typeof EARNINGS_GRAPH_NODE_KINDS)[number];
+
+export const EARNINGS_GRAPH_EDGE_KINDS = [
+  'FOR_COMPANY',
+  'FOR_FISCAL_PERIOD',
+  'SCHEDULED_FOR',
+  'CONFIRMED_AS',
+  'RELEASED_AS',
+  'FILED_WITH_SEC',
+  'SUPPLEMENTS',
+  'CALL_FOR',
+  'GUIDANCE_FOR',
+  'REVISION_OF',
+  'REACTED_TO',
+  'RESCHEDULED_FROM',
+  'AMENDS',
+] as const;
+export type EarningsGraphEdgeKind = (typeof EARNINGS_GRAPH_EDGE_KINDS)[number];
+
+export const HELIOS_EARN02_EVENT_GRAPH_QUALIFIED = 'HELIOS_EARN02_EVENT_GRAPH_QUALIFIED' as const;
+export const HELIOS_EARN02_EVENT_GRAPH_BLOCKED = 'HELIOS_EARN02_EVENT_GRAPH_BLOCKED' as const;

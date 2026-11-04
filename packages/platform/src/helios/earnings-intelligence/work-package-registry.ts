@@ -11,7 +11,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
   },
   EARN02: {
     title: 'Earnings event graph',
-    moduleRef: 'packages/platform/src/helios/earnings-intelligence/earn02-event-graph.ts',
+    moduleRef: 'packages/platform/src/helios/earnings-intelligence/event-graph/service.ts',
   },
   EARN03: {
     title: 'Surprise tensor',
