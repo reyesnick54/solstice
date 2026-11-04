@@ -31,7 +31,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
   },
   EARN07: {
     title: 'Options intelligence',
-    moduleRef: 'packages/platform/src/helios/earnings-intelligence/earn07-options-intelligence.ts',
+    moduleRef: 'packages/platform/src/helios/earnings-intelligence/options/index.ts',
   },
   EARN08: {
     title: 'Peer event network (attention, PEAD diagnostics)',
