@@ -24,6 +24,8 @@ import type { ExternalObservation } from '@solstice/provider-sdk';
 import type { ExternalDataPlane } from '../plane.ts';
 import type { FxReferenceRate, MarketQuote } from '../models.ts';
 
+type TrustPolicyProfile = Parameters<ExternalDataTrustEngine['assess']>[0]['policyProfile'];
+
 export type ExternalDataTrustPlaneOptions = {
   readonly nowUtc?: () => string;
 };
@@ -136,7 +138,7 @@ export class ExternalDataTrustPlane {
 
   assessObservations<T>(
     contexts: readonly TrustObservationContext<T>[],
-    policyProfile: import('@solstice/provider-sdk').TrustPolicyProfile,
+    policyProfile: TrustPolicyProfile,
     semanticKey: string,
     unit?: string | null,
   ): CanonicalTrustResult<T> {
