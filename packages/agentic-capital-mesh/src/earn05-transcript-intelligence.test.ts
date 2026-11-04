@@ -1,14 +1,14 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import type { UtcInstant } from '../imports.ts';
+import type { UtcInstant } from './imports.ts';
 
 import {
   HELIOS_EARN05_MESH_TRANSCRIPT_BRIDGE_QUALIFIED,
   evaluateEarn05MeshQualification,
-} from './qualification.ts';
-import { createEarningsTranscriptMeshBridge } from './mesh-bridge.ts';
-import type { EarningsTranscriptIntelligencePort } from './types.ts';
+} from './earnings-transcript-intelligence/qualification.ts';
+import { createEarningsTranscriptMeshBridge } from './earnings-transcript-intelligence/mesh-bridge.ts';
+import type { EarningsTranscriptIntelligencePort } from './earnings-transcript-intelligence/types.ts';
 
 function mockPort(): EarningsTranscriptIntelligencePort {
   return Object.freeze({
