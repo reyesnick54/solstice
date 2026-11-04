@@ -103,6 +103,12 @@ export function createConsensusModel(bounds: FormalModelBounds): FormalModel<Con
   });
 
   const next = (state: ConsensusState): Transition<ConsensusState>[] => {
+    // After commit at the current height, consensus for that height is finished.
+    // Further prevotes/locks at the same height (possible when MaxHeight caps height
+    // advance) would violate lock-vs-finality safety and do not match the engine.
+    if (state.finalized[state.height]) {
+      return [];
+    }
     const out: Transition<ConsensusState>[] = [];
     if (state.proposal === null && state.round <= maxRound) {
       for (const value of values) {
