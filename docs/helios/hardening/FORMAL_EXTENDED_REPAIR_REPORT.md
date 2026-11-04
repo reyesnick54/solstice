@@ -83,3 +83,5 @@ Report artifact: `packages/sunrey-chain/formal/reports/formal_extended.json`.
 ## Merge gate
 
 Re-run the exact GitHub extended workflow (`npm run test:formal-extended` with `FORMAL_PROFILE=FORMAL_EXTENDED`) on the merge branch before treating production hardening as closed.
+
+Post-rebase validation: full `npm run test:formal-extended` green on branch `cursor/formal-extended-repair-a8c9` after integrating current `main`.
