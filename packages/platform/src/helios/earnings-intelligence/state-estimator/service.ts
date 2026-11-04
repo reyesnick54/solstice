@@ -45,6 +45,9 @@ function applyOutcomeLearning(
   store: EarningsStateEstimatorStore,
   input: ApplyEarningsOutcomeInput,
 ): { readonly updated: boolean; readonly calibrationAppended: boolean } {
+  if (!assertOutcomeStrictlyPrior(input.outcome.outcomeKnownAt, input.appliedAt)) {
+    return Object.freeze({ updated: false, calibrationAppended: false });
+  }
   let updated = false;
   for (const signal of input.expertSignalsAtDecision) {
     const current = store.snapshot().reliabilityByExpert[signal.expertKind];
