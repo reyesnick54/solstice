@@ -1,25 +1,46 @@
+import { analyzeEarningsTranscript } from './service.ts';
 import {
-  analyzeEarningsTranscript,
   earn05ExternalFacts,
   earn05FixtureTranscript,
   earn05PriorQuarterSegments,
-  evaluateEarn05Qualification,
-  runEarn05SelfChecks,
-} from '../../../platform/src/helios/earnings-intelligence/transcript/index.ts';
-
-import type {
-  EarningsTranscriptIntelligencePort,
-  EarningsTranscriptMeshAnalyzeInput,
-  EarningsTranscriptMeshAnalyzeResult,
-} from './types.ts';
+} from './fixtures.ts';
+import { evaluateEarn05Qualification, runEarn05SelfChecks } from './qualification.ts';
 
 /**
- * Simulation fixture port — binds mesh requests to canonical HELIOS EARN05 analysis.
- * Production callers must inject point-in-time transcript materialization behind this port.
+ * Simulation fixture port for Agentic Capital Mesh EARN05 bridge tests.
+ * Production callers inject point-in-time transcript materialization behind the mesh port.
  */
-export function createFixtureEarningsTranscriptIntelligencePort(): EarningsTranscriptIntelligencePort {
+export function createEarn05TranscriptMeshFixturePort(): {
+  readonly analyzeForMesh: (input: {
+    readonly workOrderId: string;
+    readonly subjectId: string;
+    readonly transcriptId: string;
+    readonly evidenceRefs: readonly {
+      readonly evidenceId: string;
+      readonly sourceRef: string;
+      readonly observedAt: string;
+    }[];
+  }) =>
+    | {
+        readonly ok: true;
+        readonly featureSummary: {
+          readonly managementTone: number;
+          readonly uncertaintyScore: number;
+          readonly forwardLookingScore: number;
+          readonly semanticNovelty: number | null;
+          readonly answeredQuestionRatio: number;
+          readonly expectedSignOfConsensusError: -1 | 0 | 1;
+          readonly consensusConfidence: number;
+          readonly qualificationMarker: string;
+          readonly analysisOutputHash: string;
+        };
+        readonly specialistRole: 'EARNINGS_RESEARCH';
+        readonly baselineOnly: true;
+      }
+    | { readonly ok: false; readonly message: string };
+} {
   return Object.freeze({
-    analyzeForMesh(input: EarningsTranscriptMeshAnalyzeInput): EarningsTranscriptMeshAnalyzeResult {
+    analyzeForMesh(input) {
       if (input.evidenceRefs.length === 0) {
         return Object.freeze({ ok: false, message: 'At least one evidence reference is required.' });
       }

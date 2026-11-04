@@ -3,7 +3,7 @@ import { join } from 'node:path';
 
 import { EARN05_PLATFORM_OWNER } from './upstream-reference.ts';
 import { createEarningsTranscriptMeshBridge } from './mesh-bridge.ts';
-import { createFixtureEarningsTranscriptIntelligencePort } from './platform-port.ts';
+import type { EarningsTranscriptIntelligencePort } from './types.ts';
 
 export const HELIOS_EARN05_MESH_TRANSCRIPT_BRIDGE_QUALIFIED =
   'HELIOS_EARN05_MESH_TRANSCRIPT_BRIDGE_QUALIFIED' as const;
@@ -23,7 +23,9 @@ function repoRoot(): string {
   return join(import.meta.dirname, '..', '..', '..', '..');
 }
 
-export function evaluateEarn05MeshQualification(): Earn05MeshQualificationResult {
+export function evaluateEarn05MeshQualification(input: {
+  readonly port: EarningsTranscriptIntelligencePort;
+}): Earn05MeshQualificationResult {
   const blockers: string[] = [];
   const root = repoRoot();
   const ownerPath = join(root, EARN05_PLATFORM_OWNER.modulePath);
@@ -32,7 +34,7 @@ export function evaluateEarn05MeshQualification(): Earn05MeshQualificationResult
   }
 
   const bridge = createEarningsTranscriptMeshBridge({
-    port: createFixtureEarningsTranscriptIntelligencePort(),
+    port: input.port,
   });
   const result = bridge.analyze({
     workOrderId: 'wo_earn05_qual',

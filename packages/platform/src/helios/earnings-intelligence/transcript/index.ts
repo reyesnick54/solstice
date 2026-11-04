@@ -65,3 +65,4 @@ export {
   type Earn05QualificationChecks,
   type Earn05QualificationResult,
 } from './qualification.ts';
+export { createEarn05TranscriptMeshFixturePort } from './mesh-fixture-port.ts';

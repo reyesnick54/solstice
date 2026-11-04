@@ -13,7 +13,6 @@ export {
   createEarningsTranscriptMeshBridge,
   type EarningsTranscriptMeshBridge,
 } from './mesh-bridge.ts';
-export { createFixtureEarningsTranscriptIntelligencePort } from './platform-port.ts';
 export {
   HELIOS_EARN05_MESH_TRANSCRIPT_BRIDGE_QUALIFIED,
   HELIOS_EARN05_MESH_TRANSCRIPT_BRIDGE_BLOCKED,

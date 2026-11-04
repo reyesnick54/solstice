@@ -6,12 +6,35 @@ import {
   evaluateEarn05MeshQualification,
 } from './qualification.ts';
 import { createEarningsTranscriptMeshBridge } from './mesh-bridge.ts';
-import { createFixtureEarningsTranscriptIntelligencePort } from './platform-port.ts';
+import type { EarningsTranscriptIntelligencePort } from './types.ts';
+
+function mockPort(): EarningsTranscriptIntelligencePort {
+  return Object.freeze({
+    analyzeForMesh() {
+      return Object.freeze({
+        ok: true,
+        specialistRole: 'EARNINGS_RESEARCH',
+        baselineOnly: true,
+        featureSummary: Object.freeze({
+          managementTone: 0.1,
+          uncertaintyScore: 0.2,
+          forwardLookingScore: 0.3,
+          semanticNovelty: 0.4,
+          answeredQuestionRatio: 0.5,
+          expectedSignOfConsensusError: 0,
+          consensusConfidence: 0.6,
+          qualificationMarker: 'HELIOS_EARN05_TRANSCRIPT_INTELLIGENCE_QUALIFIED',
+          analysisOutputHash: 'abc123',
+        }),
+      });
+    },
+  });
+}
 
 describe('EARN05 agentic capital mesh bridge', () => {
-  it('returns structured feature summary from fixture port', () => {
+  it('forwards analyze requests to the injected port', () => {
     const bridge = createEarningsTranscriptMeshBridge({
-      port: createFixtureEarningsTranscriptIntelligencePort(),
+      port: mockPort(),
     });
     const result = bridge.analyze({
       workOrderId: 'wo_test',
@@ -33,8 +56,8 @@ describe('EARN05 agentic capital mesh bridge', () => {
     }
   });
 
-  it('qualifies mesh bridge wiring', () => {
-    const qualification = evaluateEarn05MeshQualification();
+  it('qualifies mesh bridge wiring when port matches platform marker', () => {
+    const qualification = evaluateEarn05MeshQualification({ port: mockPort() });
     assert.equal(qualification.qualified, true);
     assert.equal(qualification.marker, HELIOS_EARN05_MESH_TRANSCRIPT_BRIDGE_QUALIFIED);
   });
