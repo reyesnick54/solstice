@@ -1,8 +1,9 @@
 import { err, ok, type Result } from '@solstice/domain';
 
 import { LIVE_STRATEGY_EXECUTION } from '../types.ts';
-import { materializeEarn11CapsuleCandidate, type StrategyGenomeCapsuleCandidate } from './materialize.ts';
-import { GENOME_COMPILER_FORBIDDEN_STAGES, GENOME_COMPILER_STAGES, type GenomeCompilerStage } from '../os05/pipeline.ts';
+import type { StrategyGenomeCapsuleCandidate } from '../os05/materialize.ts';
+import { GENOME_COMPILER_FORBIDDEN_STAGES, type GenomeCompilerStage } from '../os05/pipeline.ts';
+import { materializeEarn11CapsuleCandidate } from './materialize.ts';
 import type { StrategyGenome, StrategyGenomeFailure } from '../os05/types.ts';
 import { gateEarn11ResearchArtifacts, type Earn11ResearchArtifactBundle } from './research-requirements.ts';
 import { validateEarn11StrategyGenome } from './validate.ts';
