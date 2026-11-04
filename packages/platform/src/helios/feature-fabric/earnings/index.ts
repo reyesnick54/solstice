@@ -13,3 +13,4 @@ export {
 } from './bridge.ts';
 
 export * from './quality/index.ts';
+export * from './surprise/index.ts';
