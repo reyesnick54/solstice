@@ -1,5 +1,12 @@
 export {
   HELIOS_EARNINGS_INTELLIGENCE_SCHEMA,
+  HELIOS_EARN01_CANONICAL_DOMAIN_SCHEMA,
+  HELIOS_EARNINGS_INTELLIGENCE_AUTHORITY,
+  HELIOS_EARN01_DOMAIN_QUALIFIED,
+  HELIOS_EARN01_DOMAIN_BLOCKED,
+  EARNINGS_ANNOUNCEMENT_STATES,
+  EARNINGS_SESSION_CLASSIFICATIONS,
+  EARNINGS_OBSERVATION_KINDS,
   HELIOS_EARNINGS_INTELLIGENCE_V1_QUALIFIED,
   HELIOS_EARNINGS_INTELLIGENCE_V1_BLOCKED,
   EARN_WORK_PACKAGES,
@@ -13,7 +20,55 @@ export {
   type EarningsBenchmarkStrategy,
   type EarningsRealityGateStatus,
   type EarningsRegimeSlice,
+  type EarningsAnnouncementState,
+  type EarningsSessionClassification,
+  type EarningsObservationKind,
 } from './taxonomy.ts';
+
+export type { EarningsSourceRef, EarningsTemporalEnvelope } from './temporal-envelope.ts';
+
+export {
+  asEarningsEventId,
+  type EarningsEventId,
+  type EarningsFiscalPeriod,
+  type EarningsEvent,
+  type EarningsMetricValue,
+  type EarningsReleaseObservation,
+  type EarningsActualObservation,
+  type EarningsExpectationSnapshot,
+  type EarningsConsensusSnapshot,
+  type EarningsGuidanceSnapshot,
+  type EarningsTranscriptObservation,
+  type EarningsOptionsSnapshot,
+  type EarningsMarketReaction,
+  type EarningsPeerContext,
+  type EarningsIntelligenceArtifact,
+  type EarningsIntelligenceManifest,
+  type EarningsIntelligenceStoreSnapshot,
+} from './earn01-canonical-domain.ts';
+
+export {
+  isEarningsArtifactKnowableAt,
+  filterKnowableEarningsArtifacts,
+  assertNoEarningsLeakage,
+} from './knowable-at.ts';
+
+export { createEarningsIntelligenceStore, type EarningsIntelligenceStore } from './store.ts';
+export { compileEarningsIntelligenceManifest } from './manifest.ts';
+
+export {
+  evaluateEarn01DomainQualification,
+  type Earn01QualificationChecks,
+  type Earn01QualificationResult,
+} from './earn01-qualification.ts';
+
+export {
+  demoFiscalPeriodQ2_2024,
+  demoEarningsEventReleased,
+  demoConsensusBeforeRelease,
+  demoActualAfterRelease,
+  demoFutureLeakingActual,
+} from './earn01-fixtures.ts';
 
 export { trialIdFor, trialIdFromConfig, type TrialId } from './ids.ts';
 
