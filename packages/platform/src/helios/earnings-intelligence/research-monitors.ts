@@ -16,7 +16,7 @@ function earn11MonitorBase(
   watch: readonly string[],
   description: string,
 ): ResearchMonitorDefinition {
-  return Object.freeze({
+  const definition = {
     monitorId: asResearchMonitorId(`monitor_earn11_${name}`),
     name,
     version: Object.freeze({
@@ -54,8 +54,9 @@ function earn11MonitorBase(
         requiredKind: 'earnings_event_state',
       } satisfies PointInTimeFeatureRequirement,
     ] as readonly PointInTimeFeatureRequirement[]),
-    staleDataPolicy: 'FAIL_CLOSED',
-  });
+    staleDataPolicy: 'FAIL_CLOSED' as const,
+  } satisfies ResearchMonitorDefinition;
+  return Object.freeze(definition);
 }
 
 /** Major consensus revision acceleration — triggers research, not execution. */

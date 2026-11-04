@@ -42,7 +42,9 @@ export type EarningsEventExecutionProfileGateResult = {
 };
 
 export function gateEarningsEventExecutionProfile(
-  input: Partial<EarningsEventExecutionSimulationProfile> & { readonly barExecutionMode?: BarExecutionMode },
+  input: Partial<Omit<EarningsEventExecutionSimulationProfile, 'barExecutionMode'>> & {
+    readonly barExecutionMode?: BarExecutionMode;
+  },
 ): EarningsEventExecutionProfileGateResult {
   const blockers: string[] = [];
   if (input.profileId !== EARN11_EVENT_EXECUTION_PROFILE_ID) {
