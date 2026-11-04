@@ -19,7 +19,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
   },
   EARN04: {
     title: 'Analyst expectations',
-    moduleRef: 'packages/platform/src/helios/earnings-intelligence/earn04-analyst-expectations.ts',
+    moduleRef: 'packages/platform/src/helios/earnings-intelligence/analyst-expectations/index.ts',
   },
   EARN05: {
     title: 'Transcript intelligence',

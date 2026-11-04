@@ -1,5 +1,5 @@
 export const EARN04_ANALYST_EXPECTATIONS_MODULE =
-  'packages/platform/src/helios/earnings-intelligence/earn04-analyst-expectations.ts' as const;
+  'packages/platform/src/helios/earnings-intelligence/analyst-expectations/index.ts' as const;
 
 export function reviseAnalystConsensus(input: {
   readonly consensusEpsMinor: bigint;
