@@ -95,7 +95,7 @@ export function estimateEarningsDistribution(input: {
 
   const epsMinor = decimalToMinor(state.nextQuarterEps.pointEstimate);
   const revenueMinor = decimalToMinor(state.nextQuarterRevenue.pointEstimate);
-  const beatProbabilityBps = BigInt(Math.round(state.beatProbability.probability * 10_000));
+  const beatProbabilityBps = Math.round(state.beatProbability.probability * 10_000);
   const interval = state.nextQuarterEps.conformalInterval;
   const low =
     interval === null
