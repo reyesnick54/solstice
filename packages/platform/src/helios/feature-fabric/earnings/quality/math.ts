@@ -1,3 +1,5 @@
+import type { UtcInstant } from '@solstice/domain';
+
 /** Ratio helpers — money stays bigint; ratios use basis points (10_000 = 100%). */
 
 export function growthBps(current: bigint, prior: bigint): bigint | null {
@@ -31,5 +33,5 @@ export function maxKnowableAt(times: readonly (string | null | undefined)[], fal
       max = parsed;
     }
   }
-  return new Date(max).toISOString().replace(/\.\d{3}Z$/, '.000Z') as import('../../../../../../domain/src/time.ts').UtcInstant;
+  return new Date(max).toISOString().replace(/\.\d{3}Z$/, '.000Z') as UtcInstant;
 }

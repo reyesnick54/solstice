@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import {
   EARN06_QUALITY_FEATURE_IDS,
   type Earn06ComparisonBasis,

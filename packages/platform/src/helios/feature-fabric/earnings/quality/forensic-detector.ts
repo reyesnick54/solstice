@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { growthBps, ratioBps } from './math.ts';
 import { EARN06_FORMULA_VERSIONS } from './taxonomy.ts';
 import type {

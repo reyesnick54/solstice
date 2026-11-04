@@ -2,7 +2,7 @@
  * EARN06 point-in-time earnings quality feature plane — research inputs only.
  */
 
-import type { UtcInstant } from '../../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { buildQuarterHistoryAt, computeEarn06QualityFeatures } from './features.ts';
 import { detectForensicAccountingChanges } from './forensic-detector.ts';
 import { buildEarningsQualityScorecard } from './scorecard.ts';

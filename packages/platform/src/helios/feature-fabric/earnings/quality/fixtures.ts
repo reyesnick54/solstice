@@ -1,4 +1,4 @@
-import { asUtcInstant, type UtcInstant } from '../../../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import type { Earn06ManagementGuidance, Earn06QuarterFinancials } from './types.ts';
 
 const ENTITY = 'ekg_ent_earn06_demo';

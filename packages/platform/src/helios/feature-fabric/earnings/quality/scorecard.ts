@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { HELIOS_EARN06_EARNINGS_QUALITY_SCHEMA } from './taxonomy.ts';
 import type {
   Earn06ComputedFeature,

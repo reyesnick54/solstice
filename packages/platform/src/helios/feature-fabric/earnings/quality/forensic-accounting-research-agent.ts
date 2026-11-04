@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { FORENSIC_ACCOUNTING_RESEARCH_AGENT_NAME } from './taxonomy.ts';
 import type {
   EarningsQualityScorecard,
