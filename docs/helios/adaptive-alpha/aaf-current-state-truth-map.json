@@ -280,8 +280,12 @@
     },
     {
       "name": "earnings_intelligence_engine",
-      "status": "ABSENT",
-      "paths": ["packages/ai-runtime/src/market-research.ts — prompt-level fundamentalScoreBps only"]
+      "status": "PARTIAL",
+      "paths": [
+        "packages/strategy-lab/src/earn11/",
+        "packages/platform/src/helios/earnings-intelligence/",
+        "tests/helios-earn11-strategy-research.test.ts"
+      ]
     },
     {
       "name": "alternative_data_feature_service",
