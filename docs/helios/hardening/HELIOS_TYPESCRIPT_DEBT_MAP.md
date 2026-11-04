@@ -2,7 +2,7 @@
 
 **Objective:** Zero strict TypeScript diagnostics in the HELIOS investment/research scope without raising `scripts/typecheck-baseline.json` or using suppressions.
 
-**Qualification marker:** `HELIOS_STRICT_TYPECHECK_QUALIFIED` (`packages/platform/src/helios/hardening/qualification.ts`)
+**Qualification marker:** `HELIOS_STRICT_TYPECHECK_QUALIFIED` (`packages/platform/src/helios/hardening/strict-typecheck-qualification.ts`)
 
 **Verification:** `node --experimental-strip-types scripts/helios-health02-typecheck-qualify.ts`  
 **Project:** `tsconfig.helios-strict.json`

@@ -74,6 +74,29 @@ export * from './institutional-research-mesh/index.ts';
 export * from './research-autopilot/index.ts';
 export * from './trading-agents-research-mesh/index.ts';
 export * from './proactive-research/index.ts';
-export * from './tradingagents-native/index.ts';
+export {
+  type PortfolioContext,
+  type PortfolioContextState,
+  type PortfolioPosition,
+  type ResearchRunContextPackage,
+  HELIOS_NATIVE_TRADINGAGENTS_DATA_BLOCKED,
+  HELIOS_NATIVE_TRADINGAGENTS_DATA_QUALIFIED,
+  TRADINGAGENTS_UPSTREAM_SHA,
+  TRADINGAGENTS_MEMORY_EVIDENCE_KIND,
+  TRADINGAGENTS_RESEARCH_CONTEXT_EVIDENCE_KIND,
+  TradingAgentsDecisionMemoryStore,
+  assertNoPythonProductionDependency,
+  buildDecisionMemoryContext,
+  evaluateNative10TradingAgentsDataQualification,
+  packageResearchRunContext,
+  portfolioFingerprint,
+  positionsIn,
+  renderPortfolioBlock,
+  sealDecisionMemoryEntry,
+  sealResearchContextPackage,
+  type Native10QualificationChecks,
+  type Native10QualificationResult,
+  type DecisionMemoryEntry as TradingAgentsNativeDecisionMemoryEntry,
+} from './tradingagents-native/index.ts';
 export * from './earnings-agentic-committee/index.ts';
 export * from './earnings-transcript-intelligence/index.ts';

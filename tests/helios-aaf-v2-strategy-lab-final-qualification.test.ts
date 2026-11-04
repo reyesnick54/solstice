@@ -315,8 +315,8 @@ describe('HELIOS AAF V2.6 Strategy Lab final qualification', () => {
     const gate = gateResearchToEvaluation({
       capsule: {
         capsuleId: 'cap_test' as never,
-        strategyId: 'str_aaf_v2_biased' as import('../packages/strategy-lab/src/types.ts').StrategyId,
-        version: 'v1' as import('../packages/strategy-lab/src/types.ts').StrategyVersion,
+        strategyId: 'str_aaf_v2_biased' as import('../packages/strategy-lab/src/ids.ts').StrategyId,
+        version: 'v1' as import('../packages/strategy-lab/src/ids.ts').StrategyVersion,
         fingerprint: 'fp',
         specification: {} as never,
         compiledHash: 'hash',
