@@ -70,7 +70,7 @@ function universe(overrides?: { membershipRows?: readonly UniverseMembershipRow[
 function compileRequest(input: {
   observations: readonly TemporalObservation[];
   decisionTime?: typeof DECISION;
-  featureDefinitions?: readonly Parameters<typeof compiler.compileDataset>[0]['featureDefinitions'];
+  featureDefinitions?: Parameters<typeof compiler.compileDataset>[0]['featureDefinitions'];
   membershipRows?: ReturnType<typeof universe>['membershipRows'];
 }) {
   const closeFeature = Object.freeze({
@@ -88,13 +88,15 @@ function compileRequest(input: {
     universe: universe(
       input.membershipRows !== undefined ? { membershipRows: input.membershipRows } : undefined,
     ),
-    context: Object.freeze({
+    context: {
       observations: input.observations,
-      sourceProviders: Object.freeze(['simulation']),
-      qualityPolicies: Object.freeze(['AAFV2.3:ADVERSARIAL']),
+      tickerHistory: [],
+      corporateActionRevisions: [],
+      sourceProviders: ['simulation'],
+      qualityPolicies: ['AAFV2.3:ADVERSARIAL'],
       entitlementState: 'USABLE' as const,
-      transformVersions: Object.freeze({ compiler: '1' }),
-    }),
+      transformVersions: { compiler: '1' },
+    },
   });
 }
 
@@ -404,11 +406,15 @@ describe('HELIOS AAFV2.3 point-in-time dataset compiler', () => {
       ]),
       informationTimePolicy: INFORMATION_TIME_POLICY_DEFAULT,
       universe: universe(),
-      context: Object.freeze({
-        observations: Object.freeze(bars),
-        sourceProviders: Object.freeze(['simulation']),
+      context: {
+        observations: bars,
+        tickerHistory: [],
+        corporateActionRevisions: [],
+        sourceProviders: ['simulation'],
+        qualityPolicies: ['AAFV2.3:ADVERSARIAL'],
         entitlementState: 'USABLE' as const,
-      }),
+        transformVersions: { compiler: '1' },
+      },
     });
     assert.equal(compiled.ok, true);
     if (!compiled.ok) return;

@@ -156,7 +156,8 @@ export function createConsensusModel(bounds: FormalModelBounds): FormalModel<Con
       }
       if (
         exceedsTwoThirds(powerFor(state.prevotes, state.power, value), totalPower(state.power)) &&
-        state.validValue !== value
+        state.validValue !== value &&
+        !state.finalized[state.height]
       ) {
         out.push({
           name: `Lock(${value})`,
@@ -184,6 +185,9 @@ export function createConsensusModel(bounds: FormalModelBounds): FormalModel<Con
           out.push({ name: `PrecommitReject(${validator},${reason})`, next: null });
           continue;
         }
+        if (state.lockedValue && state.lockedValue !== value && value !== 'NIL') {
+          continue;
+        }
         out.push({
           name: `Precommit(${validator},${value})`,
           next: {
@@ -199,7 +203,8 @@ export function createConsensusModel(bounds: FormalModelBounds): FormalModel<Con
       }
       if (
         exceedsTwoThirds(powerFor(state.precommits, state.power, value), totalPower(state.power)) &&
-        !state.finalized[state.height]
+        !state.finalized[state.height] &&
+        (!state.lockedValue || state.lockedValue === 'NIL' || state.lockedValue === value)
       ) {
         out.push({
           name: `Commit(${value})`,

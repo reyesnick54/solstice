@@ -12,7 +12,7 @@ import {
   HELIOS_STRICT_TYPECHECK_QUALIFIED,
   HELIOS_STRICT_TYPECHECK_SCOPE,
   type HeliosStrictTypecheckScopePath,
-} from '../packages/platform/src/helios/hardening/qualification.ts';
+} from '../packages/platform/src/helios/hardening/strict-typecheck-qualification.ts';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const TSCONFIG = join(ROOT, 'tsconfig.helios-strict.json');

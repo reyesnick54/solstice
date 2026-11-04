@@ -15,6 +15,7 @@ import {
   toolRunReferenceForIntent,
   validateGrowthProposalEvidenceBinding,
 } from '../packages/ai-runtime/src/index.ts';
+import { asAiToolIntentId } from '../packages/ai-runtime/src/ids.ts';
 import { asGrowthActionId, asGrowthPlanId, asGrowthPlanVersion } from '../packages/platform/src/ids.ts';
 import type { GrowthActionCandidate, GrowthPlan } from '../packages/platform/src/growth/types.ts';
 import {
@@ -501,8 +502,8 @@ describe('HELIOS H03 proposal and execution state correctness', () => {
     const bound = bindGrowthProposalEvidence({
       proposal: structured.value,
       completedToolRuns: [toolRunReferenceForIntent({
-        intentId: 'ait_demo_1',
-        name: 'getMarketData',
+        intentId: asAiToolIntentId('ait_demo_1'),
+        name: 'READ_FINANCIAL_STATE',
         rationale: 'sandbox quote',
         assetId: 'SUNREY_COIN',
         quantity: null,
