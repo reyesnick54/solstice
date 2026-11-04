@@ -13,7 +13,10 @@ export * from './wave5-services.ts';
 export * from './wave5-coverage.ts';
 export * from './wave5-bridges.ts';
 export * from './wave5-peg.ts';
-export * from './wave5-provider-risk.ts';
+export {
+  ProviderRiskMonitor as Wave5ProviderRiskMonitor,
+  type ProviderRiskMonitorSnapshot,
+} from './wave5-provider-risk.ts';
 export * from './productive-economy.ts';
 export * from './product-data-state.ts';
 export * from './world-snapshot.ts';

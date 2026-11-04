@@ -55,7 +55,10 @@ export function ok<T>(
   fromCache = false,
   execution?: ProviderExecutionProvenance,
 ): OpportunityServiceResult<T> {
-  return Object.freeze({ ok: true, value, fromCache, providersUsed, execution });
+  if (execution !== undefined) {
+    return Object.freeze({ ok: true, value, fromCache, providersUsed, execution });
+  }
+  return Object.freeze({ ok: true, value, fromCache, providersUsed });
 }
 
 export function fail(
@@ -64,7 +67,10 @@ export function fail(
   providerId: string,
   execution?: ProviderExecutionProvenance,
 ): OpportunityServiceResult<never> {
-  return Object.freeze({ ok: false, code, message, providerId, execution });
+  if (execution !== undefined) {
+    return Object.freeze({ ok: false, code, message, providerId, execution });
+  }
+  return Object.freeze({ ok: false, code, message, providerId });
 }
 
 export function simulationProvenance(): ProviderExecutionProvenance {

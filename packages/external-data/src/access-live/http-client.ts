@@ -75,12 +75,17 @@ export class LiveProviderHttpClient {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), timeoutMs);
       try {
-        const response = await this.#fetchFn(request.url, {
+        const init: RequestInit = {
           method: request.method,
-          headers: request.headers,
-          body: request.body,
           signal: controller.signal,
-        });
+        };
+        if (request.headers !== undefined) {
+          init.headers = request.headers;
+        }
+        if (request.body !== undefined) {
+          init.body = request.body;
+        }
+        const response = await this.#fetchFn(request.url, init);
         clearTimeout(timer);
 
         if (response.status === 429 && attempt < maxRetries) {

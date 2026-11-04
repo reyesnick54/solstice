@@ -9,7 +9,7 @@ export {
 
 export {
   TradingAgentsDecisionMemoryStore,
-  type DecisionMemoryEntry,
+  type DecisionMemoryEntry as TradingAgentsNativeDecisionMemoryEntry,
 } from './decision-memory.ts';
 
 export {

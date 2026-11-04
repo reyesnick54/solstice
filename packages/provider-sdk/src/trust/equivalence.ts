@@ -13,8 +13,8 @@ export function normalizeSemanticKey(key: string): string {
   return key.trim().toLowerCase().replace(/\s+/g, '_');
 }
 
-export function checkSemanticEquivalence(
-  contexts: readonly TrustObservationContext[],
+export function checkSemanticEquivalence<T>(
+  contexts: readonly TrustObservationContext<T>[],
   requiredSemanticKey: string,
 ): EquivalenceResult {
   const normalized = normalizeSemanticKey(requiredSemanticKey);
@@ -48,8 +48,8 @@ export function inferSemanticKey(observation: ExternalObservation<unknown>): str
   return parts.join('|') || observation.capability;
 }
 
-export function checkUnitCompatibility(
-  contexts: readonly TrustObservationContext[],
+export function checkUnitCompatibility<T>(
+  contexts: readonly TrustObservationContext<T>[],
   requiredUnit: string | null,
 ): EquivalenceResult {
   if (!requiredUnit) {
@@ -83,8 +83,8 @@ export function normalizeUnit(unit: string): string {
   return unit.trim().toLowerCase();
 }
 
-export function checkTimeAlignment(
-  contexts: readonly TrustObservationContext[],
+export function checkTimeAlignment<T>(
+  contexts: readonly TrustObservationContext<T>[],
   maxSkewMs: number,
   referenceMs?: number,
 ): EquivalenceResult {
@@ -118,13 +118,16 @@ export function observationReferenceMs(observation: ExternalObservation<unknown>
   return Number.isFinite(ms) ? ms : null;
 }
 
-export function filterSemanticallyEquivalent(
-  contexts: readonly TrustObservationContext[],
+export function filterSemanticallyEquivalent<T>(
+  contexts: readonly TrustObservationContext<T>[],
   requiredSemanticKey: string,
-): { readonly eligible: readonly TrustObservationContext[]; readonly excluded: readonly TrustObservationContext[] } {
+): {
+  readonly eligible: readonly TrustObservationContext<T>[];
+  readonly excluded: readonly TrustObservationContext<T>[];
+} {
   const normalized = normalizeSemanticKey(requiredSemanticKey);
-  const eligible: TrustObservationContext[] = [];
-  const excluded: TrustObservationContext[] = [];
+  const eligible: TrustObservationContext<T>[] = [];
+  const excluded: TrustObservationContext<T>[] = [];
   for (const ctx of contexts) {
     const key = ctx.semanticKey ?? inferSemanticKey(ctx.observation);
     if (normalizeSemanticKey(key) === normalized) {

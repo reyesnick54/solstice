@@ -37,14 +37,14 @@ export async function certifyOpportunityProvider(
   if (!allowNetwork || !adapter.liveCapable) {
     if (adapter.capabilities.includes('job_search')) {
       const simulated = await adapter.searchJobs({ limit: 3 }, nowUtc);
-      const implemented = simulated.ok || simulated.code === 'PROVIDER_UNAVAILABLE';
+      const implemented = simulated.ok || (!simulated.ok && simulated.code === 'PROVIDER_UNAVAILABLE');
       return Object.freeze({
         providerId,
         status: certificationStatusFromResult({
           liveCall: false,
           validated: simulated.ok,
           implemented,
-          blocked: simulated.code === 'PROVIDER_UNAVAILABLE',
+          blocked: !simulated.ok && simulated.code === 'PROVIDER_UNAVAILABLE',
         }),
         liveCall: false,
         validated: simulated.ok,

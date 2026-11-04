@@ -79,39 +79,51 @@ export class ResearchIntelligenceService {
   }
 
   getAuthor(authorId: string): Wave6ServiceResult<ResearchAuthor> {
-    const authors = fetchResearchWorks(this.#ctx, {})
-      .flatMap((o) => o.data.authors)
-      .filter((a) => a.authorId === authorId || a.orcid === authorId || a.providerNativeId === authorId);
-    const observations = authors.map((author) =>
-      Object.freeze({
-        ...fetchResearchWorks(this.#ctx, {})[0]!,
-        data: author as unknown as ResearchWork,
-      }),
+    const works = fetchResearchWorks(this.#ctx, {});
+    const observations: ExternalObservation<ResearchAuthor>[] = works.flatMap((observation) =>
+      observation.data.authors
+        .filter((a) => a.authorId === authorId || a.orcid === authorId || a.providerNativeId === authorId)
+        .map(
+          (author): ExternalObservation<ResearchAuthor> =>
+            Object.freeze({
+              ...observation,
+              data: author,
+            }),
+        ),
     );
     if (authorId.includes('smith')) {
-      return summarize([
-        ...observations,
-        ...[FIXTURE_AUTHOR_NAME_COLLISION.authorA, FIXTURE_AUTHOR_NAME_COLLISION.authorB].map((author) =>
+      const collisionObservations: ExternalObservation<ResearchAuthor>[] = [
+        FIXTURE_AUTHOR_NAME_COLLISION.authorA,
+        FIXTURE_AUTHOR_NAME_COLLISION.authorB,
+      ].flatMap((author) => {
+        const source = works.find((observation) => observation.providerId === author.providerId);
+        if (!source) {
+          return [];
+        }
+        return [
           Object.freeze({
-            providerId: author.providerId,
-            data: author as unknown as ResearchWork,
-          } as ExternalObservation<ResearchWork>),
-        ),
-      ]);
+            ...source,
+            data: author,
+          }),
+        ];
+      });
+      return summarize([...observations, ...collisionObservations]);
     }
     return summarize(observations);
   }
 
   getInstitution(institutionId: string): Wave6ServiceResult<ResearchInstitution> {
-    const institutions = fetchResearchWorks(this.#ctx, {})
-      .flatMap((o) => o.data.institutions)
-      .filter((i) => i.institutionId === institutionId);
-    const observations = institutions.map(
-      (institution) =>
-        Object.freeze({
-          providerId: institution.providerId,
-          data: institution as unknown as ResearchWork,
-        }) as ExternalObservation<ResearchWork>,
+    const works = fetchResearchWorks(this.#ctx, {});
+    const observations: ExternalObservation<ResearchInstitution>[] = works.flatMap((observation) =>
+      observation.data.institutions
+        .filter((i) => i.institutionId === institutionId)
+        .map(
+          (institution): ExternalObservation<ResearchInstitution> =>
+            Object.freeze({
+              ...observation,
+              data: institution,
+            }),
+        ),
     );
     return summarize(observations);
   }
@@ -248,7 +260,7 @@ export class HinReferenceService {
   }
 }
 
-export class OpportunityService {
+export class Wave6CatalogOpportunityService {
   readonly #ctx: Wave6AdapterContext;
 
   constructor(ctx?: Wave6AdapterContext) {
@@ -274,7 +286,7 @@ export type Wave6Services = {
   readonly knowledge: KnowledgeIntelligenceService;
   readonly aiEconomics: AiEconomicsIntelligenceService;
   readonly hinReference: HinReferenceService;
-  readonly opportunities: OpportunityService;
+  readonly opportunities: Wave6CatalogOpportunityService;
 };
 
 export function createWave6Services(ctx?: Wave6AdapterContext): Wave6Services {
@@ -285,7 +297,7 @@ export function createWave6Services(ctx?: Wave6AdapterContext): Wave6Services {
     knowledge: new KnowledgeIntelligenceService(context),
     aiEconomics: new AiEconomicsIntelligenceService(context),
     hinReference: new HinReferenceService(context),
-    opportunities: new OpportunityService(context),
+    opportunities: new Wave6CatalogOpportunityService(context),
   });
 }
 

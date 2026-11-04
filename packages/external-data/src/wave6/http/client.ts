@@ -65,7 +65,9 @@ export class OpportunityHttpClient {
 
   constructor(options: OpportunityHttpClientOptions = {}) {
     this.#mode = resolveOpportunityAdapterMode(options.mode);
-    this.#fetchFn = options.fetchFn;
+    if (options.fetchFn !== undefined) {
+      this.#fetchFn = options.fetchFn;
+    }
     this.#environment = options.environment ?? (options.fetchFn ? 'test' : this.#mode === 'live' ? 'preview' : 'test');
   }
 
@@ -103,7 +105,7 @@ export class OpportunityHttpClient {
       }),
       authResolver: NO_AUTH_PROVIDER_RESOLVER,
       authStrategy: { kind: 'none' },
-      fetchFn: this.#fetchFn,
+      ...(this.#fetchFn !== undefined ? { fetchFn: this.#fetchFn } : {}),
     });
 
     const queryParams: Record<string, string> = {};

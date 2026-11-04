@@ -24,6 +24,7 @@ import {
 import type {
   AIEconomicObservation,
   AIModelObservation,
+  AuthorityClass as Wave6AuthorityClass,
   HinReferenceObservation,
   KnowledgeEntity,
   OpportunityObservation,
@@ -103,6 +104,15 @@ function guardProvider(ctx: Wave6AdapterContext, providerId: string): string | n
   return null;
 }
 
+type SdkAuthorityClass = NonNullable<Parameters<typeof buildExternalObservation>[0]['authorityClass']>;
+
+function toSdkAuthorityClass(value: Wave6AuthorityClass): SdkAuthorityClass {
+  if (value === 'regulated_provider') {
+    return 'reference_data';
+  }
+  return value;
+}
+
 function observe<T>(
   ctx: Wave6AdapterContext,
   input: {
@@ -111,7 +121,7 @@ function observe<T>(
     readonly capability: string;
     readonly dataset: string;
     readonly data: T;
-    readonly authorityClass?: 'authoritative_official' | 'reference_data' | 'research_data' | 'community_data' | 'derived_data';
+    readonly authorityClass?: Wave6AuthorityClass;
   },
 ): ExternalObservation<T> | null {
   const failure = guardProvider(ctx, input.providerId);
@@ -134,7 +144,7 @@ function observe<T>(
       sourceUrl: null,
     },
     time: { retrievedAt: asUtcInstant(ctx.nowUtc), sourceTimestamp: asUtcInstant(ctx.nowUtc) },
-    authorityClass: input.authorityClass ?? 'reference_data',
+    authorityClass: toSdkAuthorityClass(input.authorityClass ?? 'reference_data'),
     provenance: {
       requestId: `wave6-${input.providerId}`,
       rawPayload,

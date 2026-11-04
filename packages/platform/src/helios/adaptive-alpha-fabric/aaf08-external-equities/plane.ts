@@ -44,7 +44,9 @@ export class HeliosExternalEquitiesObservationPlane {
     this.#marketFabric = options.marketFabric;
     this.#entityGraph = options.entityGraph;
     this.#provider = options.provider;
-    this.#evidenceVault = options.evidenceVault;
+    if (options.evidenceVault !== undefined) {
+      this.#evidenceVault = options.evidenceVault;
+    }
     this.#trust = createAaf08TrustEngine(() => this.#clock.now());
     this.#staleQuoteThresholdMs = options.staleQuoteThresholdMs ?? 120_000;
   }

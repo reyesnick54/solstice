@@ -5,7 +5,12 @@
  */
 
 import { toAgentEvidenceRef, type ExternalObservationEvidenceRef } from '@solstice/provider-sdk';
+import type { ExternalDataObservation } from './models.ts';
 import type { ExternalDataPlane } from './plane.ts';
+
+function evidenceRefs(observations: readonly ExternalDataObservation<unknown>[]): readonly ExternalObservationEvidenceRef[] {
+  return Object.freeze(observations.map((observation) => toAgentEvidenceRef(observation)));
+}
 
 export const AGENT_EVIDENCE_CATEGORIES = [
   'MACRO',
@@ -46,7 +51,7 @@ function categorizeMacro(plane: ExternalDataPlane): CategorizedAgentEvidence {
   ];
   return Object.freeze({
     category: 'MACRO',
-    refs: Object.freeze(observations.map((o) => toAgentEvidenceRef(o))),
+    refs: evidenceRefs(observations),
   });
 }
 
@@ -57,14 +62,14 @@ function categorizeMarket(plane: ExternalDataPlane): CategorizedAgentEvidence {
   ];
   return Object.freeze({
     category: 'MARKET',
-    refs: Object.freeze(observations.map((o) => toAgentEvidenceRef(o))),
+    refs: evidenceRefs(observations),
   });
 }
 
 function categorizeFx(plane: ExternalDataPlane): CategorizedAgentEvidence {
   return Object.freeze({
     category: 'FX',
-    refs: Object.freeze(plane.fx.getRates().observations.map((o) => toAgentEvidenceRef(o))),
+    refs: evidenceRefs(plane.fx.getRates().observations),
   });
 }
 
@@ -75,7 +80,7 @@ function categorizeCompany(plane: ExternalDataPlane): CategorizedAgentEvidence {
   ];
   return Object.freeze({
     category: 'COMPANY',
-    refs: Object.freeze(observations.map((o) => toAgentEvidenceRef(o))),
+    refs: evidenceRefs(observations),
   });
 }
 
@@ -83,7 +88,7 @@ function categorizeCompliance(plane: ExternalDataPlane): CategorizedAgentEvidenc
   const screening = plane.compliance.screenWatchlists('catalog-sample');
   return Object.freeze({
     category: 'COMPLIANCE',
-    refs: Object.freeze(screening.observations.map((o) => toAgentEvidenceRef(o))),
+    refs: evidenceRefs(screening.observations),
   });
 }
 
@@ -120,7 +125,7 @@ export async function buildAgentEvidenceCatalog(
     const observations = [...energy, ...resources];
     resourceCategory = Object.freeze({
       category: 'RESOURCE',
-      refs: Object.freeze(observations.map((o) => toAgentEvidenceRef(o))),
+      refs: evidenceRefs(observations),
     });
   } catch {
     resourceCategory = emptyCategory('RESOURCE');

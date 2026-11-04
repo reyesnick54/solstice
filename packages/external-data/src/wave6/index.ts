@@ -3,7 +3,19 @@ export * from './fixtures.ts';
 export * from './catalog-entries.ts';
 export * from './opportunity-catalog-entries.ts';
 export * from './adapters.ts';
-export * from './services.ts';
+export {
+  AiEconomicsIntelligenceService,
+  HinReferenceService,
+  KnowledgeIntelligenceService,
+  PatentIntelligenceService,
+  ResearchIntelligenceService,
+  Wave6CatalogOpportunityService,
+  buildKnowledgeSearchIndex,
+  buildWave6KnowledgeBundle,
+  createWave6Services,
+  type Wave6KnowledgeBundle,
+  type Wave6Services,
+} from './services.ts';
 export * from './coverage.ts';
 export * from './bridges.ts';
 /**

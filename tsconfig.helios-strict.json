@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "packages/platform/src/helios/**/*.ts",
+    "packages/strategy-lab/**/*.ts",
+    "packages/agentic-capital-mesh/**/*.ts",
+    "packages/external-data/**/*.ts",
+    "packages/provider-sdk/**/*.ts",
+    "packages/ai-runtime/**/*.ts"
+  ]
+}

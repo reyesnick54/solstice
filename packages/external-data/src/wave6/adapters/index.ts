@@ -151,12 +151,13 @@ function wrapLiveJobAdapter(
     geographicScope,
     productionAuthorized: false as const,
     liveCapable: inner.liveCapable,
-    searchJobs: (query, nowUtc) => inner.searchJobs(query, nowUtc),
+    searchJobs: (query: JobSearchQuery, nowUtc: UtcInstant) => inner.searchJobs(query, nowUtc),
     setScenario: (scenario: import('./base.ts').AdapterScenario) => inner.setScenario(scenario),
   });
 }
 
 class FixtureOnlyJobAdapter extends BaseOpportunityAdapter implements OpportunityProvider {
+  readonly providerId: string;
   readonly capabilities: readonly OpportunityCapability[];
   readonly geographicScope: readonly string[];
   readonly productionAuthorized = false as const;
@@ -189,6 +190,7 @@ class FixtureOnlyJobAdapter extends BaseOpportunityAdapter implements Opportunit
 }
 
 class UnavailableJobAdapter extends BaseOpportunityAdapter implements OpportunityProvider {
+  readonly providerId: string;
   readonly capabilities: readonly OpportunityCapability[];
   readonly geographicScope: readonly string[];
   readonly productionAuthorized = false as const;
@@ -355,6 +357,7 @@ class OpenSkillsAdapter extends BaseOpportunityAdapter implements OpportunityPro
 }
 
 class IntelligenceFixtureAdapter extends BaseOpportunityAdapter implements OpportunityProvider {
+  readonly providerId: string;
   readonly capabilities: readonly OpportunityCapability[];
   readonly geographicScope: readonly string[];
   readonly productionAuthorized = false as const;
@@ -562,8 +565,10 @@ export function createAllOpportunityAdapters(options?: OpportunityAdapterFactory
 }
 
 export function setAdapterScenario(providerId: OpportunityAdapterId, scenario: import('./base.ts').AdapterScenario): void {
-  const adapter = createOpportunityAdapter(providerId) as BaseOpportunityAdapter & { setScenario?: (s: import('./base.ts').AdapterScenario) => void };
-  adapter.setScenario?.(scenario);
+  const adapter = createOpportunityAdapter(providerId);
+  if (adapter instanceof BaseOpportunityAdapter) {
+    adapter.setScenario(scenario);
+  }
 }
 
 export {

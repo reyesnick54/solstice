@@ -18,8 +18,8 @@ export function routeMacroIndicators(input: {
   const knowable = filterKnowableByDecisionTime(
     observations.map((row) =>
       Object.freeze({
-        ...row,
-        knowableAt: asUtcInstant(row.observedAt),
+        observation: row,
+        knowableAt: asUtcInstant(row.time.sourceTimestamp ?? row.time.retrievedAt),
       }),
     ),
     evaluationTime,
@@ -31,7 +31,8 @@ export function routeMacroIndicators(input: {
     });
   }
   const lines = knowable.map(
-    (row) => `- ${row.data.seriesId}: ${row.data.value} (${row.data.unit}) @ ${row.observedAt}`,
+    (row) =>
+      `- ${row.observation.data.seriesId}: ${row.observation.data.value} (${row.observation.data.unit}) @ ${row.observation.data.observationDate}`,
   );
   return Object.freeze({
     kind: 'payload',

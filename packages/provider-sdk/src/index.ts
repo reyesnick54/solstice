@@ -267,15 +267,7 @@ export {
   type HttpProviderTransportFailure,
   type HttpProviderTransportResult,
   type HttpProviderTransport,
-  type ProviderRequestContext,
-  type ProviderResponseMetadata,
-  type ProviderTransportResponse,
-  type ProviderTransportResult,
-  type ProviderTransportSuccess,
-  type ProviderTransportFailure,
-  type ProviderHttpTransport,
-  type ProviderTransport,
-} from './types.ts';
+} from './http-transport-types.ts';
 
 export {
   PROVIDER_TRANSPORT_ERROR_KINDS,
