@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import type { UtcInstant } from '../imports.ts';
+
 import {
   HELIOS_EARN05_MESH_TRANSCRIPT_BRIDGE_QUALIFIED,
   evaluateEarn05MeshQualification,
@@ -44,7 +46,7 @@ describe('EARN05 agentic capital mesh bridge', () => {
         Object.freeze({
           evidenceId: 'ev1',
           sourceRef: 'fixture:earn05',
-          observedAt: '2026-05-15T21:00:00.000Z',
+          observedAt: '2026-05-15T21:00:00.000Z' as UtcInstant,
         }),
       ]),
     });

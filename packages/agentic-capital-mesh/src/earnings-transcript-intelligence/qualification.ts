@@ -1,6 +1,8 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
+import type { UtcInstant } from '../imports.ts';
+
 import { EARN05_PLATFORM_OWNER } from './upstream-reference.ts';
 import { createEarningsTranscriptMeshBridge } from './mesh-bridge.ts';
 import type { EarningsTranscriptIntelligencePort } from './types.ts';
@@ -44,7 +46,7 @@ export function evaluateEarn05MeshQualification(input: {
       Object.freeze({
         evidenceId: 'ev_earn05_fixture',
         sourceRef: 'fixture:earn05:q1fy2026',
-        observedAt: '2026-05-15T21:00:00.000Z',
+        observedAt: '2026-05-15T21:00:00.000Z' as UtcInstant,
       }),
     ]),
   });

@@ -5,6 +5,8 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import type { UtcInstant } from '../packages/domain/src/time.ts';
+
 import {
   HELIOS_EARN05_MESH_TRANSCRIPT_BRIDGE_QUALIFIED,
   createEarningsTranscriptMeshBridge,
@@ -24,7 +26,7 @@ describe('HELIOS EARN05 transcript mesh bridge integration', () => {
         Object.freeze({
           evidenceId: 'ev1',
           sourceRef: 'fixture:earn05',
-          observedAt: '2026-05-15T21:00:00.000Z',
+          observedAt: '2026-05-15T21:00:00.000Z' as UtcInstant,
         }),
       ]),
     });
