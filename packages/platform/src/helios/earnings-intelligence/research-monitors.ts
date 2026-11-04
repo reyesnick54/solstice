@@ -2,7 +2,10 @@ import { asUtcInstant } from '@solstice/domain';
 
 import { asResearchMonitorId } from '../research-monitor/ids.ts';
 import { RESEARCH_MONITOR_SCHEMA_VERSION } from '../research-monitor/taxonomy.ts';
-import type { ResearchMonitorDefinition } from '../research-monitor/types.ts';
+import type {
+  PointInTimeFeatureRequirement,
+  ResearchMonitorDefinition,
+} from '../research-monitor/types.ts';
 
 const EARN11_MONITOR_START = asUtcInstant('2026-11-01T00:00:00.000Z');
 const EARN11_MONITOR_END = asUtcInstant('2027-11-01T00:00:00.000Z');
@@ -45,8 +48,12 @@ function earn11MonitorBase(
     allowedAgentClasses: Object.freeze(['EARNINGS_RESEARCH', 'EQUITY_SPECIALIST']),
     requiredEvidence: Object.freeze(['EARNINGS', 'AAF_V2_FEATURE_MANIFEST']),
     pointInTimeFeatureRequirements: Object.freeze([
-      { featureId: `EARN11_${name}_triggerScore`, maxAgeMs: 3_600_000, requiredKind: 'earnings_intelligence' },
-    ]),
+      {
+        featureId: `EARN11_${name}_triggerScore`,
+        maxAgeMs: 3_600_000,
+        requiredKind: 'earnings_event_state',
+      } satisfies PointInTimeFeatureRequirement,
+    ] as readonly PointInTimeFeatureRequirement[]),
     staleDataPolicy: 'FAIL_CLOSED',
   });
 }

@@ -18,90 +18,74 @@ export type Earn11TemplateSpec = {
   readonly primaryInputs: readonly Earn11InputNodeKind[];
 };
 
+function earn11TemplateSpec(
+  family: Earn11ResearchTemplateFamily,
+  name: string,
+  hypothesis: string,
+  primaryInputs: readonly Earn11InputNodeKind[],
+): Earn11TemplateSpec {
+  return Object.freeze({ family, name, hypothesis, primaryInputs });
+}
+
+const earn11TemplateSpecs = {
+    PRE_EARNINGS_EXPECTATION_DISLOCATION: earn11TemplateSpec(
+      'PRE_EARNINGS_EXPECTATION_DISLOCATION',
+      'Pre-earnings expectation dislocation',
+      'Test whether pre-event estimate dispersion and revision velocity dislocate from implied move before announcement.',
+      ['revision_breadth', 'revision_velocity', 'dispersion', 'options_implied_move', 'attention_state'],
+    ),
+    ANNOUNCEMENT_REACTION: earn11TemplateSpec(
+      'ANNOUNCEMENT_REACTION',
+      'Announcement reaction',
+      'Test whether headline surprise tensor and options demand predict short-horizon post-print reaction under event twin fills.',
+      ['earnings_surprise_tensor', 'options_directional_demand', 'options_implied_move', 'attention_state'],
+    ),
+    POST_EARNINGS_CONDITIONAL_DRIFT: earn11TemplateSpec(
+      'POST_EARNINGS_CONDITIONAL_DRIFT',
+      'Post-earnings conditional drift',
+      'Test conditional drift conditioned on surprise sign, guidance revision, and macro regime — not unconditional momentum.',
+      ['earnings_surprise_tensor', 'revision_velocity', 'macro_regime', 'dispersion'],
+    ),
+    ANALYST_REVISION_MOMENTUM: earn11TemplateSpec(
+      'ANALYST_REVISION_MOMENTUM',
+      'Analyst revision momentum',
+      'Test post-print revision breadth/velocity momentum independent of same-day price chase.',
+      ['revision_breadth', 'revision_velocity', 'dispersion', 'value_of_information'],
+    ),
+    GUIDANCE_REVISION: earn11TemplateSpec(
+      'GUIDANCE_REVISION',
+      'Guidance revision',
+      'Test whether guidance revision tensor dominates headline beat for subsequent drift.',
+      ['earnings_surprise_tensor', 'revision_velocity', 'earnings_quality'],
+    ),
+    TRANSCRIPT_EXPECTATION_GAP: earn11TemplateSpec(
+      'TRANSCRIPT_EXPECTATION_GAP',
+      'Transcript expectation gap',
+      'Test transcript tone, tone dispersion, and Q&A answer quality gaps versus consensus after the call.',
+      ['transcript_tone', 'tone_dispersion', 'future_past_focus', 'answer_quality', 'dispersion'],
+    ),
+    OPTIONS_EXPECTATION_DISLOCATION: earn11TemplateSpec(
+      'OPTIONS_EXPECTATION_DISLOCATION',
+      'Options expectation dislocation',
+      'Test implied-vs-realized earnings move dislocation with directional demand skew.',
+      ['options_implied_move', 'options_directional_demand', 'dispersion'],
+    ),
+    PEER_READ_THROUGH: earn11TemplateSpec(
+      'PEER_READ_THROUGH',
+      'Peer read-through',
+      'Test peer cohort read-through shocks for non-reporting names in the same industry basket.',
+      ['peer_read_through', 'earnings_surprise_tensor', 'attention_state'],
+    ),
+    EARNINGS_QUALITY_REVERSAL: earn11TemplateSpec(
+      'EARNINGS_QUALITY_REVERSAL',
+      'Earnings quality reversal',
+      'Test whether earnings quality deterioration with headline beat predicts subsequent reversal under quality tensor.',
+      ['earnings_quality', 'earnings_surprise_tensor', 'value_of_information'],
+    ),
+  } satisfies Record<Earn11ResearchTemplateFamily, Earn11TemplateSpec>;
+
 export const EARN11_TEMPLATE_SPECS: Readonly<Record<Earn11ResearchTemplateFamily, Earn11TemplateSpec>> =
-  Object.freeze({
-    PRE_EARNINGS_EXPECTATION_DISLOCATION: Object.freeze({
-      family: 'PRE_EARNINGS_EXPECTATION_DISLOCATION',
-      name: 'Pre-earnings expectation dislocation',
-      hypothesis:
-        'Test whether pre-event estimate dispersion and revision velocity dislocate from implied move before announcement.',
-      primaryInputs: Object.freeze([
-        'revision_breadth',
-        'revision_velocity',
-        'dispersion',
-        'options_implied_move',
-        'attention_state',
-      ]),
-    }),
-    ANNOUNCEMENT_REACTION: Object.freeze({
-      family: 'ANNOUNCEMENT_REACTION',
-      name: 'Announcement reaction',
-      hypothesis:
-        'Test whether headline surprise tensor and options demand predict short-horizon post-print reaction under event twin fills.',
-      primaryInputs: Object.freeze([
-        'earnings_surprise_tensor',
-        'options_directional_demand',
-        'options_implied_move',
-        'attention_state',
-      ]),
-    }),
-    POST_EARNINGS_CONDITIONAL_DRIFT: Object.freeze({
-      family: 'POST_EARNINGS_CONDITIONAL_DRIFT',
-      name: 'Post-earnings conditional drift',
-      hypothesis:
-        'Test conditional drift conditioned on surprise sign, guidance revision, and macro regime — not unconditional momentum.',
-      primaryInputs: Object.freeze([
-        'earnings_surprise_tensor',
-        'revision_velocity',
-        'macro_regime',
-        'dispersion',
-      ]),
-    }),
-    ANALYST_REVISION_MOMENTUM: Object.freeze({
-      family: 'ANALYST_REVISION_MOMENTUM',
-      name: 'Analyst revision momentum',
-      hypothesis: 'Test post-print revision breadth/velocity momentum independent of same-day price chase.',
-      primaryInputs: Object.freeze(['revision_breadth', 'revision_velocity', 'dispersion', 'value_of_information']),
-    }),
-    GUIDANCE_REVISION: Object.freeze({
-      family: 'GUIDANCE_REVISION',
-      name: 'Guidance revision',
-      hypothesis: 'Test whether guidance revision tensor dominates headline beat for subsequent drift.',
-      primaryInputs: Object.freeze(['earnings_surprise_tensor', 'revision_velocity', 'earnings_quality']),
-    }),
-    TRANSCRIPT_EXPECTATION_GAP: Object.freeze({
-      family: 'TRANSCRIPT_EXPECTATION_GAP',
-      name: 'Transcript expectation gap',
-      hypothesis:
-        'Test transcript tone, tone dispersion, and Q&A answer quality gaps versus consensus after the call.',
-      primaryInputs: Object.freeze([
-        'transcript_tone',
-        'tone_dispersion',
-        'future_past_focus',
-        'answer_quality',
-        'dispersion',
-      ]),
-    }),
-    OPTIONS_EXPECTATION_DISLOCATION: Object.freeze({
-      family: 'OPTIONS_EXPECTATION_DISLOCATION',
-      name: 'Options expectation dislocation',
-      hypothesis: 'Test implied-vs-realized earnings move dislocation with directional demand skew.',
-      primaryInputs: Object.freeze(['options_implied_move', 'options_directional_demand', 'dispersion']),
-    }),
-    PEER_READ_THROUGH: Object.freeze({
-      family: 'PEER_READ_THROUGH',
-      name: 'Peer read-through',
-      hypothesis: 'Test peer cohort read-through shocks for non-reporting names in the same industry basket.',
-      primaryInputs: Object.freeze(['peer_read_through', 'earnings_surprise_tensor', 'attention_state']),
-    }),
-    EARNINGS_QUALITY_REVERSAL: Object.freeze({
-      family: 'EARNINGS_QUALITY_REVERSAL',
-      name: 'Earnings quality reversal',
-      hypothesis:
-        'Test whether earnings quality deterioration with headline beat predicts subsequent reversal under quality tensor.',
-      primaryInputs: Object.freeze(['earnings_quality', 'earnings_surprise_tensor', 'value_of_information']),
-    }),
-  });
+  Object.freeze(earn11TemplateSpecs);
 
 function inputKindToCatalogRef(kind: Earn11InputNodeKind): string {
   switch (kind) {

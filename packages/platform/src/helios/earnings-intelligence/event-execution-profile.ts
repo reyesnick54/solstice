@@ -48,10 +48,11 @@ export function gateEarningsEventExecutionProfile(
   if (input.profileId !== EARN11_EVENT_EXECUTION_PROFILE_ID) {
     blockers.push('unknown_event_execution_profile');
   }
-  if (input.barExecutionMode === 'CLOSE_ONLY') {
+  const barExecutionMode = input.barExecutionMode as BarExecutionMode | undefined;
+  if (barExecutionMode === 'CLOSE_ONLY') {
     blockers.push('close_to_close_only_fills_forbidden_for_earnings_promotion');
   }
-  if (!BAR_EXECUTION_MODES.includes(input.barExecutionMode ?? 'DETERMINISTIC_OHLC_PATH')) {
+  if (!BAR_EXECUTION_MODES.includes(barExecutionMode ?? 'DETERMINISTIC_OHLC_PATH')) {
     blockers.push('bar_execution_mode_unspecified');
   }
   if (input.overnightGapModeled !== true) blockers.push('overnight_gap_not_modeled');
