@@ -2,7 +2,7 @@
  * Bridge EARN01 domain observations into Feature Fabric contribution inputs.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { FeatureContributionInput } from '../types.ts';
 import { isFeatureVisibleAt } from '../knowable-at.ts';
 import type {

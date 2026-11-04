@@ -2,7 +2,7 @@
  * External earnings observation envelopes (provider-neutral, simulation-first).
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const EXTERNAL_EARNINGS_OBSERVATION_SCHEMA = 'sunrey.external.earnings-observation.v1' as const;
 

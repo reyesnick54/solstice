@@ -17,6 +17,7 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@solstice/config": "0.1.0"
+    "@solstice/config": "0.1.0",
+    "@solstice/domain": "0.1.0"
   }
 }
