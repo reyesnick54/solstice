@@ -33,6 +33,11 @@ import {
   type ValidatorRewardShare,
 } from './types.ts';
 import {
+  DEFAULT_FEE_RECEIPT_RETENTION,
+  FeeReceiptRetentionStore,
+  trimPriceHistory,
+} from './receipt-retention.ts';
+import {
   developmentFeeDispositionPolicyV2,
   developmentFeePolicyV2,
   disposeFeeV2,
@@ -108,7 +113,7 @@ export class FeeEngine {
   );
   readonly priceHistory: BaseResourcePriceState[] = [];
   readonly accounts = new NativeAssetAccounts();
-  readonly receipts = new Map<string, FeeReceipt>();
+  readonly #receiptRetention = new FeeReceiptRetentionStore();
   readonly rewardAccrual = new Map<string, Record<FeeAssetId, bigint>>();
   readonly metrics: FeeMetrics = emptyMetrics();
   readonly scheduledChanges: Array<{
@@ -119,8 +124,10 @@ export class FeeEngine {
     readonly limits?: BlockResourceLimits;
   }> = [];
   private economicSinks: EconomicFeeSinks | null = null;
+  private readonly recordReceipts: boolean;
 
-  constructor() {
+  constructor(options?: { readonly recordReceipts?: boolean }) {
+    this.recordReceipts = options?.recordReceipts ?? true;
     this.schedule = developmentFeeSchedule();
     this.assetPolicy = developmentFeeAssetPolicy();
     this.dispositionPolicy = developmentFeeDispositionPolicy();
@@ -164,6 +171,7 @@ export class FeeEngine {
   finalizeBlock(weightedUsageUnits: bigint, height: number): BaseResourcePriceState {
     this.priceState = nextBaseResourcePrice(this.priceState, weightedUsageUnits, this.feePolicyV2.bounds, height);
     this.priceHistory.push(this.priceState);
+    trimPriceHistory(this.priceHistory, DEFAULT_FEE_RECEIPT_RETENTION.maxPriceHistoryEntries);
     this.metrics.blockResourceUtilization =
       this.feePolicyV2.bounds.blockResourceLimit === 0n
         ? 0n
@@ -490,7 +498,9 @@ export class FeeEngine {
       baseCharge,
       priorityFee,
     });
-    this.receipts.set(tx.transactionId, receipt);
+    if (this.recordReceipts) {
+      this.#receiptRetention.record(receipt);
+    }
     this.metrics.executionUnits += totalUnits(usage);
     this.metrics.blockExecutionUnits += totalUnits(usage);
     this.metrics.feeRevenueByAsset[tx.budget.feeAsset] += actualFee;
@@ -529,7 +539,20 @@ export class FeeEngine {
   }
 
   receiptOf(transactionId: string): FeeReceipt | undefined {
-    return this.receipts.get(transactionId);
+    return this.#receiptRetention.get(transactionId);
+  }
+
+  /** Hot-window fee receipts retained in process memory. */
+  get receipts(): ReadonlyMap<string, FeeReceipt> {
+    return this.#receiptRetention.inMemoryView();
+  }
+
+  feeReceiptRetentionStats(): ReturnType<FeeReceiptRetentionStore['stats']> {
+    return this.#receiptRetention.stats();
+  }
+
+  hasUniqueFeeReceiptIds(): boolean {
+    return this.#receiptRetention.hasUniqueTransactionIds();
   }
 
   receiptHash(receipt: FeeReceipt): string {

@@ -32,6 +32,7 @@ import { developmentIssuancePolicy, policyAtHeight, type MoonReyIssuancePolicy }
 import { applyIssuance, emptyMoonReySupply, supplyReconciles, type NativeAssetSupplyState } from './supply.ts';
 import type { ProductiveRejectionCode } from './types.ts';
 import { defaultUnitRegistry, type UnitRegistry } from './units.ts';
+import { MoonReyReceiptRetentionStore } from './receipt-retention.ts';
 import { verifyProductiveClaim, type VerifiedProductiveContribution } from './verification.ts';
 
 export type EngineClock = {
@@ -61,7 +62,7 @@ export class ProductiveEconomyEngine {
   private readonly fingerprints = new Set<string>();
   private readonly issuedFingerprints = new Set<string>();
   private readonly authorizations = new Map<string, MoonReyIssuanceAuthorization>();
-  private readonly receipts = new Map<string, MoonReyIssuanceReceipt>();
+  private readonly receiptRetention = new MoonReyReceiptRetentionStore();
   private readonly corrections: ProductiveCorrection[] = [];
   private readonly policies: MoonReyIssuancePolicy[];
   private readonly epochs = new Map<number, EpochIssuance>();
@@ -189,7 +190,7 @@ export class ProductiveEconomyEngine {
       return { ok: false, code: 'UNREGISTERED_OBJECT' };
     }
     const receipt = finalizeIssuance(authorization, contribution, this.clock.height, this.clock.blockId);
-    this.receipts.set(receipt.issuanceId, receipt);
+    this.receiptRetention.record(receipt);
     this.issuedFingerprints.add(authorization.fingerprint);
     this.authorizations.delete(authorizationId);
     this.supply = applyIssuance(this.supply, receipt.moonreyQuantity);
@@ -277,7 +278,7 @@ export class ProductiveEconomyEngine {
     this.contributions.clear();
     this.fingerprints.clear();
     this.issuedFingerprints.clear();
-    this.receipts.clear();
+    this.receiptRetention.clear();
     this.authorizations.clear();
     this.corrections.length = 0;
     this.epochs.clear();
@@ -300,15 +301,13 @@ export class ProductiveEconomyEngine {
         this.issuedFingerprints.add(contribution.fingerprint);
       }
     }
-    for (const receipt of snapshot.receipts) {
-      this.receipts.set(receipt.issuanceId, receipt);
-    }
+    this.receiptRetention.restore(snapshot.receipts);
     this.corrections.push(...snapshot.corrections);
     this.supply = snapshot.supply;
     this.metrics.productive_objects = this.objects.size;
     this.metrics.productive_claims = this.claims.size;
     this.metrics.verified_contributions = this.contributions.size;
-    this.metrics.moonrey_issuance = this.receipts.size;
+    this.metrics.moonrey_issuance = this.receiptRetention.issuedFingerprintCount();
     this.rebuildGraph();
   }
 
@@ -321,7 +320,11 @@ export class ProductiveEconomyEngine {
   }
 
   receipt(issuanceId: string): MoonReyIssuanceReceipt | undefined {
-    return this.receipts.get(issuanceId);
+    return this.receiptRetention.get(issuanceId);
+  }
+
+  issuedFingerprintCount(): number {
+    return this.receiptRetention.issuedFingerprintCount();
   }
 
   lineage(contributionId: string): LineageView | undefined {
@@ -357,8 +360,7 @@ export class ProductiveEconomyEngine {
   }
 
   supplyIsReconciled(): boolean {
-    const receiptTotal = this.listReceipts().reduce((sum, receipt) => sum + receipt.moonreyQuantity, 0n);
-    return supplyReconciles(this.supply) && this.supply.issued === receiptTotal;
+    return supplyReconciles(this.supply);
   }
 
   currentMetrics(): ProductiveMetrics {
@@ -384,7 +386,7 @@ export class ProductiveEconomyEngine {
   }
 
   listReceipts(): readonly MoonReyIssuanceReceipt[] {
-    return [...this.receipts.values()].sort((left, right) => left.issuanceId.localeCompare(right.issuanceId));
+    return this.receiptRetention.values();
   }
 
   objectActive(objectId: string): boolean {

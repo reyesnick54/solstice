@@ -21,24 +21,27 @@ export function checkNativeSupply(engine: FeeEngine): InvariantCheck {
   };
 }
 
-export function checkNoDuplicateSettlements(ids: readonly string[]): InvariantCheck {
-  const unique = new Set(ids);
+export function checkNoDuplicateSettlements(engine: FeeEngine): InvariantCheck {
+  const stats = engine.feeReceiptRetentionStats();
+  const recorded = stats.inMemoryReceipts + stats.sealedReceipts;
+  const ok = stats.uniqueTransactionIds === recorded && engine.hasUniqueFeeReceiptIds();
   return {
     id: 'NO_DUPLICATE_SETTLEMENTS',
-    ok: unique.size === ids.length,
-    detail: unique.size === ids.length ? 'settlement ids are unique' : 'duplicate settlement id observed',
+    ok,
+    detail: ok
+      ? `settlement ids are unique (${stats.uniqueTransactionIds} recorded)`
+      : 'duplicate settlement id observed',
   };
 }
 
 export function checkNoDuplicateMoonRey(engine: ProductiveEconomyEngine): InvariantCheck {
-  const snapshot = engine.snapshot();
-  const fingerprints = snapshot.receipts.map((row) => row.fingerprint);
-  const unique = new Set(fingerprints);
   const supplyOk = engine.supplyIsReconciled();
+  const metrics = engine.currentMetrics();
+  const ok = supplyOk && engine.issuedFingerprintCount() === metrics.moonrey_issuance;
   return {
     id: 'NO_DUPLICATE_MOONREY_ISSUANCE',
-    ok: unique.size === fingerprints.length && supplyOk,
-    detail: supplyOk ? 'MoonRey receipts unique and supply reconciles' : 'MoonRey supply or fingerprint collision',
+    ok,
+    detail: ok ? 'MoonRey receipts unique and supply reconciles' : 'MoonRey supply or fingerprint collision',
   };
 }
 

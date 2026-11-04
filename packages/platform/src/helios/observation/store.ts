@@ -6,6 +6,10 @@ import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type { HeliosMarketObservationEnvelope } from './types.ts';
 import type { HeliosDeduplicationState } from './deduplication.ts';
 import { createHeliosDeduplicationState, restoreDeduplicationState, snapshotDeduplicationState } from './deduplication.ts';
+import {
+  HELIOS_OBSERVATION_BUFFER_MAX_PER_INSTRUMENT,
+  trimObservationHistory,
+} from './bounded-retention.ts';
 
 export type HeliosObservationStoreSnapshot = {
   readonly observations: readonly HeliosMarketObservationEnvelope[];
@@ -45,6 +49,7 @@ export function createHeliosObservationStore(): HeliosObservationStore {
     observations.set(envelope.observationId, envelope);
     const list = byInstrument.get(envelope.canonicalInstrumentId) ?? [];
     list.push(envelope);
+    trimObservationHistory(list, HELIOS_OBSERVATION_BUFFER_MAX_PER_INSTRUMENT);
     byInstrument.set(envelope.canonicalInstrumentId, list);
     if (envelope.lineage.upstreamSourceRef) {
       upstreamRefs.add(envelope.lineage.upstreamSourceRef);

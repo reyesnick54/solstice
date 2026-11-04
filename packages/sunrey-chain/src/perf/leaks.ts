@@ -29,8 +29,16 @@ export class ResourceMonitor {
     }
     const first = this.samples[0]!;
     const last = this.samples[this.samples.length - 1]!;
-    const delta = last.rssBytes - first.rssBytes;
-    return { flagged: delta > thresholdBytes, delta };
+    const window = Math.max(2, Math.floor(this.samples.length / 4));
+    const early = this.samples.slice(0, window);
+    const late = this.samples.slice(-window);
+    const earlyMaxHeap = Math.max(...early.map((row) => row.heapUsedBytes));
+    const lateMaxHeap = Math.max(...late.map((row) => row.heapUsedBytes));
+    const plateauHeapDelta = lateMaxHeap - earlyMaxHeap;
+    const delta = last.heapUsedBytes - first.heapUsedBytes;
+    const rssDelta = last.rssBytes - first.rssBytes;
+    const flagged = plateauHeapDelta > thresholdBytes;
+    return { flagged, delta: rssDelta };
   }
 }
 

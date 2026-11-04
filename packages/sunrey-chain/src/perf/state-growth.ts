@@ -90,7 +90,10 @@ export function measureStateGrowth(input: { readonly accounts: number; readonly 
         transfers: input.transfers,
         snapshotBytes,
         restartNs,
-        stateSizeHint: engine.receipts.size + snapshot.objects.length + snapshot.facts.length,
+        stateSizeHint:
+          engine.feeReceiptRetentionStats().uniqueTransactionIds +
+          snapshot.objects.length +
+          snapshot.facts.length,
       },
     }),
   ];

@@ -18,6 +18,8 @@ import type {
 import { computeClobBookMetrics } from './clob-metrics.ts';
 import type { PredictionOutcomeSide } from './taxonomy.ts';
 
+const MAX_TWIN_ORDERS_RETAINED = 512;
+
 export type HeliosPredictionMarketServiceOptions = {
   readonly clock: Clock;
   readonly store: PredictionMarketStore;
@@ -122,7 +124,9 @@ export class HeliosPredictionMarketService {
       Object.freeze({
         ...snap,
         positions: result.positions,
-        twinOrders: Object.freeze([...snap.twinOrders, result.order]),
+        twinOrders: Object.freeze(
+          [...snap.twinOrders, result.order].slice(-MAX_TWIN_ORDERS_RETAINED),
+        ),
       }),
     );
     return result;
