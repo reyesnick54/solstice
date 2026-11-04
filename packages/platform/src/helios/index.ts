@@ -324,6 +324,7 @@ export * from './open-source-integration/os13-ai-strategy-sandbox/index.ts';
 export * from './open-source/os14-prediction-market/index.ts';
 export * from './native-assimilation/native14-cross-market-intelligence/index.ts';
 export * from './research-monitor/index.ts';
+export * as heliosEarn07OptionsIntelligence from './earnings-intelligence/options/index.ts';
 export * as heliosNative13PredictionMarket from './prediction-market/index.ts';
 export {
   HELIOS_NATIVE_PREDICTION_MARKET_ENGINE_QUALIFIED,
@@ -332,4 +333,10 @@ export {
   type PredictionMarketEngineQualificationChecks,
   type PredictionMarketEngineQualificationResult,
 } from './prediction-market/qualification.ts';
-
+export {
+  HELIOS_EARN07_OPTIONS_INTELLIGENCE_QUALIFIED,
+  HELIOS_EARN07_OPTIONS_INTELLIGENCE_BLOCKED,
+  evaluateEarn07OptionsIntelligenceQualification,
+  type Earn07QualificationChecks,
+  type Earn07QualificationResult,
+} from './earnings-intelligence/options/qualification.ts';
