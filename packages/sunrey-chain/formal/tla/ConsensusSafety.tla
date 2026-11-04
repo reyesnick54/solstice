@@ -36,7 +36,8 @@ NilDoesNotCommit ==
   \A h \in DOMAIN finalized : finalized[h] # Nil
 
 LockPreservesSafety ==
-  lockedValue \in {Nil} \union Values
+  /\ lockedValue \in {Nil} \union Values
+  /\ (lockedValue = Nil \/ height \notin DOMAIN finalized \/ finalized[height] = lockedValue)
 
 Init ==
   /\ height = 1
