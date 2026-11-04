@@ -2,7 +2,7 @@
  * AAF08 — real equities / ETF external market observation plane (reference only).
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { BarTimeframe, MarketSessionStatus } from '../../market-observation/types.ts';
 
 export const HELIOS_AAF08_SCHEMA = 'sunrey.helios.aaf08.external-equities-observation.v1' as const;

@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { QualificationTermsSnapshot } from '../executable-opportunity/types.ts';
 import type { HeliosStrategyDecision } from './types.ts';
 import type { HeliosPaperStrategyId } from './taxonomy.ts';

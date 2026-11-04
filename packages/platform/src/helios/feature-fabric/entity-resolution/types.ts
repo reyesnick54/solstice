@@ -3,7 +3,7 @@
  * Reference intelligence only; does not grant Execution Authority or mutate ledger state.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { EconomicKnowledgeCanonicalEntityId, HeliosExternalIdentifier } from './ekg-bridge.ts';
 
 export const HELIOS_TEMPORAL_ENTITY_GRAPH_SCHEMA = 'sunrey.helios.temporal-entity-graph.v1' as const;

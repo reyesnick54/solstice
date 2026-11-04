@@ -3,8 +3,8 @@
  * Privacy-sensitive values use salted commitments — never public low-entropy hashes.
  */
 
-import { hashRawPayload, canonicalJsonStringify } from '../../../../provider-sdk/src/hash.ts';
-import { sha256Hex } from '../../../../security/src/hash.ts';
+import { hashRawPayload, canonicalJsonStringify } from '@solstice/provider-sdk';
+import { sha256Hex } from '@solstice/security';
 
 export type ContentCommitment = {
   readonly algorithm: 'sha256';

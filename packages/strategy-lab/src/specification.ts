@@ -1,6 +1,6 @@
-import { err, ok, type Result } from '../../domain/src/result.ts';
-import type { UtcInstant } from '../../domain/src/time.ts';
-import type { RiskBudgetId } from '../../risk/src/ids.ts';
+import { err, ok, type Result } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
+import type { RiskBudgetId } from '@solstice/risk';
 import { collectInstrumentIds, validateStrategyAst, type StrategyExpr } from './dsl.ts';
 import {
   asStrategySpecificationId,

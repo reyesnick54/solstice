@@ -1,5 +1,5 @@
-import { sha256Hex } from '../../../../security/src/hash.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import { sha256Hex } from '@solstice/security';
+import type { UtcInstant } from '@solstice/domain';
 import { reportPackageIdFor } from './ids.ts';
 import type {
   RegulatoryEvidencePackage,

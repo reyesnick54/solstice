@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { FrozenClock } from '../../../config/src/clock.ts';
-import { asUtcInstant } from '../../../domain/src/time.ts';
-import { EvidenceVault } from '../../../evidence/src/vault.ts';
+import { FrozenClock } from '@solstice/config';
+import { asUtcInstant } from '@solstice/domain';
+import { EvidenceVault } from '@solstice/evidence';
 import { asEconomicMandateId, asMandateVersion } from '../ids.ts';
 import type { CompiledEconomicMandate } from '../mandate/types.ts';
 import {

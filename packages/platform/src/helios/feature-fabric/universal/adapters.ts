@@ -2,7 +2,7 @@
  * Adapters from domain-specific feature producers into universal observations.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { HELIOS_OS14_FEATURE_FABRIC_SCHEMA } from '../../open-source/os14-prediction-market/taxonomy.ts';
 import type { PredictionMarketFeatureSnapshot } from '../../open-source/os14-prediction-market/types.ts';
 import { HELIOS_TECHNICAL_FEATURE_MANIFEST_VERSION } from '../technical/types.ts';

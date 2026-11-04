@@ -1,4 +1,4 @@
-import type { Jurisdiction } from '../../../../domain/src/jurisdiction.ts';
+import type { Jurisdiction } from '@solstice/domain';
 import type { ExecutionRouteDescriptor, ExecutionRouteRegistryPort } from './types.ts';
 
 export const SIMULATION_EXECUTION_ROUTES: readonly ExecutionRouteDescriptor[] = Object.freeze([

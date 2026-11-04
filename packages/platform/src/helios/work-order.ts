@@ -1,6 +1,6 @@
-import { sha256Hex } from '../../../security/src/hash.ts';
-import type { CustomerId } from '../../../domain/src/customer.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import { sha256Hex } from '@solstice/security';
+import type { CustomerId } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
 import type { ApprovalClass } from './taxonomy.ts';
 import type {
   EconomicWorkOrder,

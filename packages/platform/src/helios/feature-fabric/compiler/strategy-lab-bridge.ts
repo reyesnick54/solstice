@@ -2,8 +2,8 @@
  * Strategy Lab integration bridge (platform-owned; strategy-lab must not import platform).
  */
 
-import { err, ok, type Result } from '../../../../../domain/src/result.ts';
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import { err, ok, type Result } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
 import { reproduceVectorsFromManifest, type CompiledFeatureVector, type FeatureCompilerContext } from './compile.ts';
 import type { PointInTimeDatasetManifest } from './manifest.ts';
 import type { TemporalFeatureDefinition } from '../temporal-types.ts';

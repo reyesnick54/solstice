@@ -1,5 +1,5 @@
-import type { CustomerId } from '../../../../domain/src/customer.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { CustomerId } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
 import type { InvestmentLifecyclePort, MandateLifecycleContext, WithdrawableCashSnapshot } from './types.ts';
 import type { ReconciliationOutcome } from './taxonomy.ts';
 

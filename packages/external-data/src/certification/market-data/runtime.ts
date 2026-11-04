@@ -2,12 +2,12 @@
  * AAF07 external market-data certification runtime.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
-import { buildMarketDataProviderCapability } from '../../../../provider-sdk/src/market-data-capability/build-from-catalog.ts';
-import type { MarketDataProviderCapability } from '../../../../provider-sdk/src/market-data-capability/types.ts';
-import type { MarketDataProviderHealth } from '../../../../provider-sdk/src/market-data-capability/types.ts';
-import { createCapitalMarketService } from '../../../../sunrey-exchange/src/capital-market/service.ts';
-import type { CapitalMarketProviderHealth } from '../../../../sunrey-exchange/src/capital-market/types.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
+import { buildMarketDataProviderCapability } from '@solstice/provider-sdk';
+import type { MarketDataProviderCapability } from '@solstice/provider-sdk';
+import type { MarketDataProviderHealth } from '@solstice/provider-sdk';
+import { createCapitalMarketService } from '@solstice/sunrey-exchange/capital-market';
+import type { CapitalMarketProviderHealth } from '@solstice/sunrey-exchange/capital-market';
 import { createMarketDataCertificationProvider, type MarketDataAdapterBindingOptions } from './adapter-binding.ts';
 import {
   loadMarketDataCertificationCatalogIndex,

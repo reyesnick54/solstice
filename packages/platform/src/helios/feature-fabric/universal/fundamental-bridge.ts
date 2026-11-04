@@ -2,7 +2,7 @@
  * Bridge OS10 point-in-time fundamentals into the universal feature fabric.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import {
   FUNDAMENTAL_FEATURE_IDS,
   HELIOS_FUNDAMENTAL_FEATURE_SCHEMA,

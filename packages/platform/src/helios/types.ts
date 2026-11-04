@@ -1,7 +1,7 @@
-import type { CustomerId } from '../../../domain/src/customer.ts';
-import type { Jurisdiction } from '../../../domain/src/jurisdiction.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
-import type { IdentityCapability } from '../../../identity/src/capability.ts';
+import type { CustomerId } from '@solstice/domain';
+import type { Jurisdiction } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
+import type { IdentityCapability } from '@solstice/identity';
 import type { EconomicMandateId, MandateVersion } from '../ids.ts';
 import type { MandateState } from '../mandate/taxonomy.ts';
 import type { SerializedMoney } from '../mandate/types.ts';

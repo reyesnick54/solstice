@@ -5,7 +5,7 @@
 
 import { createHash } from 'node:crypto';
 
-import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import type { SecEdgarSubmissionRecord } from '../sec-fundamentals/edgar-dataflow.ts';
 import { earningsEventKey, parseFiscalPeriodLabel } from './identity.ts';
 import { classifyEarningsSessionTiming } from './session-timing.ts';

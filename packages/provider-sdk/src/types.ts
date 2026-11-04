@@ -4,7 +4,7 @@
 
 export * from './observation-types.ts';
 import type { FreshnessStatus, ValidationStatus } from './observation-types.ts';
-import type { UtcInstant } from '../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 export * from './registry-types.ts';
 export * from './http-transport-types.ts';
 export * from './reliability-types.ts';
@@ -13,7 +13,7 @@ import { PROVIDER_AUTHORITY_CLASSES } from './registry-types.ts';
 
 export const AUTHORITY_CLASSES = PROVIDER_AUTHORITY_CLASSES;
 import type { FreshnessStatus } from './observation-types.ts';
-import type { UtcInstant } from '../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 /**
  * Wave 1 Prompt 3 — universal provider HTTP transport contract.

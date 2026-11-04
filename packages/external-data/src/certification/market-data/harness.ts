@@ -2,21 +2,21 @@
  * AAF07 qualification harness — thirteen evidence proofs per provider.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import {
   DEFAULT_DEDUPLICATION_POLICIES,
   createInMemoryDeduplicationRegistry,
   isDuplicate,
-} from '../../../../provider-sdk/src/deduplication.ts';
-import { hashRawJsonPayload } from '../../../../provider-sdk/src/hash.ts';
-import { rejectSilentSimulationFallback } from '../../../../provider-sdk/src/certification/provenance.ts';
-import { buildExternalObservation } from '../../../../provider-sdk/src/observation.ts';
-import { DEFAULT_PROVIDER_RELIABILITY_POLICY } from '../../../../provider-sdk/src/policy.ts';
-import { decideRetryDelay } from '../../../../provider-sdk/src/retry.ts';
-import type { HeliosMarketDataCatalogOverlayEntry } from '../../../../provider-sdk/src/market-data-capability/build-from-catalog.ts';
-import { docsVerifiedFromCatalog } from '../../../../provider-sdk/src/market-data-capability/build-from-catalog.ts';
-import type { CatalogProviderEntry } from '../../../../provider-sdk/src/catalog/types.ts';
-import type { CapitalMarketProvider } from '../../../../sunrey-exchange/src/capital-market/provider.ts';
+} from '@solstice/provider-sdk';
+import { hashRawJsonPayload } from '@solstice/provider-sdk';
+import { rejectSilentSimulationFallback } from '@solstice/provider-sdk';
+import { buildExternalObservation } from '@solstice/provider-sdk';
+import { DEFAULT_PROVIDER_RELIABILITY_POLICY } from '@solstice/provider-sdk';
+import { decideRetryDelay } from '@solstice/provider-sdk';
+import type { HeliosMarketDataCatalogOverlayEntry } from '@solstice/provider-sdk';
+import { docsVerifiedFromCatalog } from '@solstice/provider-sdk';
+import type { CatalogProviderEntry } from '@solstice/provider-sdk';
+import type { CapitalMarketProvider } from '@solstice/sunrey-exchange/capital-market';
 import { knowableAtCorrectnessCheck, computeKnowableAtForCertification } from './knowable-at.ts';
 
 export const MARKET_DATA_QUALIFICATION_PROOF_IDS = [

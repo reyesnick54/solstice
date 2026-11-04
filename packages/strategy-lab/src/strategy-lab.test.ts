@@ -1,17 +1,17 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { FrozenClock } from '../../config/src/clock.ts';
-import { asCustomerId } from '../../domain/src/customer.ts';
-import { asAccountId } from '../../domain/src/account.ts';
-import { asJurisdiction } from '../../domain/src/jurisdiction.ts';
-import { asUtcInstant } from '../../domain/src/time.ts';
-import { DomainEventLog } from '../../events/src/events.ts';
-import { EvidenceVault } from '../../evidence/src/vault.ts';
-import { SimulatedIdentityAdapter } from '../../identity/src/simulation.ts';
-import { ModelRegistry, seedCanonicalRiskModel } from '../../model-registry/src/registry.ts';
-import { defaultSimulationBudget, RiskEngine } from '../../risk/src/engine.ts';
-import { createSimulationKeyProvider } from '../../security/src/simulation.ts';
+import { FrozenClock } from '@solstice/config';
+import { asCustomerId } from '@solstice/domain';
+import { asAccountId } from '@solstice/domain';
+import { asJurisdiction } from '@solstice/domain';
+import { asUtcInstant } from '@solstice/domain';
+import { DomainEventLog } from '@solstice/events';
+import { EvidenceVault } from '@solstice/evidence';
+import { SimulatedIdentityAdapter } from '@solstice/identity';
+import { ModelRegistry, seedCanonicalRiskModel } from '@solstice/model-registry';
+import { defaultSimulationBudget, RiskEngine } from '@solstice/risk';
+import { createSimulationKeyProvider } from '@solstice/security';
 import { validateStrategyAst } from './dsl.ts';
 import { refuseExperimentDeletion, expandParameterGrid } from './experiment.ts';
 import {

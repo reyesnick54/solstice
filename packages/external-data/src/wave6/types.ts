@@ -5,9 +5,9 @@
  * or mutate financial state.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { ProviderExecutionProvenance } from '../certification/types.ts';
-import type { AuthorityClass } from '../../../provider-sdk/src/types.ts';
+import type { AuthorityClass } from '@solstice/provider-sdk';
 
 export const EMPLOYMENT_TYPES = Object.freeze([
   'FULL_TIME',

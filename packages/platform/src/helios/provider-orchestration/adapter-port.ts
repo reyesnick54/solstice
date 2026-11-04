@@ -5,7 +5,7 @@
  * HELIOS orchestration code must not import sunrey-chain or provider SDKs directly.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type {
   CustodyWalletProvisionStatus,
   ExternalAccountApplicationStatus,

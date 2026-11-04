@@ -3,8 +3,8 @@
  * Uses the canonical events taxonomy — not a separate event bus.
  */
 
-import type { UtcInstant } from '../../domain/src/time.ts';
-import type { VersionedEvent } from '../../events/src/events.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { VersionedEvent } from '@solstice/events';
 import type { FreshnessStatus, ValidationStatus } from './types.ts';
 
 export const PROVIDER_DATA_QUALITY_EVENT_TYPES = [

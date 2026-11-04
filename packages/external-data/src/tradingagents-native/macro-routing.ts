@@ -2,7 +2,7 @@
  * Macro-data routing (TradingAgents macro_data → Wave 2 macro fixtures, simulation only).
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { fetchMacroIndicators, type Wave2AdapterContext } from '../adapters.ts';
 import { asOf, filterKnowableByDecisionTime } from './date-window.ts';
 import type { DataflowOutcome } from './types.ts';

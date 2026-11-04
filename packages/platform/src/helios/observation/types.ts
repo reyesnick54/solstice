@@ -6,19 +6,19 @@
  * Does not grant Execution Authority or authorize financial execution.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type {
   CommercialUseStatus,
   ExternalObservation,
   FreshnessStatus,
   RedistributionStatus,
-} from '../../../../provider-sdk/src/types.ts';
-import type { FreshnessAssessment } from '../../../../provider-sdk/src/freshness.ts';
+} from '@solstice/provider-sdk';
+import type { FreshnessAssessment } from '@solstice/provider-sdk';
 import type {
   CanonicalTrustResult,
   ConfidenceBand,
   TrustResultStatus,
-} from '../../../../provider-sdk/src/trust/types.ts';
+} from '@solstice/provider-sdk';
 
 export const HELIOS_MARKET_OBSERVATION_SCHEMA = 'sunrey.helios.market-observation.v1' as const;
 

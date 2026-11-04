@@ -2,7 +2,7 @@
  * AAF05 — feature coverage tensor and manifest types (strategy-lab integration).
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const HELIOS_COVERAGE_TENSOR_SCHEMA = 'sunrey.helios.coverage-tensor.v1' as const;
 

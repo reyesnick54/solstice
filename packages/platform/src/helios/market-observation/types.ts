@@ -6,8 +6,8 @@
  * market-data platform. Reference/research only — not execution authority.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
-import type { AuthorityClass } from '../../../../provider-sdk/src/types.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { AuthorityClass } from '@solstice/provider-sdk';
 import type {
   EntitlementClass,
   FeedDelayClassification,

@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { latestCloseAt, membersAt, windowCloses, type MarketDataset } from './dataset.ts';
 import type { StrategyExpr } from './dsl.ts';
 import type { StrategySpecification } from './specification.ts';

@@ -2,7 +2,7 @@
  * AAF09 observation validation — stale feeds, sequence gaps, crossed markets.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { NormalizedCryptoMarketObservation, SourceHealthState } from './types.ts';
 
 export type ValidationIssue = {

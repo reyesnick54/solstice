@@ -2,7 +2,7 @@
  * AAF06 — append-only revision ledger for macro and fundamental vintages.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const REVISION_SENSITIVE_SERIES_KINDS = [
   'GDP',

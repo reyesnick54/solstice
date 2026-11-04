@@ -2,7 +2,7 @@
  * Kraken public REST venue adapter — market data only (AAF07 certified profile).
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { requireAaf07Certification } from '../../aaf07/certification.ts';
 import { KRAKEN_PROVIDER_ID } from '../../aaf07/profiles.ts';
 import { resolveAaf09Instrument } from '../instruments.ts';

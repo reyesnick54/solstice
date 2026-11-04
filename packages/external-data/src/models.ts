@@ -4,7 +4,7 @@
  * Observations only — no execution authority, balances, or compliance decisions.
  */
 
-import type { ExternalObservation } from '../../provider-sdk/src/index.ts';
+import type { ExternalObservation } from '@solstice/provider-sdk';
 
 export type CompanyIdentifier = {
   readonly entityId: string;

@@ -7,7 +7,10 @@
     "@solstice/sunrey-chain": "0.1.0"
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./capital-market": "./src/capital-market/index.ts",
+    "./crypto-market/catalog-entries": "./src/crypto-market/catalog-entries.ts",
+    "./crypto-market/coingecko-adapter": "./src/crypto-market/spot/adapters/coingecko-adapter.ts"
   },
   "files": [
     "src"

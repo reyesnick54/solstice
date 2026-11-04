@@ -2,7 +2,7 @@
  * Deterministic earnings lifecycle fixture — reschedule, early/late release, amendment, duplicates.
  */
 
-import { asUtcInstant } from '../../../../domain/src/time.ts';
+import { asUtcInstant } from '@solstice/domain';
 import { earningsEventKey, parseFiscalPeriodLabel } from '../identity.ts';
 import { classifyEarningsSessionTiming } from '../session-timing.ts';
 import type { EarningsExternalObservation } from '../types.ts';

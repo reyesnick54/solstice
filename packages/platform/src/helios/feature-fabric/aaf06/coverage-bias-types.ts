@@ -2,7 +2,7 @@
  * AAF06 — coverage-bias sentinel domain types (deterministic diagnostics only).
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const COVERAGE_BIAS_SEVERITIES = [
   'PASS',

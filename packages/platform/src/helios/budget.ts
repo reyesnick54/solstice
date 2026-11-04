@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { randomUUID } from 'node:crypto';
 import { asResearchBudgetReservationId, asResearchSpendRecordId } from './ids.ts';
 import type { BudgetUnitKind, SpendCostStatus } from './taxonomy.ts';

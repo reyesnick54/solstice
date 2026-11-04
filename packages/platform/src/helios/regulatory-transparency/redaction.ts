@@ -1,4 +1,4 @@
-import { sha256Hex } from '../../../../security/src/hash.ts';
+import { sha256Hex } from '@solstice/security';
 import { REDACTION_RULE_VERSION } from './taxonomy.ts';
 import type { ExportArtifact, RedactionRecord } from './types.ts';
 import type { ArtifactClass } from './taxonomy.ts';

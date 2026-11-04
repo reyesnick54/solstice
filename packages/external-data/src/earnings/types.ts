@@ -2,7 +2,7 @@
  * External earnings observation envelopes (provider-neutral, simulation-first).
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type {
   EarningsArtifactKind,
   EarningsProviderKind,

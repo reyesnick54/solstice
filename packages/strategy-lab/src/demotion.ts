@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { asPromotionDecisionId, type PromotionDecisionId } from './ids.ts';
 import type { StrategyPromotionState } from './promotion-state.ts';
 

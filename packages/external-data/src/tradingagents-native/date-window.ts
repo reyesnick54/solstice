@@ -3,7 +3,7 @@
  * Historical runs must not reach vendors with dates after the decision date.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 
 export function toUtcMs(iso: string): number {
   return Date.parse(iso);

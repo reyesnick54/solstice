@@ -2,7 +2,7 @@
  * Universal feature computation from HELIOS observation contributions.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { deriveFeatureEntitlement } from './entitlement.ts';
 import {
   maxKnowableAt,

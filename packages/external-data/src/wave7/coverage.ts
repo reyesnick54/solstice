@@ -23,7 +23,7 @@ import {
   WAVE7_NOT_FREE_IDS,
   WAVE7_PREVIEW_ONLY_IDS,
 } from './registry.ts';
-import { createProviderCertificationService } from '../../../provider-sdk/src/certification/service.ts';
+import { createProviderCertificationService } from '@solstice/provider-sdk';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../../../..');
 const CATALOG_PATH = join(ROOT, 'config/providers/free-api-catalog.yaml');

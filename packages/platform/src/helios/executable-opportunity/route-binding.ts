@@ -1,10 +1,10 @@
-import { Money } from '../../../../money/src/money.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import { Money } from '@solstice/money';
+import type { UtcInstant } from '@solstice/domain';
 import { qualificationDecisionIdFor } from './ids.ts';
 import type { CanonicalInstrumentBinding, ExecutionRouteDecision, ExecutionRouteDescriptor } from './types.ts';
 import type { ExecutionRouteRegistryPort } from './types.ts';
 import type { QualificationReasonCode, RouteAvailabilityState } from './taxonomy.ts';
-import type { Jurisdiction } from '../../../../domain/src/jurisdiction.ts';
+import type { Jurisdiction } from '@solstice/domain';
 import type { SerializedMoney } from '../../mandate/types.ts';
 
 export function assessExecutionRouteReadiness(input: {

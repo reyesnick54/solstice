@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 
-import { err, ok, type Result } from '../../domain/src/result.ts';
-import type { UtcInstant } from '../../domain/src/time.ts';
+import { err, ok, type Result } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
 import type { BacktestRun } from './backtest.ts';
 import type { PromotionCapsule } from './promotion-capsule.ts';
 import { asEvaluationQualificationId, type EvaluationQualificationId } from './ids.ts';

@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { CoverageBiasAssessment } from '../feature-fabric/aaf06/coverage-bias-types.ts';
 import type { PointInTimeDatasetManifest } from '../feature-fabric/compiler/manifest.ts';
 import type { CoverageManifest } from '../feature-fabric/feature-coverage/types.ts';

@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-import { brandAs, type Brand } from '../../../../../domain/src/brand.ts';
+import { brandAs, type Brand } from '@solstice/domain';
 
 export type TemporalEntityNodeId = Brand<string, 'TemporalEntityNodeId'>;
 export type TemporalEntityEdgeId = Brand<string, 'TemporalEntityEdgeId'>;

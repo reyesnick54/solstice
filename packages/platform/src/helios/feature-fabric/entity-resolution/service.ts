@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { createTemporalEntityGraphStore, type TemporalEntityGraphStore } from './graph-store.ts';
 import { resolveProviderSymbol } from './resolver.ts';
 import type { ResolveProviderSymbolInput, ResolvedEntityBinding, TemporalEntityGraphSnapshot } from './types.ts';

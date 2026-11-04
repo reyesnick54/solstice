@@ -2,7 +2,7 @@
  * In-memory observation store with restart snapshot support.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { HeliosMarketObservationEnvelope } from './types.ts';
 import type { HeliosDeduplicationState } from './deduplication.ts';
 import { createHeliosDeduplicationState, restoreDeduplicationState, snapshotDeduplicationState } from './deduplication.ts';

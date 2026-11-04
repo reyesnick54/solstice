@@ -2,7 +2,7 @@
  * Seed AAF03 temporal mappings for AAF08 finnhub symbols → M01 instrument IDs.
  */
 
-import { asUtcInstant } from '../../../../../domain/src/time.ts';
+import { asUtcInstant } from '@solstice/domain';
 import type { TemporalEntityGraphStore } from '../../feature-fabric/entity-resolution/graph-store.ts';
 import { temporalEntityNodeIdFor } from '../../feature-fabric/entity-resolution/ids.ts';
 import { AAF08_EQUITIES_ETF_UNIVERSE } from './universe.ts';

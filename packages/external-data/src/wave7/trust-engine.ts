@@ -4,8 +4,8 @@
  * Multi-source reference reconciliation. Never fabricates canonical values.
  */
 
-import { buildConfidence } from '../../../provider-sdk/src/confidence.ts';
-import type { AuthorityClass } from '../../../provider-sdk/src/types.ts';
+import { buildConfidence } from '@solstice/provider-sdk';
+import type { AuthorityClass } from '@solstice/provider-sdk';
 import type { TrustEngineOutcome, TrustEngineResult } from './models.ts';
 
 export type TrustObservation = {

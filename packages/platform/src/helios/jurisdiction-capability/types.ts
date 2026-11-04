@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 /** Platform-local mirror of kernel capability query outcomes — no kernel import. */
 export const HELIOS_CAPABILITY_QUERY_OUTCOMES = [

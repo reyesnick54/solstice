@@ -2,7 +2,7 @@
  * Derive point-in-time fundamental features from facts when supported.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import {
   FUNDAMENTAL_FEATURE_IDS,
   HELIOS_FUNDAMENTAL_FEATURE_SCHEMA,

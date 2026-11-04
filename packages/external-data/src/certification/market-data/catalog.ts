@@ -7,9 +7,9 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse as parseYaml } from 'yaml';
 
-import { getCatalogEntry, loadCatalogFromYaml } from '../../../../provider-sdk/src/catalog/loader.ts';
-import type { CatalogIndex } from '../../../../provider-sdk/src/catalog/types.ts';
-import type { HeliosMarketDataCatalogOverlayEntry } from '../../../../provider-sdk/src/market-data-capability/build-from-catalog.ts';
+import { getCatalogEntry, loadCatalogFromYaml } from '@solstice/provider-sdk';
+import type { CatalogIndex } from '@solstice/provider-sdk';
+import type { HeliosMarketDataCatalogOverlayEntry } from '@solstice/provider-sdk';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../../../../..');
 export const HELIOS_MARKET_DATA_CERTIFICATION_CATALOG_PATH = join(

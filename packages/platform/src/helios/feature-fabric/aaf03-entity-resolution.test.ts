@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { asUtcInstant } from '../../../../domain/src/time.ts';
+import { asUtcInstant } from '@solstice/domain';
 import { AAF03_CANONICAL_OWNER_REUSE } from './entity-resolution/canonical-owners.ts';
 import { seedReferenceTemporalEntityGraph } from './entity-resolution/fixtures.ts';
 import {

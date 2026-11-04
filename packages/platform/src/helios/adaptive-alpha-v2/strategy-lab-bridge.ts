@@ -1,5 +1,5 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
-import type { EvidenceVault } from '../../../../evidence/src/vault.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { EvidenceVault } from '@solstice/evidence';
 /** Portable ref shape consumed by Strategy Lab promotion gates (defined here to avoid platform→strategy-lab imports). */
 export type StrategyLabAdaptiveAlphaQualificationRef = {
   readonly qualificationId: string;

@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { HELIOS_FEATURE_FABRIC_SCHEMA } from '../types.ts';
 import { classifyMissingness, dispositionFromMissingness, type CoverageProbeSignal } from './classify.ts';
 import { aggregateCoverageSlices, computeCoverageMetricSet, summarizeExclusions, tensorFingerprint } from './metrics.ts';

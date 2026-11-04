@@ -4,7 +4,7 @@
  * Proves what SunRey received — not that provider content is objectively true.
  */
 
-import { sha256Hex } from '../../security/src/hash.ts';
+import { sha256Hex } from '@solstice/security';
 
 export const RAW_PAYLOAD_HASH_ALGORITHM = 'sha256' as const;
 

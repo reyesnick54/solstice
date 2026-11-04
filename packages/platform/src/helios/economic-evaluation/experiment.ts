@@ -1,8 +1,8 @@
 import { createHash } from 'node:crypto';
 
-import type { CustomerId } from '../../../../domain/src/customer.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
-import { err, ok, type Result } from '../../../../domain/src/result.ts';
+import type { CustomerId } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
+import { err, ok, type Result } from '@solstice/domain';
 import { experimentIdFor, type HeliosExperimentId } from './ids.ts';
 import type {
   ExecutionAssumptionSpec,

@@ -6,8 +6,8 @@ import {
   buildExternalObservation,
   canonicalJsonStringify,
   type ExternalObservation,
-} from '../../../provider-sdk/src/index.ts';
-import { asUtcInstant } from '../../../domain/src/time.ts';
+} from '@solstice/provider-sdk';
+import { asUtcInstant } from '@solstice/domain';
 import type { ProviderAdapterState } from '../adapters.ts';
 import { WAVE6_IMPLEMENTED_PROVIDER_IDS } from './catalog-entries.ts';
 import {

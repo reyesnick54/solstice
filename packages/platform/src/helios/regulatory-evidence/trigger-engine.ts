@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { triggerEventIdFor } from './ids.ts';
 import {
   APPROVED_HELIOS_REPORTING_POLICY,

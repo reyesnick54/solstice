@@ -2,8 +2,8 @@
  * HELIOS universal evidence-time feature fabric service.
  */
 
-import type { Clock } from '../../../../../config/src/clock.ts';
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { Clock } from '@solstice/config';
+import type { UtcInstant } from '@solstice/domain';
 import { computeFeatureObservation } from './compute.ts';
 import { computeDerivedFeatureObservation } from './derived.ts';
 import { buildFeatureManifest } from './manifest.ts';

@@ -14,7 +14,7 @@ import {
   type ProductSectionEnvelope,
   type SanitizedSourceMetadata,
 } from './product-data-state.ts';
-import { DATA_MODE } from '../../config/src/data-mode.ts';
+import { DATA_MODE } from '@solstice/config';
 
 export type WorldSnapshotSectionKey =
   | 'economy'

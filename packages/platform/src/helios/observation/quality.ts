@@ -2,8 +2,8 @@
  * Reusable data quality checks — explicit degraded states over silent drops.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
-import type { ExternalObservation } from '../../../../provider-sdk/src/types.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { ExternalObservation } from '@solstice/provider-sdk';
 import { detectTimestampReversal } from './information-time.ts';
 import type { InformationTime } from './types.ts';
 import type {

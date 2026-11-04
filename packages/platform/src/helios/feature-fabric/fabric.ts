@@ -2,11 +2,11 @@
  * HELIOS feature fabric — compute and seal evidence-time features from observations.
  */
 
-import type { Clock } from '../../../../config/src/clock.ts';
+import type { Clock } from '@solstice/config';
 import { computeFeatureObservation } from './compute.ts';
 import { buildFeatureManifest } from './manifest.ts';
 import type { HeliosFeatureFabricStore } from './store.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type {
   ComputeFeatureInput,
   ComputeFeatureResult,

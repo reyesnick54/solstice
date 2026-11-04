@@ -2,7 +2,7 @@
  * Wave 1 — canonical external observation envelope types.
  */
 
-import type { UtcInstant } from '../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const EXTERNAL_OBSERVATION_SCHEMA = 'sunrey.external-observation.v1' as const;
 export const NORMALIZATION_SCHEMA_VERSION = 1 as const;

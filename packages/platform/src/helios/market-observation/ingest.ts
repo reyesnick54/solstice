@@ -2,8 +2,8 @@
  * M02 ingest bridge — validates market observations and seals through H08 fabric.
  */
 
-import type { Clock } from '../../../../config/src/clock.ts';
-import { buildExternalObservation, MARKET_PRICE_FRESHNESS_POLICY } from '../../../../provider-sdk/src/index.ts';
+import type { Clock } from '@solstice/config';
+import { buildExternalObservation, MARKET_PRICE_FRESHNESS_POLICY } from '@solstice/provider-sdk';
 import { computeKnowableAt } from '../observation/information-time.ts';
 import { HeliosObservationFabric } from '../observation/fabric.ts';
 import { createHeliosObservationStore } from '../observation/store.ts';

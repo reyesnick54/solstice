@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const TRADINGAGENTS_NATIVE_DATAFLOW_SCHEMA = 'sunrey.external-data.tradingagents-native.v1' as const;
 

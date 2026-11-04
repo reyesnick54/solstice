@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { ProviderRuntimeDiscoveryPort } from './adapter-port.ts';
 import type { ProviderCapabilityDiscovery } from './types.ts';
 import type {

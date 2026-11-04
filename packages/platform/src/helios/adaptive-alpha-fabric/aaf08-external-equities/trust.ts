@@ -1,12 +1,10 @@
-// @ts-nocheck — simulation trust stubs until provider-sdk payload generics align.
 /**
  * External Data Trust normalization for AAF08 equities payloads.
  */
 
-import { createExternalDataTrustEngine } from '../../../../../provider-sdk/src/trust/engine.ts';
-import { assessMarketReferenceTrust } from '../../../../../provider-sdk/src/trust/domain-policies.ts';
-import type { CanonicalTrustResult } from '../../../../../provider-sdk/src/trust/types.ts';
-import { buildExternalObservation, MARKET_PRICE_FRESHNESS_POLICY } from '../../../../../provider-sdk/src/index.ts';
+import { createExternalDataTrustEngine } from '@solstice/provider-sdk';
+import { assessMarketReferenceTrust } from '@solstice/provider-sdk';
+import { buildExternalObservation, MARKET_PRICE_FRESHNESS_POLICY } from '@solstice/provider-sdk';
 import type { UtcInstant } from '@solstice/domain';
 import type { ExternalEquitiesQuotePayload } from './types.ts';
 
@@ -19,15 +17,20 @@ export function createAaf08TrustEngine(nowUtc: () => UtcInstant): Aaf08TrustEngi
 export function assessEquitiesQuoteTrust(
   engine: Aaf08TrustEngine,
   payload: ExternalEquitiesQuotePayload,
-): CanonicalTrustResult<{ readonly priceMinor: string; readonly currency: string }> {
+) {
+  const priceMinor = payload.lastMinorUnits ?? 0n;
   const built = buildExternalObservation({
     observationId: payload.observationId,
     providerId: payload.providerId,
     providerCategory: 'markets',
     capability: payload.capability,
     data: Object.freeze({
-      priceMinor: payload.lastMinorUnits?.toString() ?? '0',
+      symbol: payload.instrumentId,
+      priceMinor,
       currency: payload.currency,
+      asOf: payload.sourceTimestamp,
+      sourceProvider: payload.providerId,
+      exchange: payload.venueId,
     }),
     source: {
       provider: payload.providerId,

@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { StrategyCapsule } from './capsule.ts';
 import type { EvaluationDatasetManifest } from './manifest.ts';
 import { asStrategyEvaluationId, type StrategyEvaluationId } from './ids.ts';

@@ -1,4 +1,4 @@
-import { Money } from '../../../../money/src/money.ts';
+import { Money } from '@solstice/money';
 import type { HeliosFill, HeliosOrderAggregation } from './types.ts';
 
 /**

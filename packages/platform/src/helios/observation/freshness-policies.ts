@@ -10,8 +10,8 @@ import {
   MARKET_PRICE_FRESHNESS_POLICY,
   staleAfterFromPolicy,
   type FreshnessPolicy,
-} from '../../../../provider-sdk/src/freshness.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+} from '@solstice/provider-sdk';
+import type { UtcInstant } from '@solstice/domain';
 import type { HeliosFreshnessAssessment, ObservationType } from './types.ts';
 
 export const TICK_FRESHNESS_POLICY: FreshnessPolicy = Object.freeze({

@@ -1,9 +1,9 @@
-// @ts-nocheck — simulation bridge until provider-sdk observation envelopes align with AAF02.
 /**
  * Bridge sealed M02 quotes into AAF02 feature fabric (optional downstream).
  */
 
 import type { UtcInstant } from '@solstice/domain';
+import { buildExternalObservation, MARKET_PRICE_FRESHNESS_POLICY } from '@solstice/provider-sdk';
 import type { HeliosFeatureFabric } from '../../feature-fabric/fabric.ts';
 import { HELIOS_FEATURE_FABRIC_SCHEMA, type FeatureDefinition } from '../../feature-fabric/types.ts';
 import { buildInformationTime } from '../../observation/information-time.ts';
@@ -32,32 +32,51 @@ export function materializeAaf08LastPriceFeature(
 ): void {
   if (quote.lastMinorUnits === null) return;
   fabric.registerDefinition(AAF08_LAST_PRICE_DEFINITION);
+  const envelope = buildExternalObservation({
+    observationId: quote.provenance.observationId,
+    providerId: quote.providerId,
+    providerCategory: 'markets',
+    capability: quote.provenance.capability,
+    data: Object.freeze({
+      symbol: quote.instrumentId,
+      priceMinor: quote.lastMinorUnits,
+      currency: quote.currency,
+      asOf: quote.sourceTimestamp,
+      sourceProvider: quote.providerId,
+    }),
+    source: {
+      provider: quote.providerId,
+      dataset: quote.instrumentId,
+      sourceUrl: quote.provenance.sourceUrl,
+    },
+    time: {
+      retrievedAt: quote.arrivalTimestamp,
+      sourceTimestamp: quote.sourceTimestamp,
+      effectiveAt: quote.availabilityTimestamp ?? quote.sourceTimestamp,
+    },
+    authorityClass: 'reference_data',
+    provenance: {
+      rawPayload: quote.provenance.rawPayloadHash,
+      providerSchemaVersion: quote.schema,
+    },
+    freshnessPolicy: MARKET_PRICE_FRESHNESS_POLICY,
+    validationStatus: 'valid',
+    licensing: {
+      commercialUseStatus: quote.entitlement.commercialRestricted ? 'restricted' : 'permitted',
+      redistributionStatus: quote.entitlement.redistributionRestricted ? 'restricted' : 'permitted',
+    },
+  });
+  if (!envelope.ok) return;
+  const observation = envelope.value;
   const informationTime = buildInformationTime({
+    observation,
     sourceEventTime: quote.sourceTimestamp,
     providerAvailabilityTime: quote.availabilityTimestamp,
     sunreyArrivalTime: quote.arrivalTimestamp,
     ingestionTime: computedAt,
   });
   const entitlement = buildObservationEntitlement({
-    observation: {
-      observationId: quote.provenance.observationId,
-      providerId: quote.providerId,
-      providerCategory: 'markets',
-      capability: quote.provenance.capability,
-      data: {},
-      source: { provider: quote.providerId, dataset: quote.instrumentId },
-      time: {
-        retrievedAt: quote.arrivalTimestamp,
-        sourceTimestamp: quote.sourceTimestamp,
-      },
-      authorityClass: 'reference_data',
-      provenance: { rawPayload: quote.provenance.rawPayloadHash, providerSchemaVersion: quote.schema },
-      licensing: {
-        commercialUseStatus: quote.entitlement.commercialRestricted ? 'restricted' : 'permitted',
-        redistributionStatus: quote.entitlement.redistributionRestricted ? 'restricted' : 'permitted',
-      },
-      freshness: { status: 'fresh', assessedAt: computedAt },
-    },
+    observation,
     entitlementClass: quote.entitlement.entitlementClass,
     feedDelayClassification: quote.entitlement.feedDelayClassification,
   });

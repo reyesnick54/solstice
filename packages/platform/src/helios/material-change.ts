@@ -1,4 +1,4 @@
-import { Money } from '../../../money/src/money.ts';
+import { Money } from '@solstice/money';
 import type { BindingReasonCode } from './taxonomy.ts';
 import type { WorkOrderScope } from './types.ts';
 

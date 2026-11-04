@@ -1,5 +1,5 @@
-import type { EvidenceVault } from '../../../../evidence/src/vault.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { EvidenceVault } from '@solstice/evidence';
+import type { UtcInstant } from '@solstice/domain';
 import type { ProviderEvidence } from './types.ts';
 
 export function buildProviderEvidence(input: {

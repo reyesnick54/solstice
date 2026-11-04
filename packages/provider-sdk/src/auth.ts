@@ -4,7 +4,7 @@
  * Adapters declare auth strategy; secrets resolve at the transport boundary.
  */
 
-import type { SecretProvider, SecretReference } from '../../security/src/secrets.ts';
+import type { SecretProvider, SecretReference } from '@solstice/security';
 import type { ProviderTransportError } from './errors.ts';
 import { securityError } from './errors.ts';
 

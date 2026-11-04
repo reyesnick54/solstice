@@ -2,7 +2,7 @@
  * AAFV2.3 explicit leakage scanner — canonical reason codes for Strategy Lab / Genome audits.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type {
   CorporateActionRevisionRow,
   TemporalObservation,

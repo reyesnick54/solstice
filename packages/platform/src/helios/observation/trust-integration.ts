@@ -2,7 +2,7 @@
  * External Data Trust Engine integration — trust informs HELIOS, never authorizes finance.
  */
 
-import type { CanonicalTrustResult } from '../../../../provider-sdk/src/trust/types.ts';
+import type { CanonicalTrustResult } from '@solstice/provider-sdk';
 import type { TrustIntegrationRef } from './types.ts';
 
 export function buildTrustRef<T>(trustResult: CanonicalTrustResult<T> | null | undefined): TrustIntegrationRef | null {

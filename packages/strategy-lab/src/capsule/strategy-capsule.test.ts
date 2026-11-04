@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { FrozenClock } from '../../../config/src/clock.ts';
-import { asUtcInstant } from '../../../domain/src/time.ts';
-import { DomainEventLog } from '../../../events/src/events.ts';
-import { EvidenceVault } from '../../../evidence/src/vault.ts';
+import { FrozenClock } from '@solstice/config';
+import { asUtcInstant } from '@solstice/domain';
+import { DomainEventLog } from '@solstice/events';
+import { EvidenceVault } from '@solstice/evidence';
 import { asStrategyCapsuleVersion, asStrategyFamilyId } from './ids.ts';
 import { computeStrategyCapsuleMaterialHash } from './fingerprint.ts';
 import {

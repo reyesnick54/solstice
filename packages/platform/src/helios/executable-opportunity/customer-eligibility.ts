@@ -1,6 +1,6 @@
-import type { CustomerId } from '../../../../domain/src/customer.ts';
-import type { Jurisdiction } from '../../../../domain/src/jurisdiction.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { CustomerId } from '@solstice/domain';
+import type { Jurisdiction } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
 import { evaluateOpportunityEligibility } from '../../growth/opportunity/eligibility.ts';
 import type { OpportunityDetectorKind } from '../../growth/opportunity/taxonomy.ts';
 import type { OpportunityDiscoveryContext, ProductCapability } from '../../growth/opportunity/types.ts';

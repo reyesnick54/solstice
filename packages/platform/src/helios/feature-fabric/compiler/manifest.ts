@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 
-import { err, ok, type Result } from '../../../../../domain/src/result.ts';
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import { err, ok, type Result } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
 import type { MissingnessPolicy, RevisionPolicy } from '../temporal-types.ts';
 import { AAF04_COMPILER_VERSION } from './version.ts';
 

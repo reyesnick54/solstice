@@ -1,7 +1,7 @@
-import type { UtcInstant } from '../../domain/src/time.ts';
-import type { ModelId, ModelVersion } from '../../model-registry/src/ids.ts';
-import type { Ratio } from '../../risk/src/arithmetic.ts';
-import type { RiskOutcome } from '../../risk/src/types.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { ModelId, ModelVersion } from '@solstice/model-registry';
+import type { Ratio } from '@solstice/risk';
+import type { RiskOutcome } from '@solstice/risk';
 import type {
   CapitalAgentNodeId,
   CapitalAllocationCandidateId,

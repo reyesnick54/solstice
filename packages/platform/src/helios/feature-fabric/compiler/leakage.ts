@@ -2,7 +2,7 @@
  * Information leakage guards for AAF04 point-in-time compilation.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type {
   CorporateActionRevisionRow,
   TemporalObservation,

@@ -5,7 +5,7 @@
  * real provider credentials.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import type {
   AdapterAccountOutcome,
   AdapterAccountQueryInput,

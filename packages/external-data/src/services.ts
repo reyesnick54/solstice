@@ -2,7 +2,7 @@
  * Wave 2 canonical domain services.
  */
 
-import type { ExternalObservation } from '../../provider-sdk/src/index.ts';
+import type { ExternalObservation } from '@solstice/provider-sdk';
 import {
   createDefaultAdapterStates,
   fetchCommodities,

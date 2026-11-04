@@ -1,8 +1,8 @@
-import type { CustomerId } from '../../../domain/src/customer.ts';
-import { asJurisdiction, type Jurisdiction } from '../../../domain/src/jurisdiction.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
-import { sha256Hex } from '../../../security/src/hash.ts';
-import { Money } from '../../../money/src/money.ts';
+import type { CustomerId } from '@solstice/domain';
+import { asJurisdiction, type Jurisdiction } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
+import { sha256Hex } from '@solstice/security';
+import { Money } from '@solstice/money';
 import { isActiveMandate, isTerminalMandate } from '../mandate/lifecycle.ts';
 import type { CompiledEconomicMandate } from '../mandate/types.ts';
 import type {

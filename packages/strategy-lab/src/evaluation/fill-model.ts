@@ -1,5 +1,5 @@
-import { err, ok, type Result } from '../../../domain/src/result.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import { err, ok, type Result } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
 import type { StrategyFailure, TransactionCostAssumptions } from '../types.ts';
 import type { ChronologicalObservation } from './manifest.ts';
 import { FILL_MODEL_VERSION, type EvaluationFailure } from './types.ts';

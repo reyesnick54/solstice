@@ -1,4 +1,4 @@
-import type { Jurisdiction } from '../../../../domain/src/jurisdiction.ts';
+import type { Jurisdiction } from '@solstice/domain';
 import type { CanonicalInstrumentBinding, CanonicalInstrumentCandidate } from './types.ts';
 import type { QualificationReasonCode } from './taxonomy.ts';
 

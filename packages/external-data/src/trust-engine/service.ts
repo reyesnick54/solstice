@@ -19,8 +19,8 @@ import {
   type TrustResultRecord,
   type TrustAugmentedEvidenceRef,
   type WorldQualitySnapshot,
-} from '../../../provider-sdk/src/trust/index.ts';
-import type { ExternalObservation } from '../../../provider-sdk/src/types.ts';
+} from '@solstice/provider-sdk';
+import type { ExternalObservation } from '@solstice/provider-sdk';
 import type { ExternalDataPlane } from '../plane.ts';
 import type { FxReferenceRate, MarketQuote } from '../models.ts';
 
@@ -134,7 +134,7 @@ export class ExternalDataTrustPlane {
 
   assessObservations<T>(
     contexts: readonly TrustObservationContext<T>[],
-    policyProfile: import('../../../provider-sdk/src/trust/types.ts').TrustPolicyProfile,
+    policyProfile: import('@solstice/provider-sdk').TrustPolicyProfile,
     semanticKey: string,
     unit?: string | null,
   ): CanonicalTrustResult<T> {

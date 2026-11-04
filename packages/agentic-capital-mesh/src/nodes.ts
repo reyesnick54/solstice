@@ -1,8 +1,8 @@
-import type { UtcInstant } from '../../domain/src/time.ts';
-import { err, ok, type Result } from '../../domain/src/result.ts';
-import { asModelId, asModelValidationId, asModelVersion } from '../../model-registry/src/ids.ts';
-import { ModelRegistry, type RegistryFailure } from '../../model-registry/src/registry.ts';
-import type { RegisteredModelVersion } from '../../model-registry/src/types.ts';
+import type { UtcInstant } from '@solstice/domain';
+import { err, ok, type Result } from '@solstice/domain';
+import { asModelId, asModelValidationId, asModelVersion } from '@solstice/model-registry';
+import { ModelRegistry, type RegistryFailure } from '@solstice/model-registry';
+import type { RegisteredModelVersion } from '@solstice/model-registry';
 import { asCapitalAgentNodeId } from './ids.ts';
 import {
   APPROVED_MESH_TOOLS,

@@ -2,8 +2,8 @@
  * AAFV2.3 — deterministic point-in-time dataset compiler (Strategy Lab / Genome gate).
  */
 
-import { err, ok, type Result } from '../../../../../domain/src/result.ts';
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import { err, ok, type Result } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
 import { compileFeatureVector, type CompiledFeatureVector, type FeatureCompilerContext } from './compile.ts';
 import { mapLegacyLeakageToAafv203, scanPointInTimeLeakage } from './leakage-scanner.ts';
 import { freezeAafv203PointInTimeDatasetManifest } from './v2-manifest.ts';
@@ -164,7 +164,10 @@ export class PointInTimeDatasetCompiler {
       missingnessPolicy: request.informationTimePolicy.missingnessPolicy,
     });
     if (!manifest.ok) {
-      return err(manifest.error);
+      return err({
+        code: 'INVALID_MANIFEST',
+        message: manifest.error.message,
+      });
     }
 
     const qualification: DatasetQualification = Object.freeze({

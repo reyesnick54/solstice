@@ -8,7 +8,7 @@ import {
   createFetchProviderTransport,
   createProviderTransportConfig,
   NO_AUTH_PROVIDER_RESOLVER,
-} from '../../../provider-sdk/src/index.ts';
+} from '@solstice/provider-sdk';
 import { deriveExecutionProvenance } from '../certification/types.ts';
 
 export type EconomicLiveProbeResult = {

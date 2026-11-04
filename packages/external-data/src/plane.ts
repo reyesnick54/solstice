@@ -2,7 +2,7 @@
  * External data plane orchestrator with failure isolation and cache metadata.
  */
 
-import { bundleObservationEvidence } from '../../provider-sdk/src/index.ts';
+import { bundleObservationEvidence } from '@solstice/provider-sdk';
 import {
   createDataDelivery,
   createDefaultAdapterStates,

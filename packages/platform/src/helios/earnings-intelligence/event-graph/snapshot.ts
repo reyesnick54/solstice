@@ -2,9 +2,9 @@
  * Compile PointInTimeEarningsEventSnapshot — only information knowable at decision time T.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
-import type { EarningsSessionTiming } from '../../../../../external-data/src/earnings/taxonomy.ts';
-import type { EarningsExternalObservation } from '../../../../../external-data/src/earnings/types.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { EarningsSessionTiming } from '@solstice/external-data';
+import type { EarningsExternalObservation } from '@solstice/external-data';
 import {
   selectKnowableRevisionAt,
   type RevisionLedgerStore,

@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { asUtcInstant } from '../../domain/src/time.ts';
-import { sha256Hex } from '../../security/src/hash.ts';
+import { asUtcInstant } from '@solstice/domain';
+import { sha256Hex } from '@solstice/security';
 import {
   buildExternalObservation,
   validateExternalObservation,

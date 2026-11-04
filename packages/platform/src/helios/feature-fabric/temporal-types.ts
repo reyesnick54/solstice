@@ -2,7 +2,7 @@
  * AAF04 — temporal observation shapes for point-in-time compilation.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const TEMPORAL_OBSERVATION_KINDS = [
   'MARKET_BAR',

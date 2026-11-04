@@ -1,4 +1,4 @@
-import { Money } from '../../../money/src/money.ts';
+import { Money } from '@solstice/money';
 import type { SerializedMoney } from '../mandate/types.ts';
 import type { BindingReasonCode, ObjectiveClass, ActivityClass, ProductClass } from './taxonomy.ts';
 

@@ -1,7 +1,7 @@
-import { err, ok, type Result } from '../../domain/src/result.ts';
-import type { UtcInstant } from '../../domain/src/time.ts';
-import { isVerifiedActorContext, type VerifiedActorContext } from '../../identity/src/actor-context.ts';
-import type { ModelRegistry } from '../../model-registry/src/registry.ts';
+import { err, ok, type Result } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
+import { isVerifiedActorContext, type VerifiedActorContext } from '@solstice/identity';
+import type { ModelRegistry } from '@solstice/model-registry';
 import { asStrategyPromotionReviewId, type StrategyPromotionReviewId } from './ids.ts';
 import type { StrategyValidationReport } from './validation.ts';
 import type { StrategyFailure, StrategyLifecycleState } from './types.ts';
