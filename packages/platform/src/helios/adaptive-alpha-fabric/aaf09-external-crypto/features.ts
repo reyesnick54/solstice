@@ -2,7 +2,7 @@
  * AAF09 point-in-time features — descriptive market state only (not trading signals).
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { isFeatureVisibleAt } from '../../feature-fabric/knowable-at.ts';
 import { computeFeatureObservation } from '../../feature-fabric/compute.ts';
 import type { FeatureContributionInput, FeatureDefinition, FeatureObservation } from '../../feature-fabric/types.ts';

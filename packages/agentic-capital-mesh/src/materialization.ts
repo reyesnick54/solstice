@@ -1,5 +1,5 @@
-import { err, ok, type Result } from '../../domain/src/result.ts';
-import type { ModelRegistry } from '../../model-registry/src/registry.ts';
+import { err, ok, type Result } from '@solstice/domain';
+import type { ModelRegistry } from '@solstice/model-registry';
 import type { CapitalContext, CapitalProposal, StrategyDraft } from './types.ts';
 import { isProposalStale } from './staleness.ts';
 

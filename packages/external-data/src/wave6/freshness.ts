@@ -2,7 +2,7 @@
  * Wave 6 — job listing freshness assessment.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { JobFreshnessStatus } from './types.ts';
 
 const ACTIVE_MS = 7 * 24 * 60 * 60 * 1000;

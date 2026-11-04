@@ -2,11 +2,11 @@
  * Derive AAF07 certification state from harness evidence.
  */
 
-import type { MarketDataCertificationState } from '../../../../provider-sdk/src/market-data-capability/certification-states.ts';
+import type { MarketDataCertificationState } from '@solstice/provider-sdk';
 import type { MarketDataQualificationHarnessResult } from './harness.ts';
-import type { HeliosMarketDataCatalogOverlayEntry } from '../../../../provider-sdk/src/market-data-capability/build-from-catalog.ts';
-import { docsVerifiedFromCatalog } from '../../../../provider-sdk/src/market-data-capability/build-from-catalog.ts';
-import type { CatalogProviderEntry } from '../../../../provider-sdk/src/catalog/types.ts';
+import type { HeliosMarketDataCatalogOverlayEntry } from '@solstice/provider-sdk';
+import { docsVerifiedFromCatalog } from '@solstice/provider-sdk';
+import type { CatalogProviderEntry } from '@solstice/provider-sdk';
 
 function proofPassed(result: MarketDataQualificationHarnessResult, id: string): boolean {
   return result.proofs.find((row) => row.id === id)?.passed ?? false;

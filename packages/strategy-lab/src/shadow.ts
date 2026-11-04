@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../domain/src/time.ts';
-import type { RiskDecision } from '../../risk/src/types.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { RiskDecision } from '@solstice/risk';
 import type { MarketDataset } from './dataset.ts';
 import { evaluateDecision } from './evaluate.ts';
 import { asShadowDecisionId, asShadowRunId, type ShadowDecisionId, type ShadowRunId } from './ids.ts';

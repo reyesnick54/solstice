@@ -1,5 +1,5 @@
-import { RATIO_UNIT, ratioFromUnits } from '../../../risk/src/arithmetic.ts';
-import type { Ratio } from '../../../risk/src/arithmetic.ts';
+import { RATIO_UNIT, ratioFromUnits } from '@solstice/risk';
+import type { Ratio } from '@solstice/risk';
 import type { PerformanceMetrics } from '../metrics.ts';
 import type { EvaluationEconomics, ExtendedEvaluationMetrics } from './types.ts';
 

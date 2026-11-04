@@ -1,6 +1,6 @@
-import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
-import { asModelId, asModelVersion } from '../../../model-registry/src/ids.ts';
-import { asRiskBudgetId, asRiskModelId, asRiskModelVersion } from '../../../risk/src/ids.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
+import { asModelId, asModelVersion } from '@solstice/model-registry';
+import { asRiskBudgetId, asRiskModelId, asRiskModelVersion } from '@solstice/risk';
 import { compileStrategy, STRATEGY_COMPILER_VERSION } from '../compiler.ts';
 import type { StrategyExpr } from '../dsl.ts';
 import { EXPLICIT_COSTS, SIM_ETF_1, DEFAULT_PARAMETER_SET } from '../fixtures.ts';

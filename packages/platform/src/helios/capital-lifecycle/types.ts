@@ -1,6 +1,6 @@
-import type { CustomerId } from '../../../../domain/src/customer.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
-import type { CreatePaperOrderIntent } from '../../../../permissions/src/action-types.ts';
+import type { CustomerId } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
+import type { CreatePaperOrderIntent } from '@solstice/permissions';
 import type { SerializedMoney } from '../../mandate/types.ts';
 import type { EconomicWorkOrderId } from '../ids.ts';
 import type {

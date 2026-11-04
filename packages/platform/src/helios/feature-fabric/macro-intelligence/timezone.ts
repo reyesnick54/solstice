@@ -2,7 +2,7 @@
  * Normalize macro release timestamps to UTC for point-in-time joins.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 
 /** BLS headline releases are commonly quoted in US/Eastern; fixtures pass explicit offsets. */
 export function normalizeMacroReleaseInstant(

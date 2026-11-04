@@ -4,7 +4,7 @@
 
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { entitlementsFromContributions } from './entitlement.ts';
 import {
   HELIOS_FEATURE_FABRIC_SCHEMA,

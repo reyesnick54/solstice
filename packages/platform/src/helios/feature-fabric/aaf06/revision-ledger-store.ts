@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { RevisionLedgerRecord, RevisionLedgerStoreSnapshot } from './revision-ledger-types.ts';
 
 export type RevisionLedgerStore = {

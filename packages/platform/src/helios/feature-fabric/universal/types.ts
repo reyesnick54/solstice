@@ -2,7 +2,7 @@
  * AAFV2.1 — universal evidence-time feature fabric domain types.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type {
   EntitlementClass,
   InformationTime,

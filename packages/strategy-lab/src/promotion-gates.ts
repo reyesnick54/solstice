@@ -1,9 +1,9 @@
-import { err, ok, type Result } from '../../domain/src/result.ts';
+import { err, ok, type Result } from '@solstice/domain';
 import type { PromotionCapsule } from './promotion-capsule.ts';
 import type { EvaluationQualificationResult } from './evaluation-qualification.ts';
 import type { ForwardShadowEvidenceSummary } from './forward-shadow.ts';
 import type { QualificationPolicy } from './qualification-policy.ts';
-import type { CoverageManifest } from '../../platform/src/helios/feature-fabric/feature-coverage/index.ts';
+import type { CoverageManifest } from '@solstice/platform/helios/feature-coverage';
 import { evaluateCoveragePromotionGate } from './evaluation/coverage-policy.ts';
 import { gatePromotionOnAdaptiveAlphaQualification } from './evaluation/adaptive-alpha-promotion-gate.ts';
 import type { AdaptiveAlphaQualificationRecord } from './adaptive-alpha-qualification-record.ts';

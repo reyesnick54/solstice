@@ -2,7 +2,7 @@
  * Fundamentals line normalization (concept tags aligned with SEC EDGAR as-filed patterns).
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { NormalizedStatementLine } from './types.ts';
 
 export const STATEMENT_LINE_MAP = Object.freeze({

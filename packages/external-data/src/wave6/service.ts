@@ -2,7 +2,7 @@
  * Wave 6 — OpportunityService canonical domain service.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { opportunityCachePolicy, OPPORTUNITY_CACHE_CAPABILITIES } from './cache-policies.ts';
 import { detectDuplicateJobs } from './deduplication.ts';
 import { matchJobsToUser, assertNoSensitiveDataInQuery } from './matching.ts';

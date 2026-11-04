@@ -7,8 +7,8 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
-import type { AuthorityClass } from '../../../../provider-sdk/src/types.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
+import type { AuthorityClass } from '@solstice/provider-sdk';
 import { assessJobFreshness } from '../freshness.ts';
 import {
   normalizeEmploymentType,

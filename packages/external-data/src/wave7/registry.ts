@@ -4,11 +4,14 @@
 
 import { WAVE2_IMPLEMENTED_PROVIDER_IDS } from '../adapters.ts';
 import { WAVE4_BLOCKED_PROVIDER_IDS, WAVE4_DEPRECATED_PROVIDER_IDS, WAVE4_IMPLEMENTED_PROVIDER_IDS } from '../wave4/catalog-entries.ts';
-import { FX_REFERENCE_CATALOG_ENTRIES } from '../../../payments/src/fx-reference/catalog-entries.ts';
-import { CRYPTO_MARKET_CATALOG_PROVIDER_IDS } from '../../../sunrey-exchange/src/crypto-market/catalog-entries.ts';
-import { CHAIN_INTELLIGENCE_CATALOG_PROVIDER_IDS } from '../../../sunrey-chain/src/chain-intelligence/catalog-entries.ts';
-import { ENVIRONMENTAL_CATALOG_PROVIDER_IDS } from '../../../sunrey-chain/src/environmental/catalog-entries.ts';
-import { WAVE5_ADAPTER_IDS, WAVE5_BLOCKED_PROVIDER_IDS } from '../../../sunrey-chain/src/productive-economy-providers/catalog-entries.ts';
+import { FX_REFERENCE_CATALOG_ENTRIES } from '@solstice/payments/fx-reference/catalog-entries';
+import { CRYPTO_MARKET_CATALOG_PROVIDER_IDS } from '@solstice/sunrey-exchange/crypto-market/catalog-entries';
+import { CHAIN_INTELLIGENCE_CATALOG_PROVIDER_IDS } from '@solstice/sunrey-chain/chain-intelligence/catalog-entries';
+import { ENVIRONMENTAL_CATALOG_PROVIDER_IDS } from '@solstice/sunrey-chain/environmental/catalog-entries';
+import {
+  WAVE5_ADAPTER_IDS,
+  WAVE5_BLOCKED_PROVIDER_IDS,
+} from '@solstice/sunrey-chain/productive-economy-providers/catalog-entries';
 
 /** Compliance intelligence providers (also in kernel catalog; listed here to avoid kernel import). */
 const COMPLIANCE_INTELLIGENCE_PROVIDER_IDS = ['open-sanctions', 'interpol-red-notices'] as const;

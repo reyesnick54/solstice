@@ -2,7 +2,7 @@
  * HELIOS OS10 — point-in-time corporate fundamental feature types.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const HELIOS_FUNDAMENTAL_FEATURE_SCHEMA = 'sunrey.helios.fundamental-feature.v1' as const;
 

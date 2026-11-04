@@ -2,7 +2,7 @@
  * Wave 6 — Financial Agent integration for income growth advisory.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { OpportunityService } from '../service.ts';
 import type { UserMatchContext } from '../types.ts';
 

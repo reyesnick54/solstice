@@ -1,5 +1,5 @@
-import type { CustomerId } from '../../../../domain/src/customer.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { CustomerId } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
 import { qualificationDecisionIdFor } from './ids.ts';
 import type { EvidenceRegistryPort, EvidenceVerificationDecision } from './types.ts';
 import type { QualificationReasonCode } from './taxonomy.ts';

@@ -3,7 +3,7 @@
  * Supports many-to-one and one-to-many transformations.
  */
 
-import { err, ok, type Result } from '../../../../domain/src/result.ts';
+import { err, ok, type Result } from '@solstice/domain';
 import type { ProvenanceEdge, ProvenanceEdgeKind, ProvenanceNode, ProvenanceNodeId } from './types.ts';
 
 const ACYCLIC_EDGE_KINDS = new Set<ProvenanceEdgeKind>([

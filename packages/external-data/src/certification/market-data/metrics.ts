@@ -2,7 +2,7 @@
  * Operational metrics for external market-data certification runtime.
  */
 
-import { InMemoryProviderMetrics, type ProviderMetricsRecorder } from '../../../../provider-sdk/src/metrics.ts';
+import { InMemoryProviderMetrics, type ProviderMetricsRecorder } from '@solstice/provider-sdk';
 
 export const MARKET_DATA_CERT_METRIC_NAMES = Object.freeze([
   'market_data_certification_runs_total',

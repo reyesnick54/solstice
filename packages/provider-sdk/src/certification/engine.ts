@@ -2,7 +2,7 @@
  * Provider certification engine — derives status from evidence probes.
  */
 
-import { ENVIRONMENT } from '../../../config/src/flags.ts';
+import { ENVIRONMENT } from '@solstice/config';
 import type { CatalogProviderEntry } from '../catalog/types.ts';
 import type { ProviderConfiguration } from '../types.ts';
 import { normalizeProviderFailure, type ProviderFailureCode } from './errors.ts';

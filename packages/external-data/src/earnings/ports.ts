@@ -2,7 +2,7 @@
  * HELIOS EARN02 — provider-neutral ingestion ports (simulation adapters only).
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { EarningsExternalObservation } from './types.ts';
 
 /** SEC EDGAR — first-class public-source adapter port. */

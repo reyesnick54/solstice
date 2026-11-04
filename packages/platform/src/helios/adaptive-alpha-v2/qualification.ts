@@ -1,11 +1,11 @@
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { assertAdaptiveAlphaActorMayCertify, type AdaptiveAlphaActorKind } from './authority.ts';
 import { adaptiveAlphaCertificationFailures, certifyAdaptiveAlphaDataset } from './certification.ts';
 import type { AdaptiveAlphaGateEvaluationInput } from './gates.ts';
 import { sealAdaptiveAlphaEvidenceBundle, appendAdaptiveAlphaEvidenceToVault } from './evidence.ts';
-import type { EvidenceVault } from '../../../../evidence/src/vault.ts';
+import type { EvidenceVault } from '@solstice/evidence';
 import type { CoverageBiasAssessment } from '../feature-fabric/aaf06/coverage-bias-types.ts';
 import type { PointInTimeDatasetManifest } from '../feature-fabric/compiler/manifest.ts';
 import type { CoverageManifest } from '../feature-fabric/feature-coverage/types.ts';

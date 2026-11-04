@@ -2,7 +2,7 @@
  * Strategy Lab feature coverage tensor — diagnostics only, not financial authority.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export type EligibleUniverseMember = {
   readonly canonicalEntityId: string;

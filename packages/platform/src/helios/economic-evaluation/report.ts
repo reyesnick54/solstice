@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { buildIntelligenceComparison, compareToBenchmark } from './baseline-comparison.ts';
 import { buildCalibrationBins } from './calibration.ts';
 import { evaluateNoActionValue } from './no-action.ts';

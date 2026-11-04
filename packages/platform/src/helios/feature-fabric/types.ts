@@ -3,7 +3,7 @@
  * AAF04 point-in-time compiler consumes temporal-types.ts shapes.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type {
   EntitlementClass,
   InformationTime,

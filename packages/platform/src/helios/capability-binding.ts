@@ -1,4 +1,4 @@
-import type { IdentityCapability } from '../../../identity/src/capability.ts';
+import type { IdentityCapability } from '@solstice/identity';
 import type {
   ActivityClass,
   BindingReasonCode,

@@ -3,7 +3,7 @@
  * Does not imply order-book capability for providers that do not supply it.
  */
 
-import { isUtcInstant } from '../../../../domain/src/time.ts';
+import { isUtcInstant } from '@solstice/domain';
 import type { OrderBookLevel, OrderBookSnapshot } from './types.ts';
 
 export type OrderBookValidationResult =

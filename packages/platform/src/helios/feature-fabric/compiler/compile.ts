@@ -1,5 +1,5 @@
-import { err, ok, type Result } from '../../../../../domain/src/result.ts';
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import { err, ok, type Result } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
 import type {
   CorporateActionRevisionRow,
   MissingnessPolicy,

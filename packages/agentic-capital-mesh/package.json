@@ -17,6 +17,18 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@solstice/config": "0.1.0"
+    "@solstice/config": "0.1.0",
+    "@solstice/domain": "0.1.0",
+    "@solstice/evidence": "0.1.0",
+    "@solstice/external-data": "0.1.0",
+    "@solstice/identity": "0.1.0",
+    "@solstice/model-registry": "0.1.0",
+    "@solstice/money": "0.1.0",
+    "@solstice/permissions": "0.1.0",
+    "@solstice/platform": "0.1.0",
+    "@solstice/provider-sdk": "0.1.0",
+    "@solstice/risk": "0.1.0",
+    "@solstice/security": "0.1.0",
+    "@solstice/strategy-lab": "0.1.0"
   }
 }

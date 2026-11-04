@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { revalidateAuthority } from '../authority-binding.ts';
 import { validateApprovalBinding } from '../approval-binding.ts';
 import { verifyCandidateEvidence } from '../executable-opportunity/evidence-verification.ts';

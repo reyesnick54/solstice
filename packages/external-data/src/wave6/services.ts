@@ -2,7 +2,7 @@
  * Wave 6 canonical domain services — Knowledge Intelligence layer.
  */
 
-import type { ExternalObservation } from '../../../provider-sdk/src/index.ts';
+import type { ExternalObservation } from '@solstice/provider-sdk';
 import type { ProviderAdapterState } from '../adapters.ts';
 import {
   createDefaultWave6AdapterStates,

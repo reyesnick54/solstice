@@ -7,7 +7,7 @@
 
 import { createFinnhubCapitalMarketAdapter, FINNHUB_CREDENTIAL_ENV_VAR } from '../packages/sunrey-exchange/src/capital-market/adapters/finnhub-adapter.ts';
 import { createCapitalMarketService } from '../packages/sunrey-exchange/src/capital-market/service.ts';
-import { createAaf08CapitalMarketProviderPort } from '../packages/external-data/src/helios/aaf08-capital-market-port.ts';
+import { createAaf08CapitalMarketProviderPort } from '@solstice/external-data/helios/aaf08-capital-market-port';
 import {
   HELIOS_AAF08_EXTERNAL_EQUITIES_DATA_QUALIFIED,
   runAaf08Qualification,

@@ -1,5 +1,5 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
-import type { EvidenceVault } from '../../../evidence/src/vault.ts';
+import type { UtcInstant } from '@solstice/domain';
+import type { EvidenceVault } from '@solstice/evidence';
 import type { EconomicWorkOrderId, HeliosTaskId } from './ids.ts';
 import type { HeliosAuditEventKind } from './taxonomy.ts';
 import type { AuthorityBindingDecision } from './types.ts';

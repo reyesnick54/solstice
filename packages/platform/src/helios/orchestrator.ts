@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
 
-import type { Clock } from '../../../config/src/clock.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
-import type { EvidenceVault } from '../../../evidence/src/vault.ts';
+import type { Clock } from '@solstice/config';
+import type { UtcInstant } from '@solstice/domain';
+import type { EvidenceVault } from '@solstice/evidence';
 import type { CompiledEconomicMandate } from '../mandate/types.ts';
 import {
   authorityPermitsDispatch,

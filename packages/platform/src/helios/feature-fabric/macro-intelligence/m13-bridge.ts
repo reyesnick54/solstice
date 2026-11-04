@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { Aaf10ComputedFeature, M13MacroRegimeInputBundle } from './types.ts';
 
 export function buildM13MacroRegimeInputs(input: {

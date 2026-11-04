@@ -6,7 +6,7 @@
  * packages/platform/src/helios/observation/information-time.ts.
  */
 
-import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 
 export type InformationTimeFields = {
   readonly sourceEventTime: UtcInstant;

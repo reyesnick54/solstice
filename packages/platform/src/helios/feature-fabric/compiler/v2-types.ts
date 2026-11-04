@@ -2,7 +2,7 @@
  * AAFV2.3 — request, dataset, and policy types for the point-in-time dataset compiler.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { FeatureEntitlementState } from '../types.ts';
 import type {
   CorporateActionRevisionRow,

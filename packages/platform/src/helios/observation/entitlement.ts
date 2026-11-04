@@ -3,7 +3,7 @@
  * Unknown entitlement never becomes unrestricted.
  */
 
-import type { ExternalObservation } from '../../../../provider-sdk/src/types.ts';
+import type { ExternalObservation } from '@solstice/provider-sdk';
 import type {
   EntitlementClass,
   FeedDelayClassification,

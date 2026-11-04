@@ -2,7 +2,7 @@
  * H28-approved capability/reporting policy fixture consumed by H29 trigger engine.
  * Unknown statutory values remain LEGAL_REVIEW_REQUIRED / UNMAPPED — not invented here.
  */
-import type { Jurisdiction } from '../../../../domain/src/jurisdiction.ts';
+import type { Jurisdiction } from '@solstice/domain';
 import {
   HELIOS_H28_REPORTING_POLICY_VERSION,
   type DueRuleKind,

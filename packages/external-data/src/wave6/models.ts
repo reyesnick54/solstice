@@ -5,7 +5,7 @@
  * medical diagnosis, or private HIN/Vault data exfiltration.
  */
 
-import type { ExternalObservation } from '../../../provider-sdk/src/index.ts';
+import type { ExternalObservation } from '@solstice/provider-sdk';
 
 export type FreshnessStatus = 'fresh' | 'aging' | 'stale' | 'expired' | 'unknown';
 export type AuthorityClass =

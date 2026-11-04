@@ -1,7 +1,7 @@
-import type { Clock } from '../../../../config/src/clock.ts';
-import type { EvidenceVault } from '../../../../evidence/src/vault.ts';
-import { err, ok, type Result } from '../../../../domain/src/result.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { Clock } from '@solstice/config';
+import type { EvidenceVault } from '@solstice/evidence';
+import { err, ok, type Result } from '@solstice/domain';
+import type { UtcInstant } from '@solstice/domain';
 import {
   evaluateExportApproval,
   evaluateExportAuthorization,

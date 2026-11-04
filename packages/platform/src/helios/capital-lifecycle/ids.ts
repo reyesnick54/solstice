@@ -1,4 +1,4 @@
-import type { Brand } from '../../../../domain/src/brand.ts';
+import type { Brand } from '@solstice/domain';
 
 export type HeliosExitRequestId = Brand<string, 'HeliosExitRequestId'>;
 export type HeliosWithdrawalRequestId = Brand<string, 'HeliosWithdrawalRequestId'>;

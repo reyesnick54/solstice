@@ -2,7 +2,7 @@
  * HELIOS point-in-time fundamental feature fabric service.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { buildPointInTimeFundamentalSnapshot } from './features.ts';
 import { createFundamentalObservationStore, type FundamentalObservationStore } from './fundamental-store.ts';
 import type { FundamentalFactRecord, PointInTimeFundamentalSnapshot } from './fundamental-types.ts';

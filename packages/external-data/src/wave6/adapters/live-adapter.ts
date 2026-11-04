@@ -2,7 +2,7 @@
  * Shared live/simulation execution for Wave 6 opportunity job adapters.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { ProviderExecutionProvenance } from '../../certification/types.ts';
 import { deriveExecutionProvenance } from '../../certification/types.ts';
 import type { JobOpportunity, JobSearchQuery, OpportunityServiceResult } from '../types.ts';

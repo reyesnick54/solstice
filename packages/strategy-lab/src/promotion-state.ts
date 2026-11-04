@@ -1,4 +1,4 @@
-import { err, ok, type Result } from '../../domain/src/result.ts';
+import { err, ok, type Result } from '@solstice/domain';
 import type { StrategyFailure } from './types.ts';
 
 /** H18 controlled promotion progression: RESEARCH → EVALUATED → SHADOW → PAPER. */

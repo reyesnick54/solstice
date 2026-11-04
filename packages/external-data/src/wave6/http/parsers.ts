@@ -2,7 +2,7 @@
  * Provider-specific response parsers for live opportunity HTTP adapters.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { buildJobOpportunity, buildPublicIntelligence, buildSalaryRange } from '../adapters/base.ts';
 import type { JobOpportunity, PublicIntelligenceObservation } from '../types.ts';
 

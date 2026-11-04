@@ -1,8 +1,8 @@
-import { sha256Hex } from '../../../../security/src/hash.ts';
+import { sha256Hex } from '@solstice/security';
 import { REGULATORY_TRANSPARENCY_POLICY_VERSION } from './taxonomy.ts';
 import type { ExportArtifact, ExportManifest, SupervisoryExportPackage } from './types.ts';
 import type { SupervisoryExportRequestId, SupervisoryExportPackageId } from './ids.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 function canonicalJson(value: unknown): string {
   return JSON.stringify(value, (_key, v) => (typeof v === 'bigint' ? v.toString() : v));

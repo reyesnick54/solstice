@@ -1,6 +1,6 @@
-import { sha256Hex } from '../../../../security/src/hash.ts';
-import type { UtcInstant } from '../../../../domain/src/time.ts';
-import { err, ok, type Result } from '../../../../domain/src/result.ts';
+import { sha256Hex } from '@solstice/security';
+import type { UtcInstant } from '@solstice/domain';
+import { err, ok, type Result } from '@solstice/domain';
 import {
   CHANGE_STATE_TRANSITIONS,
   UNOFFICIAL_SOURCE_KINDS,

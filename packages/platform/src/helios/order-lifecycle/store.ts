@@ -1,4 +1,4 @@
-import type { CustomerId } from '../../../../domain/src/customer.ts';
+import type { CustomerId } from '@solstice/domain';
 import type { HeliosOperationId, HeliosOrderId, HeliosProviderEventId } from './ids.ts';
 import type {
   HeliosFill,

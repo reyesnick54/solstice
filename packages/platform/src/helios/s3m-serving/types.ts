@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { ResearchSpendRecord } from '../execution-types.ts';
 
 /** Platform-local S3M usage attribution; no ai-runtime import. */

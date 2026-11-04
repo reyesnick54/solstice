@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { asCapitalScenarioId, asCapitalThesisId } from './ids.ts';
 import { FORBIDDEN_OUTCOME_SEMANTICS, type CapitalScenario, type CapitalThesis, type ModelRef } from './types.ts';
 

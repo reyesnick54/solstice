@@ -1,4 +1,4 @@
-import { err, ok, type Result } from '../../../../domain/src/result.ts';
+import { err, ok, type Result } from '@solstice/domain';
 import type { ExecutableOpportunityState } from './taxonomy.ts';
 
 const TRANSITIONS: Readonly<Record<ExecutableOpportunityState, readonly ExecutableOpportunityState[]>> = {

@@ -7,8 +7,8 @@ import {
   createInMemoryDeduplicationRegistry,
   DEFAULT_DEDUPLICATION_POLICIES,
   type DeduplicationRegistry,
-} from '../../../../provider-sdk/src/deduplication.ts';
-import type { ExternalObservation } from '../../../../provider-sdk/src/types.ts';
+} from '@solstice/provider-sdk';
+import type { ExternalObservation } from '@solstice/provider-sdk';
 
 export type HeliosDeduplicationState = {
   readonly registry: DeduplicationRegistry;

@@ -1,9 +1,9 @@
-import type { Clock } from '../../../../config/src/clock.ts';
-import type { EvidenceVault } from '../../../../evidence/src/vault.ts';
-import { asIntentId } from '../../../../permissions/src/action-intent.ts';
-import { ACTION_TYPES } from '../../../../permissions/src/action-types.ts';
-import type { CreatePaperOrderIntent } from '../../../../permissions/src/action-types.ts';
-import { asAccountId } from '../../../../domain/src/account.ts';
+import type { Clock } from '@solstice/config';
+import type { EvidenceVault } from '@solstice/evidence';
+import { asIntentId } from '@solstice/permissions';
+import { ACTION_TYPES } from '@solstice/permissions';
+import type { CreatePaperOrderIntent } from '@solstice/permissions';
+import { asAccountId } from '@solstice/domain';
 import type { EvidenceRegistryPort } from '../executable-opportunity/types.ts';
 import { paperCycleIdFor, paperPositionIdFor } from './ids.ts';
 import { buildHeliosPaperProposal } from './proposal.ts';
@@ -414,7 +414,7 @@ export class HeliosPaperGrowStrategyService {
     readonly assumptions: ReturnType<typeof computePaperFillAssumptions>;
     readonly authorityId: string | null;
     readonly riskAssessmentId: string | null;
-    readonly now: import('../../../../domain/src/time.ts').UtcInstant;
+    readonly now: import('@solstice/domain').UtcInstant;
   }): HeliosPaperExecutionRecord {
     const side = input.side ?? input.proposal?.direction ?? 'BUY';
     const quantityUnits = input.quantityUnits ?? input.proposal?.quantityUnits ?? '0';
@@ -452,7 +452,7 @@ export class HeliosPaperGrowStrategyService {
     readonly input: PaperStrategyRunInput;
     readonly proposal: { readonly proposalId: string; readonly instrumentId: string; readonly quantityUnits: string };
     readonly execution: HeliosPaperExecutionRecord;
-    readonly now: import('../../../../domain/src/time.ts').UtcInstant;
+    readonly now: import('@solstice/domain').UtcInstant;
     readonly existing?: HeliosPaperPosition;
   }): HeliosPaperPosition {
     if (input.existing) {
@@ -489,7 +489,7 @@ export class HeliosPaperGrowStrategyService {
     readonly outcome: HeliosPaperGrowResult['outcome'];
     readonly reasonCodes: readonly import('./taxonomy.ts').ValidationReasonCode[];
     readonly evidenceChainRefs: readonly string[];
-    readonly now: import('../../../../domain/src/time.ts').UtcInstant;
+    readonly now: import('@solstice/domain').UtcInstant;
     readonly grossResult?: { readonly minorUnits: string; readonly currency: string } | null;
     readonly netResult?: { readonly minorUnits: string; readonly currency: string } | null;
     readonly feesIncluded?: { readonly minorUnits: string; readonly currency: string } | null;

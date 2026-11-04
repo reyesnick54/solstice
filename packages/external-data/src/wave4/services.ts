@@ -2,7 +2,7 @@
  * Wave 4 canonical domain services — compliance, KYB, fraud, cybersecurity.
  */
 
-import type { ExternalObservation } from '../../../provider-sdk/src/index.ts';
+import type { ExternalObservation } from '@solstice/provider-sdk';
 import type { ProviderAdapterState } from '../adapters.ts';
 import {
   createDefaultWave4AdapterStates,

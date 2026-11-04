@@ -1,4 +1,4 @@
-import { err, ok, type Result } from '../../domain/src/result.ts';
+import { err, ok, type Result } from '@solstice/domain';
 import { MESH_ISOLATION } from './isolation.ts';
 import {
   APPROVED_MESH_TOOLS,

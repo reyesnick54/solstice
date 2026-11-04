@@ -2,13 +2,13 @@
  * Wave 2 provider adapter registry with simulation fixtures.
  */
 
-import { ProviderDataDeliveryService } from '../../sunrey-chain/src/provider-runtime/data-delivery/service.ts';
+import { ProviderDataDeliveryService } from '@solstice/sunrey-chain/provider-runtime/data-delivery';
 import {
   buildExternalObservation,
   canonicalJsonStringify,
   type ExternalObservation,
-} from '../../provider-sdk/src/index.ts';
-import { asUtcInstant } from '../../domain/src/time.ts';
+} from '@solstice/provider-sdk';
+import { asUtcInstant } from '@solstice/domain';
 import {
   FIXTURE_COMMODITIES,
   FIXTURE_FILINGS,

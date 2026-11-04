@@ -4,7 +4,7 @@
 
 import { createHash } from 'node:crypto';
 
-import type { ExternalObservation } from '../../../../provider-sdk/src/types.ts';
+import type { ExternalObservation } from '@solstice/provider-sdk';
 import type { ObservationLineageRecord, SourceIndependence } from './types.ts';
 
 export function buildLineageRecord(input: {

@@ -3,7 +3,7 @@
  * Observations only; no execution authority or ledger mutation.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const SEC_FUNDAMENTAL_OBSERVATION_SCHEMA = 'sunrey.external.sec-fundamental-observation.v1' as const;
 

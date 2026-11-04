@@ -2,10 +2,10 @@
  * External/live fetch guard — never silently substitute fixtures.
  */
 
-import { rejectSilentSimulationFallback } from '../../../../provider-sdk/src/certification/provenance.ts';
-import type { MarketDataRouteClass } from '../../../../provider-sdk/src/market-data-capability/types.ts';
-import type { CapitalMarketResult } from '../../../../sunrey-exchange/src/capital-market/types.ts';
-import type { CapitalMarketObservation } from '../../../../sunrey-exchange/src/capital-market/types.ts';
+import { rejectSilentSimulationFallback } from '@solstice/provider-sdk';
+import type { MarketDataRouteClass } from '@solstice/provider-sdk';
+import type { CapitalMarketResult } from '@solstice/sunrey-exchange/capital-market';
+import type { CapitalMarketObservation } from '@solstice/sunrey-exchange/capital-market';
 
 export type MarketDataFetchOutcome =
   | {

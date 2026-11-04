@@ -4,7 +4,7 @@
  * Observations only — no execution authority, compliance decisions, or balances.
  */
 
-import type { ExternalObservation } from '../../../provider-sdk/src/index.ts';
+import type { ExternalObservation } from '@solstice/provider-sdk';
 
 /** Compliance screening evidence — sanctions, PEP, watchlists. */
 export type ComplianceEvidence = {

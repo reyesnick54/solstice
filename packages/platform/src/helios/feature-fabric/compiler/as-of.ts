@@ -2,7 +2,7 @@
  * AS-OF joins on knowable time — not calendar event time alone.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { RevisionPolicy, TemporalObservation } from '../temporal-types.ts';
 import { assertObservationKnowable, isKnowableAtDecision } from './leakage.ts';
 

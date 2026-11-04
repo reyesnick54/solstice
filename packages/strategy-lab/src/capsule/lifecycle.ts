@@ -1,4 +1,4 @@
-import { err, ok, type Result } from '../../../domain/src/result.ts';
+import { err, ok, type Result } from '@solstice/domain';
 import type { StrategyCapsuleFailure, StrategyCapsuleQualificationState } from './types.ts';
 
 export const LEGAL_CAPSULE_QUALIFICATION_TRANSITIONS: Readonly<

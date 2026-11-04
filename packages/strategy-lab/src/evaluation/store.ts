@@ -1,4 +1,4 @@
-import { err, ok, type Result } from '../../../domain/src/result.ts';
+import { err, ok, type Result } from '@solstice/domain';
 import type { StrategyEvaluationRecord } from './record.ts';
 import type { EvaluationFailure, EvaluationRunKind } from './types.ts';
 

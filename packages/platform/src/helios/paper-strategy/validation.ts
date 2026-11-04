@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { termsStillValid } from '../executable-opportunity/terms.ts';
 import type { ExecutableOpportunity, QualificationTermsSnapshot } from '../executable-opportunity/types.ts';
 import type { EconomicWorkOrder } from '../types.ts';

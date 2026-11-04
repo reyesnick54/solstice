@@ -2,10 +2,12 @@
  * Wave 7 — chaos, resilience, and security regression harness.
  */
 
-import { ProviderCircuitBreaker } from '../../../provider-sdk/src/circuit-breaker.ts';
-import { enforceSsrfPolicy, isLinkLocalOrMetadata, isLoopbackHostname, isPrivateIpv4, parseDestination } from '../../../provider-sdk/src/ssrf.ts';
-import { ProviderDataDeliveryService } from '../../../sunrey-chain/src/provider-runtime/data-delivery/service.ts';
-import { SingleFlightCoordinator } from '../../../sunrey-chain/src/provider-runtime/data-delivery/single-flight.ts';
+import { ProviderCircuitBreaker } from '@solstice/provider-sdk';
+import { enforceSsrfPolicy, isLinkLocalOrMetadata, isLoopbackHostname, isPrivateIpv4, parseDestination } from '@solstice/provider-sdk';
+import {
+  ProviderDataDeliveryService,
+  SingleFlightCoordinator,
+} from '@solstice/sunrey-chain/provider-runtime/data-delivery';
 import { createExternalDataPlane } from '../plane.ts';
 import type { Wave7ProviderCoverage } from './models.ts';
 import { buildWave7CoverageReport } from './coverage.ts';
