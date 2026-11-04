@@ -11,3 +11,5 @@ export {
   earningsObservationsToContributions,
   compileEarningsFeaturePlaneFromManifest,
 } from './bridge.ts';
+
+export * from './quality/index.ts';
