@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-04T11:05:40.055015+00:00",
+  "generatedAt": "2026-11-04T11:26:22.444640+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -542,14 +542,14 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 5245,
+      "packageDeepImport": 5246,
       "serviceDeepImport": 652,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 5245,
+      "relativeCrossPackage": 5246,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5897
+      "total": 5898
     }
   },
   "violations": [
@@ -27179,6 +27179,15 @@
       "file": "packages/platform/src/helios/earnings-intelligence/event-graph/revision-bridge.ts",
       "line": 5,
       "rule": "package-deep-import",
+      "message": "'packages/platform/src/helios/earnings-intelligence/event-graph/revision-bridge.ts' deep-imports 'domain' internals via '../../../../../domain/src/time.ts'",
+      "sourcePackage": "platform",
+      "targetPackage": "domain",
+      "spec": "../../../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/platform/src/helios/earnings-intelligence/event-graph/revision-bridge.ts",
+      "line": 6,
+      "rule": "package-deep-import",
       "message": "'packages/platform/src/helios/earnings-intelligence/event-graph/revision-bridge.ts' deep-imports 'external-data' internals via '../../../../../external-data/src/earnings/types.ts'",
       "sourcePackage": "platform",
       "targetPackage": "external-data",
@@ -27186,7 +27195,7 @@
     },
     {
       "file": "packages/platform/src/helios/earnings-intelligence/event-graph/revision-bridge.ts",
-      "line": 20,
+      "line": 21,
       "rule": "package-deep-import",
       "message": "'packages/platform/src/helios/earnings-intelligence/event-graph/revision-bridge.ts' deep-imports 'domain' internals via '../../../../../domain/src/time.ts'",
       "sourcePackage": "platform",
