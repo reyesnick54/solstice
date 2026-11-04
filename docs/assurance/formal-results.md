@@ -30,6 +30,12 @@ campaign.
 | INTEROP_ASSET_CONSERVATION | 6 | VERIFIED_WITHIN_MODEL_BOUNDS |
 | CRYPTO_POLICY_MIGRATION | 5 | VERIFIED_WITHIN_MODEL_BOUNDS |
 
+The extended campaign (`FORMAL_EXTENDED`: 4 validators, height 2, round 2)
+checks twenty-two registered models. After the HEALTH04 consensus-model repair,
+`CONSENSUS_SAFETY` explores 2,322,444 states within those bounds with all
+registry properties verified. See
+`docs/helios/hardening/FORMAL_EXTENDED_REPAIR_REPORT.md`.
+
 Implementation traces for consensus, assets, DVP, MoonRey, governance,
 and interop aligned. Rust bounded checks: 3/3 `cargo test -p sunrey-formal --locked`.
 
