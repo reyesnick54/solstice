@@ -4,14 +4,18 @@
 
 import type { EarningsEstimateTarget, EarningsExpertKind } from './taxonomy.ts';
 
+function targets<T extends readonly EarningsEstimateTarget[]>(values: T): T {
+  return Object.freeze(values);
+}
+
 export const DEFAULT_EXPERT_PRIMARY_TARGETS: Readonly<Record<EarningsExpertKind, readonly EarningsEstimateTarget[]>> =
   Object.freeze({
-    StreetExpectationExpert: Object.freeze(['nextQuarterEps', 'nextQuarterRevenue']),
-    FundamentalTrendExpert: Object.freeze(['nextQuarterEps', 'nextQuarterRevenue']),
-    EarningsQualityExpert: Object.freeze(['earningsQualityRiskProbability']),
-    TranscriptExpert: Object.freeze(['guidanceRaiseProbability', 'guidanceCutProbability']),
-    OptionsExpert: Object.freeze(['beatProbability', 'revenueBeatProbability']),
-    PeerReadThroughExpert: Object.freeze(['nextQuarterRevenue']),
-    MacroExpert: Object.freeze(['marginExpansionProbability']),
-    MarketReactionExpert: Object.freeze(['announcementReturn', 'postEventResidualReturn']),
+    StreetExpectationExpert: targets(['nextQuarterEps', 'nextQuarterRevenue']),
+    FundamentalTrendExpert: targets(['nextQuarterEps', 'nextQuarterRevenue']),
+    EarningsQualityExpert: targets(['earningsQualityRiskProbability']),
+    TranscriptExpert: targets(['guidanceRaiseProbability', 'guidanceCutProbability']),
+    OptionsExpert: targets(['beatProbability', 'revenueBeatProbability']),
+    PeerReadThroughExpert: targets(['nextQuarterRevenue']),
+    MacroExpert: targets(['marginExpansionProbability']),
+    MarketReactionExpert: targets(['announcementReturn', 'postEventResidualReturn']),
   });
