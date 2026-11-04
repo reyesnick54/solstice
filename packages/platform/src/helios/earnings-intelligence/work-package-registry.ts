@@ -39,7 +39,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
   },
   EARN09: {
     title: 'Probabilistic state estimator',
-    moduleRef: 'packages/platform/src/helios/earnings-intelligence/earn09-probabilistic-estimator.ts',
+    moduleRef: 'packages/platform/src/helios/earnings-intelligence/state-estimator/index.ts',
   },
   EARN10: {
     title: 'Agent committee',
