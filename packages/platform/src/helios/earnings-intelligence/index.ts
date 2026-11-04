@@ -166,4 +166,5 @@ export {
 } from './evidence.ts';
 
 export * from './event-graph/index.ts';
+export * from './event-network/index.ts';
 export * from './transcript/index.ts';
