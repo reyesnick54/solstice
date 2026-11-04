@@ -19,6 +19,11 @@ export const HELIOS_EARNINGS_INTELLIGENCE_V1_BLOCKED =
 export const HELIOS_EARN01_DOMAIN_QUALIFIED = 'HELIOS_EARN01_DOMAIN_QUALIFIED' as const;
 export const HELIOS_EARN01_DOMAIN_BLOCKED = 'HELIOS_EARN01_DOMAIN_BLOCKED' as const;
 
+/** EARN11 event execution twin profile (Strategy Genome research lab). */
+export const EARN11_EVENT_EXECUTION_PROFILE_SCHEMA =
+  'sunrey.helios.earnings-intelligence.event-execution.v1' as const;
+export const EARN11_EVENT_EXECUTION_PROFILE_ID = 'helios-earn11-earnings-event-v1' as const;
+
 export const EARNINGS_ANNOUNCEMENT_STATES = [
   'EXPECTED',
   'CONFIRMED',

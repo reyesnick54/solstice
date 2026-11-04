@@ -283,7 +283,10 @@
       "status": "IMPLEMENTED",
       "paths": [
         "packages/agentic-capital-mesh/src/earnings-agentic-committee/",
-        "tests/helios-earn10-agentic-earnings-committee.test.ts"
+        "tests/helios-earn10-agentic-earnings-committee.test.ts",
+        "packages/strategy-lab/src/earn11/",
+        "packages/platform/src/helios/earnings-intelligence/",
+        "tests/helios-earn11-strategy-research.test.ts"
       ]
     },
     {

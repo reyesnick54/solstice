@@ -270,6 +270,13 @@ export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPacka
       'Marker HELIOS_ADAPTIVE_ALPHA_FABRIC_V2_QUALIFIED',
     ),
     statusFrom(
+      'EARN11',
+      'Earnings strategy genome and event research lab',
+      testExists(root, 'helios-earn11-strategy-research.test.ts') ? 'QUALIFIED' : 'BLOCKED',
+      'packages/strategy-lab/src/earn11/index.ts',
+      'Marker HELIOS_EARN11_STRATEGY_RESEARCH_QUALIFIED',
+    ),
+    statusFrom(
       'OS12',
       'Agent permission and model gateway (Seris integration)',
       testExists(root, 'helios-os12-agent-permission-gateway.test.ts') ? 'QUALIFIED' : 'BLOCKED',
