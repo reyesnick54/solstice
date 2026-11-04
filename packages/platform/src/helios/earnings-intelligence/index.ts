@@ -4,6 +4,8 @@ export {
   HELIOS_EARNINGS_INTELLIGENCE_AUTHORITY,
   HELIOS_EARN01_DOMAIN_QUALIFIED,
   HELIOS_EARN01_DOMAIN_BLOCKED,
+  EARN11_EVENT_EXECUTION_PROFILE_SCHEMA,
+  EARN11_EVENT_EXECUTION_PROFILE_ID,
   EARNINGS_ANNOUNCEMENT_STATES,
   EARNINGS_SESSION_CLASSIFICATIONS,
   EARNINGS_OBSERVATION_KINDS,
@@ -106,6 +108,31 @@ export {
   EARN11_STRATEGY_GENOME_MODULE,
   type EarningsStrategyGenome,
 } from './earn11-strategy-genome.ts';
+
+export {
+  DEFAULT_EARN11_EVENT_EXECUTION_PROFILE,
+  gateEarningsEventExecutionProfile,
+  earningsPromotionBlockedByBarMode,
+  type EarningsEventExecutionSimulationProfile,
+  type EarningsEventExecutionProfileGateResult,
+} from './event-execution-profile.ts';
+
+export {
+  consensusRevisionAccelerationMonitor,
+  impliedVsHistoricalMoveMonitor,
+  transcriptConsensusDisagreementMonitor,
+  earningsQualityHeadlineBeatMonitor,
+  peerInformationShockMonitor,
+  EARN11_RESEARCH_MONITORS,
+  earn11MonitorsTriggerResearchOnly,
+} from './research-monitors.ts';
+
+export {
+  EARN11_AAF_V2_MANDATORY,
+  bindEarn11GenomeToAafV2,
+  assertEarn11AafV2Mandatory,
+  type Earn11AafV2Binding,
+} from './aaf-bridge.ts';
 
 export {
   createEarningsTrialRegistry,
