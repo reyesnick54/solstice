@@ -96,7 +96,7 @@ export {
   sealResearchContextPackage,
   type Native10QualificationChecks,
   type Native10QualificationResult,
-  type DecisionMemoryEntry as TradingAgentsNativeDecisionMemoryEntry,
+  type TradingAgentsNativeDecisionMemoryEntry,
 } from './tradingagents-native/index.ts';
 export * from './earnings-agentic-committee/index.ts';
 export * from './earnings-transcript-intelligence/index.ts';
