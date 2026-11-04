@@ -1,5 +1,6 @@
+/** Pipeline shim; canonical EARN08 plane lives under `event-network/`. */
 export const EARN08_PEER_ATTENTION_PEAD_MODULE =
-  'packages/platform/src/helios/earnings-intelligence/earn08-peer-attention-pead.ts' as const;
+  'packages/platform/src/helios/earnings-intelligence/event-network/index.ts' as const;
 
 export function peerReadThroughSignal(input: {
   readonly peerSurpriseBps: readonly number[];
