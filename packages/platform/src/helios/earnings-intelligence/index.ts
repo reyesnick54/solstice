@@ -166,3 +166,4 @@ export {
 } from './evidence.ts';
 
 export * from './transcript/index.ts';
+export * from './state-estimator/index.ts';
