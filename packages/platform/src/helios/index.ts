@@ -317,13 +317,13 @@ export * from './continuous-runtime/index.ts';
 export * from './execution-twin/index.ts';
 export * from './feature-fabric/index.ts';
 export * from './adaptive-alpha-v2/index.ts';
+export * from './earnings-intelligence/index.ts';
 export * from './open-source-integration/index.ts';
 export * from './os12-agent-permission-gateway/index.ts';
 export * from './open-source-integration/os13-ai-strategy-sandbox/index.ts';
 export * from './open-source/os14-prediction-market/index.ts';
 export * from './native-assimilation/native14-cross-market-intelligence/index.ts';
 export * from './research-monitor/index.ts';
-export * from './earnings-intelligence/index.ts';
 export * as heliosNative13PredictionMarket from './prediction-market/index.ts';
 export {
   HELIOS_NATIVE_PREDICTION_MARKET_ENGINE_QUALIFIED,
