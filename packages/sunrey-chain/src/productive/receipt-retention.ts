@@ -15,7 +15,7 @@ export class MoonReyReceiptRetentionStore {
   private sealedReceipts = 0;
   private sealedChainHead = '';
 
-  constructor(maxInMemory = DEFAULT_MOONREY_RECEIPT_RETENTION.maxInMemoryReceipts) {
+  constructor(maxInMemory: number = DEFAULT_MOONREY_RECEIPT_RETENTION.maxInMemoryReceipts) {
     this.maxInMemory = maxInMemory;
   }
 

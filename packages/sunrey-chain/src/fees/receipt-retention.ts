@@ -27,7 +27,7 @@ export class FeeReceiptRetentionStore {
   private sealedReceipts = 0;
   private sealedChainHead = '';
 
-  constructor(maxInMemory = DEFAULT_FEE_RECEIPT_RETENTION.maxInMemoryReceipts) {
+  constructor(maxInMemory: number = DEFAULT_FEE_RECEIPT_RETENTION.maxInMemoryReceipts) {
     this.maxInMemory = maxInMemory;
   }
 

@@ -1,5 +1,4 @@
 import { getActiveResourcesInfo } from 'node:process';
-import { performance } from 'node:perf_hooks';
 
 import type { FeeEngine } from '../fees/engine.ts';
 import type { ProductiveEconomyEngine } from '../productive/engine.ts';
@@ -25,10 +24,11 @@ export type MemoryDiagnostics = {
 };
 
 function countActiveResources(): { readonly total: number; readonly byType: Record<string, number> } {
-  const rows = getActiveResourcesInfo();
+  const rows = getActiveResourcesInfo() as ReadonlyArray<{ readonly type: string } | string>;
   const byType: Record<string, number> = {};
   for (const row of rows) {
-    byType[row.type] = (byType[row.type] ?? 0) + 1;
+    const type = typeof row === 'string' ? row : row.type;
+    byType[type] = (byType[type] ?? 0) + 1;
   }
   return { total: rows.length, byType };
 }
@@ -48,7 +48,7 @@ export function captureMemoryDiagnostics(
     heapTotalBytes: memory.heapTotal,
     externalBytes: memory.external,
     arrayBufferBytes: memory.arrayBuffers,
-    eventListenerCount: performance.eventLoopUtilization ? 0 : 0,
+    eventListenerCount: process.listenerCount('uncaughtException') + process.listenerCount('unhandledRejection'),
     timerCount: resources.byType['Timeout'] ?? 0,
     activeResourceCount: resources.total,
     activeResourceTypes: Object.freeze({ ...resources.byType }),

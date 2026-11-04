@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 
 import { FeeEngine } from './fees/engine.ts';
 import { FeeReceiptRetentionStore } from './fees/receipt-retention.ts';
+import { emptyUsage, type FeeReceipt } from './fees/types.ts';
 import { ProductiveEconomyEngine } from './productive/engine.ts';
 import { DEV_CLOCK, fixtureClaim, fixtureFacts, fixtureRight, solarFacility } from './productive/fixtures.ts';
 import { runSoak } from './perf/soak.ts';
@@ -17,32 +18,32 @@ describe('HELIOS HEALTH05 memory soak repair', () => {
   it('bounds fee receipt hot memory while sealing evicted receipts', () => {
     const store = new FeeReceiptRetentionStore(4);
     for (let i = 0; i < 12; i += 1) {
-      store.record(
-        Object.freeze({
-          transactionId: `tx_${i}`,
-          payer: 'alice',
+      const receipt = Object.freeze({
+        transactionId: `tx_${i}`,
+        payer: 'alice',
+        asset: 'SUNREY_COIN',
+        reservedFee: 1n,
+        actualFee: 1n,
+        releasedFee: 0n,
+        resourceUsage: emptyUsage(),
+        feeScheduleVersion: 1,
+        dispositionPolicyVersion: 1,
+        blockHeight: i,
+        blockId: `blk_${i}`,
+        outcome: 'APPLIED',
+        disposition: {
           asset: 'SUNREY_COIN',
-          reservedFee: 1n,
           actualFee: 1n,
-          releasedFee: 0n,
-          resourceUsage: {},
-          feeScheduleVersion: 1,
-          dispositionPolicyVersion: 1,
-          blockHeight: i,
-          blockId: `blk_${i}`,
-          outcome: 'SUCCESS',
-          disposition: {
-            asset: 'SUNREY_COIN',
-            burned: 0n,
-            networkSink: 0n,
-            validatorRewardPool: 0n,
-            treasury: 1n,
-          },
-          policyVersion: 1,
-          baseCharge: 1n,
-          priorityFee: 0n,
-        }),
-      );
+          burned: 0n,
+          networkSink: 0n,
+          validatorRewardPool: 0n,
+          treasury: 1n,
+        },
+        policyVersion: 1,
+        baseCharge: 1n,
+        priorityFee: 0n,
+      } satisfies FeeReceipt);
+      store.record(receipt);
     }
     const stats = store.stats();
     assert.equal(stats.inMemoryReceipts, 4);

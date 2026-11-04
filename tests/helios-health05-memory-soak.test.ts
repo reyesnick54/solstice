@@ -13,7 +13,10 @@ import {
 } from '../packages/platform/src/helios/observation/bounded-retention.ts';
 import { fabricAt, ingestQuote, marketObservation } from '../packages/platform/src/helios/resilience/scenario-helpers.ts';
 import { createHeliosPredictionMarketService } from '../packages/platform/src/helios/prediction-market/service.ts';
-import { createPredictionMarketStore } from '../packages/platform/src/helios/prediction-market/store.ts';
+import {
+  createPredictionMarketStore,
+  emptyPredictionMarketStore,
+} from '../packages/platform/src/helios/prediction-market/store.ts';
 import { FIXTURE_CONDITION_FED_DEC, fixtureYesNoContracts } from '../packages/platform/src/helios/prediction-market/fixtures.ts';
 
 describe('HELIOS HEALTH05 platform memory bounds', () => {
@@ -46,7 +49,7 @@ describe('HELIOS HEALTH05 platform memory bounds', () => {
   });
 
   it('caps execution-twin order history in the prediction market service store', () => {
-    const store = createPredictionMarketStore();
+    const store = createPredictionMarketStore(emptyPredictionMarketStore());
     const service = createHeliosPredictionMarketService({ clock: systemClock, store });
     service.loadSandboxFixtures();
     const yesInstrument = fixtureYesNoContracts().yes.instrumentId;
