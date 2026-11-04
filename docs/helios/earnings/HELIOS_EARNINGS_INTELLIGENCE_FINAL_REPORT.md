@@ -44,4 +44,4 @@ Statuses are derived from holdout forecast metrics, chronology integrity, and an
 
 `packages/platform/src/helios/earnings-intelligence/`
 
-Run qualification: `npm run helios:earn12:qualify`
+Run qualification: `npm run helios:earn12:qualify` (full) or `npm run helios:earn12:qualify:fast` (subprocess skipped).
