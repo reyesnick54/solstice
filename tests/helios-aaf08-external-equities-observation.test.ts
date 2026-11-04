@@ -9,7 +9,7 @@ import { describe, it, afterEach } from 'node:test';
 import { FrozenClock } from '../packages/config/src/clock.ts';
 import { asUtcInstant } from '../packages/domain/src/time.ts';
 import { EvidenceVault } from '../packages/evidence/src/vault.ts';
-import { createAaf08CapitalMarketProviderPort } from '../packages/platform/src/helios/adaptive-alpha-fabric/aaf08-external-equities/exchange-capital-market-port.ts';
+import { createAaf08CapitalMarketProviderPort } from '@solstice/external-data/helios/aaf08-capital-market-port';
 import {
   createFinnhubCapitalMarketAdapter,
   FINNHUB_CREDENTIAL_ENV_VAR,

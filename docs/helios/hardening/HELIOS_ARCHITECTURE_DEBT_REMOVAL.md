@@ -38,9 +38,9 @@ Repository-wide grandfathered boundary count decreased by **671** (baseline rege
 - `@solstice/payments` — `./fx-reference/catalog-entries`
 - `@solstice/investments` — exports `quantityScaleFactor` on the root barrel
 
-### Relocation (boundary fix)
+### Exchange bridge (constitution-safe)
 
-- `createAaf08CapitalMarketProviderPort` moved from `packages/external-data/src/helios/` to `packages/platform/src/helios/adaptive-alpha-fabric/aaf08-external-equities/exchange-capital-market-port.ts` (Exchange→HELIOS port binding belongs on platform).
+- `createAaf08CapitalMarketProviderPort` remains on `packages/external-data` (`@solstice/external-data/helios/aaf08-capital-market-port`) because `packages/platform` may not depend on `packages/sunrey-exchange`; the adapter uses public `@solstice/platform/helios/*` port types and `@solstice/sunrey-exchange/capital-market`.
 
 ### Type safety (AAF08/AAF09)
 

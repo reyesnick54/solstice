@@ -4,14 +4,6 @@
 
 import { ENVIRONMENT } from '@solstice/config';
 import type { UtcInstant } from '@solstice/domain';
-import type { CapitalMarketService } from '@solstice/sunrey-exchange/capital-market';
-import { resolveCapitalMarketInstrument } from '@solstice/sunrey-exchange/capital-market';
-import type {
-  CapitalMarketBar,
-  CapitalMarketObservation,
-  CapitalMarketSessionObservation,
-} from '@solstice/sunrey-exchange/capital-market';
-import type { CapitalMarketHistoricalRange } from '@solstice/sunrey-exchange/capital-market';
 import type {
   ExternalEquitiesBarPayload,
   ExternalEquitiesInstrumentMetadata,
@@ -20,8 +12,16 @@ import type {
   ExternalEquitiesProviderResult,
   ExternalEquitiesQuotePayload,
   ExternalEquitiesSessionPayload,
-} from './provider-port.ts';
-import type { BarTimeframe } from '../../market-observation/types.ts';
+} from '@solstice/platform/helios/aaf08-external-equities';
+import type { BarTimeframe } from '@solstice/platform/helios/market-observation';
+import type { CapitalMarketService } from '@solstice/sunrey-exchange/capital-market';
+import { resolveCapitalMarketInstrument } from '@solstice/sunrey-exchange/capital-market';
+import type {
+  CapitalMarketBar,
+  CapitalMarketObservation,
+  CapitalMarketSessionObservation,
+} from '@solstice/sunrey-exchange/capital-market';
+import type { CapitalMarketHistoricalRange } from '@solstice/sunrey-exchange/capital-market';
 
 function feedClassificationFromEntitlement(
   observation: CapitalMarketObservation | CapitalMarketBar,
