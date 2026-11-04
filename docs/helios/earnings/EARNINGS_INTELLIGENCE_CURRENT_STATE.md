@@ -6,6 +6,8 @@
 **Baseline SHA:** `7c24ea4101bbd097e4dcca1855e73c162560b873` (`origin/main`, branch `helios/earnings-intelligence-v1`)  
 **Qualification marker:** `HELIOS_EARN01_DOMAIN_QUALIFIED` (domain types + leakage gates; not live earnings feeds)
 
+**Package boundaries:** EARN01 modules import time via `@solstice/domain` with explicit `platform` / `external-data` dependencies (no deep `domain/src` imports).
+
 Architecture companion: [`EARNINGS_INTELLIGENCE_ARCHITECTURE.md`](./EARNINGS_INTELLIGENCE_ARCHITECTURE.md)
 
 ---
