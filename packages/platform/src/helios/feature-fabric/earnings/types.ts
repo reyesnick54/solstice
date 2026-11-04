@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { FeatureQualityState } from '../types.ts';
 import type { EarningsFeatureId, HELIOS_EARNINGS_FEATURE_PLANE_SCHEMA } from './taxonomy.ts';
 

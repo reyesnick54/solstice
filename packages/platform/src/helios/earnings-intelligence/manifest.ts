@@ -4,7 +4,7 @@
 
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { assertNoEarningsLeakage } from './knowable-at.ts';
 import type { EarningsIntelligenceManifest, EarningsIntelligenceStoreSnapshot } from './types.ts';
 import { HELIOS_EARNINGS_INTELLIGENCE_SCHEMA } from './taxonomy.ts';
