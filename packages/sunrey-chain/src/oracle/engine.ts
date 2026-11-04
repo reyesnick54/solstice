@@ -269,6 +269,7 @@ export class OracleEngine {
         conflictReason: aggregated.value.reason,
       });
       this.metricsState.lastAggregationUnits = Number(this.clock.nowUnix() - started);
+      this.compactObservations(rows);
       return ok(fact);
     }
     const fact = this.storeFact({
@@ -286,7 +287,14 @@ export class OracleEngine {
     });
     this.metricsState.verified += 1;
     this.metricsState.lastAggregationUnits = Number(this.clock.nowUnix() - started);
+    this.compactObservations(rows);
     return ok(fact);
+  }
+
+  private compactObservations(rows: readonly OracleObservation[]): void {
+    for (const row of rows) {
+      this.observations.delete(row.observationId);
+    }
   }
 
   private storeFact(
@@ -297,17 +305,14 @@ export class OracleEngine {
       .filter((row): row is VerifiedEconomicFact => row !== undefined);
     for (const prior of previous) {
       if (prior.qualityStatus === 'VERIFIED') {
-        this.facts.set(
-          prior.factId,
-          Object.freeze({ ...prior, qualityStatus: 'SUPERSEDED' as const }),
-        );
+        this.facts.delete(prior.factId);
       }
     }
     const factId = factIdOf(input);
     const fact: VerifiedEconomicFact = Object.freeze({ ...input, factId });
     this.facts.set(factId, fact);
     const key = `${input.feedId}:${input.subject}`;
-    this.factsByFeed.set(key, [...(this.factsByFeed.get(key) ?? []), factId]);
+    this.factsByFeed.set(key, [factId]);
     return fact;
   }
 

@@ -151,6 +151,16 @@ export type ResourceSample = {
   readonly heapUsedBytes: number;
   readonly cpuUserMs: number;
   readonly cpuSystemMs: number;
+  readonly heapTotalBytes?: number;
+  readonly externalBytes?: number;
+  readonly arrayBufferBytes?: number;
+  readonly activeResourceCount?: number;
+  readonly feeReceiptsInMemory?: number;
+  readonly feeReceiptsSealed?: number;
+  readonly productiveObjects?: number;
+  readonly productiveClaims?: number;
+  readonly productiveFacts?: number;
+  readonly productiveReceipts?: number;
 };
 
 export type ConnectionSnapshot = {

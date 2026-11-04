@@ -1,10 +1,13 @@
 import { FeeEngine } from '../fees/engine.ts';
-import { FeeMempool } from '../fees/mempool.ts';
 import { ProductiveEconomyEngine } from '../productive/engine.ts';
 import { DEV_CLOCK, fixtureClaim, fixtureFacts, fixtureRight, solarFacility } from '../productive/fixtures.ts';
+import { developmentEnergyFeed, developmentOracleEngine } from '../oracle/index.ts';
+import { registerEnergyProviders, signDraft } from '../oracle/demo-helpers.ts';
+import { SimulationEnergyAdapter } from '../oracle/adapter.ts';
+import { quantity } from '../oracle/units.ts';
+import { mutableClock } from '../oracle/demo-helpers.ts';
 import { validatorDescriptors } from './consensus.ts';
 import { measureCustodyWorkflow } from './custody.ts';
-import { measureOracle } from './economy.ts';
 import {
   checkCustodyMismatch,
   checkExplorerCaughtUp,
@@ -15,11 +18,14 @@ import {
   checkStateRootsEqual,
 } from './invariants.ts';
 import { ConnectionTracker, ResourceMonitor } from './leaks.ts';
+import { captureMemoryDiagnostics, diagnosticsToResourceSample } from './memory-instrumentation.ts';
 import { createInProcessRpc } from './rpc.ts';
 import { caseResult } from './result.ts';
 import { elapsedNs, nowNs, summarizeThroughput } from './statistics.ts';
-import type { BenchCaseResult, InvariantCheck } from './types.ts';
+import type { BenchCaseResult, InvariantCheck, ResourceSample } from './types.ts';
 import { executableForKind, mixedKindAt } from './workload.ts';
+
+const PRODUCTIVE_OBJECT_SLOTS = 128;
 
 export function defaultSoakMs(): number {
   const raw = process.env.SUNREY_BENCH_SOAK_MS;
@@ -28,6 +34,52 @@ export function defaultSoakMs(): number {
   }
   const parsed = Number.parseInt(raw, 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 250;
+}
+
+function tickOracleBench(
+  engine: ReturnType<typeof developmentOracleEngine>,
+  providers: ReturnType<typeof registerEnergyProviders>,
+  feedId: string,
+  index: number,
+): void {
+  const adapter = new SimulationEnergyAdapter();
+  const clock = mutableClock(1_700_000_000n + BigInt(index));
+  for (let i = 0; i < providers.length; i += 1) {
+    const provider = providers[i]!;
+    const built = quantity(100n + BigInt(i), 0, 'MWh');
+    if (!built.ok) {
+      throw new Error(built.error.detail);
+    }
+    const draft = adapter.collect(
+      {
+        oracleId: provider.record.oracleId,
+        feedId,
+        subject: `plant_${index % 16}`,
+        networkId: engine.networkId,
+        chainId: engine.chainId,
+        sequence: BigInt(index),
+        measurementStartUnix: clock.now,
+        measurementEndUnix: clock.now + 60n,
+        observationTimeUnix: clock.now + 30n,
+        validUntilUnix: clock.now + 3_600n,
+      },
+      built.value,
+    );
+    const signed = signDraft(engine, provider.label, draft);
+    const submitted = engine.submitObservation(signed);
+    if (!submitted.ok) {
+      throw new Error(submitted.error.detail);
+    }
+  }
+  const finalized = engine.finalizeWindow({
+    feedId,
+    subject: `plant_${index % 16}`,
+    startUnix: clock.now,
+    endUnix: clock.now + 60n,
+  });
+  if (!finalized.ok) {
+    throw new Error(finalized.error.detail);
+  }
 }
 
 export function runSoak(input: {
@@ -39,15 +91,26 @@ export function runSoak(input: {
   readonly invariants: readonly InvariantCheck[];
   readonly monitor: ResourceMonitor;
   readonly connections: ConnectionTracker;
+  readonly memorySnapshots: readonly ResourceSample[];
 } {
   const monitor = new ResourceMonitor();
+  const memorySnapshots: ResourceSample[] = [];
   const connections = new ConnectionTracker();
   const engine = new FeeEngine();
-  const replica = new FeeEngine();
+  const replica = new FeeEngine({ recordReceipts: false });
   engine.faucet('alice', 50_000_000n);
   replica.faucet('alice', 50_000_000n);
   const productive = new ProductiveEconomyEngine(DEV_CLOCK);
   const rpc = createInProcessRpc();
+  const oracleClock = mutableClock(1_700_000_000n);
+  const oracle = developmentOracleEngine(oracleClock);
+  const oracleProviders = registerEnergyProviders(oracle);
+  const oracleFeed = oracle.registerFeed(developmentEnergyFeed({ minimumSources: 3, minimumQuorum: 3 }));
+  if (!oracleFeed.ok) {
+    throw new Error(oracleFeed.error.detail);
+  }
+  const oracleFeedId = oracleFeed.value.feedId;
+  const registeredProductiveSlots = new Set<number>();
   const validators = validatorDescriptors(4);
   const started = nowNs();
   let submitted = 0;
@@ -55,16 +118,26 @@ export function runSoak(input: {
   let rejected = 0;
   let height = 1;
   let index = 0;
-  const settlementIds: string[] = [];
+  const sampleIntervalMs = Math.max(250, Math.floor(input.durationMs / 40));
+  let nextSampleMs = 0;
   connections.open('rpc');
   connections.open('eventSubscriptions');
   monitor.sample();
+  memorySnapshots.push(
+    diagnosticsToResourceSample(
+      captureMemoryDiagnostics(0, {
+        fees: engine,
+        productive,
+      }),
+    ),
+  );
   while (elapsedNs(started) / 1_000_000 < input.durationMs) {
-    const mempool = new FeeMempool(engine);
+    const elapsedMs = elapsedNs(started) / 1_000_000;
     const kind = mixedKindAt(index);
     const tx = executableForKind(kind, index, 'alice', 'bob');
     submitted += 1;
-    if (mempool.admit(tx)) {
+    const admission = engine.validateAdmission(tx);
+    if (admission) {
       rejected += 1;
     } else {
       engine.activateAt(height);
@@ -77,13 +150,10 @@ export function runSoak(input: {
       });
       if (executed.ok) {
         finalized += 1;
-        settlementIds.push(executed.receipt.transactionId);
       } else {
         rejected += 1;
       }
       replica.activateAt(height);
-      const copy = new FeeMempool(replica);
-      copy.admit(tx);
       replica.execute({
         tx,
         blockHeight: height,
@@ -94,22 +164,27 @@ export function runSoak(input: {
     }
     if (index % 7 === 0) {
       rpc.handle('block');
-      measureOracle({ providers: 3, windows: 1 });
+      tickOracleBench(oracle, oracleProviders, oracleFeedId, index);
     }
     if (index % 11 === 0) {
-      const objectId = `obj.soak.${index}`;
-      const object = {
-        ...solarFacility(),
-        objectId,
-        rightsReference: `right.${objectId}`,
-        owner: `ctl.${objectId}`,
-        controller: `ctl.${objectId}`,
-        operator: `ctl.${objectId}`,
-        oracleFeedReferences: [`feed.${objectId}`],
-      };
-      productive.registerObject(object);
-      productive.putRight(fixtureRight({ rightId: object.rightsReference, objectId, holderId: object.controller }));
-      for (const fact of fixtureFacts({ objectId, category: 'ENERGY', quantity: 80n, unit: 'kWh' })) {
+      const slot = Math.floor(index / 11) % PRODUCTIVE_OBJECT_SLOTS;
+      const objectId = `obj.soak.${slot}`;
+      if (!registeredProductiveSlots.has(slot)) {
+        const object = {
+          ...solarFacility(),
+          objectId,
+          rightsReference: `right.${objectId}`,
+          owner: `ctl.${objectId}`,
+          controller: `ctl.${objectId}`,
+          operator: `ctl.${objectId}`,
+          oracleFeedReferences: [`feed.${objectId}`],
+        };
+        productive.registerObject(object);
+        productive.putRight(fixtureRight({ rightId: object.rightsReference, objectId, holderId: object.controller }));
+        registeredProductiveSlots.add(slot);
+      }
+      const quantity = 80n + BigInt(index);
+      for (const fact of fixtureFacts({ objectId, category: 'ENERGY', quantity, unit: 'kWh' })) {
         productive.putOracleFact(fact);
       }
       const claim = fixtureClaim({
@@ -117,14 +192,23 @@ export function runSoak(input: {
         objectId,
         claimType: 'OUTPUT',
         category: 'ENERGY',
-        quantity: 80n,
+        quantity,
         unit: 'kWh',
       });
       productive.submitClaim(claim);
       productive.issueFromClaim(claim.claimId);
     }
-    if (index % 5 === 0) {
+    if (elapsedMs >= nextSampleMs) {
       monitor.sample();
+      memorySnapshots.push(
+        diagnosticsToResourceSample(
+          captureMemoryDiagnostics(elapsedMs, {
+            fees: engine,
+            productive,
+          }),
+        ),
+      );
+      nextSampleMs += sampleIntervalMs;
     }
     index += 1;
     height += 1;
@@ -133,13 +217,22 @@ export function runSoak(input: {
   connections.close('rpc');
   connections.close('eventSubscriptions');
   monitor.sample();
+  memorySnapshots.push(
+    diagnosticsToResourceSample(
+      captureMemoryDiagnostics(input.durationMs, {
+        fees: engine,
+        productive,
+      }),
+    ),
+  );
   const growth = monitor.monotonicGrowth(input.memoryThresholdBytes ?? 64 * 1024 * 1024);
   const aliceRoot = engine.accounts.position('alice', 'SUNREY_COIN').available.toString();
   const replicaRoot = replica.accounts.position('alice', 'SUNREY_COIN').available.toString();
+  const feeStats = engine.feeReceiptRetentionStats();
   const invariants: InvariantCheck[] = [
     checkStateRootsEqual(aliceRoot, replicaRoot),
     checkNativeSupply(engine),
-    checkNoDuplicateSettlements(settlementIds),
+    checkNoDuplicateSettlements(engine),
     checkNoDuplicateMoonRey(productive),
     checkExplorerCaughtUp(input.explorerLag ?? 0),
     checkNoSignerConflicts(0),
@@ -159,6 +252,7 @@ export function runSoak(input: {
     monitor,
     connections,
     invariants,
+    memorySnapshots,
     cases: [
       caseResult('soak', 'mixed_continuous', {
         throughput: summarizeThroughput({
@@ -172,6 +266,10 @@ export function runSoak(input: {
           durationMs: input.durationMs,
           memoryFlagged: growth.flagged,
           rssDeltaBytes: growth.delta,
+          feeReceiptsInMemory: feeStats.inMemoryReceipts,
+          feeReceiptsSealed: feeStats.sealedReceipts,
+          memorySnapshots: memorySnapshots.length,
+          productiveObjectSlots: PRODUCTIVE_OBJECT_SLOTS,
         },
       }),
     ],
