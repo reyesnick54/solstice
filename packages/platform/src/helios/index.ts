@@ -316,6 +316,7 @@ export * from './grow-intelligence/index.ts';
 export * from './continuous-runtime/index.ts';
 export * from './execution-twin/index.ts';
 export * from './feature-fabric/index.ts';
+export * from './earnings-intelligence/index.ts';
 export * from './adaptive-alpha-v2/index.ts';
 export * from './open-source-integration/index.ts';
 export * from './os12-agent-permission-gateway/index.ts';
