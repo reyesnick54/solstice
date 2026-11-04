@@ -1,6 +1,9 @@
-export const EARN07_OPTIONS_INTELLIGENCE_MODULE =
-  'packages/platform/src/helios/earnings-intelligence/earn07-options-intelligence.ts' as const;
+import { HELIOS_EARN07_OPTIONS_INTELLIGENCE_QUALIFIED } from './options/qualification.ts';
 
+export const EARN07_OPTIONS_INTELLIGENCE_MODULE =
+  'packages/platform/src/helios/earnings-intelligence/options/index.ts' as const;
+
+/** Pipeline-compatible stub; full chain analytics live under `./options/`. */
 export function inferOptionsImpliedMoveBps(input: {
   readonly straddlePremiumBps: number;
   readonly knowableBeforeEvent: boolean;
@@ -10,3 +13,5 @@ export function inferOptionsImpliedMoveBps(input: {
   }
   return Object.freeze({ impliedMoveBps: input.straddlePremiumBps, usable: true });
 }
+
+export { HELIOS_EARN07_OPTIONS_INTELLIGENCE_QUALIFIED };

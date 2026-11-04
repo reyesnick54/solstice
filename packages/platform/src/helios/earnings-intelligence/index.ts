@@ -192,6 +192,11 @@ export {
   HELIOS_EARNINGS_INTELLIGENCE_EVIDENCE_KIND,
 } from './evidence.ts';
 
+export * from './analyst-expectations/index.ts';
 export * from './event-network/index.ts';
+
+/** Full options-implied earnings intelligence plane (research only). */
+export * as earn07OptionsIntelligence from './options/index.ts';
+
 export * from './transcript/index.ts';
 export * from './state-estimator/index.ts';
