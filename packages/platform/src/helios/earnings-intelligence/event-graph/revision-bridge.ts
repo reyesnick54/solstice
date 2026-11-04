@@ -2,6 +2,7 @@
  * Bind SEC earnings filings into the HELIOS AAF revision ledger (append-only).
  */
 
+import { asUtcInstant } from '../../../../../domain/src/time.ts';
 import type { EarningsExternalObservation } from '../../../../../external-data/src/earnings/types.ts';
 import {
   createRevisionLedgerStore,
@@ -40,7 +41,7 @@ export function earningsObservationToRevisionEntry(
     observationRef: observation.observationId,
     revisionSequence,
     eventPeriod: observation.fiscal.reportPeriod.slice(0, 7),
-    periodEnd: observation.fiscal.reportPeriod,
+    periodEnd: asUtcInstant(`${observation.fiscal.reportPeriod}T00:00:00.000Z`),
     originalPublicationTime,
     revisionPublicationTime: observation.times.knowableAt,
     knowableAt: observation.times.knowableAt,

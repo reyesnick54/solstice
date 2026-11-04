@@ -92,7 +92,7 @@ export function mapSecSubmissionToEarningsObservations(
   record: SecEdgarSubmissionRecord,
   sunreyArrivalTime: UtcInstant = asUtcInstant(record.acceptedAtUtc),
 ): readonly EarningsExternalObservation[] {
-  const form = record.form;
+  const form = record.form as string;
   const out: EarningsExternalObservation[] = [];
 
   if (form === '8-K' || form === '8-K/A') {
