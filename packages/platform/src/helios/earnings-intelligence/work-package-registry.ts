@@ -34,8 +34,8 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
     moduleRef: 'packages/platform/src/helios/earnings-intelligence/earn07-options-intelligence.ts',
   },
   EARN08: {
-    title: 'Peer attention PEAD',
-    moduleRef: 'packages/platform/src/helios/earnings-intelligence/earn08-peer-attention-pead.ts',
+    title: 'Peer event network (attention, PEAD diagnostics)',
+    moduleRef: 'packages/platform/src/helios/earnings-intelligence/event-network/index.ts',
   },
   EARN09: {
     title: 'Probabilistic state estimator',
