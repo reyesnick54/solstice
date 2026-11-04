@@ -1,3 +1,4 @@
+/** Gate marker for EARN06 earnings quality plane qualification checks. */
 export const HELIOS_EARN06_EARNINGS_QUALITY_QUALIFIED = 'HELIOS_EARN06_EARNINGS_QUALITY_QUALIFIED' as const;
 export const HELIOS_EARN06_EARNINGS_QUALITY_BLOCKED = 'HELIOS_EARN06_EARNINGS_QUALITY_BLOCKED' as const;
 
