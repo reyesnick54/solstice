@@ -2,7 +2,7 @@
  * Peer read-through aggregates — time-ordered; later reporters cannot inform earlier decisions.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { EarningsPeerRelationshipEdge, EarningsEventRecord, PeerReadThroughSnapshot } from './types.ts';
 import type {
   EarningsGuidanceDirection,

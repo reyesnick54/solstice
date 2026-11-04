@@ -2,7 +2,7 @@
  * EARN08 qualification gate.
  */
 
-import { asUtcInstant } from '../../../../../domain/src/time.ts';
+import { asUtcInstant } from '@solstice/domain';
 import { createTemporalEntityGraphStore } from '../../feature-fabric/entity-resolution/graph-store.ts';
 import { temporalEntityNodeIdFor } from '../../feature-fabric/entity-resolution/ids.ts';
 import { createHeliosEarningsEventNetworkFabric } from './fabric.ts';

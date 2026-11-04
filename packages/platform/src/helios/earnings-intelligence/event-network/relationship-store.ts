@@ -4,7 +4,7 @@
 
 import { createHash } from 'node:crypto';
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { TemporalEntityGraphStore } from '../../feature-fabric/entity-resolution/graph-store.ts';
 import {
   EARNINGS_PEER_RELATIONSHIP_TYPES,

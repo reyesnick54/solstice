@@ -2,7 +2,7 @@
  * Earnings attention state — concurrent events and cross-sectional context.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import type { EarningsAttentionState, EarningsEventRecord } from './types.ts';
 import type { LiquidityBucket, MarketCapBucket } from './taxonomy.ts';
 

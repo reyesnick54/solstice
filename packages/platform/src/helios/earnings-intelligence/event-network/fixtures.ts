@@ -2,7 +2,7 @@
  * Reference fixture — semiconductor peer chain with evidence-backed supplier link.
  */
 
-import { asUtcInstant } from '../../../../../domain/src/time.ts';
+import { asUtcInstant } from '@solstice/domain';
 import { createTemporalEntityGraphStore, type TemporalEntityGraphStore } from '../../feature-fabric/entity-resolution/graph-store.ts';
 import { temporalEntityNodeIdFor } from '../../feature-fabric/entity-resolution/ids.ts';
 import { createHeliosEarningsEventNetworkFabric, type HeliosEarningsEventNetworkFabric } from './fabric.ts';

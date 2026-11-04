@@ -2,7 +2,7 @@
  * PEAD conditional diagnostics — studies drift heterogeneity; not a naive post-surprise trade rule.
  */
 
-import type { UtcInstant } from '../../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { PEAD_RESEARCH_HORIZON_DAYS } from './taxonomy.ts';
 import type {
   EarningsAttentionState,
