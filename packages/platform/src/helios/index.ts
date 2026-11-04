@@ -317,6 +317,7 @@ export * from './continuous-runtime/index.ts';
 export * from './execution-twin/index.ts';
 export * from './feature-fabric/index.ts';
 export * from './adaptive-alpha-v2/index.ts';
+export * from './earnings-intelligence/index.ts';
 export * from './open-source-integration/index.ts';
 export * from './os12-agent-permission-gateway/index.ts';
 export * from './open-source-integration/os13-ai-strategy-sandbox/index.ts';
@@ -332,28 +333,3 @@ export {
   type PredictionMarketEngineQualificationResult,
 } from './prediction-market/qualification.ts';
 
-export {
-  HELIOS_EARN08,
-  HELIOS_EARN08_EVENT_NETWORK_QUALIFIED,
-  HELIOS_EARN08_EVENT_NETWORK_BLOCKED,
-  HELIOS_EARNINGS_EVENT_NETWORK_SCHEMA,
-  HELIOS_EARNINGS_EVENT_NETWORK_AUTHORITY,
-  createHeliosEarningsEventNetworkFabric,
-  createEarningsEventNetworkStore,
-  seedEarn08ReferenceEventNetwork,
-  runEarn08QualificationHarness,
-  evaluateEarn08EventNetworkQualification,
-  computePeerReadThrough,
-  computeEarningsAttentionState,
-  buildPEADConditionalState,
-  decomposeExpectedReturn,
-  buildOrthogonalizedResearchFeatures,
-  assertEarningsRelationshipEvidence,
-  type HeliosEarningsEventNetworkFabric,
-  type Earn08QualificationResult,
-  type EarningsEventRecord,
-  type PeerReadThroughSnapshot,
-  type EarningsAttentionState,
-  type PEADConditionalState,
-  type ExpectedReturnDecomposition,
-} from './earnings-intelligence/index.ts';
