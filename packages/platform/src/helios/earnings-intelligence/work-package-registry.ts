@@ -23,7 +23,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
   },
   EARN05: {
     title: 'Transcript intelligence',
-    moduleRef: 'packages/platform/src/helios/earnings-intelligence/earn05-transcript-intelligence.ts',
+    moduleRef: 'packages/platform/src/helios/earnings-intelligence/transcript/service.ts',
   },
   EARN06: {
     title: 'Earnings quality',

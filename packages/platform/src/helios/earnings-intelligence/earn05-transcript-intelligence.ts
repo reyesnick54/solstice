@@ -1,5 +1,12 @@
 export const EARN05_TRANSCRIPT_INTELLIGENCE_MODULE =
-  'packages/platform/src/helios/earnings-intelligence/earn05-transcript-intelligence.ts' as const;
+  'packages/platform/src/helios/earnings-intelligence/transcript/service.ts' as const;
+
+export { analyzeEarningsTranscript, EarningsTranscriptIntelligenceService } from './transcript/service.ts';
+export {
+  HELIOS_EARN05_TRANSCRIPT_INTELLIGENCE_QUALIFIED,
+  HELIOS_EARN05_TRANSCRIPT_INTELLIGENCE_BLOCKED,
+  evaluateEarn05Qualification,
+} from './transcript/qualification.ts';
 
 export function scoreTranscriptTone(input: {
   readonly positiveTokenCount: number;

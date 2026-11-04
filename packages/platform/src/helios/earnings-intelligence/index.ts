@@ -164,3 +164,5 @@ export {
   earningsValidationContentHash,
   HELIOS_EARNINGS_INTELLIGENCE_EVIDENCE_KIND,
 } from './evidence.ts';
+
+export * from './transcript/index.ts';
