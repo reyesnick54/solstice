@@ -75,4 +75,5 @@ export * from './research-autopilot/index.ts';
 export * from './trading-agents-research-mesh/index.ts';
 export * from './proactive-research/index.ts';
 export * from './tradingagents-native/index.ts';
+export * from './earnings-agentic-committee/index.ts';
 export * from './earnings-transcript-intelligence/index.ts';

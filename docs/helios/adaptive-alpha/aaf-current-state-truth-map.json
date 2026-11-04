@@ -280,8 +280,11 @@
     },
     {
       "name": "earnings_intelligence_engine",
-      "status": "ABSENT",
-      "paths": ["packages/ai-runtime/src/market-research.ts — prompt-level fundamentalScoreBps only"]
+      "status": "IMPLEMENTED",
+      "paths": [
+        "packages/agentic-capital-mesh/src/earnings-agentic-committee/",
+        "tests/helios-earn10-agentic-earnings-committee.test.ts"
+      ]
     },
     {
       "name": "alternative_data_feature_service",
