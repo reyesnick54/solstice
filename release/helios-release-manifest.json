@@ -1,13 +1,13 @@
 {
   "schema": "helios.release.package.v1",
-  "releaseId": "helios-rc-h34-153adf8bf64a",
-  "gitSha": "153adf8bf64af89e375a73e6d0a5aa8343073787",
+  "releaseId": "helios-rc-h34-182dca38c388",
+  "gitSha": "182dca38c3885aeef0e0a329006db24ffdb8f6de",
   "repository": "reyesnick54/solstice",
-  "buildTimestampUtc": "2026-09-21T07:29:15.589Z",
+  "buildTimestampUtc": "2026-11-05T05:50:04.303Z",
   "applicationVersion": "0.1.0",
-  "heliosVersion": "helios-h34-rc-153adf8bf64a",
+  "heliosVersion": "helios-h34-rc-182dca38c388",
   "schemaVersion": {
-    "customer": "V068",
+    "customer": "V071",
     "ledger": "V010",
     "evidence": "V001",
     "security": "V002"
@@ -18,7 +18,7 @@
   "modelRegistryVersion": "risk-model-v1",
   "providerConfigVersion": "sunrey-free-api-catalog@1.0.0",
   "deploymentManifestVersion": "deploy/sunrey-sandbox-hetzner/v1",
-  "artifactDigest": "sha256:2c5f120f4f49043f917905243e928839a47611447a878049d566ada6bbbacad2",
+  "artifactDigest": "sha256:2a50eecc9902c90c3dd8b673c2313fcae46fe70f48a983c208c883c9abe8b77d",
   "sbomReference": "dist/sunrey-supply-chain/sbom.json",
   "provenanceReference": "dist/sunrey-supply-chain/provenance.json",
   "environmentTarget": "hetzner-sandbox-simulation",
@@ -140,6 +140,9 @@
     "customer/V066__helios_market_bar_4h_timeframe.sql": "f375f0fa76511a732e1ca7c92b9f0c44ff4966c369acb105cb1b4478354cfa45",
     "customer/V067__helios_exposure_graph.sql": "e6fcb754d1b4671a55f364ba67ab9581eb5a3a53728d9604d434fa7654f469d4",
     "customer/V068__helios_macro_event_intelligence.sql": "eeeb692200718fe6648013d83b8eba49493593a54a8d1cc8a4e6fa5fdffec058",
+    "customer/V069__helios_grow_intelligence.sql": "7a0dc4011fd86549e730ca861fa82ea1b9d65f7997fc3713b7a562a3a66a4921",
+    "customer/V070__helios_execution_plan.sql": "e941aa8057a60ed3b929667576e9769a7c66727f86193e1c060f52d12efdccb5",
+    "customer/V071__helios_feature_fabric.sql": "30d11df5ffaf7c2fbca54ba618d2d8e6c6bb29fdb9549f26200b5a92e21cc70b",
     "ledger/V001__ledger.sql": "89e7b72209ae7d0f1d9b933def0d7e45991c33c94d86a69f96c463bf1a7f4ffa",
     "ledger/V002__event_fabric.sql": "f49bfcbb75ef86729af6c125627d1bd5c2ab265a694185aa23cd713a0b57dc6c",
     "ledger/V003__inbox_delivery_state.sql": "49e79ac996a495273882342e0af2a44f732125e6a0182f844df9deeb4a702dd3",
@@ -155,7 +158,7 @@
     "security/V002__credential_descriptor_refs.sql": "97c5712a247991c66620f6d4d1a52c15846e94acb19f4045c3fa884b5f3b5c3a"
   },
   "rollbackCompatibility": {
-    "previousSupportedRelease": "helios-rc-h33-153adf8bf64a",
+    "previousSupportedRelease": "helios-rc-h33-182dca38c388",
     "appBackwardCompatibility": "SAFE_APP_ROLLBACK",
     "dbBackwardCompatibility": "FORWARD_FIX_REQUIRED",
     "configurationCompatibility": "SAFE_APP_ROLLBACK",
@@ -164,14 +167,14 @@
   "sameShaBindings": [
     {
       "role": "application",
-      "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-153adf8bf64a",
-      "sourceCommit": "153adf8bf64af89e375a73e6d0a5aa8343073787",
+      "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-182dca38c388",
+      "sourceCommit": "182dca38c3885aeef0e0a329006db24ffdb8f6de",
       "dockerfile": "deploy/sunrey-sandbox-hetzner/Dockerfile"
     },
     {
       "role": "migration-runner",
-      "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-153adf8bf64a",
-      "sourceCommit": "153adf8bf64af89e375a73e6d0a5aa8343073787",
+      "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-182dca38c388",
+      "sourceCommit": "182dca38c3885aeef0e0a329006db24ffdb8f6de",
       "dockerfile": "deploy/sunrey-sandbox-hetzner/Dockerfile"
     }
   ],
