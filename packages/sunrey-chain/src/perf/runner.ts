@@ -167,8 +167,10 @@ export function runProfile(options: RunOptions): BenchReport {
 export function runSanity(ports?: BenchPorts): BenchReport {
   const shared = ports !== undefined ? { ports } : {};
   const micro = runProfile({ profile: 'micro', ...shared });
-  const seven = runProfile({ profile: 'seven-validator', latencyProfile: 'low', ...shared });
+  // Run phase-aware soak before seven-validator load so prior bench heap does not
+  // inflate HEALTH07 plateau gates during the same process CI sanity run.
   const soak = runProfile({ profile: 'soak', soakMs: sanitySoakMs(), ...shared });
+  const seven = runProfile({ profile: 'seven-validator', latencyProfile: 'low', ...shared });
   const adapterCases = [
     ...(ports?.explorer ? ports.explorer.measure({ blocks: 24, catchUp: true }) : []),
     ...(ports?.exchange ? ports.exchange.measure({ orders: 12 }) : []),
