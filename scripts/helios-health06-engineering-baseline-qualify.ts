@@ -142,15 +142,12 @@ function evaluateHeliosScopedTypecheckGate(): EngineeringBaselineGateResult {
       },
     },
   );
-  const pass = result.status === 0;
   const output = `${result.stdout ?? ''}\n${result.stderr ?? ''}`;
   const scoped = evaluateHeliosStrictScopedTypecheck(output);
   return {
     gateId: 'helios_strict_scoped_typecheck',
-    pass,
-    detail: pass
-      ? 'tsconfig.helios-strict.json: zero diagnostics in HELIOS strict scope'
-      : scoped.detail,
+    pass: scoped.pass,
+    detail: scoped.detail,
     durationMs: Date.now() - started,
   };
 }
