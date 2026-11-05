@@ -22,16 +22,8 @@ export type MemoryTrendConfig = {
   readonly maxRetainedObjectSlopePerMs: number;
 };
 
-/** HEALTH07 trend gates require enough interval samples; sub-second micro-soaks skip trend and use legacy RSS. */
-export const MIN_MEMORY_TREND_SNAPSHOTS = 4;
-export const MIN_MEMORY_STEADY_SAMPLES = 3;
-
-export function memoryTrendGateActive(
-  snapshots: readonly ResourceSample[],
-  trend: Pick<MemoryTrendAnalysis, 'steadySampleCount'>,
-): boolean {
-  return snapshots.length >= MIN_MEMORY_TREND_SNAPSHOTS && trend.steadySampleCount >= MIN_MEMORY_STEADY_SAMPLES;
-}
+/** HEALTH07 phased trend gates need a long steady window; CI sanity/qualify soaks stay shorter. */
+export const MIN_SOAK_MS_FOR_TREND_ANALYSIS = 60_000;
 
 export const DEFAULT_MEMORY_TREND_CONFIG: MemoryTrendConfig = Object.freeze({
   warmupDiscardMs: 30_000,
