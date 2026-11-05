@@ -114,3 +114,5 @@ export {
 } from './val01-fixtures.ts';
 
 export { listValWorkPackages, type ValWorkPackageRow } from './work-package-registry.ts';
+
+export * from './val04-probabilistic-dcf/index.ts';
