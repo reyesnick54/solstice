@@ -1,5 +1,5 @@
 /**
- * HELIOS VAL01 — canonical probabilistic valuation intelligence taxonomy.
+ * HELIOS Valuation Intelligence — canonical owner and taxonomy (VAL01 + VAL02 + VAL04 + VAL05).
  */
 
 export const HELIOS_VALUATION_INTELLIGENCE_SCHEMA = 'helios.valuation-intelligence.v1' as const;
@@ -49,5 +49,17 @@ export const HELIOS_VAL01_VALUATION_DOMAIN_QUALIFIED =
 export const HELIOS_VAL01_VALUATION_DOMAIN_BLOCKED =
   'HELIOS_VAL01_VALUATION_DOMAIN_BLOCKED' as const;
 
-export const VAL_WORK_PACKAGES = ['VAL01'] as const;
+export const VAL05_REVERSE_DCF_MODULE = 'VAL05_REVERSE_DCF' as const;
+
+export const HELIOS_VAL05_REVERSE_DCF_QUALIFIED = 'HELIOS_VAL05_REVERSE_DCF_QUALIFIED' as const;
+
+export const HELIOS_VAL05_REVERSE_DCF_BLOCKED = 'HELIOS_VAL05_REVERSE_DCF_BLOCKED' as const;
+
+/** Explicit horizon for the reverse-DCF explicit period (years). */
+export const VAL05_DEFAULT_EXPLICIT_YEARS = 10 as const;
+
+/** Basis points: 10_000 = 100%. */
+export const VAL05_BPS_SCALE = 10_000 as const;
+
+export const VAL_WORK_PACKAGES = Object.freeze(['VAL01', 'VAL02', 'VAL04', 'VAL05'] as const);
 export type ValWorkPackageId = (typeof VAL_WORK_PACKAGES)[number];

@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
+import { assertIsolatedTestPass, shouldRunIsolatedTestBody } from './test/isolated-child.ts';
 import { runSunreyRelease } from './supply-chain/cli.ts';
 import {
   FEATURE_INVENTORY,
@@ -91,6 +92,15 @@ describe('Chunk 63 SunRey Testnet release candidate', () => {
   });
 
   it('runs sunrey-release rc commands and keeps TESTNET banners', () => {
+    assertIsolatedTestPass({
+      envFlag: 'SUNREY_RC_CLI_ISOLATED',
+      testModuleUrl: import.meta.url,
+      cwd: ROOT,
+      testNamePattern: 'runs sunrey-release rc commands',
+    });
+    if (!shouldRunIsolatedTestBody('SUNREY_RC_CLI_ISOLATED')) {
+      return;
+    }
     for (const command of ['rc', 'rc help']) {
       const argv = command.split(' ');
       const result = runSunreyRelease(ROOT, argv);

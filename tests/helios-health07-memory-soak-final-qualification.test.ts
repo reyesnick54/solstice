@@ -2,13 +2,16 @@
  * HELIOS HEALTH07 — definitive integrated memory soak qualification.
  * CI uses shortened soak via SUNREY_BENCH_SOAK_QUALIFY_MS (default 45_000).
  * Production qualification: 3× 120_000 ms trials via scripts/helios-health07-memory-soak-qualify.ts
+ *
+ * Each trial runs in a fresh sunrey-bench process so later trials do not inherit heap
+ * from earlier trials under parallel CI load.
  */
 
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { describe, it } from 'node:test';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { describe, it } from 'node:test';
 
 const TRIALS = 3;
 const DURATION_MS = Number.parseInt(process.env.SUNREY_BENCH_SOAK_QUALIFY_MS ?? '45000', 10);

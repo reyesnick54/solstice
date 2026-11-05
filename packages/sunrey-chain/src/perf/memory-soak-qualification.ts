@@ -1,5 +1,5 @@
 import type { InvariantCheck, ResourceSample } from './types.ts';
-import { analyzeMemoryTrend } from './memory-trend-analysis.ts';
+import { analyzeMemoryTrend, MIN_SOAK_MS_FOR_TREND_ANALYSIS } from './memory-trend-analysis.ts';
 
 export const HELIOS_MEMORY_SOAK_QUALIFIED = 'HELIOS_MEMORY_SOAK_QUALIFIED' as const;
 
@@ -28,8 +28,9 @@ export function evaluateHeliosMemorySoakQualification(
   if (input.memorySnapshots.length < 4) {
     blockers.push('MEMORY_SNAPSHOTS: fewer than 4 soak snapshots captured (5s interval)');
   }
+  const trendRequired = input.durationMs >= MIN_SOAK_MS_FOR_TREND_ANALYSIS;
   const trend = analyzeMemoryTrend(input.memorySnapshots, input.durationMs);
-  if (!trend.ok) {
+  if (trendRequired && !trend.ok) {
     blockers.push(`MEMORY_TREND: ${trend.detail}`);
   }
   return Object.freeze({

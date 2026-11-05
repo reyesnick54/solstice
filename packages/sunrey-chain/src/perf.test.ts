@@ -12,6 +12,11 @@ import { canonicalProjectionHash } from '../../sunrey-explorer/src/canonical.ts'
 import { runSanity, runProfile } from './perf/runner.ts';
 import { RESULT_CLASS } from './perf/types.ts';
 import { nativeTransferTx } from './perf/workload.ts';
+import { join } from 'node:path';
+
+import { assertIsolatedTestPass, shouldRunIsolatedTestBody } from './test/isolated-child.ts';
+
+const ROOT = join(import.meta.dirname, '../../..');
 
 describe('sunrey performance engineering', () => {
   it('keeps mempool selection identical to compareForSelection after the ordered-index optimization', () => {
@@ -47,6 +52,15 @@ describe('sunrey performance engineering', () => {
   });
 
   it('runs CI sanity with context, finalized throughput, and soak invariants', () => {
+    assertIsolatedTestPass({
+      envFlag: 'SUNREY_CI_SANITY_ISOLATED',
+      testModuleUrl: import.meta.url,
+      cwd: ROOT,
+      testNamePattern: 'runs CI sanity',
+    });
+    if (!shouldRunIsolatedTestBody('SUNREY_CI_SANITY_ISOLATED')) {
+      return;
+    }
     const report = runSanity({
       explorer: { measure: (input) => measureExplorer(input) },
       exchange: { measure: (input) => measureExchange(input) },

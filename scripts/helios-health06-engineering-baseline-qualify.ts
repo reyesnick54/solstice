@@ -196,6 +196,7 @@ const EARN_TESTS = Object.freeze([
   'packages/platform/src/helios/earnings-intelligence/options/options-earnings.test.ts',
   'tests/helios-earn08-event-network.test.ts',
   'tests/helios-earn09-probabilistic-state-estimator.test.ts',
+  'tests/helios-val02-driver-forecast.test.ts',
   'tests/helios-earn10-agentic-earnings-committee.test.ts',
   'tests/helios-earn11-strategy-research.test.ts',
   'tests/helios-earn12-earnings-intelligence-qualification.test.ts',
