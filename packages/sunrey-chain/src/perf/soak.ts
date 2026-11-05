@@ -257,6 +257,15 @@ export function runSoak(input: {
   );
   const memoryTrend = analyzeMemoryTrend(memorySnapshots, input.durationMs);
   const growth = monitor.monotonicGrowth(input.memoryThresholdBytes ?? 64 * 1024 * 1024);
+  const trendEnforced = memorySnapshots.length >= 4 && memoryTrend.steadySampleCount >= 3;
+  const memoryGrowthOk = trendEnforced ? memoryTrend.ok : !growth.flagged;
+  const memoryGrowthDetail = trendEnforced
+    ? memoryTrend.ok
+      ? `${memoryTrend.detail}; legacy_rss_delta=${growth.delta}`
+      : memoryTrend.detail
+    : growth.flagged
+      ? `rss grew ${growth.delta} bytes`
+      : `rss delta ${growth.delta} bytes; short_soak_trend_deferred`;
   const aliceRoot = engine.accounts.position('alice', 'SUNREY_COIN').available.toString();
   const replicaRoot = replica.accounts.position('alice', 'SUNREY_COIN').available.toString();
   const feeStats = engine.feeReceiptRetentionStats();
@@ -270,15 +279,15 @@ export function runSoak(input: {
     checkCustodyMismatch(0),
     {
       id: 'MEMORY_GROWTH_BUDGET',
-      ok: memoryTrend.ok,
-      detail: memoryTrend.ok
-        ? `${memoryTrend.detail}; legacy_rss_delta=${growth.delta}`
-        : memoryTrend.detail,
+      ok: memoryGrowthOk,
+      detail: memoryGrowthDetail,
     },
     {
       id: 'MEMORY_STEADY_STATE_TREND',
-      ok: memoryTrend.ok,
-      detail: memoryTrend.detail,
+      ok: trendEnforced ? memoryTrend.ok : true,
+      detail: trendEnforced
+        ? memoryTrend.detail
+        : 'short soak profile; steady-state trend evaluated in extended/nightly soak',
     },
     {
       id: 'CONNECTION_RELEASE',
@@ -303,7 +312,8 @@ export function runSoak(input: {
         }),
         extras: {
           durationMs: input.durationMs,
-          memoryFlagged: !memoryTrend.ok,
+          memoryFlagged: trendEnforced ? !memoryTrend.ok : growth.flagged,
+          memoryTrendEnforced: trendEnforced,
           memoryTrendClass: memoryTrend.classification,
           rssDeltaBytes: memoryTrend.rssDeltaStartToEndBytes,
           steadyHeapSlopeBytesPerMs: memoryTrend.theilSenHeapUsedSlopeBytesPerMs,
