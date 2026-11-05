@@ -145,6 +145,8 @@ export type ThroughputStats = {
   readonly errorRejectionRate: number;
 };
 
+export type MemorySoakPhase = 'WARMUP' | 'STEADY_STATE' | 'COOLDOWN';
+
 export type ResourceSample = {
   readonly atMs: number;
   readonly rssBytes: number;
@@ -155,12 +157,24 @@ export type ResourceSample = {
   readonly externalBytes?: number;
   readonly arrayBufferBytes?: number;
   readonly activeResourceCount?: number;
+  readonly activeHandleCount?: number;
+  readonly activeRequestCount?: number;
+  readonly eventListenerCount?: number;
+  readonly timerCount?: number;
+  readonly memoryPhase?: MemorySoakPhase;
   readonly feeReceiptsInMemory?: number;
   readonly feeReceiptsSealed?: number;
   readonly productiveObjects?: number;
   readonly productiveClaims?: number;
   readonly productiveFacts?: number;
   readonly productiveReceipts?: number;
+  readonly heliosObservations?: number;
+  readonly heliosTwinOrders?: number;
+  readonly heliosAgentSessions?: number;
+  readonly heliosResearchMonitors?: number;
+  readonly heliosEvidenceStagingBytes?: number;
+  readonly heliosStrategyEvaluations?: number;
+  readonly providerReconnectCycles?: number;
 };
 
 export type ConnectionSnapshot = {
