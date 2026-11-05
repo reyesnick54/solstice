@@ -9,7 +9,7 @@ import { ConnectionTracker, ResourceMonitor } from './leaks.ts';
 import { measureMempool } from './mempool.ts';
 import type { BenchPorts } from './ports.ts';
 import { measureRpcAbuse, measureRpcLoad } from './rpc.ts';
-import { defaultSoakMs, runSoak } from './soak.ts';
+import { defaultSoakMs, runSoak, sanitySoakMs } from './soak.ts';
 import { measureStateGrowth } from './state-growth.ts';
 import { measureStorage } from './storage.ts';
 import { measureFinalizedThroughput } from './throughput.ts';
@@ -114,7 +114,12 @@ export function runProfile(options: RunOptions): BenchReport {
       warnings.push('explorer adapter absent; catch-up benches skipped');
     }
   } else {
-    const soak = runSoak({ durationMs: options.soakMs ?? defaultSoakMs() });
+    const soak = runSoak({
+      durationMs: options.soakMs ?? defaultSoakMs(),
+      ...(options.ports?.soakIntegrated !== undefined
+        ? { integrated: options.ports.soakIntegrated }
+        : {}),
+    });
     cases.push(...soak.cases);
     invariants.push(...soak.invariants);
     datasetSize = soak.cases[0]?.throughput?.submitted ?? 0;
@@ -163,7 +168,7 @@ export function runSanity(ports?: BenchPorts): BenchReport {
   const shared = ports !== undefined ? { ports } : {};
   const micro = runProfile({ profile: 'micro', ...shared });
   const seven = runProfile({ profile: 'seven-validator', latencyProfile: 'low', ...shared });
-  const soak = runProfile({ profile: 'soak', soakMs: 80, ...shared });
+  const soak = runProfile({ profile: 'soak', soakMs: sanitySoakMs(), ...shared });
   const adapterCases = [
     ...(ports?.explorer ? ports.explorer.measure({ blocks: 24, catchUp: true }) : []),
     ...(ports?.exchange ? ports.exchange.measure({ orders: 12 }) : []),
@@ -184,7 +189,7 @@ export function runSanity(ports?: BenchPorts): BenchReport {
       ...micro.warnings,
       ...seven.warnings,
       ...soak.warnings,
-      'CI sanity combines micro + seven-validator + short soak. Multi-hour soak is a manual/nightly profile.',
+      'CI sanity combines micro + seven-validator + phase-aware memory soak (sanitySoakMs). Multi-hour soak is a manual/nightly profile.',
     ],
   };
 }
