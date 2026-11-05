@@ -231,7 +231,14 @@ export class ProductiveEconomyEngine {
     if (!authorized.ok) {
       return authorized;
     }
-    return this.finalizeIssuance(authorized.authorization.authorizationId);
+    const finalized = this.finalizeIssuance(authorized.authorization.authorizationId);
+    if (finalized.ok) {
+      // Drop the claim after issuance; ISSUED contribution and receipt remain for lineage/attribution.
+      this.claims.delete(claimId);
+      this.metrics.productive_claims = this.claims.size;
+      this.rebuildGraph();
+    }
+    return finalized;
   }
 
   recordCorrection(correction: ProductiveCorrection): void {

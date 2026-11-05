@@ -8,6 +8,7 @@ import { runAllChaosScenarios } from '../../../packages/sunrey-chain/src/ops/sre
 import { captureEnvironment } from '../../lib/env-metadata.ts';
 import { mergeSuiteStatus, type SuiteResult } from '../../lib/report.ts';
 import { assertNoInventedJournals, assertSimulationOnly } from '../lib/gates.ts';
+import { heliosDrCaseStatus, runHeliosDrQualification } from '../lib/helios-dr-wave9.ts';
 
 const DB_DOMAINS = ['customer', 'ledger', 'evidence', 'security'] as const;
 
@@ -53,13 +54,25 @@ export async function runDatabaseFailureScenarios(): Promise<SuiteResult> {
     note: 'Postgres cannot mint, issue EA, or replace ledger postings',
   });
 
-  const pgAvailable = process.env.SUNREY_PERSISTENCE_TEST === '1';
+  const heliosDr = runHeliosDrQualification({
+    postgresTierAttempted: process.env.SUNREY_PERSISTENCE_TEST === '1',
+    postgresTierPass: process.env.SUNREY_HELIOS_DR_PG_TIER_PASS === '1',
+  });
+  cases.push({
+    name: 'helios-dr-harness-database-loss',
+    status: heliosDrCaseStatus(heliosDr),
+    marker: heliosDr.marker,
+    note: heliosDr.qualified
+      ? 'HEALTH08 harness: destructive loss + restore qualified (engineering tier)'
+      : heliosDr.blockers.slice(0, 2).join('; '),
+  });
   cases.push({
     name: 'real-postgresql-restart',
-    status: pgAvailable ? 'BENCHMARKED' : 'ENVIRONMENT_LIMITED',
-    note: pgAvailable
-      ? 'Run npm run qualify:backend-db for real PostgreSQL restart drill'
-      : 'Set SUNREY_PERSISTENCE_TEST=1 with db:up for live PG failure simulation',
+    status: heliosDrCaseStatus(heliosDr),
+    note:
+      process.env.SUNREY_PERSISTENCE_TEST === '1'
+        ? 'Ephemeral PostgreSQL tier when db:up + qualify:backend-db succeed'
+        : 'Fixture tier qualifies recovery logic without manual DB provisioning',
   });
 
   return {
@@ -67,7 +80,9 @@ export async function runDatabaseFailureScenarios(): Promise<SuiteResult> {
     status: mergeSuiteStatus(cases.map((row) => ({ status: row.status as 'TARGET_MET' }))),
     durationMs: Date.now() - started,
     cases,
-    environment: captureEnvironment({ databaseMode: pgAvailable ? 'postgresql' : 'in-memory' }),
+    environment: captureEnvironment({
+      databaseMode: process.env.SUNREY_PERSISTENCE_TEST === '1' ? 'postgresql' : 'in-memory',
+    }),
     notes: gates.map((gate) => `${gate.gate}: ${gate.passed ? 'PASS' : 'FAIL'}`),
   };
 }

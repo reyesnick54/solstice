@@ -43,3 +43,13 @@ export {
   type HeliosArchitectureCleanMarker,
   type HeliosArchitectureCleanQualification,
 } from './architecture-clean-qualification.ts';
+
+export {
+  HEALTH08_PROGRAM,
+  HELIOS_RESTART_RECOVERY_QUALIFIED,
+  HELIOS_RESTART_RECOVERY_BLOCKED,
+  evaluateHeliosRestartRecoveryQualification,
+  type HeliosRestartRecoveryMarker,
+  type HeliosDrHarnessReport,
+  type HeliosRestartRecoveryQualification,
+} from './restart-recovery-qualification.ts';
