@@ -14,6 +14,11 @@ export { runProfile, runSanity } from './runner.ts';
 export type { RunOptions } from './runner.ts';
 export { compareReports, regressionFailed } from './regression.ts';
 export { defaultSoakMs, runSoak } from './soak.ts';
+export { analyzeMemoryTrend } from './memory-trend-analysis.ts';
+export {
+  evaluateHeliosMemorySoakQualification,
+  HELIOS_MEMORY_SOAK_QUALIFIED,
+} from './memory-soak-qualification.ts';
 export { measureConsensusLatency } from './consensus.ts';
 export { measureFinalizedThroughput } from './throughput.ts';
 export { measureMempool } from './mempool.ts';

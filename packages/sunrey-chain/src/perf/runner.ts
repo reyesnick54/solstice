@@ -114,7 +114,12 @@ export function runProfile(options: RunOptions): BenchReport {
       warnings.push('explorer adapter absent; catch-up benches skipped');
     }
   } else {
-    const soak = runSoak({ durationMs: options.soakMs ?? defaultSoakMs() });
+    const soak = runSoak({
+      durationMs: options.soakMs ?? defaultSoakMs(),
+      ...(options.ports?.soakIntegrated !== undefined
+        ? { integrated: options.ports.soakIntegrated }
+        : {}),
+    });
     cases.push(...soak.cases);
     invariants.push(...soak.invariants);
     datasetSize = soak.cases[0]?.throughput?.submitted ?? 0;
