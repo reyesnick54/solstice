@@ -1,5 +1,8 @@
 import type { ResourceSample } from './types.ts';
 
+/** Soaks shorter than this use legacy RSS growth checks; HEALTH07 trend needs ≥4 samples. */
+export const MEMORY_TREND_MIN_SOAK_MS = 60_000;
+
 export const MEMORY_PHASES = ['WARMUP', 'STEADY_STATE', 'COOLDOWN'] as const;
 export type MemoryPhase = (typeof MEMORY_PHASES)[number];
 

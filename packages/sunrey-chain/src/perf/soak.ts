@@ -19,7 +19,7 @@ import {
 } from './invariants.ts';
 import { ConnectionTracker, ResourceMonitor } from './leaks.ts';
 import { captureMemoryDiagnostics, diagnosticsToResourceSample } from './memory-instrumentation.ts';
-import { analyzeMemoryTrend, phaseAtMs } from './memory-trend-analysis.ts';
+import { analyzeMemoryTrend, MEMORY_TREND_MIN_SOAK_MS, phaseAtMs } from './memory-trend-analysis.ts';
 import type { SoakIntegratedHarness } from './ports.ts';
 import { createInProcessRpc } from './rpc.ts';
 import { caseResult } from './result.ts';
@@ -244,6 +244,8 @@ export function runSoak(input: {
   );
   const memoryTrend = analyzeMemoryTrend(memorySnapshots, input.durationMs);
   const growth = monitor.monotonicGrowth(input.memoryThresholdBytes ?? 64 * 1024 * 1024);
+  const memoryTrendRequired = input.durationMs >= MEMORY_TREND_MIN_SOAK_MS;
+  const shortSoakTrendDetail = `short_soak(<${MEMORY_TREND_MIN_SOAK_MS}ms): HEALTH07 trend deferred; legacy_rss_delta=${growth.delta}`;
   const aliceRoot = engine.accounts.position('alice', 'SUNREY_COIN').available.toString();
   const replicaRoot = replica.accounts.position('alice', 'SUNREY_COIN').available.toString();
   const feeStats = engine.feeReceiptRetentionStats();
@@ -257,15 +259,17 @@ export function runSoak(input: {
     checkCustodyMismatch(0),
     {
       id: 'MEMORY_GROWTH_BUDGET',
-      ok: memoryTrend.ok,
-      detail: memoryTrend.ok
-        ? `${memoryTrend.detail}; legacy_rss_delta=${growth.delta}`
-        : memoryTrend.detail,
+      ok: memoryTrendRequired ? memoryTrend.ok : !growth.flagged,
+      detail: memoryTrendRequired
+        ? memoryTrend.ok
+          ? `${memoryTrend.detail}; legacy_rss_delta=${growth.delta}`
+          : memoryTrend.detail
+        : shortSoakTrendDetail,
     },
     {
       id: 'MEMORY_STEADY_STATE_TREND',
-      ok: memoryTrend.ok,
-      detail: memoryTrend.detail,
+      ok: memoryTrendRequired ? memoryTrend.ok : true,
+      detail: memoryTrendRequired ? memoryTrend.detail : shortSoakTrendDetail,
     },
     {
       id: 'CONNECTION_RELEASE',
@@ -290,7 +294,7 @@ export function runSoak(input: {
         }),
         extras: {
           durationMs: input.durationMs,
-          memoryFlagged: !memoryTrend.ok,
+          memoryFlagged: memoryTrendRequired && !memoryTrend.ok,
           memoryTrendClass: memoryTrend.classification,
           rssDeltaBytes: memoryTrend.rssDeltaStartToEndBytes,
           steadyHeapSlopeBytesPerMs: memoryTrend.theilSenHeapUsedSlopeBytesPerMs,
