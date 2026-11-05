@@ -112,6 +112,7 @@ export { createRevisionLedgerStore as createPointInTimeRevisionLedgerStore } fro
 export * from './aaf06/index.ts';
 export * from './macro-intelligence/index.ts';
 export * from './earnings/index.ts';
+export * from './valuation/index.ts';
 
 export * as entityResolution from './entity-resolution/index.ts';
 export { computeFeatureWithResolvedEntity, type ComputeFeatureWithResolutionInput } from './entity-binding.ts';
