@@ -50,6 +50,15 @@ describe('Chunk 63 SunRey Testnet release candidate', () => {
   });
 
   it('creates, qualifies, verifies, and signs SUNREY_TESTNET_RC_1', () => {
+    assertIsolatedTestPass({
+      envFlag: 'SUNREY_RC_CREATE_ISOLATED',
+      testModuleUrl: import.meta.url,
+      cwd: ROOT,
+      testNamePattern: 'creates, qualifies, verifies, and signs',
+    });
+    if (!shouldRunIsolatedTestBody('SUNREY_RC_CREATE_ISOLATED')) {
+      return;
+    }
     const created = createReleaseCandidate({ root: ROOT, profile: 'smoke', rcId: 'SUNREY_TESTNET_RC_1' });
     const manifest = created.bundle.manifest;
     assert.equal(manifest.rc_id, 'SUNREY_TESTNET_RC_1');
