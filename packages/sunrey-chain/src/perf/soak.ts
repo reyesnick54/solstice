@@ -38,6 +38,19 @@ export function defaultSoakMs(): number {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 250;
 }
 
+/** Minimum soak for CI sanity / HEALTH07 trend invariants (≥4 snapshots, ≥3 steady-state). */
+export function sanitySoakMs(): number {
+  const raw =
+    process.env.SUNREY_BENCH_SANITY_SOAK_MS ?? process.env.SUNREY_BENCH_SOAK_QUALIFY_MS;
+  if (raw) {
+    const parsed = Number.parseInt(raw, 10);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return parsed;
+    }
+  }
+  return 45_000;
+}
+
 function tickOracleBench(
   engine: ReturnType<typeof developmentOracleEngine>,
   providers: ReturnType<typeof registerEnergyProviders>,

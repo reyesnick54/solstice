@@ -13,7 +13,7 @@ export { toHumanSummary, toJson } from './result.ts';
 export { runProfile, runSanity } from './runner.ts';
 export type { RunOptions } from './runner.ts';
 export { compareReports, regressionFailed } from './regression.ts';
-export { defaultSoakMs, runSoak } from './soak.ts';
+export { defaultSoakMs, runSoak, sanitySoakMs } from './soak.ts';
 export { analyzeMemoryTrend } from './memory-trend-analysis.ts';
 export {
   evaluateHeliosMemorySoakQualification,
