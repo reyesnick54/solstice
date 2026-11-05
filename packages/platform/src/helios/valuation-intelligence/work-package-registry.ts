@@ -22,6 +22,10 @@ const MODULE_BY_PACKAGE: Record<
     title: 'Business driver and cash-flow forecast engine',
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/driver-forecast/index.ts',
   },
+  VAL03: {
+    title: 'Dynamic cost of capital engine',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/val03-cost-of-capital/engine.ts',
+  },
   VAL04: {
     title: 'Probabilistic FCFF / FCFE DCF engine',
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/val04-probabilistic-dcf/index.ts',
@@ -35,6 +39,7 @@ const MODULE_BY_PACKAGE: Record<
 const TEST_BY_PACKAGE: Record<string, string> = {
   VAL01: 'tests/helios-val01-valuation-intelligence-domain.test.ts',
   VAL02: 'tests/helios-val02-driver-forecast.test.ts',
+  VAL03: 'tests/helios-val03-cost-of-capital.test.ts',
   VAL04: 'tests/helios-val04-probabilistic-dcf.test.ts',
   VAL05: 'tests/helios-val05-reverse-dcf.test.ts',
 };
