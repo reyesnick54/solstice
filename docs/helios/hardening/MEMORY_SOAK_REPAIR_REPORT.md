@@ -60,4 +60,6 @@ SUNREY_BENCH_SOAK_MS=120000 npm run sunrey-bench -- soak --soak-ms 120000
 
 ## Qualification
 
-When soak invariants pass (including `MEMORY_GROWTH_BUDGET`) and ≥2 memory snapshots are recorded, `evaluateHeliosMemorySoakQualification` returns `HELIOS_MEMORY_SOAK_QUALIFIED`.
+See **HEALTH07** final qualification: `docs/helios/hardening/MEMORY_SOAK_FINAL_QUALIFICATION.md`.
+
+When soak invariants pass (including phase-aware `MEMORY_GROWTH_BUDGET` / `MEMORY_STEADY_STATE_TREND`) and ≥4 memory snapshots are recorded, `evaluateHeliosMemorySoakQualification` returns `HELIOS_MEMORY_SOAK_QUALIFIED`.
