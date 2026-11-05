@@ -65,7 +65,7 @@ Implemented in `packages/sunrey-chain/src/perf/memory-instrumentation.ts` and at
 1. Discard configurable **warmup** (default 30 s) and **cooldown** (default 10 s).
 2. Compute **rolling RSS median** over steady samples.
 3. Record **Theil–Sen slopes** for heap and RSS (diagnostics; robust to GC spikes).
-4. **Primary pass/fail:** late vs early steady **heap max plateau** ≤ 64 MiB; rolling RSS median Δ ≤ 96 MiB.
+4. **Primary pass/fail:** late vs early steady **heap max plateau** ≤ 64 MiB; rolling RSS median Δ ≤ 128 MiB (`DEFAULT_MEMORY_TREND_CONFIG.maxRollingRssMedianDeltaBytes`).
 5. **Retained objects:** tail-plateau stability for bounded stores (fee hot window, productive slots, HELIOS caps).
 6. **High-water RSS** and start→end RSS reported separately; large startup RSS with flat steady trends classifies as `RSS_RETENTION`, not failure.
 
