@@ -22,7 +22,7 @@ export type MemoryTrendConfig = {
   readonly maxRetainedObjectSlopePerMs: number;
 };
 
-/** HEALTH07 trend gates require enough interval samples; CI sanity soak stays at 80 ms. */
+/** HEALTH07 trend gates require enough interval samples; sub-second micro-soaks skip trend and use legacy RSS. */
 export const MIN_MEMORY_TREND_SNAPSHOTS = 4;
 export const MIN_MEMORY_STEADY_SAMPLES = 3;
 
