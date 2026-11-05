@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
 import { FeeEngine } from './fees/engine.ts';
@@ -12,8 +11,10 @@ import { ExplorerQueryService } from '../../sunrey-explorer/src/queries.ts';
 import { canonicalProjectionHash } from '../../sunrey-explorer/src/canonical.ts';
 import { runSanity, runProfile } from './perf/runner.ts';
 import { RESULT_CLASS } from './perf/types.ts';
-import { assertIsolatedTestPass, shouldRunIsolatedTestBody } from './test/isolated-child.ts';
 import { nativeTransferTx } from './perf/workload.ts';
+import { join } from 'node:path';
+
+import { assertIsolatedTestPass, shouldRunIsolatedTestBody } from './test/isolated-child.ts';
 
 const ROOT = join(import.meta.dirname, '../../..');
 
