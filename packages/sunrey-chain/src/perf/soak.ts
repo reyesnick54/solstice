@@ -19,6 +19,8 @@ import {
 } from './invariants.ts';
 import { ConnectionTracker, ResourceMonitor } from './leaks.ts';
 import { captureMemoryDiagnostics, diagnosticsToResourceSample } from './memory-instrumentation.ts';
+import { analyzeMemoryTrend, phaseAtMs } from './memory-trend-analysis.ts';
+import type { SoakIntegratedHarness } from './ports.ts';
 import { createInProcessRpc } from './rpc.ts';
 import { caseResult } from './result.ts';
 import { elapsedNs, nowNs, summarizeThroughput } from './statistics.ts';
@@ -82,16 +84,20 @@ function tickOracleBench(
   }
 }
 
+const SOAK_SAMPLE_INTERVAL_MS = 5_000;
+
 export function runSoak(input: {
   readonly durationMs: number;
   readonly explorerLag?: number;
   readonly memoryThresholdBytes?: number;
+  readonly integrated?: SoakIntegratedHarness;
 }): {
   readonly cases: readonly BenchCaseResult[];
   readonly invariants: readonly InvariantCheck[];
   readonly monitor: ResourceMonitor;
   readonly connections: ConnectionTracker;
   readonly memorySnapshots: readonly ResourceSample[];
+  readonly memoryTrend: ReturnType<typeof analyzeMemoryTrend>;
 } {
   const monitor = new ResourceMonitor();
   const memorySnapshots: ResourceSample[] = [];
@@ -118,8 +124,12 @@ export function runSoak(input: {
   let rejected = 0;
   let height = 1;
   let index = 0;
-  const sampleIntervalMs = Math.max(250, Math.floor(input.durationMs / 40));
+  const sampleIntervalMs = Math.min(
+    SOAK_SAMPLE_INTERVAL_MS,
+    Math.max(250, Math.floor(input.durationMs / 24)),
+  );
   let nextSampleMs = 0;
+  const integrated = input.integrated;
   connections.open('rpc');
   connections.open('eventSubscriptions');
   monitor.sample();
@@ -128,6 +138,8 @@ export function runSoak(input: {
       captureMemoryDiagnostics(0, {
         fees: engine,
         productive,
+        integrated: integrated?.snapshot(),
+        phase: phaseAtMs(0, input.durationMs),
       }),
     ),
   );
@@ -166,6 +178,7 @@ export function runSoak(input: {
       rpc.handle('block');
       tickOracleBench(oracle, oracleProviders, oracleFeedId, index);
     }
+    integrated?.tick(index);
     if (index % 11 === 0) {
       const slot = Math.floor(index / 11) % PRODUCTIVE_OBJECT_SLOTS;
       const objectId = `obj.soak.${slot}`;
@@ -188,7 +201,7 @@ export function runSoak(input: {
         productive.putOracleFact(fact);
       }
       const claim = fixtureClaim({
-        claimId: `claim.soak.${index}`,
+        claimId: `claim.soak.${slot}`,
         objectId,
         claimType: 'OUTPUT',
         category: 'ENERGY',
@@ -205,6 +218,8 @@ export function runSoak(input: {
           captureMemoryDiagnostics(elapsedMs, {
             fees: engine,
             productive,
+            integrated: integrated?.snapshot(),
+            phase: phaseAtMs(elapsedMs, input.durationMs),
           }),
         ),
       );
@@ -222,9 +237,12 @@ export function runSoak(input: {
       captureMemoryDiagnostics(input.durationMs, {
         fees: engine,
         productive,
+        integrated: integrated?.snapshot(),
+        phase: phaseAtMs(input.durationMs, input.durationMs),
       }),
     ),
   );
+  const memoryTrend = analyzeMemoryTrend(memorySnapshots, input.durationMs);
   const growth = monitor.monotonicGrowth(input.memoryThresholdBytes ?? 64 * 1024 * 1024);
   const aliceRoot = engine.accounts.position('alice', 'SUNREY_COIN').available.toString();
   const replicaRoot = replica.accounts.position('alice', 'SUNREY_COIN').available.toString();
@@ -239,8 +257,15 @@ export function runSoak(input: {
     checkCustodyMismatch(0),
     {
       id: 'MEMORY_GROWTH_BUDGET',
-      ok: !growth.flagged,
-      detail: growth.flagged ? `rss grew ${growth.delta} bytes` : `rss delta ${growth.delta} bytes`,
+      ok: memoryTrend.ok,
+      detail: memoryTrend.ok
+        ? `${memoryTrend.detail}; legacy_rss_delta=${growth.delta}`
+        : memoryTrend.detail,
+    },
+    {
+      id: 'MEMORY_STEADY_STATE_TREND',
+      ok: memoryTrend.ok,
+      detail: memoryTrend.detail,
     },
     {
       id: 'CONNECTION_RELEASE',
@@ -253,6 +278,7 @@ export function runSoak(input: {
     connections,
     invariants,
     memorySnapshots,
+    memoryTrend,
     cases: [
       caseResult('soak', 'mixed_continuous', {
         throughput: summarizeThroughput({
@@ -264,8 +290,11 @@ export function runSoak(input: {
         }),
         extras: {
           durationMs: input.durationMs,
-          memoryFlagged: growth.flagged,
-          rssDeltaBytes: growth.delta,
+          memoryFlagged: !memoryTrend.ok,
+          memoryTrendClass: memoryTrend.classification,
+          rssDeltaBytes: memoryTrend.rssDeltaStartToEndBytes,
+          steadyHeapSlopeBytesPerMs: memoryTrend.theilSenHeapUsedSlopeBytesPerMs,
+          steadyRssSlopeBytesPerMs: memoryTrend.theilSenRssSlopeBytesPerMs,
           feeReceiptsInMemory: feeStats.inMemoryReceipts,
           feeReceiptsSealed: feeStats.sealedReceipts,
           memorySnapshots: memorySnapshots.length,
