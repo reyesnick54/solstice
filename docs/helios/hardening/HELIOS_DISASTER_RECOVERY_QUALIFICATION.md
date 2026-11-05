@@ -3,8 +3,8 @@
 **Program:** `HELIOS_HARDENING_HEALTH08`  
 **Marker:** `HELIOS_RESTART_RECOVERY_QUALIFIED`  
 **Qualified:** yes  
-**Git SHA:** `664c80699abc3dc453d364be6ba84cc54caf44ea`  
-**Evaluated (UTC):** 2026-11-05T04:52:28.502Z
+**Git SHA:** `182dca38c3885aeef0e0a329006db24ffdb8f6de`  
+**Evaluated (UTC):** 2026-11-05T05:50:02.867Z
 
 ## Scope
 
@@ -19,7 +19,7 @@ It is **not** a production RPO/RTO commitment.
 
 | Metric | Value | Tier |
 | --- | ---: | --- |
-| RPO | 0 ms | simulation_fixture |
+| RPO | 1 ms | simulation_fixture |
 | RTO | 0 ms | simulation_fixture |
 
 Engineering harness measurement only. Not contractual production RPO/RTO.
@@ -28,19 +28,19 @@ Engineering harness measurement only. Not contractual production RPO/RTO.
 
 | Step | Result | Duration (ms) | Detail |
 | --- | --- | ---: | --- |
-| `clean_database_creation` | PASS | 0 | fixture workspace /tmp/helios-dr-harness-3CjP5W/live |
+| `clean_database_creation` | PASS | 0 | fixture workspace /tmp/helios-dr-harness-eoGVfU/live |
 | `migrations` | PASS | 0 | schema fingerprint 1a64d30c0669… |
-| `helios_state_write` | PASS | 1 | operational + HELIOS representative state seeded |
+| `helios_state_write` | PASS | 2 | operational + HELIOS representative state seeded |
 | `market_observations` | PASS | 0 | 1 observation |
 | `feature_fabric_observations` | PASS | 0 | feature fabric lineage hash captured |
 | `strategy_lab_state` | PASS | 0 | strat_v1 |
-| `evidence_vault_records` | PASS | 1 | 1 sealed record |
-| `order_fill_reconciliation_state` | PASS | 0 | 1 orders, 1 trades |
-| `backup` | PASS | 1 | local WAL archive segments=1 |
-| `destructive_database_loss` | PASS | 0 | live fixture directory destroyed |
+| `evidence_vault_records` | PASS | 0 | 1 sealed record |
+| `order_fill_reconciliation_state` | PASS | 1 | 1 orders, 1 trades |
+| `backup` | PASS | 0 | local WAL archive segments=1 |
+| `destructive_database_loss` | PASS | 1 | live fixture directory destroyed |
 | `restore` | PASS | 0 | PITR appliedSegments=1 |
 | `service_restart` | PASS | 0 | durable stores reopened after destructive loss |
-| `state_rehydration` | PASS | 1 | readiness=RECONCILIATION_REQUIRED steps=8 |
+| `state_rehydration` | PASS | 0 | readiness=RECONCILIATION_REQUIRED steps=8 |
 | `reconciliation` | PASS | 0 | 6 unresolved operations flagged query-before-retry |
 | `deterministic_continuation` | PASS | 0 | state hash 02bc32ab36f496cd… stable |
 

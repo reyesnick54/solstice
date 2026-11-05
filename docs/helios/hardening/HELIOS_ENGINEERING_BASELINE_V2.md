@@ -2,8 +2,8 @@
 
 **Program:** `HELIOS_HARDENING_HEALTH06`  
 **Schema:** `sunrey.helios.engineering-baseline.v2`  
-**Evaluated (UTC):** 2026-11-05T05:23:36.164Z  
-**Git SHA:** `a1b13affc18fb4f103f93a767a7d9bdd2b5517db`  
+**Evaluated (UTC):** 2026-11-05T05:40:48.442Z  
+**Git SHA:** `182dca38c3885aeef0e0a329006db24ffdb8f6de`  
 **Live safety:** PASS
 
 > **Final marker:** `HELIOS_ENGINEERING_BASELINE_V2_QUALIFIED`
