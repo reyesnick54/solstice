@@ -268,7 +268,8 @@ export function analyzeMemoryTrend(
   const lateMaxHeap = Math.max(...latePlateau.map((row) => row.heapUsedBytes));
   const plateauHeapDelta = lateMaxHeap - earlyMaxHeap;
 
-  const heapLeak = plateauHeapDelta > config.maxPostWarmupHeapFloorGrowthBytes;
+  // Floor growth resists GC spikes that inflate early/late max-heap plateaus without retained objects.
+  const heapLeak = heapFloorGrowth > config.maxPostWarmupHeapFloorGrowthBytes;
 
   const steadyRssDrift = rollingRssMedianDelta > config.maxRollingRssMedianDeltaBytes;
 
