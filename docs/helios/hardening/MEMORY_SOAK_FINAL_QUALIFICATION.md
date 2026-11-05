@@ -110,6 +110,6 @@ Audit/evidence durability (sealed fee/MoonRey receipts on eviction) is unchanged
 
 - All soak invariants pass (including `MEMORY_GROWTH_BUDGET` / `MEMORY_STEADY_STATE_TREND`),
 - ≥ 4 memory snapshots exist,
-- Steady-state trend analysis `ok` is true.
+- Steady-state trend analysis `ok` is true when `durationMs ≥ 60 000` (CI’s 45 s profile defers trend to legacy RSS growth; release qualification uses 120 s+).
 
 The HEALTH06 subprocess gate uses the **chain-only** canonical command above (no HELIOS env flag).

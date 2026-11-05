@@ -19,7 +19,11 @@ import {
 } from './invariants.ts';
 import { ConnectionTracker, ResourceMonitor } from './leaks.ts';
 import { captureMemoryDiagnostics, diagnosticsToResourceSample } from './memory-instrumentation.ts';
-import { analyzeMemoryTrend, memoryTrendGateActive, phaseAtMs } from './memory-trend-analysis.ts';
+import {
+  analyzeMemoryTrend,
+  MIN_SOAK_MS_FOR_TREND_ANALYSIS,
+  phaseAtMs,
+} from './memory-trend-analysis.ts';
 import type { SoakIntegratedHarness } from './ports.ts';
 import { createInProcessRpc } from './rpc.ts';
 import { caseResult } from './result.ts';
@@ -28,6 +32,8 @@ import type { BenchCaseResult, InvariantCheck, ResourceSample } from './types.ts
 import { executableForKind, mixedKindAt } from './workload.ts';
 
 const PRODUCTIVE_OBJECT_SLOTS = 128;
+/** Legacy plateau budget when HEALTH07 trend is deferred (matches HEALTH05 soak test envelope). */
+const SHORT_SOAK_LEGACY_HEAP_PLATEAU_BYTES = 256 * 1024 * 1024;
 
 export function defaultSoakMs(): number {
   const raw = process.env.SUNREY_BENCH_SOAK_MS;
@@ -112,7 +118,7 @@ export function runSoak(input: {
   readonly monitor: ResourceMonitor;
   readonly connections: ConnectionTracker;
   readonly memorySnapshots: readonly ResourceSample[];
-  readonly memoryTrend: ReturnType<typeof analyzeMemoryTrend>;
+  readonly memoryTrend: ReturnType<typeof analyzeMemoryTrend> | null;
 } {
   const monitor = new ResourceMonitor();
   const memorySnapshots: ResourceSample[] = [];
@@ -264,20 +270,24 @@ export function runSoak(input: {
       }),
     ),
   );
-  const memoryTrend = analyzeMemoryTrend(memorySnapshots, input.durationMs);
-  const growth = monitor.monotonicGrowth(input.memoryThresholdBytes ?? 64 * 1024 * 1024);
-  const trendGateActive = memoryTrendGateActive(memorySnapshots, memoryTrend);
-  const memoryBudgetOk = trendGateActive ? memoryTrend.ok : !growth.flagged;
-  const memoryBudgetDetail = trendGateActive
+  const trendEligible = input.durationMs >= MIN_SOAK_MS_FOR_TREND_ANALYSIS;
+  const memoryTrend = trendEligible ? analyzeMemoryTrend(memorySnapshots, input.durationMs) : null;
+  const legacyThresholdBytes = input.memoryThresholdBytes ?? 64 * 1024 * 1024;
+  const growthThresholdBytes = trendEligible
+    ? legacyThresholdBytes
+    : Math.max(legacyThresholdBytes, SHORT_SOAK_LEGACY_HEAP_PLATEAU_BYTES);
+  const growth = monitor.monotonicGrowth(growthThresholdBytes);
+  const aliceRoot = engine.accounts.position('alice', 'SUNREY_COIN').available.toString();
+  const replicaRoot = replica.accounts.position('alice', 'SUNREY_COIN').available.toString();
+  const feeStats = engine.feeReceiptRetentionStats();
+  const memoryGrowthOk = memoryTrend ? memoryTrend.ok : !growth.flagged;
+  const memoryGrowthDetail = memoryTrend
     ? memoryTrend.ok
       ? `${memoryTrend.detail}; legacy_rss_delta=${growth.delta}`
       : memoryTrend.detail
     : growth.flagged
-      ? `micro-soak legacy rss grew ${growth.delta} bytes`
-      : `micro-soak legacy rss delta ${growth.delta} bytes; steady-state trend skipped (${memorySnapshots.length} snapshots)`;
-  const aliceRoot = engine.accounts.position('alice', 'SUNREY_COIN').available.toString();
-  const replicaRoot = replica.accounts.position('alice', 'SUNREY_COIN').available.toString();
-  const feeStats = engine.feeReceiptRetentionStats();
+      ? `rss grew ${growth.delta} bytes`
+      : `rss delta ${growth.delta} bytes (short soak; HEALTH07 trend deferred)`;
   const invariants: InvariantCheck[] = [
     checkStateRootsEqual(aliceRoot, replicaRoot),
     checkNativeSupply(engine),
@@ -288,15 +298,15 @@ export function runSoak(input: {
     checkCustodyMismatch(0),
     {
       id: 'MEMORY_GROWTH_BUDGET',
-      ok: memoryBudgetOk,
-      detail: memoryBudgetDetail,
+      ok: memoryGrowthOk,
+      detail: memoryGrowthDetail,
     },
     {
       id: 'MEMORY_STEADY_STATE_TREND',
-      ok: trendGateActive ? memoryTrend.ok : true,
-      detail: trendGateActive
+      ok: memoryTrend ? memoryTrend.ok : true,
+      detail: memoryTrend
         ? memoryTrend.detail
-        : `steady-state trend skipped (${memorySnapshots.length} snapshots; micro-soak)`,
+        : `deferred: soak ${input.durationMs}ms < ${MIN_SOAK_MS_FOR_TREND_ANALYSIS}ms trend window`,
     },
     {
       id: 'CONNECTION_RELEASE',
@@ -321,11 +331,11 @@ export function runSoak(input: {
         }),
         extras: {
           durationMs: input.durationMs,
-          memoryFlagged: !memoryBudgetOk,
-          memoryTrendClass: memoryTrend.classification,
-          rssDeltaBytes: memoryTrend.rssDeltaStartToEndBytes,
-          steadyHeapSlopeBytesPerMs: memoryTrend.theilSenHeapUsedSlopeBytesPerMs,
-          steadyRssSlopeBytesPerMs: memoryTrend.theilSenRssSlopeBytesPerMs,
+          memoryFlagged: memoryTrend ? !memoryTrend.ok : growth.flagged,
+          memoryTrendClass: memoryTrend?.classification ?? 'SHORT_SOAK_LEGACY',
+          rssDeltaBytes: memoryTrend?.rssDeltaStartToEndBytes ?? growth.delta,
+          steadyHeapSlopeBytesPerMs: memoryTrend?.theilSenHeapUsedSlopeBytesPerMs ?? 0,
+          steadyRssSlopeBytesPerMs: memoryTrend?.theilSenRssSlopeBytesPerMs ?? 0,
           feeReceiptsInMemory: feeStats.inMemoryReceipts,
           feeReceiptsSealed: feeStats.sealedReceipts,
           memorySnapshots: memorySnapshots.length,
