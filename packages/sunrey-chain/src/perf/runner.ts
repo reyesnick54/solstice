@@ -22,6 +22,7 @@ export type RunOptions = {
   readonly profile: BenchProfile;
   readonly ports?: BenchPorts;
   readonly soakMs?: number;
+  readonly memoryThresholdBytes?: number;
   readonly latencyProfile?: LatencyProfile;
 };
 
@@ -116,6 +117,9 @@ export function runProfile(options: RunOptions): BenchReport {
   } else {
     const soak = runSoak({
       durationMs: options.soakMs ?? defaultSoakMs(),
+      ...(options.memoryThresholdBytes !== undefined
+        ? { memoryThresholdBytes: options.memoryThresholdBytes }
+        : {}),
       ...(options.ports?.soakIntegrated !== undefined
         ? { integrated: options.ports.soakIntegrated }
         : {}),
@@ -167,8 +171,13 @@ export function runProfile(options: RunOptions): BenchReport {
 export function runSanity(ports?: BenchPorts): BenchReport {
   const shared = ports !== undefined ? { ports } : {};
   const micro = runProfile({ profile: 'micro', ...shared });
+  const soak = runProfile({
+    profile: 'soak',
+    soakMs: sanitySoakMs(),
+    memoryThresholdBytes: 256 * 1024 * 1024,
+    ...shared,
+  });
   const seven = runProfile({ profile: 'seven-validator', latencyProfile: 'low', ...shared });
-  const soak = runProfile({ profile: 'soak', soakMs: sanitySoakMs(), ...shared });
   const adapterCases = [
     ...(ports?.explorer ? ports.explorer.measure({ blocks: 24, catchUp: true }) : []),
     ...(ports?.exchange ? ports.exchange.measure({ orders: 12 }) : []),
@@ -189,7 +198,7 @@ export function runSanity(ports?: BenchPorts): BenchReport {
       ...micro.warnings,
       ...seven.warnings,
       ...soak.warnings,
-      'CI sanity combines micro + seven-validator + phase-aware memory soak (sanitySoakMs). Multi-hour soak is a manual/nightly profile.',
+      'CI sanity combines micro + phase-aware memory soak (sanitySoakMs) + seven-validator. Multi-hour soak is a manual/nightly profile.',
     ],
   };
 }

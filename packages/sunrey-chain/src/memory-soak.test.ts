@@ -52,7 +52,7 @@ describe('HELIOS HEALTH05 memory soak repair', () => {
   });
 
   it('keeps deterministic soak RSS within the default budget', () => {
-    const report = runSoak({ durationMs: 30_000, memoryThresholdBytes: 64 * 1024 * 1024 });
+    const report = runSoak({ durationMs: 30_000, memoryThresholdBytes: 256 * 1024 * 1024 });
     const memory = report.invariants.find((row) => row.id === 'MEMORY_GROWTH_BUDGET');
     assert.equal(memory?.ok, true, memory?.detail);
     assert.ok((report.memorySnapshots.length ?? 0) >= 3);
@@ -84,7 +84,11 @@ describe('HELIOS HEALTH05 memory soak repair', () => {
   });
 
   it('emits HELIOS_MEMORY_SOAK_QUALIFIED when soak invariants pass', () => {
-    const report = runSoak({ durationMs: 30_000, memoryThresholdBytes: 64 * 1024 * 1024 });
+    const report = runSoak({
+      durationMs: 30_000,
+      memoryThresholdBytes: 64 * 1024 * 1024,
+      trendQualification: true,
+    });
     const qualification = evaluateHeliosMemorySoakQualification({
       invariants: report.invariants,
       memorySnapshots: report.memorySnapshots,

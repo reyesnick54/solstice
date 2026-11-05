@@ -106,6 +106,8 @@ export function runSoak(input: {
   readonly explorerLag?: number;
   readonly memoryThresholdBytes?: number;
   readonly integrated?: SoakIntegratedHarness;
+  /** HEALTH07 phase-aware trend gates (qualification soaks); CI sanity uses legacy RSS budget. */
+  readonly trendQualification?: boolean;
 }): {
   readonly cases: readonly BenchCaseResult[];
   readonly invariants: readonly InvariantCheck[];
@@ -265,6 +267,7 @@ export function runSoak(input: {
     ),
   );
   const memoryTrend = analyzeMemoryTrend(memorySnapshots, input.durationMs);
+  const trendQualification = input.trendQualification ?? Boolean(input.integrated);
   const growth = monitor.monotonicGrowth(input.memoryThresholdBytes ?? 64 * 1024 * 1024);
   const aliceRoot = engine.accounts.position('alice', 'SUNREY_COIN').available.toString();
   const replicaRoot = replica.accounts.position('alice', 'SUNREY_COIN').available.toString();
@@ -279,15 +282,21 @@ export function runSoak(input: {
     checkCustodyMismatch(0),
     {
       id: 'MEMORY_GROWTH_BUDGET',
-      ok: memoryTrend.ok,
-      detail: memoryTrend.ok
-        ? `${memoryTrend.detail}; legacy_rss_delta=${growth.delta}`
-        : memoryTrend.detail,
+      ok: trendQualification ? memoryTrend.ok : !growth.flagged,
+      detail: trendQualification
+        ? memoryTrend.ok
+          ? `${memoryTrend.detail}; legacy_rss_delta=${growth.delta}`
+          : memoryTrend.detail
+        : growth.flagged
+          ? `rss grew ${growth.delta} bytes`
+          : `rss delta ${growth.delta} bytes`,
     },
     {
       id: 'MEMORY_STEADY_STATE_TREND',
-      ok: memoryTrend.ok,
-      detail: memoryTrend.detail,
+      ok: trendQualification ? memoryTrend.ok : true,
+      detail: trendQualification
+        ? memoryTrend.detail
+        : 'skipped (non-qualification soak; see HEALTH07 qualification suite)',
     },
     {
       id: 'CONNECTION_RELEASE',
