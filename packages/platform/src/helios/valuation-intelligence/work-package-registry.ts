@@ -15,21 +15,29 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
     title: 'Probabilistic valuation domain',
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/val01-canonical-domain.ts',
   },
+  VAL02: {
+    title: 'Business driver and cash-flow forecast engine',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/driver-forecast/index.ts',
+  },
   VAL04: {
     title: 'Probabilistic FCFF / FCFE DCF engine',
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/val04-probabilistic-dcf/index.ts',
   },
 };
 
+const TEST_BY_PACKAGE: Record<string, string> = {
+  VAL01: 'tests/helios-val01-valuation-intelligence-domain.test.ts',
+  VAL02: 'tests/helios-val02-driver-forecast.test.ts',
+  VAL04: 'tests/helios-val04-probabilistic-dcf.test.ts',
+};
+
 export function listValWorkPackages(root: string): readonly ValWorkPackageRow[] {
   return Object.freeze(
     VAL_WORK_PACKAGES.map((packageId) => {
       const meta = MODULE_BY_PACKAGE[packageId];
-      const testPath =
-        packageId === 'VAL01'
-          ? join(root, 'tests/helios-val01-valuation-intelligence-domain.test.ts')
-          : join(root, 'tests/helios-val04-probabilistic-dcf.test.ts');
-      const status = meta && existsSync(join(root, meta.moduleRef)) && existsSync(testPath) ? 'IMPLEMENTED' : 'BLOCKED';
+      const testPath = join(root, TEST_BY_PACKAGE[packageId] ?? '');
+      const status =
+        meta && existsSync(join(root, meta.moduleRef)) && existsSync(testPath) ? 'IMPLEMENTED' : 'BLOCKED';
       return Object.freeze({
         packageId,
         title: meta?.title ?? packageId,
