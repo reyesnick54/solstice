@@ -22,6 +22,9 @@ export type MemoryTrendConfig = {
   readonly maxRetainedObjectSlopePerMs: number;
 };
 
+/** HEALTH07 phased trend gates need a long steady window; CI sanity/qualify soaks stay shorter. */
+export const MIN_SOAK_MS_FOR_TREND_ANALYSIS = 60_000;
+
 export const DEFAULT_MEMORY_TREND_CONFIG: MemoryTrendConfig = Object.freeze({
   warmupDiscardMs: 30_000,
   cooldownDiscardMs: 10_000,

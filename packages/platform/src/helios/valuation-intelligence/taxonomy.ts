@@ -1,5 +1,5 @@
 /**
- * HELIOS Valuation Intelligence — canonical owner and taxonomy (VAL01 + VAL04).
+ * HELIOS Valuation Intelligence — canonical owner and taxonomy (VAL01 + VAL02 + VAL04).
  */
 
 export const HELIOS_VALUATION_INTELLIGENCE_SCHEMA = 'helios.valuation-intelligence.v1' as const;
@@ -49,5 +49,5 @@ export const HELIOS_VAL01_VALUATION_DOMAIN_QUALIFIED =
 export const HELIOS_VAL01_VALUATION_DOMAIN_BLOCKED =
   'HELIOS_VAL01_VALUATION_DOMAIN_BLOCKED' as const;
 
-export const VAL_WORK_PACKAGES = Object.freeze(['VAL01', 'VAL04'] as const);
+export const VAL_WORK_PACKAGES = Object.freeze(['VAL01', 'VAL02', 'VAL04'] as const);
 export type ValWorkPackageId = (typeof VAL_WORK_PACKAGES)[number];
