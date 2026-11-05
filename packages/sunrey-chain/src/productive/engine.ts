@@ -231,7 +231,15 @@ export class ProductiveEconomyEngine {
     if (!authorized.ok) {
       return authorized;
     }
-    return this.finalizeIssuance(authorized.authorization.authorizationId);
+    const finalized = this.finalizeIssuance(authorized.authorization.authorizationId);
+    if (finalized.ok) {
+      this.claims.delete(claimId);
+      this.contributions.delete(verified.contribution.contributionId);
+      this.metrics.productive_claims = this.claims.size;
+      this.metrics.verified_contributions = this.contributions.size;
+      this.rebuildGraph();
+    }
+    return finalized;
   }
 
   recordCorrection(correction: ProductiveCorrection): void {

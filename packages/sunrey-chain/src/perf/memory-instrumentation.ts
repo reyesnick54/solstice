@@ -4,8 +4,19 @@ import type { FeeEngine } from '../fees/engine.ts';
 import type { ProductiveEconomyEngine } from '../productive/engine.ts';
 import type { ResourceSample } from './types.ts';
 
+export type IntegratedMemoryCounts = {
+  readonly heliosObservations?: number;
+  readonly heliosTwinOrders?: number;
+  readonly heliosAgentSessions?: number;
+  readonly heliosResearchMonitors?: number;
+  readonly heliosEvidenceStagingBytes?: number;
+  readonly heliosStrategyEvaluations?: number;
+  readonly providerReconnectCycles?: number;
+};
+
 export type MemoryDiagnostics = {
   readonly atMs: number;
+  readonly phase?: 'WARMUP' | 'STEADY_STATE' | 'COOLDOWN';
   readonly rssBytes: number;
   readonly heapUsedBytes: number;
   readonly heapTotalBytes: number;
@@ -13,6 +24,8 @@ export type MemoryDiagnostics = {
   readonly arrayBufferBytes: number;
   readonly eventListenerCount: number;
   readonly timerCount: number;
+  readonly activeHandleCount: number;
+  readonly activeRequestCount: number;
   readonly activeResourceCount: number;
   readonly activeResourceTypes: Readonly<Record<string, number>>;
   readonly feeReceiptsInMemory: number;
@@ -21,6 +34,13 @@ export type MemoryDiagnostics = {
   readonly productiveClaims: number;
   readonly productiveFacts: number;
   readonly productiveReceipts: number;
+  readonly heliosObservations: number;
+  readonly heliosTwinOrders: number;
+  readonly heliosAgentSessions: number;
+  readonly heliosResearchMonitors: number;
+  readonly heliosEvidenceStagingBytes: number;
+  readonly heliosStrategyEvaluations: number;
+  readonly providerReconnectCycles: number;
 };
 
 function countActiveResources(): { readonly total: number; readonly byType: Record<string, number> } {
@@ -33,23 +53,39 @@ function countActiveResources(): { readonly total: number; readonly byType: Reco
   return { total: rows.length, byType };
 }
 
+function totalEventListeners(): number {
+  return process.eventNames().reduce((sum, name) => sum + process.listenerCount(name), 0);
+}
+
 export function captureMemoryDiagnostics(
   atMs: number,
-  engines?: { readonly fees?: FeeEngine; readonly productive?: ProductiveEconomyEngine },
+  engines?: {
+    readonly fees?: FeeEngine;
+    readonly productive?: ProductiveEconomyEngine;
+    readonly integrated?: IntegratedMemoryCounts;
+    readonly phase?: 'WARMUP' | 'STEADY_STATE' | 'COOLDOWN';
+  },
 ): MemoryDiagnostics {
   const memory = process.memoryUsage();
   const resources = countActiveResources();
   const feeStats = engines?.fees?.feeReceiptRetentionStats();
   const productive = engines?.productive;
+  const integrated = engines?.integrated;
   return Object.freeze({
     atMs,
+    phase: engines?.phase,
     rssBytes: memory.rss,
     heapUsedBytes: memory.heapUsed,
     heapTotalBytes: memory.heapTotal,
     externalBytes: memory.external,
     arrayBufferBytes: memory.arrayBuffers,
-    eventListenerCount: process.listenerCount('uncaughtException') + process.listenerCount('unhandledRejection'),
+    eventListenerCount: totalEventListeners(),
     timerCount: resources.byType['Timeout'] ?? 0,
+    activeHandleCount: resources.total,
+    activeRequestCount:
+      (resources.byType['Immediate'] ?? 0) +
+      (resources.byType['TickObject'] ?? 0) +
+      (resources.byType['CloseReq'] ?? 0),
     activeResourceCount: resources.total,
     activeResourceTypes: Object.freeze({ ...resources.byType }),
     feeReceiptsInMemory: feeStats?.inMemoryReceipts ?? 0,
@@ -58,6 +94,13 @@ export function captureMemoryDiagnostics(
     productiveClaims: productive?.currentMetrics().productive_claims ?? 0,
     productiveFacts: productive?.listFacts().length ?? 0,
     productiveReceipts: productive?.listReceipts().length ?? 0,
+    heliosObservations: integrated?.heliosObservations ?? 0,
+    heliosTwinOrders: integrated?.heliosTwinOrders ?? 0,
+    heliosAgentSessions: integrated?.heliosAgentSessions ?? 0,
+    heliosResearchMonitors: integrated?.heliosResearchMonitors ?? 0,
+    heliosEvidenceStagingBytes: integrated?.heliosEvidenceStagingBytes ?? 0,
+    heliosStrategyEvaluations: integrated?.heliosStrategyEvaluations ?? 0,
+    providerReconnectCycles: integrated?.providerReconnectCycles ?? 0,
   });
 }
 
@@ -78,5 +121,17 @@ export function diagnosticsToResourceSample(row: MemoryDiagnostics): ResourceSam
     productiveClaims: row.productiveClaims,
     productiveFacts: row.productiveFacts,
     productiveReceipts: row.productiveReceipts,
+    heliosObservations: row.heliosObservations,
+    heliosTwinOrders: row.heliosTwinOrders,
+    heliosAgentSessions: row.heliosAgentSessions,
+    heliosResearchMonitors: row.heliosResearchMonitors,
+    heliosEvidenceStagingBytes: row.heliosEvidenceStagingBytes,
+    heliosStrategyEvaluations: row.heliosStrategyEvaluations,
+    providerReconnectCycles: row.providerReconnectCycles,
+    memoryPhase: row.phase,
+    eventListenerCount: row.eventListenerCount,
+    timerCount: row.timerCount,
+    activeHandleCount: row.activeHandleCount,
+    activeRequestCount: row.activeRequestCount,
   });
 }
