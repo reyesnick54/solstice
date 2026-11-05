@@ -3,8 +3,8 @@
  * Simulation-only fixture store; not loaded during soak unless wired by the bench script.
  */
 
-import { systemClock } from '../../../../config/src/clock.ts';
-import { asUtcInstant } from '../../../../domain/src/time.ts';
+import { systemClock } from '@solstice/config';
+import { asUtcInstant } from '@solstice/domain';
 import { fabricAt, ingestQuote, marketObservation } from '../resilience/scenario-helpers.ts';
 import { createHeliosPredictionMarketService } from '../prediction-market/service.ts';
 import {
