@@ -16,6 +16,7 @@ import { startSunReyPreview } from '../../../services/api/src/preview.ts';
 import { captureEnvironment } from '../../lib/env-metadata.ts';
 import { mergeSuiteStatus, type SuiteResult } from '../../lib/report.ts';
 import { assertSimulationOnly, assertSupplyUnchanged } from '../lib/gates.ts';
+import { heliosDrCaseStatus, runHeliosDrQualification } from '../lib/helios-dr-wave9.ts';
 
 export async function runFullStackRestartScenarios(): Promise<SuiteResult> {
   const started = Date.now();
@@ -108,6 +109,18 @@ export async function runFullStackRestartScenarios(): Promise<SuiteResult> {
     name: 'ledger-reconciles',
     status: 'TARGET_MET',
     note: 'Ledger append-only; restart does not invent compensating journals',
+  });
+
+  const heliosDr = runHeliosDrQualification({
+    postgresTierAttempted: process.env.SUNREY_PERSISTENCE_TEST === '1',
+    postgresTierPass: process.env.SUNREY_HELIOS_DR_PG_TIER_PASS === '1',
+  });
+  cases.push({
+    name: 'helios-dr-harness-full-stack-restart',
+    status: heliosDrCaseStatus(heliosDr),
+    marker: heliosDr.marker,
+    rtoMs: heliosDr.report.engineeringSlo.rtoMs,
+    note: 'HEALTH08 rehydration + reconciliation after simulated full-stack restart',
   });
 
   return {
