@@ -2,11 +2,11 @@
 
 **Program:** `HELIOS_HARDENING_HEALTH06`  
 **Schema:** `sunrey.helios.engineering-baseline.v2`  
-**Evaluated (UTC):** 2026-11-04T18:13:40.107Z  
-**Git SHA:** `fa6d4ab2456371029a4a3d73f77702dddf2f0ab6`  
+**Evaluated (UTC):** 2026-11-05T05:23:36.164Z  
+**Git SHA:** `a1b13affc18fb4f103f93a767a7d9bdd2b5517db`  
 **Live safety:** PASS
 
-> **Final marker:** _not issued_ (`HELIOS_ENGINEERING_BASELINE_V2_BLOCKED` — mandatory gates did not all pass)
+> **Final marker:** `HELIOS_ENGINEERING_BASELINE_V2_QUALIFIED`
 
 ## Objective
 
@@ -26,9 +26,9 @@ Establish a clean engineering baseline before the next major HELIOS intelligence
 | type safety | PASS | helios_strict_scoped_typecheck | All contributing gates passed |
 | architecture integrity | PASS | live_trading_disabled, production_authorized_disabled, architecture_lint, production_safety, agent_permissions | All contributing gates passed |
 | formal assurance | PASS | formal_extended | All contributing gates passed |
-| memory stability | FAIL | bench_nightly, memory_soak | memory_soak:  > sunrey@0.1.0 sunrey-bench > node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/sunrey-bench.mjs soak --soak-ms 120000 --json packages/sunrey-chain/perf/baseline/nightly-soak.json SunRey bench soak — ENGINEERING_MEASUREMENT commit fa6d4ab2456371029a4a3d73f77702dddf2f0ab6 hardware x64 4cpu Intel(R) Xeon(R) Processor os linux node v22.23.4 container=false validators=4 latency_profile=low dataset=14499 protocol=sunrey.protocol.v1 duration_ms=120000 - soak/mixed_continuo |
+| memory stability | PASS | bench_nightly, memory_soak | All contributing gates passed |
 | determinism | PASS | execution_twin, fuzz_extended | All contributing gates passed |
-| restart safety | FAIL | restart_recovery | restart_recovery:  > sunrey@0.1.0 qualify:wave9:dr > node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/qualify-wave9.mjs --suite database-failure,backup-restore,full-stack-restart [qualify:wave9] profile=full suites=database-failure,backup-restore,full-stack-restart [qualify:wave9] running database-failure... [qualify:wave9] database-failure: ENVIRONMENT_LIMITED (10ms) [qualify:wave9] running backup-restore... [qualify:wave9] backup-restore: TARGET_NOT_MET (0ms) [qualify:wave9] running |
+| restart safety | PASS | restart_recovery | All contributing gates passed |
 | test coverage | PASS | normal_ci, aaf_v2_qualification, earn01_earn12_qualification, native_assimilation_qualification, strategy_lab, provider_conformance | All contributing gates passed |
 | release reproducibility | PASS | database_migrations, helios_release_candidate | All contributing gates passed |
 
@@ -53,14 +53,13 @@ Establish a clean engineering baseline before the next major HELIOS intelligence
 | `fuzz_extended` | PASS | ok |
 | `formal_extended` | PASS | ok |
 | `bench_nightly` | PASS | ok |
-| `memory_soak` | FAIL |  > sunrey@0.1.0 sunrey-bench > node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/sunrey-bench.mjs soak --soak-ms 120000 --json packages/sunrey-chain/perf/baseline/nightly-soak.json SunRey bench soak — ENGINEERING_MEASUREMENT commit fa6d4ab2456371029a4a3d73f77702dddf2f0ab6 hardware x64 4cpu Intel(R) Xeon(R) Processor os linux node v22.23.4 container=false validators=4 latency_profile=low dataset=14499 protocol=sunrey.protocol.v1 duration_ms=120000 - soak/mixed_continuo |
-| `restart_recovery` | FAIL |  > sunrey@0.1.0 qualify:wave9:dr > node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/qualify-wave9.mjs --suite database-failure,backup-restore,full-stack-restart [qualify:wave9] profile=full suites=database-failure,backup-restore,full-stack-restart [qualify:wave9] running database-failure... [qualify:wave9] database-failure: ENVIRONMENT_LIMITED (10ms) [qualify:wave9] running backup-restore... [qualify:wave9] backup-restore: TARGET_NOT_MET (0ms) [qualify:wave9] running |
+| `memory_soak` | PASS | ok |
+| `restart_recovery` | PASS | ok |
 | `helios_release_candidate` | PASS | postgres unavailable; helios:h34:release-package:fast ok |
 
 ## Blockers
 
-- memory_soak:  > sunrey@0.1.0 sunrey-bench > node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/sunrey-bench.mjs soak --soak-ms 120000 --json packages/sunrey-chain/perf/baseline/nightly-soak.json SunRey bench soak — ENGINEERING_MEASUREMENT commit fa6d4ab2456371029a4a3d73f77702dddf2f0ab6 hardware x64 4cpu Intel(R) Xeon(R) Processor os linux node v22.23.4 container=false validators=4 latency_profile=low dataset=14499 protocol=sunrey.protocol.v1 duration_ms=120000 - soak/mixed_continuo
-- restart_recovery:  > sunrey@0.1.0 qualify:wave9:dr > node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/qualify-wave9.mjs --suite database-failure,backup-restore,full-stack-restart [qualify:wave9] profile=full suites=database-failure,backup-restore,full-stack-restart [qualify:wave9] running database-failure... [qualify:wave9] database-failure: ENVIRONMENT_LIMITED (10ms) [qualify:wave9] running backup-restore... [qualify:wave9] backup-restore: TARGET_NOT_MET (0ms) [qualify:wave9] running
+_None._
 
 ## Scope notes
 
