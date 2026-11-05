@@ -299,7 +299,7 @@ async function main() {
         'packages/sunrey-chain/perf/baseline/nightly-soak.json',
       ]),
     );
-    gates.push(run('restart_recovery', 'npm', ['run', 'qualify:wave9:dr']));
+    gates.push(run('restart_recovery', 'npm', ['run', 'helios:health08:dr:qualify']));
     {
       const started = Date.now();
       const env = { ...process.env, SUNREY_PERSISTENCE_TEST: '1' };

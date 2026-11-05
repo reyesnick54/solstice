@@ -11,8 +11,9 @@ import { DEVELOPMENT_CHAIN_ID, DEVELOPMENT_NETWORK_ID } from '../../../packages/
 import { captureEnvironment } from '../../lib/env-metadata.ts';
 import { mergeSuiteStatus, type SuiteResult } from '../../lib/report.ts';
 import { assertSimulationOnly } from '../lib/gates.ts';
+import { heliosDrCaseStatus, runHeliosDrQualification } from '../lib/helios-dr-wave9.ts';
 
-const ROOT = join(import.meta.dirname, '../../../..');
+const ROOT = join(import.meta.dirname, '../../..');
 
 export async function runBackupRestoreScenarios(): Promise<SuiteResult> {
   const started = Date.now();
@@ -75,10 +76,17 @@ export async function runBackupRestoreScenarios(): Promise<SuiteResult> {
     note: 'ENVIRONMENT and LIVE_* flags remain simulation after restore drill',
   });
 
+  const heliosDr = runHeliosDrQualification({
+    postgresTierAttempted: process.env.SUNREY_PERSISTENCE_TEST === '1',
+    postgresTierPass: process.env.SUNREY_HELIOS_DR_PG_TIER_PASS === '1',
+  });
   cases.push({
-    name: 'real-pitr-drill',
-    status: 'ENVIRONMENT_LIMITED',
-    note: 'Run sunrey-ops database restore-test for full PITR drill with PostgreSQL',
+    name: 'helios-dr-harness-pitr-restore',
+    status: heliosDrCaseStatus(heliosDr),
+    marker: heliosDr.marker,
+    rpoMs: heliosDr.report.engineeringSlo.rpoMs,
+    rtoMs: heliosDr.report.engineeringSlo.rtoMs,
+    note: 'HEALTH08 self-contained backup/restore qualification harness',
   });
 
   return {

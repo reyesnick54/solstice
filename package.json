@@ -78,6 +78,8 @@
     "helios:health06:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-health06-engineering-baseline-qualify.ts",
     "helios:health06:qualify:fast": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-health06-engineering-baseline-qualify.ts --skip-ci --skip-extended",
     "test:helios-health06": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-health06-engineering-baseline-qualification.test.ts",
+    "helios:health08:dr:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-health08-dr-qualify.ts",
+    "test:helios-health08": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-health08-restart-recovery-qualification.test.ts",
     "helios:earn12:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-earn12-qualify.ts",
     "helios:earn12:qualify:fast": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-earn12-qualify.ts --skip-subprocess",
     "test:helios-earn12": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-earn12-earnings-intelligence-qualification.test.ts",
