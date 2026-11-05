@@ -47,6 +47,20 @@ describe('memory trend analysis (HEALTH07)', () => {
     assert.ok(trend.classification === 'RSS_RETENTION' || trend.classification === 'STABLE');
   });
 
+  it('passes when max-heap plateau spikes but steady heap floor does not grow', () => {
+    const rows: ResourceSample[] = [];
+    for (let t = 0; t <= 60_000; t += 5_000) {
+      const inSteady = t >= 27_000 && t <= 54_000;
+      const heap = inSteady
+        ? 50_000_000 + (t === 35_000 ? 80_000_000 : 0) + (t % 20_000)
+        : 40_000_000 + t;
+      rows.push(sample(t, 120_000_000, heap, { feeReceiptsInMemory: 8192 }));
+    }
+    const trend = analyzeMemoryTrend(rows, 60_000);
+    assert.equal(trend.ok, true, trend.detail);
+    assert.equal(trend.classification, 'STABLE');
+  });
+
   it('fails monotonic retained-object growth in steady state', () => {
     const rows: ResourceSample[] = [];
     for (let t = 0; t <= 60_000; t += 5_000) {
