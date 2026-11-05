@@ -1,46 +1,46 @@
 {
   "schema": "helios.release.evidence.v1",
   "workPackage": "H34",
-  "sourceSha": "153adf8bf64af89e375a73e6d0a5aa8343073787",
+  "sourceSha": "182dca38c3885aeef0e0a329006db24ffdb8f6de",
   "marker": "HELIOS_RELEASE_PACKAGE_QUALIFIED",
   "qualified": true,
   "blockers": [],
   "buildReproducibility": {
     "passed": true,
     "inputs": {
-      "nodeVersion": "v22.14.0",
+      "nodeVersion": "v22.23.4",
       "rustToolchain": "1.83.0",
-      "lockfileDigest": "7eeb0c5e5922e6327a0332f6e6d001ec24a319742cb01cb2c0cde95d4812bb99",
+      "lockfileDigest": "2d4a4e289ade7c6621012c7e1c3029922f4c88432d05170c43ddca54c02c7942",
       "dockerfileDigest": "52fa9ec074df42279248b7e3552bffd978604c96b2f3bdd4a37aca415e8d8d61",
       "composeDigest": "82f1da98e0dcb15c05b488383e6882b7a5ea21010ff2f9ed7cb7e02efc9434ba",
-      "gitSha": "153adf8bf64af89e375a73e6d0a5aa8343073787"
+      "gitSha": "182dca38c3885aeef0e0a329006db24ffdb8f6de"
     }
   },
   "gateRuns": [
     {
       "command": "node scripts/check-migration-quality.mjs",
       "status": 0,
-      "durationMs": 24
+      "durationMs": 27
     },
     {
       "command": "node scripts/check-production-safety.mjs",
       "status": 0,
-      "durationMs": 157
+      "durationMs": 172
     },
     {
       "command": "node scripts/check-api-specs.mjs",
       "status": 0,
-      "durationMs": 63
+      "durationMs": 64
     },
     {
       "command": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-concurrency=1 --test-reporter=spec tests/helios-h34-release-packaging.test.ts",
       "status": 0,
-      "durationMs": 208
+      "durationMs": 251
     },
     {
       "command": "node scripts/sunrey-release.mjs audit",
       "status": 0,
-      "durationMs": 1181
+      "durationMs": 695
     }
   ],
   "migrationQualification": {
@@ -48,7 +48,7 @@
     "skipped": true,
     "inventoryCount": 17,
     "schemaHeads": {
-      "customer": "V068",
+      "customer": "V071",
       "ledger": "V010",
       "evidence": "V001",
       "security": "V002"
@@ -62,7 +62,7 @@
     "passed": true,
     "blockers": [],
     "schemaBaseline": {
-      "customer": "V068",
+      "customer": "V071",
       "ledger": "V010",
       "evidence": "V001",
       "security": "V002"
@@ -94,7 +94,7 @@
     "findings": [
       {
         "specPath": "api/sunrey-consumer-bff-v1.openapi.yaml",
-        "specHash": "415b8791974b3a9ab78a0dddef40890a12a5644b66a7fcbfdfdb2123c996eab6",
+        "specHash": "e0d098e12269a496f8a562bd2822037bc9a52074af6506614bcc0fdc316fdd48",
         "infoVersion": "v1",
         "breakingChanges": [],
         "deprecatedFields": [],
@@ -105,13 +105,13 @@
     ]
   },
   "rollbackMatrix": {
-    "previousSupportedReleaseId": "helios-rc-h33-153adf8bf64a",
-    "currentReleaseId": "helios-rc-h34-153adf8bf64a",
+    "previousSupportedReleaseId": "helios-rc-h33-182dca38c388",
+    "currentReleaseId": "helios-rc-h34-182dca38c388",
     "entries": [
       {
         "dimension": "application-artifact",
-        "previousSupported": "helios-rc-h33-153adf8bf64a",
-        "currentRelease": "helios-rc-h34-153adf8bf64a",
+        "previousSupported": "helios-rc-h33-182dca38c388",
+        "currentRelease": "helios-rc-h34-182dca38c388",
         "state": "SAFE_APP_ROLLBACK",
         "level": "LEVEL_1_APPLICATION",
         "limitation": "Redeploy prior qualified digest against current schema when compatible"
@@ -119,7 +119,7 @@
       {
         "dimension": "configuration-policy",
         "previousSupported": "prior-qualified-config-pack",
-        "currentRelease": "helios-rc-h34-153adf8bf64a",
+        "currentRelease": "helios-rc-h34-182dca38c388",
         "state": "SAFE_APP_ROLLBACK",
         "level": "LEVEL_2_CONFIGURATION",
         "limitation": "Restore prior provider/model/jurisdiction config references; secrets remain external"
@@ -127,7 +127,7 @@
       {
         "dimension": "database-schema",
         "previousSupported": "V061",
-        "currentRelease": "V068",
+        "currentRelease": "V071",
         "state": "FORWARD_FIX_REQUIRED",
         "level": "LEVEL_3_DATABASE",
         "limitation": "Forward-fix or snapshot restore required for V061, V062"
@@ -159,7 +159,7 @@
       {
         "step": "upgrade-to-candidate",
         "passed": true,
-        "detail": "Upgraded helios-rc-h33-153adf8bf64a → helios-rc-h34-153adf8bf64a"
+        "detail": "Upgraded helios-rc-h33-182dca38c388 → helios-rc-h34-182dca38c388"
       },
       {
         "step": "smoke-after-upgrade",
@@ -169,7 +169,7 @@
       {
         "step": "application-rollback",
         "passed": true,
-        "detail": "Application rolled back toward helios-rc-h33-153adf8bf64a"
+        "detail": "Application rolled back toward helios-rc-h33-182dca38c388"
       },
       {
         "step": "configuration-rollback",
@@ -258,14 +258,14 @@
     "bindings": [
       {
         "role": "application",
-        "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-153adf8bf64a",
-        "sourceCommit": "153adf8bf64af89e375a73e6d0a5aa8343073787",
+        "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-182dca38c388",
+        "sourceCommit": "182dca38c3885aeef0e0a329006db24ffdb8f6de",
         "dockerfile": "deploy/sunrey-sandbox-hetzner/Dockerfile"
       },
       {
         "role": "migration-runner",
-        "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-153adf8bf64a",
-        "sourceCommit": "153adf8bf64af89e375a73e6d0a5aa8343073787",
+        "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-182dca38c388",
+        "sourceCommit": "182dca38c3885aeef0e0a329006db24ffdb8f6de",
         "dockerfile": "deploy/sunrey-sandbox-hetzner/Dockerfile"
       }
     ]
