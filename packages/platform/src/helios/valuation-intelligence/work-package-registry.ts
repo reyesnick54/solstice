@@ -10,7 +10,10 @@ export type ValWorkPackageRow = {
   readonly status: 'IMPLEMENTED' | 'BLOCKED';
 };
 
-const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly moduleRef: string }> = {
+const MODULE_BY_PACKAGE: Record<
+  string,
+  { readonly title: string; readonly moduleRef: string }
+> = {
   VAL01: {
     title: 'Probabilistic valuation domain',
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/val01-canonical-domain.ts',
@@ -23,12 +26,17 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
     title: 'Probabilistic FCFF / FCFE DCF engine',
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/val04-probabilistic-dcf/index.ts',
   },
+  VAL05: {
+    title: 'Reverse DCF and market-implied expectations',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/val05/service.ts',
+  },
 };
 
 const TEST_BY_PACKAGE: Record<string, string> = {
   VAL01: 'tests/helios-val01-valuation-intelligence-domain.test.ts',
   VAL02: 'tests/helios-val02-driver-forecast.test.ts',
   VAL04: 'tests/helios-val04-probabilistic-dcf.test.ts',
+  VAL05: 'tests/helios-val05-reverse-dcf.test.ts',
 };
 
 export function listValWorkPackages(root: string): readonly ValWorkPackageRow[] {

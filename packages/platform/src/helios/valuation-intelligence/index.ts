@@ -9,6 +9,11 @@ export {
   VALUATION_ASSUMPTION_VALUE_KINDS,
   VALUATION_INPUT_SOURCES,
   VAL_WORK_PACKAGES,
+  VAL05_REVERSE_DCF_MODULE,
+  VAL05_DEFAULT_EXPLICIT_YEARS,
+  VAL05_BPS_SCALE,
+  HELIOS_VAL05_REVERSE_DCF_QUALIFIED,
+  HELIOS_VAL05_REVERSE_DCF_BLOCKED,
   type ValuationMethod,
   type ValuationScenarioKind,
   type ValuationAssumptionValueKind,
@@ -117,3 +122,4 @@ export { listValWorkPackages, type ValWorkPackageRow } from './work-package-regi
 
 export * from './val04-probabilistic-dcf/index.ts';
 export * from './driver-forecast/index.ts';
+export * from './val05/index.ts';
