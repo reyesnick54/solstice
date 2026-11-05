@@ -1,6 +1,6 @@
 /**
  * HELIOS HEALTH07 — definitive integrated memory soak qualification.
- * CI uses shortened soak via SUNREY_BENCH_SOAK_QUALIFY_MS (default 12_000).
+ * CI uses shortened soak via SUNREY_BENCH_SOAK_QUALIFY_MS (default 45_000).
  * Production qualification: 3× 120_000 ms trials via scripts/helios-health07-memory-soak-qualify.ts
  */
 
