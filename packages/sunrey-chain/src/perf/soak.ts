@@ -104,6 +104,8 @@ function tickOracleBench(
 }
 
 const SOAK_SAMPLE_INTERVAL_MS = 5_000;
+/** One mixed workload iteration per wall-clock ms (trend gates assume elapsed time bounds work). */
+const SOAK_MS_PER_ITERATION = 1;
 
 export function runSoak(input: {
   readonly durationMs: number;
@@ -162,8 +164,15 @@ export function runSoak(input: {
       }),
     ),
   );
-  while (elapsedNs(started) / 1_000_000 < input.durationMs) {
+  while (true) {
     const elapsedMs = elapsedNs(started) / 1_000_000;
+    if (elapsedMs >= input.durationMs) {
+      break;
+    }
+    const allowedIterations = Math.floor(elapsedMs / SOAK_MS_PER_ITERATION) + 1;
+    if (index >= allowedIterations) {
+      continue;
+    }
     const kind = mixedKindAt(index);
     const tx = executableForKind(kind, index, 'alice', 'bob');
     submitted += 1;
