@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
 import { FeeEngine } from './fees/engine.ts';
@@ -13,6 +14,18 @@ import {
   evaluateHeliosMemorySoakQualification,
   HELIOS_MEMORY_SOAK_QUALIFIED,
 } from './perf/memory-soak-qualification.ts';
+import { assertIsolatedTestPass, shouldRunIsolatedTestBody } from './test/isolated-child.ts';
+
+const ROOT = join(import.meta.dirname, '../../..');
+
+function assertHealth05SoakIsolated(testNamePattern: string): void {
+  assertIsolatedTestPass({
+    envFlag: 'HELIOS_HEALTH05_SOAK_ISOLATED',
+    testModuleUrl: import.meta.url,
+    cwd: ROOT,
+    testNamePattern,
+  });
+}
 
 describe('HELIOS HEALTH05 memory soak repair', () => {
   it('bounds fee receipt hot memory while sealing evicted receipts', () => {
@@ -52,6 +65,10 @@ describe('HELIOS HEALTH05 memory soak repair', () => {
   });
 
   it('keeps deterministic soak RSS within the default budget', () => {
+    assertHealth05SoakIsolated('keeps deterministic soak RSS');
+    if (!shouldRunIsolatedTestBody('HELIOS_HEALTH05_SOAK_ISOLATED')) {
+      return;
+    }
     const report = runSoak({ durationMs: 30_000, memoryThresholdBytes: 64 * 1024 * 1024 });
     const memory = report.invariants.find((row) => row.id === 'MEMORY_GROWTH_BUDGET');
     assert.equal(memory?.ok, true, memory?.detail);
@@ -84,6 +101,10 @@ describe('HELIOS HEALTH05 memory soak repair', () => {
   });
 
   it('emits HELIOS_MEMORY_SOAK_QUALIFIED when soak invariants pass', () => {
+    assertHealth05SoakIsolated('emits HELIOS_MEMORY_SOAK_QUALIFIED');
+    if (!shouldRunIsolatedTestBody('HELIOS_HEALTH05_SOAK_ISOLATED')) {
+      return;
+    }
     const report = runSoak({ durationMs: 30_000, memoryThresholdBytes: 64 * 1024 * 1024 });
     const qualification = evaluateHeliosMemorySoakQualification({
       invariants: report.invariants,
