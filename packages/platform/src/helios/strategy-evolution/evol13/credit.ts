@@ -13,10 +13,6 @@ function parseMinor(value: string): bigint {
   return BigInt(value);
 }
 
-function addMinor(a: string, b: string): string {
-  return (BigInt(a) + BigInt(b)).toString();
-}
-
 type Accum = {
   runs: number;
   candidates: number;
