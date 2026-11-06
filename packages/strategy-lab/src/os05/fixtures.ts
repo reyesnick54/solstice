@@ -112,6 +112,9 @@ export function buildOs05ExampleStrategyGenome(): StrategyGenome {
         createdAt: EXAMPLE_NOW,
         featureManifestVersion: STRATEGY_GENOME_FEATURE_MANIFEST_VERSION,
         nodeCatalogVersion: STRATEGY_GENOME_NODE_CATALOG_VERSION,
+        operator: null,
+        operatorVersion: null,
+        randomSeed: null,
       }),
     }),
   );
