@@ -774,6 +774,39 @@ export type {
 } from './native12-seris/index.ts';
 
 export {
+  HELIOS_EVOL10_REGIME_DIMENSIONS,
+  HELIOS_EVOL10_STRESS_REGIME_DIMENSIONS,
+  HELIOS_EVOL10_REGIME_GENERALIZATION_QUALIFIED,
+  mapM13DimensionsToEvol10,
+  mapMacroObservationToEvol10,
+  mergeEvol10Tags,
+  computeCrossRegimeRobustness,
+  computeRegimeConcentrationBps,
+  computeWorstRegimePerformance,
+  computeRegimeTransitionPerformance,
+  buildLeaveOneRegimeOutEvaluation,
+  computeTemporalTransferAssessment,
+  computeStressRegimeAssessment,
+  computeGeneralizationScoreBps,
+  evaluateEvol10GenomeRegimeReport,
+  labelEvol10RegimeDimensions,
+  evaluateEvol10RegimeGeneralizationQualification,
+  backtestTotalReturnMinor,
+} from './evol10/index.ts';
+export type {
+  HeliosEvol10RegimeDimension,
+  HeliosEvol10MacroObservation,
+  RegimePerformanceCell,
+  RegimePerformanceMatrix,
+  CrossRegimeRobustness,
+  LeaveOneRegimeOutFold,
+  LeaveOneRegimeOutEvaluation,
+  TemporalTransferAssessment,
+  StressRegimeAssessment,
+  Evol10GenomeRegimeReport,
+} from './evol10/index.ts';
+
+export {
   NATIVE06_STRATEGY_GENOME_SCHEMA,
   BYTEX_STRATEGY_DOCUMENT_SCHEMA_VERSION,
   asNative06StrategyGenomeId,
