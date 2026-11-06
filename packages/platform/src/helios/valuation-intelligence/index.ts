@@ -133,6 +133,6 @@ export * from './val05/index.ts';
 export * from './residual-income/index.ts';
 export * from './comparables/index.ts';
 export * from './sotp/index.ts';
+export * from './ensemble/index.ts';
 export * from './val10-uncertainty/index.ts';
-export * from './val11-adaptive-ensemble/index.ts';
 export * from './val12/index.ts';

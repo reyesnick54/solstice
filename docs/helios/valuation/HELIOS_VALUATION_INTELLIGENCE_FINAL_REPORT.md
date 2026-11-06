@@ -22,7 +22,7 @@ Complete the HELIOS valuation-intelligence architecture and expose outputs to re
 | VAL08 | Probabilistic comparables | `comparables/` |
 | VAL09 | SOTP | `sotp/` |
 | VAL10 | Valuation uncertainty & fragility | `val10-uncertainty/` |
-| VAL11 | Adaptive ensemble | `val11-adaptive-ensemble/` |
+| VAL11 | Adaptive multi-model ensemble | `ensemble/` |
 | VAL12 | Final qualification & strategy bridge | `val12/` |
 
 ## Final artifact: `HeliosValuationState`

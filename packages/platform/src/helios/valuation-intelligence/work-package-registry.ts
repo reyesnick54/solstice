@@ -55,8 +55,8 @@ const MODULE_BY_PACKAGE: Record<
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/val10-uncertainty/index.ts',
   },
   VAL11: {
-    title: 'Adaptive valuation ensemble',
-    moduleRef: 'packages/platform/src/helios/valuation-intelligence/val11-adaptive-ensemble/index.ts',
+    title: 'Adaptive multi-model valuation ensemble',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/ensemble/index.ts',
   },
   VAL12: {
     title: 'Final qualification and strategy bridge',
