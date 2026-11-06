@@ -1,7 +1,7 @@
 # HELIOS Strategy Evolution — Final Report (EVOL14)
 
-**Generated (UTC):** 2026-11-06T15:48:36.698Z  
-**Git SHA:** `457ec0c660fec5e8644e6d0ce9e449be37b5cd32`  
+**Generated (UTC):** 2026-11-06T16:02:00.268Z  
+**Git SHA:** `746456720a0fc6ab0ad8344dd07b5d160e7fb6ed`  
 **Qualification marker:** `HELIOS_STRATEGY_SELF_EVOLUTION_V1_QUALIFIED`  
 **Qualified:** yes
 
@@ -28,6 +28,6 @@ Robust moderate genome preferred over flashy candidate: **yes**
 
 - Trial ledger entries: 24 (success: 22, failed: 1, blocked: 1)
 - Sealed evidence hashes: 4
-- JSON: `performance/helios/results/helios-evol14/helios-evol14-qualification-457ec0c660fe.json`
+- JSON: `performance/helios/results/helios-evol14/helios-evol14-qualification-746456720a0f.json`
 
 See also: `docs/helios/evolution/EVOLUTION_CAPABILITY_MATRIX.md`, `EVOLUTION_OVERFITTING_REPORT.md`, `EVOLUTION_LINEAGE_REPORT.md`.

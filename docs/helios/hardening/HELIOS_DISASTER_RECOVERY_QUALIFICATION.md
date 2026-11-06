@@ -3,8 +3,8 @@
 **Program:** `HELIOS_HARDENING_HEALTH08`  
 **Marker:** `HELIOS_RESTART_RECOVERY_QUALIFIED`  
 **Qualified:** yes  
-**Git SHA:** `946af5169e96be7db3610b1c6056383b14d87c09`  
-**Evaluated (UTC):** 2026-11-06T15:46:33.869Z
+**Git SHA:** `1f254dadeff024ff3ecad870038e758a98a78f65`  
+**Evaluated (UTC):** 2026-11-06T16:01:06.766Z
 
 ## Scope
 
@@ -28,21 +28,21 @@ Engineering harness measurement only. Not contractual production RPO/RTO.
 
 | Step | Result | Duration (ms) | Detail |
 | --- | --- | ---: | --- |
-| `clean_database_creation` | PASS | 0 | fixture workspace /tmp/helios-dr-harness-25eK0p/live |
+| `clean_database_creation` | PASS | 0 | fixture workspace /tmp/helios-dr-harness-OkCT2Q/live |
 | `migrations` | PASS | 0 | schema fingerprint 1a64d30c0669… |
-| `helios_state_write` | PASS | 2 | operational + HELIOS representative state seeded |
+| `helios_state_write` | PASS | 1 | operational + HELIOS representative state seeded |
 | `market_observations` | PASS | 0 | 1 observation |
 | `feature_fabric_observations` | PASS | 0 | feature fabric lineage hash captured |
 | `strategy_lab_state` | PASS | 0 | strat_v1 |
-| `evidence_vault_records` | PASS | 0 | 1 sealed record |
+| `evidence_vault_records` | PASS | 1 | 1 sealed record |
 | `order_fill_reconciliation_state` | PASS | 0 | 1 orders, 1 trades |
 | `backup` | PASS | 1 | local WAL archive segments=1 |
 | `destructive_database_loss` | PASS | 1 | live fixture directory destroyed |
 | `restore` | PASS | 0 | PITR appliedSegments=1 |
 | `service_restart` | PASS | 0 | durable stores reopened after destructive loss |
 | `state_rehydration` | PASS | 0 | readiness=RECONCILIATION_REQUIRED steps=8 |
-| `reconciliation` | PASS | 1 | 6 unresolved operations flagged query-before-retry |
-| `deterministic_continuation` | PASS | 0 | state hash 02bc32ab36f496cd… stable |
+| `reconciliation` | PASS | 0 | 6 unresolved operations flagged query-before-retry |
+| `deterministic_continuation` | PASS | 1 | state hash 02bc32ab36f496cd… stable |
 
 ## Failure modes (fail closed)
 
