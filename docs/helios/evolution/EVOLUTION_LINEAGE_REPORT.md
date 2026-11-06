@@ -1,6 +1,6 @@
 # EVOL14 / EVOL15 — Strategy Genome Lineage Report
 
-**Git SHA:** `f5b247451fc583f71d68663511d5fc1fd484458f`
+**Git SHA:** `547e9e01495fe8b9eb44af0911980f474b125c6c`
 
 Lineage is **declarative** (OS05 `StrategyGenomeLineage`): parent genome IDs, mutation reason, catalog/manifest versions, and `genomeHash` from `attachGenomeHash`.
 
