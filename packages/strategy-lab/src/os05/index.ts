@@ -16,6 +16,7 @@ export {
   STRATEGY_NODE_KINDS,
 } from './types.ts';
 export type {
+  EvolutionOperatorKind,
   StrategyNodeKind,
   GenomeParamValue,
   GenomeNodeParams,
