@@ -7,7 +7,7 @@ import {
   computeProbabilityOfBacktestOverfitting,
 } from '../../earnings-intelligence/anti-overfitting.ts';
 
-import { EVOL09_MINIMUM_TRACK_RECORD_PERIODS, EVOL09_MIN_TRIALS_FOR_PBO } from './taxonomy.ts';
+import { EVOL09_MINIMUM_TRACK_RECORD_PERIODS } from './taxonomy.ts';
 import type { EvolutionTrialRecord, MultipleTestingState, SelectionBiasAssessment } from './types.ts';
 
 function mean(values: readonly number[]): number {
