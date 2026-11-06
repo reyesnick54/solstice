@@ -13,6 +13,7 @@ import {
 import type { PromotionCapsule } from './promotion-capsule.ts';
 import type { StrategySpecification } from './specification.ts';
 import type { StrategyFailure } from './types.ts';
+import type { Evol11ForwardShadowRole } from './evol11-champion-challenger.ts';
 
 export type ForwardShadowRun = {
   readonly runId: ForwardShadowRunId;
@@ -23,6 +24,8 @@ export type ForwardShadowRun = {
   readonly startedAt: UtcInstant;
   readonly completedAt: UtcInstant | null;
   readonly observationRef: string;
+  /** HELIOS EVOL11 — challenger track labels this run as challenging an incumbent (simulation only). */
+  readonly evol11Role: Evol11ForwardShadowRole;
   readonly sendsOrders: false;
   readonly changesInvestmentState: false;
   readonly financialEffectCreated: false;
@@ -70,6 +73,7 @@ export type ForwardShadowEvidenceSummary = {
   readonly calibrationPassed: boolean;
   readonly financialEffectCreated: false;
   readonly outcomesRecorded: number;
+  readonly evol11Role: Evol11ForwardShadowRole;
 };
 
 function daysBetween(start: UtcInstant, end: UtcInstant): number {
@@ -83,6 +87,8 @@ export function startForwardShadowRun(input: {
   readonly startedAt: UtcInstant;
   readonly modelVersions?: readonly string[];
   readonly toolVersions?: readonly string[];
+  /** Defaults to INCUBATION when omitted. */
+  readonly evol11Role?: Evol11ForwardShadowRole;
 }): ForwardShadowRun {
   const material = `${input.capsule.capsuleId}:${input.capsule.fingerprint}:${input.startedAt}`;
   return Object.freeze({
@@ -94,6 +100,7 @@ export function startForwardShadowRun(input: {
     startedAt: input.startedAt,
     completedAt: null,
     observationRef: input.observationRef,
+    evol11Role: input.evol11Role ?? 'INCUBATION',
     sendsOrders: false,
     changesInvestmentState: false,
     financialEffectCreated: false,
@@ -207,5 +214,6 @@ export function summarizeForwardShadowEvidence(input: {
     calibrationPassed: input.calibrationPassed ?? true,
     financialEffectCreated: false,
     outcomesRecorded: input.decisions.filter((d) => d.subsequentOutcome !== null).length,
+    evol11Role: input.run.evol11Role,
   });
 }

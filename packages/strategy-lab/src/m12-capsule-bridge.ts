@@ -58,7 +58,9 @@ export function observeM12CapsuleQualification(input: {
     parameterVersion: M12_PARAMETERS_V1.version,
     promotionState: promotion?.promotionState ?? 'UNREGISTERED',
     paperEligible:
-      promotion?.promotionState === 'PAPER_ELIGIBLE' || promotion?.promotionState === 'PAPER_ACTIVE',
+      promotion?.promotionState === 'PAPER_ELIGIBLE' ||
+      promotion?.promotionState === 'PAPER_ACTIVE' ||
+      promotion?.promotionState === 'PAPER_CHALLENGER',
     shadowEligible:
       promotion?.promotionState === 'SHADOW_ELIGIBLE' || promotion?.promotionState === 'SHADOW_ACTIVE',
     liveEligible: false,
