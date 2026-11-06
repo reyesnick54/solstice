@@ -7,6 +7,8 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
+const ROOT = join(import.meta.dirname, '..');
+
 import { ENVIRONMENT, LIVE_TRADING_ENABLED } from '../packages/config/src/flags.ts';
 import { asAccountId } from '../packages/domain/src/account.ts';
 import { asIntentId } from '../packages/permissions/src/action-intent.ts';
