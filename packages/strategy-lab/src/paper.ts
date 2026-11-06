@@ -9,6 +9,7 @@ import { asIntentId, type PurposeCode } from '@solstice/permissions';
 import type { RiskDecision } from '@solstice/risk';
 import { asPaperStrategyRunId, type PaperStrategyRunId } from './ids.ts';
 import type { KillSwitchReason, StrategyFailure, StrategyLifecycleState } from './types.ts';
+import type { Evol11PaperRole } from './evol11-champion-challenger.ts';
 
 export type PaperStrategyRun = {
   readonly runId: PaperStrategyRunId;
@@ -19,6 +20,8 @@ export type PaperStrategyRun = {
   readonly haltedAt: UtcInstant | null;
   readonly haltReason: KillSwitchReason | null;
   readonly track: 'PAPER';
+  /** HELIOS EVOL11 — challenger paper track vs incubation (simulation only). */
+  readonly evol11Role: Evol11PaperRole;
   readonly mergedIntoBacktest: false;
   readonly mergedIntoShadow: false;
   readonly liveBroker: false;
@@ -46,6 +49,7 @@ export function startPaperRun(input: {
   readonly investmentAccountId: string;
   readonly lifecycle: StrategyLifecycleState;
   readonly startedAt: UtcInstant;
+  readonly evol11Role?: Evol11PaperRole;
 }): Result<PaperStrategyRun, StrategyFailure> {
   if (input.lifecycle !== 'PAPER_APPROVED' && input.lifecycle !== 'PAPER_RUNNING') {
     return err({
@@ -64,6 +68,7 @@ export function startPaperRun(input: {
       haltedAt: null,
       haltReason: null,
       track: 'PAPER',
+      evol11Role: input.evol11Role ?? 'INCUBATION',
       mergedIntoBacktest: false,
       mergedIntoShadow: false,
       liveBroker: false,
