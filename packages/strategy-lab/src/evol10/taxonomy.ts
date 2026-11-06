@@ -6,7 +6,7 @@
  * only price/volatility/liquidity/risk labels from M13 apply.
  */
 
-import type { MarketRegimeDimension } from '../../../platform/src/helios/multi-asset/regime/taxonomy.ts';
+import type { MarketRegimeDimension } from '@solstice/platform/helios/regime';
 
 /** EVOL10 economic-environment dimensions (analysis labels, not trade signals). */
 export const HELIOS_EVOL10_REGIME_DIMENSIONS = [

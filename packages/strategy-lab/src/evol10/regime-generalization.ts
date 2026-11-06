@@ -18,7 +18,7 @@ import {
   mapMacroObservationToEvol10,
   mergeEvol10Tags,
 } from './taxonomy.ts';
-import type { MarketRegimeDimension } from '../../../platform/src/helios/multi-asset/regime/taxonomy.ts';
+import type { MarketRegimeDimension } from '@solstice/platform/helios/regime';
 
 export const HELIOS_EVOL10_REGIME_GENERALIZATION_QUALIFIED =
   'HELIOS_EVOL10_REGIME_GENERALIZATION_QUALIFIED' as const;
