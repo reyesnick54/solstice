@@ -147,3 +147,42 @@ export {
   type Native04QualificationChecks,
   type Native04QualificationResult,
 } from './native04-qualification.ts';
+
+/** CF08 — counterfactual market response and execution twin. */
+export {
+  HELIOS_CF08_MARKET_RESPONSE_TWIN,
+  HELIOS_CF08_MARKET_RESPONSE_TWIN_QUALIFIED,
+  HELIOS_CF08_MARKET_RESPONSE_TWIN_BLOCKED,
+  HELIOS_CF08_DETERMINISTIC_MARKET_MODEL_ID,
+  COUNTERFACTUAL_SIMULATION_FIDELITY_LEVELS,
+  RESPONSIVE_MARKET_MODEL_KINDS,
+  type CounterfactualSimulationFidelityLevel,
+  type ResponsiveMarketModelKind,
+} from './counterfactual-taxonomy.ts';
+
+export type {
+  CounterfactualRunProvenance,
+  MarketTrajectoryPoint,
+  PassiveReplayOutcome,
+  ExecutionTwinCounterfactualOutcome,
+  ResponsiveMarketCounterfactualOutcome,
+  CounterfactualModeOutcome,
+  ResponsiveModelValidationScores,
+  CounterfactualValidationBundle,
+  CounterfactualTripleRun,
+  CounterfactualScenarioInput,
+} from './counterfactual-types.ts';
+
+export {
+  DeterministicResponsiveMarketSimulator,
+  type ResponsiveMarketSimulator,
+  type ResponsiveMarketSimulatorConfig,
+} from './responsive-market-simulator.ts';
+
+export { runCounterfactualTriple, fingerprintLevel2Snapshot, fillFingerprintFromFills } from './counterfactual-orchestrator.ts';
+
+export {
+  evaluateCf08MarketResponseTwinQualification,
+  type Cf08QualificationChecks,
+  type Cf08QualificationResult,
+} from './cf08-qualification.ts';
