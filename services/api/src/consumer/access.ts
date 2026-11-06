@@ -14,6 +14,7 @@ import {
 import { bffError, isBffError, type BffErrorEnvelope } from './errors.ts';
 import { pageSizeOf } from './pagination.ts';
 import type { BffPrincipal } from './ports.ts';
+import type { AccessLiveBff } from './access-live-adapter.ts';
 
 const consumerSurfaces = new WeakMap<HumanAccessEconomyProduct, AccessConsumerBffSurface>();
 
@@ -125,13 +126,151 @@ function categoryOf(value: unknown): AccessCategory | undefined {
   return typeof value === 'string' ? (value as AccessCategory) : undefined;
 }
 
+function isLiveAccessRoute(
+  pathWithoutQuery: string,
+  method: string,
+  query: Readonly<Record<string, string | undefined>>,
+  rec: Record<string, unknown>,
+): boolean {
+  if (pathWithoutQuery === '/api/v1/access' && method === 'GET' && query.simulation !== 'true') return true;
+  if (pathWithoutQuery === '/api/v1/access/provider-status' && method === 'GET') return true;
+  if (pathWithoutQuery === '/api/v1/access/recommendations' && method === 'GET') return true;
+  if ((pathWithoutQuery === '/api/v1/access/offers' || pathWithoutQuery === '/api/v1/access/search') && method === 'GET') {
+    return true;
+  }
+  if (pathWithoutQuery === '/api/v1/access/search' && method === 'POST' && (rec.liveSearch === true || rec.mode === 'live')) {
+    return true;
+  }
+  if (pathWithoutQuery.startsWith('/api/v1/access/providers/') && method === 'GET') return true;
+  return false;
+}
+
+async function dispatchAccessLive(
+  accessLive: AccessLiveBff,
+  request: DispatchRequest,
+  requestId: string,
+  headers: Record<string, string>,
+): Promise<DispatchResponse | null> {
+  const { method, path } = request;
+  const rec = request.body && typeof request.body === 'object' ? (request.body as Record<string, unknown>) : {};
+  const pathWithoutQuery = path.split('?')[0] ?? path;
+  const query = request.query ?? {};
+
+  if ((pathWithoutQuery === '/api/v1/access' || path === '/api/v1/access') && method === 'GET') {
+    const body = await accessLive.home({
+      ...(num(query.latitude) !== undefined ? { latitude: num(query.latitude) } : {}),
+      ...(num(query.longitude) !== undefined ? { longitude: num(query.longitude) } : {}),
+      ...(str(query.city) ? { city: str(query.city) } : {}),
+      ...(str(query.country) ? { country: str(query.country) } : {}),
+      ...(num(query.limit) !== undefined ? { limit: num(query.limit) } : {}),
+    });
+    return json(200, body, headers);
+  }
+  if (pathWithoutQuery === '/api/v1/access/provider-status' && method === 'GET') {
+    return json(200, await accessLive.providerStatus(), headers);
+  }
+  if (pathWithoutQuery.startsWith('/api/v1/access/providers/') && pathWithoutQuery.endsWith('/health') && method === 'GET') {
+    const providerId = decodeURIComponent(
+      pathWithoutQuery.slice('/api/v1/access/providers/'.length, -'/health'.length),
+    );
+    const outcome = await accessLive.providerHealth(providerId);
+    if (!outcome.ok) {
+      return json(
+        404,
+        bffError({
+          errorCode: 'NOT_FOUND',
+          category: 'NOT_FOUND',
+          message: outcome.error.message,
+          retryable: false,
+          requestId,
+        }),
+        headers,
+      );
+    }
+    return json(200, outcome.value, headers);
+  }
+  if (pathWithoutQuery.startsWith('/api/v1/access/providers/') && method === 'GET') {
+    const providerId = decodeURIComponent(pathWithoutQuery.slice('/api/v1/access/providers/'.length));
+    if (providerId && !providerId.includes('/')) {
+      const outcome = await accessLive.providerHealth(providerId);
+      if (!outcome.ok) {
+        return json(
+          404,
+          bffError({
+            errorCode: 'NOT_FOUND',
+            category: 'NOT_FOUND',
+            message: outcome.error.message,
+            retryable: false,
+            requestId,
+          }),
+          headers,
+        );
+      }
+      return json(200, outcome.value, headers);
+    }
+  }
+  if ((pathWithoutQuery === '/api/v1/access/offers' || pathWithoutQuery === '/api/v1/access/search') && method === 'GET') {
+    return json(
+      200,
+      await accessLive.search({
+        ...(str(query.query) ? { query: str(query.query) } : {}),
+        ...(str(query.category) ? { category: str(query.category) } : {}),
+        ...(str(query.provider) ? { providerId: str(query.provider) } : {}),
+        ...(num(query.latitude) !== undefined ? { latitude: num(query.latitude) } : {}),
+        ...(num(query.longitude) !== undefined ? { longitude: num(query.longitude) } : {}),
+        ...(num(query.radius) !== undefined ? { radiusKm: num(query.radius) } : {}),
+        ...(str(query.city) ? { city: str(query.city) } : {}),
+        ...(str(query.country) ? { country: str(query.country) } : {}),
+        ...(str(query.startDate) ? { startDate: str(query.startDate) } : {}),
+        ...(str(query.endDate) ? { endDate: str(query.endDate) } : {}),
+        ...(num(query.minPrice) !== undefined ? { minPrice: num(query.minPrice) } : {}),
+        ...(num(query.maxPrice) !== undefined ? { maxPrice: num(query.maxPrice) } : {}),
+        ...(str(query.currency) ? { currency: str(query.currency) } : {}),
+        ...(num(query.limit) !== undefined ? { limit: num(query.limit) } : {}),
+      }),
+      headers,
+    );
+  }
+  if (pathWithoutQuery === '/api/v1/access/recommendations' && method === 'GET') {
+    const body = await accessLive.home({
+      ...(num(query.latitude) !== undefined ? { latitude: num(query.latitude) } : {}),
+      ...(num(query.longitude) !== undefined ? { longitude: num(query.longitude) } : {}),
+      ...(str(query.city) ? { city: str(query.city) } : {}),
+      limit: num(query.limit) ?? 8,
+    });
+    return json(200, body, headers);
+  }
+  if (pathWithoutQuery === '/api/v1/access/search' && method === 'POST') {
+    return json(
+      200,
+      await accessLive.search({
+        ...(str(rec.query) ? { query: str(rec.query) } : {}),
+        ...(str(rec.category) ? { category: str(rec.category) } : {}),
+        ...(str(rec.providerId) ? { providerId: str(rec.providerId) } : {}),
+        ...(num(rec.latitude) !== undefined ? { latitude: num(rec.latitude) } : {}),
+        ...(num(rec.longitude) !== undefined ? { longitude: num(rec.longitude) } : {}),
+        ...(num(rec.radiusKm) !== undefined ? { radiusKm: num(rec.radiusKm) } : {}),
+        ...(num(rec.radius) !== undefined ? { radiusKm: num(rec.radius) } : {}),
+        ...(str(rec.city) ? { city: str(rec.city) } : {}),
+        ...(str(rec.country) ? { country: str(rec.country) } : {}),
+        ...(str(rec.startDate) ? { startDate: str(rec.startDate) } : {}),
+        ...(str(rec.endDate) ? { endDate: str(rec.endDate) } : {}),
+        ...(num(rec.limit) !== undefined ? { limit: num(rec.limit) } : {}),
+      }),
+      headers,
+    );
+  }
+  return null;
+}
+
 export function dispatchAccess(
   product: HumanAccessEconomyProduct,
   request: DispatchRequest,
   principal: BffPrincipal,
   requestId: string,
   headers: Record<string, string>,
-): DispatchResponse | null {
+  options: { readonly accessLive?: AccessLiveBff } = {},
+): DispatchResponse | null | Promise<DispatchResponse | null> {
   const { method, path } = request;
   if (!path.startsWith('/api/v1/access')) {
     return null;
@@ -143,6 +282,10 @@ export function dispatchAccess(
   const queryEpoch = epochIdFromQuery(request.query);
   const query = request.query ?? {};
   const consumer = consumerSurface(product);
+
+  if (options.accessLive && isLiveAccessRoute(pathWithoutQuery, method, query, rec)) {
+    return dispatchAccessLive(options.accessLive, request, requestId, headers);
+  }
 
   if ((pathWithoutQuery === '/api/v1/access' || path === '/api/v1/access') && method === 'GET') {
     return result(mapAccessOutcome(consumer.dashboard(actor), requestId), headers);

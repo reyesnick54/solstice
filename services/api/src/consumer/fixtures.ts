@@ -90,6 +90,7 @@ import { createWorldExternalDataBff, type WorldExternalDataBff } from './world-e
 import { createTravelBff, type TravelBff } from './travel-adapter.ts';
 import { createAgentExternalEvidenceBff, type AgentExternalEvidenceBff } from './agent-evidence-adapter.ts';
 import { createEnvironmentalOracleBff, type EnvironmentalOracleBff } from './environmental-adapter.ts';
+import { createAccessLiveBff, type AccessLiveBff } from './access-live-adapter.ts';
 import { createOpportunityIntelligenceBff, type OpportunityIntelligenceBff } from './opportunity-adapter.ts';
 import {
   createSubscriptionIntelligenceBff,
@@ -183,6 +184,7 @@ export type SandboxWorld = {
   readonly dataRights: ConsentDataRightsEngine;
   readonly vault: PersonalDataVaultProduct;
   readonly access: HumanAccessEconomyProduct;
+  readonly accessLive: AccessLiveBff;
   readonly personalEconomy: PersonalEconomyBffSurface;
   readonly hinAccess: HumanInformationAccessBridge;
   readonly worldExternalData: WorldExternalDataBff;
@@ -868,6 +870,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   } satisfies PersonalEconomyBffDeps);
 
   const worldExternalData = createWorldExternalDataBff(createExternalDataPlane({ nowUtc: NOW }));
+  const accessLive = createAccessLiveBff();
   const environmental = createEnvironmentalOracleBff();
   const travel = createTravelBff({ environmental, world: worldExternalData, nowUtc: NOW });
   const agentExternalEvidence = createAgentExternalEvidenceBff(createExternalDataPlane({ nowUtc: NOW }));
@@ -902,6 +905,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     exchange: new ExchangeBffSurface(() => NOW),
     dataRights,
     access,
+    accessLive,
     personalEconomy,
     hinAccess,
     worldExternalData,
@@ -937,6 +941,7 @@ export function consumerBffRuntimeFromWorld(world: SandboxWorld): ConsumerBffRun
     dataRights: world.dataRights,
     vault: world.vault,
     access: world.access,
+    accessLive: world.accessLive,
     personalEconomy: world.personalEconomy,
     hinAccess: world.hinAccess,
     worldExternalData: world.worldExternalData,
