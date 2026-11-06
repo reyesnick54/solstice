@@ -14,6 +14,8 @@ export {
   valuationFeaturePlaneAt,
 } from './bridge.ts';
 
+export { val07FeaturesFromResidualIncome, val07FeaturePlaneStub } from './val07-bridge.ts';
+
 export {
   evaluateVal01FeatureFabricQualification,
   type Val01FeatureFabricQualificationChecks,

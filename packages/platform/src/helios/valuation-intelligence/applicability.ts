@@ -15,6 +15,8 @@ export type ValuationIssuerProfile = {
   readonly hasPeerUniverse: boolean;
   readonly isPreRevenue: boolean;
   readonly hasLeverageInputs: boolean;
+  /** Banks and similar firms — FCFF/WACC industrial paths are often inappropriate. */
+  readonly isFinancialInstitution?: boolean;
 };
 
 export type ValuationMethodApplicability = {
@@ -28,6 +30,12 @@ const METHOD_RULES: Record<
   (profile: ValuationIssuerProfile) => { applicable: boolean; reasons: readonly string[] }
 > = {
   DCF_FCFF: (profile) => {
+    if (profile.isFinancialInstitution) {
+      return Object.freeze({
+        applicable: false,
+        reasons: Object.freeze(['financial_institution_fcff_inappropriate']),
+      });
+    }
     if (profile.isPreRevenue) {
       return Object.freeze({ applicable: false, reasons: Object.freeze(['pre_revenue']) });
     }
@@ -57,6 +65,12 @@ const METHOD_RULES: Record<
   RESIDUAL_INCOME: (profile) => {
     if (!profile.hasMeaningfulBookEquity) {
       return Object.freeze({ applicable: false, reasons: Object.freeze(['missing_book_equity']) });
+    }
+    if (profile.isFinancialInstitution) {
+      return Object.freeze({
+        applicable: true,
+        reasons: Object.freeze(['financial_institution_excess_return_on_equity']),
+      });
     }
     return Object.freeze({ applicable: true, reasons: Object.freeze(['book_equity_available']) });
   },

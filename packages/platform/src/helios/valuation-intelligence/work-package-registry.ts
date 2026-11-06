@@ -34,6 +34,10 @@ const MODULE_BY_PACKAGE: Record<
     title: 'Reverse DCF and market-implied expectations',
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/val05/service.ts',
   },
+  VAL07: {
+    title: 'Residual income, economic profit, and excess-return valuation',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/residual-income/index.ts',
+  },
 };
 
 const TEST_BY_PACKAGE: Record<string, string> = {
@@ -42,6 +46,7 @@ const TEST_BY_PACKAGE: Record<string, string> = {
   VAL03: 'tests/helios-val03-cost-of-capital.test.ts',
   VAL04: 'tests/helios-val04-probabilistic-dcf.test.ts',
   VAL05: 'tests/helios-val05-reverse-dcf.test.ts',
+  VAL07: 'tests/helios-val07-residual-income.test.ts',
 };
 
 export function listValWorkPackages(root: string): readonly ValWorkPackageRow[] {
