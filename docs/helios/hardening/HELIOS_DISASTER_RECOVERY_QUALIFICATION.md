@@ -3,8 +3,8 @@
 **Program:** `HELIOS_HARDENING_HEALTH08`  
 **Marker:** `HELIOS_RESTART_RECOVERY_QUALIFIED`  
 **Qualified:** yes  
-**Git SHA:** `ba6f8256455fb038ec1ac69393594e65d1e5860d`  
-**Evaluated (UTC):** 2026-11-06T14:50:04.734Z
+**Git SHA:** `946af5169e96be7db3610b1c6056383b14d87c09`  
+**Evaluated (UTC):** 2026-11-06T15:46:33.869Z
 
 ## Scope
 
@@ -28,20 +28,20 @@ Engineering harness measurement only. Not contractual production RPO/RTO.
 
 | Step | Result | Duration (ms) | Detail |
 | --- | --- | ---: | --- |
-| `clean_database_creation` | PASS | 0 | fixture workspace /tmp/helios-dr-harness-8kpRzQ/live |
+| `clean_database_creation` | PASS | 0 | fixture workspace /tmp/helios-dr-harness-25eK0p/live |
 | `migrations` | PASS | 0 | schema fingerprint 1a64d30c0669… |
 | `helios_state_write` | PASS | 2 | operational + HELIOS representative state seeded |
 | `market_observations` | PASS | 0 | 1 observation |
 | `feature_fabric_observations` | PASS | 0 | feature fabric lineage hash captured |
 | `strategy_lab_state` | PASS | 0 | strat_v1 |
-| `evidence_vault_records` | PASS | 1 | 1 sealed record |
+| `evidence_vault_records` | PASS | 0 | 1 sealed record |
 | `order_fill_reconciliation_state` | PASS | 0 | 1 orders, 1 trades |
 | `backup` | PASS | 1 | local WAL archive segments=1 |
 | `destructive_database_loss` | PASS | 1 | live fixture directory destroyed |
 | `restore` | PASS | 0 | PITR appliedSegments=1 |
 | `service_restart` | PASS | 0 | durable stores reopened after destructive loss |
 | `state_rehydration` | PASS | 0 | readiness=RECONCILIATION_REQUIRED steps=8 |
-| `reconciliation` | PASS | 0 | 6 unresolved operations flagged query-before-retry |
+| `reconciliation` | PASS | 1 | 6 unresolved operations flagged query-before-retry |
 | `deterministic_continuation` | PASS | 0 | state hash 02bc32ab36f496cd… stable |
 
 ## Failure modes (fail closed)

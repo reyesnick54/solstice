@@ -2,7 +2,7 @@
   "context": {
     "schemaVersion": 1,
     "resultClass": "ENGINEERING_MEASUREMENT",
-    "sourceCommit": "ba6f8256455fb038ec1ac69393594e65d1e5860d",
+    "sourceCommit": "946af5169e96be7db3610b1c6056383b14d87c09",
     "hardware": {
       "arch": "x64",
       "cpus": 4,
@@ -19,9 +19,9 @@
     "latencyProfile": "low",
     "datasetSize": 48,
     "protocolVersion": "sunrey.protocol.v1",
-    "testDurationMs": 33,
+    "testDurationMs": 34,
     "profile": "seven-validator",
-    "startedAtUtc": "2026-11-06T14:48:03.503Z"
+    "startedAtUtc": "2026-11-06T15:44:32.582Z"
   },
   "cases": [
     {
@@ -30,14 +30,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 4,
-        "minNs": 205930,
-        "maxNs": 263038,
-        "meanNs": 221437,
-        "medianNs": 208255,
-        "p50Ns": 208255,
-        "p95Ns": 263038,
-        "p99Ns": 263038,
-        "stddevNs": 24039.525359291103
+        "minNs": 206478,
+        "maxNs": 265432,
+        "meanNs": 222649.25,
+        "medianNs": 209145,
+        "p50Ns": 209145,
+        "p95Ns": 265432,
+        "p99Ns": 265432,
+        "stddevNs": 24728.717085354427
       },
       "extras": {
         "validatorCount": 7,
@@ -114,14 +114,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 4,
-        "minNs": 364675,
-        "maxNs": 6737553,
-        "meanNs": 2054672.75,
-        "medianNs": 400819,
-        "p50Ns": 400819,
-        "p95Ns": 6737553,
-        "p99Ns": 6737553,
-        "stddevNs": 2707105.9293349027
+        "minNs": 373983,
+        "maxNs": 6793252,
+        "meanNs": 2092427.25,
+        "medianNs": 408021,
+        "p50Ns": 408021,
+        "p95Ns": 6793252,
+        "p99Ns": 6793252,
+        "stddevNs": 2719042.365395984
       },
       "extras": {
         "validatorCount": 7,
@@ -135,14 +135,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 4,
-        "minNs": 1165217,
-        "maxNs": 7539900,
-        "meanNs": 2856930,
-        "medianNs": 1202937,
-        "p50Ns": 1202937,
-        "p95Ns": 7539900,
-        "p99Ns": 7539900,
-        "stddevNs": 2707215.762781663
+        "minNs": 1174611,
+        "maxNs": 7595515,
+        "meanNs": 2894698.25,
+        "medianNs": 1210238,
+        "p50Ns": 1210238,
+        "p95Ns": 7595515,
+        "p99Ns": 7595515,
+        "stddevNs": 2719103.646747341
       },
       "extras": {
         "validatorCount": 7,
@@ -156,31 +156,31 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 8,
-        "minNs": 522215,
-        "maxNs": 954993,
-        "meanNs": 660638.625,
-        "medianNs": 635561,
-        "p50Ns": 635561,
-        "p95Ns": 954993,
-        "p99Ns": 954993,
-        "stddevNs": 119570.76277871768
+        "minNs": 525106,
+        "maxNs": 1068648,
+        "meanNs": 681312,
+        "medianNs": 629978,
+        "p50Ns": 629978,
+        "p95Ns": 1068648,
+        "p99Ns": 1068648,
+        "stddevNs": 154265.94799647134
       },
       "throughput": {
         "submitted": 48,
         "accepted": 48,
         "finalized": 48,
         "rejected": 0,
-        "sustainedFinalizedPerSec": 8468.05031080391,
-        "burstFinalizedPerSec": 8468.05031080391,
+        "sustainedFinalizedPerSec": 8210.402511562128,
+        "burstFinalizedPerSec": 8210.402511562128,
         "errorRejectionRate": 0
       },
       "extras": {
         "validatorCount": 7,
         "roundChanges": 0,
         "stateRootsEqual": true,
-        "rssBytes": 170819584,
-        "cpuUserMs": 7.73,
-        "cpuSystemMs": 0.08,
+        "rssBytes": 172994560,
+        "cpuUserMs": 7.951,
+        "cpuSystemMs": 0.007,
         "measured": "finalized_not_mempool_only"
       }
     },
@@ -190,14 +190,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 6,
-        "minNs": 333519,
-        "maxNs": 1971285,
-        "meanNs": 717217.8333333334,
-        "medianNs": 473377,
-        "p50Ns": 473377,
-        "p95Ns": 1971285,
-        "p99Ns": 1971285,
-        "stddevNs": 566380.4468736588
+        "minNs": 341260,
+        "maxNs": 1930103,
+        "meanNs": 719686,
+        "medianNs": 494694,
+        "p50Ns": 494694,
+        "p95Ns": 1930103,
+        "p99Ns": 1930103,
+        "stddevNs": 546195.3752858648
       },
       "extras": {
         "providerCount": 3
@@ -209,14 +209,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 47093,
-        "maxNs": 466639,
-        "meanNs": 256866,
-        "medianNs": 47093,
-        "p50Ns": 47093,
-        "p95Ns": 466639,
-        "p99Ns": 466639,
-        "stddevNs": 209773
+        "minNs": 48657,
+        "maxNs": 468969,
+        "meanNs": 258813,
+        "medianNs": 48657,
+        "p50Ns": 48657,
+        "p95Ns": 468969,
+        "p99Ns": 468969,
+        "stddevNs": 210156
       }
     },
     {
@@ -225,14 +225,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 3984,
-        "maxNs": 40856,
-        "meanNs": 22420,
-        "medianNs": 3984,
-        "p50Ns": 3984,
-        "p95Ns": 40856,
-        "p99Ns": 40856,
-        "stddevNs": 18436
+        "minNs": 4746,
+        "maxNs": 43725,
+        "meanNs": 24235.5,
+        "medianNs": 4746,
+        "p50Ns": 4746,
+        "p95Ns": 43725,
+        "p99Ns": 43725,
+        "stddevNs": 19489.5
       }
     },
     {
@@ -241,14 +241,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 3270,
-        "maxNs": 17284,
-        "meanNs": 10277,
-        "medianNs": 3270,
-        "p50Ns": 3270,
-        "p95Ns": 17284,
-        "p99Ns": 17284,
-        "stddevNs": 7007
+        "minNs": 1642,
+        "maxNs": 17808,
+        "meanNs": 9725,
+        "medianNs": 1642,
+        "p50Ns": 1642,
+        "p95Ns": 17808,
+        "p99Ns": 17808,
+        "stddevNs": 8083
       }
     },
     {
@@ -257,14 +257,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 316690,
-        "maxNs": 1019845,
-        "meanNs": 668267.5,
-        "medianNs": 316690,
-        "p50Ns": 316690,
-        "p95Ns": 1019845,
-        "p99Ns": 1019845,
-        "stddevNs": 351577.5
+        "minNs": 319971,
+        "maxNs": 1035443,
+        "meanNs": 677707,
+        "medianNs": 319971,
+        "p50Ns": 319971,
+        "p95Ns": 1035443,
+        "p99Ns": 1035443,
+        "stddevNs": 357736
       }
     },
     {
@@ -273,14 +273,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 87787,
-        "maxNs": 90640,
-        "meanNs": 89213.5,
-        "medianNs": 87787,
-        "p50Ns": 87787,
-        "p95Ns": 90640,
-        "p99Ns": 90640,
-        "stddevNs": 1426.5
+        "minNs": 90001,
+        "maxNs": 90096,
+        "meanNs": 90048.5,
+        "medianNs": 90001,
+        "p50Ns": 90001,
+        "p95Ns": 90096,
+        "p99Ns": 90096,
+        "stddevNs": 47.5
       }
     },
     {
@@ -289,14 +289,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 271,
-        "maxNs": 282,
-        "meanNs": 276.5,
-        "medianNs": 271,
-        "p50Ns": 271,
-        "p95Ns": 282,
-        "p99Ns": 282,
-        "stddevNs": 5.5
+        "minNs": 282,
+        "maxNs": 342,
+        "meanNs": 312,
+        "medianNs": 282,
+        "p50Ns": 282,
+        "p95Ns": 342,
+        "p99Ns": 342,
+        "stddevNs": 30
       }
     },
     {
@@ -305,14 +305,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 408,
-        "maxNs": 6637,
-        "meanNs": 3522.5,
-        "medianNs": 408,
-        "p50Ns": 408,
-        "p95Ns": 6637,
-        "p99Ns": 6637,
-        "stddevNs": 3114.5
+        "minNs": 487,
+        "maxNs": 6263,
+        "meanNs": 3375,
+        "medianNs": 487,
+        "p50Ns": 487,
+        "p95Ns": 6263,
+        "p99Ns": 6263,
+        "stddevNs": 2888
       }
     },
     {
@@ -321,13 +321,13 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 1,
-        "minNs": 5345381,
-        "maxNs": 5345381,
-        "meanNs": 5345381,
-        "medianNs": 5345381,
-        "p50Ns": 5345381,
-        "p95Ns": 5345381,
-        "p99Ns": 5345381,
+        "minNs": 5577765,
+        "maxNs": 5577765,
+        "meanNs": 5577765,
+        "medianNs": 5577765,
+        "p50Ns": 5577765,
+        "p95Ns": 5577765,
+        "p99Ns": 5577765,
         "stddevNs": 0
       },
       "extras": {
@@ -341,14 +341,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 17926,
-        "maxNs": 126207,
-        "meanNs": 72066.5,
-        "medianNs": 17926,
-        "p50Ns": 17926,
-        "p95Ns": 126207,
-        "p99Ns": 126207,
-        "stddevNs": 54140.5
+        "minNs": 17906,
+        "maxNs": 129738,
+        "meanNs": 73822,
+        "medianNs": 17906,
+        "p50Ns": 17906,
+        "p95Ns": 129738,
+        "p99Ns": 129738,
+        "stddevNs": 55916
       }
     },
     {
@@ -357,14 +357,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 5416,
-        "maxNs": 36940,
-        "meanNs": 21178,
-        "medianNs": 5416,
-        "p50Ns": 5416,
-        "p95Ns": 36940,
-        "p99Ns": 36940,
-        "stddevNs": 15762
+        "minNs": 5585,
+        "maxNs": 43788,
+        "meanNs": 24686.5,
+        "medianNs": 5585,
+        "p50Ns": 5585,
+        "p95Ns": 43788,
+        "p99Ns": 43788,
+        "stddevNs": 19101.5
       }
     },
     {
@@ -373,14 +373,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 13872,
-        "maxNs": 81036,
-        "meanNs": 47454,
-        "medianNs": 13872,
-        "p50Ns": 13872,
-        "p95Ns": 81036,
-        "p99Ns": 81036,
-        "stddevNs": 33582
+        "minNs": 13742,
+        "maxNs": 79028,
+        "meanNs": 46385,
+        "medianNs": 13742,
+        "p50Ns": 13742,
+        "p95Ns": 79028,
+        "p99Ns": 79028,
+        "stddevNs": 32643
       }
     },
     {
@@ -389,14 +389,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 1624,
-        "maxNs": 12830,
-        "meanNs": 7227,
-        "medianNs": 1624,
-        "p50Ns": 1624,
-        "p95Ns": 12830,
-        "p99Ns": 12830,
-        "stddevNs": 5603
+        "minNs": 1547,
+        "maxNs": 12472,
+        "meanNs": 7009.5,
+        "medianNs": 1547,
+        "p50Ns": 1547,
+        "p95Ns": 12472,
+        "p99Ns": 12472,
+        "stddevNs": 5462.5
       }
     },
     {
@@ -405,14 +405,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 1758,
-        "maxNs": 3256,
-        "meanNs": 2507,
-        "medianNs": 1758,
-        "p50Ns": 1758,
-        "p95Ns": 3256,
-        "p99Ns": 3256,
-        "stddevNs": 749
+        "minNs": 1772,
+        "maxNs": 3842,
+        "meanNs": 2807,
+        "medianNs": 1772,
+        "p50Ns": 1772,
+        "p95Ns": 3842,
+        "p99Ns": 3842,
+        "stddevNs": 1035
       }
     },
     {
@@ -421,14 +421,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 18872,
-        "maxNs": 171046,
-        "meanNs": 94959,
-        "medianNs": 18872,
-        "p50Ns": 18872,
-        "p95Ns": 171046,
-        "p99Ns": 171046,
-        "stddevNs": 76087
+        "minNs": 18502,
+        "maxNs": 167687,
+        "meanNs": 93094.5,
+        "medianNs": 18502,
+        "p50Ns": 18502,
+        "p95Ns": 167687,
+        "p99Ns": 167687,
+        "stddevNs": 74592.5
       }
     },
     {
@@ -437,14 +437,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 725,
-        "maxNs": 1371,
-        "meanNs": 1048,
-        "medianNs": 725,
-        "p50Ns": 725,
-        "p95Ns": 1371,
-        "p99Ns": 1371,
-        "stddevNs": 323
+        "minNs": 722,
+        "maxNs": 1534,
+        "meanNs": 1128,
+        "medianNs": 722,
+        "p50Ns": 722,
+        "p95Ns": 1534,
+        "p99Ns": 1534,
+        "stddevNs": 406
       },
       "extras": {
         "excludesHumanApproval": true
@@ -456,14 +456,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 2569,
-        "maxNs": 4451,
-        "meanNs": 3510,
-        "medianNs": 2569,
-        "p50Ns": 2569,
-        "p95Ns": 4451,
-        "p99Ns": 4451,
-        "stddevNs": 941
+        "minNs": 2726,
+        "maxNs": 4572,
+        "meanNs": 3649,
+        "medianNs": 2726,
+        "p50Ns": 2726,
+        "p95Ns": 4572,
+        "p99Ns": 4572,
+        "stddevNs": 923
       }
     },
     {
@@ -472,14 +472,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 1518,
-        "maxNs": 1776,
-        "meanNs": 1647,
-        "medianNs": 1518,
-        "p50Ns": 1518,
-        "p95Ns": 1776,
-        "p99Ns": 1776,
-        "stddevNs": 129
+        "minNs": 1899,
+        "maxNs": 2171,
+        "meanNs": 2035,
+        "medianNs": 1899,
+        "p50Ns": 1899,
+        "p95Ns": 2171,
+        "p99Ns": 2171,
+        "stddevNs": 136
       },
       "extras": {
         "excludesHumanApproval": true
@@ -491,14 +491,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 12923,
-        "maxNs": 63899,
-        "meanNs": 38411,
-        "medianNs": 12923,
-        "p50Ns": 12923,
-        "p95Ns": 63899,
-        "p99Ns": 63899,
-        "stddevNs": 25488
+        "minNs": 12322,
+        "maxNs": 36184,
+        "meanNs": 24253,
+        "medianNs": 12322,
+        "p50Ns": 12322,
+        "p95Ns": 36184,
+        "p99Ns": 36184,
+        "stddevNs": 11931
       }
     },
     {
@@ -507,14 +507,14 @@
       "cryptoLabeledSeparately": false,
       "latency": {
         "count": 2,
-        "minNs": 992,
-        "maxNs": 2718,
-        "meanNs": 1855,
-        "medianNs": 992,
-        "p50Ns": 992,
-        "p95Ns": 2718,
-        "p99Ns": 2718,
-        "stddevNs": 863
+        "minNs": 936,
+        "maxNs": 2443,
+        "meanNs": 1689.5,
+        "medianNs": 936,
+        "p50Ns": 936,
+        "p95Ns": 2443,
+        "p99Ns": 2443,
+        "stddevNs": 753.5
       }
     }
   ],
@@ -528,17 +528,17 @@
   "resources": [
     {
       "atMs": 0,
-      "rssBytes": 168288256,
-      "heapUsedBytes": 47834672,
-      "cpuUserMs": 3.009,
-      "cpuSystemMs": 0.392
+      "rssBytes": 170266624,
+      "heapUsedBytes": 47844848,
+      "cpuUserMs": 0.091,
+      "cpuSystemMs": 0.013
     },
     {
-      "atMs": 33,
-      "rssBytes": 172351488,
-      "heapUsedBytes": 56859888,
-      "cpuUserMs": 40.193,
-      "cpuSystemMs": 0.579
+      "atMs": 34,
+      "rssBytes": 174411776,
+      "heapUsedBytes": 56852952,
+      "cpuUserMs": 37.794,
+      "cpuSystemMs": 0.144
     }
   ],
   "connections": {
