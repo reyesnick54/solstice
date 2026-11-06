@@ -115,7 +115,7 @@ export const SHADOW_BENCHMARKS: readonly ShadowBenchmark[] = Object.freeze([
   'PORTFOLIO_BASELINE',
 ]);
 
-/** What was recorded in the market after the decision (not execution-attributed P&amp;L). */
+/** What was recorded in the market after the decision (not execution-attributed P&L). */
 export const MARKET_PATH_OBSERVED = 'MARKET_PATH_OBSERVED' as const;
 /** Estimated path had the proposed execution been followed (research estimate only). */
 export const EXECUTION_COUNTERFACTUAL_ESTIMATED = 'EXECUTION_COUNTERFACTUAL_ESTIMATED' as const;
