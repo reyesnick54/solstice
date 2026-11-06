@@ -37,7 +37,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
   },
   CF07: {
     title: 'Sequential off-policy evaluation (FQE)',
-    moduleRef: 'packages/platform/src/helios/counterfactual-learning/cf07-sequential-ope.ts',
+    moduleRef: 'packages/platform/src/helios/counterfactual-learning/cf07-sequential-ope/qualification.ts',
   },
   CF08: {
     title: 'Market response twin',

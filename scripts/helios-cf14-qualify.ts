@@ -77,6 +77,7 @@ const valOk = runTest('VALUATION', 'tests/helios-val12-valuation-intelligence-qu
 const execTwinOk = runTest('Execution Twin', 'tests/helios-os02-execution-twin.test.ts');
 const cf04Ok = runTest('CF04 outcome model', 'tests/helios-cf04-counterfactual-outcome-model.test.ts');
 const cf06Ok = runTest('CF06 distributional OPE', 'tests/helios-cf06-distributional-ope.test.ts');
+const cf07Ok = runTest('CF07 sequential OPE', 'tests/helios-cf07-sequential-ope.test.ts');
 const cf08Ok = runTest('CF08 market response twin', 'tests/helios-cf08-market-response-twin.test.ts');
 const evolOk = runTest('EVOL14 self-evolution', 'tests/helios-evol14-strategy-self-evolution-qualification.test.ts');
 const cf14Ok = runTest('CF14 acceptance', 'tests/helios-cf14-counterfactual-learning-qualification.test.ts');
@@ -99,6 +100,7 @@ if (!valOk) blockers.push('VALUATION subprocess gate failed');
 if (!execTwinOk) blockers.push('Execution Twin subprocess gate failed');
 if (!cf04Ok) blockers.push('CF04 counterfactual outcome model test failed');
 if (!cf06Ok) blockers.push('CF06 distributional OPE test failed');
+if (!cf07Ok) blockers.push('CF07 sequential OPE test failed');
 if (!cf08Ok) blockers.push('CF08 market response twin test failed');
 if (!evolOk) blockers.push('EVOL14 strategy self-evolution qualification test failed');
 if (!cf14Ok) blockers.push('CF14 acceptance test failed');

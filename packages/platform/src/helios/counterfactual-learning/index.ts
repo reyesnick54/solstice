@@ -54,7 +54,6 @@ export {
 export { HELIOS_CF01_DECISION_LEDGER } from './cf01-decision-ledger.ts';
 export { HELIOS_CF02_REJECTED_OPPORTUNITY_SHADOW_BOOK } from './cf02-rejected-opportunity-shadow-book.ts';
 export { HELIOS_CF03_BEHAVIOR_POLICY_PROPENSITY } from './cf03-behavior-policy-propensity.ts';
-export { HELIOS_CF07_SEQUENTIAL_OPE } from './cf07-sequential-ope.ts';
 export { HELIOS_CF10_DECISION_ATTRIBUTION } from './cf10-decision-attribution.ts';
 export { HELIOS_CF11_CONSERVATIVE_POLICY_IMPROVEMENT } from './cf11-conservative-policy-improvement.ts';
 export { HELIOS_CF12_EVOLUTION_MEMORY } from './cf12-evolution-memory.ts';

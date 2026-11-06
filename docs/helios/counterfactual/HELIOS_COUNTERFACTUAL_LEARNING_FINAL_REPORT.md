@@ -28,7 +28,7 @@ Qualify HELIOS as an architecture that learns from **both taken and untaken** in
 | CF04 | Outcome model | `cf04/` (cross-fit outcome surface) |
 | CF05 | Doubly robust OPE | `cf05-doubly-robust-ope.ts` |
 | CF06 | Distributional OPE | `cf06-distributional-ope/` |
-| CF07 | Sequential OPE (FQE) | `cf07-sequential-ope.ts` |
+| CF07 | Sequential OPE (FQE) | `cf07-sequential-ope/` |
 | CF08 | Market response twin | `execution-twin/simulation/` (L1/L2/L3 counterfactual triple) |
 | CF09 | Heterogeneous effects | `cf09-heterogeneous-effects.ts` |
 | CF10 | Decision attribution | `cf10-decision-attribution.ts` |

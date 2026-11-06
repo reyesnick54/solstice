@@ -10,7 +10,7 @@
 | CF04 | IMPLEMENTED | `packages/platform/src/helios/counterfactual-learning/cf04/` — `tests/helios-cf04-counterfactual-outcome-model.test.ts` |
 | CF05 | IMPLEMENTED | `packages/platform/src/helios/counterfactual-learning/cf05-doubly-robust-ope.ts` |
 | CF06 | IMPLEMENTED | `packages/platform/src/helios/counterfactual-learning/cf06-distributional-ope/` — `tests/helios-cf06-distributional-ope.test.ts` |
-| CF07 | IMPLEMENTED | `packages/platform/src/helios/counterfactual-learning/cf07-sequential-ope.ts` |
+| CF07 | IMPLEMENTED | `packages/platform/src/helios/counterfactual-learning/cf07-sequential-ope/` — `tests/helios-cf07-sequential-ope.test.ts` |
 | CF08 | IMPLEMENTED | `packages/platform/src/helios/execution-twin/simulation/` (orchestrator + qualification) — `tests/helios-cf08-market-response-twin.test.ts` |
 | CF09 | IMPLEMENTED | `packages/platform/src/helios/counterfactual-learning/cf09-heterogeneous-effects.ts` |
 | CF10 | IMPLEMENTED | `packages/platform/src/helios/counterfactual-learning/cf10-decision-attribution.ts` |
