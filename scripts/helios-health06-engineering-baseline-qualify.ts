@@ -247,14 +247,13 @@ async function main() {
   gates.push(runNodeTest('aaf_v2_qualification', 'tests/helios-aaf-v2-strategy-lab-final-qualification.test.ts'));
   gates.push(runNodeTests('earn01_earn12_qualification', [...EARN_TESTS].filter((rel) => existsSync(join(ROOT, rel)))));
   gates.push(evaluateNativeAssimilationGate());
-  gates.push(
-    runNodeTest(
-      'strategy_lab',
-      existsSync(join(ROOT, 'packages/strategy-lab/src/architecture-guards.test.ts'))
-        ? 'packages/strategy-lab/src/architecture-guards.test.ts'
-        : 'tests/helios-aaf-v2-strategy-lab-final-qualification.test.ts',
-    ),
-  );
+  const strategyLabTests = [
+    existsSync(join(ROOT, 'packages/strategy-lab/src/architecture-guards.test.ts'))
+      ? 'packages/strategy-lab/src/architecture-guards.test.ts'
+      : 'tests/helios-aaf-v2-strategy-lab-final-qualification.test.ts',
+    'packages/strategy-lab/src/evolution/evol14-strategy-self-evolution.test.ts',
+  ].filter((rel) => existsSync(join(ROOT, rel)));
+  gates.push(runNodeTests('strategy_lab', strategyLabTests));
   gates.push(runNodeTest('execution_twin', 'tests/helios-os02-execution-twin.test.ts'));
   gates.push(runNodeTest('agent_permissions', 'tests/helios-os12-agent-permission-gateway.test.ts'));
   gates.push(runNodeTest('provider_conformance', 'tests/helios-os04-venue-adapter-conformance.test.ts'));
