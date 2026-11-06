@@ -50,7 +50,9 @@ export function observeM10CapsuleQualification(input: {
     fingerprint: input.fingerprint ?? 'unregistered',
     promotionState: promotion?.promotionState ?? 'UNREGISTERED',
     paperEligible:
-      promotion?.promotionState === 'PAPER_ELIGIBLE' || promotion?.promotionState === 'PAPER_ACTIVE',
+      promotion?.promotionState === 'PAPER_ELIGIBLE' ||
+      promotion?.promotionState === 'PAPER_ACTIVE' ||
+      promotion?.promotionState === 'PAPER_CHALLENGER',
     liveEligible: false,
     liveCryptoExecution: false,
     qualificationMarker: HELIOS_MULTI_ASSET_M10_CRYPTO_MOMENTUM_BREAKOUT_QUALIFIED,
