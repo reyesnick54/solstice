@@ -105,7 +105,7 @@ describe('HELIOS OS05 — Strategy Genome foundation', () => {
     });
     const result = evaluateOs05StrategyGenomeQualification({
       genomeTypesPresent: true,
-      nodeCatalogValidated: Object.keys(STRATEGY_GENOME_NODE_CATALOG).length >= 8,
+      nodeCatalogValidated: Object.keys(STRATEGY_GENOME_NODE_CATALOG).length >= 9,
       declarativeNoCodeExecution: validateStrategyGenome(
         attachGenomeHash({
           schema: STRATEGY_GENOME_SCHEMA,
@@ -122,6 +122,9 @@ describe('HELIOS OS05 — Strategy Genome foundation', () => {
             createdAt: asUtcInstant('2026-11-03T06:00:00.000Z'),
             featureManifestVersion: STRATEGY_GENOME_FEATURE_MANIFEST_VERSION,
             nodeCatalogVersion: STRATEGY_GENOME_NODE_CATALOG_VERSION,
+            operator: null,
+            operatorVersion: null,
+            randomSeed: null,
           },
         }),
       ).ok,
