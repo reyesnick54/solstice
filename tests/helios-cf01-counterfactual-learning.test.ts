@@ -107,8 +107,8 @@ describe('HELIOS CF01 — counterfactual decision ledger', () => {
     const setDigest = digestCandidateActionSetContent({
       setId: 'set_cf01',
       candidates: [
-        { candidateId: 'c1', actionClass: 'ENTER' },
-        { candidateId: 'c2', actionClass: 'NO_ACTION' },
+        { candidateId: 'c1', actionClass: 'ENTER', parametersDigest: 'p1' },
+        { candidateId: 'c2', actionClass: 'NO_ACTION', parametersDigest: 'p2' },
       ],
     });
     const episode = sealDecisionEpisode({

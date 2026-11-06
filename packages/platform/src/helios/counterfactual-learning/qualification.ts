@@ -1,4 +1,4 @@
-import { digestDecisionContext } from './seal.ts';
+import { digestCandidateActionSetContent, digestDecisionContext } from './seal.ts';
 import type { DecisionEpisode } from './types.ts';
 import {
   HELIOS_CF01_DECISION_LEDGER_BLOCKED,
@@ -33,6 +33,17 @@ export function evaluateCf01DecisionLedgerQualification(episode: DecisionEpisode
   }
   const candidateIds = new Set(episode.candidateSet.candidates.map((c) => c.candidateId));
   const setDigest = episode.candidateSet.contentDigest;
+  const expectedSetDigest = digestCandidateActionSetContent({
+    setId: episode.candidateSet.setId,
+    candidates: episode.candidateSet.candidates.map((c) => ({
+      candidateId: c.candidateId,
+      actionClass: c.actionClass,
+      parametersDigest: c.parametersDigest,
+    })),
+  });
+  if (setDigest !== expectedSetDigest) {
+    findings.push('CANDIDATE_SET_DIGEST_MISMATCH');
+  }
   if (episode.candidateSet.candidates.length === 0 && setDigest.length > 0) {
     findings.push('CANDIDATE_SET_DIGEST_PRESENT_WITHOUT_CANDIDATES');
   }

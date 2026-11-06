@@ -26,7 +26,11 @@ export function digestDecisionContext(context: DecisionContext): string {
 
 export function digestCandidateActionSetContent(input: {
   readonly setId: string;
-  readonly candidates: readonly { readonly candidateId: string; readonly actionClass: string }[];
+  readonly candidates: readonly {
+    readonly candidateId: string;
+    readonly actionClass: string;
+    readonly parametersDigest: string;
+  }[];
 }): string {
   return createHash('sha256')
     .update(stableStringify({ setId: input.setId, candidates: input.candidates }))
