@@ -768,6 +768,45 @@ export type {
 } from './earn11/index.ts';
 
 export {
+  HELIOS_EVOL04_QUALITY_DIVERSITY_QUALIFIED,
+  HELIOS_EVOL04_QUALITY_DIVERSITY_BLOCKED,
+  DEFAULT_BIN_COUNTS,
+  binDescriptorValue,
+  defaultNicheDescriptor,
+  emptyBehaviorDescriptors,
+  strategyNicheFromDescriptor,
+  computeQualityDiversityScore,
+  compareNicheFitness,
+  createEmptyNicheArchive,
+  attemptInsertElite,
+  nicheArchiveStats,
+  researchBudgetForEmptyNiches,
+  assessDiversityCollapse,
+  evaluateEvol04QualityDiversityQualification,
+} from './evolution/quality-diversity/index.ts';
+export type {
+  BehaviorAssetClass,
+  BehaviorDescriptors,
+  BehaviorDrawdownProfile,
+  BehaviorLongShortBias,
+  BehaviorOrdinalBin,
+  BehaviorRegimePreference,
+  BehaviorSignalFamily,
+  DiversityCollapseReport,
+  EvolutionCandidateRef,
+  NicheArchive,
+  NicheDescriptor,
+  NicheElite,
+  NicheFitnessComponents,
+  StrategyNiche,
+  NicheArchiveStats,
+  DefaultNicheGrid,
+  AttemptInsertResult,
+  Evol04QualityDiversityChecks,
+  Evol04QualityDiversityQualificationResult,
+} from './evolution/quality-diversity/index.ts';
+
+export {
   HELIOS_EVOL07_BEHAVIOR_FINGERPRINT_SCHEMA_VERSION,
   HELIOS_EVOL07_NEAREST_NEIGHBOR_ENGINE_SCHEMA_VERSION,
   HELIOS_EVOL07_NEUTRAL_DIAGNOSTIC_DATASET_ID,
