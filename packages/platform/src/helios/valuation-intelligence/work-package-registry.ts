@@ -42,6 +42,10 @@ const MODULE_BY_PACKAGE: Record<
     title: 'Dynamic probabilistic comparable company engine',
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/comparables/index.ts',
   },
+  VAL09: {
+    title: 'Sum-of-the-parts and segment valuation engine',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/sotp/index.ts',
+  },
 };
 
 const TEST_BY_PACKAGE: Record<string, string> = {
@@ -52,6 +56,7 @@ const TEST_BY_PACKAGE: Record<string, string> = {
   VAL05: 'tests/helios-val05-reverse-dcf.test.ts',
   VAL07: 'tests/helios-val07-residual-income.test.ts',
   VAL08: 'tests/helios-val08-probabilistic-comparables.test.ts',
+  VAL09: 'tests/helios-val09-sotp.test.ts',
 };
 
 export function listValWorkPackages(root: string): readonly ValWorkPackageRow[] {

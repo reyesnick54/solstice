@@ -1,5 +1,5 @@
 /**
- * HELIOS Valuation Intelligence — canonical owner and taxonomy (VAL01–VAL08).
+ * HELIOS Valuation Intelligence — canonical owner and taxonomy (VAL01–VAL09).
  */
 
 export const HELIOS_VALUATION_INTELLIGENCE_SCHEMA = 'helios.valuation-intelligence.v1' as const;
@@ -61,6 +61,10 @@ export const HELIOS_VAL08_PROBABILISTIC_COMPARABLES_QUALIFIED =
 export const HELIOS_VAL08_PROBABILISTIC_COMPARABLES_BLOCKED =
   'HELIOS_VAL08_PROBABILISTIC_COMPARABLES_BLOCKED' as const;
 
+export const HELIOS_VAL09_SOTP_QUALIFIED = 'HELIOS_VAL09_SOTP_QUALIFIED' as const;
+
+export const HELIOS_VAL09_SOTP_BLOCKED = 'HELIOS_VAL09_SOTP_BLOCKED' as const;
+
 /** Explicit horizon for the reverse-DCF explicit period (years). */
 export const VAL05_DEFAULT_EXPLICIT_YEARS = 10 as const;
 
@@ -75,5 +79,6 @@ export const VAL_WORK_PACKAGES = Object.freeze([
   'VAL05',
   'VAL07',
   'VAL08',
+  'VAL09',
 ] as const);
 export type ValWorkPackageId = (typeof VAL_WORK_PACKAGES)[number];
