@@ -21,6 +21,7 @@ export type EvaluationQualificationId = Brand<string, 'EvaluationQualificationId
 export type PromotionDecisionId = Brand<string, 'PromotionDecisionId'>;
 export type ForwardShadowRunId = Brand<string, 'ForwardShadowRunId'>;
 export type ForwardShadowDecisionId = Brand<string, 'ForwardShadowDecisionId'>;
+export type RejectedOpportunityShadowOpportunityId = Brand<string, 'RejectedOpportunityShadowOpportunityId'>;
 
 function asPrefixed<T extends string>(value: string, prefix: string, label: string): Brand<string, T> {
   if (!value.startsWith(prefix) || value.length <= prefix.length) {
@@ -118,4 +119,10 @@ export function asForwardShadowRunId(value: string): ForwardShadowRunId {
 
 export function asForwardShadowDecisionId(value: string): ForwardShadowDecisionId {
   return asPrefixed(value, 'fsdec_', 'ForwardShadowDecisionId');
+}
+
+export function asRejectedOpportunityShadowOpportunityId(
+  value: string,
+): RejectedOpportunityShadowOpportunityId {
+  return asPrefixed(value, 'rosh_', 'RejectedOpportunityShadowOpportunityId');
 }

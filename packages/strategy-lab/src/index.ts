@@ -19,6 +19,7 @@ export {
   asPromotionDecisionId,
   asForwardShadowRunId,
   asForwardShadowDecisionId,
+  asRejectedOpportunityShadowOpportunityId,
 } from './ids.ts';
 export type {
   BacktestRunId,
@@ -41,6 +42,7 @@ export type {
   PromotionDecisionId,
   ForwardShadowRunId,
   ForwardShadowDecisionId,
+  RejectedOpportunityShadowOpportunityId,
 } from './ids.ts';
 export {
   COST_MODES,
@@ -325,12 +327,31 @@ export {
   recordForwardShadowDecision,
   attachForwardShadowOutcome,
   summarizeForwardShadowEvidence,
+  HELIOS_CF02_REJECTED_OPPORTUNITY_BOOK_QUALIFIED,
+  SHADOW_OBSERVATION_HORIZONS,
+  SHADOW_BENCHMARKS,
+  MARKET_PATH_OBSERVED,
+  EXECUTION_COUNTERFACTUAL_ESTIMATED,
+  POLICY_COUNTERFACTUAL_ESTIMATED,
+  REJECTED_OPPORTUNITY_NOT_COUNTERFACTUAL_CUSTOMER_INVARIANT,
+  createRejectedOpportunityShadowBook,
+  appendRejectedOpportunityShadowEntry,
+  shadowOriginalDecisionFromForwardShadow,
 } from './forward-shadow.ts';
 export type {
   ForwardShadowRun,
   ForwardShadowDecision,
   ForwardShadowOutcome,
   ForwardShadowEvidenceSummary,
+  ShadowObservationHorizon,
+  ShadowBenchmark,
+  ShadowPricePathSlice,
+  ShadowBenchmarkPathRow,
+  ShadowHorizonObservation,
+  ShadowOutcome,
+  ShadowOriginalDecisionSnapshot,
+  ShadowOpportunity,
+  RejectedOpportunityShadowBook,
 } from './forward-shadow.ts';
 export {
   canEmitPromotionDecision,
