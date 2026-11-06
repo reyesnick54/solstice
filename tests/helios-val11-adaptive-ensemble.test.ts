@@ -14,6 +14,7 @@ import {
   assertIntrinsicInputsPriceFree,
   evaluateVal11AdaptiveEnsembleQualification,
   listValWorkPackages,
+  mergeQuantiles,
   qualificationChecksFromState,
   runVal11AdaptiveValuationEnsemble,
   val11DemoCompanyProfile,
@@ -23,6 +24,7 @@ import {
   VAL11_FIXTURE_AS_OF,
   VAL11_FIXTURE_CURRENCY,
   VAL11_FIXTURE_ENTITY_ID,
+  type EnsembleValueQuantile,
 } from '../packages/platform/src/helios/valuation-intelligence/index.ts';
 import { lintHeliosBoundary } from '../tools/architectural-linter/src/helios-guards.ts';
 
@@ -102,6 +104,18 @@ describe('HELIOS VAL11 — adaptive valuation ensemble', () => {
     assert.ok(ri && fcff);
     assert.ok(ri!.applicabilityScore > fcff!.applicabilityScore);
     assert.ok(ri!.characteristicDrivers.includes('BANK'));
+  });
+
+  it('mergeQuantiles includes zero equity values (0n is not treated as missing)', () => {
+    const zeroQuantile: EnsembleValueQuantile = Object.freeze({
+      quantile: 'p50',
+      equityValuePerShareMinor: 0n,
+      enterpriseValueMinor: null,
+    });
+    const merged = mergeQuantiles(Object.freeze(['p50']), [
+      Object.freeze({ weight: 1, quantiles: Object.freeze([zeroQuantile]) }),
+    ]);
+    assert.equal(merged[0]!.equityValuePerShareMinor, 0n);
   });
 
   it('emits HELIOS_VAL11_ADAPTIVE_VALUATION_ENSEMBLE_QUALIFIED when engineering checks pass', () => {

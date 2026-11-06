@@ -33,7 +33,7 @@ export function mergeQuantiles(
       const rows = perModel
         .map((m) => {
           const q = m.quantiles.find((row) => row.quantile === quantile);
-          if (!q?.equityValuePerShareMinor) return null;
+          if (!q || q.equityValuePerShareMinor === null) return null;
           return Object.freeze({ valueMinor: q.equityValuePerShareMinor, weight: m.weight });
         })
         .filter((r): r is { valueMinor: bigint; weight: number } => r !== null);
@@ -41,7 +41,7 @@ export function mergeQuantiles(
       const evRows = perModel
         .map((m) => {
           const q = m.quantiles.find((row) => row.quantile === quantile);
-          if (!q?.enterpriseValueMinor) return null;
+          if (!q || q.enterpriseValueMinor === null) return null;
           return Object.freeze({ valueMinor: q.enterpriseValueMinor, weight: m.weight });
         })
         .filter((r): r is { valueMinor: bigint; weight: number } => r !== null);

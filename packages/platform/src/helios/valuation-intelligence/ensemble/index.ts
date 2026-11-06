@@ -49,6 +49,8 @@ export {
 
 export { computeAdaptiveModelWeights, type WeightingInput } from './weighting.ts';
 
+export { mergeQuantiles } from './numeric.ts';
+
 export {
   aggregateIntrinsicLane,
   aggregateMarketReferencedLane,
