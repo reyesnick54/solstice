@@ -1,6 +1,6 @@
 import {
   HELIOS_CF04_OUTCOME_MODEL_SCHEMA,
-  LIQUIDITY_BUCKETS,
+  CF04_LIQUIDITY_BUCKETS,
   REGIME_LABELS,
 } from './taxonomy.ts';
 import type { Cf04BaselineModelKind } from './taxonomy.ts';
@@ -14,6 +14,7 @@ import type {
   OutcomeQuantileSurface,
   QuantileCoverageReport,
 } from './types.ts';
+import type { OutcomeDimensionKey } from './taxonomy.ts';
 import {
   assertIssuerInstrumentLeakageGuard,
   buildChronologicalFolds,
@@ -64,7 +65,7 @@ function buildCalibrationFromOof(oof: readonly RowCalibration[]): OutcomeModelCa
     const s = sliceByAction(oof, actionId);
     return { actionId, metrics: s.metrics, quantileCoverage: s.quantileCoverage };
   });
-  const byLiquidity = LIQUIDITY_BUCKETS.map((liquidityBucket) => {
+  const byLiquidity = CF04_LIQUIDITY_BUCKETS.map((liquidityBucket) => {
     const slice = oof.filter((r) => r.row.liquidityBucket === liquidityBucket);
     if (slice.length === 0) {
       return {
@@ -90,12 +91,12 @@ function toOutcomeQuantileSurface(
   xRaw: readonly number[],
 ): OutcomeQuantileSurface {
   const perDim = predictQuantileSurfacesFromStates(xRaw, dimStates);
-  const surf = {} as OutcomeQuantileSurface;
+  const surf: Partial<Record<OutcomeDimensionKey, (typeof perDim)[number]>> = {};
   for (let i = 0; i < OUTCOME_VECTOR_KEYS.length; i += 1) {
     const key = OUTCOME_VECTOR_KEYS[i]!;
     surf[key] = perDim[i]!;
   }
-  return Object.freeze(surf);
+  return Object.freeze(surf as OutcomeQuantileSurface);
 }
 
 export function fitCrossFitOutcomeModel(

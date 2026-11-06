@@ -56,9 +56,10 @@ function trajectoryFromSnapshots(snapshots: readonly Level2Snapshot[]): readonly
       const book = marketBookFromLevel2(snap);
       const bid = bestBid(book);
       const ask = bestAsk(book);
+      const mid = midPriceMinor(book);
       return Object.freeze({
         at: snap.observedAt,
-        midPriceMinorUnits: midPriceMinor(book),
+        midPriceMinorUnits: mid ?? 0n,
         bestBidMinorUnits: bid?.priceMinorUnits ?? 0n,
         bestAskMinorUnits: ask?.priceMinorUnits ?? 0n,
       });

@@ -8,7 +8,8 @@
 
 import type { UtcInstant } from '@solstice/domain';
 
-import type { Level2Snapshot, SimulatedOrderSide } from './types.ts';
+import type { Level2Snapshot } from './types.ts';
+import type { SimulatedOrderSide } from './taxonomy.ts';
 import {
   HELIOS_CF08_DETERMINISTIC_MARKET_MODEL_ID,
   type ResponsiveMarketModelKind,
@@ -125,7 +126,7 @@ export class DeterministicResponsiveMarketSimulator implements ResponsiveMarketS
     const newBidPrice = newMid - newHalfSpread;
     const newAskPrice = newMid + newHalfSpread;
 
-    const bids = snap.bids.map((row, index) => {
+    let bids = snap.bids.map((row, index) => {
       if (index !== 0) {
         return row;
       }
