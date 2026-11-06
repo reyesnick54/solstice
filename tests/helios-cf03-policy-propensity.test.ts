@@ -13,7 +13,7 @@ import {
   assessOverlapForOpe,
   evaluateCf03PolicyPropensityQualification,
   HELIOS_CF03_POLICY_PROPENSITY_QUALIFIED,
-} from '../packages/platform/src/helios/index.ts';
+} from '../packages/platform/src/helios/counterfactual-learning/index.ts';
 import { lintHeliosBoundary } from '../tools/architectural-linter/src/helios-guards.ts';
 
 const NOW = asUtcInstant('2026-11-06T12:00:00.000Z');

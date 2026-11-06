@@ -5,14 +5,14 @@ import { LIVE_TRADING_ENABLED } from '@solstice/config';
 import type { UtcInstant } from '@solstice/domain';
 
 import {
-  HELIOS_COUNTERFACTUAL_LEARNING_SCHEMA,
+  HELIOS_COUNTERFACTUAL_LEARNING_PROGRAM_SCHEMA,
   HELIOS_COUNTERFACTUAL_LEARNING_V1_BLOCKED,
   HELIOS_COUNTERFACTUAL_LEARNING_V1_QUALIFIED,
 } from './taxonomy.ts';
 import { listCfWorkPackages } from './work-package-registry.ts';
 
 export {
-  HELIOS_COUNTERFACTUAL_LEARNING_SCHEMA,
+  HELIOS_COUNTERFACTUAL_LEARNING_PROGRAM_SCHEMA,
   HELIOS_COUNTERFACTUAL_LEARNING_V1_BLOCKED,
   HELIOS_COUNTERFACTUAL_LEARNING_V1_QUALIFIED,
 } from './taxonomy.ts';
@@ -26,7 +26,7 @@ export type CounterfactualLearningQualificationInput = {
 };
 
 export type CounterfactualLearningQualificationResult = {
-  readonly schema: typeof HELIOS_COUNTERFACTUAL_LEARNING_SCHEMA;
+  readonly schema: typeof HELIOS_COUNTERFACTUAL_LEARNING_PROGRAM_SCHEMA;
   readonly marker:
     | typeof HELIOS_COUNTERFACTUAL_LEARNING_V1_QUALIFIED
     | typeof HELIOS_COUNTERFACTUAL_LEARNING_V1_BLOCKED;
@@ -75,7 +75,7 @@ export function evaluateCounterfactualLearningQualification(
   const qualified = blockers.length === 0;
 
   return Object.freeze({
-    schema: HELIOS_COUNTERFACTUAL_LEARNING_SCHEMA,
+    schema: HELIOS_COUNTERFACTUAL_LEARNING_PROGRAM_SCHEMA,
     marker: qualified
       ? HELIOS_COUNTERFACTUAL_LEARNING_V1_QUALIFIED
       : HELIOS_COUNTERFACTUAL_LEARNING_V1_BLOCKED,
