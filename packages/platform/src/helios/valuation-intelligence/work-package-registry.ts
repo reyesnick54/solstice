@@ -38,6 +38,10 @@ const MODULE_BY_PACKAGE: Record<
     title: 'Residual income, economic profit, and excess-return valuation',
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/residual-income/index.ts',
   },
+  VAL08: {
+    title: 'Dynamic probabilistic comparable company engine',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/comparables/index.ts',
+  },
 };
 
 const TEST_BY_PACKAGE: Record<string, string> = {
@@ -47,6 +51,7 @@ const TEST_BY_PACKAGE: Record<string, string> = {
   VAL04: 'tests/helios-val04-probabilistic-dcf.test.ts',
   VAL05: 'tests/helios-val05-reverse-dcf.test.ts',
   VAL07: 'tests/helios-val07-residual-income.test.ts',
+  VAL08: 'tests/helios-val08-probabilistic-comparables.test.ts',
 };
 
 export function listValWorkPackages(root: string): readonly ValWorkPackageRow[] {
