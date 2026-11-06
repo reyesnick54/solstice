@@ -36,3 +36,4 @@ export type {
   TwinBindingRef,
   ValuationStateAtDecision,
 } from './types.ts';
+export * from './cf06-distributional-ope/index.ts';
