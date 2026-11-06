@@ -318,6 +318,34 @@ export type {
   Evol11ForwardShadowRole,
   Evol11PaperRole,
 } from './evol11-champion-challenger.ts';
+export {
+  CF11_FORBIDDEN_POLICY_SURFACES,
+  CF11_NEXT_ROUTE_STAGE,
+  CF11_RESEARCH_POLICY_KNOB_KINDS,
+  HELIOS_CF11_POLICY_SAFETY_ENVELOPE_SCHEMA_VERSION,
+  HELIOS_CF11_SAFE_POLICY_IMPROVEMENT_BLOCKED,
+  HELIOS_CF11_SAFE_POLICY_IMPROVEMENT_QUALIFIED,
+  assertCf11SafetyEnvelopeComplete,
+  createCf11PolicySafetyEnvelope,
+  evaluateCf11EngineeringQualification,
+  evaluateCf11SafePolicyImprovementQualification,
+  cf11EngineeringQualificationChecks,
+  lintCf11PolicyImprovementCandidate,
+  routeCf11QualifiedToEvol11,
+} from './cf11/index.ts';
+export type {
+  BaselinePolicyComparison,
+  Cf11ForbiddenPolicySurface,
+  Cf11OpeEstimatorAgreement,
+  Cf11QualifiedRoute,
+  Cf11ResearchPolicyKnobKind,
+  ConservativeImprovementBound,
+  PolicyImprovementCandidate,
+  PolicySafetyEnvelope,
+  PolicySafetyEnvelopeBounds,
+  Cf11EngineeringQualificationChecks,
+  Cf11QualificationResult,
+} from './cf11/index.ts';
 export { gateResearchToEvaluation, gateEvaluationToShadow, gateShadowToPaper } from './promotion-gates.ts';
 export type { GateResult } from './promotion-gates.ts';
 export {
