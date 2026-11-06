@@ -10,6 +10,10 @@ export const VALUATION_FEATURE_IDS = [
   'val01.applicable_method_count',
   'val01.wacc_assumption_decimal',
   'val01.market_implied_growth_decimal',
+  'val07.intrinsic_equity_value',
+  'val07.pv_residual_income',
+  'val07.current_book_equity',
+  'val07.cost_of_equity_bps',
 ] as const;
 
 export type ValuationFeatureId = (typeof VALUATION_FEATURE_IDS)[number];
