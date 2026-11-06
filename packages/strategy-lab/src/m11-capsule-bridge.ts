@@ -51,7 +51,9 @@ export function observeM11CapsuleQualification(input: {
     fingerprint: input.fingerprint ?? 'unregistered',
     promotionState: promotion?.promotionState ?? 'UNREGISTERED',
     paperEligible:
-      promotion?.promotionState === 'PAPER_ELIGIBLE' || promotion?.promotionState === 'PAPER_ACTIVE',
+      promotion?.promotionState === 'PAPER_ELIGIBLE' ||
+      promotion?.promotionState === 'PAPER_ACTIVE' ||
+      promotion?.promotionState === 'PAPER_CHALLENGER',
     liveEligible: false,
     liveCommodityExecution: false,
     liveFuturesExecution: false,

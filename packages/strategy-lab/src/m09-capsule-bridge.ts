@@ -53,7 +53,9 @@ export function observeM09CapsuleQualification(input: {
     parameterVersion: M09_PARAMETERS_V1.version,
     promotionState: promotion?.promotionState ?? 'UNREGISTERED',
     paperEligible:
-      promotion?.promotionState === 'PAPER_ELIGIBLE' || promotion?.promotionState === 'PAPER_ACTIVE',
+      promotion?.promotionState === 'PAPER_ELIGIBLE' ||
+      promotion?.promotionState === 'PAPER_ACTIVE' ||
+      promotion?.promotionState === 'PAPER_CHALLENGER',
     shadowEligible:
       promotion?.promotionState === 'SHADOW_ELIGIBLE' || promotion?.promotionState === 'SHADOW_ACTIVE',
     liveEligible: false,
