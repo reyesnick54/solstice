@@ -10,7 +10,7 @@ export const HELIOS_VAL06_AGENTIC_VALUATION_BLOCKED =
 export const VALUATION_ANALYST_SPECIALIST_ROLES = [
   'REVENUE_FORECAST',
   'MARGIN',
-  'CAPITAL_INTENSITY',
+  'RESIDUAL_INCOME',
   'COST_OF_CAPITAL',
   'DCF_VALUATION',
   'REVERSE_DCF_CHALLENGE',
@@ -62,7 +62,7 @@ export const VALUATION_COMMITTEE_AGENT_NAMES: Readonly<Record<ValuationCommittee
   Object.freeze({
     REVENUE_FORECAST: 'RevenueForecastAgent',
     MARGIN: 'MarginAgent',
-    CAPITAL_INTENSITY: 'CapitalIntensityAgent',
+    RESIDUAL_INCOME: 'ResidualIncomeAgent',
     COST_OF_CAPITAL: 'CostOfCapitalAgent',
     DCF_VALUATION: 'DCFValuationAgent',
     REVERSE_DCF_CHALLENGE: 'ReverseDCFChallengeAgent',
@@ -70,6 +70,6 @@ export const VALUATION_COMMITTEE_AGENT_NAMES: Readonly<Record<ValuationCommittee
     SOTP: 'SOTPAgent',
     BULL_VALUATION: 'BullValuationAgent',
     BEAR_VALUATION: 'BearValuationAgent',
-    VALUATION_RISK: 'ValuationRiskAgent',
-    VALUATION_SYNTHESIS: 'ValuationSynthesisAgent',
+    VALUATION_RISK: 'ModelRiskAgent',
+    VALUATION_SYNTHESIS: 'SynthesisAgent',
   });

@@ -113,7 +113,7 @@ export function buildValuationInvestmentThesis(input: {
         'MARGIN',
         'COST_OF_CAPITAL',
         'DCF_VALUATION',
-        'CAPITAL_INTENSITY',
+        'RESIDUAL_INCOME',
         'SOTP',
       ].includes(row.role),
     )

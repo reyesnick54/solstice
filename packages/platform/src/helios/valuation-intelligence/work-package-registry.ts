@@ -34,6 +34,10 @@ const MODULE_BY_PACKAGE: Record<
     title: 'Reverse DCF and market-implied expectations',
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/val05/service.ts',
   },
+  VAL06: {
+    title: 'Agentic valuation investment committee',
+    moduleRef: 'packages/agentic-capital-mesh/src/valuation-agentic-committee/mesh-service.ts',
+  },
   VAL07: {
     title: 'Residual income, economic profit, and excess-return valuation',
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/residual-income/index.ts',
@@ -46,13 +50,17 @@ const MODULE_BY_PACKAGE: Record<
     title: 'Sum-of-the-parts and segment valuation engine',
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/sotp/index.ts',
   },
+  VAL10: {
+    title: 'Valuation uncertainty, fragility, and model-risk engine',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/uncertainty/index.ts',
+  },
   VAL11: {
     title: 'Adaptive multi-model valuation ensemble',
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/ensemble/index.ts',
   },
-  VAL10: {
-    title: 'Valuation uncertainty, fragility, and model-risk engine',
-    moduleRef: 'packages/platform/src/helios/valuation-intelligence/uncertainty/index.ts',
+  VAL12: {
+    title: 'Final qualification and strategy bridge',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/val12/qualification.ts',
   },
 };
 
@@ -62,11 +70,13 @@ const TEST_BY_PACKAGE: Record<string, string> = {
   VAL03: 'tests/helios-val03-cost-of-capital.test.ts',
   VAL04: 'tests/helios-val04-probabilistic-dcf.test.ts',
   VAL05: 'tests/helios-val05-reverse-dcf.test.ts',
+  VAL06: 'tests/helios-val06-agentic-valuation-committee.test.ts',
   VAL07: 'tests/helios-val07-residual-income.test.ts',
   VAL08: 'tests/helios-val08-probabilistic-comparables.test.ts',
   VAL09: 'tests/helios-val09-sotp.test.ts',
-  VAL11: 'tests/helios-val11-adaptive-ensemble.test.ts',
   VAL10: 'tests/helios-val10-uncertainty-engine.test.ts',
+  VAL11: 'tests/helios-val11-adaptive-ensemble.test.ts',
+  VAL12: 'tests/helios-val12-valuation-intelligence-qualification.test.ts',
 };
 
 export function listValWorkPackages(root: string): readonly ValWorkPackageRow[] {

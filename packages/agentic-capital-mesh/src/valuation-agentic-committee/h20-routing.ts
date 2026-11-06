@@ -17,7 +17,7 @@ const COST_PROFILES: Readonly<Record<ValuationCommitteeRole, SpecialistCostProfi
     dataCostMicros: 25_000n,
     baselineInformationValue: 0.72,
   }),
-  CAPITAL_INTENSITY: Object.freeze({
+  RESIDUAL_INCOME: Object.freeze({
     modelCostMicros: 85_000n,
     dataCostMicros: 30_000n,
     baselineInformationValue: 0.68,

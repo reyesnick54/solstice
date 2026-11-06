@@ -21,6 +21,8 @@ export {
   HELIOS_VAL10_UNCERTAINTY_ENGINE_QUALIFIED,
   HELIOS_VAL10_UNCERTAINTY_ENGINE_BLOCKED,
   VAL10_UNCERTAINTY_ENGINE_MODULE,
+  HELIOS_VALUATION_INTELLIGENCE_V1_QUALIFIED,
+  HELIOS_VALUATION_INTELLIGENCE_V1_BLOCKED,
   type ValuationMethod,
   type ValuationScenarioKind,
   type ValuationAssumptionValueKind,
@@ -136,3 +138,4 @@ export * from './comparables/index.ts';
 export * from './sotp/index.ts';
 export * from './ensemble/index.ts';
 export * from './uncertainty/index.ts';
+export * from './val12/index.ts';

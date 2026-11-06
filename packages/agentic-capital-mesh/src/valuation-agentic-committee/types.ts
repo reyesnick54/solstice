@@ -126,6 +126,16 @@ export type ValuationSpecialistArtifact = {
   readonly issuesOrders: false;
 };
 
+export type ValuationExtendedModelEvidence = {
+  readonly schema: 'sunrey.helios.valuation-extended-model-evidence.v1';
+  readonly val07ResidualIncomeRef: string;
+  readonly val08ComparablesRef: string;
+  readonly val09SotpRef: string;
+  readonly val10UncertaintyRef: string;
+  readonly val11EnsembleRef: string;
+  readonly compiledAt: UtcInstant;
+};
+
 export type ValuationCommitteeRequest = {
   readonly workOrderId: string;
   readonly subjectId: string;
@@ -135,6 +145,7 @@ export type ValuationCommitteeRequest = {
   readonly contextRef: string;
   readonly evidenceBundle: readonly ValuationEvidenceRef[];
   readonly canonicalFinancialFacts: readonly CanonicalFinancialFact[];
+  readonly extendedModelEvidence?: ValuationExtendedModelEvidence | null;
   readonly timeHorizon?: ValuationTimeHorizon;
   readonly decisionImportance?: number;
   readonly forceAllSpecialists?: boolean;

@@ -19,6 +19,7 @@ import {
   validateValuationInvestmentThesis,
   type CanonicalFinancialFact,
 } from '../packages/agentic-capital-mesh/src/valuation-agentic-committee/index.ts';
+import { buildHeliosValuationState } from '../packages/platform/src/helios/valuation-intelligence/index.ts';
 
 const NOW = asUtcInstant('2026-11-04T07:00:00.000Z');
 
@@ -152,7 +153,9 @@ describe('HELIOS VAL06 agentic valuation investment committee', () => {
     assert.equal(names.length, 12);
     assert.equal(VALUATION_COMMITTEE_ROLES.length, 12);
     assert.equal(VALUATION_COMMITTEE_AGENT_NAMES.REVENUE_FORECAST, 'RevenueForecastAgent');
-    assert.equal(VALUATION_COMMITTEE_AGENT_NAMES.VALUATION_SYNTHESIS, 'ValuationSynthesisAgent');
+    assert.equal(VALUATION_COMMITTEE_AGENT_NAMES.RESIDUAL_INCOME, 'ResidualIncomeAgent');
+    assert.equal(VALUATION_COMMITTEE_AGENT_NAMES.VALUATION_RISK, 'ModelRiskAgent');
+    assert.equal(VALUATION_COMMITTEE_AGENT_NAMES.VALUATION_SYNTHESIS, 'SynthesisAgent');
   });
 
   it('1. freezes evidence pack and canonical facts; rejects post-freeze mutation', () => {
@@ -212,6 +215,7 @@ describe('HELIOS VAL06 agentic valuation investment committee', () => {
     });
     assert.ok(ctx.ok);
     const committee = new ValuationAgenticCommittee({ clock: new FrozenClock(NOW) });
+    const valuationState = buildHeliosValuationState({});
     const result = committee.run({
       context: ctx.value,
       request: Object.freeze({
@@ -223,6 +227,7 @@ describe('HELIOS VAL06 agentic valuation investment committee', () => {
         contextRef: 'ctx_val06',
         evidenceBundle: Object.freeze([evidence(), evidence({ evidenceId: 'ev_val06_2' })]),
         canonicalFinancialFacts: canonicalFacts(),
+        extendedModelEvidence: valuationState.extendedModelEvidence,
         timeHorizon: 'MEDIUM_TERM',
         decisionImportance: 0.75,
         forceAllSpecialists: true,
