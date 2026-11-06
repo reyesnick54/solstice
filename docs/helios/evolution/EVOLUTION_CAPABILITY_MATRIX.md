@@ -12,7 +12,7 @@
 | EVOL06 | Population scheduling | `POPULATION_SCHEDULING` trial | EVOL14 simulation |
 | EVOL07 | Novelty | `assessNovelty` | EVOL14 simulation |
 | EVOL08 | Falsification | `runFalsification` | EVOL14 simulation |
-| EVOL09 | Multiple-testing firewall | DSR / PBO via `buildAntiOverfittingDiagnostics` (`anti-overfitting.ts`) | EVOL14 tests |
+| EVOL09 | Multiple-testing firewall | `packages/platform/src/helios/strategy-evolution/evol09/` (DSR, PSR, PBO, FDR, family-wise budget, sealed holdout) | `tests/helios-evol09-multiple-testing-firewall.test.ts` + EVOL14 simulation |
 | EVOL10 | Regime generalization | `evaluateStrategyRegimeGating` + overfit genome gate | EVOL14 simulation |
 | EVOL11 | Champion / challenger | `ChampionChallengerComparison` | EVOL14 simulation |
 | EVOL12 | Strategy Scientist | `StrategyScientistObservation` | EVOL14 simulation |
