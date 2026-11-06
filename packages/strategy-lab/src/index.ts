@@ -604,6 +604,25 @@ export {
   evaluateOs05StrategyGenomeQualification,
   buildOs05ExampleStrategyGenome,
 } from './os05/index.ts';
+export {
+  CANONICAL_RISK_ENGINE_CATALOG_REF,
+  EVOLUTION_ENGINE_VERSION,
+  HELIOS_EVOL02_GENOME_OPERATORS_BLOCKED,
+  HELIOS_EVOL02_GENOME_OPERATORS_QUALIFIED,
+  crossoverStrategyGenomes,
+  evaluateEvolutionOperatorsQualification,
+  genomeGraphOps,
+  genomeSemanticDistance,
+  mutateStrategyGenome,
+} from './evolution/operators/index.ts';
+export type {
+  CrossoverMode,
+  GenomeSemanticDistance,
+  MutationFamily,
+} from './evolution/operators/index.ts';
+export type {
+  EvolutionOperatorKind,
+} from './os05/index.ts';
 export type {
   StrategyGenomeId,
   StrategyGenomeVersion,
