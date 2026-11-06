@@ -37,9 +37,16 @@ export function canEmitPromotionDecision(input: {
     });
   }
   if (
-    (['PROMOTED_TO_SHADOW', 'PROMOTED_TO_PAPER', 'DEMOTED'] as readonly string[]).includes(
-      input.decisionKind,
-    ) &&
+    (
+      [
+        'PROMOTED_TO_SHADOW',
+        'PROMOTED_TO_PAPER',
+        'QUALIFIED_AS_CHALLENGER',
+        'CHAMPION_NAMED',
+        'DEGRADATION_DETECTED',
+        'DEMOTED',
+      ] as readonly string[]
+    ).includes(input.decisionKind) &&
     kind !== 'QUALIFICATION_SERVICE' &&
     kind !== 'HUMAN_GOVERNANCE'
   ) {

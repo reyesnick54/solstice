@@ -8,6 +8,7 @@ import { asPromotionDecisionId, type PromotionDecisionId } from './ids.ts';
 import type { GateResult } from './promotion-gates.ts';
 import type { PromotionDecisionKind, StrategyPromotionState } from './promotion-state.ts';
 import type { QualificationPolicy } from './qualification-policy.ts';
+import type { Evol11ChampionComparisonEvidence } from './evol11-champion-challenger.ts';
 
 export type PromotionEvidenceRecord = {
   readonly decisionId: PromotionDecisionId;
@@ -25,6 +26,7 @@ export type PromotionEvidenceRecord = {
   readonly gate: GateResult | null;
   readonly evaluationQualificationId: string | null;
   readonly shadowRunId: string | null;
+  readonly evol11Comparison: Evol11ChampionComparisonEvidence | null;
   readonly metricValues: Readonly<Record<string, string | number | boolean>>;
   readonly passCriteria: readonly string[];
   readonly failCriteria: readonly string[];
@@ -57,6 +59,7 @@ export function sealPromotionEvidence(input: {
   readonly gate?: GateResult | null;
   readonly qualification?: EvaluationQualificationResult | null;
   readonly shadow?: ForwardShadowEvidenceSummary | null;
+  readonly evol11Comparison?: Evol11ChampionComparisonEvidence | null;
   readonly actorId: string;
   readonly actorKind: string;
   readonly humanApproved?: boolean;
@@ -75,6 +78,12 @@ export function sealPromotionEvidence(input: {
     metricValues.shadowDecisionCount = input.shadow.decisionCount;
     metricValues.shadowNoActionCount = input.shadow.noActionCount;
     metricValues.shadowMaxDrawdownProxyBps = input.shadow.maxDrawdownProxyBps;
+    metricValues.evol11ForwardShadowRole = input.shadow.evol11Role;
+  }
+  if (input.evol11Comparison) {
+    metricValues.evol11PermitsChampionReplacement = input.evol11Comparison.permitsChampionReplacement;
+    metricValues.evol11ChallengerDominates = input.evol11Comparison.pareto.challengerDominatesIncumbent;
+    metricValues.evol11ParetoIncomparableCount = input.evol11Comparison.pareto.incomparableDimensions.length;
   }
   return Object.freeze({
     decisionId: asPromotionDecisionId(
@@ -94,6 +103,7 @@ export function sealPromotionEvidence(input: {
     gate: input.gate ?? null,
     evaluationQualificationId: input.qualification?.qualificationId ?? null,
     shadowRunId: input.shadow?.runId ?? null,
+    evol11Comparison: input.evol11Comparison ?? null,
     metricValues: Object.freeze(metricValues),
     passCriteria: Object.freeze([...(input.qualification?.passCriteria ?? input.gate?.passed ? ['gate_passed'] : [])]),
     failCriteria: Object.freeze([...(input.qualification?.failCriteria ?? input.gate?.missing ?? [])]),
