@@ -84,7 +84,7 @@ export type ContextAdaptiveSwitchPolicy = {
   readonly enabled: boolean;
   /**
    * When DR bootstrap variance exceeds this multiple of self-normalized IPS variance,
-   * report SWITCH_DR point estimate aligned with the safer SNIPS path (documented in diagnostics).
+   * annotate SWITCH_DR diagnostics (point estimates are unchanged).
    */
   readonly varianceRatioThreshold: number;
 };
