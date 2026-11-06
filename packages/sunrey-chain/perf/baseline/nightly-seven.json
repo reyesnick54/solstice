@@ -1,0 +1,553 @@
+{
+  "context": {
+    "schemaVersion": 1,
+    "resultClass": "ENGINEERING_MEASUREMENT",
+    "sourceCommit": "b9efb04abc603593a6079b0e5c72171076cb7e1f",
+    "hardware": {
+      "arch": "x64",
+      "cpus": 4,
+      "totalMemoryBytes": 16780623872,
+      "model": "Intel(R) Xeon(R) Processor"
+    },
+    "os": {
+      "platform": "linux",
+      "release": "node",
+      "container": false,
+      "nodeVersion": "v22.23.4"
+    },
+    "validatorCount": 7,
+    "latencyProfile": "low",
+    "datasetSize": 48,
+    "protocolVersion": "sunrey.protocol.v1",
+    "testDurationMs": 33,
+    "profile": "seven-validator",
+    "startedAtUtc": "2026-11-06T13:48:32.536Z"
+  },
+  "cases": [
+    {
+      "suite": "consensus",
+      "name": "7v_low_proposal_creation",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 4,
+        "minNs": 206007,
+        "maxNs": 259122,
+        "meanNs": 220605.75,
+        "medianNs": 208644,
+        "p50Ns": 208644,
+        "p95Ns": 259122,
+        "p99Ns": 259122,
+        "stddevNs": 22263.470286267144
+      },
+      "extras": {
+        "validatorCount": 7,
+        "latencyProfile": "low",
+        "geographicClaim": false
+      }
+    },
+    {
+      "suite": "consensus",
+      "name": "7v_low_proposal_propagation",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 4,
+        "minNs": 200000,
+        "maxNs": 200000,
+        "meanNs": 200000,
+        "medianNs": 200000,
+        "p50Ns": 200000,
+        "p95Ns": 200000,
+        "p99Ns": 200000,
+        "stddevNs": 0
+      },
+      "extras": {
+        "validatorCount": 7,
+        "latencyProfile": "low",
+        "geographicClaim": false
+      }
+    },
+    {
+      "suite": "consensus",
+      "name": "7v_low_prevote",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 4,
+        "minNs": 200000,
+        "maxNs": 200000,
+        "meanNs": 200000,
+        "medianNs": 200000,
+        "p50Ns": 200000,
+        "p95Ns": 200000,
+        "p99Ns": 200000,
+        "stddevNs": 0
+      },
+      "extras": {
+        "validatorCount": 7,
+        "latencyProfile": "low",
+        "geographicClaim": false
+      }
+    },
+    {
+      "suite": "consensus",
+      "name": "7v_low_precommit",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 4,
+        "minNs": 200000,
+        "maxNs": 200000,
+        "meanNs": 200000,
+        "medianNs": 200000,
+        "p50Ns": 200000,
+        "p95Ns": 200000,
+        "p99Ns": 200000,
+        "stddevNs": 0
+      },
+      "extras": {
+        "validatorCount": 7,
+        "latencyProfile": "low",
+        "geographicClaim": false
+      }
+    },
+    {
+      "suite": "consensus",
+      "name": "7v_low_commit",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 4,
+        "minNs": 360000,
+        "maxNs": 6952029,
+        "meanNs": 2115296.5,
+        "medianNs": 393730,
+        "p50Ns": 393730,
+        "p95Ns": 6952029,
+        "p99Ns": 6952029,
+        "stddevNs": 2796787.592507742
+      },
+      "extras": {
+        "validatorCount": 7,
+        "latencyProfile": "low",
+        "geographicClaim": false
+      }
+    },
+    {
+      "suite": "consensus",
+      "name": "7v_low_end_to_end_finality",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 4,
+        "minNs": 1160552,
+        "maxNs": 7754181,
+        "meanNs": 2917633.25,
+        "medianNs": 1195952,
+        "p50Ns": 1195952,
+        "p95Ns": 7754181,
+        "p99Ns": 7754181,
+        "stddevNs": 2796752.392009827
+      },
+      "extras": {
+        "validatorCount": 7,
+        "latencyProfile": "low",
+        "geographicClaim": false
+      }
+    },
+    {
+      "suite": "mixed_workload",
+      "name": "7v_finalized_throughput",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 8,
+        "minNs": 507158,
+        "maxNs": 955640,
+        "meanNs": 650645.25,
+        "medianNs": 627374,
+        "p50Ns": 627374,
+        "p95Ns": 955640,
+        "p99Ns": 955640,
+        "stddevNs": 125273.14519855203
+      },
+      "throughput": {
+        "submitted": 48,
+        "accepted": 48,
+        "finalized": 48,
+        "rejected": 0,
+        "sustainedFinalizedPerSec": 8580.079129779775,
+        "burstFinalizedPerSec": 8580.079129779775,
+        "errorRejectionRate": 0
+      },
+      "extras": {
+        "validatorCount": 7,
+        "roundChanges": 0,
+        "stateRootsEqual": true,
+        "rssBytes": 172904448,
+        "cpuUserMs": 7.467,
+        "cpuSystemMs": 0.325,
+        "measured": "finalized_not_mempool_only"
+      }
+    },
+    {
+      "suite": "oracle",
+      "name": "observation_and_signature_verify",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 6,
+        "minNs": 377479,
+        "maxNs": 1941619,
+        "meanNs": 736900,
+        "medianNs": 486923,
+        "p50Ns": 486923,
+        "p95Ns": 1941619,
+        "p99Ns": 1941619,
+        "stddevNs": 542715.0533650232
+      },
+      "extras": {
+        "providerCount": 3
+      }
+    },
+    {
+      "suite": "oracle",
+      "name": "aggregation",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 47525,
+        "maxNs": 482804,
+        "meanNs": 265164.5,
+        "medianNs": 47525,
+        "p50Ns": 47525,
+        "p95Ns": 482804,
+        "p99Ns": 482804,
+        "stddevNs": 217639.5
+      }
+    },
+    {
+      "suite": "oracle",
+      "name": "conflict_detection",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 4060,
+        "maxNs": 48183,
+        "meanNs": 26121.5,
+        "medianNs": 4060,
+        "p50Ns": 4060,
+        "p95Ns": 48183,
+        "p99Ns": 48183,
+        "stddevNs": 22061.5
+      }
+    },
+    {
+      "suite": "oracle",
+      "name": "fact_creation_query",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 1571,
+        "maxNs": 19641,
+        "meanNs": 10606,
+        "medianNs": 1571,
+        "p50Ns": 1571,
+        "p95Ns": 19641,
+        "p99Ns": 19641,
+        "stddevNs": 9035
+      }
+    },
+    {
+      "suite": "productive",
+      "name": "claim_verification",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 304924,
+        "maxNs": 1003122,
+        "meanNs": 654023,
+        "medianNs": 304924,
+        "p50Ns": 304924,
+        "p95Ns": 1003122,
+        "p99Ns": 1003122,
+        "stddevNs": 349099
+      }
+    },
+    {
+      "suite": "productive",
+      "name": "anti_double_count_fingerprint",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 84312,
+        "maxNs": 89611,
+        "meanNs": 86961.5,
+        "medianNs": 84312,
+        "p50Ns": 84312,
+        "p95Ns": 89611,
+        "p99Ns": 89611,
+        "stddevNs": 2649.5
+      }
+    },
+    {
+      "suite": "productive",
+      "name": "moonrey_formula",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 270,
+        "maxNs": 280,
+        "meanNs": 275,
+        "medianNs": 270,
+        "p50Ns": 270,
+        "p95Ns": 280,
+        "p99Ns": 280,
+        "stddevNs": 5
+      }
+    },
+    {
+      "suite": "productive",
+      "name": "graph_projection",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 543,
+        "maxNs": 5640,
+        "meanNs": 3091.5,
+        "medianNs": 543,
+        "p50Ns": 543,
+        "p95Ns": 5640,
+        "p99Ns": 5640,
+        "stddevNs": 2548.5
+      }
+    },
+    {
+      "suite": "machine",
+      "name": "offer_purchase_escrow_meter_settle",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 1,
+        "minNs": 5411945,
+        "maxNs": 5411945,
+        "meanNs": 5411945,
+        "medianNs": 5411945,
+        "p50Ns": 5411945,
+        "p95Ns": 5411945,
+        "p99Ns": 5411945,
+        "stddevNs": 0
+      },
+      "extras": {
+        "concurrentActors": 1,
+        "moonreyIssued": false
+      }
+    },
+    {
+      "suite": "interop",
+      "name": "header_verification",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 18835,
+        "maxNs": 142712,
+        "meanNs": 80773.5,
+        "medianNs": 18835,
+        "p50Ns": 18835,
+        "p95Ns": 142712,
+        "p99Ns": 142712,
+        "stddevNs": 61938.5
+      }
+    },
+    {
+      "suite": "interop",
+      "name": "membership_proof_verification",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 6174,
+        "maxNs": 45122,
+        "meanNs": 25648,
+        "medianNs": 6174,
+        "p50Ns": 6174,
+        "p95Ns": 45122,
+        "p99Ns": 45122,
+        "stddevNs": 19474
+      }
+    },
+    {
+      "suite": "interop",
+      "name": "packet_receive",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 15489,
+        "maxNs": 102414,
+        "meanNs": 58951.5,
+        "medianNs": 15489,
+        "p50Ns": 15489,
+        "p95Ns": 102414,
+        "p99Ns": 102414,
+        "stddevNs": 43462.5
+      }
+    },
+    {
+      "suite": "interop",
+      "name": "acknowledgement",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 1828,
+        "maxNs": 14657,
+        "meanNs": 8242.5,
+        "medianNs": 1828,
+        "p50Ns": 1828,
+        "p95Ns": 14657,
+        "p99Ns": 14657,
+        "stddevNs": 6414.5
+      }
+    },
+    {
+      "suite": "interop",
+      "name": "duplicate_relayer",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 2048,
+        "maxNs": 3290,
+        "meanNs": 2669,
+        "medianNs": 2048,
+        "p50Ns": 2048,
+        "p95Ns": 3290,
+        "p99Ns": 3290,
+        "stddevNs": 621
+      }
+    },
+    {
+      "suite": "custody",
+      "name": "deposit_indexing",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 19020,
+        "maxNs": 196019,
+        "meanNs": 107519.5,
+        "medianNs": 19020,
+        "p50Ns": 19020,
+        "p95Ns": 196019,
+        "p99Ns": 196019,
+        "stddevNs": 88499.5
+      }
+    },
+    {
+      "suite": "custody",
+      "name": "policy_evaluation",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 701,
+        "maxNs": 1405,
+        "meanNs": 1053,
+        "medianNs": 701,
+        "p50Ns": 701,
+        "p95Ns": 1405,
+        "p99Ns": 1405,
+        "stddevNs": 352
+      },
+      "extras": {
+        "excludesHumanApproval": true
+      }
+    },
+    {
+      "suite": "custody",
+      "name": "transaction_preview",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 2628,
+        "maxNs": 4706,
+        "meanNs": 3667,
+        "medianNs": 2628,
+        "p50Ns": 2628,
+        "p95Ns": 4706,
+        "p99Ns": 4706,
+        "stddevNs": 1039
+      }
+    },
+    {
+      "suite": "custody",
+      "name": "signer_request",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 1542,
+        "maxNs": 1861,
+        "meanNs": 1701.5,
+        "medianNs": 1542,
+        "p50Ns": 1542,
+        "p95Ns": 1861,
+        "p99Ns": 1861,
+        "stddevNs": 159.5
+      },
+      "extras": {
+        "excludesHumanApproval": true
+      }
+    },
+    {
+      "suite": "custody",
+      "name": "chain_submission",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 12530,
+        "maxNs": 34526,
+        "meanNs": 23528,
+        "medianNs": 12530,
+        "p50Ns": 12530,
+        "p95Ns": 34526,
+        "p99Ns": 34526,
+        "stddevNs": 10998
+      }
+    },
+    {
+      "suite": "custody",
+      "name": "reconciliation",
+      "cryptoLabeledSeparately": false,
+      "latency": {
+        "count": 2,
+        "minNs": 1037,
+        "maxNs": 2433,
+        "meanNs": 1735,
+        "medianNs": 1037,
+        "p50Ns": 1037,
+        "p95Ns": 2433,
+        "p99Ns": 2433,
+        "stddevNs": 698
+      }
+    }
+  ],
+  "invariants": [
+    {
+      "id": "STATE_ROOTS_EQUAL",
+      "ok": true,
+      "detail": "seven-validator state-root agreement"
+    }
+  ],
+  "resources": [
+    {
+      "atMs": 0,
+      "rssBytes": 170311680,
+      "heapUsedBytes": 48019712,
+      "cpuUserMs": 0.078,
+      "cpuSystemMs": 0.007
+    },
+    {
+      "atMs": 33,
+      "rssBytes": 174305280,
+      "heapUsedBytes": 57030400,
+      "cpuUserMs": 37.39,
+      "cpuSystemMs": 0.513
+    }
+  ],
+  "connections": {
+    "p2p": 0,
+    "rpc": 0,
+    "databasePools": 0,
+    "eventSubscriptions": 0
+  },
+  "warnings": [
+    "seven-validator load submitted=48 accepted=48 finalized=48 rejected=0 round_changes=0"
+  ]
+}

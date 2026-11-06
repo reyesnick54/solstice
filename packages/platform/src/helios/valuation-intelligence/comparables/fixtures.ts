@@ -70,6 +70,7 @@ export function fixtureVal08Target(): PeerCandidate {
     fundamentals: {
       revenue: 1_500_000_000,
       netIncome: 220_000_000,
+      sharesOutstanding: 90_000_000,
       revenueGrowth: 0.14,
       operatingMargin: 0.2,
     },
@@ -81,15 +82,15 @@ export function fixtureVal08PeerUniverse(): readonly PeerCandidate[] {
   return Object.freeze([
     peer('peer-a', 'Peer A', '2020-06-15T00:00:00.000Z' as UtcInstant, {
       market: { marketCap: 12_000_000_000, enterpriseValue: 12_500_000_000, beta: 1.0 },
-      fundamentals: { revenueGrowth: 0.11, operatingMargin: 0.21 },
+      fundamentals: { revenue: 2_200_000_000, sharesOutstanding: 110_000_000, revenueGrowth: 0.11, operatingMargin: 0.21 },
     }),
     peer('peer-b', 'Peer B', '2020-05-20T00:00:00.000Z' as UtcInstant, {
       market: { marketCap: 9_000_000_000, enterpriseValue: 9_200_000_000, beta: 1.15 },
-      fundamentals: { revenueGrowth: 0.09, operatingMargin: 0.19 },
+      fundamentals: { revenue: 1_800_000_000, sharesOutstanding: 95_000_000, revenueGrowth: 0.09, operatingMargin: 0.19 },
     }),
     peer('peer-c', 'Peer C', '2020-06-10T00:00:00.000Z' as UtcInstant, {
       market: { marketCap: 15_000_000_000, enterpriseValue: 15_800_000_000, beta: 0.95 },
-      fundamentals: { revenueGrowth: 0.13, operatingMargin: 0.24 },
+      fundamentals: { revenue: 2_800_000_000, sharesOutstanding: 120_000_000, revenueGrowth: 0.13, operatingMargin: 0.24 },
     }),
     peer('peer-future-leak', 'Future Leak', '2021-01-01T00:00:00.000Z' as UtcInstant),
     peer('peer-ifrs', 'IFRS Peer', t, {
@@ -100,7 +101,12 @@ export function fixtureVal08PeerUniverse(): readonly PeerCandidate[] {
     }),
     peer('peer-outlier', 'Outlier Peer', t, {
       market: { marketCap: 20_000_000_000, enterpriseValue: 21_000_000_000 },
-      fundamentals: { netIncome: 50_000_000, ebitda: 200_000_000 },
+      fundamentals: {
+        revenue: 1_200_000_000,
+        sharesOutstanding: 75_000_000,
+        netIncome: 50_000_000,
+        ebitda: 200_000_000,
+      },
     }),
   ]);
 }

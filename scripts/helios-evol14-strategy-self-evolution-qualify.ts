@@ -5,7 +5,7 @@
  */
 
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -20,11 +20,34 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DOCS_DIR = join(ROOT, 'docs/helios/evolution');
 const OUT_DIR = join(ROOT, 'performance/helios/results', 'helios-evol14');
 const FINAL_REPORT = join(DOCS_DIR, 'HELIOS_STRATEGY_EVOLUTION_FINAL_REPORT.md');
+const COMPANION_SHA_DOCS = Object.freeze([
+  join(DOCS_DIR, 'EVOLUTION_CAPABILITY_MATRIX.md'),
+  join(DOCS_DIR, 'EVOLUTION_LINEAGE_REPORT.md'),
+  join(DOCS_DIR, 'EVOLUTION_OVERFITTING_REPORT.md'),
+]);
 const SKIP_SUBPROCESS = process.argv.includes('--skip-subprocess');
 
 function gitSha(): string {
+  const env = process.env.EVOL14_GIT_SHA?.trim();
+  if (env && /^[0-9a-f]{40}$/i.test(env)) {
+    return env.toLowerCase();
+  }
   const result = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' });
   return result.status === 0 ? result.stdout.trim() : '0000000000000000000000000000000000000000';
+}
+
+/** Keep companion markdown in sync with `git rev-parse HEAD` (full SHA in backticks). */
+function stampCompanionGitSha(gitSha: string): void {
+  for (const path of COMPANION_SHA_DOCS) {
+    if (!existsSync(path)) continue;
+    let body = readFileSync(path, 'utf8');
+    body = body.replace(/\*\*Git SHA:\*\* `[^`]+`/g, `**Git SHA:** \`${gitSha}\``);
+    body = body.replace(
+      /\*\*Integration SHA \(requalification commit\):\*\* `[^`]+`/g,
+      `**Integration SHA (requalification commit):** \`${gitSha}\``,
+    );
+    writeFileSync(path, body);
+  }
 }
 
 function runTest(rel: string): boolean {
@@ -85,6 +108,9 @@ writeFileSync(
       moderatePreferred: sim.moderateCandidatePreferred,
       sealedEvidenceEntries: sim.sealedEvidenceTrail.length,
       trialCount: sim.trials.length,
+      trialSuccessCount: sim.trialSuccessCount,
+      trialFailureCount: sim.trialFailureCount,
+      trialBlockedCount: sim.trialBlockedCount,
     },
     null,
     2,
@@ -100,13 +126,13 @@ const report = `# HELIOS Strategy Evolution — Final Report (EVOL14)
 
 ## Scope
 
-Deterministic simulation of Strategy Genome self-evolution: seeds, population, mutation/crossover, invalid genome rejection, AAF V2 point-in-time dataset seal, inner train/validation, toy CMA-ES update, MAP-Elites-style archive cells, novelty distance, falsification stress, freeze, holdout diagnostics (DSR/PBO), challenger selection, forward shadow, Execution Twin paper track (no broker), champion/challenger comparison, research-only promotion, sealed evidence trail.
+End-to-end **research simulation** wired to canonical HELIOS modules on this SHA: **EVOL02** (\`mutateStrategyGenome\`, \`crossoverStrategyGenomes\`), **EVOL03** (\`EvolutionArchive\` inner-trial ledger), **EVOL04** (\`attemptInsertElite\` MAP-Elites archive), **EVOL05** (\`runCmaEsGeneration\`), **EVOL06** (\`runPopulationSchedulerTick\`), **EVOL07** (\`computeStrategyNoveltyScore\`), **EVOL08** (\`StrategyFalsificationAgent\`), **EVOL09** (sealed holdout vault + DSR/PBO firewall trial), **EVOL10** (\`evaluateEvol10GenomeRegimeReport\`), **EVOL11** (material champion comparison evidence), **EVOL12** (\`buildEvol12SampleGenomeProposal\`), **EVOL13** (\`buildOperatorCreditState\`). Plus AAF V2 PIT seal, forward shadow, Execution Twin paper track (simulation), and sealed evidence trail. **No** live broker or production authority.
 
 ## Critical test — overfit rejection
 
 Injected **flashy overfit** genome (\`sgnm_evol14_overfit_flashy\`): rejected when **any** of holdout degradation, non-positive DSR (multiple-testing adjusted), elevated PBO, fragility under stress, or regime gating applies.
 
-**Rejection reasons observed:** ${sim.overfitRejectionReasons.join(', ') || '(none — qualification would block)'}
+**Rejection reasons observed:** ${sim.overfitRejectionReasons.join(', ') || '(none - qualification would block)'}
 
 ## Moderate candidate preference
 
@@ -119,7 +145,7 @@ Robust moderate genome preferred over flashy candidate: **${sim.moderateCandidat
 
 ## Evidence
 
-- Trial ledger entries: ${String(sim.trials.length)} (success: ${String(sim.trialSuccessCount)}, failed: ${String(sim.trialFailureCount)})
+- Trial ledger entries: ${String(sim.trials.length)} (success: ${String(sim.trialSuccessCount)}, failed: ${String(sim.trialFailureCount)}, blocked: ${String(sim.trialBlockedCount)})
 - Sealed evidence hashes: ${String(sim.sealedEvidenceTrail.length)}
 - JSON: \`${jsonPath.replace(ROOT + '/', '')}\`
 
@@ -127,6 +153,7 @@ See also: \`docs/helios/evolution/EVOLUTION_CAPABILITY_MATRIX.md\`, \`EVOLUTION_
 `;
 
 writeFileSync(FINAL_REPORT, report);
+stampCompanionGitSha(sha);
 
 console.log(
   JSON.stringify(

@@ -1,4 +1,14 @@
-import type { BehaviorDescriptors, DiversityCollapseReport, NicheArchive, NicheElite } from './types.ts';
+import type {
+  BehaviorAssetClass,
+  BehaviorDescriptors,
+  BehaviorDrawdownProfile,
+  BehaviorLongShortBias,
+  BehaviorRegimePreference,
+  BehaviorSignalFamily,
+  DiversityCollapseReport,
+  NicheArchive,
+  NicheElite,
+} from './types.ts';
 
 function behaviorVector(d: BehaviorDescriptors): readonly number[] {
   return [
@@ -74,9 +84,11 @@ function cosineSimilarity(a: readonly number[], b: readonly number[]): number {
   let na = 0;
   let nb = 0;
   for (let i = 0; i < a.length; i++) {
-    dot += a[i] * b[i];
-    na += a[i] * a[i];
-    nb += b[i] * b[i];
+    const ai = a[i]!;
+    const bi = b[i]!;
+    dot += ai * bi;
+    na += ai * ai;
+    nb += bi * bi;
   }
   const denom = Math.sqrt(na) * Math.sqrt(nb);
   if (denom === 0) {
@@ -90,11 +102,11 @@ function fullDescriptorVector(e: NicheElite): number[] {
   const continuous = behaviorVector(b);
   return [
     ...continuous,
-    assetClassOrdinal(b),
-    signalOrdinal(b),
-    drawdownOrdinal(b),
-    longShortOrdinal(b),
-    regimeOrdinal(b),
+    assetClassOrdinal(b.assetClass as BehaviorAssetClass),
+    signalOrdinal(b.signalFamily as BehaviorSignalFamily),
+    drawdownOrdinal(b.drawdownProfile as BehaviorDrawdownProfile),
+    longShortOrdinal(b.longShortBias as BehaviorLongShortBias),
+    regimeOrdinal(b.regimePreference as BehaviorRegimePreference),
   ];
 }
 

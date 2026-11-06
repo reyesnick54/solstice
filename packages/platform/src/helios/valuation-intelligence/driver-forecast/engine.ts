@@ -246,9 +246,9 @@ export function buildDriverCashFlowForecast(input: BuildDriverForecastInput): Dr
     instrumentId: input.instrumentId,
     asOf: input.asOf,
     modelId: driverModel.modelId,
-    researchOnly: true,
-    grantsExecutionAuthority: false,
-    epsExtrapolationOnly: false,
+    researchOnly: true as const,
+    grantsExecutionAuthority: false as const,
+    epsExtrapolationOnly: false as const,
     driverTreesUsed: true,
     horizonBands: Object.freeze(['NEAR', 'MEDIUM', 'LONG']),
     periods: Object.freeze(periods),
@@ -257,5 +257,5 @@ export function buildDriverCashFlowForecast(input: BuildDriverForecastInput): Dr
     nearTermEarn09Anchored: nearBridge.anchored,
     sampleCount: input.sampleCount,
     disclaimer: 'NOT_INVESTMENT_ADVICE_NOT_EXECUTION_AUTHORITY',
-  });
+  }) as DriverForecastResult;
 }

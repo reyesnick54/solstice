@@ -1,4 +1,6 @@
-# EVOL14 — Strategy Genome Lineage Report
+# EVOL14 / EVOL15 — Strategy Genome Lineage Report
+
+**Git SHA:** `b3066feba013e368db56d8aa588bf926af13c9f4`
 
 Lineage is **declarative** (OS05 `StrategyGenomeLineage`): parent genome IDs, mutation reason, catalog/manifest versions, and `genomeHash` from `attachGenomeHash`.
 
@@ -6,17 +8,21 @@ Lineage is **declarative** (OS05 `StrategyGenomeLineage`): parent genome IDs, mu
 
 | Genome | Role |
 |--------|------|
-| `sgnm_helios_os05_mean_reversion_example` (OS05 fixture) | Primary seed |
-| Seeds B/C | Parameter nudges via `withParam` |
+| `sgnm_helios_os05_mean_reversion_example` (OS05 fixture) | Primary seed A |
+| Derived seed B, C | `mutateStrategyGenome` (EVOL02) with distinct random seeds |
 
 ## Derived lineages (simulation)
 
-| Genome ID | Parents | Operator tag |
-|-----------|---------|----------------|
-| `sgnm_evol14_mut_A` | OS05 example | MUTATION |
-| `sgnm_evol14_crossover` | mut_A × seed B | CROSSOVER |
-| `sgnm_evol14_overfit_flashy` | OS05 example | PARAMETER_SEARCH + REGIME_AND_THRESHOLD |
-| `sgnm_evol14_moderate_robust` | OS05 example | CROSSOVER (conservative params) |
+| Genome ID | Parents | Operator |
+|-----------|---------|----------|
+| `sgnm_evol14_mut_A` | OS05 example | EVOL02 `PARAMETER_MUTATION` |
+| `sgnm_evol14_crossover` | mut_A × seed B | EVOL02 `crossoverStrategyGenomes` (`PARAMETER_BLEND`) |
+| `sgnm_evol14_moderate_robust` | mut_A × seed B | EVOL02 `PARAMETER_BLEND` (conservative blend) |
+| `sgnm_evol14_overfit_flashy` | OS05 example | Custom fixture (`PARAMETER_SEARCH` + `REGIME_AND_THRESHOLD`) |
+
+## EVOL03 archive
+
+Each population genome registers in `EvolutionArchive` with **`innerTrainVal`** metrics (partitioned evaluation slice); the flashy genome’s trial includes a **non-null `failure`** record (poor inner economics), so rejected/weak evaluations remain on the ledger.
 
 ## Evidence sealing
 

@@ -218,7 +218,9 @@ export function buildEarn11ResearchTemplateGenome(
         createdAt: TEMPLATE_NOW,
         featureManifestVersion: EARN11_GENOME_FEATURE_MANIFEST_VERSION,
         nodeCatalogVersion: EARN11_GENOME_NODE_CATALOG_VERSION,
-        genomeHash: '',
+        operator: null,
+        operatorVersion: null,
+        randomSeed: null,
       }),
     }),
   );

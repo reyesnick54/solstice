@@ -55,5 +55,5 @@ export function evaluateFamilyWiseBudget(input: {
     }
   }
 
-  return Object.freeze([...violations]);
+  return violations;
 }

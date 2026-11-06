@@ -11,10 +11,11 @@ export type PathDrivers = ResolvedAssumptionDraw & {
   readonly baseRevenue: number;
   readonly forecastYears: number;
   readonly taxRate: number;
-  readonly explicitForecasts?: readonly ExplicitYearForecast[];
+  /** When absent, path engine treats as no explicit rows (`exactOptionalPropertyTypes`). */
+  readonly explicitForecasts?: readonly ExplicitYearForecast[] | undefined;
   readonly terminal: TerminalValueSpec;
   readonly capitalStructure: DcfCapitalStructure;
-  readonly roic?: number;
+  readonly roic?: number | undefined;
 };
 
 export function evaluateDcfPath(drivers: PathDrivers): SinglePathDcfResult {

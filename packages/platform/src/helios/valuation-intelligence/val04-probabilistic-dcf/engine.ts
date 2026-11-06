@@ -6,7 +6,8 @@ import {
   HELIOS_VAL04_PROBABILISTIC_DCF_QUALIFIED,
   VAL04_PROBABILISTIC_DCF_SCHEMA,
 } from './taxonomy.ts';
-import type { ProbabilisticDcfInput, ProbabilisticDcfResult, TerminalValueMethod } from './types.ts';
+import type { ProbabilisticDcfInput, ProbabilisticDcfResult } from './types.ts';
+import type { TerminalValueMethod } from './taxonomy.ts';
 
 export function runProbabilisticDcfEngine(input: ProbabilisticDcfInput): ProbabilisticDcfResult {
   const seed = input.seed ?? DEFAULT_VAL04_SEED;

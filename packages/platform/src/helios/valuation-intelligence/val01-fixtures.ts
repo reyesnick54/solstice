@@ -92,7 +92,7 @@ export function demoVal01FundamentalSnapshot(): PointInTimeFundamentalSnapshot {
       sbc: feature(200_000_000n),
       working_capital_change: feature(-50_000_000n),
     }),
-  });
+  }) as PointInTimeFundamentalSnapshot;
 }
 
 export function demoVal01WaccAssumption() {

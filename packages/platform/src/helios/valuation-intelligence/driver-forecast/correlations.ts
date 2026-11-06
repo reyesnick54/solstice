@@ -70,4 +70,4 @@ export const DEFAULT_VAL02_CORRELATION: CorrelationSpec = Object.freeze({
     Object.freeze([0.45, -0.05, -0.04, 0.65, 1, 0.7]),
     Object.freeze([0.6, -0.08, -0.06, 0.9, 0.7, 1]),
   ]),
-});
+}) as CorrelationSpec;

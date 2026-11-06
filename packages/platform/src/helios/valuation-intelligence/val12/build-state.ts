@@ -20,7 +20,7 @@ import {
   runProbabilisticComparablesEngine,
 } from '../comparables/index.ts';
 import type { ProbabilisticComparablesInput } from '../comparables/types.ts';
-import { bindSegmentIdentities, fixtureSotpValuationInput, runSotpValuationEngine } from '../sotp/index.ts';
+import { fixtureSotpValuationInput, runSotpValuationEngine } from '../sotp/index.ts';
 import {
   fixturePositiveResidualIncomeInput,
   runResidualIncomeValuation,
@@ -30,11 +30,19 @@ import { runVal10UncertaintyEngine } from '../uncertainty/engine.ts';
 import type { HistoricalModelResearchRecord } from '../ensemble/reliability.ts';
 import type { EnsembleValueQuantile } from '../ensemble/types.ts';
 import { runVal11AdaptiveValuationEnsemble } from '../ensemble/engine.ts';
+import type { CompanyCharacteristicTag } from '../ensemble/taxonomy.ts';
 import { compileValuationExtendedModelEvidence } from './extended-evidence.ts';
 import { distributionSummaryFromSamples } from './distribution-summary.ts';
 import { computeModelImpliedMarginOfSafety } from './margin-of-safety.ts';
 import { computeValuationGap } from './valuation-gap.ts';
 import type { HeliosValuationState } from './types.ts';
+
+function val10UncertaintyInputFromDcf(
+  input: import('../val04-probabilistic-dcf/types.ts').ProbabilisticDcfInput,
+): import('../val04-probabilistic-dcf/types.ts').ProbabilisticDcfInput {
+  const { monteCarloPaths: _mp, seed: _s, ...rest } = input;
+  return rest;
+}
 
 function addMs(iso: UtcInstant, ms: number): UtcInstant {
   return new Date(Date.parse(iso) + ms).toISOString() as UtcInstant;
@@ -109,11 +117,8 @@ export function buildHeliosValuationState(input: {
   const sotpInput = Object.freeze({
     ...rawSotpInput,
     canonicalEntityId: entityId,
-    segmentSource: Object.freeze({
-      ...rawSotpInput.segmentSource,
-      observations: bindSegmentIdentities(rawSotpInput.segmentSource.observations),
-    }),
   });
+  const sharesOutstandingMinor = sotpInput.sharesOutstandingMinor ?? 1_000_000_000n;
   const sotp = runSotpValuationEngine(sotpInput);
   const dist = sotp.intrinsicDistribution;
   const minorToPerShare = (m: bigint) => Number(m) / Number(priceScaleMinor);
@@ -142,7 +147,7 @@ export function buildHeliosValuationState(input: {
   const sotpEquityMinor = dist.equityValueMinor;
   const sotpPerShareMinor =
     dist.valuePerShareMinor ??
-    (sotpInput.sharesOutstandingMinor > 0n ? sotpEquityMinor / sotpInput.sharesOutstandingMinor : dist.medianMinor);
+    (sharesOutstandingMinor > 0n ? sotpEquityMinor / sharesOutstandingMinor : dist.medianMinor);
   const compMedianMinor = BigInt(Math.round(eqDist.median * Number(priceScaleMinor)));
   const compEvMinor = BigInt(Math.round((eqDist.median * sharesOutstanding) * Number(priceScaleMinor)));
 
@@ -151,7 +156,7 @@ export function buildHeliosValuationState(input: {
     reverseDcf.priceLevelScenarios[Math.floor(reverseDcf.priceLevelScenarios.length / 2)]!;
   const reverseEquityMinor = reverseScenario.targetEquityMinor;
   const reversePerShareMinor =
-    sotpInput.sharesOutstandingMinor > 0n ? reverseEquityMinor / sotpInput.sharesOutstandingMinor : reverseEquityMinor;
+    sharesOutstandingMinor > 0n ? reverseEquityMinor / sharesOutstandingMinor : reverseEquityMinor;
 
   const capStruct = val05DemoCapitalStructure();
   const netDebtEvAdj =
@@ -188,10 +193,10 @@ export function buildHeliosValuationState(input: {
   const val10Uncertainty = runVal10UncertaintyEngine({
     valuationId: `val10-hvs-${entityId}`,
     entityLabel: entityId,
-    probabilisticDcf: dcfInput,
+    probabilisticDcf: val10UncertaintyInputFromDcf(dcfInput),
     crossModelValues,
-    monteCarloPaths: dcfInput.monteCarloPaths,
-    seed: dcfInput.seed,
+    ...(dcfInput.monteCarloPaths === undefined ? {} : { monteCarloPaths: dcfInput.monteCarloPaths }),
+    ...(dcfInput.seed === undefined ? {} : { seed: dcfInput.seed }),
   });
   const uncertaintyEvidenceRef = `ev/val10/uncertainty:${val10Uncertainty.valuationId}`;
   const uncertainty = {
@@ -277,7 +282,7 @@ export function buildHeliosValuationState(input: {
     currency: 'USD',
     company: Object.freeze({
       canonicalEntityId: entityId,
-      sector: 'Technology',
+      sector: 'Technology' as string | null,
       reportingSegments: sotp.segmentValuations.length,
       paysRegularDividend: true,
       hasPositiveOperatingCashFlow: true,
@@ -286,7 +291,8 @@ export function buildHeliosValuationState(input: {
       hasPeerUniverse: true,
       isPreRevenue: false,
       hasLeverageInputs: true,
-      characteristicTags: Object.freeze(['CONGLOMERATE']),
+      isFinancialInstitution: false,
+      characteristicTags: Object.freeze<readonly CompanyCharacteristicTag[]>(['CONGLOMERATE']),
       isLossMaking: false,
       isHighGrowth: false,
       assetIntensityScore: 0.5,
@@ -301,10 +307,10 @@ export function buildHeliosValuationState(input: {
         applicabilityScore: 0.92,
         uncertaintyScore: 0.3,
         equityValuePerShareMinor: dcfMedianMinor,
-        enterpriseValueMinor: dcfMedianMinor * sotpInput.sharesOutstandingMinor,
+        enterpriseValueMinor: dcfMedianMinor * sharesOutstandingMinor,
         quantiles: equityQuantilesFromPerShareMinor(
           dcfMedianMinor,
-          dcfMedianMinor * sotpInput.sharesOutstandingMinor,
+          dcfMedianMinor * sharesOutstandingMinor,
         ),
         inputKeysUsed: Object.freeze(['fcf_forecast', 'wacc', 'terminal_growth']),
         grantsExecutionAuthority: false,
@@ -319,10 +325,10 @@ export function buildHeliosValuationState(input: {
         applicabilityScore: 0.78,
         uncertaintyScore: 0.28,
         equityValuePerShareMinor: rivMedianMinor,
-        enterpriseValueMinor: rivMedianMinor * sotpInput.sharesOutstandingMinor,
+        enterpriseValueMinor: rivMedianMinor * sharesOutstandingMinor,
         quantiles: equityQuantilesFromPerShareMinor(
           rivMedianMinor,
-          rivMedianMinor * sotpInput.sharesOutstandingMinor,
+          rivMedianMinor * sharesOutstandingMinor,
         ),
         inputKeysUsed: Object.freeze(['book_equity', 'cost_of_equity', 'residual_earnings']),
         grantsExecutionAuthority: false,
@@ -417,7 +423,7 @@ export function buildHeliosValuationState(input: {
         })
       : null;
 
-  const sharesOutNum = Number(sotpInput.sharesOutstandingMinor);
+  const sharesOutNum = Number(sharesOutstandingMinor);
   const segmentSummaries = Object.fromEntries(
     sotp.segmentValuations.map((sv) => {
       const segDist = sv.distribution;

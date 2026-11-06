@@ -298,17 +298,17 @@ export function runCmaEsGeneration(input: {
     const parent = sorted[j]!;
     const zP = [...parent.z];
     ySel.push(vecScale(vecSub(zP, mOld), 1 / Math.max(EPS_DECODE, searchState.sigma)));
-    const wj = searchState.weights[j]!;
+    const wj = searchState.weights[j] ?? 0;
     for (let d = 0; d < n; d += 1) {
-      mNew[d] += wj * zP[d]!;
+      mNew[d] = (mNew[d] ?? 0) + wj * (zP[d] ?? 0);
     }
   }
 
   const yW = vecZeros(n);
   for (let j = 0; j < searchState.mu; j += 1) {
-    const wj = searchState.weights[j]!;
+    const wj = searchState.weights[j] ?? 0;
     for (let d = 0; d < n; d += 1) {
-      yW[d] += wj * ySel[j]![d]!;
+      yW[d] = (yW[d] ?? 0) + wj * (ySel[j]?.[d] ?? 0);
     }
   }
 

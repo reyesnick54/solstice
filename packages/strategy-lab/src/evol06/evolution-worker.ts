@@ -78,6 +78,9 @@ export function createEvolutionWorker(input: CreateEvolutionWorkerInput): Evolut
     createdAt: input.createdAt,
     featureManifestVersion: input.featureManifestVersion,
     nodeCatalogVersion: input.nodeCatalogVersion,
+    operator: null,
+    operatorVersion: null,
+    randomSeed: null,
   };
 
   const genome: StrategyGenome = attachGenomeHash({

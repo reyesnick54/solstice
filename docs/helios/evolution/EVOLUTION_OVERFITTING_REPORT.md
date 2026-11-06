@@ -1,9 +1,11 @@
-# EVOL14 — Overfitting Stress Report
+# EVOL14 / EVOL15 — Overfitting Stress Report
+
+**Git SHA:** `b3066feba013e368db56d8aa588bf926af13c9f4`
 
 ## Injected flashy strategy
 
 - **Genome ID:** `sgnm_evol14_overfit_flashy`
-- **Design:** Extreme `entryZScore` / tight `volatilityThresholdBps` plus a restrictive **REGIME_GATE** (permits `LOW_VOL_TREND`, conflicts with stressed `HIGH_VOL_STRESS` regime).
+- **Design:** Extreme `entryZScore` / tight `volatilityThresholdBps` plus a restrictive **REGIME_GATE** (permits `LOW_VOL_TREND`, conflicts with stressed `HIGH_VOL_STRESS` regime in gating).
 
 ## Rejection channels (at least one must fire)
 
@@ -11,13 +13,17 @@ The qualification simulation asserts **`overfitCandidateRejected === true`** whe
 
 | Gate | Mechanism |
 |------|-----------|
-| Holdout degradation | Synthetic holdout return path is materially negative vs training narrative. |
-| DSR | Deflated Sharpe from `buildAntiOverfittingDiagnostics` ≤ 0 (multiple-testing adjusted flag false). |
+| Holdout degradation | Synthetic holdout return path is materially negative vs training narrative (`buildAntiOverfittingDiagnostics`). |
+| DSR | Deflated Sharpe from inner trial statistics ≤ 0 (multiple-testing adjusted path). |
 | PBO | Simplified CSCV-style probability of backtest overfitting ≥ threshold in simulation. |
-| Fragility | Falsification stress shows large fitness delta or extreme entry threshold. |
-| Regime generalization | `evaluateStrategyRegimeGating` blocks when prohibited regime is active. |
+| Fragility | EVOL08 `StrategyFalsificationAgent` reports structural fragility or stress falsification. |
+| Regime generalization | EVOL10 matrix places strongly negative return under `high_volatility` for the overfit genome; OS05 `evaluateStrategyRegimeGating` blocks prohibited `HIGH_VOL_STRESS`. |
 
-**Observed reasons** are listed in simulation output under `overfitRejectionReasons` (e.g. `HOLDOUT_DEGRADATION`, `DSR_NON_POSITIVE`, `PBO_ELEVATED`, `FRAGILITY_UNDER_STRESS`, `REGIME_GATE:HIGH_VOL_STRESS`).
+**Observed reasons** (example from current run): `HOLDOUT_DEGRADATION`, `DSR_NON_POSITIVE`, `FRAGILITY_UNDER_STRESS`, `REGIME_GENERALIZATION:HIGH_VOL_STRESS`, `REGIME_GATE:HIGH_VOL_STRESS`.
+
+## Trial ledger honesty
+
+When the flashy genome is **rejected**, the multiple-testing firewall phase records outcome **`BLOCKED`** (not `SUCCESS`). The qualification JSON reports separate **`trialSuccessCount`**, **`trialFailureCount`**, and **`trialBlockedCount`** so blocked/rejected evaluations are not folded into “all green” success tallies.
 
 ## Injected robust strategy
 
@@ -26,5 +32,5 @@ The qualification simulation asserts **`overfitCandidateRejected === true`** whe
 
 ## Artifacts
 
-- JSON: `performance/helios/results/helios-evol14/helios-evol14-qualification-<sha>.json`
+- JSON: `performance/helios/results/helios-evol14/helios-evol14-qualification-<sha-prefix>.json`
 - Final narrative: `docs/helios/evolution/HELIOS_STRATEGY_EVOLUTION_FINAL_REPORT.md`

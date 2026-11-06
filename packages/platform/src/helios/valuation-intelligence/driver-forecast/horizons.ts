@@ -5,7 +5,7 @@
 import type { ForecastHorizonBand } from './taxonomy.ts';
 import type { AnalystRevenueExpectation, HorizonBlendWeights, TerminalAssumptions } from './types.ts';
 import type { ProbabilisticEarningsState } from '../../earnings-intelligence/state-estimator/types.ts';
-import { earningsDecimalToNumber } from '../../earnings-intelligence/state-estimator/numeric.ts';
+import { earningsDecimalToNumber, parseEarningsDecimal } from '../../earnings-intelligence/state-estimator/numeric.ts';
 
 export function resolveHorizonBand(
   yearIndex: number,
@@ -44,7 +44,11 @@ export function nearTermEarn09Bridge(
   if (nearTermEarnings === undefined) {
     return { revenueGrowthDelta: null, anchored: false };
   }
-  const quarterly = earningsDecimalToNumber(nearTermEarnings.nextQuarterRevenue.pointEstimate);
+  const revenuePoint = parseEarningsDecimal(nearTermEarnings.nextQuarterRevenue.pointEstimate);
+  if (!revenuePoint.ok) {
+    return { revenueGrowthDelta: null, anchored: false };
+  }
+  const quarterly = earningsDecimalToNumber(revenuePoint.scaled);
   const impliedAnnual = quarterly * 4;
   const coherent =
     impliedAnnual > 0 &&

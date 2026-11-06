@@ -1,19 +1,19 @@
 # HELIOS Strategy Evolution — Final Report (EVOL14)
 
-**Generated (UTC):** 2026-11-06T11:07:59.600Z  
-**Git SHA:** `f1c1c5cefa846b8818c20aae068a73d8dbd60280`  
+**Generated (UTC):** 2026-11-06T14:03:14.940Z  
+**Git SHA:** `b3066feba013e368db56d8aa588bf926af13c9f4`  
 **Qualification marker:** `HELIOS_STRATEGY_SELF_EVOLUTION_V1_QUALIFIED`  
 **Qualified:** yes
 
 ## Scope
 
-Deterministic simulation of Strategy Genome self-evolution: seeds, population, mutation/crossover, invalid genome rejection, AAF V2 point-in-time dataset seal, inner train/validation, toy CMA-ES update, MAP-Elites-style archive cells, novelty distance, falsification stress, freeze, holdout diagnostics (DSR/PBO), challenger selection, forward shadow, Execution Twin paper track (no broker), champion/challenger comparison, research-only promotion, sealed evidence trail.
+End-to-end **research simulation** wired to canonical HELIOS modules on this SHA: **EVOL02** (`mutateStrategyGenome`, `crossoverStrategyGenomes`), **EVOL03** (`EvolutionArchive` inner-trial ledger), **EVOL04** (`attemptInsertElite` MAP-Elites archive), **EVOL05** (`runCmaEsGeneration`), **EVOL06** (`runPopulationSchedulerTick`), **EVOL07** (`computeStrategyNoveltyScore`), **EVOL08** (`StrategyFalsificationAgent`), **EVOL09** (sealed holdout vault + DSR/PBO firewall trial), **EVOL10** (`evaluateEvol10GenomeRegimeReport`), **EVOL11** (material champion comparison evidence), **EVOL12** (`buildEvol12SampleGenomeProposal`), **EVOL13** (`buildOperatorCreditState`). Plus AAF V2 PIT seal, forward shadow, Execution Twin paper track (simulation), and sealed evidence trail. **No** live broker or production authority.
 
 ## Critical test — overfit rejection
 
 Injected **flashy overfit** genome (`sgnm_evol14_overfit_flashy`): rejected when **any** of holdout degradation, non-positive DSR (multiple-testing adjusted), elevated PBO, fragility under stress, or regime gating applies.
 
-**Rejection reasons observed:** HOLDOUT_DEGRADATION, DSR_NON_POSITIVE, FRAGILITY_UNDER_STRESS, REGIME_GATE:HIGH_VOL_STRESS
+**Rejection reasons observed:** HOLDOUT_DEGRADATION, DSR_NON_POSITIVE, FRAGILITY_UNDER_STRESS, REGIME_GENERALIZATION:HIGH_VOL_STRESS, REGIME_GATE:HIGH_VOL_STRESS
 
 ## Moderate candidate preference
 
@@ -26,8 +26,8 @@ Robust moderate genome preferred over flashy candidate: **yes**
 
 ## Evidence
 
-- Trial ledger entries: 20 (success: 20, failed: 0)
+- Trial ledger entries: 24 (success: 22, failed: 1, blocked: 1)
 - Sealed evidence hashes: 4
-- JSON: `performance/helios/results/helios-evol14/helios-evol14-qualification-f1c1c5cefa84.json`
+- JSON: `performance/helios/results/helios-evol14/helios-evol14-qualification-b3066feba013.json`
 
 See also: `docs/helios/evolution/EVOLUTION_CAPABILITY_MATRIX.md`, `EVOLUTION_OVERFITTING_REPORT.md`, `EVOLUTION_LINEAGE_REPORT.md`.

@@ -37,13 +37,21 @@ export function addNode(
   if (!flow) {
     return next;
   }
-  const edge: Extract<StrategyNode, { kind: 'FLOW' }> = {
-    nodeId: flow.flowId,
-    kind: 'FLOW',
-    fromNodeId: flow.fromNodeId,
-    toNodeId: flow.toNodeId,
-    port: flow.port,
-  };
+  const edge: Extract<StrategyNode, { kind: 'FLOW' }> =
+    flow.port === undefined
+      ? {
+          nodeId: flow.flowId,
+          kind: 'FLOW',
+          fromNodeId: flow.fromNodeId,
+          toNodeId: flow.toNodeId,
+        }
+      : {
+          nodeId: flow.flowId,
+          kind: 'FLOW',
+          fromNodeId: flow.fromNodeId,
+          toNodeId: flow.toNodeId,
+          port: flow.port,
+        };
   return [...next, edge];
 }
 
