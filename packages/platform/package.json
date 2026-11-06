@@ -8,7 +8,8 @@
     "./helios/aaf08-external-equities": "./src/helios/adaptive-alpha-fabric/aaf08-external-equities/provider-port.ts",
     "./helios/market-observation": "./src/helios/market-observation/types.ts",
     "./helios/feature-coverage": "./src/helios/feature-fabric/feature-coverage/index.ts",
-    "./helios/strategy-lab-bridge": "./src/helios/feature-fabric/compiler/strategy-lab-bridge.ts"
+    "./helios/strategy-lab-bridge": "./src/helios/feature-fabric/compiler/strategy-lab-bridge.ts",
+    "./helios/regime": "./src/helios/multi-asset/regime/taxonomy.ts"
   },
   "files": [
     "src"
