@@ -43,8 +43,8 @@ const MODULE_BY_PACKAGE: Record<
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/residual-income/index.ts',
   },
   VAL08: {
-    title: 'Probabilistic comparables',
-    moduleRef: 'packages/platform/src/helios/valuation-intelligence/val08-comparables/index.ts',
+    title: 'Dynamic probabilistic comparable company engine',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/comparables/index.ts',
   },
   VAL09: {
     title: 'Sum-of-the-parts (SOTP)',
@@ -72,7 +72,7 @@ const TEST_BY_PACKAGE: Record<string, string> = {
   VAL05: 'tests/helios-val05-reverse-dcf.test.ts',
   VAL06: 'tests/helios-val06-agentic-valuation-committee.test.ts',
   VAL07: 'tests/helios-val07-residual-income.test.ts',
-  VAL08: 'tests/helios-val08-comparables.test.ts',
+  VAL08: 'tests/helios-val08-probabilistic-comparables.test.ts',
   VAL09: 'tests/helios-val09-sotp.test.ts',
   VAL10: 'tests/helios-val10-uncertainty.test.ts',
   VAL11: 'tests/helios-val11-adaptive-ensemble.test.ts',

@@ -11,7 +11,7 @@
 | VAL05 | IMPLEMENTED | `tests/helios-val05-reverse-dcf.test.ts` |
 | VAL06 | IMPLEMENTED | `tests/helios-val06-agentic-valuation-committee.test.ts` |
 | VAL07 | IMPLEMENTED | `tests/helios-val07-residual-income.test.ts` |
-| VAL08 | IMPLEMENTED | `tests/helios-val08-comparables.test.ts` |
+| VAL08 | IMPLEMENTED | `tests/helios-val08-probabilistic-comparables.test.ts` |
 | VAL09 | IMPLEMENTED | `tests/helios-val09-sotp.test.ts` |
 | VAL10 | IMPLEMENTED | `tests/helios-val10-uncertainty.test.ts` |
 | VAL11 | IMPLEMENTED | `tests/helios-val11-adaptive-ensemble.test.ts` |

@@ -15,7 +15,11 @@ import {
   VAL05_FIXTURE_AS_OF,
   VAL05_FIXTURE_ENTITY_ID,
 } from '../val05/fixtures.ts';
-import { runProbabilisticComparables, fixtureVal08Peers, FIXTURE_VAL08_AS_OF } from '../val08-comparables/index.ts';
+import {
+  fixtureProbabilisticComparablesInput,
+  runProbabilisticComparablesEngine,
+} from '../comparables/index.ts';
+import type { ProbabilisticComparablesInput } from '../comparables/types.ts';
 import { runSotpValuation, fixtureVal09Segments, FIXTURE_VAL09_AS_OF } from '../val09-sotp/index.ts';
 import {
   fixturePositiveResidualIncomeInput,
@@ -56,21 +60,20 @@ export function buildHeliosValuationState(input: {
     const jitter = 0.04;
     return Array.from({ length: 64 }, (_, i) => base * (1 + ((i % 9) - 4) * jitter));
   })();
-  const rivPerShare = rivIntrinsicSamples.map((eq) => eq / 1e9);
+  const dcfAnchor = mc.paths[0]?.valuePerShare ?? 1;
+  const rivPerShare = rivIntrinsicSamples.map((eq) =>
+    riv.intrinsicEquityValue !== 0 ? (eq / riv.intrinsicEquityValue) * dcfAnchor : dcfAnchor,
+  );
   const rivDist = distributionPercentiles(rivPerShare);
 
-  const comparables = runProbabilisticComparables({
-    entityId,
-    asOf: FIXTURE_VAL08_AS_OF,
-    targetEbitda: 12_000,
-    netDebt: 500,
-    sharesOutstanding: 100,
-    peers: fixtureVal08Peers(FIXTURE_VAL08_AS_OF),
-    evidenceRef: 'ev/val08/comparables',
-  });
-  const compSamples = Array.from({ length: comparables.peerCount }, (_, i) => {
-    const t = i / Math.max(comparables.peerCount - 1, 1);
-    return comparables.impliedValuePerShare.p10 * (1 - t) + comparables.impliedValuePerShare.p90 * t;
+  const val08Input: ProbabilisticComparablesInput = fixtureProbabilisticComparablesInput();
+  const comparables = runProbabilisticComparablesEngine(val08Input);
+  const eqDist = comparables.equityValueDistribution;
+  const sharesOutstanding = val08Input.target.fundamentals.sharesOutstanding;
+  const compSamples = Array.from({ length: 32 }, (_, i) => {
+    const t = i / 31;
+    const equity = eqDist.p10 * (1 - t) + eqDist.p90 * t;
+    return equity / sharesOutstanding;
   });
 
   const sotp = runSotpValuation({
@@ -136,7 +139,7 @@ export function buildHeliosValuationState(input: {
       modelMedians: Object.freeze([
         mc.paths[0]?.valuePerShare ?? 0,
         rivDist.median,
-        comparables.impliedValuePerShare.median,
+        eqDist.median,
         sotp.consolidatedValuePerShare.median,
       ]),
       waccShockBps: 75,
@@ -197,7 +200,7 @@ export function buildHeliosValuationState(input: {
 
   const extendedModelEvidence = compileValuationExtendedModelEvidence({
     val07ResidualIncomeRef: riv.valuationId,
-    val08ComparablesRef: comparables.evidenceRef,
+    val08ComparablesRef: comparables.valuationId,
     val09SotpRef: sotp.evidenceRef,
     val10UncertaintyRef: uncertainty.evidenceRef,
     val11EnsembleRef: ensemble.evidenceRef,
@@ -227,7 +230,7 @@ export function buildHeliosValuationState(input: {
     modelImpliedMarginOfSafety: margin,
     evidenceRefs: Object.freeze([
       `helios:val07:${riv.valuationId}`,
-      comparables.evidenceRef,
+      `helios:val08:${comparables.valuationId}`,
       sotp.evidenceRef,
       uncertainty.evidenceRef,
       ensemble.evidenceRef,

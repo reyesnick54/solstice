@@ -14,6 +14,8 @@ export {
   VAL05_BPS_SCALE,
   HELIOS_VAL05_REVERSE_DCF_QUALIFIED,
   HELIOS_VAL05_REVERSE_DCF_BLOCKED,
+  HELIOS_VAL08_PROBABILISTIC_COMPARABLES_QUALIFIED,
+  HELIOS_VAL08_PROBABILISTIC_COMPARABLES_BLOCKED,
   HELIOS_VALUATION_INTELLIGENCE_V1_QUALIFIED,
   HELIOS_VALUATION_INTELLIGENCE_V1_BLOCKED,
   type ValuationMethod,
@@ -127,7 +129,7 @@ export * from './val04-probabilistic-dcf/index.ts';
 export * from './driver-forecast/index.ts';
 export * from './val05/index.ts';
 export * from './residual-income/index.ts';
-export * from './val08-comparables/index.ts';
+export * from './comparables/index.ts';
 export * from './val09-sotp/index.ts';
 export * from './val10-uncertainty/index.ts';
 export * from './val11-adaptive-ensemble/index.ts';
