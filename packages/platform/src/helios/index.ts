@@ -325,6 +325,7 @@ export * from './open-source-integration/os13-ai-strategy-sandbox/index.ts';
 export * from './open-source/os14-prediction-market/index.ts';
 export * from './native-assimilation/native14-cross-market-intelligence/index.ts';
 export * from './research-monitor/index.ts';
+export * from './strategy-evolution/index.ts';
 export * as heliosEarn07OptionsIntelligence from './earnings-intelligence/options/index.ts';
 export * as heliosNative13PredictionMarket from './prediction-market/index.ts';
 export {
