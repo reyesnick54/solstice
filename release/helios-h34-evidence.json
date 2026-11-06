@@ -1,7 +1,7 @@
 {
   "schema": "helios.release.evidence.v1",
   "workPackage": "H34",
-  "sourceSha": "b9efb04abc603593a6079b0e5c72171076cb7e1f",
+  "sourceSha": "c04ac1e548e959579fcdc0b108360fa1e3b3f6a8",
   "marker": "HELIOS_RELEASE_PACKAGE_QUALIFIED",
   "qualified": true,
   "blockers": [],
@@ -13,7 +13,7 @@
       "lockfileDigest": "2d4a4e289ade7c6621012c7e1c3029922f4c88432d05170c43ddca54c02c7942",
       "dockerfileDigest": "52fa9ec074df42279248b7e3552bffd978604c96b2f3bdd4a37aca415e8d8d61",
       "composeDigest": "82f1da98e0dcb15c05b488383e6882b7a5ea21010ff2f9ed7cb7e02efc9434ba",
-      "gitSha": "b9efb04abc603593a6079b0e5c72171076cb7e1f"
+      "gitSha": "c04ac1e548e959579fcdc0b108360fa1e3b3f6a8"
     }
   },
   "gateRuns": [
@@ -25,7 +25,7 @@
     {
       "command": "node scripts/check-production-safety.mjs",
       "status": 0,
-      "durationMs": 242
+      "durationMs": 245
     },
     {
       "command": "node scripts/check-api-specs.mjs",
@@ -35,12 +35,12 @@
     {
       "command": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-concurrency=1 --test-reporter=spec tests/helios-h34-release-packaging.test.ts",
       "status": 0,
-      "durationMs": 310
+      "durationMs": 318
     },
     {
       "command": "node scripts/sunrey-release.mjs audit",
       "status": 0,
-      "durationMs": 743
+      "durationMs": 754
     }
   ],
   "migrationQualification": {
@@ -105,13 +105,13 @@
     ]
   },
   "rollbackMatrix": {
-    "previousSupportedReleaseId": "helios-rc-h33-b9efb04abc60",
-    "currentReleaseId": "helios-rc-h34-b9efb04abc60",
+    "previousSupportedReleaseId": "helios-rc-h33-c04ac1e548e9",
+    "currentReleaseId": "helios-rc-h34-c04ac1e548e9",
     "entries": [
       {
         "dimension": "application-artifact",
-        "previousSupported": "helios-rc-h33-b9efb04abc60",
-        "currentRelease": "helios-rc-h34-b9efb04abc60",
+        "previousSupported": "helios-rc-h33-c04ac1e548e9",
+        "currentRelease": "helios-rc-h34-c04ac1e548e9",
         "state": "SAFE_APP_ROLLBACK",
         "level": "LEVEL_1_APPLICATION",
         "limitation": "Redeploy prior qualified digest against current schema when compatible"
@@ -119,7 +119,7 @@
       {
         "dimension": "configuration-policy",
         "previousSupported": "prior-qualified-config-pack",
-        "currentRelease": "helios-rc-h34-b9efb04abc60",
+        "currentRelease": "helios-rc-h34-c04ac1e548e9",
         "state": "SAFE_APP_ROLLBACK",
         "level": "LEVEL_2_CONFIGURATION",
         "limitation": "Restore prior provider/model/jurisdiction config references; secrets remain external"
@@ -159,7 +159,7 @@
       {
         "step": "upgrade-to-candidate",
         "passed": true,
-        "detail": "Upgraded helios-rc-h33-b9efb04abc60 → helios-rc-h34-b9efb04abc60"
+        "detail": "Upgraded helios-rc-h33-c04ac1e548e9 → helios-rc-h34-c04ac1e548e9"
       },
       {
         "step": "smoke-after-upgrade",
@@ -169,7 +169,7 @@
       {
         "step": "application-rollback",
         "passed": true,
-        "detail": "Application rolled back toward helios-rc-h33-b9efb04abc60"
+        "detail": "Application rolled back toward helios-rc-h33-c04ac1e548e9"
       },
       {
         "step": "configuration-rollback",
@@ -258,14 +258,14 @@
     "bindings": [
       {
         "role": "application",
-        "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-b9efb04abc60",
-        "sourceCommit": "b9efb04abc603593a6079b0e5c72171076cb7e1f",
+        "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-c04ac1e548e9",
+        "sourceCommit": "c04ac1e548e959579fcdc0b108360fa1e3b3f6a8",
         "dockerfile": "deploy/sunrey-sandbox-hetzner/Dockerfile"
       },
       {
         "role": "migration-runner",
-        "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-b9efb04abc60",
-        "sourceCommit": "b9efb04abc603593a6079b0e5c72171076cb7e1f",
+        "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-c04ac1e548e9",
+        "sourceCommit": "c04ac1e548e959579fcdc0b108360fa1e3b3f6a8",
         "dockerfile": "deploy/sunrey-sandbox-hetzner/Dockerfile"
       }
     ]

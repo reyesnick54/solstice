@@ -1,6 +1,6 @@
 # EVOL14 / EVOL15 — Overfitting Stress Report
 
-**Git SHA:** `b3066feba013e368db56d8aa588bf926af13c9f4`
+**Git SHA:** `83656ed315272b1d54e77dad97e442a4000e1bde`
 
 ## Injected flashy strategy
 

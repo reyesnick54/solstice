@@ -1,7 +1,7 @@
 # Strategy Genome Self-Evolution — Capability Matrix (EVOL15 / EVOL14 requalification)
 
 **Stack marker (when qualification passes):** `HELIOS_STRATEGY_SELF_EVOLUTION_V1_QUALIFIED`  
-**Integration SHA (requalification commit):** `b3066feba013e368db56d8aa588bf926af13c9f4`
+**Integration SHA (requalification commit):** `83656ed315272b1d54e77dad97e442a4000e1bde`
 
 | ID | Capability | Canonical implementation | Verification |
 |----|------------|-------------------------|--------------|
