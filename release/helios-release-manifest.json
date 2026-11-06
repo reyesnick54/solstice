@@ -1,11 +1,11 @@
 {
   "schema": "helios.release.package.v1",
-  "releaseId": "helios-rc-h34-c04ac1e548e9",
-  "gitSha": "c04ac1e548e959579fcdc0b108360fa1e3b3f6a8",
+  "releaseId": "helios-rc-h34-ba6f8256455f",
+  "gitSha": "ba6f8256455fb038ec1ac69393594e65d1e5860d",
   "repository": "reyesnick54/solstice",
-  "buildTimestampUtc": "2026-11-06T14:36:48.600Z",
+  "buildTimestampUtc": "2026-11-06T14:50:06.482Z",
   "applicationVersion": "0.1.0",
-  "heliosVersion": "helios-h34-rc-c04ac1e548e9",
+  "heliosVersion": "helios-h34-rc-ba6f8256455f",
   "schemaVersion": {
     "customer": "V071",
     "ledger": "V010",
@@ -18,7 +18,7 @@
   "modelRegistryVersion": "risk-model-v1",
   "providerConfigVersion": "sunrey-free-api-catalog@1.0.0",
   "deploymentManifestVersion": "deploy/sunrey-sandbox-hetzner/v1",
-  "artifactDigest": "sha256:7e20945afb811d929a3703d82b80ce40f1b017c02bb4dfb01ac3daf407a2a960",
+  "artifactDigest": "sha256:0a75e22afb304cd4ac1714624cc9993d431ffcaa9784bc58d0f56c55c5b40eea",
   "sbomReference": "dist/sunrey-supply-chain/sbom.json",
   "provenanceReference": "dist/sunrey-supply-chain/provenance.json",
   "environmentTarget": "hetzner-sandbox-simulation",
@@ -158,7 +158,7 @@
     "security/V002__credential_descriptor_refs.sql": "97c5712a247991c66620f6d4d1a52c15846e94acb19f4045c3fa884b5f3b5c3a"
   },
   "rollbackCompatibility": {
-    "previousSupportedRelease": "helios-rc-h33-c04ac1e548e9",
+    "previousSupportedRelease": "helios-rc-h33-ba6f8256455f",
     "appBackwardCompatibility": "SAFE_APP_ROLLBACK",
     "dbBackwardCompatibility": "FORWARD_FIX_REQUIRED",
     "configurationCompatibility": "SAFE_APP_ROLLBACK",
@@ -167,14 +167,14 @@
   "sameShaBindings": [
     {
       "role": "application",
-      "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-c04ac1e548e9",
-      "sourceCommit": "c04ac1e548e959579fcdc0b108360fa1e3b3f6a8",
+      "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-ba6f8256455f",
+      "sourceCommit": "ba6f8256455fb038ec1ac69393594e65d1e5860d",
       "dockerfile": "deploy/sunrey-sandbox-hetzner/Dockerfile"
     },
     {
       "role": "migration-runner",
-      "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-c04ac1e548e9",
-      "sourceCommit": "c04ac1e548e959579fcdc0b108360fa1e3b3f6a8",
+      "imageRef": "sunrey.local/sandbox-bff:helios-rc-h34-ba6f8256455f",
+      "sourceCommit": "ba6f8256455fb038ec1ac69393594e65d1e5860d",
       "dockerfile": "deploy/sunrey-sandbox-hetzner/Dockerfile"
     }
   ],
