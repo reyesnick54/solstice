@@ -105,6 +105,25 @@ export type StrategyNode =
   | RegimeGateNode
   | FlowNode;
 
+export type EvolutionOperatorKind =
+  | 'PARAMETER_MUTATION'
+  | 'FEATURE_SUBSTITUTION'
+  | 'FEATURE_ADDITION'
+  | 'FEATURE_REMOVAL'
+  | 'ENTRY_RULE_MUTATION'
+  | 'EXIT_RULE_MUTATION'
+  | 'REGIME_GATE_MUTATION'
+  | 'TIME_HORIZON_MUTATION'
+  | 'POSITION_SIZING_RESEARCH_MUTATION'
+  | 'RISK_FILTER_MUTATION'
+  | 'CONFIRMATION_RULE_MUTATION'
+  | 'ENSEMBLE_WEIGHT_MUTATION'
+  | 'SUBGRAPH_CROSSOVER'
+  | 'FEATURE_BLOCK_CROSSOVER'
+  | 'ENTRY_EXIT_CROSSOVER'
+  | 'REGIME_POLICY_CROSSOVER'
+  | 'PARAMETER_BLEND';
+
 export type StrategyGenomeLineage = {
   readonly parentGenomeIds: readonly StrategyGenomeId[];
   readonly mutationReason: string | null;
@@ -113,6 +132,12 @@ export type StrategyGenomeLineage = {
   readonly featureManifestVersion: string;
   readonly nodeCatalogVersion: string;
   readonly genomeHash: string;
+  /** When set, this genome was produced by a typed evolution operator. */
+  readonly operator: EvolutionOperatorKind | null;
+  /** Semantic version of the evolution operator implementation (reproducibility). */
+  readonly operatorVersion: string | null;
+  /** RNG seed used to produce this genome (reproducibility). */
+  readonly randomSeed: string | null;
 };
 
 export type StrategyGenome = {
@@ -144,7 +169,15 @@ export type StrategyGenomeFailureCode =
   | 'GRAPH_CYCLE'
   | 'MISSING_REQUIRED_NODE'
   | 'UNREACHABLE_NODE'
-  | 'LIVE_EXECUTION_FORBIDDEN';
+  | 'LIVE_EXECUTION_FORBIDDEN'
+  | 'EVOLUTION_INCOMPATIBLE_TYPES'
+  | 'EVOLUTION_FEATURE_LINEAGE_INVALID'
+  | 'EVOLUTION_LOOKAHEAD_INTRODUCED'
+  | 'EVOLUTION_CIRCULAR_DEPENDENCY'
+  | 'EVOLUTION_UNSUPPORTED_INSTRUMENT'
+  | 'EVOLUTION_INVALID_EXECUTION_SEMANTICS'
+  | 'EVOLUTION_RISK_POLICY_IMMUTABLE'
+  | 'EVOLUTION_REJECTED';
 
 export type StrategyGenomeFailure = {
   readonly code: StrategyGenomeFailureCode;

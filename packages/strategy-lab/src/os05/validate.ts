@@ -168,6 +168,16 @@ export function validateStrategyGenome(genome: StrategyGenome): Result<StrategyG
       message: `featureManifestVersion must be ${STRATEGY_GENOME_FEATURE_MANIFEST_VERSION}`,
     });
   }
+  const op = genome.lineage.operator;
+  const ov = genome.lineage.operatorVersion;
+  const seed = genome.lineage.randomSeed;
+  const evolutionMetaCount = [op, ov, seed].filter((x) => x != null).length;
+  if (evolutionMetaCount !== 0 && evolutionMetaCount !== 3) {
+    return err({
+      code: 'INVALID_PARAMS',
+      message: 'lineage must set operator, operatorVersion, and randomSeed together or all null',
+    });
+  }
   for (const [key, value] of Object.entries(genome.parameters)) {
     if (!paramTypeMatches(value)) {
       return err({
