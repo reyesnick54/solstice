@@ -785,6 +785,7 @@ export type {
   Earn11QualificationChecks,
   Earn11QualificationResult,
 } from './earn11/index.ts';
+
 export {
   asEvolutionBudgetId,
   asEvolutionEvidenceManifestId,
@@ -864,3 +865,49 @@ export type {
   Evol04QualityDiversityChecks,
   Evol04QualityDiversityQualificationResult,
 } from './evolution/quality-diversity/index.ts';
+
+export {
+  HELIOS_EVOL07_BEHAVIOR_FINGERPRINT_SCHEMA_VERSION,
+  HELIOS_EVOL07_NEAREST_NEIGHBOR_ENGINE_SCHEMA_VERSION,
+  HELIOS_EVOL07_NEUTRAL_DIAGNOSTIC_DATASET_ID,
+  HELIOS_EVOL07_NOVELTY_ENGINE_BLOCKED,
+  HELIOS_EVOL07_NOVELTY_ENGINE_QUALIFIED,
+  HELIOS_EVOL07_SEMANTIC_FINGERPRINT_SCHEMA_VERSION,
+  DEFAULT_EVOL07_ANTI_CLONE_THRESHOLDS,
+  DEFAULT_EVOL07_NOVELTY_WEIGHTS,
+  computeStrategyBehaviorFingerprint,
+  behaviorVector,
+  computeStrategySemanticFingerprint,
+  structuralDistance,
+  parameterDistance,
+  behavioralDistance,
+  combinedDistance,
+  nearestNeighborInArchive,
+  genomeStructureParameterDistance,
+  computeStrategyNoveltyScore,
+  emptyPopulationDiversityState,
+  withArchivedEntry,
+  populationArchiveEntryFromGenome,
+  evaluateAntiClone,
+  researchSelectionNoveltyReward,
+  evaluateEvol07NoveltyEngineQualification,
+  evol07EngineeringQualificationChecks,
+  clamp01,
+  signedTo01,
+  l1Distance,
+  multisetJaccardDistance,
+} from './evol07/index.ts';
+export type {
+  AntiCloneOutcome,
+  AntiCloneThresholds,
+  NoveltyDistanceWeights,
+  PopulationDiversityArchiveEntry,
+  PopulationDiversityState,
+  ResearchSelectionNoveltyInput,
+  ResearchSelectionNoveltyResult,
+  StrategyBehaviorFingerprint,
+  StrategyNoveltyScore,
+  StrategySemanticFingerprint,
+  Evol07QualificationChecks,
+  Evol07QualificationResult,
+} from './evol07/index.ts';
