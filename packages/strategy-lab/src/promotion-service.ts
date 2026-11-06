@@ -10,7 +10,13 @@ import {
   type PromotionCapsuleEvidenceRef,
 } from './promotion-capsule.ts';
 import type { MarketDataset } from './dataset.ts';
-import { buildDemotionRecord, evaluateDemotionTrigger, requiresRequalification, type DemotionTrigger } from './demotion.ts';
+import {
+  buildDemotionRecord,
+  evaluateDemotionTrigger,
+  requiresRequalification,
+  type DemotionTrigger,
+  type DemotionToState,
+} from './demotion.ts';
 import { evaluateQualification } from './evaluation-qualification.ts';
 import {
   attachForwardShadowOutcome,
@@ -44,12 +50,39 @@ import type { GateResult } from './promotion-gates.ts';
 import type { EvaluationQualificationResult } from './evaluation-qualification.ts';
 import type { AdaptiveAlphaQualificationRecord } from './adaptive-alpha-qualification-record.ts';
 import type { StrategyLabAdaptiveAlphaQualificationRef } from './evaluation/adaptive-alpha-promotion-gate.ts';
+import {
+  evol11DefaultForwardShadowRole,
+  type Evol11ChampionComparisonEvidence,
+} from './evol11-champion-challenger.ts';
+import type { Evol11ForwardShadowRole } from './evol11-champion-challenger.ts';
 
 function addDays(instant: UtcInstant, days: number): UtcInstant {
   const date = new Date(instant);
   date.setUTCDate(date.getUTCDate() + days);
   return date.toISOString() as UtcInstant;
 }
+
+function shadowActiveTarget(current: StrategyPromotionState): StrategyPromotionState {
+  if (current === 'SHADOW_CHALLENGER' || current === 'QUALIFIED_CHALLENGER') {
+    return 'SHADOW_CHALLENGER';
+  }
+  return 'SHADOW_ACTIVE';
+}
+
+function paperEligibleTarget(current: StrategyPromotionRecord): StrategyPromotionState {
+  const isChallengerTrack =
+    current.promotionTrack === 'EVOL11_CHALLENGER' ||
+    current.promotionState === 'SHADOW_CHALLENGER' ||
+    current.promotionState === 'QUALIFIED_CHALLENGER';
+  return isChallengerTrack ? 'PAPER_CHALLENGER' : 'PAPER_ELIGIBLE';
+}
+
+const SHADOW_FORWARD_STATES: ReadonlySet<StrategyPromotionState> = new Set([
+  'SHADOW_ELIGIBLE',
+  'SHADOW_ACTIVE',
+  'SHADOW_CHALLENGER',
+  'QUALIFIED_CHALLENGER',
+]);
 
 export class StrategyPromotionService {
   readonly store: StrategyPromotionStore;
@@ -75,7 +108,7 @@ export class StrategyPromotionService {
 
   setPolicy(policy: QualificationPolicy): void {
     this.policy = policy;
-    this.store.putPolicy(policy);
+    this.store.putPolicy(this.policy);
   }
 
   registerCapsule(input: {
@@ -101,7 +134,7 @@ export class StrategyPromotionService {
       subjectId: input.subjectId,
       capsuleId: capsule.value.capsuleId,
       capsuleFingerprint: capsule.value.fingerprint,
-      promotionState: 'RESEARCH',
+      promotionState: 'CANDIDATE',
       policyId: this.policy.policyId,
       policyVersion: this.policy.version,
       policyHash: this.policy.policyHash,
@@ -192,7 +225,7 @@ export class StrategyPromotionService {
       return qualification;
     }
     this.store.putQualification(qualification.value);
-    if (current.promotionState === 'RESEARCH') {
+    if (current.promotionState === 'CANDIDATE') {
       const eligible = this.assessEvaluationEligibility(input.strategyId, input.version);
       if (!eligible.ok) {
         return eligible;
@@ -207,6 +240,37 @@ export class StrategyPromotionService {
       qualification: qualification.value,
       actorId: 'qlsvc_promotion',
       actorKind: 'QUALIFICATION_SERVICE',
+    });
+  }
+
+  qualifyChallenger(input: {
+    readonly actor: unknown;
+    readonly strategyId: string;
+    readonly version: string;
+    readonly reason: string;
+  }): Result<StrategyPromotionRecord, StrategyFailure> {
+    const auth = assertAuthoritativePromotion({
+      actor: input.actor,
+      decisionKind: 'QUALIFIED_AS_CHALLENGER',
+      reason: input.reason,
+    });
+    if (!auth.ok) {
+      return auth;
+    }
+    const qualification = this.store.getLatestQualification(input.strategyId, input.version);
+    if (!qualification?.passed) {
+      return err({ code: 'PROMOTION_GATE_FAILED', message: 'passed evaluation qualification is required' });
+    }
+    return this.transition({
+      strategyId: input.strategyId,
+      version: input.version,
+      to: 'QUALIFIED_CHALLENGER',
+      kind: 'QUALIFIED_AS_CHALLENGER',
+      qualification,
+      actorId: auth.value.actorId,
+      actorKind: auth.value.actorKind,
+      humanApproved: auth.value.actorKind === 'HUMAN_GOVERNANCE',
+      promotionTrack: 'EVOL11_CHALLENGER',
     });
   }
 
@@ -238,10 +302,13 @@ export class StrategyPromotionService {
         message: `Gate 2 failed: ${gate.value.missing.join(', ')}`,
       });
     }
+    const current = this.store.getPromotion(input.strategyId, input.version);
+    const to: StrategyPromotionState =
+      current?.promotionState === 'QUALIFIED_CHALLENGER' ? 'SHADOW_CHALLENGER' : 'SHADOW_ELIGIBLE';
     return this.transition({
       strategyId: input.strategyId,
       version: input.version,
-      to: 'SHADOW_ELIGIBLE',
+      to,
       kind: 'PROMOTED_TO_SHADOW',
       gate: gate.value,
       qualification,
@@ -256,27 +323,33 @@ export class StrategyPromotionService {
     readonly version: string;
     readonly observationRef: string;
     readonly modelVersions?: readonly string[];
+    readonly evol11Role?: Evol11ForwardShadowRole;
   }): Result<ForwardShadowRun, StrategyFailure> {
     const capsule = this.store.getCapsule(input.strategyId, input.version);
     const current = this.store.getPromotion(input.strategyId, input.version);
     if (!capsule || !current) {
       return err({ code: 'UNVERSIONED_STRATEGY', message: 'Strategy Capsule is missing' });
     }
-    if (current.promotionState !== 'SHADOW_ELIGIBLE' && current.promotionState !== 'SHADOW_ACTIVE') {
-      return err({ code: 'INVALID_TRANSITION', message: 'forward shadow requires SHADOW_ELIGIBLE' });
+    if (!SHADOW_FORWARD_STATES.has(current.promotionState)) {
+      return err({
+        code: 'INVALID_TRANSITION',
+        message: 'forward shadow requires SHADOW_ELIGIBLE, SHADOW_ACTIVE, SHADOW_CHALLENGER, or QUALIFIED_CHALLENGER',
+      });
     }
+    const role = input.evol11Role ?? evol11DefaultForwardShadowRole(current.promotionState);
     const run = startForwardShadowRun({
       capsule,
       observationRef: input.observationRef,
       startedAt: this.clock.now(),
+      evol11Role: role,
       ...(input.modelVersions !== undefined ? { modelVersions: input.modelVersions } : {}),
     });
     this.store.putForwardShadowRun(run);
-    if (current.promotionState === 'SHADOW_ELIGIBLE') {
+    if (current.promotionState === 'SHADOW_ELIGIBLE' || current.promotionState === 'QUALIFIED_CHALLENGER') {
       const moved = this.transition({
         strategyId: input.strategyId,
         version: input.version,
-        to: 'SHADOW_ACTIVE',
+        to: shadowActiveTarget(current.promotionState),
         kind: 'GATE_PASSED',
         actorId: 'qlsvc_promotion',
         actorKind: 'QUALIFICATION_SERVICE',
@@ -363,11 +436,16 @@ export class StrategyPromotionService {
         message: `Gate 3 failed: ${gate.value.missing.join(', ')}`,
       });
     }
+    const current = this.store.getPromotion(input.strategyId, input.version);
+    if (!current) {
+      return err({ code: 'UNVERSIONED_STRATEGY', message: 'Strategy Capsule is missing' });
+    }
+    const to = paperEligibleTarget(current);
     const expiresAt = addDays(this.clock.now(), this.policy.paperEligibilityExpiryDays);
     const moved = this.transition({
       strategyId: input.strategyId,
       version: input.version,
-      to: 'PAPER_ELIGIBLE',
+      to,
       kind: 'PROMOTED_TO_PAPER',
       gate: gate.value,
       shadow: input.shadow,
@@ -377,6 +455,110 @@ export class StrategyPromotionService {
       expiresAt,
     });
     return moved;
+  }
+
+  /** Name a research champion after paper simulation; not live authorization. */
+  nameResearchChampion(input: {
+    readonly actor: unknown;
+    readonly strategyId: string;
+    readonly version: string;
+    readonly scope: 'NICHE' | 'GLOBAL_RESEARCH';
+    readonly comparison: Evol11ChampionComparisonEvidence;
+    readonly reason: string;
+  }): Result<StrategyPromotionRecord, StrategyFailure> {
+    const auth = assertAuthoritativePromotion({
+      actor: input.actor,
+      decisionKind: 'CHAMPION_NAMED',
+      reason: input.reason,
+    });
+    if (!auth.ok) {
+      return auth;
+    }
+    if (!input.comparison.permitsChampionReplacement) {
+      return err({
+        code: 'PROMOTION_GATE_FAILED',
+        message: 'champion comparison does not permit replacement (material improvement / dominance not met)',
+      });
+    }
+    if (!input.comparison.championIsResearchOnly || !input.comparison.noLiveCapitalAuthorization) {
+      return err({
+        code: 'PROMOTION_GATE_FAILED',
+        message: 'EVOL11 champion evidence must mark research-only, non-live designation',
+      });
+    }
+    const to: StrategyPromotionState =
+      input.scope === 'GLOBAL_RESEARCH' ? 'GLOBAL_RESEARCH_CHAMPION' : 'NICHE_CHAMPION';
+    return this.transition({
+      strategyId: input.strategyId,
+      version: input.version,
+      to,
+      kind: 'CHAMPION_NAMED',
+      actorId: auth.value.actorId,
+      actorKind: auth.value.actorKind,
+      humanApproved: auth.value.actorKind === 'HUMAN_GOVERNANCE',
+      evol11Comparison: input.comparison,
+    });
+  }
+
+  recordAutomaticDegradation(input: {
+    readonly strategyId: string;
+    readonly version: string;
+    readonly trigger: DemotionTrigger;
+    readonly reason: string;
+  }): Result<StrategyPromotionRecord, StrategyFailure> {
+    const allowed = new Set<DemotionTrigger>([
+      'CHAMPION_PERFORMANCE_DECAY',
+      'CHAMPION_FEATURE_DECAY',
+      'REGIME_DRIFT_DETECTED',
+      'CHAMPION_COST_DETERIORATION',
+      'CHAMPION_CAPACITY_DETERIORATION',
+    ]);
+    if (!allowed.has(input.trigger)) {
+      return err({
+        code: 'PROMOTION_GATE_FAILED',
+        message: 'automatic degradation allowed only for EVOL11 champion decay triggers',
+      });
+    }
+    const current = this.store.getPromotion(input.strategyId, input.version);
+    const capsule = this.store.getCapsule(input.strategyId, input.version);
+    if (!current || !capsule) {
+      return err({ code: 'UNVERSIONED_STRATEGY', message: 'Strategy Capsule is missing' });
+    }
+    const evaluated =
+      evaluateDemotionTrigger({
+        currentState: current.promotionState,
+        trigger: input.trigger,
+        now: this.clock.now(),
+        expiresAt: current.expiresAt as UtcInstant | null,
+      }) ?? null;
+    if (evaluated !== 'DEGRADED') {
+      return err({
+        code: 'INVALID_TRANSITION',
+        message: 'automatic degradation applies only to champion states per EVOL11',
+      });
+    }
+    const demotion = buildDemotionRecord({
+      strategyId: input.strategyId,
+      strategyVersion: input.version,
+      capsuleFingerprint: capsule.fingerprint,
+      fromState: current.promotionState,
+      toState: 'DEGRADED',
+      trigger: input.trigger,
+      reason: input.reason,
+      actorId: 'qlsvc_promotion',
+      decidedAt: this.clock.now(),
+      policyId: this.policy.policyId,
+      policyHash: this.policy.policyHash,
+    });
+    this.store.putDemotion(demotion);
+    return this.transition({
+      strategyId: input.strategyId,
+      version: input.version,
+      to: 'DEGRADED',
+      kind: 'DEGRADATION_DETECTED',
+      actorId: 'qlsvc_promotion',
+      actorKind: 'QUALIFICATION_SERVICE',
+    });
   }
 
   recommendPromotion(input: {
@@ -441,19 +623,19 @@ export class StrategyPromotionService {
     if (!current || !capsule) {
       return err({ code: 'UNVERSIONED_STRATEGY', message: 'Strategy Capsule is missing' });
     }
-    const toState =
+    const evaluated =
       evaluateDemotionTrigger({
         currentState: current.promotionState,
         trigger: input.trigger,
         now: this.clock.now(),
         expiresAt: current.expiresAt as UtcInstant | null,
-      }) ?? 'PAUSED';
+      }) ?? ('PAUSED' as DemotionToState);
     const demotion = buildDemotionRecord({
       strategyId: input.strategyId,
       strategyVersion: input.version,
       capsuleFingerprint: capsule.fingerprint,
       fromState: current.promotionState,
-      toState: toState === 'PAUSED' ? 'PAUSED' : 'REVIEW_REQUIRED',
+      toState: evaluated,
       trigger: input.trigger,
       reason: input.reason,
       actorId: auth.value.actorId,
@@ -462,12 +644,10 @@ export class StrategyPromotionService {
       policyHash: this.policy.policyHash,
     });
     this.store.putDemotion(demotion);
-    const nextState: StrategyPromotionState =
-      toState === 'PAUSED' ? 'PAUSED' : 'REVIEW_REQUIRED';
     if (requiresRequalification(input.trigger)) {
       const requalifyTarget: StrategyPromotionState =
         current.promotionState === 'REVIEW_REQUIRED' || current.promotionState === 'PAUSED'
-          ? 'RESEARCH'
+          ? 'CANDIDATE'
           : 'REVIEW_REQUIRED';
       return this.transition({
         strategyId: input.strategyId,
@@ -478,6 +658,14 @@ export class StrategyPromotionService {
         actorKind: auth.value.actorKind,
       });
     }
+    const nextState: StrategyPromotionState =
+      evaluated === 'PAUSED'
+        ? 'PAUSED'
+        : evaluated === 'DEGRADED'
+          ? 'DEGRADED'
+          : evaluated === 'DEMOTED'
+            ? 'DEMOTED'
+            : 'REVIEW_REQUIRED';
     return this.transition({
       strategyId: input.strategyId,
       version: input.version,
@@ -540,6 +728,8 @@ export class StrategyPromotionService {
     readonly actorKind: string;
     readonly humanApproved?: boolean;
     readonly expiresAt?: UtcInstant | null;
+    readonly promotionTrack?: StrategyPromotionRecord['promotionTrack'];
+    readonly evol11Comparison?: Evol11ChampionComparisonEvidence | null;
   }): Result<StrategyPromotionRecord, StrategyFailure> {
     const current = this.store.getPromotion(input.strategyId, input.version);
     const capsule = this.store.getCapsule(input.strategyId, input.version);
@@ -550,9 +740,13 @@ export class StrategyPromotionService {
     if (!nextState.ok) {
       return nextState;
     }
+    const nextTrack =
+      input.promotionTrack ??
+      (nextState.value === 'QUALIFIED_CHALLENGER' ? ('EVOL11_CHALLENGER' as const) : current.promotionTrack);
     const record: StrategyPromotionRecord = Object.freeze({
       ...current,
       promotionState: nextState.value,
+      ...(nextTrack !== undefined ? { promotionTrack: nextTrack } : {}),
       policyId: this.policy.policyId,
       policyVersion: this.policy.version,
       policyHash: this.policy.policyHash,
@@ -569,6 +763,7 @@ export class StrategyPromotionService {
       ...(input.gate !== undefined ? { gate: input.gate } : {}),
       ...(input.qualification !== undefined ? { qualification: input.qualification } : {}),
       ...(input.shadow !== undefined ? { shadow: input.shadow } : {}),
+      ...(input.evol11Comparison !== undefined ? { evol11Comparison: input.evol11Comparison } : {}),
       actorId: input.actorId,
       actorKind: input.actorKind,
       ...(input.humanApproved !== undefined ? { humanApproved: input.humanApproved } : {}),
