@@ -34,7 +34,9 @@ describe('HELIOS EVOL14 — Strategy Genome self-evolution', () => {
     });
     assert.ok(sim.sealedEvidenceTrail.length >= 1);
     assert.ok(sim.trials.length >= 10);
-    assert.ok(sim.trialSuccessCount + sim.trialFailureCount === sim.trials.length);
+    assert.ok(
+      sim.trialSuccessCount + sim.trialFailureCount + sim.trialBlockedCount === sim.trials.length,
+    );
   });
 
   it('emits HELIOS_STRATEGY_SELF_EVOLUTION_V1_QUALIFIED when live trading is disabled and simulation invariants hold', () => {

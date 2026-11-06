@@ -6,6 +6,8 @@ import type {
   VAL10_UNCERTAINTY_ENGINE_SCHEMA,
 } from './taxonomy.ts';
 
+export type { ValuationConfidenceLevel, TerminalValueDependenceSeverity } from './taxonomy.ts';
+
 export type ValuationUncertaintySource = {
   readonly source: ValuationUncertaintySourceId;
   readonly label: string;

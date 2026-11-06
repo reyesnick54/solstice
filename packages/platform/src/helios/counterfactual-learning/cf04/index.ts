@@ -8,7 +8,7 @@ export {
   CF04_BASELINE_MODEL_KINDS,
   CF04_QUANTILE_LEVELS,
   REGIME_LABELS,
-  LIQUIDITY_BUCKETS,
+  CF04_LIQUIDITY_BUCKETS,
   type OutcomeDimensionKey,
   type Cf04BaselineModelKind,
   type Cf04QuantileLevel,

@@ -98,7 +98,7 @@ export {
   type Native10QualificationResult,
   type TradingAgentsNativeDecisionMemoryEntry,
 } from './tradingagents-native/index.ts';
-export * from './earnings-agentic-committee/index.ts';
-export * from './valuation-agentic-committee/index.ts';
+export * as EarningsAgenticCommittee from './earnings-agentic-committee/index.ts';
+export * as ValuationAgenticCommittee from './valuation-agentic-committee/index.ts';
 export * from './counterfactual-research-cf13/index.ts';
 export * from './earnings-transcript-intelligence/index.ts';

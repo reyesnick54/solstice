@@ -8,6 +8,7 @@ import { validateStrategyGenome } from '../../os05/validate.ts';
 import type {
   EvolutionOperatorKind,
   GenomeNodeParams,
+  GenomeParamValue,
   StrategyGenome,
   StrategyGenomeFailure,
   StrategyNode,
@@ -78,7 +79,7 @@ function makeLineage(
   operator: EvolutionOperatorKind,
   mutationReason: string,
   randomSeed: string,
-): StrategyGenome['lineage'] {
+): LineageWithoutHash {
   return Object.freeze({
     ...base,
     parentGenomeIds: Object.freeze([...parentIds]),
@@ -466,7 +467,7 @@ export function crossoverStrategyGenomes(input: {
       const keys = [
         ...new Set([...Object.keys(input.parentA.parameters), ...Object.keys(input.parentB.parameters)]),
       ].sort();
-      const blended: GenomeNodeParams = {};
+      const blended: Record<string, GenomeParamValue> = {};
       for (const k of keys) {
         const va = input.parentA.parameters[k];
         const vb = input.parentB.parameters[k];

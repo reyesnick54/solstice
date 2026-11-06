@@ -59,16 +59,20 @@ export class CounterfactualResearchCf13Mesh {
         if (!roleSet.has(role)) {
           continue;
         }
-        const artifact = runCounterfactualCf13Role({
+        const runnerInputBase = {
           role,
           workOrderId: input.request.workOrderId,
           subjectId: input.request.subjectId,
           objective: input.request.objective,
           informationTime: now,
           data: dataResult.value,
-          factualPolicyHint: input.request.factualPolicyHint,
           priorArtifacts: Object.freeze([...artifacts]),
-        });
+        } as const;
+        const artifact = runCounterfactualCf13Role(
+          input.request.factualPolicyHint !== undefined
+            ? { ...runnerInputBase, factualPolicyHint: input.request.factualPolicyHint }
+            : runnerInputBase,
+        );
         const validationErrors = validateCounterfactualCf13Artifact(artifact);
         if (validationErrors.length > 0) {
           return err({ code: 'VALIDATION_FAILED', message: validationErrors.join('; ') });

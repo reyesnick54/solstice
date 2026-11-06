@@ -68,6 +68,8 @@ export type PartitionedEvaluationMetrics = {
 };
 
 export type EvolutionTrialOutcomeSlice = {
+  /** Inner train/validation partition only — never use holdout metrics during search. */
+  readonly innerTrainVal?: PartitionedEvaluationMetrics | null;
   readonly holdout: PartitionedEvaluationMetrics | null;
   readonly walkForward: PartitionedEvaluationMetrics | null;
   readonly shadow: PartitionedEvaluationMetrics | null;

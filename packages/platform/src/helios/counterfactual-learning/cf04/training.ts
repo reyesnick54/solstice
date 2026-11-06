@@ -181,9 +181,9 @@ export function predictQuantileSurfacesFromStates(
     if (m.kind === 'QUANTILE_LINEAR') {
       const pt = predictLinear(m.weights, xd);
       const q: Partial<Record<Cf04QuantileLevel, number>> = {};
-      for (const [level, off] of Object.entries(m.offsets)) {
+      for (const [levelKey, off] of Object.entries(m.offsets)) {
         if (off !== undefined) {
-          q[level as Cf04QuantileLevel] = pt + off;
+          q[levelKey as unknown as Cf04QuantileLevel] = pt + off;
         }
       }
       return q;
@@ -270,7 +270,7 @@ export type RowCalibration = {
   readonly row: CounterfactualTrainingRow;
   readonly actual: readonly number[];
   readonly predictedPoint: readonly number[];
-  readonly predictedQuantilesByDim: readonly Array<Partial<Record<Cf04QuantileLevel, number>>>;
+  readonly predictedQuantilesByDim: ReadonlyArray<Partial<Record<Cf04QuantileLevel, number>>>;
 };
 
 export function buildRowCalibration(

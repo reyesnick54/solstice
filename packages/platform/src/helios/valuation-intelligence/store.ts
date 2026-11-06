@@ -12,7 +12,10 @@ import type {
   ValuationScenario,
   ValuationSnapshot,
 } from './val01-canonical-domain.ts';
-import { filterKnowableValuationArtifacts } from './knowable-at.ts';
+import {
+  filterKnowableMarketImpliedExpectations,
+  filterKnowableValuationArtifacts,
+} from './knowable-at.ts';
 
 export type ValuationIntelligenceStore = {
   upsertSnapshot(snapshot: ValuationSnapshot): void;
@@ -86,7 +89,7 @@ export function createValuationIntelligenceStore(): ValuationIntelligenceStore {
         filterKnowableValuationArtifacts(evaluationTime, [...assumptions.values()]),
         filterKnowableValuationArtifacts(evaluationTime, [...distributions.values()]),
         filterKnowableValuationArtifacts(evaluationTime, [...intrinsicDistributions.values()]),
-        filterKnowableValuationArtifacts(evaluationTime, [...marketImplied.values()]),
+        filterKnowableMarketImpliedExpectations(evaluationTime, [...marketImplied.values()]),
       );
     },
   };

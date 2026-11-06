@@ -3,7 +3,8 @@ import type { UtcInstant } from '@solstice/domain';
 import type { EvolutionAntiOverfittingDiagnostics } from './anti-overfitting.ts';
 import type { PointInTimeDatasetManifestSeal } from '../evaluation/point-in-time-dataset-seal.ts';
 import type { StrategyEvaluationId } from '../evaluation/ids.ts';
-import type { StrategyGenome, StrategyGenomeId, StrategyGenomeVersion } from '../os05/types.ts';
+import type { StrategyGenome } from '../os05/types.ts';
+import type { StrategyGenomeId, StrategyGenomeVersion } from '../os05/ids.ts';
 import type {
   EvolutionBudgetId,
   EvolutionEvidenceManifestId,
@@ -161,11 +162,12 @@ export type EvolutionEvidenceManifest = {
 
 // ---- EVOL14 (Strategy Genome self-evolution qualification simulation) ----
 
-export type EvolutionTrialOutcome = 'SUCCESS' | 'FAILED';
+export type EvolutionTrialOutcome = 'SUCCESS' | 'FAILED' | 'BLOCKED';
 
 export type EvolutionPhase =
   | 'SEED'
   | 'POPULATION_INIT'
+  | 'POPULATION_ARCHIVE'
   | 'POPULATION_SCHEDULING'
   | 'MUTATION_CROSSOVER'
   | 'VALIDATION_REJECT'
@@ -176,9 +178,12 @@ export type EvolutionPhase =
   | 'NOVELTY'
   | 'FALSIFICATION'
   | 'FREEZE'
+  | 'REGIME_GENERALIZATION'
   | 'HOLDOUT_OPEN'
   | 'DSR_PBO'
   | 'CHALLENGER_SELECT'
+  | 'STRATEGY_SCIENTIST'
+  | 'OPERATOR_CREDIT'
   | 'FORWARD_SHADOW'
   | 'EXECUTION_TWIN_PAPER'
   | 'CHAMPION_COMPARE'
@@ -202,7 +207,9 @@ export type EvolutionTrialRecord = {
 
 export type StrategyScientistObservation = {
   readonly hypothesisId: string;
-  readonly operatorIntelligenceRef: string;
+  /** EVOL12 Strategy Scientist agent reference (`agent/...`). */
+  readonly strategyScientistAgentRef: string;
+  readonly genomeProposalId: string;
   readonly falsificationTarget: string;
   readonly notes: string;
 };
@@ -265,5 +272,7 @@ export type EvolutionSimulationResult = {
   readonly trials: readonly EvolutionTrialRecord[];
   readonly sealedEvidenceTrail: readonly EvolutionSealedEvidenceEntry[];
   readonly trialSuccessCount: number;
+  /** FAILED outcomes only (excludes BLOCKED). */
   readonly trialFailureCount: number;
+  readonly trialBlockedCount: number;
 };

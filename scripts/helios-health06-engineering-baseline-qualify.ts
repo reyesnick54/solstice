@@ -30,6 +30,10 @@ const SKIP_NORMAL_CI = args.has('--skip-normal-ci');
 const SKIP_EXTENDED = args.has('--skip-extended') || SKIP_SUBPROCESS;
 
 function gitSha(): string {
+  const env = process.env.HEALTH06_GIT_SHA?.trim();
+  if (env && /^[0-9a-f]{40}$/i.test(env)) {
+    return env.toLowerCase();
+  }
   const result = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' });
   return result.status === 0 ? result.stdout.trim() : '0000000000000000000000000000000000000000';
 }

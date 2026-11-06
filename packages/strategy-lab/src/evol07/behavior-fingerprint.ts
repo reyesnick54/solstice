@@ -20,7 +20,7 @@ export function computeStrategyBehaviorFingerprint(
   },
 ): StrategyBehaviorFingerprint {
   const digest = createHash('sha256').update(genome.lineage.genomeHash, 'utf8').digest();
-  const u8 = (i: number) => digest[i % digest.length] / 255;
+  const u8 = (i: number) => (digest[i % digest.length] ?? 0) / 255;
 
   return Object.freeze({
     datasetId: options?.datasetId ?? HELIOS_EVOL07_NEUTRAL_DIAGNOSTIC_DATASET_ID,

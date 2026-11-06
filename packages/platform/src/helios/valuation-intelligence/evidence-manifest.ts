@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 
 import type { UtcInstant } from '@solstice/domain';
 import { assertAssumptionExplicit } from './assumption.ts';
-import { assertNoValuationLeakage } from './knowable-at.ts';
+import { assertNoMarketImpliedLeakage, assertNoValuationLeakage } from './knowable-at.ts';
 import type {
   ValuationEvidenceManifest,
   ValuationIntelligenceStoreSnapshot,
@@ -23,7 +23,7 @@ export function compileValuationEvidenceManifest(input: {
   assertNoValuationLeakage(input.evaluationTime, input.snapshot.assumptions);
   assertNoValuationLeakage(input.evaluationTime, input.snapshot.distributions);
   assertNoValuationLeakage(input.evaluationTime, input.snapshot.intrinsicDistributions);
-  assertNoValuationLeakage(input.evaluationTime, input.snapshot.marketImpliedExpectations);
+  assertNoMarketImpliedLeakage(input.evaluationTime, input.snapshot.marketImpliedExpectations);
 
   for (const assumption of input.snapshot.assumptions) {
     assertAssumptionExplicit(assumption);

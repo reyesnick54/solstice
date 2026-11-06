@@ -9,7 +9,11 @@
     "./helios/market-observation": "./src/helios/market-observation/types.ts",
     "./helios/feature-coverage": "./src/helios/feature-fabric/feature-coverage/index.ts",
     "./helios/strategy-lab-bridge": "./src/helios/feature-fabric/compiler/strategy-lab-bridge.ts",
-    "./helios/regime": "./src/helios/multi-asset/regime/taxonomy.ts"
+    "./helios/regime": "./src/helios/multi-asset/regime/taxonomy.ts",
+    "./helios/budget": "./src/helios/budget.ts",
+    "./helios/strategy-evolution/evol08": "./src/helios/strategy-evolution/evol08/index.ts",
+    "./helios/strategy-evolution/evol09/holdout": "./src/helios/strategy-evolution/evol09/holdout.ts",
+    "./helios/strategy-evolution/evol13": "./src/helios/strategy-evolution/evol13/index.ts"
   },
   "files": [
     "src"

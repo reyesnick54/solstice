@@ -11,6 +11,13 @@ import type {
   ResidualIncomeValuation,
 } from './types.ts';
 
+function stripCostOfEquityOptionalBounds(
+  input: ResidualIncomeEngineInput,
+): Omit<ResidualIncomeEngineInput, 'costOfEquityLowBps' | 'costOfEquityHighBps'> {
+  const { costOfEquityLowBps: _low, costOfEquityHighBps: _high, ...rest } = input;
+  return rest;
+}
+
 function assertPriceFree(input: ResidualIncomeEngineInput): void {
   if ('marketPriceMinor' in input && (input as { marketPriceMinor?: unknown }).marketPriceMinor !== undefined) {
     throw new Error('residual-income intrinsic valuation is price-free; market price is not an input');
@@ -93,13 +100,17 @@ export function runResidualIncomeValuation(input: ResidualIncomeEngineInput): Re
   const highKe = input.costOfEquityHighBps ?? input.costOfEquityBps;
   const lowIntrinsic =
     lowKe !== input.costOfEquityBps
-      ? runResidualIncomeValuation({ ...input, costOfEquityBps: lowKe, costOfEquityLowBps: undefined, costOfEquityHighBps: undefined })
-          .intrinsicEquityValue
+      ? runResidualIncomeValuation({
+          ...stripCostOfEquityOptionalBounds(input),
+          costOfEquityBps: lowKe,
+        }).intrinsicEquityValue
       : null;
   const highIntrinsic =
     highKe !== input.costOfEquityBps
-      ? runResidualIncomeValuation({ ...input, costOfEquityBps: highKe, costOfEquityLowBps: undefined, costOfEquityHighBps: undefined })
-          .intrinsicEquityValue
+      ? runResidualIncomeValuation({
+          ...stripCostOfEquityOptionalBounds(input),
+          costOfEquityBps: highKe,
+        }).intrinsicEquityValue
       : null;
 
   return Object.freeze({

@@ -7,7 +7,9 @@ export type WeightingInput = {
   readonly currentUncertaintyByMethod: Readonly<Record<string, number>>;
 };
 
-function normalizeWeights(raw: readonly { method: string; lane: ModelWeight['lane']; weight: number; rationale: string[] }[]): readonly ModelWeight[] {
+function normalizeWeights(
+  raw: readonly { method: string; lane: ModelWeight['lane']; weight: number; rationale: readonly string[] }[],
+): readonly ModelWeight[] {
   const applicable = raw.filter((r) => r.weight > 0);
   const sum = applicable.reduce((acc, r) => acc + r.weight, 0);
   if (sum <= 0) {

@@ -115,7 +115,11 @@ export function computeModelDisagreement(
   const max = values.length ? values.reduce((a, b) => (a > b ? a : b)) : null;
   const spread = min !== null && max !== null ? max - min : null;
 
-  const pairwise: ModelDisagreement['pairwiseDivergence'] = [];
+  const pairwise: {
+    readonly methodA: string;
+    readonly methodB: string;
+    readonly divergenceRatio: number | null;
+  }[] = [];
   for (let i = 0; i < candidates.length; i++) {
     for (let j = i + 1; j < candidates.length; j++) {
       const a = candidates[i]!.equityValuePerShareMinor;

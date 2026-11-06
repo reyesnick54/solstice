@@ -46,6 +46,6 @@ export const REGIME_LABELS = ['RISK_OFF', 'NEUTRAL', 'RISK_ON', 'STRESS'] as con
 
 export type Cf04RegimeLabel = (typeof REGIME_LABELS)[number];
 
-export const LIQUIDITY_BUCKETS = ['DEEP', 'NORMAL', 'THIN', 'ILLIQUID'] as const;
+export const CF04_LIQUIDITY_BUCKETS = ['DEEP', 'NORMAL', 'THIN', 'ILLIQUID'] as const;
 
-export type Cf04LiquidityBucket = (typeof LIQUIDITY_BUCKETS)[number];
+export type Cf04LiquidityBucket = (typeof CF04_LIQUIDITY_BUCKETS)[number];

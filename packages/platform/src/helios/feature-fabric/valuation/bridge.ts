@@ -3,7 +3,10 @@
  */
 
 import type { UtcInstant } from '@solstice/domain';
-import { filterKnowableValuationArtifacts } from '../../valuation-intelligence/knowable-at.ts';
+import {
+  filterKnowableMarketImpliedExpectations,
+  filterKnowableValuationArtifacts,
+} from '../../valuation-intelligence/knowable-at.ts';
 import type { ValuationEvidenceManifest } from '../../valuation-intelligence/val01-canonical-domain.ts';
 import { applicableMethodsOnly } from '../../valuation-intelligence/applicability.ts';
 import type { ValuationIssuerProfile } from '../../valuation-intelligence/applicability.ts';
@@ -78,7 +81,7 @@ export function compileValuationFeaturePlaneFromManifest(input: {
     );
   }
 
-  const marketImplied = filterKnowableValuationArtifacts(
+  const marketImplied = filterKnowableMarketImpliedExpectations(
     input.manifest.evaluationTime,
     input.manifest.marketImpliedExpectations,
   )[0];

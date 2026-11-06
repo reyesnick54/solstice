@@ -26,7 +26,7 @@ export function buildAccountingUncertaintySpread(input: {
       baseRevenue: revenue,
       forecastYears: input.dcf.forecastYears,
       taxRate: input.dcf.taxRate,
-      explicitForecasts: input.dcf.explicitForecasts,
+      ...(input.dcf.explicitForecasts === undefined ? {} : { explicitForecasts: input.dcf.explicitForecasts }),
       terminal: input.dcf.terminal,
       capitalStructure: input.dcf.capitalStructure,
       roic: input.dcf.coherence.roic,

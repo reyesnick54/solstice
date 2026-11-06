@@ -2,8 +2,8 @@
 
 **Program:** `HELIOS_HARDENING_HEALTH06`  
 **Schema:** `sunrey.helios.engineering-baseline.v2`  
-**Evaluated (UTC):** 2026-11-05T05:40:48.442Z  
-**Git SHA:** `182dca38c3885aeef0e0a329006db24ffdb8f6de`  
+**Evaluated (UTC):** 2026-11-06T16:16:21.615Z  
+**Git SHA:** `ea2b73a0e158c4e915f057b77a63234f688d952c`  
 **Live safety:** PASS
 
 > **Final marker:** `HELIOS_ENGINEERING_BASELINE_V2_QUALIFIED`
@@ -38,14 +38,14 @@ Establish a clean engineering baseline before the next major HELIOS intelligence
 | --- | --- | --- |
 | `live_trading_disabled` | PASS | actual=false as const |
 | `production_authorized_disabled` | PASS | actual=false |
-| `normal_ci` | PASS | verified separately via scripts/helios-health06-normal-ci.mjs on this SHA |
+| `normal_ci` | PASS | ok |
 | `helios_strict_scoped_typecheck` | PASS | HELIOS strict scoped typecheck: no errors in HELIOS intelligence surface |
 | `architecture_lint` | PASS | ok |
 | `production_safety` | PASS | check-production-safety + deployment posture ok |
 | `aaf_v2_qualification` | PASS | ok |
-| `earn01_earn12_qualification` | PASS | ok (12 files) |
+| `earn01_earn12_qualification` | PASS | ok (13 files) |
 | `native_assimilation_qualification` | PASS | HELIOS_FOREIGN_RUNTIME_INDEPENDENCE_QUALIFIED; native tests ok |
-| `strategy_lab` | PASS | ok |
+| `strategy_lab` | PASS | ok (2 files) |
 | `execution_twin` | PASS | ok |
 | `agent_permissions` | PASS | ok |
 | `provider_conformance` | PASS | ok |

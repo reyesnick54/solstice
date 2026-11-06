@@ -77,7 +77,7 @@ function gridSurface(input: {
         baseRevenue: input.input.baseRevenue,
         forecastYears: input.input.forecastYears,
         taxRate: input.input.taxRate,
-        explicitForecasts: input.input.explicitForecasts,
+        ...(input.input.explicitForecasts === undefined ? {} : { explicitForecasts: input.input.explicitForecasts }),
         terminal: input.input.terminal,
         capitalStructure: input.input.capitalStructure,
         roic: merged.roic ?? input.input.coherence.roic,
