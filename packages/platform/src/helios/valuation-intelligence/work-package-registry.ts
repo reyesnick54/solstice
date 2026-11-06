@@ -51,8 +51,8 @@ const MODULE_BY_PACKAGE: Record<
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/sotp/index.ts',
   },
   VAL10: {
-    title: 'Valuation uncertainty and fragility',
-    moduleRef: 'packages/platform/src/helios/valuation-intelligence/val10-uncertainty/index.ts',
+    title: 'Valuation uncertainty, fragility, and model-risk engine',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/uncertainty/index.ts',
   },
   VAL11: {
     title: 'Adaptive multi-model valuation ensemble',
@@ -74,7 +74,7 @@ const TEST_BY_PACKAGE: Record<string, string> = {
   VAL07: 'tests/helios-val07-residual-income.test.ts',
   VAL08: 'tests/helios-val08-probabilistic-comparables.test.ts',
   VAL09: 'tests/helios-val09-sotp.test.ts',
-  VAL10: 'tests/helios-val10-uncertainty.test.ts',
+  VAL10: 'tests/helios-val10-uncertainty-engine.test.ts',
   VAL11: 'tests/helios-val11-adaptive-ensemble.test.ts',
   VAL12: 'tests/helios-val12-valuation-intelligence-qualification.test.ts',
 };

@@ -25,7 +25,8 @@ import {
   fixturePositiveResidualIncomeInput,
   runResidualIncomeValuation,
 } from '../residual-income/index.ts';
-import { computeValuationUncertainty } from '../val10-uncertainty/index.ts';
+import type { CrossModelValueInput } from '../uncertainty/types.ts';
+import { runVal10UncertaintyEngine } from '../uncertainty/engine.ts';
 import type { HistoricalModelResearchRecord } from '../ensemble/reliability.ts';
 import type { EnsembleValueQuantile } from '../ensemble/types.ts';
 import { runVal11AdaptiveValuationEnsemble } from '../ensemble/engine.ts';
@@ -116,25 +117,6 @@ export function buildHeliosValuationState(input: {
   const sotp = runSotpValuationEngine(sotpInput);
   const dist = sotp.intrinsicDistribution;
   const minorToPerShare = (m: bigint) => Number(m) / Number(priceScaleMinor);
-  const sotpMedianPerShare = minorToPerShare(dist.medianMinor);
-
-  const uncertainty = computeValuationUncertainty({
-    entityId,
-    asOf: valuationTime,
-    evidenceRef: 'ev/val10/uncertainty',
-    surface: Object.freeze({
-      modelMedians: Object.freeze([
-        mc.paths[0]?.valuePerShare ?? 0,
-        rivDist.median,
-        eqDist.median,
-        sotpMedianPerShare,
-      ]),
-      waccShockBps: 75,
-      baselineMedian: mc.paths[0]?.valuePerShare ?? rivDist.median,
-      shockedMedian: (mc.paths[0]?.valuePerShare ?? rivDist.median) * 0.92,
-    }),
-  });
-
   const price = val05DemoPrice();
   const heliosExpectations = buildHeliosProbabilisticExpectations({
     entityId,
@@ -170,6 +152,54 @@ export function buildHeliosValuationState(input: {
   const reverseEquityMinor = reverseScenario.targetEquityMinor;
   const reversePerShareMinor =
     sotpInput.sharesOutstandingMinor > 0n ? reverseEquityMinor / sotpInput.sharesOutstandingMinor : reverseEquityMinor;
+
+  const capStruct = val05DemoCapitalStructure();
+  const netDebtEvAdj =
+    Number(capStruct.netDebtMinor - capStruct.cashMinor + capStruct.minorityInterestMinor) / Number(priceScaleMinor);
+
+  const refPath = mc.paths[0]!;
+  const sortedEv = [...mc.paths].map((p) => p.enterpriseValue).sort((a, b) => a - b);
+  const evDcfMed = sortedEv[Math.floor(sortedEv.length / 2)] ?? refPath.enterpriseValue;
+  const evRiv =
+    refPath.equityValue > 0
+      ? (riv.intrinsicEquityValue / refPath.equityValue) * refPath.enterpriseValue
+      : evDcfMed;
+  const evComp =
+    comparables.enterpriseValueDistribution?.median ?? eqDist.median * sharesOutstanding;
+  const evSotp = Number(dist.enterpriseValueMinor) / Number(priceScaleMinor);
+  const evReverse = Number(reverseEquityMinor) / Number(priceScaleMinor) + netDebtEvAdj;
+
+  const crossModelValues: readonly CrossModelValueInput[] = Object.freeze([
+    Object.freeze({ method: 'DCF', enterpriseValue: evDcfMed, consistentWithReverseDcf: true }),
+    Object.freeze({ method: 'RIV', enterpriseValue: evRiv, consistentWithReverseDcf: null }),
+    Object.freeze({
+      method: 'COMPARABLES',
+      enterpriseValue: evComp,
+      consistentWithReverseDcf: null,
+    }),
+    Object.freeze({ method: 'SOTP', enterpriseValue: evSotp, consistentWithReverseDcf: null }),
+    Object.freeze({
+      method: 'REVERSE_DCF',
+      enterpriseValue: evReverse,
+      consistentWithReverseDcf: true,
+    }),
+  ]);
+
+  const val10Uncertainty = runVal10UncertaintyEngine({
+    valuationId: `val10-hvs-${entityId}`,
+    entityLabel: entityId,
+    probabilisticDcf: dcfInput,
+    crossModelValues,
+    monteCarloPaths: dcfInput.monteCarloPaths,
+    seed: dcfInput.seed,
+  });
+  const uncertaintyEvidenceRef = `ev/val10/uncertainty:${val10Uncertainty.valuationId}`;
+  const uncertainty = {
+    crossModelDispersion: val10Uncertainty.modelRisk.crossModel?.coefficientOfVariation ?? 0,
+    valuationUncertainty: val10Uncertainty.uncertainty.enterpriseValueStdDev,
+    fragility: val10Uncertainty.fragility.fragility.index,
+    evidenceRef: uncertaintyEvidenceRef,
+  };
 
   const historicalReliability: readonly HistoricalModelResearchRecord[] = Object.freeze([
     Object.freeze({

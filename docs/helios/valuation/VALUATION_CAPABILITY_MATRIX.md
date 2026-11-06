@@ -13,7 +13,7 @@
 | VAL07 | IMPLEMENTED | `tests/helios-val07-residual-income.test.ts` |
 | VAL08 | IMPLEMENTED | `tests/helios-val08-probabilistic-comparables.test.ts` |
 | VAL09 | IMPLEMENTED | `tests/helios-val09-sotp.test.ts` |
-| VAL10 | IMPLEMENTED | `tests/helios-val10-uncertainty.test.ts` |
+| VAL10 | IMPLEMENTED | `tests/helios-val10-uncertainty-engine.test.ts` |
 | VAL11 | IMPLEMENTED | `tests/helios-val11-adaptive-ensemble.test.ts` |
 | VAL12 | IMPLEMENTED | `tests/helios-val12-valuation-intelligence-qualification.test.ts` |
 
