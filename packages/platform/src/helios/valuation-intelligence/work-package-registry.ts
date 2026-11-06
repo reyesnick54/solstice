@@ -50,6 +50,10 @@ const MODULE_BY_PACKAGE: Record<
     title: 'Adaptive multi-model valuation ensemble',
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/ensemble/index.ts',
   },
+  VAL10: {
+    title: 'Valuation uncertainty, fragility, and model-risk engine',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/uncertainty/index.ts',
+  },
 };
 
 const TEST_BY_PACKAGE: Record<string, string> = {
@@ -62,6 +66,7 @@ const TEST_BY_PACKAGE: Record<string, string> = {
   VAL08: 'tests/helios-val08-probabilistic-comparables.test.ts',
   VAL09: 'tests/helios-val09-sotp.test.ts',
   VAL11: 'tests/helios-val11-adaptive-ensemble.test.ts',
+  VAL10: 'tests/helios-val10-uncertainty-engine.test.ts',
 };
 
 export function listValWorkPackages(root: string): readonly ValWorkPackageRow[] {
