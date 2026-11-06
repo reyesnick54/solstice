@@ -604,6 +604,25 @@ export {
   evaluateOs05StrategyGenomeQualification,
   buildOs05ExampleStrategyGenome,
 } from './os05/index.ts';
+export {
+  CANONICAL_RISK_ENGINE_CATALOG_REF,
+  EVOLUTION_ENGINE_VERSION,
+  HELIOS_EVOL02_GENOME_OPERATORS_BLOCKED,
+  HELIOS_EVOL02_GENOME_OPERATORS_QUALIFIED,
+  crossoverStrategyGenomes,
+  evaluateEvolutionOperatorsQualification,
+  genomeGraphOps,
+  genomeSemanticDistance,
+  mutateStrategyGenome,
+} from './evolution/operators/index.ts';
+export type {
+  CrossoverMode,
+  GenomeSemanticDistance,
+  MutationFamily,
+} from './evolution/operators/index.ts';
+export type {
+  EvolutionOperatorKind,
+} from './os05/index.ts';
 export type {
   StrategyGenomeId,
   StrategyGenomeVersion,
@@ -713,6 +732,38 @@ export type {
   SerisNative12QualificationResult,
 } from './native12-seris/index.ts';
 
+export {
+  HELIOS_EVOL10_REGIME_DIMENSIONS,
+  HELIOS_EVOL10_STRESS_REGIME_DIMENSIONS,
+  HELIOS_EVOL10_REGIME_GENERALIZATION_QUALIFIED,
+  mapM13DimensionsToEvol10,
+  mapMacroObservationToEvol10,
+  mergeEvol10Tags,
+  computeCrossRegimeRobustness,
+  computeRegimeConcentrationBps,
+  computeWorstRegimePerformance,
+  computeRegimeTransitionPerformance,
+  buildLeaveOneRegimeOutEvaluation,
+  computeTemporalTransferAssessment,
+  computeStressRegimeAssessment,
+  computeGeneralizationScoreBps,
+  evaluateEvol10GenomeRegimeReport,
+  labelEvol10RegimeDimensions,
+  evaluateEvol10RegimeGeneralizationQualification,
+  backtestTotalReturnMinor,
+} from './evol10/index.ts';
+export type {
+  HeliosEvol10RegimeDimension,
+  HeliosEvol10MacroObservation,
+  RegimePerformanceCell,
+  RegimePerformanceMatrix,
+  CrossRegimeRobustness,
+  LeaveOneRegimeOutFold,
+  LeaveOneRegimeOutEvaluation,
+  TemporalTransferAssessment,
+  StressRegimeAssessment,
+  Evol10GenomeRegimeReport,
+} from './evol10/index.ts';
 export {
   EVOL_CAPABILITY_IDS,
   HELIOS_STRATEGY_SELF_EVOLUTION_V1_BLOCKED,
