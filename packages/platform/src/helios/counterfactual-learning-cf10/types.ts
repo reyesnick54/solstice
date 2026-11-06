@@ -37,7 +37,7 @@ export type HeliosCf10GateDecisionObservation = {
    */
   readonly executionCounterfactualEstimateMinor: string;
   /**
-   * ESTIMATED — off-policy / importance-weighted style value estimate from logged propsensity / support;
+   * ESTIMATED — off-policy / importance-weighted style value estimate from logged propensity / support;
    * not a live trading signal.
    */
   readonly opeEstimateMinor: string;
