@@ -32,7 +32,9 @@ export function observeH14CapsuleQualification(input: {
     fingerprint: input.capsule?.fingerprint ?? 'unregistered',
     promotionState: promotion?.promotionState ?? 'UNREGISTERED',
     paperEligible:
-      promotion?.promotionState === 'PAPER_ELIGIBLE' || promotion?.promotionState === 'PAPER_ACTIVE',
+      promotion?.promotionState === 'PAPER_ELIGIBLE' ||
+      promotion?.promotionState === 'PAPER_ACTIVE' ||
+      promotion?.promotionState === 'PAPER_CHALLENGER',
     liveEligible: false,
     policyVersion: promotion?.policyVersion ?? null,
     policyHash: promotion?.policyHash ?? null,
