@@ -299,6 +299,7 @@ export * from './multi-leg/index.ts';
 export * from './capital-lifecycle/index.ts';
 export * from './outcome-attribution/index.ts';
 export * from './counterfactual-learning-cf10/index.ts';
+export * from './counterfactual-learning/index.ts';
 export * from './economic-evaluation/index.ts';
 export * from './jurisdiction-capability/index.ts';
 export * from './capacity/index.ts';
