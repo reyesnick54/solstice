@@ -970,3 +970,28 @@ export type {
   Evol07QualificationChecks,
   Evol07QualificationResult,
 } from './evol07/index.ts';
+export {
+  HELIOS_EVOL05_CMA_ES_QUALIFIED,
+  HOLDOUT_FEEDBACK_LEAKAGE,
+  createInitialCmaEsSearchState,
+  decodeUnconstrainedToParameters,
+  runCmaEsGeneration,
+  evaluateEvol05CmaEsQualification,
+  createCmaEsRngState,
+  nextCmaEsStandardNormal,
+  nextCmaEsUniform,
+} from './evol05-cma-es/index.ts';
+export type {
+  CmaEsSearchState,
+  CmaEsPopulation,
+  CmaEsCandidate,
+  CmaEsCandidateValidity,
+  CmaEsParameterBounds,
+  CmaEsParameterVector,
+  CmaEsGeneration,
+  CmaEsPolicyGate,
+  CmaEsRngState,
+  CmaEsObjectiveWindow,
+  Evol05CmaEsQualificationChecks,
+  Evol05CmaEsQualificationResult,
+} from './evol05-cma-es/index.ts';
