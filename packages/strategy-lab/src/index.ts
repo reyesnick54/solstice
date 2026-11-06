@@ -655,6 +655,20 @@ export type {
 } from './native12-seris/index.ts';
 
 export {
+  EVOL_CAPABILITY_IDS,
+  HELIOS_STRATEGY_SELF_EVOLUTION_V1_BLOCKED,
+  HELIOS_STRATEGY_SELF_EVOLUTION_V1_QUALIFIED,
+  evaluateStrategyGenomeSelfEvolutionQualification,
+  runStrategyEvolutionSimulation,
+} from './evolution/index.ts';
+export type {
+  EvolutionQualificationBlocker,
+  EvolutionQualificationResult,
+  EvolutionSimulationResult,
+  EvolutionPhase,
+  EvolutionAntiOverfittingDiagnostics,
+} from './evolution/index.ts';
+export {
   NATIVE06_STRATEGY_GENOME_SCHEMA,
   BYTEX_STRATEGY_DOCUMENT_SCHEMA_VERSION,
   asNative06StrategyGenomeId,
