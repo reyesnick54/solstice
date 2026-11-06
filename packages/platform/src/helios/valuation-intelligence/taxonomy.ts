@@ -55,6 +55,12 @@ export const HELIOS_VAL05_REVERSE_DCF_QUALIFIED = 'HELIOS_VAL05_REVERSE_DCF_QUAL
 
 export const HELIOS_VAL05_REVERSE_DCF_BLOCKED = 'HELIOS_VAL05_REVERSE_DCF_BLOCKED' as const;
 
+export const HELIOS_VAL08_PROBABILISTIC_COMPARABLES_QUALIFIED =
+  'HELIOS_VAL08_PROBABILISTIC_COMPARABLES_QUALIFIED' as const;
+
+export const HELIOS_VAL08_PROBABILISTIC_COMPARABLES_BLOCKED =
+  'HELIOS_VAL08_PROBABILISTIC_COMPARABLES_BLOCKED' as const;
+
 /** Explicit horizon for the reverse-DCF explicit period (years). */
 export const VAL05_DEFAULT_EXPLICIT_YEARS = 10 as const;
 
@@ -68,6 +74,7 @@ export const VAL_WORK_PACKAGES = Object.freeze([
   'VAL04',
   'VAL05',
   'VAL07',
+  'VAL08',
   'VAL11',
 ] as const);
 export type ValWorkPackageId = (typeof VAL_WORK_PACKAGES)[number];
