@@ -6,14 +6,14 @@ import { createSunReyPreviewRuntime } from '../services/api/src/preview.ts';
 import { handleConsumerBff } from '../services/api/src/consumer/handler.ts';
 import { sandboxToken } from '../services/api/src/consumer/sandbox-personas.ts';
 
-function call(
+async function call(
   runtime: ReturnType<typeof createSunReyPreviewRuntime>,
   method: string,
   path: string,
   persona: string,
   body?: unknown,
 ) {
-  return handleConsumerBff(runtime, {
+  return await handleConsumerBff(runtime, {
     method,
     path,
     query: {},

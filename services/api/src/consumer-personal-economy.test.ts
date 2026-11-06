@@ -15,14 +15,14 @@ function runtime(world: ReturnType<typeof createSandboxWorld>) {
   };
 }
 
-function call(
+async function call(
   world: ReturnType<typeof createSandboxWorld>,
   method: string,
   path: string,
   persona: Parameters<typeof sandboxToken>[0] | null,
   body: Record<string, unknown> = {},
 ) {
-  return handleConsumerBff(runtime(world), {
+  return await handleConsumerBff(runtime(world), {
     method,
     path,
     query: {},
@@ -32,9 +32,9 @@ function call(
 }
 
 describe('Consumer BFF personal economy ACCESS-20', () => {
-  it('returns unified overview projection', () => {
+  it('returns unified overview projection', async () => {
     const world = createSandboxWorld();
-    const response = call(world, 'GET', '/api/v1/personal-economy/overview', 'personal_economy');
+    const response = await call(world, 'GET', '/api/v1/personal-economy/overview', 'personal_economy');
     assert.equal(response.status, 200);
     const body = response.body as {
       schema: string;
@@ -49,9 +49,9 @@ describe('Consumer BFF personal economy ACCESS-20', () => {
     assert.equal(body.snapshot.ledgerWins, true);
   });
 
-  it('returns a simulation plan and proposal-only recommendations', () => {
+  it('returns a simulation plan and proposal-only recommendations', async () => {
     const world = createSandboxWorld();
-    const plan = call(world, 'GET', '/api/v1/personal-economy/plan', 'personal_economy');
+    const plan = await call(world, 'GET', '/api/v1/personal-economy/plan', 'personal_economy');
     assert.equal(plan.status, 200);
     const planBody = plan.body as {
       plan: { autoExecution: false; recommendations: { executable: false; requiresApproval: true }[] };
@@ -62,16 +62,16 @@ describe('Consumer BFF personal economy ACCESS-20', () => {
       assert.equal(rec.executable, false);
       assert.equal(rec.requiresApproval, true);
     }
-    const proposals = call(world, 'POST', '/api/v1/personal-economy/proposals', 'personal_economy', {
+    const proposals = await call(world, 'POST', '/api/v1/personal-economy/proposals', 'personal_economy', {
       goalSummary: 'Grow wealth while preserving access for two vacations next year',
     });
     assert.equal(proposals.status, 201);
     assert.equal((proposals.body as { resultKind: string }).resultKind, 'PROPOSAL');
   });
 
-  it('runs what-if scenarios without promising outcomes', () => {
+  it('runs what-if scenarios without promising outcomes', async () => {
     const world = createSandboxWorld();
-    const scenario = call(world, 'POST', '/api/v1/personal-economy/scenarios', 'personal_economy', {
+    const scenario = await call(world, 'POST', '/api/v1/personal-economy/scenarios', 'personal_economy', {
       scenario: 'What if I invest $5,000?',
     });
     assert.equal(scenario.status, 200);
