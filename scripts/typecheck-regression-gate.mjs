@@ -18,6 +18,10 @@ const result = spawnSync('npx', ['tsc', '--noEmit', '-p', 'tsconfig.json', '--pr
   cwd: ROOT,
   encoding: 'utf8',
   shell: false,
+  env: {
+    ...process.env,
+    NODE_OPTIONS: process.env.NODE_OPTIONS ?? '--max-old-space-size=8192',
+  },
 });
 
 if (result.error) {

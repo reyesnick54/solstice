@@ -212,8 +212,8 @@ SUNREY_FIXTURE_ENV="${SUNREY_FIXTURE_ENV:-local}" npm run demo:sunrey-rc
 npm run demo:universal-exchange
 npm run demo:sunrey-audit
 
-echo "==> [TYPECHECK] TypeScript"
-npm run typecheck
+echo "==> [TYPECHECK] TypeScript (no-new-errors regression gate)"
+node scripts/typecheck-regression-gate.mjs
 
 echo "==> [SECURITY] secret scan"
 python3 scripts/secret-scan.py
