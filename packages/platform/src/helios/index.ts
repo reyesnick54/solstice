@@ -325,6 +325,7 @@ export * from './open-source-integration/os13-ai-strategy-sandbox/index.ts';
 export * from './open-source/os14-prediction-market/index.ts';
 export * from './native-assimilation/native14-cross-market-intelligence/index.ts';
 export * from './research-monitor/index.ts';
+export * from './strategy-evolution/index.ts';
 export * as heliosEarn07OptionsIntelligence from './earnings-intelligence/options/index.ts';
 export * as heliosNative13PredictionMarket from './prediction-market/index.ts';
 export {
@@ -341,22 +342,3 @@ export {
   type Earn07QualificationChecks,
   type Earn07QualificationResult,
 } from './earnings-intelligence/options/qualification.ts';
-
-export {
-  HELIOS_EVOL09_SCHEMA,
-  HELIOS_EVOL09_MULTIPLE_TESTING_FIREWALL_QUALIFIED,
-  HELIOS_EVOL09_MULTIPLE_TESTING_FIREWALL_BLOCKED,
-  EVOL09_MINIMUM_TRACK_RECORD_PERIODS,
-  EVOL09_MIN_TRIALS_FOR_PBO,
-  createEvolutionTrialRegistry,
-  assertEveryGenomeEvaluationCounts,
-  buildStrategyDiscoveryEvidence,
-  evaluateEvol09MultipleTestingFirewallQualification,
-  computeEffectiveIndependentTrials,
-  freezeResearchProgram,
-  unsealHoldoutAfterFreeze,
-  scrubHoldoutFromEnginePayload,
-  type EvolutionTrialRegistry,
-  type StrategyDiscoveryEvidence,
-  type Evol09QualificationResult,
-} from './strategy-evolution/index.ts';
