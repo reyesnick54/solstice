@@ -16,6 +16,8 @@ export {
   HELIOS_VAL05_REVERSE_DCF_BLOCKED,
   HELIOS_VAL08_PROBABILISTIC_COMPARABLES_QUALIFIED,
   HELIOS_VAL08_PROBABILISTIC_COMPARABLES_BLOCKED,
+  HELIOS_VAL09_SOTP_QUALIFIED,
+  HELIOS_VAL09_SOTP_BLOCKED,
   HELIOS_VALUATION_INTELLIGENCE_V1_QUALIFIED,
   HELIOS_VALUATION_INTELLIGENCE_V1_BLOCKED,
   type ValuationMethod,
@@ -130,7 +132,7 @@ export * from './driver-forecast/index.ts';
 export * from './val05/index.ts';
 export * from './residual-income/index.ts';
 export * from './comparables/index.ts';
-export * from './val09-sotp/index.ts';
+export * from './sotp/index.ts';
 export * from './val10-uncertainty/index.ts';
 export * from './val11-adaptive-ensemble/index.ts';
 export * from './val12/index.ts';

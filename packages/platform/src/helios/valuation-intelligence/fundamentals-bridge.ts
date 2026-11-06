@@ -2,9 +2,11 @@
  * Consume OS10 SEC point-in-time fundamentals — do not recompile filings here.
  */
 
+import type { SegmentObservation } from '@solstice/external-data';
 import type { PointInTimeFundamentalSnapshot } from '../feature-fabric/fundamental-types.ts';
 import type { ValuationIssuerProfile } from './applicability.ts';
 import { bindSecFundamentalsSnapshot } from './input-manifest.ts';
+import { countDistinctReportingSegmentsAtEvaluation } from './sotp/sec-segment-bridge.ts';
 
 export const VAL01_FUNDAMENTALS_BRIDGE_VERSION = 'helios-val01-fundamentals-bridge-v1' as const;
 
@@ -26,6 +28,7 @@ function featureMinor(
 
 export function issuerProfileFromFundamentals(
   snapshot: PointInTimeFundamentalSnapshot,
+  segmentObservations: readonly SegmentObservation[] = [],
 ): ValuationIssuerProfile {
   const revenue = featureMinor(snapshot, 'revenue');
   const fcf = featureMinor(snapshot, 'fcf');
@@ -39,7 +42,10 @@ export function issuerProfileFromFundamentals(
   return Object.freeze({
     canonicalEntityId: snapshot.canonicalEntityId,
     sector: null,
-    reportingSegments: 1,
+    reportingSegments: Math.max(
+      1,
+      countDistinctReportingSegmentsAtEvaluation(segmentObservations, snapshot.evaluationTimeUtc),
+    ),
     paysRegularDividend: false,
     hasPositiveOperatingCashFlow,
     hasMeaningfulBookEquity: cash !== null && cash > 0n,
@@ -52,11 +58,13 @@ export function issuerProfileFromFundamentals(
 
 export function attachSecFundamentalsToValuationInput(input: {
   readonly snapshot: PointInTimeFundamentalSnapshot;
+  readonly segmentObservations?: readonly SegmentObservation[];
 }) {
+  const segments = input.segmentObservations ?? [];
   return Object.freeze({
     bridgeVersion: VAL01_FUNDAMENTALS_BRIDGE_VERSION,
     binding: bindSecFundamentalsSnapshot(input),
-    issuerProfile: issuerProfileFromFundamentals(input.snapshot),
+    issuerProfile: issuerProfileFromFundamentals(input.snapshot, segments),
     grantsExecutionAuthority: false as const,
   });
 }

@@ -20,7 +20,7 @@ import {
   runProbabilisticComparablesEngine,
 } from '../comparables/index.ts';
 import type { ProbabilisticComparablesInput } from '../comparables/types.ts';
-import { runSotpValuation, fixtureVal09Segments, FIXTURE_VAL09_AS_OF } from '../val09-sotp/index.ts';
+import { bindSegmentIdentities, fixtureSotpValuationInput, runSotpValuationEngine } from '../sotp/index.ts';
 import {
   fixturePositiveResidualIncomeInput,
   runResidualIncomeValuation,
@@ -66,6 +66,8 @@ export function buildHeliosValuationState(input: {
   );
   const rivDist = distributionPercentiles(rivPerShare);
 
+  const priceScaleMinor = 100n;
+
   const val08Input: ProbabilisticComparablesInput = fixtureProbabilisticComparablesInput();
   const comparables = runProbabilisticComparablesEngine(val08Input);
   const eqDist = comparables.equityValueDistribution;
@@ -76,17 +78,29 @@ export function buildHeliosValuationState(input: {
     return equity / sharesOutstanding;
   });
 
-  const sotp = runSotpValuation({
-    entityId,
-    asOf: FIXTURE_VAL09_AS_OF,
-    segments: fixtureVal09Segments(),
-    holdingCompanyDiscountBps: 150,
-    evidenceRef: 'ev/val09/sotp',
+  const rawSotpInput = fixtureSotpValuationInput();
+  const sotpInput = Object.freeze({
+    ...rawSotpInput,
+    canonicalEntityId: entityId,
+    segmentSource: Object.freeze({
+      ...rawSotpInput.segmentSource,
+      observations: bindSegmentIdentities(rawSotpInput.segmentSource.observations),
+    }),
   });
+  const sotp = runSotpValuationEngine(sotpInput);
+  const dist = sotp.intrinsicDistribution;
+  const minorToPerShare = (m: bigint) => Number(m) / Number(priceScaleMinor);
   const sotpSamples = Array.from({ length: 32 }, (_, i) => {
     const t = i / 31;
-    return sotp.consolidatedValuePerShare.p10 * (1 - t) + sotp.consolidatedValuePerShare.p90 * t;
+    const low = dist.p05Minor;
+    const high = dist.p95Minor;
+    if (low < high) {
+      const v = Number(low) + (Number(high) - Number(low)) * t;
+      return v / Number(priceScaleMinor);
+    }
+    return minorToPerShare(dist.valuePerShareMinor ?? dist.medianMinor);
   });
+  const sotpMedianPerShare = minorToPerShare(dist.medianMinor);
 
   const ensemble = runAdaptiveEnsemble({
     entityId,
@@ -140,7 +154,7 @@ export function buildHeliosValuationState(input: {
         mc.paths[0]?.valuePerShare ?? 0,
         rivDist.median,
         eqDist.median,
-        sotp.consolidatedValuePerShare.median,
+        sotpMedianPerShare,
       ]),
       waccShockBps: 75,
       baselineMedian: mc.paths[0]?.valuePerShare ?? rivDist.median,
@@ -167,7 +181,6 @@ export function buildHeliosValuationState(input: {
   });
 
   const marketPriceMinor = price.pricePerShareMinor;
-  const priceScaleMinor = 100n;
   const gap =
     marketPriceMinor != null
       ? computeValuationGap({
@@ -185,23 +198,24 @@ export function buildHeliosValuationState(input: {
         })
       : null;
 
+  const sharesOutNum = Number(sotpInput.sharesOutstandingMinor);
   const segmentSummaries = Object.fromEntries(
-    Object.entries(sotp.segmentValuePerShare).map(([segmentId, dist]) => [
-      segmentId,
-      distributionSummaryFromSamples(
-        Array.from({ length: 32 }, (_, i) => {
-          const t = i / 31;
-          return dist.p10 * (1 - t) + dist.p90 * t;
-        }),
-        priceScaleMinor,
-      ),
-    ]),
+    sotp.segmentValuations.map((sv) => {
+      const segDist = sv.distribution;
+      const low = Number(segDist.p05Minor) / sharesOutNum / Number(priceScaleMinor);
+      const high = Number(segDist.p95Minor) / sharesOutNum / Number(priceScaleMinor);
+      const segSamples = Array.from({ length: 32 }, (_, i) => {
+        const t = i / 31;
+        return low + (high - low) * t;
+      });
+      return [sv.stableSegmentKey, distributionSummaryFromSamples(segSamples, priceScaleMinor)] as const;
+    }),
   );
 
   const extendedModelEvidence = compileValuationExtendedModelEvidence({
     val07ResidualIncomeRef: riv.valuationId,
     val08ComparablesRef: comparables.valuationId,
-    val09SotpRef: sotp.evidenceRef,
+    val09SotpRef: sotp.valuationId,
     val10UncertaintyRef: uncertainty.evidenceRef,
     val11EnsembleRef: ensemble.evidenceRef,
     compiledAt: valuationTime,
@@ -231,7 +245,7 @@ export function buildHeliosValuationState(input: {
     evidenceRefs: Object.freeze([
       `helios:val07:${riv.valuationId}`,
       `helios:val08:${comparables.valuationId}`,
-      sotp.evidenceRef,
+      `helios:val09:${sotp.valuationId}`,
       uncertainty.evidenceRef,
       ensemble.evidenceRef,
       reverseDcf.price.evidenceRef,

@@ -47,8 +47,8 @@ const MODULE_BY_PACKAGE: Record<
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/comparables/index.ts',
   },
   VAL09: {
-    title: 'Sum-of-the-parts (SOTP)',
-    moduleRef: 'packages/platform/src/helios/valuation-intelligence/val09-sotp/index.ts',
+    title: 'Sum-of-the-parts and segment valuation engine',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/sotp/index.ts',
   },
   VAL10: {
     title: 'Valuation uncertainty and fragility',

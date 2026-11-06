@@ -20,7 +20,7 @@ Complete the HELIOS valuation-intelligence architecture and expose outputs to re
 | VAL06 | Agent valuation committee | `packages/agentic-capital-mesh/.../valuation-agentic-committee/` |
 | VAL07 | Residual income / economic profit | `residual-income/` |
 | VAL08 | Probabilistic comparables | `comparables/` |
-| VAL09 | SOTP | `val09-sotp/` |
+| VAL09 | SOTP | `sotp/` |
 | VAL10 | Valuation uncertainty & fragility | `val10-uncertainty/` |
 | VAL11 | Adaptive ensemble | `val11-adaptive-ensemble/` |
 | VAL12 | Final qualification & strategy bridge | `val12/` |
