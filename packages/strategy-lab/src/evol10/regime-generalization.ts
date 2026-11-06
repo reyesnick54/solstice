@@ -164,7 +164,7 @@ export function computeCrossRegimeRobustness(
   });
 }
 
-/** Share of total |return| attributed to the best regime (Herfindahl-style concentration). */
+/** Share of total |return| attributed to the single regime with largest |return| (concentration of P/L mass). */
 export function computeRegimeConcentrationBps(matrix: RegimePerformanceMatrix, genomeId: string): bigint {
   const cells = cellsForGenome(matrix, genomeId);
   if (cells.length === 0) {
