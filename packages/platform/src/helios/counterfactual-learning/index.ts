@@ -5,6 +5,7 @@
 export * from './cf04/index.ts';
 export * from './cf05/index.ts';
 export * from './cf06-distributional-ope/index.ts';
+export * from './cf07-sequential-ope/index.ts';
 export * from './cf09/index.ts';
 export {
   COUNTERFACTUAL_ACTION_CLASSES,
