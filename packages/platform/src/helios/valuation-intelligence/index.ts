@@ -126,4 +126,5 @@ export * from './val03-cost-of-capital/index.ts';
 export * from './val04-probabilistic-dcf/index.ts';
 export * from './driver-forecast/index.ts';
 export * from './val05/index.ts';
+export * from './residual-income/index.ts';
 export * from './comparables/index.ts';

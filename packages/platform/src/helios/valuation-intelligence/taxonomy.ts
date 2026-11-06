@@ -73,6 +73,7 @@ export const VAL_WORK_PACKAGES = Object.freeze([
   'VAL03',
   'VAL04',
   'VAL05',
+  'VAL07',
   'VAL08',
 ] as const);
 export type ValWorkPackageId = (typeof VAL_WORK_PACKAGES)[number];
