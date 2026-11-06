@@ -39,8 +39,8 @@ const MODULE_BY_PACKAGE: Record<
     moduleRef: 'packages/agentic-capital-mesh/src/valuation-agentic-committee/mesh-service.ts',
   },
   VAL07: {
-    title: 'Residual income / economic profit',
-    moduleRef: 'packages/platform/src/helios/valuation-intelligence/val07-residual-income/index.ts',
+    title: 'Residual income, economic profit, and excess-return valuation',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/residual-income/index.ts',
   },
   VAL08: {
     title: 'Probabilistic comparables',

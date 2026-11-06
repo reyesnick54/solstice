@@ -4,6 +4,7 @@ import type { UtcInstant } from '@solstice/domain';
 
 import { HELIOS_VALUATION_INTELLIGENCE_SCHEMA } from '../taxonomy.ts';
 import { fixtureTerminalGrowthDcfInput } from '../val04-probabilistic-dcf/fixtures.ts';
+import { distributionPercentiles } from '../val04-probabilistic-dcf/percentiles.ts';
 import { runMonteCarloDcf } from '../val04-probabilistic-dcf/monte-carlo.ts';
 import { buildHeliosProbabilisticExpectations, runVal05ReverseDcfAnalysis } from '../val05/service.ts';
 import {
@@ -16,7 +17,10 @@ import {
 } from '../val05/fixtures.ts';
 import { runProbabilisticComparables, fixtureVal08Peers, FIXTURE_VAL08_AS_OF } from '../val08-comparables/index.ts';
 import { runSotpValuation, fixtureVal09Segments, FIXTURE_VAL09_AS_OF } from '../val09-sotp/index.ts';
-import { runResidualIncomeEngine, fixtureVal07Paths, FIXTURE_VAL07_AS_OF } from '../val07-residual-income/index.ts';
+import {
+  fixturePositiveResidualIncomeInput,
+  runResidualIncomeValuation,
+} from '../residual-income/index.ts';
 import { computeValuationUncertainty } from '../val10-uncertainty/index.ts';
 import { runAdaptiveEnsemble } from '../val11-adaptive-ensemble/index.ts';
 import { compileValuationExtendedModelEvidence } from './extended-evidence.ts';
@@ -40,16 +44,20 @@ export function buildHeliosValuationState(input: {
   const mc = runMonteCarloDcf(dcfInput);
   const dcfSamples = mc.paths.map((row) => row.valuePerShare);
 
-  const riv = runResidualIncomeEngine({
-    entityId,
-    asOf: FIXTURE_VAL07_AS_OF,
-    paths: fixtureVal07Paths(),
-    evidenceRef: 'ev/val07/residual-income',
-  });
-  const rivSamples = Array.from({ length: riv.pathCount }, (_, i) => {
-    const t = i / Math.max(riv.pathCount - 1, 1);
-    return riv.valuePerShare.p10 * (1 - t) + riv.valuePerShare.p90 * t;
-  });
+  const riv = runResidualIncomeValuation(fixturePositiveResidualIncomeInput());
+  const rivIntrinsicSamples = (() => {
+    const base = riv.intrinsicEquityValue;
+    const low = riv.distribution.lowIntrinsicEquity;
+    const high = riv.distribution.highIntrinsicEquity;
+    if (low != null && high != null) {
+      const span = Math.max(high - low, 1e-9);
+      return Array.from({ length: 64 }, (_, i) => low + (span * i) / 63);
+    }
+    const jitter = 0.04;
+    return Array.from({ length: 64 }, (_, i) => base * (1 + ((i % 9) - 4) * jitter));
+  })();
+  const rivPerShare = rivIntrinsicSamples.map((eq) => eq / 1e9);
+  const rivDist = distributionPercentiles(rivPerShare);
 
   const comparables = runProbabilisticComparables({
     entityId,
@@ -90,7 +98,7 @@ export function buildHeliosValuationState(input: {
       Object.freeze({
         method: 'RESIDUAL_INCOME' as const,
         applicabilityScore: 0.78,
-        valuePerShareSamples: Object.freeze(rivSamples),
+        valuePerShareSamples: Object.freeze(rivPerShare),
       }),
       Object.freeze({
         method: 'COMPARABLE_MULTIPLES' as const,
@@ -110,7 +118,7 @@ export function buildHeliosValuationState(input: {
     let weight = 0;
     for (const model of [
       { w: ensemble.modelWeights.DCF_FCFF ?? 0, samples: dcfSamples },
-      { w: ensemble.modelWeights.RESIDUAL_INCOME ?? 0, samples: rivSamples },
+      { w: ensemble.modelWeights.RESIDUAL_INCOME ?? 0, samples: rivPerShare },
       { w: ensemble.modelWeights.COMPARABLE_MULTIPLES ?? 0, samples: compSamples },
       { w: ensemble.modelWeights.SUM_OF_PARTS ?? 0, samples: sotpSamples },
     ]) {
@@ -127,13 +135,13 @@ export function buildHeliosValuationState(input: {
     surface: Object.freeze({
       modelMedians: Object.freeze([
         mc.paths[0]?.valuePerShare ?? 0,
-        riv.valuePerShare.median,
+        rivDist.median,
         comparables.impliedValuePerShare.median,
         sotp.consolidatedValuePerShare.median,
       ]),
       waccShockBps: 75,
-      baselineMedian: mc.paths[0]?.valuePerShare ?? riv.valuePerShare.median,
-      shockedMedian: (mc.paths[0]?.valuePerShare ?? riv.valuePerShare.median) * 0.92,
+      baselineMedian: mc.paths[0]?.valuePerShare ?? rivDist.median,
+      shockedMedian: (mc.paths[0]?.valuePerShare ?? rivDist.median) * 0.92,
     }),
   });
 
@@ -188,7 +196,7 @@ export function buildHeliosValuationState(input: {
   );
 
   const extendedModelEvidence = compileValuationExtendedModelEvidence({
-    val07ResidualIncomeRef: riv.evidenceRef,
+    val07ResidualIncomeRef: riv.valuationId,
     val08ComparablesRef: comparables.evidenceRef,
     val09SotpRef: sotp.evidenceRef,
     val10UncertaintyRef: uncertainty.evidenceRef,
@@ -207,7 +215,7 @@ export function buildHeliosValuationState(input: {
     marketReferencedValueDistribution: distributionSummaryFromSamples(compSamples, priceScaleMinor),
     reverseDcfExpectations: reverseDcf,
     segmentValueDistribution: Object.freeze(segmentSummaries),
-    residualIncomeValueDistribution: distributionSummaryFromSamples(rivSamples, priceScaleMinor),
+    residualIncomeValueDistribution: distributionSummaryFromSamples(rivPerShare, priceScaleMinor),
     comparableValueDistribution: distributionSummaryFromSamples(compSamples, priceScaleMinor),
     crossModelDispersion: uncertainty.crossModelDispersion,
     valuationUncertainty: uncertainty.valuationUncertainty,
@@ -218,7 +226,7 @@ export function buildHeliosValuationState(input: {
     valuationGap: gap,
     modelImpliedMarginOfSafety: margin,
     evidenceRefs: Object.freeze([
-      riv.evidenceRef,
+      `helios:val07:${riv.valuationId}`,
       comparables.evidenceRef,
       sotp.evidenceRef,
       uncertainty.evidenceRef,

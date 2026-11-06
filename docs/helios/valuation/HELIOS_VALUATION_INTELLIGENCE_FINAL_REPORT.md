@@ -18,7 +18,7 @@ Complete the HELIOS valuation-intelligence architecture and expose outputs to re
 | VAL04 | Probabilistic DCF | `val04-probabilistic-dcf/` |
 | VAL05 | Reverse DCF | `val05/` |
 | VAL06 | Agent valuation committee | `packages/agentic-capital-mesh/.../valuation-agentic-committee/` |
-| VAL07 | Residual income / economic profit | `val07-residual-income/` |
+| VAL07 | Residual income / economic profit | `residual-income/` |
 | VAL08 | Probabilistic comparables | `val08-comparables/` |
 | VAL09 | SOTP | `val09-sotp/` |
 | VAL10 | Valuation uncertainty & fragility | `val10-uncertainty/` |
