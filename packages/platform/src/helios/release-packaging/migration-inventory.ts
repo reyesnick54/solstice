@@ -39,7 +39,11 @@ const HELIOS_QUALIFICATION_TESTS: Readonly<Record<string, readonly string[]>> = 
   H14: ['tests/helios-h14-paper-grow-strategy.test.ts', 'tests/persistence/helios-paper-strategy.test.ts'],
   H16: ['packages/strategy-lab/src/capsule/strategy-capsule.test.ts'],
   H18: ['tests/helios-h18-strategy-promotion.test.ts'],
-  H20: ['tests/helios-h20-meta-allocator.test.ts', 'tests/persistence/helios-meta-allocator.test.ts'],
+  H20: [
+    'tests/helios-h20-meta-allocator.test.ts',
+    'tests/persistence/helios-meta-allocator.test.ts',
+    'tests/helios-evol13-meta-evolution.test.ts',
+  ],
   H21: ['tests/helios-h21-decision-validity-envelope.test.ts', 'tests/persistence/helios-decision-validity.test.ts'],
   H22: ['tests/helios-h22-provider-orchestration.test.ts', 'tests/persistence/helios-provider-orchestration.test.ts'],
   H23: ['tests/helios-h23-order-fill-settlement-lifecycle.test.ts', 'tests/persistence/helios-order-lifecycle.test.ts'],
