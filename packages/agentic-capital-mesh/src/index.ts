@@ -100,4 +100,5 @@ export {
 } from './tradingagents-native/index.ts';
 export * from './earnings-agentic-committee/index.ts';
 export * from './valuation-agentic-committee/index.ts';
+export * from './counterfactual-research-cf13/index.ts';
 export * from './earnings-transcript-intelligence/index.ts';
