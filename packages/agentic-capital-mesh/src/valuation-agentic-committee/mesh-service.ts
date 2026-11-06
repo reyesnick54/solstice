@@ -139,6 +139,7 @@ export class ValuationAgenticCommittee {
           ...runnerBase,
           role,
           priorArtifacts: Object.freeze([...artifacts]),
+          extendedModelEvidence: input.request.extendedModelEvidence ?? null,
           challengeMode,
         });
         const validationErrors = validateValuationSpecialistArtifact(artifact);

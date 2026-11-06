@@ -7,6 +7,7 @@ import type {
   CanonicalFinancialFact,
   FrozenValuationEvidencePack,
   ValuationAssumptionChallengeState,
+  ValuationExtendedModelEvidence,
   ValuationSpecialistArtifact,
 } from './types.ts';
 
@@ -22,6 +23,7 @@ export type ValuationRoleRunnerInput = {
   readonly pack: FrozenValuationEvidencePack;
   readonly assumptionChallengeState: ValuationAssumptionChallengeState;
   readonly priorArtifacts: readonly ValuationSpecialistArtifact[];
+  readonly extendedModelEvidence?: ValuationExtendedModelEvidence | null;
   readonly challengeMode?: boolean;
 };
 
@@ -124,18 +126,21 @@ export function runValuationCommitteeRole(input: ValuationRoleRunnerInput): Valu
         confidence: 0.62,
         uncertainty: 'Medium — non-GAAP reconciliation depth limited in simulation.',
       });
-    case 'CAPITAL_INTENSITY':
+    case 'RESIDUAL_INCOME': {
+      const ext = input.extendedModelEvidence;
       return baseArtifact(input, {
-        thesis: `Capital intensity for ${scope}: reinvestment and working-capital needs vs frozen balance-sheet facts.`,
+        thesis: `Residual income / economic profit for ${scope}: book value and excess return path vs cost of equity.`,
         supportingEvidence: Object.freeze([
           ...factCitations,
-          'Capital requirements derived from entitled HELIOS metadata reads',
+          ext?.val07ResidualIncomeRef ?? 'VAL07 evidence not attached',
+          ext?.val10UncertaintyRef ?? 'VAL10 uncertainty evidence not attached',
         ]),
-        contradictingEvidence: Object.freeze(['Maintenance vs growth capex split not live-parsed from filings']),
-        assumptionTopicsChallenged: Object.freeze(['capital requirements', 'segment economics']),
-        confidence: 0.6,
-        uncertainty: 'Medium — capex cadence is scenario placeholder.',
+        contradictingEvidence: Object.freeze(['Persistence of ROE spread is scenario-level in simulation fixtures']),
+        assumptionTopicsChallenged: Object.freeze(['capital requirements', 'WACC', 'growth']),
+        confidence: 0.61,
+        uncertainty: 'Medium — RIV terminal persistence is research-only.',
       });
+    }
     case 'COST_OF_CAPITAL':
       return baseArtifact(input, {
         thesis: `Cost of capital for ${scope}: WACC band challenged against market-implied discount rate ${input.assumptionChallengeState.impliedWaccBps ?? 'n/a'} bps.`,
@@ -181,7 +186,10 @@ export function runValuationCommitteeRole(input: ValuationRoleRunnerInput): Valu
     case 'COMPARABLE_VALUATION':
       return baseArtifact(input, {
         thesis: `Comparable valuation for ${scope}: peer multiples from universe metadata; challenges multiple expansion without fundamental support.`,
-        supportingEvidence: Object.freeze(['Universe instrument metadata consulted via mesh tools']),
+        supportingEvidence: Object.freeze([
+          input.extendedModelEvidence?.val08ComparablesRef ?? 'VAL08 comparables evidence not attached',
+          'Universe instrument metadata consulted via mesh tools',
+        ]),
         contradictingEvidence: Object.freeze(['Peer set covariance and ADR adjustments not fully specified']),
         assumptionTopicsChallenged: Object.freeze(['margin', 'segment economics']),
         confidence: 0.58,
@@ -192,6 +200,7 @@ export function runValuationCommitteeRole(input: ValuationRoleRunnerInput): Valu
         thesis: `Sum-of-the-parts for ${scope}: segment economics valued separately; holding-company discount challenged with evidence.`,
         supportingEvidence: Object.freeze([
           ...factCitations.slice(0, 2),
+          input.extendedModelEvidence?.val09SotpRef ?? 'VAL09 SOTP evidence not attached',
           'SOTPAgent cites segment revenue facts without mutating canonical totals',
         ]),
         contradictingEvidence: Object.freeze(['Inter-segment eliminations and minority interests are simplified']),

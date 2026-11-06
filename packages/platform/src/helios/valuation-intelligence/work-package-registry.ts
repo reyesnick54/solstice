@@ -34,6 +34,34 @@ const MODULE_BY_PACKAGE: Record<
     title: 'Reverse DCF and market-implied expectations',
     moduleRef: 'packages/platform/src/helios/valuation-intelligence/val05/service.ts',
   },
+  VAL06: {
+    title: 'Agentic valuation investment committee',
+    moduleRef: 'packages/agentic-capital-mesh/src/valuation-agentic-committee/mesh-service.ts',
+  },
+  VAL07: {
+    title: 'Residual income / economic profit',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/val07-residual-income/index.ts',
+  },
+  VAL08: {
+    title: 'Probabilistic comparables',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/val08-comparables/index.ts',
+  },
+  VAL09: {
+    title: 'Sum-of-the-parts (SOTP)',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/val09-sotp/index.ts',
+  },
+  VAL10: {
+    title: 'Valuation uncertainty and fragility',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/val10-uncertainty/index.ts',
+  },
+  VAL11: {
+    title: 'Adaptive valuation ensemble',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/val11-adaptive-ensemble/index.ts',
+  },
+  VAL12: {
+    title: 'Final qualification and strategy bridge',
+    moduleRef: 'packages/platform/src/helios/valuation-intelligence/val12/qualification.ts',
+  },
 };
 
 const TEST_BY_PACKAGE: Record<string, string> = {
@@ -42,6 +70,13 @@ const TEST_BY_PACKAGE: Record<string, string> = {
   VAL03: 'tests/helios-val03-cost-of-capital.test.ts',
   VAL04: 'tests/helios-val04-probabilistic-dcf.test.ts',
   VAL05: 'tests/helios-val05-reverse-dcf.test.ts',
+  VAL06: 'tests/helios-val06-agentic-valuation-committee.test.ts',
+  VAL07: 'tests/helios-val07-residual-income.test.ts',
+  VAL08: 'tests/helios-val08-comparables.test.ts',
+  VAL09: 'tests/helios-val09-sotp.test.ts',
+  VAL10: 'tests/helios-val10-uncertainty.test.ts',
+  VAL11: 'tests/helios-val11-adaptive-ensemble.test.ts',
+  VAL12: 'tests/helios-val12-valuation-intelligence-qualification.test.ts',
 };
 
 export function listValWorkPackages(root: string): readonly ValWorkPackageRow[] {
