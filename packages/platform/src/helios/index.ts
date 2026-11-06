@@ -342,3 +342,5 @@ export {
   type Earn07QualificationChecks,
   type Earn07QualificationResult,
 } from './earnings-intelligence/options/qualification.ts';
+
+export * from './strategy-evolution/evol08/index.ts';
