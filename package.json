@@ -89,7 +89,10 @@
     "test:helios-evol14": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-evol14-strategy-self-evolution-qualification.test.ts",
     "helios:val12:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-val12-qualify.ts",
     "helios:val12:qualify:fast": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-val12-qualify.ts --skip-subprocess",
+    "helios:cf14:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-cf14-qualify.ts",
+    "helios:cf14:qualify:fast": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-cf14-qualify.ts --skip-subprocess",
     "test:helios-val12": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-val12-valuation-intelligence-qualification.test.ts",
+    "test:helios-cf14": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-cf14-counterfactual-learning-qualification.test.ts",
     "test:helios-earn12": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-earn12-earnings-intelligence-qualification.test.ts",
     "helios:os15:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-os15-open-source-qualify.ts",
     "helios:os15:qualify:fast": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-os15-open-source-qualify.ts --skip-subprocess",
@@ -318,7 +321,7 @@
     "scan:secrets": "python3 scripts/secret-scan.py && python3 scripts/secret-scan.py --self-test",
     "security:test": "node scripts/security-assurance.mjs",
     "gate": "node scripts/check-kernel-gating.mjs",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "NODE_OPTIONS=--max-old-space-size=8192 tsc --noEmit -p tsconfig.json",
     "ci": "bash scripts/ci.sh"
   },
   "engines": {

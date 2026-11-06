@@ -8,14 +8,13 @@ import { describe, it } from 'node:test';
 import { asUtcInstant } from '../packages/domain/src/time.ts';
 import { lintHeliosBoundary } from '../tools/architectural-linter/src/helios-guards.ts';
 import { HELIOS_FEATURE_FABRIC_SCHEMA } from '../packages/platform/src/helios/feature-fabric/types.ts';
+import { evaluateCf01DecisionLedgerQualification } from '../packages/platform/src/helios/counterfactual-learning/qualification-cf01.ts';
+import { digestCandidateActionSetContent, sealDecisionEpisode } from '../packages/platform/src/helios/counterfactual-learning/seal.ts';
 import {
-  digestCandidateActionSetContent,
-  evaluateCf01DecisionLedgerQualification,
   HELIOS_CF01_DECISION_LEDGER_QUALIFIED,
-  HELIOS_COUNTERFACTUAL_LEARNING_SCHEMA,
-  sealDecisionEpisode,
-  type DecisionContext,
-} from '../packages/platform/src/helios/counterfactual-learning/index.ts';
+  HELIOS_CF01_DECISION_LEDGER_SCHEMA,
+} from '../packages/platform/src/helios/counterfactual-learning/taxonomy.ts';
+import type { DecisionContext } from '../packages/platform/src/helios/counterfactual-learning/types.ts';
 
 const T0 = asUtcInstant('2026-01-15T14:30:00.000Z');
 
@@ -156,7 +155,7 @@ describe('HELIOS CF01 — counterfactual decision ledger', () => {
       sealedAt: T0,
     });
 
-    assert.equal(episode.schema, HELIOS_COUNTERFACTUAL_LEARNING_SCHEMA);
+    assert.equal(episode.schema, HELIOS_CF01_DECISION_LEDGER_SCHEMA);
     assert(episode.seal !== null);
     const q = evaluateCf01DecisionLedgerQualification(episode);
     assert.equal(q.qualified, true);

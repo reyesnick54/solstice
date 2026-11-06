@@ -5,7 +5,7 @@
 import { createHash } from 'node:crypto';
 
 import type { UtcInstant } from '@solstice/domain';
-import { HELIOS_COUNTERFACTUAL_LEARNING_SCHEMA } from './taxonomy.ts';
+import { HELIOS_CF01_DECISION_LEDGER_SCHEMA } from './taxonomy.ts';
 import type { DecisionContext, DecisionEpisode, DecisionEpisodeSeal } from './types.ts';
 
 function stableStringify(value: unknown): string {
@@ -54,7 +54,7 @@ export function sealDecisionEpisode(input: {
     contextDigest,
   });
   const core = {
-    schema: HELIOS_COUNTERFACTUAL_LEARNING_SCHEMA,
+    schema: HELIOS_CF01_DECISION_LEDGER_SCHEMA,
     episodeId: input.episodeId,
     context: input.context,
     candidateSet: input.candidateSet,

@@ -4,7 +4,7 @@ import type { FeatureManifest } from '../feature-fabric/types.ts';
 
 import type { BehaviorPolicySnapshotId } from './ids.ts';
 import type {
-  HELIOS_COUNTERFACTUAL_LEARNING_SCHEMA,
+  HELIOS_CF01_DECISION_LEDGER_SCHEMA,
   HELIOS_COUNTERFACTUAL_LEARNING_SCHEMA_VERSION,
   CounterfactualActionClass,
   StochasticPolicyEnvironment,
@@ -231,7 +231,7 @@ export type DecisionEpisodeSeal = {
  * Immutable once seal is non-null. Outcomes attach separately; do not mutate context after seal.
  */
 export type DecisionEpisode = {
-  readonly schema: typeof HELIOS_COUNTERFACTUAL_LEARNING_SCHEMA;
+  readonly schema: typeof HELIOS_CF01_DECISION_LEDGER_SCHEMA;
   readonly episodeId: string;
   readonly context: DecisionContext;
   readonly candidateSet: CandidateActionSet;
@@ -259,7 +259,7 @@ export type CounterfactualOutcomeKind =
  * Kept distinct from DecisionEpisode to preserve immutability of the research-time record.
  */
 export type CounterfactualOutcomeAttachment = {
-  readonly schema: typeof HELIOS_COUNTERFACTUAL_LEARNING_SCHEMA;
+  readonly schema: typeof HELIOS_CF01_DECISION_LEDGER_SCHEMA;
   readonly attachmentId: string;
   readonly episodeId: string;
   readonly attachedAt: UtcInstant;

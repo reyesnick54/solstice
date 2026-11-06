@@ -3,7 +3,7 @@ import type { DecisionEpisode } from './types.ts';
 import {
   HELIOS_CF01_DECISION_LEDGER_BLOCKED,
   HELIOS_CF01_DECISION_LEDGER_QUALIFIED,
-  HELIOS_COUNTERFACTUAL_LEARNING_SCHEMA,
+  HELIOS_CF01_DECISION_LEDGER_SCHEMA,
 } from './taxonomy.ts';
 
 export type Cf01QualificationResult = {
@@ -17,7 +17,7 @@ export type Cf01QualificationResult = {
  */
 export function evaluateCf01DecisionLedgerQualification(episode: DecisionEpisode): Cf01QualificationResult {
   const findings: string[] = [];
-  if (episode.schema !== HELIOS_COUNTERFACTUAL_LEARNING_SCHEMA) {
+  if (episode.schema !== HELIOS_CF01_DECISION_LEDGER_SCHEMA) {
     findings.push('SCHEMA_MISMATCH');
   }
   if (episode.seal === null) {
