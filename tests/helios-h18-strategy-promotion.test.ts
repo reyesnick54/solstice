@@ -207,6 +207,7 @@ describe('HELIOS H18 strategy promotion pipeline', () => {
         calibrationPassed: true,
         financialEffectCreated: false,
         outcomesRecorded: 10,
+        evol11Role: 'INCUBATION',
       },
       reason: 'model self promotion',
     });
@@ -471,7 +472,7 @@ describe('HELIOS H18 strategy promotion pipeline', () => {
     assert.equal(v2.ok, true);
     if (v2.ok) {
       assert.equal(v2.value.fingerprint !== ctx.promotion.store.getCapsule('str_two_etf_cash', 'v1')?.fingerprint, true);
-      assert.equal(ctx.promotion.getQualificationStatus('str_two_etf_cash', 'v2')?.promotionState, 'RESEARCH');
+      assert.equal(ctx.promotion.getQualificationStatus('str_two_etf_cash', 'v2')?.promotionState, 'CANDIDATE');
     }
   });
 
@@ -676,7 +677,7 @@ describe('HELIOS H18 strategy promotion pipeline', () => {
     });
     assert.equal(h14Observation.strategyId, HELIOS_H14_STRATEGY_CAPSULE_ID);
     assert.equal(h14Observation.version, HELIOS_H14_STRATEGY_CAPSULE_VERSION);
-    assert.equal(h14Observation.promotionState, 'RESEARCH');
+    assert.equal(h14Observation.promotionState, 'CANDIDATE');
     assert.equal(compiled.ok, true);
   });
 

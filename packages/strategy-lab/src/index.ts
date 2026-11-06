@@ -294,8 +294,30 @@ export {
   LEGAL_PROMOTION_TRANSITIONS,
   transitionPromotionState,
   isLiveEligibleState,
+  LEGACY_RESEARCH_PROMOTION_STATE,
+  normalizeLegacyPromotionState,
 } from './promotion-state.ts';
 export type { StrategyPromotionState, PromotionDecisionKind } from './promotion-state.ts';
+export {
+  HELIOS_EVOL11_CHAMPION_CHALLENGER_QUALIFIED,
+  EVOL11_CHALLENGE_PROCESS_STAGES,
+  EVOL11_CHALLENGE_COMPARISON_DIMENSIONS,
+  EVOL11_LOWER_IS_BETTER,
+  evaluateEvol11ParetoDominance,
+  assessEvol11MaterialChampionReplacement,
+  evol11DefaultForwardShadowRole,
+  evol11DefaultPaperRole,
+} from './evol11-champion-challenger.ts';
+export type {
+  Evol11ChallengeProcessStage,
+  Evol11ComparisonDimension,
+  Evol11SignedDeltaMinor,
+  Evol11ComparisonDeltas,
+  Evol11ParetoDominanceResult,
+  Evol11ChampionComparisonEvidence,
+  Evol11ForwardShadowRole,
+  Evol11PaperRole,
+} from './evol11-champion-challenger.ts';
 export { gateResearchToEvaluation, gateEvaluationToShadow, gateShadowToPaper } from './promotion-gates.ts';
 export type { GateResult } from './promotion-gates.ts';
 export {
@@ -929,3 +951,28 @@ export type {
   Evol07QualificationChecks,
   Evol07QualificationResult,
 } from './evol07/index.ts';
+export {
+  HELIOS_EVOL05_CMA_ES_QUALIFIED,
+  HOLDOUT_FEEDBACK_LEAKAGE,
+  createInitialCmaEsSearchState,
+  decodeUnconstrainedToParameters,
+  runCmaEsGeneration,
+  evaluateEvol05CmaEsQualification,
+  createCmaEsRngState,
+  nextCmaEsStandardNormal,
+  nextCmaEsUniform,
+} from './evol05-cma-es/index.ts';
+export type {
+  CmaEsSearchState,
+  CmaEsPopulation,
+  CmaEsCandidate,
+  CmaEsCandidateValidity,
+  CmaEsParameterBounds,
+  CmaEsParameterVector,
+  CmaEsGeneration,
+  CmaEsPolicyGate,
+  CmaEsRngState,
+  CmaEsObjectiveWindow,
+  Evol05CmaEsQualificationChecks,
+  Evol05CmaEsQualificationResult,
+} from './evol05-cma-es/index.ts';

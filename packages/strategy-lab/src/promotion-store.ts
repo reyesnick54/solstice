@@ -14,6 +14,8 @@ export type StrategyPromotionRecord = {
   readonly capsuleId: string;
   readonly capsuleFingerprint: string;
   readonly promotionState: StrategyPromotionState;
+  /** HELIOS EVOL11 — when set, forward-shadow defaults label runs as challenger vs incumbent incubation. */
+  readonly promotionTrack?: 'DEFAULT' | 'EVOL11_CHALLENGER';
   readonly policyId: string;
   readonly policyVersion: string;
   readonly policyHash: string;
