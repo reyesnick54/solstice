@@ -30,6 +30,16 @@ export const STRATEGY_GENOME_NODE_CATALOG = Object.freeze({
       { key: 'annualizationFactor', valueType: 'number', required: false },
     ]),
   }),
+  /** Alternative realized-vol feature for evolution substitution (same param schema). */
+  'feature.realized_volatility_alt': Object.freeze({
+    catalogRef: 'feature.realized_volatility_alt',
+    kind: 'FEATURE',
+    description: 'Alternate rolling realized volatility feature (catalog substitution slot).',
+    params: Object.freeze([
+      { key: 'lookbackDays', valueType: 'number', required: true },
+      { key: 'annualizationFactor', valueType: 'number', required: false },
+    ]),
+  }),
   'condition.threshold_compare': Object.freeze({
     catalogRef: 'condition.threshold_compare',
     kind: 'CONDITION',
