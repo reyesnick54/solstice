@@ -240,9 +240,9 @@ describe('Wave 3 Prompt 12 — crypto market reference layer', () => {
     assert.equal(resolveCryptoAsset(MOONREY_COIN_NATIVE_ASSET_ID), undefined);
   });
 
-  it('26. no credentials exposed through BFF', () => {
+  it('26. no credentials exposed through BFF', async () => {
     const world = createSandboxWorld();
-    const response = handleConsumerBff(
+    const response = await handleConsumerBff(
       { ...world },
       {
         method: 'GET',
