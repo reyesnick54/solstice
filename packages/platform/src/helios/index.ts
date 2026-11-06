@@ -209,8 +209,6 @@ export {
   type QualityState,
 } from './observation/index.ts';
 
-export * from './counterfactual-learning/index.ts';
-
 export {
   HELIOS_FEATURE_FABRIC_SCHEMA,
   HELIOS_AAF02_EVIDENCE_TIME_FEATURE_FABRIC_QUALIFIED,
@@ -292,6 +290,7 @@ export * from './grok-research/index.ts';
 export * from './strategy-capsule/index.ts';
 export * from './meta-allocator/index.ts';
 export * from './decision-validity/index.ts';
+export * from './counterfactual-learning/index.ts';
 export * from './grow-controls/index.ts';
 export * from './provider-orchestration/index.ts';
 export * from './order-lifecycle/index.ts';
@@ -320,6 +319,7 @@ export * from './execution-twin/index.ts';
 export * from './feature-fabric/index.ts';
 export * from './earnings-intelligence/index.ts';
 export * from './valuation-intelligence/index.ts';
+export * from './counterfactual-learning/index.ts';
 export * from './adaptive-alpha-v2/index.ts';
 export * from './open-source-integration/index.ts';
 export * from './os12-agent-permission-gateway/index.ts';
