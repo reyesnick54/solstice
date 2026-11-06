@@ -14,6 +14,7 @@ import type {
   OpeDiagnostics,
   PortfolioConstraintSpec,
   PortfolioConstraintViolation,
+  PortfolioState,
   PortfolioStateTransition,
   SequentialOpeResult,
   SequentialPolicyEstimate,
