@@ -131,3 +131,4 @@ export * from './val05/index.ts';
 export * from './residual-income/index.ts';
 export * from './comparables/index.ts';
 export * from './sotp/index.ts';
+export * from './ensemble/index.ts';
