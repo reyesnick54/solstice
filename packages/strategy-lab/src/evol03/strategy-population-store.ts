@@ -1,4 +1,4 @@
-import { err, ok, type Result } from '@solstice/domain';
+import { ok, type Result } from '@solstice/domain';
 
 import type { StrategyFailure } from '../types.ts';
 import type { StrategyGenomeId } from '../os05/ids.ts';
