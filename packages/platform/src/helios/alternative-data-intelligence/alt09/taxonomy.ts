@@ -1,0 +1,25 @@
+export const ALT09_SCHEMA = 'helios-alt09-innovation-intelligence-v1' as const;
+
+export const HELIOS_ALT09_INNOVATION_INTELLIGENCE_QUALIFIED =
+  'HELIOS_ALT09_INNOVATION_INTELLIGENCE_QUALIFIED' as const;
+export const HELIOS_ALT09_INNOVATION_INTELLIGENCE_BLOCKED =
+  'HELIOS_ALT09_INNOVATION_INTELLIGENCE_BLOCKED' as const;
+
+export const PATENT_UTILIZATION_CLASSES = Object.freeze([
+  'LIKELY_UTILIZED',
+  'POSSIBLY_UTILIZED',
+  'NO_EVIDENCE',
+  'UNKNOWN',
+] as const);
+
+export const TECHNOLOGY_GRAPH_EDGE_KINDS = Object.freeze([
+  'COMPANY_OWNS_PATENT',
+  'PATENT_CLASSIFIED_AS',
+  'PATENT_CITES',
+  'PATENT_COMPETES_WITH',
+  'PATENT_LINKED_TO_PRODUCT',
+  'COMPANY_COMPETES_WITH',
+] as const);
+
+export type PatentUtilizationClass = (typeof PATENT_UTILIZATION_CLASSES)[number];
+export type TechnologyGraphEdgeKind = (typeof TECHNOLOGY_GRAPH_EDGE_KINDS)[number];
