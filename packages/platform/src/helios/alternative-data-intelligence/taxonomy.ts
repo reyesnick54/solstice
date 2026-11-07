@@ -1,5 +1,5 @@
 /**
- * HELIOS Alternative Data Intelligence — shared taxonomy (ALT01 fabric + ALT12 fusion).
+ * HELIOS Alternative Data Intelligence — shared taxonomy (ALT01 fabric + ALT09/ALT12).
  * Research-only signals; not canonical economic facts.
  */
 
@@ -64,6 +64,11 @@ export const ALT01_FORMULA_VERSIONS = Object.freeze({
 
 export const ALT01_AUTHORITY_CLASS = 'REFERENCE_AND_RESEARCH_ONLY' as const;
 
+export const HELIOS_ALTERNATIVE_DATA_PROGRAM = 'HELIOS_ALTERNATIVE_DATA' as const;
+
+export const ALT09_WORK_PACKAGE = 'ALT09' as const;
+export const ALT09_MODULE = 'packages/platform/src/helios/alternative-data-intelligence/alt09' as const;
+
 export const HELIOS_ALT12_MULTIMODAL_FUSION_SCHEMA = 'helios.alt12.multimodal_fusion.v1' as const;
 export const HELIOS_ALT12_MULTIMODAL_FUSION_AUTHORITY =
   'packages/platform/src/helios/alternative-data-intelligence/alt12' as const;
@@ -73,7 +78,7 @@ export const HELIOS_ALT12_MULTIMODAL_FUSION_QUALIFIED =
 export const HELIOS_ALT12_MULTIMODAL_FUSION_BLOCKED =
   'HELIOS_ALT12_MULTIMODAL_FUSION_BLOCKED' as const;
 
-export const ALT_WORK_PACKAGES = Object.freeze(['ALT04', 'ALT12'] as const);
+export const ALT_WORK_PACKAGES = Object.freeze(['ALT04', 'ALT09', 'ALT12'] as const);
 export type AltWorkPackageId = (typeof ALT_WORK_PACKAGES)[number];
 
 /** Alternative-data modality families accepted by the fusion router. */
