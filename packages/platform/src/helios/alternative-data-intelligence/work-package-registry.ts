@@ -37,7 +37,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
   },
   ALT07: {
     title: 'Logistics, geospatial, innovation, procurement, supply chain modalities',
-    moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt07-physical-supply-modalities.ts',
+    moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/geospatial-activity/index.ts',
   },
   ALT08: {
     title: 'AlternativeDataSkeptic gate',
@@ -71,6 +71,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
 
 const OPTIONAL_TESTS: Record<string, string> = {
   ALT04: 'tests/helios-alt04-workforce-intelligence.test.ts',
+  ALT07: 'tests/helios-alt08-geospatial-activity.test.ts',
   ALT09: 'tests/helios-alt09-innovation-intelligence-qualification.test.ts',
   ALT11: 'tests/helios-alt11-supply-chain-graph.test.ts',
   ALT12: 'tests/helios-alt12-multimodal-fusion.test.ts',

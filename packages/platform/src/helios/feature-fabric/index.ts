@@ -113,6 +113,7 @@ export * from './aaf06/index.ts';
 export * from './macro-intelligence/index.ts';
 export * from './alternative-data/index.ts';
 export * from './earnings/index.ts';
+export * from './geospatial-activity/index.ts';
 export * from './valuation/index.ts';
 
 export * as entityResolution from './entity-resolution/index.ts';
