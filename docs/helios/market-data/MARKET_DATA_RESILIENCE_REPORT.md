@@ -1,28 +1,14 @@
 # Market Data Resilience Report
 
-## Redundancy (MD05)
+**Git SHA:** `ceeba184f759b64d01216dc923d2cc1f6554dd41` · **Evaluated at (UTC):** `2026-11-07T16:54:02.230Z`
 
-Independent provider lineage is evaluated before corroboration upgrades quality. Shared upstream feeds are not treated as independent (`observation/lineage.ts`).
+## Canonical owners
 
-## Sequence and gap handling (MD03)
+| Area | Owner | Status |
+|------|-------|--------|
+| Redundant feed arbitration (MD05) | `packages/platform/src/helios/market-data/md05/index.ts` | IMPLEMENTED |
+| Sequence recovery (MD03) | `packages/platform/src/helios/market-data/md03/index.ts` | IMPLEMENTED |
+| Live-data resilience / chaos (MD13) | `packages/platform/src/helios/market-data-live/md13/index.ts` | IMPLEMENTED |
 
-Sequence gaps surface explicit quality degradation; gap recovery may restore `GAP_RECOVERED` integrity when secondary evidence reconciles (`observation/quality.ts`).
+MD14 adversarial scenarios: `8/8` passed via `adversarial-qualification.ts`.
 
-## Chaos and operations (MD13)
-
-AAF07 harness proofs include heartbeat outage, stale detection, rate limits, retry backoff, and silent-fallback rejection (`packages/external-data/src/certification/market-data/harness.ts`).
-
-## MD14 adversarial scenarios
-
-| Scenario | Intent |
-|----------|--------|
-| `md14_gap_recovery` | Recovered gaps may certify |
-| `md14_clock_skew` | knowableAt before eventTime rejected |
-| `md14_entitlement_block` | Entitlement block rejects AAF |
-| `md14_redundant_source_divergence` | UNTRUSTED blocks certification |
-| `md14_chaos_provider_outage` | Fixtures stay sandbox-qualified |
-| `md14_aaf_block_on_untrusted` | DESYNCHRONIZED blocks AAF |
-| `md14_execution_twin_no_live_submit` | No broker submit |
-| `md14_live_shadow_no_execution_authority` | Shadow safe with trading off |
-
-Runner: `runAllMd14AdversarialScenarios()` in `adversarial-qualification.ts`.
