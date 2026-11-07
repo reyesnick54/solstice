@@ -54,3 +54,8 @@ export {
   type TransactionMonitoringProviderPort,
   type VersionedMonitoringRule,
 } from './transaction-monitoring.ts';
+export {
+  EXEC01_INVESTMENT_EXECUTION_CONNECTIVITY_GATE,
+  exec01InvestmentExecutionPosture,
+  type Exec01InvestmentExecutionPosture,
+} from './exec01-investment-execution.ts';

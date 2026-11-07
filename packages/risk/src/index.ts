@@ -121,3 +121,7 @@ export {
   type RiskInterventionEvidence,
   type StrategyDrawdownFact,
 } from './portfolio/index.ts';
+export type {
+  BrokerCapitalReservationFact,
+  BrokerCapitalReservationPort,
+} from './investments/exec01-capital-reservation.ts';

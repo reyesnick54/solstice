@@ -10,6 +10,12 @@ export {
   type ExchangeKillSwitchScope,
 } from './kill-switches.ts';
 export {
+  EXEC01_BROKER_ORDER_ENTRY_KILL_SCOPE,
+  EXEC01_BROKER_SETTLEMENT_KILL_SCOPE,
+  exec01BrokerMarketAccessOverlay,
+  type Exec01BrokerMarketAccessOverlay,
+} from './exec01-broker-access.ts';
+export {
   evaluateProductionListing,
   type ProductionListingAuthorization,
 } from './listing.ts';
