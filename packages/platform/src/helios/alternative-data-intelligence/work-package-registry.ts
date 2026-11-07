@@ -24,8 +24,8 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
     moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt03-provider-ingestion.ts',
   },
   ALT04: {
-    title: 'Workforce intelligence signals',
-    moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt04-workforce-signals.ts',
+    title: 'Workforce and hiring intelligence',
+    moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt04-workforce/qualification.ts',
   },
   ALT05: {
     title: 'Digital demand signals',

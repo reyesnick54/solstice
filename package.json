@@ -82,6 +82,7 @@
     "helios:health08:dr:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-health08-dr-qualify.ts",
     "test:helios-health08": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-health08-restart-recovery-qualification.test.ts",
     "test:helios-health07": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-health07-memory-soak-final-qualification.test.ts",
+    "helios:alt04:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-alt04-qualify.ts",
     "helios:earn12:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-earn12-qualify.ts",
     "helios:earn12:qualify:fast": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-earn12-qualify.ts --skip-subprocess",
     "helios:evol14:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-evol14-strategy-self-evolution-qualify.ts",
