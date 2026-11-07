@@ -93,3 +93,11 @@ export type {
   WalletStatus,
   WalletProductOutcome,
 } from './product/index.ts';
+export * as executionConnectivity from './execution-connectivity/index.ts';
+export {
+  HELIOS_EXEC11_CUSTODY_ISOLATION_QUALIFIED,
+  HELIOS_EXEC11_CUSTODY_ISOLATION_BLOCKED,
+  evaluateExec11CustodyIsolationQualification,
+  evaluateCustodyMovementIsolation,
+  defaultGrowTradingAgentGrant,
+} from './execution-connectivity/exec11/index.ts';
