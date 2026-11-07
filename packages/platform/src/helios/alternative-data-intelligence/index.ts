@@ -4,4 +4,5 @@ export {
   type AltWorkPackageId,
 } from './taxonomy.ts';
 
+export * from './alt04-workforce/index.ts';
 export * from './geospatial-activity/index.ts';

@@ -1,5 +1,5 @@
 /**
- * HELIOS Alternative Data Intelligence — ALT08 geospatial activity taxonomy.
+ * HELIOS Alternative Data Intelligence — shared taxonomy (ALT04, ALT08, …).
  */
 
 export const HELIOS_ALTERNATIVE_DATA_INTELLIGENCE_SCHEMA = 'helios.alternative-data-intelligence.v1' as const;
@@ -14,7 +14,7 @@ export const HELIOS_ALT08_GEOSPATIAL_ACTIVITY_QUALIFIED =
 export const HELIOS_ALT08_GEOSPATIAL_ACTIVITY_BLOCKED =
   'HELIOS_ALT08_GEOSPATIAL_ACTIVITY_BLOCKED' as const;
 
-export const ALT_WORK_PACKAGES = ['ALT08'] as const;
+export const ALT_WORK_PACKAGES = ['ALT04', 'ALT08'] as const;
 export type AltWorkPackageId = (typeof ALT_WORK_PACKAGES)[number];
 
 /** Facility-scale assets only — no individual tracking. */
