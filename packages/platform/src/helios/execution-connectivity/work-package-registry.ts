@@ -49,7 +49,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
   },
   EXEC10: {
     title: 'Financing controls',
-    moduleRef: 'packages/platform/src/helios/capital-lifecycle/service.ts',
+    moduleRef: 'packages/platform/src/helios/execution-connectivity/exec10/index.ts',
   },
   EXEC11: {
     title: 'Custody isolation',
@@ -83,7 +83,7 @@ const OPTIONAL_TESTS: Record<string, string> = {
   EXEC07: 'tests/helios-exec07-tca.test.ts',
   EXEC08: 'tests/helios-multi-asset-m24-execution-settlement-reconciliation.test.ts',
   EXEC09: 'tests/helios-multi-asset-m24-execution-settlement-reconciliation.test.ts',
-  EXEC10: 'tests/helios-h24-capital-lifecycle.test.ts',
+  EXEC10: 'tests/helios-exec10-financing-controls.test.ts',
   EXEC11: 'tests/helios-exec11-custody-isolation.test.ts',
   EXEC12: 'tests/helios-exec12-reconciliation.test.ts',
   EXEC13: 'tests/helios-exec13-execution-resilience.test.ts',
