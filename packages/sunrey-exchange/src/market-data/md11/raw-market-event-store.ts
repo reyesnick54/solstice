@@ -2,7 +2,7 @@
  * Immutable append-only raw provider market event store.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { partitionKeyId } from './partition.ts';
 import { indexFieldValue, type MarketEventIndexName, MARKET_EVENT_INDEX_NAMES, compareUtc } from './indexes.ts';
 import type { MarketDataPartitionKey, RawMarketEventRecord } from './types.ts';
