@@ -106,8 +106,11 @@ export function assertSimulationOnly(): void {
     LIVE_EXTERNAL_CHAIN_INTERACTION_ENABLED !== false ||
     LIVE_CUSTODY_ENABLED !== false ||
     LIVE_AGENT_FINANCIAL_EXECUTION_ENABLED !== false ||
-    LIVE_CONNECTIVITY_ENABLED !== false
+    LIVE_CONNECTIVITY_ENABLED !== false ||
+    MARKET_DATA_LIVE_SHADOW_ENABLED !== false
   ) {
-    throw new Error('every LIVE_* flag must remain false; real-world movement is not authorised');
+    throw new Error(
+      'every LIVE_* flag and MARKET_DATA_LIVE_SHADOW_ENABLED must remain false; real-world movement is not authorised',
+    );
   }
 }
