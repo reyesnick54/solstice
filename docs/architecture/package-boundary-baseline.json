@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-04T14:19:12.048870+00:00",
+  "generatedAt": "2026-11-07T16:25:37.307197+00:00",
   "inventory": {
     "totalPackages": 49,
     "packageNames": [
@@ -216,6 +216,7 @@
       ],
       "investments": [
         "config",
+        "custody",
         "domain",
         "events",
         "evidence",
@@ -495,14 +496,14 @@
       ]
     },
     "violationCounts": {
-      "packageDeepImport": 4575,
+      "packageDeepImport": 4601,
       "serviceDeepImport": 652,
       "undeclaredPackageExport": 0,
-      "relativeCrossPackage": 4575,
+      "relativeCrossPackage": 4601,
       "aliasDeepImport": 0,
       "economicAuthorityDag": 0,
       "packageImportsService": 0,
-      "total": 5227
+      "total": 5253
     }
   },
   "violations": [
@@ -6652,6 +6653,105 @@
       "sourcePackage": "custody",
       "targetPackage": "sunrey-chain",
       "spec": "../../sunrey-chain/src/economics/supply.ts"
+    },
+    {
+      "file": "packages/custody/src/execution-connectivity/execution-connectivity.test.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/custody/src/execution-connectivity/execution-connectivity.test.ts' deep-imports 'domain' internals via '../../../domain/src/customer.ts'",
+      "sourcePackage": "custody",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/customer.ts"
+    },
+    {
+      "file": "packages/custody/src/execution-connectivity/execution-connectivity.test.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/custody/src/execution-connectivity/execution-connectivity.test.ts' deep-imports 'domain' internals via '../../../domain/src/jurisdiction.ts'",
+      "sourcePackage": "custody",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/jurisdiction.ts"
+    },
+    {
+      "file": "packages/custody/src/execution-connectivity/execution-connectivity.test.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/custody/src/execution-connectivity/execution-connectivity.test.ts' deep-imports 'domain' internals via '../../../domain/src/legal-entity.ts'",
+      "sourcePackage": "custody",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/legal-entity.ts"
+    },
+    {
+      "file": "packages/custody/src/execution-connectivity/execution-connectivity.test.ts",
+      "line": 7,
+      "rule": "package-deep-import",
+      "message": "'packages/custody/src/execution-connectivity/execution-connectivity.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "custody",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/custody/src/execution-connectivity/ids.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/custody/src/execution-connectivity/ids.ts' deep-imports 'domain' internals via '../../../domain/src/brand.ts'",
+      "sourcePackage": "custody",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/brand.ts"
+    },
+    {
+      "file": "packages/custody/src/execution-connectivity/qualification.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/custody/src/execution-connectivity/qualification.ts' deep-imports 'config' internals via '../../../config/src/flags.ts'",
+      "sourcePackage": "custody",
+      "targetPackage": "config",
+      "spec": "../../../config/src/flags.ts"
+    },
+    {
+      "file": "packages/custody/src/execution-connectivity/reconciliation.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/custody/src/execution-connectivity/reconciliation.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "custody",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/custody/src/execution-connectivity/types.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/custody/src/execution-connectivity/types.ts' deep-imports 'domain' internals via '../../../domain/src/customer.ts'",
+      "sourcePackage": "custody",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/customer.ts"
+    },
+    {
+      "file": "packages/custody/src/execution-connectivity/types.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/custody/src/execution-connectivity/types.ts' deep-imports 'domain' internals via '../../../domain/src/jurisdiction.ts'",
+      "sourcePackage": "custody",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/jurisdiction.ts"
+    },
+    {
+      "file": "packages/custody/src/execution-connectivity/types.ts",
+      "line": 3,
+      "rule": "package-deep-import",
+      "message": "'packages/custody/src/execution-connectivity/types.ts' deep-imports 'domain' internals via '../../../domain/src/legal-entity.ts'",
+      "sourcePackage": "custody",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/legal-entity.ts"
+    },
+    {
+      "file": "packages/custody/src/execution-connectivity/types.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/custody/src/execution-connectivity/types.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "custody",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
     },
     {
       "file": "packages/custody/src/institutional-cold-demo.ts",
@@ -13501,6 +13601,141 @@
       "sourcePackage": "investments",
       "targetPackage": "config",
       "spec": "../../config/src/flags.ts"
+    },
+    {
+      "file": "packages/investments/src/execution-connectivity/execution-connectivity.test.ts",
+      "line": 4,
+      "rule": "package-deep-import",
+      "message": "'packages/investments/src/execution-connectivity/execution-connectivity.test.ts' deep-imports 'domain' internals via '../../../domain/src/customer.ts'",
+      "sourcePackage": "investments",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/customer.ts"
+    },
+    {
+      "file": "packages/investments/src/execution-connectivity/execution-connectivity.test.ts",
+      "line": 5,
+      "rule": "package-deep-import",
+      "message": "'packages/investments/src/execution-connectivity/execution-connectivity.test.ts' deep-imports 'domain' internals via '../../../domain/src/jurisdiction.ts'",
+      "sourcePackage": "investments",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/jurisdiction.ts"
+    },
+    {
+      "file": "packages/investments/src/execution-connectivity/execution-connectivity.test.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/investments/src/execution-connectivity/execution-connectivity.test.ts' deep-imports 'domain' internals via '../../../domain/src/legal-entity.ts'",
+      "sourcePackage": "investments",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/legal-entity.ts"
+    },
+    {
+      "file": "packages/investments/src/execution-connectivity/execution-connectivity.test.ts",
+      "line": 7,
+      "rule": "package-deep-import",
+      "message": "'packages/investments/src/execution-connectivity/execution-connectivity.test.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "investments",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/investments/src/execution-connectivity/execution-connectivity.test.ts",
+      "line": 8,
+      "rule": "package-deep-import",
+      "message": "'packages/investments/src/execution-connectivity/execution-connectivity.test.ts' deep-imports 'money' internals via '../../../money/src/money.ts'",
+      "sourcePackage": "investments",
+      "targetPackage": "money",
+      "spec": "../../../money/src/money.ts"
+    },
+    {
+      "file": "packages/investments/src/execution-connectivity/execution-connectivity.test.ts",
+      "line": 13,
+      "rule": "package-deep-import",
+      "message": "'packages/investments/src/execution-connectivity/execution-connectivity.test.ts' deep-imports 'custody' internals via '../../../custody/src/execution-connectivity/index.ts'",
+      "sourcePackage": "investments",
+      "targetPackage": "custody",
+      "spec": "../../../custody/src/execution-connectivity/index.ts"
+    },
+    {
+      "file": "packages/investments/src/execution-connectivity/execution-connectivity.test.ts",
+      "line": 25,
+      "rule": "package-deep-import",
+      "message": "'packages/investments/src/execution-connectivity/execution-connectivity.test.ts' deep-imports 'custody' internals via '../../../custody/src/execution-connectivity/index.ts'",
+      "sourcePackage": "investments",
+      "targetPackage": "custody",
+      "spec": "../../../custody/src/execution-connectivity/index.ts"
+    },
+    {
+      "file": "packages/investments/src/execution-connectivity/ids.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/investments/src/execution-connectivity/ids.ts' deep-imports 'domain' internals via '../../../domain/src/brand.ts'",
+      "sourcePackage": "investments",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/brand.ts"
+    },
+    {
+      "file": "packages/investments/src/execution-connectivity/reconciliation.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/investments/src/execution-connectivity/reconciliation.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "investments",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/investments/src/execution-connectivity/reconciliation.ts",
+      "line": 6,
+      "rule": "package-deep-import",
+      "message": "'packages/investments/src/execution-connectivity/reconciliation.ts' deep-imports 'custody' internals via '../../../custody/src/execution-connectivity/index.ts'",
+      "sourcePackage": "investments",
+      "targetPackage": "custody",
+      "spec": "../../../custody/src/execution-connectivity/index.ts"
+    },
+    {
+      "file": "packages/investments/src/execution-connectivity/types.ts",
+      "line": 1,
+      "rule": "package-deep-import",
+      "message": "'packages/investments/src/execution-connectivity/types.ts' deep-imports 'domain' internals via '../../../domain/src/jurisdiction.ts'",
+      "sourcePackage": "investments",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/jurisdiction.ts"
+    },
+    {
+      "file": "packages/investments/src/execution-connectivity/types.ts",
+      "line": 2,
+      "rule": "package-deep-import",
+      "message": "'packages/investments/src/execution-connectivity/types.ts' deep-imports 'domain' internals via '../../../domain/src/time.ts'",
+      "sourcePackage": "investments",
+      "targetPackage": "domain",
+      "spec": "../../../domain/src/time.ts"
+    },
+    {
+      "file": "packages/investments/src/execution-connectivity/types.ts",
+      "line": 14,
+      "rule": "package-deep-import",
+      "message": "'packages/investments/src/execution-connectivity/types.ts' deep-imports 'custody' internals via '../../../custody/src/execution-connectivity/index.ts'",
+      "sourcePackage": "investments",
+      "targetPackage": "custody",
+      "spec": "../../../custody/src/execution-connectivity/index.ts"
+    },
+    {
+      "file": "packages/investments/src/execution-connectivity/types.ts",
+      "line": 16,
+      "rule": "package-deep-import",
+      "message": "'packages/investments/src/execution-connectivity/types.ts' deep-imports 'money' internals via '../../../money/src/money.ts'",
+      "sourcePackage": "investments",
+      "targetPackage": "money",
+      "spec": "../../../money/src/money.ts"
+    },
+    {
+      "file": "packages/investments/src/execution-connectivity/types.ts",
+      "line": 22,
+      "rule": "package-deep-import",
+      "message": "'packages/investments/src/execution-connectivity/types.ts' deep-imports 'custody' internals via '../../../custody/src/execution-connectivity/taxonomy.ts'",
+      "sourcePackage": "investments",
+      "targetPackage": "custody",
+      "spec": "../../../custody/src/execution-connectivity/taxonomy.ts"
     },
     {
       "file": "packages/investments/src/fill.ts",
