@@ -5,6 +5,7 @@
 export * from './exec01/index.ts';
 export * from './exec02/index.ts';
 export * from './exec03/index.ts';
+export * from './pretrade-firewall/index.ts';
 export * from './exec05/index.ts';
 export * from './exec06/index.ts';
 export * from './exec07/index.ts';

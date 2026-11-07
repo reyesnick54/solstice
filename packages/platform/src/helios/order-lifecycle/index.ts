@@ -75,7 +75,11 @@ export type {
 export { providerFillToHeliosFill } from './provider-port.ts';
 export { SandboxHeliosProviderPort, type SandboxProviderScenario } from './sandbox-provider.ts';
 export { InMemoryHeliosOrderLifecycleStore } from './store.ts';
-export { HeliosOrderLifecycleService, HELIOS_H23_ORDER_LIFECYCLE } from './service.ts';
+export {
+  HeliosOrderLifecycleService,
+  HELIOS_H23_ORDER_LIFECYCLE,
+  type HeliosPreTradeFirewallPort,
+} from './service.ts';
 export {
   EXEC01_SANDBOX_HELIOS_PROVIDER_ID,
   HELIOS_H23_EXEC01_SCHEMA_REF,

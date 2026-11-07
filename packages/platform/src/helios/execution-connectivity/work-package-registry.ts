@@ -25,7 +25,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
   },
   EXEC04: {
     title: 'Pre-trade firewall',
-    moduleRef: 'packages/platform/src/helios/multi-asset/m18/index.ts',
+    moduleRef: 'packages/platform/src/helios/execution-connectivity/pretrade-firewall/index.ts',
   },
   EXEC05: {
     title: 'Smart routing',
@@ -77,7 +77,7 @@ const OPTIONAL_TESTS: Record<string, string> = {
   EXEC01: 'tests/helios-exec01-connectivity-domain.test.ts',
   EXEC02: 'tests/helios-exec02-broker-protocol.test.ts',
   EXEC03: 'tests/helios-exec03-exactly-once-intent.test.ts',
-  EXEC04: 'tests/helios-multi-asset-m18-portfolio-exposure-graph.test.ts',
+  EXEC04: 'tests/helios-exec04-pretrade-firewall.test.ts',
   EXEC05: 'tests/helios-exec05-smart-routing.test.ts',
   EXEC06: 'tests/helios-exec06-execution-algos.test.ts',
   EXEC07: 'tests/helios-exec07-tca.test.ts',
