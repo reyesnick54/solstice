@@ -2,9 +2,9 @@
 
 **Engineering marker:** `HELIOS_PRODUCTION_MARKET_DATA_V1_QUALIFIED`
 
-**Git SHA:** `pending`
+**Git SHA:** `ceeba184f759b64d01216dc923d2cc1f6554dd41`
 
-**Evaluated at (UTC):** `2026-11-07T16:53:55.245Z`
+**Evaluated at (UTC):** `2026-11-07T16:54:02.230Z`
 
 **Subprocess gates:** GREEN
 

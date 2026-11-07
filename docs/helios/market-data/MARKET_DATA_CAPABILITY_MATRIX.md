@@ -1,6 +1,6 @@
 # Market Data Capability Matrix
 
-**Git SHA:** `pending` · **Evaluated at (UTC):** `2026-11-07T16:53:55.245Z`
+**Git SHA:** `ceeba184f759b64d01216dc923d2cc1f6554dd41` · **Evaluated at (UTC):** `2026-11-07T16:54:02.230Z`
 
 | Package | Capability | Canonical owner | Qualification status |
 |---------|------------|-----------------|----------------------|
