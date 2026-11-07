@@ -28,8 +28,8 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
     moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt04-workforce/index.ts',
   },
   ALT05: {
-    title: 'Digital demand signals',
-    moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt05-digital-demand.ts',
+    title: 'Digital demand and attention intelligence',
+    moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt05/index.ts',
   },
   ALT06: {
     title: 'Product demand / pricing power',
@@ -71,6 +71,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
 
 const OPTIONAL_TESTS: Record<string, string> = {
   ALT04: 'tests/helios-alt04-workforce-intelligence.test.ts',
+  ALT05: 'tests/helios-alt05-digital-demand.test.ts',
   ALT07: 'tests/helios-alt07-logistics-flow.test.ts',
   ALT09: 'tests/helios-alt09-innovation-intelligence-qualification.test.ts',
   ALT11: 'tests/helios-alt11-supply-chain-graph.test.ts',

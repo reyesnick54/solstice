@@ -75,6 +75,7 @@ export * from './alt07-logistics-flow/index.ts';
 export * from './geospatial-activity/index.ts';
 export * from './alt09/index.ts';
 export * from './alt12/index.ts';
+export * from './alt05/index.ts';
 
 export { buildAlternativeDataResearchState } from './alt09-synthesis.ts';
 export {

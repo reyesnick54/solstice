@@ -9,7 +9,13 @@ import type {
   HELIOS_ALT01_ALTERNATIVE_DATA_INTELLIGENCE_SCHEMA,
   AafCertifiedAltFeatureId,
   AlternativeDataSkepticAttackVector,
+  AttentionToSalesInference,
+  DigitalDemandAnomalyClass,
+  DigitalDemandInputFamily,
+  ProviderEstimateSemantics,
+  SearchSeriesValueKind,
 } from './taxonomy.ts';
+import type { DigitalDemandTemporalEnvelope } from './temporal-envelope.ts';
 
 export type AlternativeDataLicenseClass =
   | 'OPEN'
@@ -232,4 +238,123 @@ export type AltResearchBuildInput = {
   readonly skepticFindings: readonly SkepticFinding[];
   readonly incremental: IncrementalInformationAssessment;
   readonly evidenceRefs: readonly string[];
+};
+
+export type ProviderNumericEstimate = {
+  readonly semantics: ProviderEstimateSemantics;
+  /** Provider point estimate; not an exact user count unless semantics allow (never for ALT05 fixtures). */
+  readonly point: number;
+  readonly low: number | null;
+  readonly high: number | null;
+  readonly unitLabel: string;
+  readonly isExactCount: false;
+};
+
+export type SearchAttentionFeatures = {
+  readonly searchLevel: number;
+  readonly searchMomentum: number;
+  readonly searchAcceleration: number;
+  readonly queryBreadth: number;
+  readonly brandSearchShare: number;
+  readonly productSearchShare: number;
+  readonly categoryRelativeSearch: number;
+};
+
+export type WebDemandFeatures = {
+  readonly visits: ProviderNumericEstimate;
+  readonly uniqueAggregateVisitors: ProviderNumericEstimate;
+  readonly visitGrowth: number;
+  readonly engagementDurationAggregate: number;
+  readonly referralMixAggregate: Readonly<Record<string, number>>;
+};
+
+export type AppDemandFeatures = {
+  readonly ranking: number | null;
+  readonly downloadEstimate: ProviderNumericEstimate | null;
+  readonly activeUserEstimate: ProviderNumericEstimate | null;
+  readonly usageGrowth: number;
+  readonly reviewVelocity: ProviderNumericEstimate | null;
+};
+
+export type SearchAttentionObservation = {
+  readonly observationId: string;
+  readonly envelope: DigitalDemandTemporalEnvelope;
+  readonly periodStart: UtcInstant;
+  readonly periodEnd: UtcInstant;
+  readonly features: SearchAttentionFeatures;
+  readonly rawIndexSeries: readonly number[];
+};
+
+export type WebDemandObservation = {
+  readonly observationId: string;
+  readonly envelope: DigitalDemandTemporalEnvelope;
+  readonly periodStart: UtcInstant;
+  readonly periodEnd: UtcInstant;
+  readonly features: WebDemandFeatures;
+};
+
+export type AppDemandObservation = {
+  readonly observationId: string;
+  readonly envelope: DigitalDemandTemporalEnvelope;
+  readonly periodStart: UtcInstant;
+  readonly periodEnd: UtcInstant;
+  readonly features: AppDemandFeatures;
+};
+
+export type SearchSeriesVintagePoint = {
+  readonly periodEnd: UtcInstant;
+  readonly valueKind: SearchSeriesValueKind;
+  readonly rawIndex: number | null;
+  readonly normalizedIndex: number | null;
+};
+
+export type SearchSeriesVintage = {
+  readonly vintageId: string;
+  readonly capturedAt: UtcInstant;
+  readonly revisionSequence: number;
+  readonly points: readonly SearchSeriesVintagePoint[];
+};
+
+export type SearchSeriesReliability = {
+  readonly entityId: string;
+  readonly providerId: string;
+  readonly vintages: readonly SearchSeriesVintage[];
+  readonly revisionDriftBps: number;
+  readonly zeroVsMissingDistinctionEnforced: boolean;
+  readonly samplingNoiseEstimate: number;
+  readonly rescalingChangeDetected: boolean;
+  readonly rescalingChangeAt: UtcInstant | null;
+  readonly robustNormalizationScale: number;
+  readonly reliabilityScoreBps: number;
+};
+
+export type LatentDigitalDemand = {
+  readonly level: number;
+  readonly momentum: number;
+  readonly uncertainty: number;
+  readonly stateRef: string;
+};
+
+export type DigitalDemandAnomalyAssessment = {
+  readonly anomalyClass: DigitalDemandAnomalyClass;
+  readonly robustZ: number;
+  readonly seasonalResidual: number;
+  readonly changePointDetected: boolean;
+  readonly changePointAt: UtcInstant | null;
+  readonly attentionToSales: AttentionToSalesInference;
+  readonly spikeNotTreatedAsSales: boolean;
+};
+
+export type DigitalDemandState = {
+  readonly stateId: string;
+  readonly entityId: string;
+  readonly asOf: UtcInstant;
+  readonly compiledAt: UtcInstant;
+  readonly inputFamiliesPresent: readonly DigitalDemandInputFamily[];
+  readonly search: SearchAttentionObservation | null;
+  readonly web: WebDemandObservation | null;
+  readonly app: AppDemandObservation | null;
+  readonly searchReliability: SearchSeriesReliability | null;
+  readonly latent: LatentDigitalDemand;
+  readonly anomaly: DigitalDemandAnomalyAssessment;
 };

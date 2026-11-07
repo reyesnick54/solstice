@@ -208,3 +208,48 @@ export const ALT12_FUSION_MODULE =
 
 export const ALT07_LOGISTICS_FLOW_MODULE =
   'packages/platform/src/helios/alternative-data-intelligence/alt07-logistics-flow/index.ts' as const;
+
+export const HELIOS_ALT05_DIGITAL_DEMAND_SCHEMA = 'sunrey.helios.alt05.digital-demand.v1' as const;
+
+export const HELIOS_ALT05_DIGITAL_DEMAND_AUTHORITY =
+  'packages/platform/src/helios/alternative-data-intelligence/alt05' as const;
+
+export const HELIOS_ALT05_DIGITAL_DEMAND_QUALIFIED = 'HELIOS_ALT05_DIGITAL_DEMAND_QUALIFIED' as const;
+export const HELIOS_ALT05_DIGITAL_DEMAND_BLOCKED = 'HELIOS_ALT05_DIGITAL_DEMAND_BLOCKED' as const;
+
+/** Permitted aggregate public/licensed input families (no individual tracking). */
+export const DIGITAL_DEMAND_INPUT_FAMILIES = [
+  'SEARCH_TRENDS',
+  'WEB_TRAFFIC',
+  'APP_ACTIVITY',
+  'APP_RANKING',
+  'DIGITAL_ENGAGEMENT',
+] as const;
+export type DigitalDemandInputFamily = (typeof DIGITAL_DEMAND_INPUT_FAMILIES)[number];
+
+export const SEARCH_SERIES_VALUE_KINDS = ['ZERO', 'MISSING', 'OBSERVED'] as const;
+export type SearchSeriesValueKind = (typeof SEARCH_SERIES_VALUE_KINDS)[number];
+
+export const PROVIDER_ESTIMATE_SEMANTICS = [
+  'INDEX_NORMALIZED',
+  'PROVIDER_MODEL_ESTIMATE',
+  'RANK_ONLY',
+  'UNKNOWN',
+] as const;
+export type ProviderEstimateSemantics = (typeof PROVIDER_ESTIMATE_SEMANTICS)[number];
+
+export const DIGITAL_DEMAND_ANOMALY_CLASSES = [
+  'NONE',
+  'PERSISTENT_TREND',
+  'SHORT_LIVED_ATTENTION_SPIKE',
+  'SEASONAL_RESIDUAL',
+  'CHANGE_POINT',
+] as const;
+export type DigitalDemandAnomalyClass = (typeof DIGITAL_DEMAND_ANOMALY_CLASSES)[number];
+
+export const ATTENTION_TO_SALES_INFERENCE = [
+  'NOT_INFERRED',
+  'QUALIFIED_ATTENTION_ONLY',
+  'REQUIRES_CORROBORATION',
+] as const;
+export type AttentionToSalesInference = (typeof ATTENTION_TO_SALES_INFERENCE)[number];
