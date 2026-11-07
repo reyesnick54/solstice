@@ -11,6 +11,10 @@ export type AltWorkPackageRow = {
 };
 
 const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly moduleRef: string }> = {
+  ALT04: {
+    title: 'Workforce and hiring alternative-data intelligence',
+    moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt04-workforce/index.ts',
+  },
   ALT12: {
     title: 'Missing-aware multimodal fusion and signal routing',
     moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt12/index.ts',
@@ -18,6 +22,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
 };
 
 const TEST_BY_PACKAGE: Record<string, string> = {
+  ALT04: 'tests/helios-alt04-workforce-intelligence.test.ts',
   ALT12: 'tests/helios-alt12-multimodal-fusion.test.ts',
 };
 

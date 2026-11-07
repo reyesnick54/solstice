@@ -12,7 +12,7 @@ export const HELIOS_ALT12_MULTIMODAL_FUSION_QUALIFIED =
 export const HELIOS_ALT12_MULTIMODAL_FUSION_BLOCKED =
   'HELIOS_ALT12_MULTIMODAL_FUSION_BLOCKED' as const;
 
-export const ALT_WORK_PACKAGES = Object.freeze(['ALT12'] as const);
+export const ALT_WORK_PACKAGES = Object.freeze(['ALT04', 'ALT12'] as const);
 export type AltWorkPackageId = (typeof ALT_WORK_PACKAGES)[number];
 
 /** Alternative-data modality families accepted by the fusion router. */
