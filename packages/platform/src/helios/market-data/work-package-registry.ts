@@ -57,7 +57,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
   },
   MD12: {
     title: 'Quality and microstructure',
-    moduleRef: 'packages/platform/src/helios/multi-asset/data-quality.ts',
+    moduleRef: 'packages/platform/src/helios/market-data/md12/index.ts',
   },
   MD13: {
     title: 'Operations, conformance, and chaos evidence',
@@ -79,7 +79,7 @@ const OPTIONAL_TESTS: Record<string, string> = {
   MD09: 'tests/helios-m06-crypto-market-data.test.ts',
   MD10: 'tests/helios-md10-macro-market-reference.test.ts',
   MD11: 'tests/helios-native03-bytex-runtime.test.ts',
-  MD12: 'tests/helios-m04-multi-asset-market-state.test.ts',
+  MD12: 'tests/helios-md12-data-quality-microstructure.test.ts',
   MD13: 'tests/helios-aaf07-external-market-data-certification.test.ts',
   MD14: 'tests/helios-md14-market-data-qualification.test.ts',
 };
