@@ -1,5 +1,6 @@
 /**
  * ALT01 knowability — decision-time PIT and backfill prohibition.
+ * ALT05 digital-demand artifact visibility helpers.
  */
 
 import type { UtcInstant } from '@solstice/domain';
@@ -67,4 +68,32 @@ export function assertAlternativeDataKnowableAtDecision(
     };
   }
   return assertNoBackfillBeforeHistoricalAvailability(observation);
+}
+
+export function isDigitalDemandArtifactKnowableAt<T extends { readonly envelope: { readonly knowableAt: UtcInstant } }>(
+  evaluationTimeUtc: UtcInstant,
+  artifact: T,
+): boolean {
+  const evalMs = Date.parse(evaluationTimeUtc);
+  const knowableMs = Date.parse(artifact.envelope.knowableAt);
+  if (!Number.isFinite(evalMs) || !Number.isFinite(knowableMs)) {
+    return false;
+  }
+  return evalMs >= knowableMs;
+}
+
+export function filterKnowableDigitalDemandArtifacts<
+  T extends { readonly envelope: { readonly knowableAt: UtcInstant } },
+>(evaluationTimeUtc: UtcInstant, artifacts: readonly T[]): readonly T[] {
+  return Object.freeze(artifacts.filter((row) => isDigitalDemandArtifactKnowableAt(evaluationTimeUtc, row)));
+}
+
+export function assertNoDigitalDemandLeakage<
+  T extends { readonly observationId: string; readonly envelope: { readonly knowableAt: UtcInstant } },
+>(evaluationTimeUtc: UtcInstant, artifacts: readonly T[]): void {
+  for (const artifact of artifacts) {
+    if (!isDigitalDemandArtifactKnowableAt(evaluationTimeUtc, artifact)) {
+      throw new Error(`digital-demand observation ${artifact.observationId} not knowable at ${evaluationTimeUtc}`);
+    }
+  }
 }
