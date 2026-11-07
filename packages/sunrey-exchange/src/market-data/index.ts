@@ -12,6 +12,15 @@ export {
   runMarketDataContractSuite,
 } from './sandbox.ts';
 export {
+  EXCHANGE_MARKET_DATA_OBSERVATION_ONLY,
+  MARKET_DATA_EVENT_SCHEMA_VERSION,
+  MARKET_DATA_EVENT_AUTHORITY,
+  CANONICAL_MARKET_DATA_EVENT_KINDS,
+  validateMarketDataEventEnvelope,
+} from './canonical-events.ts';
+export type { CanonicalMarketDataEvent, CanonicalMarketDataEventKind } from './canonical-events.ts';
+
+export {
   MARKET_DATA_CONTRACT_VERSION,
   MARKET_DATA_QUALITY,
   MARKET_DATA_SELECTION_POLICIES,
