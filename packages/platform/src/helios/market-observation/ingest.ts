@@ -4,7 +4,6 @@
 
 import type { Clock } from '@solstice/config';
 import { buildExternalObservation, MARKET_PRICE_FRESHNESS_POLICY } from '@solstice/provider-sdk';
-import { computeKnowableAt } from '../observation/information-time.ts';
 import { HeliosObservationFabric } from '../observation/fabric.ts';
 import { createHeliosObservationStore } from '../observation/store.ts';
 import { createMarketTimeSeriesStore, type MarketTimeSeriesStore } from './time-series-store.ts';
@@ -116,12 +115,6 @@ export class HeliosMarketObservationFabric {
         ? observation.orderBook.arrivalTimestamp
         : observation.arrivalTimestamp;
 
-    const knowableAt = computeKnowableAt({
-      providerAvailabilityTime: availabilityTimestamp,
-      sunreyArrivalTime: arrivalTimestamp,
-      ingestionTime: nowUtc,
-    });
-
     const built = buildExternalObservation({
       observationId: observation.provenance.observationId,
       providerId: observation.providerId,
@@ -163,6 +156,7 @@ export class HeliosMarketObservationFabric {
       informationTime: {
         sourceEventTime: sourceTimestamp,
         providerAvailabilityTime: availabilityTimestamp,
+        providerReceiveTime: availabilityTimestamp,
         sunreyArrivalTime: arrivalTimestamp,
         ingestionTime: nowUtc,
       },
@@ -200,7 +194,8 @@ export class HeliosMarketObservationFabric {
       }),
       envelope: ingestResult.envelope,
       informationTime: ingestResult.envelope.informationTime,
-      knowableAt: ingestResult.envelope.informationTime.knowableAt,
+      marketTime: ingestResult.envelope.marketTime,
+      knowableAt: ingestResult.envelope.marketTime.knowableAt,
     });
 
     if (!ingestResult.duplicate && !quarantined) {

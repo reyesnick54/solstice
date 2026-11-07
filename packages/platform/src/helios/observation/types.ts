@@ -7,6 +7,7 @@
  */
 
 import type { UtcInstant } from '@solstice/domain';
+import type { MarketTimeEnvelope } from '../market-data/md02/types.ts';
 import type {
   CommercialUseStatus,
   ExternalObservation,
@@ -96,6 +97,7 @@ export const QUALITY_FLAG_CODES = [
   'MALFORMED_PAYLOAD',
   'PROVIDER_UNAVAILABLE',
   'SHARED_UPSTREAM_SOURCE',
+  'CLOCK_INCONSISTENCY',
 ] as const;
 export type QualityFlagCode = (typeof QUALITY_FLAG_CODES)[number];
 
@@ -165,6 +167,8 @@ export type HeliosMarketObservationEnvelope = {
   readonly observationType: ObservationType;
   readonly observation: ExternalObservation<unknown>;
   readonly informationTime: InformationTime;
+  /** MD02 precision pipeline — distinct from collapsed informationTime fields. */
+  readonly marketTime: MarketTimeEnvelope;
   readonly sequence: number | null;
   readonly version: string | null;
   readonly lineage: ObservationLineageRecord;
@@ -191,6 +195,8 @@ export type IngestObservationInput<T> = {
     readonly providerAvailabilityTime: UtcInstant | null;
     readonly sunreyArrivalTime: UtcInstant;
     readonly ingestionTime: UtcInstant;
+    readonly exchangeSendTime: UtcInstant | null;
+    readonly providerReceiveTime: UtcInstant | null;
   }>;
   readonly sequence?: number | null;
   readonly version?: string | null;

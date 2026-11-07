@@ -260,6 +260,16 @@ export {
   type ObservationEntitlement,
   type ObservationType,
   type QualityState,
+  HELIOS_MD02_PRECISION_TIME_QUALIFIED,
+  HELIOS_MD02_PRECISION_TIME_BLOCKED,
+  buildMarketTimeEnvelope,
+  computeMarketKnowableAt,
+  computeMarketTimeLatencies,
+  aafTemporalJoinInstant,
+  evaluateMd02PrecisionTimeQualification,
+  marketTimeToInformationTime,
+  type MarketTimeEnvelope,
+  type Md02PrecisionTimeQualificationResult,
 } from './observation/index.ts';
 
 export {

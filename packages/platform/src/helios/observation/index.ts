@@ -83,6 +83,20 @@ export {
 export { HeliosObservationFabric, type HeliosObservationFabricOptions } from './fabric.ts';
 
 export {
+  HELIOS_MD02_PRECISION_TIME_QUALIFIED,
+  HELIOS_MD02_PRECISION_TIME_BLOCKED,
+  HELIOS_MD02_PRECISION_TIME_SCHEMA,
+  buildMarketTimeEnvelope,
+  marketTimeToInformationTime,
+  computeMarketKnowableAt,
+  computeMarketTimeLatencies,
+  aafTemporalJoinInstant,
+  evaluateMd02PrecisionTimeQualification,
+  type MarketTimeEnvelope,
+  type Md02PrecisionTimeQualificationResult,
+} from '../market-data/md02/index.ts';
+
+export {
   HELIOS_AAF07_EXTERNAL_MARKET_DATA_CERTIFICATION_QUALIFIED,
   HELIOS_AAF07_EXTERNAL_MARKET_DATA_CERTIFICATION_BLOCKED,
   evaluateAaf07MarketDataQualification,

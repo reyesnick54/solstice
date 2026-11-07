@@ -74,6 +74,12 @@ export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPacka
       'tests/helios-h07-market-data-adapter.test.ts',
     ),
     statusFrom(
+      'MD02',
+      'Precision market time and timestamp provenance',
+      testExists(root, 'helios-md02-precision-market-time.test.ts') ? 'QUALIFIED' : 'BLOCKED',
+      'tests/helios-md02-precision-market-time.test.ts',
+    ),
+    statusFrom(
       'H08',
       'Observation provenance freshness entitlements',
       testExists(root, 'helios-h08-observation-provenance-freshness-entitlements.test.ts')
