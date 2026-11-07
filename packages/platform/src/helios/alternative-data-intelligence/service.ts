@@ -4,7 +4,10 @@
 
 import type { UtcInstant } from '@solstice/domain';
 import type { RevisionPolicy } from '../feature-fabric/temporal-types.ts';
-import { filterKnowableAlternativeDataObservations } from './knowable-at.ts';
+import {
+  assertNoBackfillBeforeHistoricalAvailability,
+  filterKnowableAlternativeDataObservations,
+} from './knowable-at.ts';
 import { computeAlternativeDataFeatures } from './features.ts';
 import { buildAlternativeDataCoverageState } from './coverage.ts';
 import { ALT01_REFERENCE_AND_RESEARCH_ONLY } from './authority.ts';
@@ -51,6 +54,10 @@ export class AlternativeDataIntelligenceFabric {
       schema: HELIOS_ALT01_ALTERNATIVE_DATA_INTELLIGENCE_SCHEMA,
       grantsExecutionAuthority: false,
     });
+    const backfill = assertNoBackfillBeforeHistoricalAvailability(observation);
+    if (!backfill.ok) {
+      throw new Error(`${backfill.code}:${backfill.message}`);
+    }
     this.#observations.push(observation);
     return observation;
   }

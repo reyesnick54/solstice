@@ -4,7 +4,10 @@
 
 import type { UtcInstant } from '@solstice/domain';
 import { createAlternativeDataIntelligenceFabric } from '../../alternative-data-intelligence/service.ts';
-import type { AlternativeDataObservationInput } from '../../alternative-data-intelligence/types.ts';
+import type {
+  AlternativeDataObservation,
+  AlternativeDataObservationInput,
+} from '../../alternative-data-intelligence/types.ts';
 import { assertNoBackfillBeforeHistoricalAvailability } from '../../alternative-data-intelligence/knowable-at.ts';
 import { createRevisionLedgerStore, type RevisionLedgerStore } from '../revision-ledger/store.ts';
 import type { RevisionPolicy } from '../temporal-types.ts';
@@ -36,7 +39,16 @@ export class PointInTimeAlternativeDataFabric {
   }
 
   ingestObservation(input: AlternativeDataObservationInput): IngestAlternativeDataResult {
-    const observation = this.#intelligence.ingestObservation(input);
+    let observation: AlternativeDataObservation;
+    try {
+      observation = this.#intelligence.ingestObservation(input);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const colon = message.indexOf(':');
+      const code = colon >= 0 ? message.slice(0, colon) : 'INGEST_REJECTED';
+      const detail = colon >= 0 ? message.slice(colon + 1) : message;
+      return Object.freeze({ ok: false, code, message: detail });
+    }
     const backfill = assertNoBackfillBeforeHistoricalAvailability(observation);
     if (!backfill.ok) {
       return backfill;
