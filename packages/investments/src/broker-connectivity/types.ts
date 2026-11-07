@@ -3,7 +3,7 @@
  * Money fields use integer minor-unit strings; quantities use scaled unit strings.
  */
 
-import type { UtcInstant } from '@solstice/domain';
+import type { UtcInstant } from '../../../domain/src/time.ts';
 import type {
   BrokerConnectivityState,
   HELIOS_EXEC01_CONNECTIVITY_AUTHORITY,
