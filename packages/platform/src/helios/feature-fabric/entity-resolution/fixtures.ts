@@ -71,6 +71,7 @@ export function seedReferenceTemporalEntityGraph(store: TemporalEntityGraphStore
     source: 'fixture:sec-edgar',
     confidenceState: 'CONFIRMED' as const,
     ambiguityState: 'UNAMBIGUOUS' as const,
+    confidence: null,
     observedAt: T('2010-01-01T00:00:00.000Z'),
     knowableAt: T('2010-01-02T00:00:00.000Z'),
     jurisdiction: 'US',
