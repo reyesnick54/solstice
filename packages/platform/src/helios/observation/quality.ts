@@ -6,6 +6,7 @@ import type { UtcInstant } from '@solstice/domain';
 import type { ExternalObservation } from '@solstice/provider-sdk';
 import { detectTimestampReversal } from './information-time.ts';
 import type { InformationTime } from './types.ts';
+import type { MarketTimeEnvelope } from '../market-data/md02/types.ts';
 import type {
   GapState,
   HeliosFreshnessAssessment,
@@ -22,6 +23,7 @@ import { sharedUpstreamNotIndependent } from './lineage.ts';
 export type QualityCheckContext = {
   readonly observation: ExternalObservation<unknown>;
   readonly informationTime: InformationTime;
+  readonly marketTime?: MarketTimeEnvelope;
   readonly entitlement: ObservationEntitlement;
   readonly freshness: HeliosFreshnessAssessment;
   readonly canonicalInstrumentId: string;
@@ -81,6 +83,22 @@ export function runQualityChecks(context: QualityCheckContext): {
 
   if (detectTimestampReversal(context.informationTime, context.priorSourceEventTime)) {
     flags.push({ code: 'TIMESTAMP_REVERSAL', message: 'Source event time reversed relative to prior observation' });
+    return finalize('DEGRADED_SEQUENCE', 'UNKNOWN', flags);
+  }
+
+  if (context.marketTime?.timestampQuality.clockInconsistency) {
+    flags.push({
+      code: 'CLOCK_INCONSISTENCY',
+      message: 'Source clock appears ahead of SunRey receive beyond tolerance',
+    });
+    return finalize('DEGRADED_SEQUENCE', 'UNKNOWN', flags);
+  }
+
+  if (context.marketTime?.timestampQuality.negativeLatencyDetected) {
+    flags.push({
+      code: 'TIMESTAMP_REVERSAL',
+      message: 'Negative latency detected in market time pipeline — not silently corrected',
+    });
     return finalize('DEGRADED_SEQUENCE', 'UNKNOWN', flags);
   }
 

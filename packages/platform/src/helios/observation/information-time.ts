@@ -41,7 +41,8 @@ export function buildInformationTime(input: {
 }
 
 /**
- * Earliest instant SunRey could have known the observation.
+ * Earliest instant SunRey could have known the observation (legacy three-stage rule).
+ * Market observations should use MD02 `computeMarketKnowableAt` via `MarketTimeEnvelope`.
  * Uses the latest of known availability/arrival times — never fabricates earlier knowability.
  */
 export function computeKnowableAt(input: {
