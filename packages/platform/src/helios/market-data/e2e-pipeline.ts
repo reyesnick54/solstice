@@ -1,5 +1,21 @@
 import type { UtcInstant } from '@solstice/domain';
 
+import { createHeliosMarketDataFabric, md01QuoteEventFixture } from './md01/index.ts';
+import { buildMarketTimeEnvelope } from './md02/envelope.ts';
+import { detectSequenceAnomalies } from './md03/detection.ts';
+import {
+  createCanonicalOrderBookFromSnapshot,
+  MD04_L3_SNAPSHOT_SEED,
+} from './md04-order-book/index.ts';
+import {
+  MD05_FIXTURE_FEED_ID,
+  MD05_FIXTURE_REPLICAS,
+  RedundantFeedArbitrationEngine,
+  fixtureTick,
+} from './md05/index.ts';
+import { createMd12AnomalyStore } from './md12/store.ts';
+import { createMd12EngineState, processMd12MarketEvent } from './md12/engine.ts';
+import type { Md12MarketEvent } from './md12/types.ts';
 import { mayAafCertifyMarketDataFeature, type MarketDataAafFeatureEnvelope } from './aaf-integration.ts';
 
 export const MD14_E2E_PIPELINE_STAGES = Object.freeze([
@@ -45,28 +61,156 @@ export function runMd14SyntheticE2ePipeline(input: {
     stages.push(Object.freeze({ stage, ok, detail }));
   };
 
-  push('raw_event', true, `fixture raw seq=${input.sequence}`);
+  const quoteFixture = md01QuoteEventFixture({
+    eventTime: input.eventTime,
+    knowableAt: input.knowableAt,
+    sourceSequence: BigInt(input.sequence),
+  });
+  push('raw_event', true, `MD01 fixture quote seq=${input.sequence}`);
 
-  const sequenceOk = input.sequence === input.priorSequence + 1;
+  const sequenceAnomalies = detectSequenceAnomalies({
+    lastAppliedSequence: input.priorSequence,
+    expectedNextSequence: input.priorSequence + 1,
+    session: Object.freeze({
+      sessionId: 'md14-e2e',
+      sessionGeneration: 1,
+      startedAt: input.eventTime,
+      lastResetAt: null,
+      resetReason: null,
+    }),
+    observation: Object.freeze({
+      sequence: input.sequence,
+      sessionId: 'md14-e2e',
+      sessionGeneration: 1,
+      checksum: null,
+      expectedChecksum: null,
+      at: input.knowableAt,
+    }),
+  });
+  const sequenceOk = sequenceAnomalies.length === 0 && input.sequence === input.priorSequence + 1;
   push(
     'sequence_verification',
     sequenceOk,
-    sequenceOk ? 'sequence intact' : 'sequence gap detected',
+    sequenceOk ? 'MD03 sequence intact' : `MD03 anomalies=${sequenceAnomalies.length}`,
   );
 
-  const timeOk = input.knowableAt >= input.eventTime;
-  push('time_envelope', timeOk, timeOk ? 'knowableAt >= eventTime' : 'time envelope violation');
+  const timeEnvelope = buildMarketTimeEnvelope({
+    exchangeEventTime: input.eventTime,
+    sunreyNetworkReceiveTime: input.knowableAt,
+    sunreyNormalizeTime: input.knowableAt,
+    sunreyPersistTime: input.knowableAt,
+  });
+  const timeOk = timeEnvelope.knowableAt >= input.eventTime && input.knowableAt >= input.eventTime;
+  push(
+    'time_envelope',
+    timeOk,
+    timeOk ? `MD02 knowableAt=${timeEnvelope.knowableAt}` : 'MD02 time envelope violation',
+  );
 
-  push('normalized_event', sequenceOk && timeOk, 'canonical instrument + normalized payload');
+  const fabric = createHeliosMarketDataFabric();
+  const ingest = fabric.ingestEvent(quoteFixture);
+  const normalizedOk = ingest.ok && sequenceOk && timeOk;
+  push(
+    'normalized_event',
+    normalizedOk,
+    normalizedOk ? 'MD01 fabric ingested canonical quote' : ingest.ok ? 'upstream sequence/time' : 'MD01 ingest rejected',
+  );
 
-  push('book_reconstruction', true, 'deterministic L2 snapshot from normalized quotes');
+  const book = createCanonicalOrderBookFromSnapshot(MD04_L3_SNAPSHOT_SEED);
+  const bookOk = book.instrumentId === MD04_L3_SNAPSHOT_SEED.instrumentId && book.bids.length > 0;
+  push(
+    'book_reconstruction',
+    bookOk,
+    bookOk ? `MD04 book hash=${book.stateHash.digest.slice(0, 12)}` : 'MD04 book reconstruction failed',
+  );
 
-  push('redundant_source_reconciliation', true, 'primary corroborated by secondary fixture source');
+  const md05Engine = new RedundantFeedArbitrationEngine({
+    feedId: MD05_FIXTURE_FEED_ID,
+    symbol: 'SPY',
+    venueId: 'XNYS',
+    replicas: MD05_FIXTURE_REPLICAS,
+  });
+  const md05Result = md05Engine.ingest(
+    [
+      fixtureTick({
+        replicaId: 'replica-primary-a',
+        role: 'PRIMARY_A',
+        providerId: 'vendor_alpha',
+        nativeMessageId: `msg-${input.sequence}-a`,
+        nativeSequence: String(input.sequence),
+        sourceTimestamp: input.eventTime,
+        arrivalTimestamp: input.knowableAt,
+      }),
+      fixtureTick({
+        replicaId: 'replica-primary-b',
+        role: 'PRIMARY_B',
+        providerId: 'vendor_beta',
+        nativeMessageId: `msg-${input.sequence}-b`,
+        nativeSequence: String(input.sequence),
+        sourceTimestamp: input.eventTime,
+        arrivalTimestamp: input.knowableAt,
+      }),
+    ],
+    input.knowableAt,
+  );
+  const redundantOk = md05Result.consensus.outcome === 'UNANIMOUS' && md05Result.consensus.observation !== null;
+  push(
+    'redundant_source_reconciliation',
+    redundantOk,
+    redundantOk ? 'MD05 redundant replicas corroborated' : 'MD05 reconciliation failed',
+  );
 
-  const qualityState = sequenceOk && timeOk ? 'VALID' : 'DESYNCHRONIZED';
-  push('quality_state', sequenceOk && timeOk, `quality=${qualityState}`);
+  const md12Event: Md12MarketEvent = Object.freeze({
+    eventId: 'md14-e2e-quote',
+    kind: 'QUOTE',
+    sequence: BigInt(input.sequence),
+    instrumentId: quoteFixture.instrumentId,
+    venueId: quoteFixture.venueId,
+    providerId: quoteFixture.providerId,
+    sourceTimestamp: input.eventTime,
+    knowableAt: input.knowableAt,
+    arrivalTimestamp: input.knowableAt,
+    ingestLatencyMs: 5,
+    bid:
+      quoteFixture.bidPrice && quoteFixture.bidQuantity
+        ? Object.freeze({
+            priceMinorUnits: 187_25_00n,
+            sizeUnits: 100_0000n,
+          })
+        : null,
+    ask:
+      quoteFixture.askPrice && quoteFixture.askQuantity
+        ? Object.freeze({
+            priceMinorUnits: 187_26_00n,
+            sizeUnits: 100_0000n,
+          })
+        : null,
+    tradePriceMinorUnits: null,
+    tradeSizeUnits: null,
+    tradeId: null,
+    bookBidLevels: Object.freeze([]),
+    bookAskLevels: Object.freeze([]),
+    priorMidMinorUnits: null,
+    referenceMidMinorUnits: null,
+    duplicateTradeFingerprint: null,
+  });
+  const md12Store = createMd12AnomalyStore();
+  const md12 = processMd12MarketEvent({
+    event: md12Event,
+    now: input.nowUtc,
+    store: md12Store,
+    engineState: createMd12EngineState(),
+    corroborationProviderCount: 2,
+  });
+  const qualityState = sequenceOk && timeOk && md12.quality.band !== 'UNUSABLE' ? 'VALID' : 'DESYNCHRONIZED';
+  const qualityOk = sequenceOk && timeOk && md12.quality.band !== 'UNUSABLE';
+  push(
+    'quality_state',
+    qualityOk,
+    `MD12 quality=${md12.quality.band} composite=${qualityState}`,
+  );
 
-  push('durable_store', true, 'simulation store append-only');
+  push('durable_store', normalizedOk, 'simulation store append-only');
 
   const featureEnvelope: MarketDataAafFeatureEnvelope = Object.freeze({
     eventTime: input.eventTime,

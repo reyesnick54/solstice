@@ -1,22 +1,14 @@
 # Market Data Time Integrity Report
 
-## Event time vs knowable-at (MD02)
+**Git SHA:** `ceeba184f759b64d01216dc923d2cc1f6554dd41` · **Evaluated at (UTC):** `2026-11-07T16:54:02.230Z`
 
-- **eventTime** maps from provider `sourceEventTime` on the H08 observation envelope.
-- **knowableAt** is the earliest research-safe instant; queries and features must filter on knowable-at, not arrival time.
+## Precision time (MD02)
 
-Canonical types: `packages/platform/src/helios/observation/types.ts`, `packages/platform/src/helios/market-observation/types.ts`.
+Canonical owner: `packages/platform/src/helios/market-data/md02/index.ts`
 
-## AAF07 proofs
+- `buildMarketTimeEnvelope` distinguishes pipeline stages and computes `knowableAt`.
+- MD14 E2E invokes MD02 for the time-envelope stage.
+- Adversarial scenario `md14_clock_skew` rejects `knowableAt < eventTime`.
 
-`knowable_at_correctness` and `timestamp_normalization` are explicit harness proofs (`packages/external-data/src/certification/market-data/harness.ts`, `knowable-at.ts`).
+AAF feature certification requires `knowableAt >= eventTime` (`aaf-integration.ts`).
 
-## MD14 gates
-
-- Synthetic E2E pipeline rejects envelopes where `knowableAt < eventTime`.
-- Adversarial scenario `md14_clock_skew` locks this behavior.
-- AAF feature certification requires `knowableAt >= eventTime` (`aaf-integration.ts`).
-
-## Precision expectations
-
-All timestamps are UTC instants. Simulation qualification uses deterministic fixture clocks; live-shadow mode must still normalize provider clocks before observations enter the fabric.

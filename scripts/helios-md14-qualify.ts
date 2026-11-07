@@ -15,6 +15,7 @@ import {
   HELIOS_PRODUCTION_MARKET_DATA_V1_QUALIFIED,
   evaluateMarketDataFabricQualification,
 } from '../packages/platform/src/helios/market-data/index.ts';
+import { regenerateMarketDataQualificationReports } from '../packages/platform/src/helios/market-data/report-writer.ts';
 import { lintHeliosBoundary } from '../tools/architectural-linter/src/helios-guards.ts';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -80,8 +81,12 @@ const cfOk = runTest('COUNTERFACTUAL', 'tests/helios-cf14-counterfactual-learnin
 const altOk = runTest('ALT14 alternative data', 'tests/helios-alt14-alternative-data-qualification.test.ts');
 const strategyLabOk = runTest('Strategy Lab', 'tests/helios-os05-strategy-genome.test.ts');
 const execTwinOk = runTest('Execution Twin', 'tests/helios-os02-execution-twin.test.ts');
-const fuzzOk = runTest('fuzz', 'tests/helios-h31-adversarial-resilience.test.ts');
-const formalOk = runNpmScript('formal smoke', 'test:formal-smoke');
+const fuzzOk =
+  runTest('fuzz (HELIOS)', 'tests/helios-h31-adversarial-resilience.test.ts') &&
+  runNpmScript('fuzz extended', 'test:fuzz-extended');
+const formalOk = runNpmScript('formal extended', 'test:formal-extended');
+const md11Ok = runTest('MD11 replay', 'tests/helios-md11-deterministic-replay.test.ts');
+const md13Ok = runTest('MD13 resilience', 'tests/helios-md13-live-data-resilience.test.ts');
 function runNightlyBench(): boolean {
   if (SKIP_SUBPROCESS) {
     console.log('[MD14] nightly bench: skipped (--skip-subprocess)');
@@ -141,6 +146,8 @@ const subprocessGatesOk =
   formalOk &&
   nightlyBenchOk &&
   aaf07Ok &&
+  md11Ok &&
+  md13Ok &&
   md14Ok;
 
 const qualification = evaluateMarketDataFabricQualification({
@@ -168,10 +175,12 @@ if (!subprocessGatesOk) {
   if (!altOk) blockers.push('ALT14 subprocess gate failed');
   if (!strategyLabOk) blockers.push('Strategy Lab subprocess gate failed');
   if (!execTwinOk) blockers.push('Execution Twin subprocess gate failed');
-  if (!fuzzOk) blockers.push('fuzz qualification test failed');
-  if (!formalOk) blockers.push('formal smoke failed');
+  if (!fuzzOk) blockers.push('fuzz qualification (HELIOS or extended) failed');
+  if (!formalOk) blockers.push('formal extended failed');
   if (!nightlyBenchOk) blockers.push('nightly bench failed');
   if (!aaf07Ok) blockers.push('AAF07 market-data certification test failed');
+  if (!md11Ok) blockers.push('MD11 deterministic replay test failed');
+  if (!md13Ok) blockers.push('MD13 live-data resilience test failed');
   if (!md14Ok) blockers.push('MD14 acceptance test failed');
 }
 
@@ -179,6 +188,19 @@ const qualified = blockers.length === 0;
 const marker = qualified
   ? HELIOS_PRODUCTION_MARKET_DATA_V1_QUALIFIED
   : HELIOS_PRODUCTION_MARKET_DATA_V1_BLOCKED;
+
+regenerateMarketDataQualificationReports({
+  root: ROOT,
+  gitSha: sha,
+  evaluatedAt: now,
+  qualification: Object.freeze({
+    ...qualification,
+    qualified,
+    marker,
+    blockers: Object.freeze(blockers),
+  }),
+  subprocessGatesOk,
+});
 
 mkdirSync(OUT_DIR, { recursive: true });
 const jsonPath = join(OUT_DIR, `helios-md14-qualification-${sha.slice(0, 12)}.json`);
