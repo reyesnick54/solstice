@@ -74,6 +74,20 @@ export {
 export { createKrakenVenueRoutingAdapter } from './adapters/kraken-venue.ts';
 
 export {
+  HELIOS_EXEC05_SMART_ROUTING_QUALIFIED,
+  SmartOrderRouter,
+  generateBestExecutionEvidence,
+  evaluateExec05SmartRoutingQualification,
+  ROUTING_SCORE_COMPONENTS,
+  type ExecutionVenueCandidate,
+  type RoutingDecision,
+  type RoutingScorecard,
+  type ExecutionQualityEstimate,
+  type DirectedOrderInstruction,
+  type BestExecutionEvidence,
+} from '../execution-connectivity/exec05/index.ts';
+
+export {
   runHeliosOs04VenueConformanceSuite,
   describeVenueRoutingPosture,
   HELIOS_OS04_VENUE_ADAPTER_CONFORMANCE_QUALIFIED,
