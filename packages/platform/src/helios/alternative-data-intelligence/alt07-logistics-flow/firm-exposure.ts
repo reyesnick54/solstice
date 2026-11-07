@@ -56,7 +56,7 @@ export function compileFirmLogisticsExposures(input: {
         companyId,
         facilityId: seed.facilityRef,
         portId: portIds.has(portId) ? portId : null,
-        routeId: routeIds.has(routeId) ? routeId : routeId,
+        routeId: routeIds.has(routeId) ? routeId : null,
         commodityCode: seed.commodityCode,
         confidence,
         evidenceRefs: Object.freeze([...seed.evidenceRefs]),
