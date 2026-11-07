@@ -347,3 +347,4 @@ export {
 } from './earnings-intelligence/options/qualification.ts';
 
 export * from './strategy-evolution/evol08/index.ts';
+export * from './alternative-data/index.ts';
