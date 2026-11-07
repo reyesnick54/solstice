@@ -1,5 +1,7 @@
 # Market Data Provider Qualification
 
+**Git SHA:** `2146aa191d01323d9c2cfff6bd8411e640809802` · **Evaluated at (UTC):** `2026-11-07T16:23:35.673Z`
+
 ## Status ladder
 
 1. **REGISTERED** — Provider appears in certification catalog overlay.
@@ -7,27 +9,12 @@
 3. **READONLY_LIVE_QUALIFIED** — Sandbox checks plus credentials, contract/license, entitlement evidence, data-use policy, and **verified external connectivity**.
 4. **PRODUCTION_RESEARCH_QUALIFIED** — Read-only live qualification complete for continuous research ingestion.
 
-This ladder is **not** regulatory approval.
-
-## Evidence fields
-
-| Field | Required for live shadow |
-|-------|--------------------------|
-| Valid credentials (env secret ref) | Yes |
-| Contract / license reference | Yes |
-| Entitlement evidence | Yes |
-| Data-use policy | Yes |
-| Conformance harness | Yes |
-| Gap recovery | Yes |
-| Clock / timestamp validation | Yes |
-| Chaos test | Yes |
-| External connectivity verified | Yes |
+Fixture catalog providers remain **SANDBOX_QUALIFIED** only for this MD15 pass (`MARKET_DATA_LIVE_SHADOW_ENABLED=false`).
 
 Implementation: `packages/platform/src/helios/market-data/provider-qualification.ts`.
 
-## Operator commands
+## Qualification status
 
-- `npm run helios:aaf07:market-data:certify` — AAF07 thirteen-proof harness
-- `npm run helios:market-data:qualify` — H07 bounded external qualify (`HELIOS_MARKET_DATA_LIVE_QUALIFY=1` + credential)
+- MD14 fabric marker: `HELIOS_PRODUCTION_MARKET_DATA_V1_QUALIFIED`
+- Live shadow eligible without connectivity evidence: **blocked**
 
-Never commit credential values. Reports must set `secretValuePresent: false`.

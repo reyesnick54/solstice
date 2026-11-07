@@ -12,12 +12,12 @@ export type MdWorkPackageRow = {
 
 const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly moduleRef: string }> = {
   MD01: {
-    title: 'Canonical observation fabric',
-    moduleRef: 'packages/platform/src/helios/observation/fabric.ts',
+    title: 'Canonical market-data fabric',
+    moduleRef: 'packages/platform/src/helios/market-data/md01/index.ts',
   },
   MD02: {
     title: 'Precision time and knowable-at envelope',
-    moduleRef: 'packages/platform/src/helios/observation/information-time.ts',
+    moduleRef: 'packages/platform/src/helios/market-data/md02/index.ts',
   },
   MD03: {
     title: 'Sequence recovery and gap handling',
@@ -28,8 +28,8 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
     moduleRef: 'packages/platform/src/helios/market-data/md04-order-book/index.ts',
   },
   MD05: {
-    title: 'Redundant-source reconciliation',
-    moduleRef: 'packages/platform/src/helios/observation/lineage.ts',
+    title: 'Redundant feed arbitration',
+    moduleRef: 'packages/platform/src/helios/market-data/md05/index.ts',
   },
   MD06: {
     title: 'Instrument master',
@@ -44,8 +44,8 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
     moduleRef: 'packages/platform/src/helios/market-data/md08/index.ts',
   },
   MD09: {
-    title: 'Crypto multi-venue fabric',
-    moduleRef: 'packages/platform/src/helios/adaptive-alpha-fabric/aaf09-external-crypto/fabric.ts',
+    title: 'Multi-venue crypto',
+    moduleRef: 'packages/platform/src/helios/market-data/md09/index.ts',
   },
   MD10: {
     title: 'FX, rates, and commodity reference fabric',
@@ -53,15 +53,15 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
   },
   MD11: {
     title: 'Deterministic replay',
-    moduleRef: 'packages/platform/src/helios/execution-twin/bytex-native/replay.ts',
+    moduleRef: 'packages/sunrey-exchange/src/market-data/md11/index.ts',
   },
   MD12: {
     title: 'Quality and microstructure',
     moduleRef: 'packages/platform/src/helios/market-data/md12/index.ts',
   },
   MD13: {
-    title: 'Operations, conformance, and chaos evidence',
-    moduleRef: 'packages/external-data/src/certification/market-data/harness.ts',
+    title: 'Live-data resilience and chaos',
+    moduleRef: 'packages/platform/src/helios/market-data-live/md13/index.ts',
   },
   MD14: {
     title: 'Final production-shaped qualification',
@@ -70,17 +70,19 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
 };
 
 const OPTIONAL_TESTS: Record<string, string> = {
-  MD01: 'tests/helios-h08-observation-provenance-freshness-entitlements.test.ts',
+  MD01: 'tests/helios-md01-market-data-fabric.test.ts',
+  MD02: 'tests/helios-md02-precision-market-time.test.ts',
+  MD05: 'tests/helios-md05-redundant-market-truth.test.ts',
   MD03: 'tests/helios-md03-sequence-recovery.test.ts',
   MD04: 'tests/helios-md04-order-book-engine.test.ts',
   MD06: 'tests/helios-md06-instrument-master.test.ts',
   MD07: 'tests/helios-md07-us-equity-market-state.test.ts',
   MD08: 'tests/helios-md08-derivatives-market-data.test.ts',
-  MD09: 'tests/helios-m06-crypto-market-data.test.ts',
+  MD09: 'tests/helios-md09-crypto-market-data.test.ts',
   MD10: 'tests/helios-md10-macro-market-reference.test.ts',
-  MD11: 'tests/helios-native03-bytex-runtime.test.ts',
+  MD11: 'tests/helios-md11-deterministic-replay.test.ts',
   MD12: 'tests/helios-md12-data-quality-microstructure.test.ts',
-  MD13: 'tests/helios-aaf07-external-market-data-certification.test.ts',
+  MD13: 'tests/helios-md13-live-data-resilience.test.ts',
   MD14: 'tests/helios-md14-market-data-qualification.test.ts',
 };
 
