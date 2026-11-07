@@ -10,7 +10,7 @@ import type {
   Md08OptionContractState,
   Md08OptionQuote,
 } from './types.ts';
-import type { Md03FeedCoordinatorSnapshot } from '../md03/types.ts';
+import type { Md08FeedTransportState } from './feed-bridge.ts';
 
 function yearsToExpiry(expiry: UtcInstant, evaluatedAt: UtcInstant): number {
   const ms = Date.parse(expiry) - Date.parse(evaluatedAt);
@@ -65,7 +65,7 @@ export function buildDerivativeMarketState(input: {
   readonly options: readonly Md08OptionContractState[];
   readonly underlyingSpotById: Readonly<Record<string, bigint>>;
   readonly riskFreeRate: number;
-  readonly feedTransport: Md03FeedCoordinatorSnapshot<unknown> | null;
+  readonly feedTransport: Md08FeedTransportState | null;
 }): DerivativeMarketState {
   const options = Object.freeze(
     input.options.map((row) =>

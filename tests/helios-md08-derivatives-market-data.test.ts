@@ -8,7 +8,6 @@ import { describe, it } from 'node:test';
 import { ENVIRONMENT, LIVE_TRADING_ENABLED } from '../packages/config/src/index.ts';
 import { asUtcInstant } from '../packages/domain/src/time.ts';
 import {
-  applyMd03Incremental,
   applyMd08IncrementalBookUpdate,
   applyMd08RecoveryBookSnapshot,
   buildDerivativeMarketState,
@@ -22,8 +21,7 @@ import {
   MD08_FIXTURE_OPTIONS,
   MD08_FIXTURE_UNDERLYING_SPOT,
   MD08_ESZ2026_ID,
-  snapshotMd08FeedTransport,
-} from '../packages/platform/src/helios/market-data-intelligence/index.ts';
+} from '../packages/platform/src/helios/market-data/index.ts';
 
 describe('HELIOS MD08 derivatives market data', () => {
   it('stays in simulation posture', () => {
@@ -73,59 +71,49 @@ describe('HELIOS MD08 derivatives market data', () => {
 
   it('supports CME-style dual/incremental/recovery through MD03', () => {
     const book = MD08_FIXTURE_FUTURES[0]!.book!;
-    let coordinator = createMd08DerivativesFeedTransport({
-      instrumentId: MD08_ESZ2026_ID,
-      initialBooks: Object.freeze({}),
+    const sessionId = 'cme-sess-md08';
+    let transport = createMd08DerivativesFeedTransport({
+      primaryFeedId: 'CME:MDP3:PRIMARY',
+      secondaryFeedId: 'CME:MDP3:SECONDARY',
+      sessionId,
+      startedAt: MD08_FIXTURE_EVAL_TIME,
     });
-    coordinator = applyMd08IncrementalBookUpdate(coordinator, {
-      instrumentId: MD08_ESZ2026_ID,
-      sequence: 1n,
-      knowableAt: MD08_FIXTURE_EVAL_TIME,
-      book,
+    transport = applyMd08IncrementalBookUpdate(transport, {
       feedRole: 'PRIMARY',
-    });
-    coordinator = applyMd08IncrementalBookUpdate(coordinator, {
       instrumentId: MD08_ESZ2026_ID,
-      sequence: 1n,
+      sequence: 1,
       knowableAt: MD08_FIXTURE_EVAL_TIME,
       book,
+      sessionId,
+    });
+    transport = applyMd08IncrementalBookUpdate(transport, {
       feedRole: 'SECONDARY',
-    });
-    const gap = applyMd03Incremental({
-      prior: coordinator.state,
-      sequence: coordinator.primarySequence,
-      envelope: {
-        schema: 'sunrey.helios.market-data.md03-feed.v1',
-        authority: 'REFERENCE_ONLY',
-        mode: 'INCREMENTAL',
-        feed: Object.freeze({
-          schema: 'sunrey.helios.market-data.md03-feed.v1',
-          feedId: 'primary',
-          venueId: 'XCME',
-          role: 'PRIMARY',
-          channel: 'MDP3',
-        }),
-        instrumentId: MD08_ESZ2026_ID,
-        sequence: 3n,
-        sourceTimestamp: MD08_FIXTURE_EVAL_TIME,
-        knowableAt: MD08_FIXTURE_EVAL_TIME,
-        payload: Object.freeze({ book }),
-        grantsExecutionAuthority: false,
-      },
-      merge: coordinator.merge,
-      applyOnGap: false,
-    });
-    assert.equal(gap.outcome, 'GAP');
-    coordinator = applyMd08RecoveryBookSnapshot(coordinator, {
       instrumentId: MD08_ESZ2026_ID,
-      snapshotSequence: 10n,
+      sequence: 1,
+      knowableAt: MD08_FIXTURE_EVAL_TIME,
+      book,
+      sessionId,
+    });
+    const gap = applyMd08IncrementalBookUpdate(transport, {
+      feedRole: 'PRIMARY',
+      instrumentId: MD08_ESZ2026_ID,
+      sequence: 3,
       knowableAt: asUtcInstant('2026-09-15T18:00:01.000Z'),
       book,
-      recoveryToken: 'recovery-md08-1',
+      sessionId,
     });
-    const transport = snapshotMd08FeedTransport(coordinator, MD08_FIXTURE_EVAL_TIME);
-    assert.equal(transport.recovery?.phase, 'RECOVERED');
-    assert.equal(transport.primary.lastSequence, 10n);
+    assert.equal(gap.primary.lastAppliedSequence, 1);
+    transport = applyMd08RecoveryBookSnapshot(gap, {
+      feedRole: 'PRIMARY',
+      instrumentId: MD08_ESZ2026_ID,
+      snapshotSequence: 10,
+      knowableAt: asUtcInstant('2026-09-15T18:00:02.000Z'),
+      book,
+      sessionId,
+      checksum: 'fixture-checksum',
+    });
+    assert.equal(transport.primary.lastAppliedSequence, 10);
+    assert.ok(transport.booksByInstrument[MD08_ESZ2026_ID]);
   });
 
   it('emits HELIOS_MD08_DERIVATIVES_DATA_QUALIFIED when checks pass', () => {

@@ -9,7 +9,7 @@ import type {
   Md08ProvenanceKind,
   Md08TermStructureShape,
 } from './taxonomy.ts';
-import type { Md03FeedCoordinatorSnapshot } from '../md03/types.ts';
+import type { Md08FeedTransportState } from './feed-bridge.ts';
 import type { RollState } from '../../multi-asset/futures/types.ts';
 import type { MarketSessionStatus } from '../../market-observation/types.ts';
 
@@ -145,7 +145,7 @@ export type Md08TermStructure = {
   readonly provenance: Md08Provenance;
 };
 
-export type Md08FeedTransportSnapshot = Md03FeedCoordinatorSnapshot<unknown>;
+export type Md08FeedTransportSnapshot = Md08FeedTransportState;
 
 export type DerivativeMarketState = {
   readonly schema: typeof HELIOS_MD08_DERIVATIVES_SCHEMA;

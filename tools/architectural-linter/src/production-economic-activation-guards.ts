@@ -103,6 +103,7 @@ export function lintProductionEconomicActivation(root: string): Finding[] {
     'LIVE_CUSTODY_ENABLED',
     'LIVE_AGENT_FINANCIAL_EXECUTION_ENABLED',
     'LIVE_CONNECTIVITY_ENABLED',
+    'MARKET_DATA_LIVE_SHADOW_ENABLED',
   ]) {
     if (new RegExp(`${name}\\s*=\\s*true`).test(flags)) {
       findings.push(finding(FLAGS, `${name} must remain false`));

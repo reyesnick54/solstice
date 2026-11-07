@@ -55,7 +55,6 @@ export {
   createMd08DerivativesFeedTransport,
   applyMd08IncrementalBookUpdate,
   applyMd08RecoveryBookSnapshot,
-  snapshotMd08FeedTransport,
   type Md08IncrementalBookPayload,
   type Md08FeedTransportState,
 } from './feed-bridge.ts';
