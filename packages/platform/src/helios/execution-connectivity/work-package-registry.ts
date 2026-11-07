@@ -41,7 +41,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
   },
   EXEC08: {
     title: 'Asset and account segregation',
-    moduleRef: 'packages/platform/src/helios/multi-asset/m24/types.ts',
+    moduleRef: 'packages/custody/src/execution-connectivity/index.ts',
   },
   EXEC09: {
     title: 'Settlement obligations',
@@ -81,7 +81,7 @@ const OPTIONAL_TESTS: Record<string, string> = {
   EXEC05: 'tests/helios-exec05-smart-routing.test.ts',
   EXEC06: 'tests/helios-exec06-execution-algos.test.ts',
   EXEC07: 'tests/helios-exec07-tca.test.ts',
-  EXEC08: 'tests/helios-multi-asset-m24-execution-settlement-reconciliation.test.ts',
+  EXEC08: 'tests/helios-exec08-asset-segregation.test.ts',
   EXEC09: 'tests/helios-multi-asset-m24-execution-settlement-reconciliation.test.ts',
   EXEC10: 'tests/helios-exec10-financing-controls.test.ts',
   EXEC11: 'tests/helios-exec11-custody-isolation.test.ts',
