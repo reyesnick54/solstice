@@ -3,7 +3,7 @@
  * without mutating paper-broker behavior.
  */
 
-import type { UtcInstant } from '@solstice/domain';
+import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { BrokerExecutionProvider } from '../broker-port.ts';
 import type { PaperOrder } from '../order.ts';
 import {
