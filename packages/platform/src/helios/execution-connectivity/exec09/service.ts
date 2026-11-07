@@ -479,7 +479,7 @@ export class Exec09SettlementLifecycleService {
 
     const partial = BigInt(targetQuantity) < BigInt(obligation.quantityUnits);
     const nextState: Exec09SettlementLifecycleState = partial ? 'PARTIALLY_SETTLED' : 'SETTLED';
-    if (obligation.state !== 'SETTLING' && obligation.state !== 'PARTIALLY_SETTLED' && obligation.state !== 'AFFIRMED') {
+    if (obligation.state !== 'SETTLING' && obligation.state !== 'PARTIALLY_SETTLED') {
       return fail('INVALID_TRANSITION', `cannot complete settlement from ${obligation.state}`);
     }
 
