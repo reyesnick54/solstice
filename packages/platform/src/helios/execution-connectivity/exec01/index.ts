@@ -17,20 +17,9 @@ export {
 } from './owner-audit.ts';
 
 export {
-  brokerOrderRequestToProviderSubmit,
-  describeHeliosProviderAsExec01,
-  heliosOrderToBrokerOrderRequest,
-} from './h23-bridge.ts';
-
-export {
   evaluateExec01Qualification,
   HELIOS_EXEC01_CONNECTIVITY_DOMAIN_BLOCKED,
   HELIOS_EXEC01_CONNECTIVITY_DOMAIN_QUALIFIED,
   type Exec01QualificationChecks,
   type Exec01QualificationResult,
 } from './qualification.ts';
-
-export {
-  exec01PaperBrokerProviderIdFixture,
-  exec01SandboxConnectivityEnvelopeFixture,
-} from './fixtures.ts';

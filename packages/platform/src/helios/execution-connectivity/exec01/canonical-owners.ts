@@ -65,5 +65,5 @@ export const EXEC01_EXPLICIT_NON_OWNERS = Object.freeze([
   'Second Exchange — reuse sunrey-exchange regulated owner only',
   'Second Execution Authority — kernel + permissions owner only',
   'Second Risk Engine — reuse packages/risk',
-  'Second ledger — Ledger.postJournal only',
+  'Second ledger — packages/ledger canonical owner only',
 ]);

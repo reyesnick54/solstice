@@ -45,3 +45,8 @@ export {
   paperBrokerSessionFixture,
   type PaperBrokerExec01Adapter,
 } from './paper-bridge.ts';
+
+export {
+  exec01PaperBrokerProviderIdFixture,
+  exec01SandboxConnectivityEnvelopeFixture,
+} from './fixtures.ts';

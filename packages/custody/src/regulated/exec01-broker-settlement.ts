@@ -2,7 +2,7 @@
  * EXEC01 — broker securities settlement scope for custody reconciliation (simulation).
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export type Exec01BrokerSettlementScope = {
   readonly scopeKind: 'BROKER_SECURITIES_SETTLEMENT';

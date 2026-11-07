@@ -2,7 +2,7 @@
  * EXEC01 — capital reservation facts for broker connectivity (simulation only).
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export type BrokerCapitalReservationFact = {
   readonly factKind: 'BROKER_CAPITAL_RESERVATION';
