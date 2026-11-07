@@ -90,6 +90,22 @@ export function buildProductiveEconomicGraph(plane: ExternalDataPlane): Producti
     observationCount += 1;
   }
 
+  for (const obs of w5.logistics.getObservations().observations) {
+    if (obs.data.observationType !== 'PORT_ACTIVITY') continue;
+    const portRef = obs.data.origin ?? obs.data.region ?? 'unknown-port';
+    const nodeId = `port:${portRef.replace(/\s+/g, '-').toLowerCase()}`;
+    if (!nodes.some((n) => n.nodeId === nodeId)) {
+      nodes.push({
+        nodeId,
+        nodeType: 'PORT',
+        label: portRef,
+        geography: null,
+        sourceObservationId: obs.observationId,
+      });
+    }
+    observationCount += 1;
+  }
+
   for (const obs of w5.travel.getTransitRoutes().observations) {
     const transit = obs.data;
     const nodeId = `transport:${transit.routeId}`;

@@ -205,3 +205,6 @@ export type AltFusionModelKind = (typeof ALT_FUSION_MODEL_KINDS)[number];
 
 export const ALT12_FUSION_MODULE =
   'packages/platform/src/helios/alternative-data-intelligence/alt12/index.ts' as const;
+
+export const ALT07_LOGISTICS_FLOW_MODULE =
+  'packages/platform/src/helios/alternative-data-intelligence/alt07-logistics-flow/index.ts' as const;
