@@ -125,6 +125,14 @@ describe('HELIOS EXEC09 settlement lifecycle', () => {
     if (!tooEarly.ok) throw new Error('settling');
     assert.equal(tooEarly.value.state, 'AFFIRMED');
 
+    const completeTooEarly = service.completeObligationSettlement({
+      obligationId: obligation.obligationId,
+      customerId: CUSTOMER,
+    });
+    assert.equal(completeTooEarly.ok, false);
+    if (completeTooEarly.ok) throw new Error('expected early complete to fail');
+    assert.equal(completeTooEarly.error.code, 'INVALID_TRANSITION');
+
     clock.set(asUtcInstant('2026-09-18T20:00:00.000Z'));
     const settling = service.beginSettling(obligation.obligationId, CUSTOMER);
     assert.equal(settling.ok, true);
