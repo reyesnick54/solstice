@@ -14,6 +14,7 @@ import {
   EXEC01_CONNECTIVITY_IMPLIES_LEGAL_AUTHORIZATION,
   HELIOS_EXEC01_CONNECTIVITY_SCHEMA,
   adaptPaperBrokerToExec01Provider,
+  exec01SandboxConnectivityEnvelopeFixture,
   paperBrokerProviderRegistration,
 } from '../packages/investments/src/broker-connectivity/index.ts';
 import {
@@ -21,10 +22,9 @@ import {
   EXEC01_EXPLICIT_NON_OWNERS,
   EXEC01_OWNER_AUDIT_RECORDS,
   evaluateExec01Qualification,
-  exec01SandboxConnectivityEnvelopeFixture,
-  heliosOrderToBrokerOrderRequest,
   HELIOS_EXEC01_CONNECTIVITY_DOMAIN_QUALIFIED,
 } from '../packages/platform/src/helios/execution/exec01/index.ts';
+import { heliosOrderToExec01BrokerOrderRequest } from '../packages/platform/src/helios/order-lifecycle/exec01-bridge.ts';
 import { HELIOS_H23_EXEC01_SCHEMA_REF } from '../packages/platform/src/helios/order-lifecycle/exec01-schema.ts';
 import type { HeliosOrder } from '../packages/platform/src/helios/order-lifecycle/types.ts';
 import { exec01BrokerMarketAccessOverlay } from '../packages/sunrey-exchange/src/regulated/exec01-broker-access.ts';
@@ -106,7 +106,7 @@ describe('HELIOS EXEC01 execution connectivity', () => {
       productionAuthorized: false,
       grantsFinancialEffect: false,
     };
-    const mapped = heliosOrderToBrokerOrderRequest(order);
+    const mapped = heliosOrderToExec01BrokerOrderRequest(order);
     assert.equal(mapped.externalOperationId, order.externalOperationId);
     assert.equal(mapped.simulation, true);
     assert.equal(mapped.liveSecuritiesExecution, false);

@@ -20,7 +20,7 @@ export const EXEC01_AUDIT_HELIOS_ORDER_LIFECYCLE = Object.freeze({
   settlementType: 'HeliosSettlement',
   reconciliationType: 'HeliosReconciliationRecord',
   liveExecutionFrozen: true,
-  notes: 'H23 does not mint ExecutionAuthority; kernelPermits is injected',
+  notes: 'H23 does not mint ExecutionAuthority; kernelPermits is injected; EXEC01 bridge at order-lifecycle/exec01-bridge.ts',
 });
 
 export const EXEC01_AUDIT_RISK_PORTS = Object.freeze({

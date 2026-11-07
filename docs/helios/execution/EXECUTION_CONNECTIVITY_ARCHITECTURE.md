@@ -87,7 +87,7 @@ flowchart TB
 1. **Ledger paper** — `InvestmentsService` + `PaperBrokerProvider` (unchanged).  
 2. **Product** — `InvestmentExecutionAdapter` + sandbox provider.  
 3. **HELIOS H23** — `HeliosOrderLifecycleService` + `HeliosProviderOrderPort`.  
-4. **EXEC01** — unifies vocabulary; `h23-bridge.ts` maps H23 ↔ broker DTOs.
+4. **EXEC01** — unifies vocabulary; `order-lifecycle/exec01-bridge.ts` maps H23 ↔ broker DTOs.
 
 ## Authorization and capital
 

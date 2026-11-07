@@ -12,7 +12,7 @@
 | Canonical broker connectivity types | `packages/investments/src/broker-connectivity/` | Implemented |
 | Paper broker EXEC01 bridge | `packages/investments/src/broker-connectivity/paper-bridge.ts` | Implemented |
 | Owner audit map | `packages/platform/src/helios/execution/exec01/owner-audit.ts` | Implemented |
-| H23 ↔ EXEC01 bridge | `packages/platform/src/helios/execution/exec01/h23-bridge.ts` | Implemented |
+| H23 ↔ EXEC01 bridge | `packages/platform/src/helios/order-lifecycle/exec01-bridge.ts` | Implemented |
 | Qualification evaluator | `packages/platform/src/helios/execution/exec01/qualification.ts` | Implemented |
 | H23 schema anchor | `packages/platform/src/helios/order-lifecycle/exec01-schema.ts` | Implemented |
 | Exchange overlay | `packages/sunrey-exchange/src/regulated/exec01-broker-access.ts` | Implemented |
