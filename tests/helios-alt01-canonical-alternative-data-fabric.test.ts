@@ -63,6 +63,14 @@ describe('HELIOS ALT01 canonical alternative-data fabric', () => {
     assert.equal(result.code, 'BACKFILL_BEFORE_AVAILABILITY');
   });
 
+  it('intelligence fabric rejects illegal backfill at ingest', () => {
+    const fabric = createAlternativeDataIntelligenceFabric();
+    assert.throws(
+      () => fabric.ingestObservation(illegalBackfillObservationFixture()),
+      /BACKFILL_BEFORE_AVAILABILITY/,
+    );
+  });
+
   it('delayed geospatial provider — not knowable before providerAvailableAt', () => {
     const fabric = createAlternativeDataIntelligenceFabric();
     fabric.ingestObservation(delayedProviderObservationFixture());
