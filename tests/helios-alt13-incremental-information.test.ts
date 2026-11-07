@@ -3,6 +3,7 @@
  */
 
 import assert from 'node:assert/strict';
+import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
 import { asUtcInstant } from '../packages/domain/src/time.ts';
@@ -23,6 +24,7 @@ import {
 } from '../packages/platform/src/helios/alternative-data/alt13/index.ts';
 import { lintHeliosBoundary } from '../tools/architectural-linter/src/helios-guards.ts';
 
+const ROOT = join(import.meta.dirname, '..');
 const NOW = asUtcInstant('2026-11-07T09:00:00.000Z');
 
 describe('HELIOS ALT13 incremental information', () => {
@@ -91,7 +93,8 @@ describe('HELIOS ALT13 incremental information', () => {
   });
 
   it('respects HELIOS architectural boundary rules', () => {
-    const issues = lintHeliosBoundary('packages/platform/src/helios/alternative-data/alt13');
-    assert.deepEqual(issues, []);
+    const findings = lintHeliosBoundary(ROOT);
+    const scoped = findings.filter((f) => f.file.includes('alternative-data/alt13'));
+    assert.deepEqual(scoped, []);
   });
 });
