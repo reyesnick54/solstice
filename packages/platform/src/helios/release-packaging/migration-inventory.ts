@@ -43,6 +43,7 @@ const HELIOS_QUALIFICATION_TESTS: Readonly<Record<string, readonly string[]>> = 
     'tests/helios-h20-meta-allocator.test.ts',
     'tests/persistence/helios-meta-allocator.test.ts',
     'tests/helios-evol13-meta-evolution.test.ts',
+    'tests/helios-exec07-tca.test.ts',
   ],
   H21: ['tests/helios-h21-decision-validity-envelope.test.ts', 'tests/persistence/helios-decision-validity.test.ts'],
   H22: ['tests/helios-h22-provider-orchestration.test.ts', 'tests/persistence/helios-provider-orchestration.test.ts'],
