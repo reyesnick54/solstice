@@ -1,4 +1,4 @@
-import { ENVIRONMENT, LIVE_TRADING_ENABLED } from '@solstice/config';
+import { ENVIRONMENT, LIVE_INVESTMENT_EXECUTION, LIVE_TRADING_ENABLED } from '@solstice/config';
 
 export const HELIOS_EXEC09_SETTLEMENT_LIFECYCLE_QUALIFIED = 'HELIOS_EXEC09_SETTLEMENT_LIFECYCLE_QUALIFIED' as const;
 export const HELIOS_EXEC09_SETTLEMENT_LIFECYCLE_BLOCKED = 'HELIOS_EXEC09_SETTLEMENT_LIFECYCLE_BLOCKED' as const;
@@ -48,6 +48,7 @@ export function evaluateExec09SettlementQualification(checks: Exec09Qualificatio
 
 export function defaultExec09QualificationChecksFromPosture(): Pick<Exec09QualificationChecks, 'simulationPosture'> {
   return Object.freeze({
-    simulationPosture: ENVIRONMENT === 'simulation' && LIVE_TRADING_ENABLED === false,
+    simulationPosture:
+      ENVIRONMENT === 'simulation' && LIVE_TRADING_ENABLED === false && LIVE_INVESTMENT_EXECUTION === false,
   });
 }
