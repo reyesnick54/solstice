@@ -25,7 +25,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
   },
   MD04: {
     title: 'Deterministic order books',
-    moduleRef: 'packages/platform/src/helios/market-observation/order-book.ts',
+    moduleRef: 'packages/platform/src/helios/market-data/md04-order-book/index.ts',
   },
   MD05: {
     title: 'Redundant-source reconciliation',
@@ -72,7 +72,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
 const OPTIONAL_TESTS: Record<string, string> = {
   MD01: 'tests/helios-h08-observation-provenance-freshness-entitlements.test.ts',
   MD03: 'tests/helios-md03-sequence-recovery.test.ts',
-  MD04: 'tests/helios-multi-asset-m02-market-observations.test.ts',
+  MD04: 'tests/helios-md04-order-book-engine.test.ts',
   MD06: 'tests/helios-md06-instrument-master.test.ts',
   MD07: 'tests/helios-md07-us-equity-market-state.test.ts',
   MD08: 'tests/helios-multi-asset-m03-market-calendar-contracts.test.ts',
