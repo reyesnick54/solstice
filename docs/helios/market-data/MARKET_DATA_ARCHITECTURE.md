@@ -15,7 +15,7 @@ Upgrade HELIOS external market-data infrastructure into the canonical **producti
 | `packages/platform/src/helios/observation/` | H08 envelope, information-time, entitlement |
 | `packages/platform/src/helios/feature-fabric/market-data/` | Evidence-time features from sealed events |
 
-Explicit non-owners are listed in `MD01_EXPLICIT_NON_OWNERS` (`packages/platform/src/helios/market-data/canonical-owners.ts`).
+Explicit non-owners are listed in `MD01_EXPLICIT_NON_OWNERS` (`packages/platform/src/helios/market-data/md01/canonical-owners.ts`).
 
 ## Event model
 
