@@ -13,7 +13,8 @@
     "./helios/budget": "./src/helios/budget.ts",
     "./helios/strategy-evolution/evol08": "./src/helios/strategy-evolution/evol08/index.ts",
     "./helios/strategy-evolution/evol09/holdout": "./src/helios/strategy-evolution/evol09/holdout.ts",
-    "./helios/strategy-evolution/evol13": "./src/helios/strategy-evolution/evol13/index.ts"
+    "./helios/strategy-evolution/evol13": "./src/helios/strategy-evolution/evol13/index.ts",
+    "./helios/alternative-data/alt13": "./src/helios/alternative-data/alt13/index.ts"
   },
   "files": [
     "src"
