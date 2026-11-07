@@ -2,7 +2,7 @@
  * HELIOS ALT13 — simulation panel with core HELIOS planes and alt-data features.
  */
 
-import { asUtcInstant } from '../../../../../domain/src/time.ts';
+import { asUtcInstant } from '@solstice/domain';
 
 import type { Alt13EvaluationRow } from './types.ts';
 
