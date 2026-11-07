@@ -1,57 +1,56 @@
-# HELIOS Market Data — MD14 Final Report
+# HELIOS Market Data — MD15 Current-Main Requalification Report
 
-**Marker:** `HELIOS_PRODUCTION_MARKET_DATA_V1_QUALIFIED` (when CI and subprocess gates are green)
+**Engineering marker:** `HELIOS_PRODUCTION_MARKET_DATA_V1_QUALIFIED`
 
-**Posture:** Simulation only. `LIVE_TRADING_ENABLED=false`. `production_authorized=false`. `MARKET_DATA_LIVE_SHADOW_ENABLED=false` in repository CI unless explicitly enabled in a controlled operator environment.
+**Git SHA:** `ceeba184f759b64d01216dc923d2cc1f6554dd41`
 
-## Objective
+**Evaluated at (UTC):** `2026-11-07T16:54:02.230Z`
 
-Integrate and qualify the complete market-data fabric for **live read-only research** while keeping financial execution disabled.
+**Subprocess gates:** GREEN
 
-## MD01–MD13 verification summary
+## Posture (unchanged)
 
-| ID | Capability | Canonical owner |
-|----|------------|-----------------|
-| MD01 | Canonical observation fabric | `packages/platform/src/helios/observation/fabric.ts` |
-| MD02 | Precision time / knowable-at | `packages/platform/src/helios/observation/information-time.ts` |
-| MD03 | Sequence recovery | `packages/platform/src/helios/observation/quality.ts` |
-| MD04 | Deterministic books | `packages/platform/src/helios/market-observation/order-book.ts` |
-| MD05 | Redundant-source reconciliation | `packages/platform/src/helios/observation/lineage.ts` |
-| MD06 | Instrument master | `packages/platform/src/helios/market-observation/instrument-registry.ts` |
-| MD07 | Equities | `packages/sunrey-exchange/src/capital-market/` |
-| MD08 | Derivatives / calendars | `packages/platform/src/helios/multi-asset/market-calendar/` |
-| MD09 | Crypto | `packages/platform/src/helios/adaptive-alpha-fabric/aaf09-external-crypto/` |
-| MD10 | FX, rates, commodities | `packages/platform/src/helios/multi-asset/gold/`, energy/WTI |
-| MD11 | Replay | `packages/platform/src/helios/execution-twin/bytex-native/replay.ts` |
-| MD12 | Quality / microstructure | `packages/platform/src/helios/multi-asset/data-quality.ts` |
-| MD13 | Operations / conformance / chaos | `packages/external-data/src/certification/market-data/` |
+- `ENVIRONMENT=simulation`
+- `MARKET_DATA_LIVE_SHADOW_ENABLED=false`
+- `LIVE_TRADING_ENABLED=false`
+- `LIVE_INVESTMENT_EXECUTION=false`
+- `production_authorized=false`
 
-## MD14 integration
+This marker means **architecture / engineering qualification**. It does **not** mean a commercial data provider is contracted or licensed.
 
-- **Owner:** `packages/platform/src/helios/market-data/`
+## MD01–MD14 canonical verification
+
+| Package | Capability | Canonical owner | Qualification |
+|---------|------------|-----------------|----------------|
+| MD01 | Canonical market-data fabric | `packages/platform/src/helios/market-data/md01/index.ts` | QUALIFIED (module + test) |
+| MD02 | Precision time and knowable-at envelope | `packages/platform/src/helios/market-data/md02/index.ts` | QUALIFIED (module + test) |
+| MD03 | Sequence recovery and gap handling | `packages/platform/src/helios/market-data/md03/index.ts` | QUALIFIED (module + test) |
+| MD04 | Deterministic order books | `packages/platform/src/helios/market-data/md04-order-book/index.ts` | QUALIFIED (module + test) |
+| MD05 | Redundant feed arbitration | `packages/platform/src/helios/market-data/md05/index.ts` | QUALIFIED (module + test) |
+| MD06 | Instrument master | `packages/platform/src/helios/market-data/md06-instrument-master/index.ts` | QUALIFIED (module + test) |
+| MD07 | U.S. equity consolidated/direct market state | `packages/platform/src/helios/market-data/md07-us-equity/index.ts` | QUALIFIED (module + test) |
+| MD08 | Derivatives market data intelligence | `packages/platform/src/helios/market-data/md08/index.ts` | QUALIFIED (module + test) |
+| MD09 | Multi-venue crypto | `packages/platform/src/helios/market-data/md09/index.ts` | QUALIFIED (module + test) |
+| MD10 | FX, rates, and commodity reference fabric | `packages/platform/src/helios/market-data/md10/index.ts` | QUALIFIED (module + test) |
+| MD11 | Deterministic replay | `packages/sunrey-exchange/src/market-data/md11/index.ts` | QUALIFIED (module + test) |
+| MD12 | Quality and microstructure | `packages/platform/src/helios/market-data/md12/index.ts` | QUALIFIED (module + test) |
+| MD13 | Live-data resilience and chaos | `packages/platform/src/helios/market-data-live/md13/index.ts` | QUALIFIED (module + test) |
+| MD14 | Final production-shaped qualification | `packages/platform/src/helios/market-data/md14-qualification.ts` | QUALIFIED (module + test) |
+
+## MD14 integration harness
+
+- **Owner:** `packages/platform/src/helios/market-data/md14-qualification.ts`
+- **E2E pipeline:** `e2e-pipeline.ts` (canonical MD01–MD05 + MD12 stages)
+- **Canonical probes:** `md14-canonical-probes.ts` (MD06, MD09, MD10, MD13 harnesses)
 - **Qualification test:** `tests/helios-md14-market-data-qualification.test.ts`
 - **Runner:** `npm run helios:md14:qualify`
 
-## AAF integration
+## E2E and adversarial
 
-Research features must carry `eventTime`, `knowableAt`, provider lineage, sequence integrity, quality state, and entitlement state. Certification is blocked for `DESYNCHRONIZED`, `UNTRUSTED`, and `ENTITLEMENT_BLOCKED` observations (`aaf-integration.ts`).
+- E2E pipeline ok: **true**
+- Adversarial scenarios: **8/8**
 
-## Execution Twin
+## Blockers
 
-Paper simulator may consume canonical live-shadow fixture streams. Production Execution Authority remains disabled; Execution Twin provider ports block live submit.
+_None._
 
-## Live shadow mode
-
-`MARKET_DATA_LIVE_SHADOW_ENABLED` permits licensed read-only connectivity, ingestion, book reconstruction, features, research, and paper simulation. It does **not** permit broker orders, venue orders, custody movement, or customer capital deployment.
-
-## Provider production evidence
-
-Live-shadow eligibility requires credentials, contract/license reference, entitlement evidence, data-use policy, conformance, gap recovery, clock validation, chaos test, and **verified external connectivity**. Credentials are never committed. Fixture catalog providers remain `SANDBOX_QUALIFIED` only.
-
-## End-to-end path
-
-Synthetic qualification exercises: raw event → sequence verification → time envelope → normalized event → book reconstruction → redundant-source reconciliation → quality state → durable store → AAF feature → Strategy Lab → HELIOS research agent → paper Execution Twin (`e2e-pipeline.ts`).
-
-## Status semantics
-
-`REGISTERED` → `SANDBOX_QUALIFIED` → `READONLY_LIVE_QUALIFIED` → `PRODUCTION_RESEARCH_QUALIFIED` describes engineering qualification progress, **not** regulatory approval.
