@@ -3,7 +3,7 @@
  */
 
 import { createHash } from 'node:crypto';
-import { asUtcInstant, type UtcInstant } from '../../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { buildPartitionKey } from './partition.ts';
 import { createNormalizedMarketEventStore } from './normalized-market-event-store.ts';
 import { createRawMarketEventStore } from './raw-market-event-store.ts';

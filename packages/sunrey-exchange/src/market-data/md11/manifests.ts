@@ -2,7 +2,7 @@
  * MD11 session and replay manifest builders.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { sha256Hex, stableJson } from './fingerprint.ts';
 import type {
   MarketDataPartitionKey,

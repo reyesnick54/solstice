@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@solstice/domain": "0.1.0",
     "@solstice/sunrey-chain": "0.1.0"
   },
   "exports": {

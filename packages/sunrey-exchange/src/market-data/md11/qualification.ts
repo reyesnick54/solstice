@@ -2,7 +2,7 @@
  * HELIOS MD11 deterministic historical replay qualification harness.
  */
 
-import { asUtcInstant } from '../../../../domain/src/time.ts';
+import { asUtcInstant } from '@solstice/domain';
 import { MARKET_EVENT_INDEX_NAMES } from './indexes.ts';
 import { loadMd11FixtureTape, MD11_FIXTURE_PARTITION } from './fixtures.ts';
 import { createMarketReplayEngine, replayOrderingDiffersByMode } from './replay-engine.ts';

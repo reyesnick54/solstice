@@ -4,7 +4,7 @@
  * Research/reference plane only. Does not grant Execution Authority.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 
 export const HELIOS_MD11_SCHEMA = 'sunrey.helios.market-data.md11.v1' as const;
 export const HELIOS_MD11 = 'HELIOS_MD11_IMMUTABLE_TICK_STORE' as const;

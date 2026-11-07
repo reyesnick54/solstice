@@ -2,7 +2,7 @@
  * OHLCV bars derived from immutable underlying observations (never replaces ticks).
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { sha256Hex } from './fingerprint.ts';
 import type { DerivedOhlcvBar, NormalizedMarketEventRecord } from './types.ts';
 import { MD11_BAR_BUILDER_VERSION } from './types.ts';
