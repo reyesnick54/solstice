@@ -50,7 +50,10 @@ export class Exec03IdempotentOrderEngine {
     return this.store.register(draft, safeWindowMs);
   }
 
-  submitIntent(operationId: string): Result<ExecutionIntent, Exec03Failure> {
+  submitIntent(
+    operationId: string,
+    options?: { readonly viaGovernedResubmit?: boolean },
+  ): Result<ExecutionIntent, Exec03Failure> {
     const intent = this.store.get(operationId);
     if (!intent) {
       return err({ code: 'INTENT_NOT_FOUND', message: 'execution intent not found' });
@@ -67,10 +70,10 @@ export class Exec03IdempotentOrderEngine {
         message: `cannot submit from state ${intent.state}`,
       });
     }
-    if (intent.governedResubmitPermitted && !intent.submittedOnce) {
+    if (intent.governedResubmitPermitted && !options?.viaGovernedResubmit) {
       return err({
         code: EXEC03_GOVERNED_RESUBMIT_NOT_PERMITTED,
-        message: 'governed resubmit requires prior ambiguous submission',
+        message: 'post-reconciliation resubmission must use governedResubmit',
       });
     }
 
@@ -277,7 +280,7 @@ export class Exec03IdempotentOrderEngine {
         message: 'governed resubmission is not permitted for this intent',
       });
     }
-    return this.submitIntent(operationId);
+    return this.submitIntent(operationId, { viaGovernedResubmit: true });
   }
 
   recoverAfterRestart(): readonly ExecutionIntent[] {

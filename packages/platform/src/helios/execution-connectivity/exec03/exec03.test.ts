@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import {
+  EXEC03_GOVERNED_RESUBMIT_NOT_PERMITTED,
   EXEC03_IDEMPOTENCY_PAYLOAD_MISMATCH,
   EXEC03_QUERY_REQUIRED_BEFORE_RETRY,
   Exec03IdempotentOrderEngine,
@@ -150,6 +151,28 @@ describe('HELIOS EXEC03 idempotent order intent', () => {
     const resubmitted = engine.governedResubmit(intent.operationId);
     assert.equal(resubmitted.ok, true);
     assert.equal(broker.externalOrderCount(), 1);
+  });
+
+  it('rejects direct submitIntent when governed resubmit is required', () => {
+    const broker = new FixtureExec03BrokerPort();
+    broker.setSubmitBehavior('TIMEOUT_AFTER_ACCEPT');
+    let now = T0;
+    const engine = new Exec03IdempotentOrderEngine({ now: () => now, broker, safeWindowMs: 5_000 });
+
+    const intent = engine.registerIntent(sampleDraft('op_gov_direct', 'clord_gov_direct'));
+    engine.submitIntent(intent.operationId);
+    broker.reset();
+
+    now = T_AFTER_SAFE;
+    const reconciled = engine.reconcileIntent(intent.operationId);
+    assert.equal(reconciled.ok, true);
+    if (!reconciled.ok) throw new Error('reconcile');
+    assert.equal(reconciled.value.intent.governedResubmitPermitted, true);
+
+    const direct = engine.submitIntent(intent.operationId);
+    assert.equal(direct.ok, false);
+    if (direct.ok) throw new Error('expected governed gate');
+    assert.equal(direct.error.code, EXEC03_GOVERNED_RESUBMIT_NOT_PERMITTED);
   });
 
   it('qualifies HELIOS_EXEC03_EXACTLY_ONCE_INTENT_QUALIFIED when engineering checks pass', () => {
