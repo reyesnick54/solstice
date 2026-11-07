@@ -23,6 +23,7 @@ export function seedAaf08EquitiesEntityGraph(store: TemporalEntityGraphStore): v
     source: 'helios:aaf08:universe',
     confidenceState: 'CONFIRMED' as const,
     ambiguityState: 'UNAMBIGUOUS' as const,
+    confidence: null,
     observedAt: T0,
     knowableAt: KNOWABLE,
     jurisdiction: 'US',
