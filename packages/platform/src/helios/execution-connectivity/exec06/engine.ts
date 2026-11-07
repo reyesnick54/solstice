@@ -448,7 +448,8 @@ export class BoundedExecutionAlgorithmEngine {
     const nextState: ExecutionAlgorithmState = Object.freeze({
       ...state,
       filledQuantityUnits: state.filledQuantityUnits + input.fillQuantityUnits,
-      remainingQuantityUnits: state.remainingQuantityUnits - input.fillQuantityUnits,
+      // Quantity was reserved from remaining at child release; fills only move parent filled, not remaining again.
+      remainingQuantityUnits: state.remainingQuantityUnits,
       workingChildCount: workingChildCount < 0 ? 0 : workingChildCount,
       openChildOrderIds: Object.freeze(open),
       updatedAt: input.now,

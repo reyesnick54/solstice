@@ -23,7 +23,7 @@ import {
   registerParentFixture,
   refusingAlgorithmRiskPort,
   type ExecutionAlgorithmKind,
-} from '../packages/platform/src/helios/execution-connectivity/index.ts';
+} from '../packages/platform/src/helios/execution-connectivity/exec06/index.ts';
 import { lintHeliosBoundary } from '../tools/architectural-linter/src/helios-guards.ts';
 
 const RISK = permissiveAlgorithmRiskPort();
@@ -87,6 +87,23 @@ describe('HELIOS EXEC06 — bounded execution algorithms', () => {
       }
     });
   }
+
+  it('applyFill increments filled quantity without double-decrementing remaining', () => {
+    const { engine, registered, tick } = registerAndTick('LIMIT');
+    const child = tick.releasedChildren[0];
+    assert.ok(child);
+    const after = engine.applyFill({
+      parentOrderId: registered.parent!.parentOrderId,
+      childOrderId: child.childOrderId,
+      now: registered.parent!.registeredAt,
+      fillQuantityUnits: child.quantityUnits,
+    });
+    assert.equal(after.filledQuantityUnits, child.quantityUnits);
+    assert.equal(
+      after.filledQuantityUnits + after.remainingQuantityUnits,
+      registered.parent!.authorizedQuantityUnits,
+    );
+  });
 
   it('rejects increasing parent quantity via child release', () => {
     const engine = engineFor();
