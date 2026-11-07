@@ -70,3 +70,5 @@ export {
   illegalBackfillObservationFixture,
   delayedProviderObservationFixture,
 } from './fixtures.ts';
+
+export * from './alt04-workforce/index.ts';
