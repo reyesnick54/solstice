@@ -29,7 +29,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
   },
   MD05: {
     title: 'Redundant-source reconciliation',
-    moduleRef: 'packages/platform/src/helios/observation/lineage.ts',
+    moduleRef: 'packages/platform/src/helios/market-data/md05/index.ts',
   },
   MD06: {
     title: 'Instrument master',
@@ -73,6 +73,7 @@ const OPTIONAL_TESTS: Record<string, string> = {
   MD01: 'tests/helios-h08-observation-provenance-freshness-entitlements.test.ts',
   MD03: 'tests/helios-md03-sequence-recovery.test.ts',
   MD04: 'tests/helios-md04-order-book-engine.test.ts',
+  MD05: 'tests/helios-md05-redundant-market-truth.test.ts',
   MD06: 'tests/helios-md06-instrument-master.test.ts',
   MD07: 'tests/helios-md07-us-equity-market-state.test.ts',
   MD08: 'tests/helios-md08-derivatives-market-data.test.ts',
