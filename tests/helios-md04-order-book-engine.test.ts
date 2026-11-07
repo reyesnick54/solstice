@@ -22,7 +22,10 @@ import { lintHeliosBoundary } from '../tools/architectural-linter/src/helios-gua
 
 describe('HELIOS MD04 order-book engine', () => {
   it('respects helios package boundary imports', () => {
-    lintHeliosBoundary('packages/platform/src/helios/market-data/md04-order-book/engine.ts');
+    const findings = lintHeliosBoundary(process.cwd()).filter((row) =>
+      row.file.includes('market-data/md04-order-book'),
+    );
+    assert.deepEqual(findings, []);
   });
 
   it('produces identical state hash for same snapshot and update sequence', () => {
