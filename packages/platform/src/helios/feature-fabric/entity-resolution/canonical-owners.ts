@@ -33,6 +33,11 @@ export const AAF03_CANONICAL_OWNER_REUSE = Object.freeze([
     owner: 'packages/platform/src/helios/feature-fabric',
     aaf03Usage: 'features bind canonicalEntityId / canonicalInstrumentId from resolver output',
   }),
+  Object.freeze({
+    capability: 'helios_md06_instrument_master',
+    owner: 'packages/platform/src/helios/market-data-intelligence/md06-instrument-master',
+    aaf03Usage: 'extends temporal graph with VENUE_INSTRUMENT and TRADING_SESSION; stable imd_id identity',
+  }),
 ]);
 
 export const AAF03_EXPLICIT_NON_OWNERS = Object.freeze([

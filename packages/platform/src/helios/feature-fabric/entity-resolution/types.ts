@@ -34,6 +34,10 @@ export const TEMPORAL_ENTITY_KINDS = [
   'DATACENTER',
   'PATENT_ASSIGNEE',
   'GOVERNMENT_CONTRACTOR',
+  /** HELIOS MD06 venue-native instrument (extends graph; not a second symbology authority). */
+  'VENUE_INSTRUMENT',
+  /** HELIOS MD06 exchange session calendar node. */
+  'TRADING_SESSION',
 ] as const;
 export type TemporalEntityKind = (typeof TEMPORAL_ENTITY_KINDS)[number];
 
@@ -66,6 +70,10 @@ export const TEMPORAL_RELATIONSHIP_TYPES = [
   'CUSTOMER_OF',
   'ASSIGNED_TO',
   'CONTRACT_AWARDED_TO',
+  /** HELIOS MD06 venue instrument maps to listing/security. */
+  'VENUE_INSTRUMENT_FOR',
+  /** HELIOS MD06 venue trading session attachment. */
+  'HAS_TRADING_SESSION',
 ] as const;
 export type TemporalRelationshipType = (typeof TEMPORAL_RELATIONSHIP_TYPES)[number];
 
