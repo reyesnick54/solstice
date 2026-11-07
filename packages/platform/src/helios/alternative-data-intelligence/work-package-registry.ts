@@ -19,6 +19,10 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
     title: 'Geospatial and satellite physical-activity engine',
     moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/geospatial-activity/index.ts',
   },
+  ALT09: {
+    title: 'Patent, technology, and commercialization intelligence',
+    moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt09/index.ts',
+  },
   ALT12: {
     title: 'Missing-aware multimodal fusion and signal routing',
     moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt12/index.ts',
@@ -28,6 +32,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
 const TEST_BY_PACKAGE: Record<string, string> = {
   ALT04: 'tests/helios-alt04-workforce-intelligence.test.ts',
   ALT08: 'tests/helios-alt08-geospatial-activity.test.ts',
+  ALT09: 'tests/helios-alt09-innovation-intelligence-qualification.test.ts',
   ALT12: 'tests/helios-alt12-multimodal-fusion.test.ts',
 };
 
