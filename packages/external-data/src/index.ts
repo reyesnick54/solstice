@@ -35,3 +35,4 @@ export * from './tradingagents-native/index.ts';
 export * from './venue-adapters/index.ts';
 export * from './prediction-market/index.ts';
 export * from './alternative-data-rights/index.ts';
+export * from './procurement/index.ts';
