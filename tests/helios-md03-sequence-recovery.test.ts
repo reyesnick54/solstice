@@ -275,6 +275,35 @@ describe('HELIOS MD03 sequence recovery', () => {
     assert.equal(isMarketBookAuthoritative(result.state), false);
   });
 
+  it('demotes authoritative book on session reset until recovery completes', () => {
+    let state = createMarketFeedSequenceState({
+      feedId: FEED,
+      sessionId: SESSION,
+      startedAt: T0,
+      policy: nasdaqPolicy,
+    });
+    state = ingestMarketFeedIncremental(state, incremental(1, T0), nasdaqPolicy).state;
+    assert.equal(isMarketBookAuthoritative(state), true);
+
+    const sessionChanged = ingestMarketFeedIncremental(
+      state,
+      Object.freeze({
+        feedId: FEED,
+        sequence: 2,
+        sessionId: 'sess-2',
+        sessionGeneration: 2,
+        payloadId: 'p-2',
+        observedAt: T1,
+        checksum: null,
+      }),
+      nasdaqPolicy,
+    );
+    assert.equal(sessionChanged.applied, false);
+    assert.equal(isMarketBookAuthoritative(sessionChanged.state), false);
+    assert.equal(sessionChanged.state.bookAuthority, 'NON_AUTHORITATIVE');
+    assert.ok(sessionChanged.anomalies.some((row) => row.kind === 'SESSION_RESET'));
+  });
+
   it('rejects duplicate incrementals without opening a gap', () => {
     let state = createMarketFeedSequenceState({
       feedId: FEED,
