@@ -1,5 +1,5 @@
 /**
- * Append-only anomaly ledger — anomalies are never deleted automatically.
+ * Append-only in-memory anomaly store (not the canonical Ledger).
  */
 
 import { createHash } from 'node:crypto';
