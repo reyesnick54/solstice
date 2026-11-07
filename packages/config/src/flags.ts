@@ -42,6 +42,12 @@ export const LIVE_AGENT_FINANCIAL_EXECUTION_ENABLED = false as const;
 /** External connectivity to regulated providers remains disabled. */
 export const LIVE_CONNECTIVITY_ENABLED = false as const;
 
+/**
+ * HELIOS MD14 — licensed read-only market-data live shadow (ingestion, books, research).
+ * Does not enable trading, custody, or Execution Authority. Stays false in simulation CI.
+ */
+export const MARKET_DATA_LIVE_SHADOW_ENABLED = false as const;
+
 /** External production HSM/KMS remains absent. Software ports may be complete. */
 export const PRODUCTION_HSM_KMS_CONFIGURED = false as const;
 
@@ -71,6 +77,7 @@ export const CAPABILITIES = Object.freeze({
   LIVE_CUSTODY_ENABLED,
   LIVE_AGENT_FINANCIAL_EXECUTION_ENABLED,
   LIVE_CONNECTIVITY_ENABLED,
+  MARKET_DATA_LIVE_SHADOW_ENABLED,
 });
 
 export function assertSimulationOnly(): void {
