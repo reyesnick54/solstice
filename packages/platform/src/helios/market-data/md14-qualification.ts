@@ -5,6 +5,10 @@ import { LIVE_TRADING_ENABLED, MARKET_DATA_LIVE_SHADOW_ENABLED } from '@solstice
 import type { UtcInstant } from '@solstice/domain';
 
 import { runAllMd14AdversarialScenarios } from './adversarial-qualification.ts';
+import {
+  blockersFromMd14CanonicalProbes,
+  runMd14CanonicalQualificationProbes,
+} from './md14-canonical-probes.ts';
 import { runMd14SyntheticE2ePipeline } from './e2e-pipeline.ts';
 import { assertMarketDataLiveShadowSafe } from './live-shadow.ts';
 import { fixtureSandboxProviderEvidence, decideProviderMarketDataStatus } from './provider-qualification.ts';
@@ -96,6 +100,9 @@ export function evaluateMarketDataFabricQualification(
       blockers.push(`missing documentation: ${doc}`);
     }
   }
+
+  const canonicalProbes = runMd14CanonicalQualificationProbes({ evaluatedAt: input.evaluatedAt });
+  blockers.push(...blockersFromMd14CanonicalProbes(canonicalProbes));
 
   const e2e = runMd14SyntheticE2ePipeline({
     nowUtc: input.evaluatedAt,
