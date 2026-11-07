@@ -50,4 +50,9 @@ export {
   type Alt10QualificationResult,
 } from './qualification.ts';
 
+export {
+  runAlt10AdversarialChecks,
+  runAlt10QualificationHarness,
+} from './qualification-harness.ts';
+
 export { createProcurementIntelligenceStore, type ProcurementIntelligenceStore } from './store.ts';

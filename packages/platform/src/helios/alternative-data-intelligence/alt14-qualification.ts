@@ -12,6 +12,7 @@ import {
 } from './taxonomy.ts';
 import { listAltWorkPackages } from './work-package-registry.ts';
 import { HELIOS_ALT14_AGENTIC_COMMITTEE } from './alt14-agent-committee.ts';
+import { runCanonicalAltStackQualification } from './canonical-stack-qualification.ts';
 
 export {
   HELIOS_ALTERNATIVE_DATA_INTELLIGENCE_SCHEMA,
@@ -45,6 +46,7 @@ export type AlternativeDataIntelligenceQualificationResult = {
   readonly gitSha: string;
   readonly evaluatedAt: UtcInstant;
   readonly workPackages: ReturnType<typeof listAltWorkPackages>;
+  readonly canonicalQualifications: ReturnType<typeof runCanonicalAltStackQualification>;
   readonly adversarialScenariosPassed: number;
   readonly adversarialScenariosTotal: number;
   readonly blockers: readonly string[];
@@ -62,6 +64,13 @@ export function evaluateAlternativeDataIntelligenceQualification(
         .filter((row) => row.status === 'BLOCKED')
         .map((row) => `${row.packageId}:${row.moduleRef}`),
     );
+  }
+
+  const canonicalQualifications = runCanonicalAltStackQualification(input.evaluatedAt);
+  for (const row of canonicalQualifications) {
+    if (!row.qualified) {
+      blockers.push(`${row.packageId}:${row.marker}:${row.blockers.join(',')}`);
+    }
   }
 
   const committeeIndex = join(input.root, 'packages/agentic-capital-mesh/src/alternative-data-research-alt14/index.ts');
@@ -111,6 +120,7 @@ export function evaluateAlternativeDataIntelligenceQualification(
     gitSha: input.gitSha,
     evaluatedAt: input.evaluatedAt,
     workPackages,
+    canonicalQualifications,
     adversarialScenariosPassed: passed,
     adversarialScenariosTotal: adversarial.length,
     blockers: Object.freeze(blockers),
