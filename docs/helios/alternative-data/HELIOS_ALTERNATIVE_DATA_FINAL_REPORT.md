@@ -1,33 +1,37 @@
-# HELIOS Alternative Data Intelligence — Final Report (ALT14)
+# HELIOS Alternative Data Intelligence — Final Report (ALT15 requalification)
 
-**Qualification marker:** `HELIOS_ALTERNATIVE_DATA_INTELLIGENCE_V1_QUALIFIED`  
-**Schema:** `sunrey.helios.alternative-data-intelligence.v1`  
-**Environment:** simulation only — `LIVE_TRADING_ENABLED=false`; `production_authorized=false`  
+**Git SHA:** `68ec6eaa7522a6a463c0c450a3c7d3c19ba29d92`  
+**Qualification timestamp (UTC):** `2026-11-07T12:17:54.232Z`  
+**Stack marker:** `HELIOS_ALTERNATIVE_DATA_INTELLIGENCE_V1_QUALIFIED`  
+**Qualified:** yes  
+**Posture:** `LIVE_TRADING_ENABLED=false`; `production_authorized=false`  
+
 
 ## Objective
 
-ALT14 completes the HELIOS alternative-data intelligence system with ten Agentic Capital Mesh specialists, platform synthesis to `AlternativeDataResearchState`, AAF-certified Strategy Genome features, EVOL09/EVOL12 bridges, and a fourteen-scenario adversarial qualification harness. Output is **research evidence only**; no live provider access or execution authority.
+Requalify ALT01–ALT14 against canonical modules on current `main`. ALT14 agentic mesh and platform synthesis produce **research evidence only**; no live provider access or execution authority.
 
-## Specialist roster
+## Canonical stack qualification
 
-| Agent | Role |
-|-------|------|
-| WorkforceIntelligenceAgent | Workforce / hiring proxies |
-| DigitalDemandAgent | Search and digital demand |
-| ProductDemandAgent | Pricing power proxies |
-| LogisticsAgent | Port / freight congestion |
-| GeospatialAgent | Physical activity / satellite |
-| InnovationAgent | Patent momentum (non-demand) |
-| ProcurementAgent | Government contract obligations |
-| SupplyChainAgent | Tier graph risk propagation |
-| AlternativeDataSkepticAgent | Bias, mapping, licensing review |
-| AlternativeDataSynthesisAgent | Fusion to certified features |
+| Package | Marker | Result |
+|---------|--------|--------|
+| ALT01 | `HELIOS_ALT01_POINT_IN_TIME_ALTERNATIVE_DATA_QUALIFIED` | QUALIFIED |
+| ALT02 | `HELIOS_ALT02_DATA_RIGHTS_FIREWALL_QUALIFIED` | QUALIFIED |
+| ALT03 | `HELIOS_ALT03_ENTITY_ASSET_GRAPH_QUALIFIED` | QUALIFIED |
+| ALT04 | `HELIOS_ALT04_WORKFORCE_INTELLIGENCE_QUALIFIED` | QUALIFIED |
+| ALT05 | `HELIOS_ALT05_DIGITAL_DEMAND_QUALIFIED` | QUALIFIED |
+| ALT06 | `HELIOS_ALT06_PRODUCT_DEMAND_QUALIFIED` | QUALIFIED |
+| ALT07 | `HELIOS_ALT07_LOGISTICS_FLOW_QUALIFIED` | QUALIFIED |
+| ALT08 | `HELIOS_ALT08_GEOSPATIAL_ACTIVITY_QUALIFIED` | QUALIFIED |
+| ALT09 | `HELIOS_ALT09_INNOVATION_INTELLIGENCE_QUALIFIED` | QUALIFIED |
+| ALT10 | `HELIOS_ALT10_PROCUREMENT_INTELLIGENCE_QUALIFIED` | QUALIFIED |
+| ALT11 | `HELIOS_ALT11_SUPPLY_CHAIN_GRAPH_QUALIFIED` | QUALIFIED |
+| ALT12 | `HELIOS_ALT12_MULTIMODAL_FUSION_QUALIFIED` | QUALIFIED |
+| ALT13 | `HELIOS_ALT13_INCREMENTAL_INFORMATION_QUALIFIED` | QUALIFIED |
+| ALT14 | `HELIOS_ALT14_STACK_HOOK_PRESENT` | QUALIFIED |
 
-## Qualification
+## Gates
 
-| Command | Purpose |
-|---------|---------|
-| `npm run helios:alt14:qualify` | Full ALT14 stack gate |
-| `npm run helios:alt14:qualify:fast` | Qualification logic + unit tests (`--skip-subprocess`) |
-
-Evidence JSON: `performance/helios/results/helios-alt14/`
+- Adversarial scenarios: 14/14
+- Command: `npm run helios:alt15:qualify`
+- Evidence JSON: `performance/helios/results/helios-alt15/`
