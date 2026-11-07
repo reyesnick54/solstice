@@ -3,6 +3,8 @@
  * Research evidence only; no live provider access or trading authority.
  */
 
+export const HELIOS_ALTERNATIVE_DATA_PROGRAM = 'HELIOS_ALTERNATIVE_DATA' as const;
+
 export const HELIOS_ALTERNATIVE_DATA_INTELLIGENCE_SCHEMA =
   'sunrey.helios.alternative-data-intelligence.v1' as const;
 
@@ -11,6 +13,9 @@ export const HELIOS_ALTERNATIVE_DATA_INTELLIGENCE_V1_QUALIFIED =
 
 export const HELIOS_ALTERNATIVE_DATA_INTELLIGENCE_V1_BLOCKED =
   'HELIOS_ALTERNATIVE_DATA_INTELLIGENCE_V1_BLOCKED' as const;
+
+export const ALT09_WORK_PACKAGE = 'ALT09' as const;
+export const ALT09_MODULE = 'packages/platform/src/helios/alternative-data-intelligence/alt09' as const;
 
 export const HELIOS_ALT12_MULTIMODAL_FUSION_SCHEMA = 'helios.alt12.multimodal_fusion.v1' as const;
 export const HELIOS_ALT12_MULTIMODAL_FUSION_AUTHORITY =

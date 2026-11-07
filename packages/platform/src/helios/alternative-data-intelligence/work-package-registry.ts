@@ -44,16 +44,16 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
     moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt08-skeptic.ts',
   },
   ALT09: {
-    title: 'Synthesis to AlternativeDataResearchState',
-    moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt09-synthesis.ts',
+    title: 'Patent, technology, and commercialization intelligence',
+    moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt09/index.ts',
   },
   ALT10: {
     title: 'AAF V2 certification bridge',
     moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt10-aaf-bridge.ts',
   },
   ALT11: {
-    title: 'Strategy Genome certified features',
-    moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt11-strategy-genome-features.ts',
+    title: 'Supply-chain knowledge graph and risk propagation',
+    moduleRef: 'packages/platform/src/helios/alternative-data/alt11-supply-chain-graph/index.ts',
   },
   ALT12: {
     title: 'Missing-aware multimodal fusion and signal routing',
@@ -71,6 +71,8 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
 
 const OPTIONAL_TESTS: Record<string, string> = {
   ALT04: 'tests/helios-alt04-workforce-intelligence.test.ts',
+  ALT09: 'tests/helios-alt09-innovation-intelligence-qualification.test.ts',
+  ALT11: 'tests/helios-alt11-supply-chain-graph.test.ts',
   ALT12: 'tests/helios-alt12-multimodal-fusion.test.ts',
   ALT14: 'tests/helios-alt14-alternative-data-qualification.test.ts',
 };
