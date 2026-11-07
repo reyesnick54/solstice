@@ -14,6 +14,7 @@ import {
   deriveSourceIndependence,
   featureQualityRecord,
 } from './quality.ts';
+import { applyAlt02FeatureEntitlementGate } from '../alt02-entitlement-gate.ts';
 import {
   HELIOS_UNIVERSAL_FEATURE_FABRIC_SCHEMA,
   type ComputeFeatureInput,
@@ -199,6 +200,17 @@ export function computeFeatureObservation(input: ComputeFeatureInput): ComputeFe
     const future = rejectAnyFutureContribution(input.evaluationTimeForVisibility, contributions);
     if (!future.ok) {
       return future;
+    }
+  }
+
+  if (input.alt02Gate) {
+    const gate = applyAlt02FeatureEntitlementGate(input.alt02Gate);
+    if (gate.blocked) {
+      return Object.freeze({
+        ok: false,
+        code: 'ALT02_ENTITLEMENT_BLOCKED',
+        message: `alternative-data feature blocked: ${gate.outcome}`,
+      });
     }
   }
 

@@ -128,5 +128,10 @@ export {
 } from './research-data-manifest.ts';
 export * from './technical/index.ts';
 export * from './universal/index.ts';
+export {
+  applyAlt02FeatureEntitlementGate,
+  type Alt02FeatureGateInput,
+  type Alt02FeatureGateResult,
+} from './alt02-entitlement-gate.ts';
 export * as aaf05Coverage from './coverage/index.ts';
 export * as biasSentinel from './bias-sentinel/index.ts';
