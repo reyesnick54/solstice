@@ -34,6 +34,7 @@ export type { InvestmentAccountProfile } from './profile.ts';
 export { evaluateInvestmentEligibility } from './eligibility.ts';
 export { PaperBrokerProvider } from './broker-port.ts';
 export type { BrokerExecutionProvider } from './broker-port.ts';
+export * from './broker-connectivity/index.ts';
 export { paperOnlyRiskControl } from './risk-port.ts';
 export type { InvestmentRiskControlPort, RiskControlDecision } from './risk-port.ts';
 export { simulationPeveConsumer, simulationRdtPort } from './ports.ts';
