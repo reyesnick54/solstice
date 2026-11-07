@@ -1,14 +1,4 @@
-export {
-  HELIOS_ALT01_ALTERNATIVE_DATA_INTELLIGENCE_SCHEMA,
-  ALTERNATIVE_DATA_SIGNAL_FAMILIES,
-  ALT_DATA_PROVIDER_SURFACES,
-  ALT01_CANONICAL_FEATURE_IDS,
-  ALT01_FORMULA_VERSIONS,
-  ALT01_AUTHORITY_CLASS,
-  type AlternativeDataSignalFamily,
-  type AltDataProviderSurface,
-  type Alt01CanonicalFeatureId,
-} from './taxonomy.ts';
+export * from './taxonomy.ts';
 
 export type {
   AlternativeDataLicenseClass,
@@ -25,6 +15,15 @@ export type {
   AlternativeDataIntelligencePlane,
   AlternativeDataIntelligenceStoreSnapshot,
   AlternativeDataObservationInput,
+  AlternativeDataResearchState,
+  SignalFamilyState,
+  SkepticFinding,
+  AltStrategyGenomeFeatureRow,
+  SourceContribution,
+  ContradictingSignal,
+  IncrementalInformationAssessment,
+  AafQualificationLabel,
+  AltResearchBuildInput,
 } from './types.ts';
 
 export { ALT01_REFERENCE_AND_RESEARCH_ONLY, ALT01_GRANTS_EXECUTION_AUTHORITY, type Alt01AuthorityClass } from './authority.ts';
@@ -69,9 +68,42 @@ export {
   workforceObservationFollowOnFixture,
   illegalBackfillObservationFixture,
   delayedProviderObservationFixture,
-} from './fixtures.ts';
+} from './alt01-fixtures.ts';
 
 export * from './alt04-workforce/index.ts';
 export * from './alt09/index.ts';
 export * from './alt12/index.ts';
-export { listAltWorkPackages, type AltWorkPackageRow } from './work-package-registry.ts';
+
+export { buildAlternativeDataResearchState } from './alt09-synthesis.ts';
+export {
+  runAlternativeDataSkepticChecks,
+  skepticGateBlocksAafCertification,
+  type SkepticCheckInput,
+} from './alt08-skeptic.ts';
+export {
+  compileAltStrategyGenomeFeatures,
+  assertNoRawProviderRecordsInGenome,
+} from './alt11-strategy-genome-features.ts';
+export {
+  runAdversarialScenario,
+  runAllAlt14AdversarialScenarios,
+  type AdversarialScenarioResult,
+} from './adversarial-qualification.ts';
+export {
+  evaluateAlternativeDataIntelligenceQualification,
+  listAltWorkPackages,
+  type AlternativeDataIntelligenceQualificationInput,
+  type AlternativeDataIntelligenceQualificationResult,
+  type AltWorkPackageRow,
+} from './alt14-qualification.ts';
+export { demoAlternativeDataResearchState } from './fixtures.ts';
+export { bindAltIntelligenceToAafV2, ALT10_AAF_V2_MANDATORY } from './alt10-aaf-bridge.ts';
+export {
+  assertEvol12MayProposeAlternativeFeatures,
+  applyEvol09MultipleTestingNote,
+  registerAltFeatureScreeningTrials,
+} from './alt14-evol-bridge.ts';
+export {
+  HELIOS_ALT13_COUNTERFACTUAL_BRIDGE,
+  linkAltResearchToCounterfactualAssessment,
+} from './alt13-counterfactual-bridge.ts';

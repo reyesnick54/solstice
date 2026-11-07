@@ -1,136 +1,131 @@
-import { asUtcInstant } from '@solstice/domain';
-import type {
-  AlternativeDataObservationInput,
-  AlternativeDataSeries,
-  AlternativeDataSourceManifest,
-} from './types.ts';
-import { HELIOS_ALT01_ALTERNATIVE_DATA_INTELLIGENCE_SCHEMA } from './taxonomy.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 
-const baseEntitlement = Object.freeze({
-  entitlementRef: 'ent.alt01.fixture.open',
-  entitlementClass: 'sandbox_test' as const,
-  licenseClass: 'OPEN' as const,
-  commercialUseStatus: 'permitted' as const,
-});
+import { runAlternativeDataSkepticChecks } from './alt08-skeptic.ts';
+import { buildAlternativeDataResearchState } from './alt09-synthesis.ts';
+import type { AlternativeDataResearchState } from './types.ts';
+import { SKEPTIC_ALT_ATTACK_VECTORS } from './taxonomy.ts';
 
-const baseGeo = Object.freeze({
-  regionCodes: Object.freeze(['US']),
-  coverageKind: 'MARKET' as const,
-  confidence: 0.9,
-});
+const DECISION: UtcInstant = asUtcInstant('2026-06-01T00:00:00.000Z');
 
-export function wave6WorkforceManifestFixture(): AlternativeDataSourceManifest {
-  return Object.freeze({
-    schema: HELIOS_ALT01_ALTERNATIVE_DATA_INTELLIGENCE_SCHEMA,
-    manifestId: 'manifest.wave6.jobs.fixture',
-    providerId: 'wave6-arbeitnow-jobs',
-    providerSurface: 'MARKET_REFERENCE',
-    signalFamilies: Object.freeze(['WORKFORCE']),
-    sourceRef: 'config/providers/wave6-opportunity-skills-catalog-entries.yaml',
-    catalogEntryRef: 'arbeitnow-jobs',
-    entitlement: baseEntitlement,
-    geographicCoverage: baseGeo,
-    grantsExecutionAuthority: false,
-  });
-}
-
-export function wave5GeospatialSeriesFixture(): AlternativeDataSeries {
-  return Object.freeze({
-    seriesId: 'series.wave5.geospatial.activity',
-    signalFamily: 'GEOSPATIAL',
-    providerId: 'wave5-geospatial-reference',
-    manifestId: 'manifest.wave5.geospatial.fixture',
-    entityLink: Object.freeze({
-      canonicalEntityId: 'entity.issuer.fixture.001',
-      canonicalInstrumentId: 'instrument.equity.fixture.001',
-      providerEntityRef: 'FIG:ACME',
-      entityLinkConfidence: 0.82,
-      resolutionRef: 'aaf03.resolution.fixture.001',
+export function demoAlternativeDataResearchState(entityId = 'ent_demo_alt14'): AlternativeDataResearchState {
+  const skepticInputs = SKEPTIC_ALT_ATTACK_VECTORS.map((vector) =>
+    Object.freeze({
+      vector,
+      passed: true,
+      detail: `${vector} check passed in fixture universe`,
     }),
-    unit: 'activity_index',
-    revisionChainId: 'chain.geospatial.fixture',
-    grantsExecutionAuthority: false,
-  });
-}
-
-export function workforceObservationInitialFixture(): AlternativeDataObservationInput {
-  return Object.freeze({
-    observationId: 'obs.workforce.initial',
-    seriesId: 'series.wave6.workforce.postings',
-    signalFamily: 'WORKFORCE',
-    eventTime: asUtcInstant('2026-02-01T00:00:00.000Z'),
-    sourcePublishedAt: asUtcInstant('2026-02-02T08:00:00.000Z'),
-    providerAvailableAt: asUtcInstant('2026-02-02T08:00:00.000Z'),
-    sunreyArrivalTime: asUtcInstant('2026-02-02T09:15:00.000Z'),
-    knowableAt: asUtcInstant('2026-02-02T09:15:00.000Z'),
-    revisionId: 'rev.workforce.v0',
-    sourceRef: 'fixture://wave6/jobs/initial',
-    providerId: 'wave6-arbeitnow-jobs',
-    licenseClass: 'OPEN',
-    entitlementRef: baseEntitlement.entitlementRef,
-    entityLink: Object.freeze({
-      canonicalEntityId: 'entity.issuer.fixture.001',
-      canonicalInstrumentId: 'instrument.equity.fixture.001',
-      providerEntityRef: 'FIG:ACME',
-      entityLinkConfidence: 0.82,
-      resolutionRef: 'aaf03.resolution.fixture.001',
+  );
+  const skepticFindings = runAlternativeDataSkepticChecks(skepticInputs);
+  return buildAlternativeDataResearchState({
+    entityId,
+    decisionTime: DECISION,
+    entityResolutionQuality: 0.96,
+    signalFamilies: Object.freeze([
+      Object.freeze({
+        familyId: 'workforce',
+        modality: 'job_postings',
+        stateLabel: 'EXPANDING',
+        uncertaintyBps: 2200,
+        coverageFractionBps: 7800,
+        knowableAt: DECISION,
+        blocked: false,
+        blockReason: null,
+      }),
+      Object.freeze({
+        familyId: 'digital_demand',
+        modality: 'search_interest',
+        stateLabel: 'ACCELERATING',
+        uncertaintyBps: 1800,
+        coverageFractionBps: 8200,
+        knowableAt: DECISION,
+        blocked: false,
+        blockReason: null,
+      }),
+      Object.freeze({
+        familyId: 'product_demand',
+        modality: 'pricing_scrape',
+        stateLabel: 'PRICING_POWER_STABLE',
+        uncertaintyBps: 2400,
+        coverageFractionBps: 6500,
+        knowableAt: DECISION,
+        blocked: false,
+        blockReason: null,
+      }),
+      Object.freeze({
+        familyId: 'logistics',
+        modality: 'port_ais',
+        stateLabel: 'CONGESTION_ELEVATED',
+        uncertaintyBps: 3100,
+        coverageFractionBps: 7000,
+        knowableAt: DECISION,
+        blocked: false,
+        blockReason: null,
+      }),
+      Object.freeze({
+        familyId: 'geospatial',
+        modality: 'satellite_activity',
+        stateLabel: 'ACTIVITY_UP',
+        uncertaintyBps: 3500,
+        coverageFractionBps: 6200,
+        knowableAt: DECISION,
+        blocked: false,
+        blockReason: null,
+      }),
+      Object.freeze({
+        familyId: 'innovation',
+        modality: 'patent_velocity',
+        stateLabel: 'MOMENTUM_MODERATE',
+        uncertaintyBps: 4200,
+        coverageFractionBps: 5400,
+        knowableAt: DECISION,
+        blocked: false,
+        blockReason: null,
+      }),
+      Object.freeze({
+        familyId: 'procurement',
+        modality: 'gov_contracts',
+        stateLabel: 'DEMAND_STEADY',
+        uncertaintyBps: 2800,
+        coverageFractionBps: 7100,
+        knowableAt: DECISION,
+        blocked: false,
+        blockReason: null,
+      }),
+      Object.freeze({
+        familyId: 'supply_chain',
+        modality: 'tier_graph',
+        stateLabel: 'RISK_ELEVATED',
+        uncertaintyBps: 3900,
+        coverageFractionBps: 6800,
+        knowableAt: DECISION,
+        blocked: false,
+        blockReason: null,
+      }),
+    ]),
+    sources: Object.freeze([
+      Object.freeze({
+        providerId: 'prov_jobs_fixture',
+        modality: 'job_postings',
+        weightBps: 2500,
+        reliabilityBps: 8200,
+        licensed: true,
+      }),
+      Object.freeze({
+        providerId: 'prov_search_fixture',
+        modality: 'search_interest',
+        weightBps: 2000,
+        reliabilityBps: 7900,
+        licensed: true,
+      }),
+    ]),
+    contradictions: Object.freeze([]),
+    skepticFindings,
+    incremental: Object.freeze({
+      inSampleLiftBps: 95,
+      holdoutLiftBps: 42,
+      incrementalOnHoldout: true,
+      rejectedForOverfit: false,
     }),
-    geographicCoverage: baseGeo,
-    qualityState: 'VALID',
-    valueMinor: 1_250n,
-    valueText: null,
-  });
-}
-
-export function workforceObservationFollowOnFixture(): AlternativeDataObservationInput {
-  return Object.freeze({
-    ...workforceObservationInitialFixture(),
-    observationId: 'obs.workforce.followon',
-    knowableAt: asUtcInstant('2026-03-02T10:00:00.000Z'),
-    sunreyArrivalTime: asUtcInstant('2026-03-02T10:00:00.000Z'),
-    providerAvailableAt: asUtcInstant('2026-03-02T09:00:00.000Z'),
-    eventTime: asUtcInstant('2026-03-01T00:00:00.000Z'),
-    revisionId: 'rev.workforce.v1',
-    valueMinor: 1_400n,
-  });
-}
-
-/** Provider backfill: event predates availability but knowableAt incorrectly equals event time. */
-export function illegalBackfillObservationFixture(): AlternativeDataObservationInput {
-  return Object.freeze({
-    ...workforceObservationInitialFixture(),
-    observationId: 'obs.workforce.backfill.illegal',
-    eventTime: asUtcInstant('2025-06-01T00:00:00.000Z'),
-    providerAvailableAt: asUtcInstant('2026-04-01T12:00:00.000Z'),
-    sunreyArrivalTime: asUtcInstant('2026-04-01T12:30:00.000Z'),
-    knowableAt: asUtcInstant('2025-06-01T00:00:00.000Z'),
-    revisionId: 'rev.workforce.backfill',
-  });
-}
-
-export function delayedProviderObservationFixture(): AlternativeDataObservationInput {
-  return Object.freeze({
-    observationId: 'obs.geospatial.delayed',
-    seriesId: 'series.wave5.geospatial.activity',
-    signalFamily: 'GEOSPATIAL',
-    eventTime: asUtcInstant('2026-01-15T00:00:00.000Z'),
-    sourcePublishedAt: asUtcInstant('2026-01-16T06:00:00.000Z'),
-    providerAvailableAt: asUtcInstant('2026-01-20T14:00:00.000Z'),
-    sunreyArrivalTime: asUtcInstant('2026-01-20T14:05:00.000Z'),
-    knowableAt: asUtcInstant('2026-01-20T14:05:00.000Z'),
-    revisionId: 'rev.geospatial.v0',
-    sourceRef: 'fixture://wave5/geospatial/delayed',
-    providerId: 'wave5-geospatial-reference',
-    licenseClass: 'GOVERNMENT_OFFICIAL',
-    entitlementRef: baseEntitlement.entitlementRef,
-    entityLink: wave5GeospatialSeriesFixture().entityLink,
-    geographicCoverage: Object.freeze({
-      regionCodes: Object.freeze(['US-CA']),
-      coverageKind: 'REGIONAL',
-      confidence: 0.75,
-    }),
-    qualityState: 'VALID',
-    valueMinor: 88_000n,
-    valueText: null,
+    evidenceRefs: Object.freeze(['ev/alt14/demo_state']),
   });
 }
