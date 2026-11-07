@@ -13,7 +13,7 @@ export type ExecWorkPackageRow = {
 const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly moduleRef: string }> = {
   EXEC01: {
     title: 'Canonical execution domain',
-    moduleRef: 'packages/platform/src/helios/order-lifecycle/types.ts',
+    moduleRef: 'packages/platform/src/helios/execution-connectivity/exec01/index.ts',
   },
   EXEC02: {
     title: 'Normalized broker protocol',
@@ -74,7 +74,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
 };
 
 const OPTIONAL_TESTS: Record<string, string> = {
-  EXEC01: 'tests/helios-h23-order-fill-settlement-lifecycle.test.ts',
+  EXEC01: 'tests/helios-exec01-connectivity-domain.test.ts',
   EXEC02: 'tests/helios-exec02-broker-protocol.test.ts',
   EXEC03: 'tests/helios-exec03-exactly-once-intent.test.ts',
   EXEC04: 'tests/helios-multi-asset-m18-portfolio-exposure-graph.test.ts',
