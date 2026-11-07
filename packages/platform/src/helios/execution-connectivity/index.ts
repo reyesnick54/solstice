@@ -9,6 +9,7 @@ export * from './pretrade-firewall/index.ts';
 export * from './exec05/index.ts';
 export * from './exec06/index.ts';
 export * from './exec07/index.ts';
+export * from './exec09/index.ts';
 export * from './exec10/index.ts';
 export * from './exec11/index.ts';
 export * from './exec12/index.ts';
