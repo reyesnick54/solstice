@@ -75,6 +75,7 @@ export { SandboxInvestmentExecutionProvider } from './product/sandbox.ts';
 export { seedInstrumentProducts } from './product/instrument-catalog.ts';
 export type { InstrumentProduct } from './product/instrument-catalog.ts';
 export { opportunitiesFromInvestmentState } from './product/growth-port.ts';
+export * as executionConnectivity from './execution-connectivity/index.ts';
 export {
   PRODUCT_ASSET_CLASSES,
   INVESTMENT_ORDER_STATES,
