@@ -33,7 +33,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
   },
   MD06: {
     title: 'Instrument master',
-    moduleRef: 'packages/platform/src/helios/market-observation/instrument-registry.ts',
+    moduleRef: 'packages/platform/src/helios/market-data/md06-instrument-master/index.ts',
   },
   MD07: {
     title: 'U.S. equity consolidated/direct market state',
@@ -73,7 +73,7 @@ const OPTIONAL_TESTS: Record<string, string> = {
   MD01: 'tests/helios-h08-observation-provenance-freshness-entitlements.test.ts',
   MD03: 'tests/helios-md03-sequence-recovery.test.ts',
   MD04: 'tests/helios-multi-asset-m02-market-observations.test.ts',
-  MD06: 'tests/helios-m01-multi-asset-instrument.test.ts',
+  MD06: 'tests/helios-md06-instrument-master.test.ts',
   MD07: 'tests/helios-md07-us-equity-market-state.test.ts',
   MD08: 'tests/helios-multi-asset-m03-market-calendar-contracts.test.ts',
   MD09: 'tests/helios-m06-crypto-market-data.test.ts',

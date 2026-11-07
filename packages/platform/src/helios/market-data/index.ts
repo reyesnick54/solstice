@@ -3,6 +3,8 @@
  */
 
 export * from './md03/index.ts';
+export * from './md06-instrument-master/index.ts';
+export * from './md07-us-equity/index.ts';
 export * from './md10/index.ts';
 
 export {
