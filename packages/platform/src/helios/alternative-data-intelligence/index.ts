@@ -1,6 +1,7 @@
 export * from './taxonomy.ts';
 export * from './alt04-workforce/index.ts';
 export * from './alt07-logistics-flow/index.ts';
+export * from './geospatial-activity/index.ts';
 export * from './alt09/index.ts';
 export * from './alt12/index.ts';
 
