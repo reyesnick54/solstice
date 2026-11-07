@@ -1,6 +1,6 @@
 # Market Data Resilience Report
 
-**Git SHA:** `2146aa191d01323d9c2cfff6bd8411e640809802` · **Evaluated at (UTC):** `2026-11-07T16:23:35.673Z`
+**Git SHA:** `pending` · **Evaluated at (UTC):** `2026-11-07T16:53:55.245Z`
 
 ## Canonical owners
 
