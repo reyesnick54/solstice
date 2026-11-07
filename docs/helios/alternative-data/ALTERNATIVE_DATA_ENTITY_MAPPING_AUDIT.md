@@ -1,6 +1,15 @@
 # Alternative Data Entity Mapping Audit
 
-**Marker:** `HELIOS_ALTERNATIVE_DATA_INTELLIGENCE_V1_QUALIFIED`
+**Git SHA:** `68ec6eaa7522a6a463c0c450a3c7d3c19ba29d92`  
+**Qualification timestamp (UTC):** `2026-11-07T12:17:54.232Z`  
+**Stack marker:** `HELIOS_ALTERNATIVE_DATA_INTELLIGENCE_V1_QUALIFIED`  
+**Qualified:** yes  
+**Posture:** `LIVE_TRADING_ENABLED=false`; `production_authorized=false`  
+
+
+## Canonical owner (ALT03)
+
+`packages/platform/src/helios/alternative-data/alt03-entity-asset-graph` — qualification marker `HELIOS_ALT03_ENTITY_ASSET_GRAPH_QUALIFIED`.
 
 ## Rules
 

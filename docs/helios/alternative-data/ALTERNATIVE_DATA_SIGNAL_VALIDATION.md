@@ -1,6 +1,11 @@
 # Alternative Data Signal Validation
 
-**Marker:** `HELIOS_ALTERNATIVE_DATA_INTELLIGENCE_V1_QUALIFIED`
+**Git SHA:** `68ec6eaa7522a6a463c0c450a3c7d3c19ba29d92`  
+**Qualification timestamp (UTC):** `2026-11-07T12:17:54.232Z`  
+**Stack marker:** `HELIOS_ALTERNATIVE_DATA_INTELLIGENCE_V1_QUALIFIED`  
+**Qualified:** yes  
+**Posture:** `LIVE_TRADING_ENABLED=false`; `production_authorized=false`  
+
 
 ## AAF-certified Strategy Genome features
 
@@ -19,4 +24,4 @@ Holdout incremental lift is required before `AAFQualification=CERTIFIED`. Featur
 
 ## Adversarial harness
 
-Fourteen simulation scenarios in `adversarial-qualification.ts` guard entity mapping, deduplication, coverage bias, vintage preservation, cloud obscuration, night-lights calibration, AIS cargo unknown, contract ceiling vs obligation, patent-without-commercialization, weak supply-chain edges, modality dropout, multiple-testing correction, and entitlement revocation.
+14 simulation scenarios in `adversarial-qualification.ts` guard entity mapping, deduplication, coverage bias, vintage preservation, cloud obscuration, night-lights calibration, AIS cargo unknown, contract ceiling vs obligation, patent-without-commercialization, weak supply-chain edges, modality dropout, multiple-testing correction, and entitlement revocation.
