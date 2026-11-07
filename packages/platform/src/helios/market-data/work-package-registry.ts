@@ -40,8 +40,8 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
     moduleRef: 'packages/platform/src/helios/market-data/md07-us-equity/index.ts',
   },
   MD08: {
-    title: 'Derivatives and listed contracts',
-    moduleRef: 'packages/platform/src/helios/multi-asset/market-calendar/registry.ts',
+    title: 'Derivatives market data intelligence',
+    moduleRef: 'packages/platform/src/helios/market-data/md08/index.ts',
   },
   MD09: {
     title: 'Crypto multi-venue fabric',
@@ -75,7 +75,7 @@ const OPTIONAL_TESTS: Record<string, string> = {
   MD04: 'tests/helios-md04-order-book-engine.test.ts',
   MD06: 'tests/helios-md06-instrument-master.test.ts',
   MD07: 'tests/helios-md07-us-equity-market-state.test.ts',
-  MD08: 'tests/helios-multi-asset-m03-market-calendar-contracts.test.ts',
+  MD08: 'tests/helios-md08-derivatives-market-data.test.ts',
   MD09: 'tests/helios-m06-crypto-market-data.test.ts',
   MD10: 'tests/helios-md10-macro-market-reference.test.ts',
   MD11: 'tests/helios-native03-bytex-runtime.test.ts',
