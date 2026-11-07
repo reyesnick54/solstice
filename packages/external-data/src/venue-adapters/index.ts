@@ -20,3 +20,13 @@ export {
   listHeliosVenueAdapterIds,
   assertOs04VenueRegistryComplete,
 } from './registry.ts';
+export {
+  bindMd09VenueResearchAdapter,
+  bindAllMd09VenueResearchAdapters,
+  buildMd09ReferenceStream,
+  describeMd09Synchronization,
+  HELIOS_MD09_VENUE_RESEARCH_SCHEMA,
+  type Md09VenueResearchAdapter,
+  type Md09SynchronizationScheme,
+  type Md09VenueRawTick,
+} from './md09/index.ts';
