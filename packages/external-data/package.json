@@ -6,6 +6,7 @@
   "description": "Wave 2 external reference data plane — macro, FX, markets, commodities, filings, fiscal, regulatory",
   "exports": {
     ".": "./src/index.ts",
+    "./wave6": "./src/wave6/index.ts",
     "./helios/aaf08-capital-market-port": "./src/helios/aaf08-capital-market-port.ts"
   },
   "files": [
