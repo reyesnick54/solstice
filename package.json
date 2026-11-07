@@ -102,6 +102,8 @@
     "helios:alt15:qualify:fast": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-alt15-qualify.ts --skip-subprocess --skip-ci",
     "helios:md14:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-md14-qualify.ts",
     "helios:md14:qualify:fast": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-md14-qualify.ts --skip-subprocess --skip-ci",
+    "helios:exec15:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-exec15-qualify.ts",
+    "helios:exec15:qualify:fast": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-exec15-qualify.ts --skip-subprocess --skip-ci",
     "test:helios-alt14": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-alt14-alternative-data-qualification.test.ts tests/helios-alt14-alternative-data-research-mesh.test.ts",
     "test:helios-val12": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/helios-val12-valuation-intelligence-qualification.test.ts",
     "helios:alt09:qualify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/helios-alt09-qualify.ts",
