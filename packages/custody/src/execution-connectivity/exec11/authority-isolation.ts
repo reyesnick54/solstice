@@ -34,6 +34,13 @@ export function evaluateCustodyMovementIsolation(request: CustodyMovementRequest
 
   if (tradeGrantImpliesWithdraw(grant) && authority === 'WITHDRAW' && grantIncludes(grant, 'TRADE')) {
     reasonCodes.push('TRADE_BUNDLED_WITHDRAW_FORBIDDEN');
+    return Object.freeze({
+      decision: 'DENIED',
+      authority,
+      reasonCodes: Object.freeze(reasonCodes),
+      tradeAuthorityImpliesWithdraw: false,
+      postsCustodyMovement: false,
+    });
   }
 
   const explicitlyGranted = grantIncludes(grant, authority);
