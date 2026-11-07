@@ -109,6 +109,11 @@ export function forcesFailedSafe(kind: SequenceAnomalyKind): boolean {
   return kind === 'CHECKSUM_MISMATCH' || kind === 'STALE_SNAPSHOT';
 }
 
+/** Session or large sequence discontinuities require resync — never stay authoritative. */
+export function requiresFeedResynchronization(kind: SequenceAnomalyKind): boolean {
+  return kind === 'SESSION_RESET' || kind === 'SEQUENCE_RESET';
+}
+
 function anomaly(kind: SequenceAnomalyKind, sequence: number | null, message: string, at: UtcInstant): SequenceAnomalyEvent {
   return Object.freeze({ kind, sequence, message, at });
 }

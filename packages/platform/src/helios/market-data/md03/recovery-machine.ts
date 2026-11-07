@@ -9,6 +9,7 @@ import {
   detectSnapshotAnomalies,
   forcesFailedSafe,
   isRecoverableAnomaly,
+  requiresFeedResynchronization,
   sequenceGapFromMissing,
 } from './detection.ts';
 import { buildRecoveryRequest, selectRecoveryStrategy } from './recovery-adapters.ts';
@@ -123,7 +124,11 @@ export function ingestMarketFeedIncremental(
   }
 
   const needsRecovery = anomalies.some(
-    (row) => row.kind !== 'DUPLICATE_SEQUENCE' && (isRecoverableAnomaly(row.kind) || forcesFailedSafe(row.kind)),
+    (row) =>
+      row.kind !== 'DUPLICATE_SEQUENCE' &&
+      (isRecoverableAnomaly(row.kind) ||
+        forcesFailedSafe(row.kind) ||
+        requiresFeedResynchronization(row.kind)),
   );
 
   if (!needsRecovery && state.phase === 'INITIALIZING') {

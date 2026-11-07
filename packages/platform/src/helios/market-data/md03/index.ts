@@ -32,6 +32,7 @@ export {
   sequenceGapFromMissing,
   isRecoverableAnomaly,
   forcesFailedSafe,
+  requiresFeedResynchronization,
   type SequenceDetectionContext,
   type SequenceObservation,
 } from './detection.ts';
