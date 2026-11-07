@@ -70,6 +70,13 @@ export {
 } from './qualification.ts';
 
 export {
+  normalizedTradeToMarketTradeEvent,
+  normalizedQuoteToMarketQuoteEvent,
+  normalizedBookToMarketBookSnapshot,
+  type VenueToMd01Context,
+} from './canonical-event-bridge.ts';
+
+export {
   HELIOS_VENUE_NORMALIZATION_SCHEMA_VERSION,
   type HeliosCanonicalSymbol,
   type HeliosInstrumentMetadata,

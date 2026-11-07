@@ -1,7 +1,8 @@
 /**
- * HELIOS Market Data platform — feed integrity, macro reference, and MD14 qualification.
+ * HELIOS Market Data platform — MD01 observation fabric, feed integrity, macro reference, MD14 qualification.
  */
 
+export * from './md01/index.ts';
 export * from './md03/index.ts';
 export * from './md06-instrument-master/index.ts';
 export * from './md07-us-equity/index.ts';
