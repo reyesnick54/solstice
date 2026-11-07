@@ -244,6 +244,8 @@ export type ComputeFeatureInput = {
   readonly contributions: readonly FeatureContributionInput[];
   readonly evaluationTimeForVisibility?: UtcInstant | null;
   readonly computation?: FeatureComputation | null;
+  /** When set, ALT02 firewall is evaluated before feature materialization (alternative-data sources only). */
+  readonly alt02Gate?: import('../alt02-entitlement-gate.ts').Alt02FeatureGateInput;
 };
 
 export type ComputeDerivedFeatureInput = {
