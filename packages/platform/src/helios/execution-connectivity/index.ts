@@ -1,8 +1,8 @@
 /**
- * HELIOS execution connectivity — measurement and learning bridges (simulation).
+ * HELIOS execution connectivity — broker protocol, routing, measurement, and submission safety.
  */
-
 export * from './exec02/index.ts';
+export * from './exec03/index.ts';
 export * from './exec05/index.ts';
 export * from './exec06/index.ts';
 export * from './exec07/index.ts';
