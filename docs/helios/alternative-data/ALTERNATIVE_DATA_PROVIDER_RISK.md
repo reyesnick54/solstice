@@ -1,9 +1,9 @@
 # Alternative Data Provider Risk
 
-**Git SHA:** `faf85de7fe517971e0ce34fadbb7af33fc9986c6`  
-**Qualification timestamp (UTC):** `2026-11-07T11:42:36.763Z`  
-**Stack marker:** `HELIOS_ALTERNATIVE_DATA_INTELLIGENCE_V1_BLOCKED`  
-**Qualified:** no  
+**Git SHA:** `68ec6eaa7522a6a463c0c450a3c7d3c19ba29d92`  
+**Qualification timestamp (UTC):** `2026-11-07T12:17:54.232Z`  
+**Stack marker:** `HELIOS_ALTERNATIVE_DATA_INTELLIGENCE_V1_QUALIFIED`  
+**Qualified:** yes  
 **Posture:** `LIVE_TRADING_ENABLED=false`; `production_authorized=false`  
 
 
