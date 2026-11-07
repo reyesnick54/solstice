@@ -7,7 +7,7 @@ import type { ExternalGeoAssetRecord, ExternalGeoObservation } from '@solstice/e
 import {
   DERIVED_METRIC_VERSION,
   HELIOS_ALT08_GEOSPATIAL_ACTIVITY_SCHEMA,
-} from '../taxonomy.ts';
+} from './taxonomy.ts';
 import type { GeoAsset, GeoObservation, VersionedDerivedMetric } from './types.ts';
 
 function mapDerived(external: ExternalGeoObservation): VersionedDerivedMetric {

@@ -1,6 +1,6 @@
 import type { UtcInstant } from '@solstice/domain';
 
-import { HELIOS_ALT08_GEOSPATIAL_ACTIVITY_SCHEMA } from '../taxonomy.ts';
+import { HELIOS_ALT08_GEOSPATIAL_ACTIVITY_SCHEMA } from './taxonomy.ts';
 import type { GeospatialActivityManifest, GeospatialActivityStoreSnapshot } from './types.ts';
 import { assertNoGeospatialLeakage, filterKnowableGeoObservations } from './knowable-at.ts';
 

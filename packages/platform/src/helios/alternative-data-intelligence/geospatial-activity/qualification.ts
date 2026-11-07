@@ -1,7 +1,7 @@
 import {
   HELIOS_ALT08_GEOSPATIAL_ACTIVITY_BLOCKED,
   HELIOS_ALT08_GEOSPATIAL_ACTIVITY_QUALIFIED,
-} from '../taxonomy.ts';
+} from './taxonomy.ts';
 
 export type Alt08QualificationChecks = {
   readonly coreTypesDefined: boolean;

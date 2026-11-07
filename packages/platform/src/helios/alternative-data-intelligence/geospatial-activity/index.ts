@@ -11,7 +11,7 @@ export {
   type GeoAssetType,
   type DerivedObservationKind,
   type PhysicalActivityBand,
-} from '../taxonomy.ts';
+} from './taxonomy.ts';
 
 export type {
   GeoAsset,

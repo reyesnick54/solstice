@@ -8,7 +8,7 @@ import type {
   GeoAssetType,
   HELIOS_ALT08_GEOSPATIAL_ACTIVITY_SCHEMA,
   PhysicalActivityBand,
-} from '../taxonomy.ts';
+} from './taxonomy.ts';
 
 export type GeoAsset = {
   readonly schema: typeof HELIOS_ALT08_GEOSPATIAL_ACTIVITY_SCHEMA;

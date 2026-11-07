@@ -4,8 +4,8 @@
 
 import type { UtcInstant } from '@solstice/domain';
 
-import { FUSION_ALGORITHM_VERSION } from '../taxonomy.ts';
-import type { DerivedObservationKind, PhysicalActivityBand } from '../taxonomy.ts';
+import { FUSION_ALGORITHM_VERSION } from './taxonomy.ts';
+import type { DerivedObservationKind, PhysicalActivityBand } from './taxonomy.ts';
 import { calibratedNighttimeActivityIndexBps } from './calibration.ts';
 import type {
   GeoObservation,
