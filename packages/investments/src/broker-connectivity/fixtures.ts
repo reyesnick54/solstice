@@ -1,5 +1,4 @@
-import type { UtcInstant } from '../../../domain/src/time.ts';
-import { asUtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant, type UtcInstant } from '@solstice/domain';
 import { EXEC01_PAPER_BROKER_PROVIDER_ID, HELIOS_EXEC01_CONNECTIVITY_SCHEMA } from './taxonomy.ts';
 import type { BrokerConnectivityEnvelope } from './types.ts';
 import { paperBrokerAccountFixture, paperBrokerProviderRegistration, paperBrokerSessionFixture } from './paper-bridge.ts';
