@@ -57,3 +57,7 @@ export {
   type WithdrawalGateInput,
   type WithdrawalGateResult,
 } from './withdrawal-gate.ts';
+export {
+  freezeExec01BrokerSettlementScope,
+  type Exec01BrokerSettlementScope,
+} from './exec01-broker-settlement.ts';
