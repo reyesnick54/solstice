@@ -2,7 +2,7 @@
  * Deterministic historical replay — reproduces HELIOS knowledge at a past instant.
  */
 
-import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { UtcInstant } from '@solstice/domain';
 import { compareUtc } from './indexes.ts';
 import { buildMarketReplayManifest, buildReplayCheckpoint } from './manifests.ts';
 import { sha256Hex, stableJson } from './fingerprint.ts';
