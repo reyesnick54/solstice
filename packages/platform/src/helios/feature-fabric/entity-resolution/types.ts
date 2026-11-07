@@ -34,6 +34,11 @@ export const TEMPORAL_ENTITY_KINDS = [
   'DATACENTER',
   'PATENT_ASSIGNEE',
   'GOVERNMENT_CONTRACTOR',
+  /** HELIOS MD06 instrument master reference nodes (not ticker identity). */
+  'INSTRUMENT_IDENTITY',
+  'VENUE_INSTRUMENT',
+  'TRADING_SESSION',
+  'DERIVATIVE_CONTRACT',
 ] as const;
 export type TemporalEntityKind = (typeof TEMPORAL_ENTITY_KINDS)[number];
 
@@ -66,6 +71,13 @@ export const TEMPORAL_RELATIONSHIP_TYPES = [
   'CUSTOMER_OF',
   'ASSIGNED_TO',
   'CONTRACT_AWARDED_TO',
+  /** HELIOS MD06 instrument master temporal relations. */
+  'HAS_INSTRUMENT_IDENTITY',
+  'VENUE_INSTRUMENT_FOR',
+  'SESSION_AT_VENUE',
+  'CORPORATE_ACTION_ON',
+  'UNDERLYING_OF',
+  'CONTRACT_LIFECYCLE_FOR',
 ] as const;
 export type TemporalRelationshipType = (typeof TEMPORAL_RELATIONSHIP_TYPES)[number];
 
