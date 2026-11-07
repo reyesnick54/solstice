@@ -673,12 +673,13 @@
         "packages/identity",
         "packages/security",
         "packages/risk",
-        "packages/model-registry"
+        "packages/model-registry",
+        "packages/custody"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical investment account profile, paper orders, positions, lots, valuation, and reconciliation. Simulation only. Reuses canonical Account classes. Not a second ledger. Pre-trade Risk is required before paper execution."
+      "notes": "Canonical investment account profile, paper orders, positions, lots, valuation, and reconciliation. Simulation only. Reuses canonical Account classes. Not a second ledger. Pre-trade Risk is required before paper execution. HELIOS EXEC08 may read packages/custody execution-connectivity types for beneficial-owner mapping only; no custody mutation."
     },
     {
       "id": "packages/regulatory-twin",
