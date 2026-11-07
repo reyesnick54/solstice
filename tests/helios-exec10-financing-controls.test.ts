@@ -96,6 +96,7 @@ describe('HELIOS EXEC10 — financing controls', () => {
       asOf: NOW,
     });
     assert.equal(state.executableBuyingPowerMinor, '700000');
+    assert.equal(state.buyingPower.validationState, 'INFORMATIONAL_ONLY');
     assert.equal(state.buyingPower.limitingSource, 'CASH_POSTURE');
     assert.ok(
       providerBuyingPowerInformationalOnly({

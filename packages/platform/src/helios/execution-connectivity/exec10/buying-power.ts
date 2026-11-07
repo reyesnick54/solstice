@@ -52,7 +52,7 @@ export function buildBuyingPowerState(input: BuildBuyingPowerInput): BuyingPower
     currency: input.currency,
     providerId: input.providerId,
     brokerReportedAvailableMinor: input.brokerReportedAvailableMinor,
-    validationState: 'MANDATE_VALIDATED',
+    validationState: 'INFORMATIONAL_ONLY',
     executableBuyingPowerMinor: effective.executableBuyingPowerMinor,
     limitingSource,
     asOf: input.asOf,
