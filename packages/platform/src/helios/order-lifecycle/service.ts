@@ -26,6 +26,11 @@ import {
   canTransitionHeliosOrder,
   type HeliosOrderStatus,
 } from './taxonomy.ts';
+import { evaluatePreTradeExecutionFirewall } from '../execution-connectivity/pretrade-firewall/evaluator.ts';
+import {
+  buildPreTradeExecutionRequestFromHeliosOrder,
+  type PreTradeOrderLifecycleFacts,
+} from '../execution-connectivity/pretrade-firewall/order-lifecycle-bridge.ts';
 import type {
   CreateHeliosOrderInput,
   HeliosCapitalPort,
@@ -36,6 +41,14 @@ import type {
   HeliosReconciliationRecord,
   HeliosSettlement,
 } from './types.ts';
+
+export type HeliosPreTradeFirewallPort = {
+  readonly factsFor: (
+    order: HeliosOrder,
+    now: ReturnType<Clock['now']>,
+    phase: 'PRE_RESERVE' | 'PRE_BROKER',
+  ) => PreTradeOrderLifecycleFacts;
+};
 
 export const HELIOS_H23_ORDER_LIFECYCLE = 'HELIOS_H23_ORDER_LIFECYCLE' as const;
 
@@ -61,6 +74,7 @@ export class HeliosOrderLifecycleService {
   private readonly provider: HeliosProviderOrderPort;
   private readonly validation: HeliosOrderValidationPorts;
   private readonly capital: HeliosCapitalPort;
+  private readonly preTrade?: HeliosPreTradeFirewallPort;
   readonly store: InMemoryHeliosOrderLifecycleStore;
 
   constructor(input: {
@@ -69,6 +83,7 @@ export class HeliosOrderLifecycleService {
     readonly provider: HeliosProviderOrderPort;
     readonly validation: HeliosOrderValidationPorts;
     readonly capital: HeliosCapitalPort;
+    readonly preTrade?: HeliosPreTradeFirewallPort;
     readonly store?: InMemoryHeliosOrderLifecycleStore;
   }) {
     this.clock = input.clock;
@@ -78,6 +93,9 @@ export class HeliosOrderLifecycleService {
     this.provider = input.provider;
     this.validation = input.validation;
     this.capital = input.capital;
+    if (input.preTrade) {
+      this.preTrade = input.preTrade;
+    }
     this.store = input.store ?? new InMemoryHeliosOrderLifecycleStore();
   }
 
@@ -186,8 +204,8 @@ export class HeliosOrderLifecycleService {
       return fail('INVALID_TRANSITION', `cannot submit from status ${order.status}`);
     }
 
-    const revalidation = this.revalidateBeforeSubmit(order, now);
-    if (!revalidation.ok) return revalidation;
+    const gateBeforeReserve = this.evaluatePreTradeFirewall(order, now, 'PRE_RESERVE');
+    if (!gateBeforeReserve.ok) return gateBeforeReserve;
 
     const reserved = this.capital.reserve({
       orderId: order.orderId,
@@ -221,6 +239,16 @@ export class HeliosOrderLifecycleService {
 
     const submitted = transitionOrder(current, 'SUBMITTED', { submittedAt: now, updatedAt: now });
     this.store.updateOrder(submitted);
+
+    const gateBeforeBroker = this.evaluatePreTradeFirewall(submitted, now, 'PRE_BROKER');
+    if (!gateBeforeBroker.ok) {
+      if (submitted.reservationId) {
+        this.capital.release({ reservationId: submitted.reservationId, reason: 'pre-trade firewall blocked broker submit' });
+      }
+      const failed = transitionOrder(submitted, 'FAILED', { updatedAt: now });
+      this.store.updateOrder(failed);
+      return gateBeforeBroker;
+    }
 
     const result = this.provider.submit({
       externalOperationId: submitted.externalOperationId,
@@ -588,6 +616,38 @@ export class HeliosOrderLifecycleService {
 
   restoreFromSnapshot(): void {
     // Called externally via store.restore
+  }
+
+  private evaluatePreTradeFirewall(
+    order: HeliosOrder,
+    now: ReturnType<Clock['now']>,
+    phase: 'PRE_RESERVE' | 'PRE_BROKER',
+  ): Result<true, HeliosOrderFailure> {
+    if (this.preTrade) {
+      const facts = this.preTrade.factsFor(order, now, phase);
+      const request = buildPreTradeExecutionRequestFromHeliosOrder({
+        order,
+        now,
+        validation: this.validation,
+        facts,
+      });
+      const decision = evaluatePreTradeExecutionFirewall(request);
+      this.evidence?.seal('HELIOS_EXEC04_PRETRADE_FIREWALL', {
+        orderId: order.orderId,
+        phase,
+        outcome: decision.outcome,
+        reasonCodes: decision.reasonCodes,
+        decisionId: decision.decisionId,
+      });
+      if (decision.outcome === 'BLOCK') {
+        return fail('PRETRADE_BLOCKED', decision.reasonCodes.join('; '));
+      }
+      if (decision.outcome === 'REVIEW_REQUIRED') {
+        return fail('PRETRADE_REVIEW_REQUIRED', decision.reasonCodes.join('; '));
+      }
+      return ok(true);
+    }
+    return this.revalidateBeforeSubmit(order, now);
   }
 
   private revalidateBeforeSubmit(order: HeliosOrder, now: ReturnType<Clock['now']>): Result<true, HeliosOrderFailure> {

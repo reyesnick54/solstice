@@ -156,7 +156,9 @@ export type HeliosOrderFailure = {
     | 'WEBHOOK_INVALID'
     | 'WEBHOOK_REPLAY'
     | 'NOT_SIMULATION'
-    | 'LIVE_GATE_BLOCKED';
+    | 'LIVE_GATE_BLOCKED'
+    | 'PRETRADE_BLOCKED'
+    | 'PRETRADE_REVIEW_REQUIRED';
   readonly message: string;
 };
 
