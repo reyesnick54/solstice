@@ -15,6 +15,7 @@ import type {
   InformationTime,
   QualityState,
 } from '../observation/types.ts';
+import type { MarketTimeEnvelope } from '../market-data/md02/types.ts';
 
 export const HELIOS_MARKET_TIME_SERIES_SCHEMA = 'sunrey.helios.market-time-series.v1' as const;
 export const HELIOS_MARKET_TIME_SERIES_AUTHORITY = 'REFERENCE_ONLY' as const;
@@ -245,6 +246,7 @@ export type SealedMarketObservation = {
   readonly marketObservation: CanonicalMarketObservation;
   readonly envelope: HeliosMarketObservationEnvelope;
   readonly informationTime: InformationTime;
+  readonly marketTime: MarketTimeEnvelope;
   readonly knowableAt: UtcInstant;
 };
 

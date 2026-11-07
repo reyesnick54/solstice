@@ -8,7 +8,11 @@ import type { Clock } from '@solstice/config';
 import { buildObservationEntitlement } from './entitlement.ts';
 import { checkDuplicate } from './deduplication.ts';
 import { assessHeliosFreshness } from './freshness-policies.ts';
-import { buildInformationTime } from './information-time.ts';
+import {
+  buildMarketTimeEnvelope,
+  buildMarketTimeInputFromInformationPartial,
+  marketTimeToInformationTime,
+} from '../market-data/md02/index.ts';
 import { assessSourceIndependence, buildLineageRecord } from './lineage.ts';
 import { detectSequenceGap, runQualityChecks } from './quality.ts';
 import { buildTrustRef } from './trust-integration.ts';
@@ -50,22 +54,41 @@ export class HeliosObservationFabric {
       return { ok: false, code: 'INSTRUMENT_REQUIRED', message: 'canonicalInstrumentId is required' };
     }
 
-    const informationTime = buildInformationTime({
-      observation,
-      ingestionTime: input.informationTime?.ingestionTime ?? nowUtc,
-      ...(input.informationTime?.sourceEventTime !== undefined
-        ? { sourceEventTime: input.informationTime.sourceEventTime }
-        : {}),
-      ...(input.informationTime?.sourcePublishedTime !== undefined
-        ? { sourcePublishedTime: input.informationTime.sourcePublishedTime }
-        : {}),
-      ...(input.informationTime?.providerAvailabilityTime !== undefined
-        ? { providerAvailabilityTime: input.informationTime.providerAvailabilityTime }
-        : {}),
-      ...(input.informationTime?.sunreyArrivalTime !== undefined
-        ? { sunreyArrivalTime: input.informationTime.sunreyArrivalTime }
-        : {}),
+    const arrivalTime = input.informationTime?.sunreyArrivalTime ?? observation.time.retrievedAt;
+    const latestUtc = (a: typeof nowUtc, b: typeof nowUtc) =>
+      Date.parse(a) >= Date.parse(b) ? a : b;
+    const sunreyNormalizeTime = latestUtc(input.informationTime?.ingestionTime ?? nowUtc, arrivalTime);
+    const sunreyPersistTime = latestUtc(nowUtc, sunreyNormalizeTime);
+    const receiveMono = process.hrtime.bigint();
+    const marketTime = buildMarketTimeEnvelope({
+      ...buildMarketTimeInputFromInformationPartial({
+        sunreyArrivalTime: arrivalTime,
+        ingestionTime: sunreyNormalizeTime,
+        ...(input.informationTime?.sourceEventTime !== undefined
+          ? { sourceEventTime: input.informationTime.sourceEventTime }
+          : { sourceEventTime: observation.time.sourceTimestamp ?? observation.time.effectiveAt ?? null }),
+        ...(input.informationTime?.sourcePublishedTime !== undefined
+          ? { sourcePublishedTime: input.informationTime.sourcePublishedTime }
+          : {}),
+        ...(input.informationTime?.providerAvailabilityTime !== undefined
+          ? { providerAvailabilityTime: input.informationTime.providerAvailabilityTime }
+          : {}),
+        ...(input.informationTime?.exchangeSendTime !== undefined
+          ? { exchangeSendTime: input.informationTime.exchangeSendTime }
+          : {}),
+        ...(input.informationTime?.providerReceiveTime !== undefined
+          ? { providerReceiveTime: input.informationTime.providerReceiveTime }
+          : {}),
+        sunreyPersistTime,
+      }),
+      processMonotonicNs: Object.freeze({
+        networkReceive: receiveMono,
+        decode: receiveMono,
+        normalize: receiveMono,
+        persist: process.hrtime.bigint(),
+      }),
     });
+    const informationTime = marketTimeToInformationTime(marketTime);
 
     const lineage = buildLineageRecord({
       observation,
@@ -132,6 +155,7 @@ export class HeliosObservationFabric {
     const quality = runQualityChecks({
       observation,
       informationTime,
+      marketTime,
       entitlement,
       freshness,
       canonicalInstrumentId: input.canonicalInstrumentId,
@@ -156,6 +180,7 @@ export class HeliosObservationFabric {
       observationType: input.observationType,
       observation,
       informationTime,
+      marketTime,
       sequence,
       version: input.version ?? null,
       lineage,
