@@ -1,14 +1,9 @@
-import { asUtcInstant } from '../../../../domain/src/time.ts';
-import { toIdentityFacts } from '../../../../kernel/src/regulated/identity-port.ts';
-import { screeningResponseToFact } from '../../../../kernel/src/regulated/screening.ts';
-import { createSimulationProviders } from '../../../../kernel/src/compliance/simulation.ts';
 import {
   evaluateWithdrawalGate,
   registerDestination,
   sandboxHsm,
-  SandboxIdentityKycProvider,
-  SandboxTravelRuleProvider,
   transitionDestination,
+  type WithdrawalGateInput,
 } from '../../regulated/index.ts';
 import { defaultGrowTradingAgentGrant, evaluateCustodyMovementIsolation, tradeGrantImpliesWithdraw } from './authority-isolation.ts';
 import { authorizeAgentWithdrawalAction } from './agent-boundary.ts';
@@ -21,27 +16,23 @@ import {
 import type { Exec11QualificationChecks } from './types.ts';
 import { evaluateWithdrawalAuthorityRequirements, withdrawalRequirementsComplete } from './withdrawal-requirements.ts';
 
-const NOW = asUtcInstant('2026-09-21T12:00:00.000Z');
-
-function fixtureIdentity() {
-  return toIdentityFacts(
-    { subjectRef: 'exec11', actorId: 'actor.exec11', jurisdiction: 'GB', now: NOW },
-    new SandboxIdentityKycProvider().verify({
-      subjectRef: 'exec11',
-      actorId: 'actor.exec11',
-      jurisdiction: 'GB',
-      now: NOW,
-    }),
-  );
-}
-
-function fixtureScreening() {
-  const providers = createSimulationProviders();
-  const request = { subjectKind: 'PERSON' as const, subjectRef: 'exec11', jurisdiction: 'GB', now: NOW };
-  return Object.freeze([
-    screeningResponseToFact('SANCTIONS', request, providers.sanctions.screen(request)),
-    screeningResponseToFact('PEP', request, providers.pep.screen(request)),
-  ]);
+function fixtureIdentity(): WithdrawalGateInput['identity'] {
+  return Object.freeze({
+    identityExists: true,
+    identityStatus: 'ACTIVE',
+    subjectId: 'sub_exec11',
+    actorId: 'actor.exec11',
+    actorSubjectMatch: true,
+    authenticated: true,
+    sessionValid: true,
+    authenticationAssurance: 'STANDARD',
+    kycState: 'VERIFIED',
+    kycLevel: 'STANDARD',
+    kycFresh: true,
+    kycVersion: 1,
+    customerId: null,
+    authorizedCapabilities: Object.freeze([]),
+  }) as WithdrawalGateInput['identity'];
 }
 
 function fixtureApprovedDestination() {
@@ -60,7 +51,7 @@ function fixtureRegulatedGateEligible() {
   const destination = fixtureApprovedDestination();
   return evaluateWithdrawalGate({
     identity: fixtureIdentity(),
-    screening: fixtureScreening(),
+    screening: Object.freeze([]),
     travelRule: null,
     travelRuleRecord: null,
     destination,
