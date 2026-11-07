@@ -10,6 +10,23 @@ import {
 } from './index.ts';
 
 describe('HELIOS EXEC11 custody movement isolation', () => {
+  it('denies WITHDRAW when TRADE and WITHDRAW are bundled on the same grant', () => {
+    const grant = Object.freeze({
+      grantId: 'grant_bundled',
+      actorKind: 'HUMAN_CUSTOMER' as const,
+      productScope: 'GROW' as const,
+      grantedAuthorities: Object.freeze(['TRADE', 'WITHDRAW'] as const),
+    });
+    const withdraw = evaluateCustodyMovementIsolation({
+      requestId: 'req_bundled',
+      authority: 'WITHDRAW',
+      rail: 'SECURITIES',
+      grant,
+    });
+    assert.equal(withdraw.decision, 'DENIED');
+    assert.ok(withdraw.reasonCodes.includes('TRADE_BUNDLED_WITHDRAW_FORBIDDEN'));
+  });
+
   it('does not grant WITHDRAW to Grow trading agents authorized only for TRADE', () => {
     const grant = defaultGrowTradingAgentGrant('grant_test');
     assert.equal(tradeGrantImpliesWithdraw(grant), false);
