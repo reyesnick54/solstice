@@ -13,3 +13,4 @@ export * from './exec11/index.ts';
 export * from './exec12/index.ts';
 export * from './exec13/index.ts';
 export * from './exec14/index.ts';
+export * from './pretrade-firewall/index.ts';
