@@ -92,7 +92,7 @@ export function runAlt10AdversarialChecks(): Alt10QualificationChecks {
           priorState: subsidiaryAfterMod,
           priorYearState: null,
           normalization: Object.freeze({
-            companyRevenueMinor: 2_000_000_00n,
+            companyRevenueMinor: 2_000_000_000_00n,
             marketCapMinor: 8_000_000_000_00n,
             existingGovernmentBusinessMinor: 500_000_000_00n,
             currency: 'USD',
