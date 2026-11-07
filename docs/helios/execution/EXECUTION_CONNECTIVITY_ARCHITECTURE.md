@@ -15,7 +15,7 @@ Establish the canonical **production-shaped external execution connectivity** do
 | `packages/investments/src/broker-connectivity/` | EXEC01 canonical broker DTOs and paper bridge |
 | `packages/investments/src/product/execution.ts` | `InvestmentExecutionAdapter` product facade |
 | `packages/platform/src/helios/order-lifecycle/` | H23 `HeliosProviderOrderPort`, settlement, reconciliation |
-| `packages/platform/src/helios/execution/exec01/` | Audit map, H23 bridge, qualification |
+| `packages/platform/src/helios/execution-connectivity/exec01/` | Audit map, qualification |
 | `packages/platform/src/helios/provider-orchestration/` | H22 provider accounts and wallets |
 | `packages/platform/src/helios/executable-opportunity/` | H09 execution routes |
 | `packages/platform/src/helios/capital-lifecycle/` | H24 exits and cash availability |
@@ -27,7 +27,7 @@ Establish the canonical **production-shaped external execution connectivity** do
 | `packages/kernel/src/policy/seed.ts` | Investment `ActionIntent` seeds |
 | `packages/kernel/src/regulated/exec01-investment-execution.ts` | Connectivity gate references |
 
-Explicit non-owners are listed in `EXEC01_EXPLICIT_NON_OWNERS` (`packages/platform/src/helios/execution/exec01/canonical-owners.ts`).
+Explicit non-owners are listed in `EXEC01_EXPLICIT_NON_OWNERS` (`packages/platform/src/helios/execution-connectivity/exec01/canonical-owners.ts`).
 
 ## Production-shaped types
 

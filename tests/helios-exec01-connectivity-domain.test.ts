@@ -23,7 +23,7 @@ import {
   EXEC01_OWNER_AUDIT_RECORDS,
   evaluateExec01Qualification,
   HELIOS_EXEC01_CONNECTIVITY_DOMAIN_QUALIFIED,
-} from '../packages/platform/src/helios/execution/exec01/index.ts';
+} from '../packages/platform/src/helios/execution-connectivity/exec01/index.ts';
 import { heliosOrderToExec01BrokerOrderRequest } from '../packages/platform/src/helios/order-lifecycle/exec01-bridge.ts';
 import { HELIOS_H23_EXEC01_SCHEMA_REF } from '../packages/platform/src/helios/order-lifecycle/exec01-schema.ts';
 import type { HeliosOrder } from '../packages/platform/src/helios/order-lifecycle/types.ts';
