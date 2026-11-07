@@ -318,6 +318,7 @@ export * from './grow-intelligence/index.ts';
 export * from './continuous-runtime/index.ts';
 export * from './execution-twin/index.ts';
 export * from './feature-fabric/index.ts';
+export * from './alternative-data/index.ts';
 export * from './earnings-intelligence/index.ts';
 export * from './alternative-data-intelligence/index.ts';
 export * from './valuation-intelligence/index.ts';
@@ -347,4 +348,3 @@ export {
 } from './earnings-intelligence/options/qualification.ts';
 
 export * from './strategy-evolution/evol08/index.ts';
-export * from './alternative-data/index.ts';
