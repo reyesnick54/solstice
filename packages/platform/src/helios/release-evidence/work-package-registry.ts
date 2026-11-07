@@ -80,6 +80,12 @@ export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPacka
       'tests/helios-md02-precision-market-time.test.ts',
     ),
     statusFrom(
+      'MD05',
+      'Redundant feed arbitration and provider trust',
+      testExists(root, 'helios-md05-redundant-market-truth.test.ts') ? 'QUALIFIED' : 'BLOCKED',
+      'tests/helios-md05-redundant-market-truth.test.ts',
+    ),
+    statusFrom(
       'H08',
       'Observation provenance freshness entitlements',
       testExists(root, 'helios-h08-observation-provenance-freshness-entitlements.test.ts')
