@@ -24,8 +24,8 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
     moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt03-provider-ingestion.ts',
   },
   ALT04: {
-    title: 'Workforce and hiring intelligence',
-    moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt04-workforce/qualification.ts',
+    title: 'Workforce and hiring alternative-data intelligence',
+    moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt04-workforce/index.ts',
   },
   ALT05: {
     title: 'Digital demand signals',
@@ -56,25 +56,33 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
     moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt11-strategy-genome-features.ts',
   },
   ALT12: {
-    title: 'EVOL12 / EVOL09 evolution bridge',
-    moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt12-evolution-bridge.ts',
+    title: 'Missing-aware multimodal fusion and signal routing',
+    moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt12/index.ts',
   },
   ALT13: {
     title: 'Counterfactual assessment bridge',
     moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt13-counterfactual-bridge.ts',
   },
   ALT14: {
-    title: 'Final qualification and adversarial harness',
+    title: 'Final qualification, adversarial harness, EVOL bridge',
     moduleRef: 'packages/platform/src/helios/alternative-data-intelligence/alt14-qualification.ts',
   },
+};
+
+const OPTIONAL_TESTS: Record<string, string> = {
+  ALT04: 'tests/helios-alt04-workforce-intelligence.test.ts',
+  ALT12: 'tests/helios-alt12-multimodal-fusion.test.ts',
+  ALT14: 'tests/helios-alt14-alternative-data-qualification.test.ts',
 };
 
 export function listAltWorkPackages(root: string): readonly AltWorkPackageRow[] {
   return Object.freeze(
     ALT_WORK_PACKAGES.map((packageId) => {
       const meta = MODULE_BY_PACKAGE[packageId];
-      const status =
-        meta && existsSync(join(root, meta.moduleRef)) ? ('IMPLEMENTED' as const) : ('BLOCKED' as const);
+      const moduleOk = meta !== undefined && existsSync(join(root, meta.moduleRef));
+      const testRel = OPTIONAL_TESTS[packageId];
+      const testOk = testRel ? existsSync(join(root, testRel)) : true;
+      const status = moduleOk && testOk ? ('IMPLEMENTED' as const) : ('BLOCKED' as const);
       return Object.freeze({
         packageId,
         title: meta?.title ?? packageId,

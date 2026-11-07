@@ -12,8 +12,8 @@
 | ALT09 | `AlternativeDataResearchState` synthesis | `alt09-synthesis.ts` |
 | ALT10 | AAF V2 bridge | `alt10-aaf-bridge.ts` |
 | ALT11 | Strategy Genome certified features | `alt11-strategy-genome-features.ts` |
-| ALT12 | EVOL12 proposals + EVOL09 trial counting | `alt12-evolution-bridge.ts` |
+| ALT12 | Missing-aware multimodal fusion | `alt12/index.ts` |
 | ALT13 | Counterfactual assessment link | `alt13-counterfactual-bridge.ts` |
-| ALT14 | Final qualification + adversarial harness | `alt14-qualification.ts` |
+| ALT14 | Final qualification, adversarial harness, EVOL bridge | `alt14-qualification.ts`, `alt14-evol-bridge.ts` |
 
 Raw provider records do **not** enter Strategy Genome; only AAF-certified feature ids are exposed.
