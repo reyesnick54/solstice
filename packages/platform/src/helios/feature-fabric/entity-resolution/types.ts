@@ -20,6 +20,20 @@ export const TEMPORAL_ENTITY_KINDS = [
   'CRYPTO_ASSET',
   'CRYPTO_VENUE_INSTRUMENT',
   'ECONOMIC_SERIES',
+  /** HELIOS ALT03 alternative-data asset entities (extends graph; not a second authority). */
+  'PUBLIC_COMPANY',
+  'PRIVATE_COMPANY',
+  'PRODUCT',
+  'FACILITY',
+  'FACTORY',
+  'WAREHOUSE',
+  'PORT',
+  'VESSEL',
+  'MINE',
+  'POWER_PLANT',
+  'DATACENTER',
+  'PATENT_ASSIGNEE',
+  'GOVERNMENT_CONTRACTOR',
 ] as const;
 export type TemporalEntityKind = (typeof TEMPORAL_ENTITY_KINDS)[number];
 
@@ -42,6 +56,16 @@ export const TEMPORAL_RELATIONSHIP_TYPES = [
   'CONTINUOUS_SERIES_FOR',
   'DELISTED_AS_OF',
   'LOCATED_IN',
+  /** HELIOS ALT03 alternative-data temporal relations. */
+  'OWNS',
+  'OWNED_BY',
+  'BRAND_OF',
+  'OPERATES',
+  'LOCATED_AT',
+  'SUPPLIES',
+  'CUSTOMER_OF',
+  'ASSIGNED_TO',
+  'CONTRACT_AWARDED_TO',
 ] as const;
 export type TemporalRelationshipType = (typeof TEMPORAL_RELATIONSHIP_TYPES)[number];
 
@@ -76,6 +100,8 @@ export type TemporalMappingEvidence = {
   readonly source: string;
   readonly confidenceState: ConfidenceState;
   readonly ambiguityState: AmbiguityState;
+  /** Normalized 0–1 confidence for alternative-data relations; null when not scored. */
+  readonly confidence: number | null;
   readonly effectiveFrom: UtcInstant;
   readonly effectiveTo: UtcInstant | null;
   readonly observedAt: UtcInstant;
