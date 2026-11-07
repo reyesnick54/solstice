@@ -322,6 +322,7 @@ export * from './feature-fabric/index.ts';
 export * from './alternative-data/index.ts';
 export * from './earnings-intelligence/index.ts';
 export * from './alternative-data-intelligence/index.ts';
+export * from './market-data/index.ts';
 export * from './valuation-intelligence/index.ts';
 export * from './adaptive-alpha-v2/index.ts';
 export * from './open-source-integration/index.ts';
@@ -349,5 +350,3 @@ export {
 } from './earnings-intelligence/options/qualification.ts';
 
 export * from './strategy-evolution/evol08/index.ts';
-
-export * from './market-data/index.ts';
