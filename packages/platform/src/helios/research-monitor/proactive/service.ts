@@ -31,6 +31,7 @@ import type {
 import type { ResearchMonitorDefinition, CanonicalFeatureObservation } from '../types.ts';
 import type { EconomicWorkOrder } from '../../types.ts';
 import { computeKnowableAt } from '../../observation/information-time.ts';
+import type { ProactiveForwardCampaignCoordinator } from './campaign-orchestrator-bridge.ts';
 
 export type RegisterProactiveMonitorInput = {
   readonly customerId: string;
@@ -47,15 +48,20 @@ export class HeliosProactiveResearchEngine {
   private readonly clock: Clock;
   private readonly ports: ProactiveResearchEnginePorts;
   private readonly pendingEvents: MarketFeatureEvent[] = [];
+  private campaignCoordinator: ProactiveForwardCampaignCoordinator | null = null;
 
   constructor(input: {
     readonly ports: ProactiveResearchEnginePorts;
     readonly monitorStore?: InMemoryResearchMonitorStore;
     readonly engineStore?: ProactiveResearchEngineStore;
     readonly triggerRouter?: ResearchTriggerRouter;
+    readonly campaignCoordinator?: ProactiveForwardCampaignCoordinator;
   }) {
     this.ports = input.ports;
     this.clock = input.ports.clock;
+    if (input.campaignCoordinator !== undefined) {
+      this.campaignCoordinator = input.campaignCoordinator;
+    }
     const monitorStore = input.monitorStore ?? new InMemoryResearchMonitorStore();
     this.monitorService = new HeliosResearchMonitorService({ store: monitorStore });
     this.engineStore = input.engineStore ?? new ProactiveResearchEngineStore();
@@ -127,8 +133,15 @@ export class HeliosProactiveResearchEngine {
     );
   }
 
+  attachCampaignCoordinator(coordinator: ProactiveForwardCampaignCoordinator): void {
+    this.campaignCoordinator = coordinator;
+  }
+
   enqueueMarketEvent(event: MarketFeatureEvent): void {
     this.pendingEvents.push(event);
+    if (this.campaignCoordinator) {
+      this.campaignCoordinator.enqueueMarketEventTrigger(event);
+    }
     this.recordHistory({
       kind: 'MARKET_EVENT_RECEIVED',
       stage: 'MARKET_EVENT',
@@ -203,6 +216,10 @@ export class HeliosProactiveResearchEngine {
       if (result.routeResult?.outcome === 'RESEARCH_COMPLETED') {
         triggersRouted += 1;
       }
+    }
+
+    if (this.campaignCoordinator) {
+      this.campaignCoordinator.tickCampaigns({ workLimit: limit });
     }
 
     return Object.freeze({
