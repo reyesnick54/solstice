@@ -17,6 +17,7 @@ export { listAlphaWorkPackages, type AlphaWorkPackageRow } from './work-package-
 
 export * from './alpha02/index.ts';
 export * from './alpha04-shadow-capital/index.ts';
+export * from './alpha05/index.ts';
 export * from './alpha06/index.ts';
 export * from './alpha08/index.ts';
 export * from './alpha09/index.ts';
