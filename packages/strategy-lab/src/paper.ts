@@ -11,6 +11,9 @@ import { asPaperStrategyRunId, type PaperStrategyRunId } from './ids.ts';
 import type { KillSwitchReason, StrategyFailure, StrategyLifecycleState } from './types.ts';
 import type { Evol11PaperRole } from './evol11-champion-challenger.ts';
 
+/** ALPHA01 — paper runs accumulate FORWARD_PAPER lane evidence only (never merged with backtest). */
+export const PAPER_FORWARD_ALPHA_EVIDENCE_LANE = 'FORWARD_PAPER' as const;
+
 export type PaperStrategyRun = {
   readonly runId: PaperStrategyRunId;
   readonly strategyId: string;
@@ -25,6 +28,7 @@ export type PaperStrategyRun = {
   readonly mergedIntoBacktest: false;
   readonly mergedIntoShadow: false;
   readonly liveBroker: false;
+  readonly forwardAlphaEvidenceLane: typeof PAPER_FORWARD_ALPHA_EVIDENCE_LANE;
 };
 
 export type PaperActionProposal = {
@@ -72,6 +76,7 @@ export function startPaperRun(input: {
       mergedIntoBacktest: false,
       mergedIntoShadow: false,
       liveBroker: false,
+      forwardAlphaEvidenceLane: PAPER_FORWARD_ALPHA_EVIDENCE_LANE,
     }),
   );
 }

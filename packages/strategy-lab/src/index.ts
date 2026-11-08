@@ -112,7 +112,12 @@ export type { StrategyValidationReport } from './validation.ts';
 export { paperEligibility, recordHumanPromotion } from './promotion.ts';
 export { shadowDecision, startShadowRun } from './shadow.ts';
 export type { ShadowDecision, ShadowRun } from './shadow.ts';
-export { paperOrderIntent, startPaperRun, submitPaperAction } from './paper.ts';
+export {
+  paperOrderIntent,
+  startPaperRun,
+  submitPaperAction,
+  PAPER_FORWARD_ALPHA_EVIDENCE_LANE,
+} from './paper.ts';
 export type { PaperExecutionPort, PaperStrategyRun } from './paper.ts';
 export { INACTIVE_KILL_SWITCH, activateKillSwitch, evaluateKillConditions } from './kill-switch.ts';
 export {
@@ -356,6 +361,80 @@ export type {
   Cf11EngineeringQualificationChecks,
   Cf11QualificationResult,
 } from './cf11/index.ts';
+export {
+  HELIOS_ALPHA01_FORWARD_EVIDENCE_DOMAIN_SCHEMA,
+  HELIOS_ALPHA01_FORWARD_EVIDENCE_DOMAIN_AUTHORITY,
+  HELIOS_ALPHA01_FORWARD_EVIDENCE_DOMAIN_QUALIFIED,
+  HELIOS_ALPHA01_FORWARD_EVIDENCE_DOMAIN_BLOCKED,
+  FORWARD_ALPHA_EVIDENCE_LANES,
+  FORWARD_ALPHA_FORWARD_ONLY_LANES,
+  FORWARD_ALPHA_STATUSES,
+  FORWARD_ALPHA_ARCHITECTURE_TEST_CAPABLE_STATUSES,
+  FORWARD_ALPHA_SYNTHETIC_FIXTURE_FORBIDDEN_STATUSES,
+  FORWARD_ALPHA_DECISION_FAILURE_CODES,
+  FORWARD_ALPHA_CAMPAIGN_SCHEMA,
+  asForwardAlphaCampaignId,
+  asForwardAlphaStrategyId,
+  asForwardAlphaDecisionId,
+  asForwardAlphaObservationId,
+  asForwardAlphaOutcomeId,
+  asForwardAlphaEvidenceId,
+  asForwardAlphaManifestId,
+  assertEvidenceLanesDisjoint,
+  assertCannotRelabelBacktestAsForward,
+  assertCannotRelabelHistoricalReplayAsForward,
+  isForwardAlphaEvidenceLane,
+  lanePermitsForwardDecision,
+  evaluateForwardAlphaDecisionIntegrity,
+  digestForwardAlphaFeatureVersions,
+  digestForwardAlphaMarketDataSequence,
+  sealForwardAlphaDecision,
+  attachForwardAlphaOutcomeRef,
+  buildForwardAlphaManifest,
+  aggregateForwardAlphaEvidence,
+  evaluateAlpha01ForwardEvidenceDomainEngineering,
+  alpha01EngineeringQualificationChecks,
+  resolveForwardAlphaStatus,
+  assertArchitectureTestStatusCap,
+  assertSyntheticFixtureStatusAllowed,
+  buildAlpha01FixtureCampaign,
+  buildAlpha01FixtureStrategy,
+  buildAlpha01SyntheticFixtureManifest,
+  FORWARD_SHADOW_ALPHA01_EVIDENCE_LANE,
+  forwardShadowRunToAlpha01CampaignRef,
+  projectForwardShadowDecisionToForwardAlpha,
+  FORWARD_PAPER_ALPHA01_EVIDENCE_LANE,
+  paperRunToAlpha01CampaignRef,
+} from './forward-alpha/index.ts';
+export type {
+  ForwardAlphaEvidenceLane,
+  ForwardAlphaForwardOnlyLane,
+  ForwardAlphaStatus,
+  ForwardAlphaArchitectureTestCapableStatus,
+  ForwardAlphaDecisionFailureCode,
+  ForwardAlphaCampaignId,
+  ForwardAlphaStrategyId,
+  ForwardAlphaDecisionId,
+  ForwardAlphaObservationId,
+  ForwardAlphaOutcomeId,
+  ForwardAlphaEvidenceId,
+  ForwardAlphaManifestId,
+  ForwardAlphaStrategy,
+  ForwardAlphaDecision,
+  ForwardAlphaObservation,
+  ForwardAlphaOutcome,
+  ForwardAlphaEvidence,
+  ForwardAlphaCampaign,
+  ForwardAlphaForwardCampaignLane,
+  ForwardAlphaManifest,
+  ForwardAlphaDecisionIntegrityInput,
+  ForwardAlphaDecisionIntegrityResult,
+  ForwardAlphaDecisionFailure,
+  EvidenceLaneMergeViolation,
+  Alpha01EngineeringQualificationChecks,
+  Alpha01QualificationResult,
+  ForwardAlphaStatusResolutionInput,
+} from './forward-alpha/index.ts';
 export { gateResearchToEvaluation, gateEvaluationToShadow, gateShadowToPaper } from './promotion-gates.ts';
 export type { GateResult } from './promotion-gates.ts';
 export {
@@ -363,6 +442,7 @@ export {
   recordForwardShadowDecision,
   attachForwardShadowOutcome,
   summarizeForwardShadowEvidence,
+  FORWARD_SHADOW_FORWARD_ALPHA_EVIDENCE_LANE,
   HELIOS_CF02_REJECTED_OPPORTUNITY_BOOK_QUALIFIED,
   SHADOW_OBSERVATION_HORIZONS,
   SHADOW_BENCHMARKS,
@@ -907,6 +987,31 @@ export type {
   StressRegimeAssessment,
   Evol10GenomeRegimeReport,
 } from './evol10/index.ts';
+export {
+  HELIOS_ALPHA10_FORWARD_GENERALIZATION_QUALIFIED,
+  HELIOS_ALPHA10_FORWARD_GENERALIZATION_BLOCKED,
+  HELIOS_ALPHA10_SCOPE_AXES,
+  EMPTY_FORWARD_REGIME_SCOPE,
+  scopeSliceKey,
+  buildForwardRegimeMatrix,
+  buildScopeSlicedForwardMatrices,
+  computeForwardRegimeConcentration,
+  computeForwardRegimeTransitionPerformance,
+  evaluateAlpha10ForwardRegimeReport,
+  evaluateAlpha10ForwardGeneralizationQualification,
+  computeForwardStressRegimeAssessment,
+} from './alpha10/index.ts';
+export type {
+  HeliosAlpha10ScopeAxis,
+  ForwardRegimeScopeSlice,
+  Alpha10CampaignRegimeDeclaration,
+  ForwardRegimeMatrixCell,
+  ForwardRegimeMatrix,
+  RegimeConcentration,
+  RegimeTransitionPerformance,
+  ForwardRegimePerformanceObservation,
+  Alpha10ForwardRegimeReport,
+} from './alpha10/index.ts';
 export {
   EVOL_CAPABILITY_IDS,
   HELIOS_STRATEGY_SELF_EVOLUTION_V1_BLOCKED,
