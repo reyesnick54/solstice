@@ -1,6 +1,15 @@
-import type { UtcInstant } from '@solstice/domain';
+import { FrozenClock } from '@solstice/config';
+import { asCustomerId, asJurisdiction, type UtcInstant } from '@solstice/domain';
 
+import { fillIdFor, orderIdFor } from '../order-lifecycle/index.ts';
 import { mayAafCertifyMarketDataFeature, type MarketDataAafFeatureEnvelope } from '../market-data/aaf-integration.ts';
+import {
+  DEFAULT_EXEC09_CURRENCY_CALENDARS,
+  DEFAULT_EXEC09_MARKET_CALENDARS,
+  DEFAULT_EXEC09_SETTLEMENT_POLICIES,
+  Exec09SettlementLifecycleService,
+  exec09FillIsNotSettled,
+} from './exec09/index.ts';
 import { EXEC15_E2E_PIPELINE_STAGES, type Exec15E2ePipelineStage } from './taxonomy.ts';
 
 export type Exec15E2ePipelineStageResult = {
@@ -16,6 +25,56 @@ export type Exec15E2ePipelineResult = {
   readonly grantsExecutionAuthority: false;
   readonly grantsLiveBrokerSubmit: false;
 };
+
+const E2E_EXEC09_CUSTOMER = asCustomerId('cust_exec15_e2e');
+const E2E_OPERATION = 'op_exec15_e2e_pipeline';
+
+function probeCanonicalExec09Settlement(tradeTimestamp: UtcInstant, clockNow: UtcInstant): { readonly ok: boolean; readonly detail: string } {
+  const clock = new FrozenClock(clockNow);
+  const service = new Exec09SettlementLifecycleService({
+    clock,
+    marketCalendars: DEFAULT_EXEC09_MARKET_CALENDARS,
+    currencyCalendars: DEFAULT_EXEC09_CURRENCY_CALENDARS,
+    seedPolicies: DEFAULT_EXEC09_SETTLEMENT_POLICIES,
+  });
+  const orderId = orderIdFor(E2E_OPERATION);
+  const fillId = fillIdFor(orderId, 'pf_exec15_e2e');
+  const opened = service.openFromFill(
+    Object.freeze({
+      customerId: E2E_EXEC09_CUSTOMER,
+      orderId,
+      fillId,
+      providerId: 'sandbox_helios_investment_v1',
+      providerFillId: 'pf_exec15_e2e',
+      providerTradeId: 'ptr_exec15_e2e',
+      instrumentId: 'inst_spy',
+      assetClass: 'EQUITY',
+      market: 'NYSE',
+      jurisdiction: asJurisdiction('US'),
+      side: 'BUY',
+      tradeTimestamp,
+      quantityUnits: '10',
+      priceMinorUnits: '45000',
+      notionalMinorUnits: '450000',
+      feeMinorUnits: '10',
+      currency: 'USD',
+    }),
+  );
+  if (!opened.ok) {
+    return Object.freeze({ ok: false, detail: `EXEC09 openFromFill: ${opened.error.code}` });
+  }
+  const { obligation, lifecycle, instruction } = opened.value;
+  const fillOpen =
+    obligation.state === 'PENDING' &&
+    exec09FillIsNotSettled({ orderFilled: true, lifecycleState: lifecycle.aggregateState });
+  if (!fillOpen) {
+    return Object.freeze({ ok: false, detail: 'fill must not imply settled lifecycle' });
+  }
+  return Object.freeze({
+    ok: true,
+    detail: `EXEC09 obligation ${obligation.obligationId} pending; contractual ${instruction.contractualSettlementDate}`,
+  });
+}
 
 export function runExec15SyntheticE2ePipeline(input: {
   readonly nowUtc: UtcInstant;
@@ -63,7 +122,14 @@ export function runExec15SyntheticE2ePipeline(input: {
   push('cancel_replace', authorized, 'cancel/replace idempotent on operation identity');
   push('final_fill', authorized, 'terminal fill state');
   push('drop_copy', authorized, 'drop copy ingested with dedupe');
-  push('settlement_obligation', authorized, 'T+1 obligation fixture');
+
+  if (authorized) {
+    const settlement = probeCanonicalExec09Settlement(input.eventTime, input.nowUtc);
+    push('settlement_obligation', settlement.ok, settlement.detail);
+  } else {
+    push('settlement_obligation', false, 'blocked before canonical EXEC09 settlement');
+  }
+
   push('custody_position_update', authorized, 'custody simulation position');
   push('ledger_cash_reconciliation', authorized, 'ledger read; no second accounting');
   push('tca', authorized, 'slippage and improvement captured on fill');

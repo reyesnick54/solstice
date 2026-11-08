@@ -7,8 +7,13 @@ export type ExecWorkPackageRow = {
   readonly packageId: string;
   readonly title: string;
   readonly moduleRef: string;
+  readonly testRef: string;
   readonly status: 'IMPLEMENTED' | 'BLOCKED';
 };
+
+export function execWorkPackageTestRef(packageId: string): string {
+  return OPTIONAL_TESTS[packageId] ?? '';
+}
 
 const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly moduleRef: string }> = {
   EXEC01: {
@@ -44,8 +49,8 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
     moduleRef: 'packages/custody/src/execution-connectivity/index.ts',
   },
   EXEC09: {
-    title: 'Settlement obligations',
-    moduleRef: 'packages/platform/src/helios/multi-asset/m24/settlement-semantics.ts',
+    title: 'Institutional settlement and post-trade lifecycle',
+    moduleRef: 'packages/platform/src/helios/execution-connectivity/exec09/index.ts',
   },
   EXEC10: {
     title: 'Financing controls',
@@ -82,7 +87,7 @@ const OPTIONAL_TESTS: Record<string, string> = {
   EXEC06: 'tests/helios-exec06-execution-algos.test.ts',
   EXEC07: 'tests/helios-exec07-tca.test.ts',
   EXEC08: 'tests/helios-exec08-asset-segregation.test.ts',
-  EXEC09: 'tests/helios-multi-asset-m24-execution-settlement-reconciliation.test.ts',
+  EXEC09: 'tests/helios-exec09-settlement-lifecycle.test.ts',
   EXEC10: 'tests/helios-exec10-financing-controls.test.ts',
   EXEC11: 'tests/helios-exec11-custody-isolation.test.ts',
   EXEC12: 'tests/helios-exec12-reconciliation.test.ts',
@@ -103,6 +108,7 @@ export function listExecWorkPackages(root: string): readonly ExecWorkPackageRow[
         packageId,
         title: meta?.title ?? packageId,
         moduleRef: meta?.moduleRef ?? '',
+        testRef: testRel ?? '',
         status,
       });
     }),

@@ -1,21 +1,33 @@
 # Execution Capability Matrix (EXEC01–EXEC15)
 
-| ID | Status | Module | Primary test |
-|----|--------|--------|--------------|
-| EXEC01 | IMPLEMENTED | `order-lifecycle/types.ts` | `helios-h23-order-fill-settlement-lifecycle.test.ts` |
-| EXEC02 | IMPLEMENTED | `order-lifecycle/provider-port.ts` | `helios-h23-order-fill-settlement-lifecycle.test.ts` |
-| EXEC03 | IMPLEMENTED | `order-lifecycle/service.ts` | `helios-h23-order-fill-settlement-lifecycle.test.ts` |
-| EXEC04 | IMPLEMENTED | `multi-asset/m18/` | `helios-multi-asset-m18-portfolio-exposure-graph.test.ts` |
-| EXEC05 | IMPLEMENTED | `execution-routing/resolver.ts` | `helios-multi-asset-m23-execution-routing.test.ts` |
-| EXEC06 | IMPLEMENTED | `execution-twin/simulation/` | `helios-os03-execution-simulation.test.ts` |
-| EXEC07 | IMPLEMENTED | `multi-asset/m22/planner.ts` | `helios-multi-asset-m21-execution-plan.test.ts` |
-| EXEC08 | IMPLEMENTED | `multi-asset/m24/types.ts` | `helios-multi-asset-m24-execution-settlement-reconciliation.test.ts` |
-| EXEC09 | IMPLEMENTED | `multi-asset/m24/settlement-semantics.ts` | `helios-multi-asset-m24-execution-settlement-reconciliation.test.ts` |
-| EXEC10 | IMPLEMENTED | `capital-lifecycle/service.ts` | `helios-h24-capital-lifecycle.test.ts` |
-| EXEC11 | IMPLEMENTED | `custody/provider-candidate/sandbox.ts` | `custody-simulation-travel-rule.test.ts` |
-| EXEC12 | IMPLEMENTED | `multi-asset/m24/reconciliation.ts` | `helios-multi-asset-m24-execution-settlement-reconciliation.test.ts` |
-| EXEC13 | IMPLEMENTED | `resilience/scenarios.ts` | `helios-h31-adversarial-resilience.test.ts` |
-| EXEC14 | IMPLEMENTED | `execution-routing/venue-conformance/` | `helios-os04-venue-adapter-conformance.test.ts` |
-| EXEC15 | IMPLEMENTED | `execution-connectivity/exec15-qualification.ts` | `helios-exec15-execution-connectivity-qualification.test.ts` |
+**Qualification marker:** `HELIOS_BROKER_CUSTODY_EXECUTION_V1_QUALIFIED` (**ENGINEERING_ARCHITECTURE_QUALIFIED** only)
+
+**Git SHA:** `f4c0587c32de19d717529430a1e62b98abc75352`
+
+**Qualification timestamp (UTC):** `2026-11-08T08:54:48.831Z`
+
+**Subprocess gates:** GREEN
+
+**Posture:** `ENVIRONMENT=simulation`; `LIVE_TRADING_ENABLED=false`; `LIVE_INVESTMENT_EXECUTION=false`; `LIVE_CUSTODY_ENABLED=false`; `production_authorized=false`
+
+
+
+| ID | Status | Canonical owner | Test owner | Gate result |
+|----|--------|-----------------|------------|-------------|
+| EXEC01 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec01/index.ts` | `tests/helios-exec01-connectivity-domain.test.ts` | QUALIFIED |
+| EXEC02 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec02/index.ts` | `tests/helios-exec02-broker-protocol.test.ts` | QUALIFIED |
+| EXEC03 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec03/index.ts` | `tests/helios-exec03-exactly-once-intent.test.ts` | QUALIFIED |
+| EXEC04 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/pretrade-firewall/index.ts` | `tests/helios-exec04-pretrade-firewall.test.ts` | QUALIFIED |
+| EXEC05 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec05/index.ts` | `tests/helios-exec05-smart-routing.test.ts` | QUALIFIED |
+| EXEC06 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec06/index.ts` | `tests/helios-exec06-execution-algos.test.ts` | QUALIFIED |
+| EXEC07 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec07/index.ts` | `tests/helios-exec07-tca.test.ts` | QUALIFIED |
+| EXEC08 | IMPLEMENTED | `packages/custody/src/execution-connectivity/index.ts` | `tests/helios-exec08-asset-segregation.test.ts` | QUALIFIED |
+| EXEC09 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec09/index.ts` | `tests/helios-exec09-settlement-lifecycle.test.ts` | QUALIFIED |
+| EXEC10 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec10/index.ts` | `tests/helios-exec10-financing-controls.test.ts` | QUALIFIED |
+| EXEC11 | IMPLEMENTED | `packages/custody/src/execution-connectivity/exec11/index.ts` | `tests/helios-exec11-custody-isolation.test.ts` | QUALIFIED |
+| EXEC12 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec12/index.ts` | `tests/helios-exec12-reconciliation.test.ts` | QUALIFIED |
+| EXEC13 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec13/index.ts` | `tests/helios-exec13-execution-resilience.test.ts` | QUALIFIED |
+| EXEC14 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec14/index.ts` | `tests/helios-exec14-provider-conformance.test.ts` | QUALIFIED |
+| EXEC15 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec15-qualification.ts` | `tests/helios-exec15-execution-connectivity-qualification.test.ts` | QUALIFIED |
 
 All capabilities operate in **simulation / sandbox / paper** environments only.

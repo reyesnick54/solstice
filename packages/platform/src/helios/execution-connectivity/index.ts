@@ -67,6 +67,12 @@ export {
 } from './exec15-qualification.ts';
 
 export {
+  regenerateExecutionConnectivityReports,
+  type ExecutionConnectivityReportRegenerationInput,
+  type ExecutionSubprocessGateResults,
+} from './report-writer.ts';
+
+export {
   HELIOS_ALPHA01_EXEC_CONNECTIVITY_FORWARD_BRIDGE_SCHEMA,
   buildAlpha01ForwardCostEvidenceSlice,
   type Alpha01ForwardCostEvidenceSlice,

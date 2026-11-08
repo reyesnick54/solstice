@@ -14,6 +14,8 @@ import {
   HELIOS_BROKER_CUSTODY_EXECUTION_V1_BLOCKED,
   HELIOS_BROKER_CUSTODY_EXECUTION_V1_QUALIFIED,
   evaluateExecutionConnectivityQualification,
+  regenerateExecutionConnectivityReports,
+  type ExecutionSubprocessGateResults,
 } from '../packages/platform/src/helios/execution-connectivity/index.ts';
 import { lintHeliosBoundary } from '../tools/architectural-linter/src/helios-guards.ts';
 
@@ -81,8 +83,8 @@ const altOk = runTest('ALT14 alternative data', 'tests/helios-alt14-alternative-
 const md14Ok = runTest('MD14 market data', 'tests/helios-md14-market-data-qualification.test.ts');
 const strategyLabOk = runTest('Strategy Lab', 'tests/helios-os05-strategy-genome.test.ts');
 const execTwinOk = runTest('Execution Twin', 'tests/helios-os02-execution-twin.test.ts');
-const fuzzOk = runTest('fuzz', 'tests/helios-h31-adversarial-resilience.test.ts');
-const formalOk = runNpmScript('formal smoke', 'test:formal-smoke');
+const fuzzOk = runNpmScript('fuzz extended', 'test:fuzz-extended');
+const formalOk = runNpmScript('formal extended', 'test:formal-extended');
 
 function runNightlyBench(): boolean {
   if (SKIP_SUBPROCESS) {
@@ -125,24 +127,44 @@ if (!SKIP_SUBPROCESS) {
   console.log('[EXEC15] HELIOS strict typecheck: skipped (--skip-subprocess)');
 }
 
+const subprocessGates: ExecutionSubprocessGateResults = {
+  ci: ciOk,
+  heliosStrictTypecheck: typecheckOk,
+  architecture: architectureOk,
+  productionSafety: productionSafetyOk,
+  healthBaseline: healthOk,
+  aafV2: aafOk,
+  earnings: earnOk,
+  valuation: valOk,
+  evolution: evolOk,
+  counterfactual: cfOk,
+  alternativeData: altOk,
+  md15MarketData: md14Ok,
+  strategyLab: strategyLabOk,
+  executionTwin: execTwinOk,
+  fuzzExtended: fuzzOk,
+  formalExtended: formalOk,
+  nightlyBench: nightlyBenchOk,
+};
+
 const subprocessGatesOk =
-  ciOk &&
-  productionSafetyOk &&
-  architectureOk &&
-  typecheckOk &&
-  aafOk &&
-  earnOk &&
-  healthOk &&
-  valOk &&
-  evolOk &&
-  cfOk &&
-  altOk &&
-  md14Ok &&
-  strategyLabOk &&
-  execTwinOk &&
-  fuzzOk &&
-  formalOk &&
-  nightlyBenchOk &&
+  subprocessGates.ci &&
+  subprocessGates.productionSafety &&
+  subprocessGates.architecture &&
+  subprocessGates.heliosStrictTypecheck &&
+  subprocessGates.aafV2 &&
+  subprocessGates.earnings &&
+  subprocessGates.healthBaseline &&
+  subprocessGates.valuation &&
+  subprocessGates.evolution &&
+  subprocessGates.counterfactual &&
+  subprocessGates.alternativeData &&
+  subprocessGates.md15MarketData &&
+  subprocessGates.strategyLab &&
+  subprocessGates.executionTwin &&
+  subprocessGates.fuzzExtended &&
+  subprocessGates.formalExtended &&
+  subprocessGates.nightlyBench &&
   exec15Ok;
 
 const qualification = evaluateExecutionConnectivityQualification({
@@ -171,8 +193,8 @@ if (!subprocessGatesOk) {
   if (!md14Ok) blockers.push('MD14 market data subprocess gate failed');
   if (!strategyLabOk) blockers.push('Strategy Lab subprocess gate failed');
   if (!execTwinOk) blockers.push('Execution Twin subprocess gate failed');
-  if (!fuzzOk) blockers.push('fuzz qualification test failed');
-  if (!formalOk) blockers.push('formal smoke failed');
+  if (!fuzzOk) blockers.push('fuzz extended gate failed');
+  if (!formalOk) blockers.push('formal extended gate failed');
   if (!nightlyBenchOk) blockers.push('nightly bench failed');
   if (!exec15Ok) blockers.push('EXEC15 acceptance test failed');
 }
@@ -181,6 +203,14 @@ const qualified = blockers.length === 0;
 const marker = qualified
   ? HELIOS_BROKER_CUSTODY_EXECUTION_V1_QUALIFIED
   : HELIOS_BROKER_CUSTODY_EXECUTION_V1_BLOCKED;
+
+regenerateExecutionConnectivityReports({
+  root: ROOT,
+  gitSha: sha,
+  evaluatedAt: now,
+  qualification: { ...qualification, qualified: blockers.length === 0, blockers: Object.freeze(blockers) },
+  subprocessGates,
+});
 
 mkdirSync(OUT_DIR, { recursive: true });
 const jsonPath = join(OUT_DIR, `helios-exec15-qualification-${sha.slice(0, 12)}.json`);
