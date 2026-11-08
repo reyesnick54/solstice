@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
+import { join } from 'node:path';
 import { test } from 'node:test';
 
 import { asUtcInstant } from '@solstice/domain';
+
+const REPO_ROOT = join(import.meta.dirname, '..', '..', '..', '..');
 
 import {
   HELIOS_ALPHA01_FORWARD_EVIDENCE_DOMAIN_QUALIFIED,
@@ -20,7 +23,7 @@ import { forwardAlphaLaneForEvaluationMode } from '../evaluation/evidence-lanes.
 import { assertEvolTrialLanesSeparated } from '../evolution/forward-alpha-bridge.ts';
 
 test('ALPHA01 engineering qualification', () => {
-  const checks = alpha01EngineeringQualificationChecks(process.cwd());
+  const checks = alpha01EngineeringQualificationChecks(REPO_ROOT);
   const result = evaluateAlpha01ForwardEvidenceDomainEngineering(checks);
   assert.equal(result.qualified, true, result.blockers.join('; '));
   assert.equal(result.marker, HELIOS_ALPHA01_FORWARD_EVIDENCE_DOMAIN_QUALIFIED);
