@@ -21,7 +21,7 @@ Qualify HELIOS as a **continuous autonomous investment research laboratory** tha
 | ALPHA19 | Outcome maturity | `alpha19-outcome-maturity.ts` |
 | ALPHA20 | Experimental cohorts | `alpha20-experimental-cohorts.ts` |
 | ALPHA21 | Continuous shadow portfolio | `alpha21-continuous-shadow-portfolio.ts` |
-| ALPHA22 | Control room (read-only) | `alpha22-control-room.ts` |
+| ALPHA22 | Control room (read-only) | `alpha22-control-room.ts` → `forward-alpha/alpha22-shadow-control-room/` |
 | ALPHA23 | Automatic demotion | `alpha23-automatic-demotion.ts` |
 | ALPHA24 | Recurring evidence reports | `alpha24-recurring-evidence-reports.ts` |
 

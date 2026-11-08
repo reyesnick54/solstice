@@ -31,5 +31,6 @@
 | ALPHA13 | QUALIFIED | `packages/platform/src/helios/forward-alpha/alpha13` | `packages/platform/src/helios/forward-alpha/alpha13/index.ts` | `tests/helios-alpha13-portfolio-forward-evidence.test.ts` |
 | ALPHA14 | QUALIFIED | `packages/agentic-capital-mesh/src/alpha-evidence-agentic-committee` | `packages/agentic-capital-mesh/src/alpha-evidence-agentic-committee/index.ts` | `tests/helios-alpha14-agentic-evidence-committee.test.ts` |
 | ALPHA15 | QUALIFIED | `packages/platform/src/helios/forward-alpha-evidence` | `packages/platform/src/helios/forward-alpha-evidence/alpha15-qualification.ts` | `tests/helios-alpha15-forward-alpha-qualification.test.ts` |
+| ALPHA22 | QUALIFIED | `packages/platform/src/helios/forward-alpha/alpha22-shadow-control-room` | `packages/platform/src/helios/forward-alpha/alpha22-shadow-control-room/index.ts` | `tests/helios-alpha22-shadow-control-room.test.ts` |
 
 Architecture marker `HELIOS_FORWARD_ALPHA_EVIDENCE_V1_QUALIFIED` does **not** imply alpha proven.
