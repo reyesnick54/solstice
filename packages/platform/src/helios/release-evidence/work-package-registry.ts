@@ -276,11 +276,25 @@ export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPacka
       'Marker HELIOS_ALPHA13_PORTFOLIO_FORWARD_EVIDENCE_QUALIFIED',
     ),
     statusFrom(
+      'ALPHA19',
+      'Outcome maturity and delayed label engine',
+      testExists(root, 'helios-alpha19-outcome-maturity.test.ts') ? 'QUALIFIED' : 'BLOCKED',
+      'packages/platform/src/helios/forward-alpha/alpha19/index.ts',
+      'Marker HELIOS_ALPHA19_OUTCOME_MATURITY_QUALIFIED',
+    ),
+    statusFrom(
       'ALPHA20',
       'Forward strategy cohort and control experiments',
       testExists(root, 'helios-alpha20-forward-experiments.test.ts') ? 'QUALIFIED' : 'BLOCKED',
       'packages/platform/src/helios/forward-alpha/alpha20/index.ts',
       'Marker HELIOS_ALPHA20_FORWARD_EXPERIMENTS_QUALIFIED',
+    ),
+    statusFrom(
+      'ALPHA23',
+      'Automatic strategy demotion and fail-safe research control',
+      testExists(root, 'helios-alpha23-automatic-demotion.test.ts') ? 'QUALIFIED' : 'BLOCKED',
+      'packages/platform/src/helios/forward-alpha/alpha23/index.ts',
+      'Marker HELIOS_ALPHA23_AUTOMATIC_DEMOTION_QUALIFIED',
     ),
     statusFrom(
       'ALPHA24',
