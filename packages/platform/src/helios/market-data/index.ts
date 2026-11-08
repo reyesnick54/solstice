@@ -63,3 +63,9 @@ export {
   type MarketDataFabricQualificationInput,
   type MarketDataFabricQualificationResult,
 } from './md14-qualification.ts';
+
+export {
+  HELIOS_ALPHA01_MARKET_DATA_FORWARD_BRIDGE_SCHEMA,
+  attestAlpha01ChronologicalMarketData,
+  type Alpha01ChronologicalMarketDataAttestation,
+} from './alpha01-forward-evidence-bridge.ts';
