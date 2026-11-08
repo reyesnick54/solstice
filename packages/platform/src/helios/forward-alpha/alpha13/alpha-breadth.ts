@@ -1,7 +1,8 @@
 import { ALPHA13_HIGH_RETURN_CORRELATION_SCALE } from './taxonomy.ts';
 import type { AlphaBreadth, ForwardStrategyPortfolio } from './types.ts';
 
-function pairKey(a: string, b: string): string {
+/** Canonical unordered pair id — must match interaction pairwise map keys. */
+export function alpha13StrategyPairKey(a: string, b: string): string {
   return a < b ? `${a}|${b}` : `${b}|${a}`;
 }
 
@@ -65,7 +66,7 @@ export function computeAlphaBreadth(
   let pairCount = 0;
   for (let i = 0; i < legs.length; i += 1) {
     for (let j = i + 1; j < legs.length; j += 1) {
-      const key = pairKey(legs[i]!.strategyId, legs[j]!.strategyId);
+      const key = alpha13StrategyPairKey(legs[i]!.strategyId, legs[j]!.strategyId);
       const scale = pairwiseReturnCorrelationScale[key] ?? 0;
       corrSum += Math.abs(scale);
       pairCount += 1;

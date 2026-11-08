@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 
+import { alpha13StrategyPairKey } from './alpha-breadth.ts';
 import {
   ALPHA13_HIGH_RETURN_CORRELATION_SCALE,
   ALPHA13_POSITION_OVERLAP_NOTIFY_BPS,
@@ -135,7 +136,7 @@ export function buildStrategyInteractionState(input: {
     for (let j = i + 1; j < legs.length; j += 1) {
       const a = legs[i]!;
       const b = legs[j]!;
-      const key = `${a.strategyId}|${b.strategyId}`;
+      const key = alpha13StrategyPairKey(a.strategyId, b.strategyId);
       const scale = correlationScale(a.returnSeriesBps, b.returnSeriesBps);
       pairwiseReturnCorrelationScale[key] = scale;
       if (scale >= ALPHA13_HIGH_RETURN_CORRELATION_SCALE) {
