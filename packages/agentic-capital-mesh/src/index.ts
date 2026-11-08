@@ -100,6 +100,7 @@ export {
 } from './tradingagents-native/index.ts';
 export * as EarningsAgenticCommittee from './earnings-agentic-committee/index.ts';
 export * as ValuationAgenticCommittee from './valuation-agentic-committee/index.ts';
+export * as AlphaEvidenceAgenticCommittee from './alpha-evidence-agentic-committee/index.ts';
 export * from './counterfactual-research-cf13/index.ts';
 export * from './alternative-data-research-alt14/index.ts';
 export * from './earnings-transcript-intelligence/index.ts';
