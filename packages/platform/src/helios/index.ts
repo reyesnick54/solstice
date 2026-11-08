@@ -392,6 +392,7 @@ export * from './alternative-data-intelligence/index.ts';
 export * from './market-data/index.ts';
 export * from './valuation-intelligence/index.ts';
 export * from './adaptive-alpha-v2/index.ts';
+export * from './forward-alpha/index.ts';
 export * from './open-source-integration/index.ts';
 export * from './os12-agent-permission-gateway/index.ts';
 export * from './open-source-integration/os13-ai-strategy-sandbox/index.ts';
