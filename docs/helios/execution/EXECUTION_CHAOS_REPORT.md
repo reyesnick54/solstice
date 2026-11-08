@@ -1,8 +1,24 @@
 # Execution Chaos and Adversarial Report (EXEC13 / EXEC15)
 
+**Qualification marker:** `HELIOS_BROKER_CUSTODY_EXECUTION_V1_QUALIFIED` (**ENGINEERING_ARCHITECTURE_QUALIFIED** only)
+
+**Git SHA:** `f4c0587c32de19d717529430a1e62b98abc75352`
+
+**Qualification timestamp (UTC):** `2026-11-08T08:54:48.831Z`
+
+**Subprocess gates:** GREEN
+
+**Posture:** `ENVIRONMENT=simulation`; `LIVE_TRADING_ENABLED=false`; `LIVE_INVESTMENT_EXECUTION=false`; `LIVE_CUSTODY_ENABLED=false`; `production_authorized=false`
+
+
+
 ## Resiliency owner (EXEC13)
 
-`packages/platform/src/helios/resilience/scenarios.ts` (H31) exercises order provider idempotency, capital reservation replay, worker crash, and multi-device retry without duplicate external effects.
+Canonical owner: `packages/platform/src/helios/execution-connectivity/exec13/index.ts`
+
+Test owner: `tests/helios-exec13-execution-resilience.test.ts`
+
+Gate: **QUALIFIED**
 
 ## EXEC15 adversarial scenarios
 
@@ -25,3 +41,5 @@
 | 15 | T+1 settlement failure | Unsettled position + break |
 
 Implementation: `packages/platform/src/helios/execution-connectivity/adversarial-qualification.ts`.
+
+Adversarial pass count: **15/15**.

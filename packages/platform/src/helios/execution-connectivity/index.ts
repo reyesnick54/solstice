@@ -65,3 +65,9 @@ export {
   type ExecutionConnectivityQualificationInput,
   type ExecutionConnectivityQualificationResult,
 } from './exec15-qualification.ts';
+
+export {
+  regenerateExecutionConnectivityReports,
+  type ExecutionConnectivityReportRegenerationInput,
+  type ExecutionSubprocessGateResults,
+} from './report-writer.ts';

@@ -1,14 +1,32 @@
 # Best Execution — Engineering Evidence (EXEC05 / EXEC07)
 
+**Qualification marker:** `HELIOS_BROKER_CUSTODY_EXECUTION_V1_QUALIFIED` (**ENGINEERING_ARCHITECTURE_QUALIFIED** only)
+
+**Git SHA:** `f4c0587c32de19d717529430a1e62b98abc75352`
+
+**Qualification timestamp (UTC):** `2026-11-08T08:54:48.831Z`
+
+**Subprocess gates:** GREEN
+
+**Posture:** `ENVIRONMENT=simulation`; `LIVE_TRADING_ENABLED=false`; `LIVE_INVESTMENT_EXECUTION=false`; `LIVE_CUSTODY_ENABLED=false`; `production_authorized=false`
+
+
+
 ## Smart routing (EXEC05)
 
-`ExecutionRoutingService` applies regulatory-compatible route **filtering** before scoring. Non-permitted corridors are excluded; regulatory compatibility is not a score weight.
+Canonical owner: `packages/platform/src/helios/execution-connectivity/exec05/index.ts`
 
-Evidence: `tests/helios-multi-asset-m23-execution-routing.test.ts`, `EXECUTION_PROVIDER_ROUTE_CATALOG`.
+Test owner: `tests/helios-exec05-smart-routing.test.ts`
+
+Regulatory-compatible route **filtering** before scoring. Gate: **QUALIFIED**.
 
 ## Transaction cost analysis (EXEC07)
 
-M22 execution plan planner models spread, slippage, and fee certainty levels. M24 fill records capture `slippageMinorUnits` and `priceImprovementMinorUnits` for post-trade TCA evidence.
+Canonical owner: `packages/platform/src/helios/execution-connectivity/exec07/index.ts`
+
+Test owner: `tests/helios-exec07-tca.test.ts`
+
+Post-trade TCA evidence on fills (slippage and price improvement in minor units). Gate: **QUALIFIED**.
 
 ## Simulation-only posture
 

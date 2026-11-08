@@ -1,54 +1,78 @@
-# HELIOS Execution Connectivity — Final Report (EXEC15)
+# HELIOS Execution Connectivity — Final Report (EXEC16 current-main requalification)
 
-**Qualification marker:** `HELIOS_BROKER_CUSTODY_EXECUTION_V1_QUALIFIED`  
-**Authority:** `packages/platform/src/helios/execution-connectivity`  
-**Environment:** simulation — `LIVE_TRADING_ENABLED=false`, `LIVE_INVESTMENT_EXECUTION=false`, `LIVE_CUSTODY_ENABLED=false`; authority map — `production_authorized=false`
+**Qualification marker:** `HELIOS_BROKER_CUSTODY_EXECUTION_V1_QUALIFIED` (**ENGINEERING_ARCHITECTURE_QUALIFIED** only)
+
+**Git SHA:** `f4c0587c32de19d717529430a1e62b98abc75352`
+
+**Qualification timestamp (UTC):** `2026-11-08T08:54:48.831Z`
+
+**Subprocess gates:** GREEN
+
+**Posture:** `ENVIRONMENT=simulation`; `LIVE_TRADING_ENABLED=false`; `LIVE_INVESTMENT_EXECUTION=false`; `LIVE_CUSTODY_ENABLED=false`; `production_authorized=false`
+
+
 
 ## Objective
 
-Qualify the complete **production-shaped** broker, custody, and execution architecture while leaving all real-money trading disabled.
+Requalify EXEC01–EXEC15 against **actual** current `main`. EXEC15 synthetic E2E invokes the canonical **EXEC09** institutional settlement module (`Exec09SettlementLifecycleService`), not legacy settlement-semantics stand-ins.
 
-This marker means **ENGINEERING_ARCHITECTURE_QUALIFIED** only. It does **not** mean licensed broker, licensed investment adviser, regulated live Grow, executed broker/custodian contracts, market-access approval, or customer-money authorization.
+No new execution features; simulation and sandbox only.
 
-## EXEC01–EXEC14 verification summary
+## EXEC01–EXEC15 verification
 
-| ID | Capability | Canonical owner |
-|----|------------|-------------------|
-| EXEC01 | Canonical execution domain | `packages/platform/src/helios/order-lifecycle/types.ts` |
-| EXEC02 | Normalized broker protocol | `packages/platform/src/helios/order-lifecycle/provider-port.ts` |
-| EXEC03 | Exactly-once intent | `packages/platform/src/helios/order-lifecycle/service.ts` |
-| EXEC04 | Pre-trade firewall | `packages/platform/src/helios/multi-asset/m18/` |
-| EXEC05 | Smart routing | `packages/platform/src/helios/execution-routing/resolver.ts` |
-| EXEC06 | Execution algorithms | `packages/platform/src/helios/execution-twin/simulation/` |
-| EXEC07 | TCA | `packages/platform/src/helios/multi-asset/m22/planner.ts` |
-| EXEC08 | Asset/account segregation | `packages/platform/src/helios/multi-asset/m24/types.ts` |
-| EXEC09 | Settlement | `packages/platform/src/helios/multi-asset/m24/settlement-semantics.ts` |
-| EXEC10 | Financing controls | `packages/platform/src/helios/capital-lifecycle/service.ts` |
-| EXEC11 | Custody isolation | `packages/custody/src/provider-candidate/sandbox.ts` |
-| EXEC12 | Reconciliation | `packages/platform/src/helios/multi-asset/m24/reconciliation.ts` |
-| EXEC13 | Resiliency | `packages/platform/src/helios/resilience/scenarios.ts` |
-| EXEC14 | Provider certification | `packages/platform/src/helios/execution-routing/venue-conformance/` |
+| ID | Status | Canonical owner | Test owner | Gate |
+|----|--------|-----------------|------------|------|
+| EXEC01 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec01/index.ts` | `tests/helios-exec01-connectivity-domain.test.ts` | QUALIFIED |
+| EXEC02 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec02/index.ts` | `tests/helios-exec02-broker-protocol.test.ts` | QUALIFIED |
+| EXEC03 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec03/index.ts` | `tests/helios-exec03-exactly-once-intent.test.ts` | QUALIFIED |
+| EXEC04 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/pretrade-firewall/index.ts` | `tests/helios-exec04-pretrade-firewall.test.ts` | QUALIFIED |
+| EXEC05 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec05/index.ts` | `tests/helios-exec05-smart-routing.test.ts` | QUALIFIED |
+| EXEC06 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec06/index.ts` | `tests/helios-exec06-execution-algos.test.ts` | QUALIFIED |
+| EXEC07 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec07/index.ts` | `tests/helios-exec07-tca.test.ts` | QUALIFIED |
+| EXEC08 | IMPLEMENTED | `packages/custody/src/execution-connectivity/index.ts` | `tests/helios-exec08-asset-segregation.test.ts` | QUALIFIED |
+| EXEC09 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec09/index.ts` | `tests/helios-exec09-settlement-lifecycle.test.ts` | QUALIFIED |
+| EXEC10 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec10/index.ts` | `tests/helios-exec10-financing-controls.test.ts` | QUALIFIED |
+| EXEC11 | IMPLEMENTED | `packages/custody/src/execution-connectivity/exec11/index.ts` | `tests/helios-exec11-custody-isolation.test.ts` | QUALIFIED |
+| EXEC12 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec12/index.ts` | `tests/helios-exec12-reconciliation.test.ts` | QUALIFIED |
+| EXEC13 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec13/index.ts` | `tests/helios-exec13-execution-resilience.test.ts` | QUALIFIED |
+| EXEC14 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec14/index.ts` | `tests/helios-exec14-provider-conformance.test.ts` | QUALIFIED |
+| EXEC15 | IMPLEMENTED | `packages/platform/src/helios/execution-connectivity/exec15-qualification.ts` | `tests/helios-exec15-execution-connectivity-qualification.test.ts` | QUALIFIED |
 
 ## EXEC15 integration
 
-- **Owner:** `packages/platform/src/helios/execution-connectivity/`
+- **Owner:** `packages/platform/src/helios/execution-connectivity/exec15-qualification.ts`
 - **Qualification test:** `tests/helios-exec15-execution-connectivity-qualification.test.ts`
 - **Runner:** `npm run helios:exec15:qualify`
+- **E2E:** `e2e-pipeline.ts` — settlement stage uses canonical EXEC09 `openFromFill`
+- **Adversarial:** `adversarial-qualification.ts` (15 scenarios)
 
-## End-to-end scenario (synthetic)
+## Subprocess qualification gates
 
-HELIOS research thesis → qualified Strategy Genome → DecisionValidityEnvelope → customer mandate → deterministic Risk → Kernel authorization → capital reservation → parent order → smart routing → execution algorithm → pre-trade firewall → broker adapter → broker acknowledgement → partial fill → cancel/replace → final fill → drop copy → settlement obligation → custody/position update → ledger/cash reconciliation → TCA → evidence vault.
+| Gate | Result |
+|------|--------|
+| CI (`npm run ci`) | GREEN |
+| HELIOS strict typecheck (`helios:health02:typecheck:qualify`) | GREEN |
+| Architecture (`lint:architecture`) | GREEN |
+| Production safety (`check:production-safety`) | GREEN |
+| HEALTH baseline | GREEN |
+| AAF V2 | GREEN |
+| EARNINGS | GREEN |
+| VALUATION | GREEN |
+| EVOLUTION | GREEN |
+| COUNTERFACTUAL | GREEN |
+| ALTERNATIVE DATA | GREEN |
+| MD15 market data (MD14 harness on current main) | GREEN |
+| Strategy Lab | GREEN |
+| Execution Twin | GREEN |
+| Fuzz extended | GREEN |
+| Formal extended | GREEN |
+| Nightly bench | GREEN |
 
-Implementation: `e2e-pipeline.ts` (22 stages; no Execution Authority mint).
+## E2E and adversarial summary
 
-## Adversarial scenarios (1–15)
+- E2E pipeline ok: **true**
+- Adversarial scenarios: **15/15**
 
-Covered in `adversarial-qualification.ts` and enumerated in `EXECUTION_CHAOS_REPORT.md`.
+## Blockers
 
-## Subprocess gates (required green)
-
-CI, strict HELIOS typecheck, architecture lint, production safety, HEALTH baseline, AAF V2, EARNINGS, VALUATION, EVOLUTION, COUNTERFACTUAL, ALTERNATIVE DATA, MD14 market data, Strategy Lab, Execution Twin, fuzz, formal smoke, nightly bench.
-
-## Qualification command
-
-`npm run helios:exec15:qualify`
+_None._
