@@ -396,6 +396,9 @@ describe('HELIOS H36 — release evidence and live-pilot gate', () => {
     const alpha13 = registry.find((row) => row.workPackage === 'ALPHA13');
     assert.ok(alpha13);
     assert.equal(alpha13!.status, 'QUALIFIED');
+    const alpha19 = registry.find((row) => row.workPackage === 'ALPHA19');
+    assert.ok(alpha19);
+    assert.equal(alpha19!.status, 'QUALIFIED');
     const alpha20 = registry.find((row) => row.workPackage === 'ALPHA20');
     assert.ok(alpha20);
     assert.equal(alpha20!.status, 'QUALIFIED');
