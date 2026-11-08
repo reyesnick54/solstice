@@ -14,6 +14,7 @@
 | EVOL07 | Novelty engine | `packages/strategy-lab/src/evol07/novelty-score.ts` (`computeStrategyNoveltyScore`) | `packages/strategy-lab/src/evol07/evol07.test.ts` + EVOL14 simulation |
 | EVOL08 | Falsification engine | `packages/platform/src/helios/strategy-evolution/evol08/engine.ts` (`StrategyFalsificationAgent`) | `tests/helios-evol08-falsification-engine.test.ts` + EVOL14 simulation |
 | EVOL09 | Multiple-testing firewall + sealed holdout | `packages/platform/src/helios/strategy-evolution/evol09/` (`holdout.ts`, `stats.ts`, `trial-registry.ts`) | `tests/helios-evol09-multiple-testing-firewall.test.ts` + EVOL14 (`DSR_PBO` trial uses outcome `BLOCKED` when overfit is rejected) |
+| ALPHA08 | Forward multiple-strategy data-snooping firewall (extends EVOL09) | `packages/platform/src/helios/forward-alpha/alpha08/` (`stats.ts` White RC + Hansen SPA, `trial-registry.ts`) | `tests/helios-forward-alpha08-data-snooping-firewall.test.ts` |
 | EVOL10 | Regime generalization | `packages/strategy-lab/src/evol10/regime-generalization.ts` (`evaluateEvol10GenomeRegimeReport`) | `tests/helios-evol10-regime-generalization.test.ts` + EVOL14 simulation |
 | EVOL11 | Champion / challenger | `packages/strategy-lab/src/evol11-champion-challenger.ts` (`assessEvol11MaterialChampionReplacement`, `evaluateEvol11ParetoDominance`) | EVOL14 simulation |
 | EVOL12 | Strategy Scientist | `packages/strategy-lab/src/evol12/` (`buildEvol12SampleGenomeProposal`, validation) | EVOL14 simulation (`STRATEGY_SCIENTIST` phase) |
