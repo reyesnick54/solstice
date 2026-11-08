@@ -17,6 +17,9 @@ import type { StrategySpecification } from './specification.ts';
 import type { StrategyFailure } from './types.ts';
 import type { Evol11ForwardShadowRole } from './evol11-champion-challenger.ts';
 
+/** ALPHA01 — forward shadow is the canonical FORWARD_SHADOW evidence lane owner. */
+export const FORWARD_SHADOW_FORWARD_ALPHA_EVIDENCE_LANE = 'FORWARD_SHADOW' as const;
+
 export type ForwardShadowRun = {
   readonly runId: ForwardShadowRunId;
   readonly capsuleId: string;
@@ -33,6 +36,7 @@ export type ForwardShadowRun = {
   readonly financialEffectCreated: false;
   readonly modelVersions: readonly string[];
   readonly toolVersions: readonly string[];
+  readonly forwardAlphaEvidenceLane: typeof FORWARD_SHADOW_FORWARD_ALPHA_EVIDENCE_LANE;
 };
 
 export type ForwardShadowDecision = {
@@ -219,6 +223,7 @@ export function startForwardShadowRun(input: {
     financialEffectCreated: false,
     modelVersions: Object.freeze([...(input.modelVersions ?? [])]),
     toolVersions: Object.freeze([...(input.toolVersions ?? ['strategy-lab-v1'])]),
+    forwardAlphaEvidenceLane: FORWARD_SHADOW_FORWARD_ALPHA_EVIDENCE_LANE,
   });
 }
 

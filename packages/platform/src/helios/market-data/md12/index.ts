@@ -55,3 +55,8 @@ export {
   toStrategyLabMd12QualitySnapshot,
   type StrategyLabMd12ResearchPeriodSample,
 } from './strategy-lab-bridge.ts';
+export {
+  HELIOS_ALPHA01_MARKET_DATA_FORWARD_BRIDGE_SCHEMA,
+  attestAlpha01ChronologicalMarketData,
+  type Alpha01ChronologicalMarketDataAttestation,
+} from '../alpha01-forward-evidence-bridge.ts';
