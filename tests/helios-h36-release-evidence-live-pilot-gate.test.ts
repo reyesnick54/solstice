@@ -335,7 +335,7 @@ describe('HELIOS H36 — release evidence and live-pilot gate', () => {
     });
     const hCore = report.h01ThroughH36.filter((row) => /^H\d+$/.test(row.workPackage));
     assert.equal(hCore.length, 36);
-    assert.equal(report.h01ThroughH36.length, 42);
+    assert.equal(report.h01ThroughH36.length, 43);
     assert.equal(report.releaseSha, sha);
     assert.ok(report.recommendedNextAuthorizedAction.includes('external live-pilot gate'));
   });
@@ -389,13 +389,16 @@ describe('HELIOS H36 — release evidence and live-pilot gate', () => {
     const registry = buildHeliosWorkPackageRegistry(ROOT);
     const hCore = registry.filter((row) => /^H\d+$/.test(row.workPackage));
     assert.equal(hCore.length, 36);
-    assert.equal(registry.length, 42);
+    assert.equal(registry.length, 43);
     const h36 = registry.find((row) => row.workPackage === 'H36');
     assert.ok(h36);
     assert.equal(h36!.status, 'QUALIFIED');
     const alpha13 = registry.find((row) => row.workPackage === 'ALPHA13');
     assert.ok(alpha13);
     assert.equal(alpha13!.status, 'QUALIFIED');
+    const alpha20 = registry.find((row) => row.workPackage === 'ALPHA20');
+    assert.ok(alpha20);
+    assert.equal(alpha20!.status, 'QUALIFIED');
     const earn11 = registry.find((row) => row.workPackage === 'EARN11');
     assert.ok(earn11);
     assert.equal(earn11!.status, 'QUALIFIED');
