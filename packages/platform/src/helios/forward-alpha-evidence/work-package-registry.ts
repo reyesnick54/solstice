@@ -23,7 +23,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
   },
   ALPHA05: {
     title: 'Benchmark attribution',
-    moduleRef: 'packages/platform/src/helios/forward-alpha-evidence/alpha05-benchmark-attribution.ts',
+    moduleRef: 'packages/platform/src/helios/forward-alpha/alpha05/index.ts',
   },
   ALPHA06: {
     title: 'Execution realism overlay',
