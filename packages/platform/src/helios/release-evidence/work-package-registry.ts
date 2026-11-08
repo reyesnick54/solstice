@@ -269,6 +269,13 @@ export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPacka
       'tests/helios-h36-release-evidence-live-pilot-gate.test.ts',
     ),
     statusFrom(
+      'ALPHA13',
+      'Multi-strategy portfolio forward evidence',
+      testExists(root, 'helios-alpha13-portfolio-forward-evidence.test.ts') ? 'QUALIFIED' : 'BLOCKED',
+      'packages/platform/src/helios/forward-alpha/alpha13/index.ts',
+      'Marker HELIOS_ALPHA13_PORTFOLIO_FORWARD_EVIDENCE_QUALIFIED',
+    ),
+    statusFrom(
       'AAFV2.6',
       'Adaptive Alpha Fabric V2 Strategy Lab binding',
       testExists(root, 'helios-aaf-v2-strategy-lab-final-qualification.test.ts') ? 'QUALIFIED' : 'BLOCKED',
