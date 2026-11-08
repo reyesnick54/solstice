@@ -112,6 +112,11 @@ export type ShadowCapitalFailure = {
   readonly message: string;
 };
 
+export type ShadowCapitalStrategyRollups = {
+  readonly realizedMinorByStrategy: Readonly<Record<string, string>>;
+  readonly feesMinorByStrategy: Readonly<Record<string, string>>;
+};
+
 export type ShadowCapitalAccountSnapshot = {
   readonly schema: typeof import('./taxonomy.ts').SHADOW_CAPITAL_SCHEMA;
   readonly account: ShadowCapitalAccount;
@@ -121,5 +126,7 @@ export type ShadowCapitalAccountSnapshot = {
   readonly trades: readonly ShadowTrade[];
   readonly pnl: ShadowPnL;
   readonly equityCurve: ShadowEquityCurve;
+  readonly strategyRollups: ShadowCapitalStrategyRollups;
+  readonly declaredFlowMinor: string;
   readonly sequence: number;
 };

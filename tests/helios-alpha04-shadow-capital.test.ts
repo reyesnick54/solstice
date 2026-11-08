@@ -252,6 +252,39 @@ describe('HELIOS Forward Alpha ALPHA04 shadow capital', () => {
     assert.equal(snap.sequence <= snap2.sequence, true);
   });
 
+  it('snapshot restore preserves per-strategy rollups', () => {
+    const book = new ShadowCapitalPortfolioBook(defaultAccount(['S1']));
+    assert.ok(
+      isTrade(
+        book.applyTrade({
+          instrumentId: 'EQ:SIM:H',
+          strategyId: 'S1',
+          side: 'BUY',
+          quantityMinor: 10n,
+          priceMinor: 100_000n,
+          feeMinor: 0n,
+          tradeAt: T0,
+        }),
+      ),
+    );
+    assert.ok(
+      isTrade(
+        book.applyTrade({
+          instrumentId: 'EQ:SIM:H',
+          strategyId: 'S1',
+          side: 'SELL',
+          quantityMinor: 10n,
+          priceMinor: 120_000n,
+          feeMinor: 0n,
+          tradeAt: T1,
+        }),
+      ),
+    );
+    const before = book.aggregateByStrategy().S1!.realizedMinor;
+    const restored = ShadowCapitalPortfolioBook.fromSnapshot(book.snapshot());
+    assert.equal(restored.aggregateByStrategy().S1!.realizedMinor, before);
+  });
+
   it('equity curve records NAV without undeclared capital', () => {
     const book = new ShadowCapitalPortfolioBook(defaultAccount());
     const pointsBefore = book.snapshot().equityCurve.points.length;

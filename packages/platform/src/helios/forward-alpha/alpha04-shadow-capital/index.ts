@@ -24,6 +24,7 @@ export type {
   ShadowEquityCurve,
   ShadowCapitalFailure,
   ShadowCapitalAccountSnapshot,
+  ShadowCapitalStrategyRollups,
 } from './types.ts';
 
 export { SHADOW_RESEARCH_POSTURE } from './types.ts';

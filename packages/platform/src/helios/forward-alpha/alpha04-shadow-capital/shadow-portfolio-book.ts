@@ -13,6 +13,7 @@ import type {
   ShadowLot,
   ShadowPnL,
   ShadowPosition,
+  ShadowCapitalStrategyRollups,
   ShadowTrade,
 } from './types.ts';
 
@@ -112,7 +113,29 @@ export class ShadowCapitalPortfolioBook {
     }
     book.lotCounter = snapshot.lots.length;
     book.tradeCounter = snapshot.trades.length;
+    for (const [strategyId, minor] of Object.entries(snapshot.strategyRollups.realizedMinorByStrategy)) {
+      book.realizedByStrategy.set(strategyId, BigInt(minor));
+    }
+    for (const [strategyId, minor] of Object.entries(snapshot.strategyRollups.feesMinorByStrategy)) {
+      book.feesByStrategy.set(strategyId, BigInt(minor));
+    }
+    book.declaredFlowMinor = BigInt(snapshot.declaredFlowMinor);
     return book;
+  }
+
+  private strategyRollups(): ShadowCapitalStrategyRollups {
+    const realizedMinorByStrategy: Record<string, string> = {};
+    for (const [strategyId, minor] of this.realizedByStrategy) {
+      realizedMinorByStrategy[strategyId] = minor.toString();
+    }
+    const feesMinorByStrategy: Record<string, string> = {};
+    for (const [strategyId, minor] of this.feesByStrategy) {
+      feesMinorByStrategy[strategyId] = minor.toString();
+    }
+    return Object.freeze({
+      realizedMinorByStrategy: Object.freeze(realizedMinorByStrategy),
+      feesMinorByStrategy: Object.freeze(feesMinorByStrategy),
+    });
   }
 
   getAccount(): ShadowCapitalAccount {
@@ -568,6 +591,8 @@ export class ShadowCapitalPortfolioBook {
       trades: Object.freeze([...this.trades]),
       pnl,
       equityCurve,
+      strategyRollups: this.strategyRollups(),
+      declaredFlowMinor: this.declaredFlowMinor.toString(),
       sequence: this.sequence,
     });
   }
