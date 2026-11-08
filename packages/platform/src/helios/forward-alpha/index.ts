@@ -1,5 +1,5 @@
 /**
- * HELIOS Forward Alpha — forward paper / shadow qualification and live-strategy monitoring (simulation).
+ * HELIOS Forward Alpha — forward paper evidence, sequential inference, execution realism, and monitoring (simulation).
  */
 
 export {
@@ -17,7 +17,9 @@ export { listAlphaWorkPackages, type AlphaWorkPackageRow } from './work-package-
 
 export * from './alpha02/index.ts';
 export * from './alpha04-shadow-capital/index.ts';
+export * from './alpha05/index.ts';
 export * from './alpha06/index.ts';
+export * from './alpha07-sequential-evidence/index.ts';
 export * from './alpha08/index.ts';
 export * from './alpha09/index.ts';
 export * from './alpha11/index.ts';
