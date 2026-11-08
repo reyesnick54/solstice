@@ -290,6 +290,13 @@ export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPacka
       'Marker HELIOS_ALPHA23_AUTOMATIC_DEMOTION_QUALIFIED',
     ),
     statusFrom(
+      'ALPHA24',
+      'Automated forward research book and evidence reporting',
+      testExists(root, 'helios-alpha24-research-book.test.ts') ? 'QUALIFIED' : 'BLOCKED',
+      'packages/platform/src/helios/forward-alpha/alpha24/index.ts',
+      'Marker HELIOS_ALPHA24_RESEARCH_BOOK_QUALIFIED',
+    ),
+    statusFrom(
       'AAFV2.6',
       'Adaptive Alpha Fabric V2 Strategy Lab binding',
       testExists(root, 'helios-aaf-v2-strategy-lab-final-qualification.test.ts') ? 'QUALIFIED' : 'BLOCKED',
