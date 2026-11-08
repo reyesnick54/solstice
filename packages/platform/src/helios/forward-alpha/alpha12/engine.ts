@@ -1,10 +1,9 @@
 import {
   ALPHA12_CAPITAL_SCALE_MULTIPLIERS,
   ALPHA12_CAPACITY_ENGINE_SCHEMA,
-  HELIOS_ALPHA12_CAPACITY_ENGINE_QUALIFIED,
 } from './taxonomy.ts';
+import { evaluateAlpha12CapacityQualification } from './qualification.ts';
 import {
-  allScaleMultipliersPresent,
   classifyCapacity,
   estimateBreakEvenCapital,
   estimateCapacityCeiling,
@@ -157,15 +156,18 @@ export function buildStrategyCapacityCurve(input: Alpha12CapacityEngineInput): S
 
 export function runAlpha12CapacityEngine(input: Alpha12CapacityEngineInput): Alpha12CapacityEngineResult {
   const curve = buildStrategyCapacityCurve(input);
-  void allScaleMultipliersPresent(curve.scenarios);
-
-  return Object.freeze({
+  const result = Object.freeze({
     schema: ALPHA12_CAPACITY_ENGINE_SCHEMA,
     strategyId: input.strategyId,
-    grantsExecutionAuthority: false,
-    researchOnly: true,
+    grantsExecutionAuthority: false as const,
+    researchOnly: true as const,
     curve,
     scaleMultipliersRequested: ALPHA12_CAPITAL_SCALE_MULTIPLIERS,
-    qualificationMarker: HELIOS_ALPHA12_CAPACITY_ENGINE_QUALIFIED,
+    qualificationMarker: '',
+  });
+  const qualification = evaluateAlpha12CapacityQualification(result);
+  return Object.freeze({
+    ...result,
+    qualificationMarker: qualification.marker,
   });
 }
