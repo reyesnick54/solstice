@@ -1,5 +1,6 @@
 /**
- * HELIOS Forward Alpha — forward paper / shadow qualification planes.
+ * HELIOS Forward Alpha — forward paper / shadow qualification and live-strategy monitoring (simulation).
  */
 
 export * from './alpha08/index.ts';
+export * from './alpha11/index.ts';
