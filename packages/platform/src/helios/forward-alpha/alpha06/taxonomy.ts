@@ -1,0 +1,26 @@
+/**
+ * HELIOS Forward Alpha — ALPHA06 execution realism taxonomy.
+ */
+
+import { HELIOS_FORWARD_ALPHA_SCHEMA } from '../taxonomy.ts';
+
+export const ALPHA06_ENGINE_VERSION = 'helios-forward-alpha06-v1' as const;
+export const ALPHA06_SCHEMA = `${HELIOS_FORWARD_ALPHA_SCHEMA}.alpha06` as const;
+
+export const HELIOS_ALPHA06_EXECUTION_REALISM_QUALIFIED =
+  'HELIOS_ALPHA06_EXECUTION_REALISM_QUALIFIED' as const;
+export const HELIOS_ALPHA06_EXECUTION_REALISM_BLOCKED =
+  'HELIOS_ALPHA06_EXECUTION_REALISM_BLOCKED' as const;
+
+export const ALPHA06_RULE_FLAGS = Object.freeze({
+  NO_MID_PRICE_FILLS: true,
+  PARTIAL_FILLS_ALLOWED: true,
+  NO_FILL_THROUGH_UNAVAILABLE_LIQUIDITY: true,
+  SIGNAL_LANE_THEORETICAL_ONLY: true,
+  DECAY_BLOCKS_PROMOTION_WHEN_ALPHA_GONE: true,
+  SEPARATES_STRATEGY_FROM_EXECUTION: true,
+  NO_EXECUTION_AUTHORITY: true,
+});
+
+export const ALPHA06_EXECUTION_ALGORITHM_KINDS = Object.freeze(['MARKET', 'TWAP'] as const);
+export type Alpha06ExecutionAlgorithmKind = (typeof ALPHA06_EXECUTION_ALGORITHM_KINDS)[number];
