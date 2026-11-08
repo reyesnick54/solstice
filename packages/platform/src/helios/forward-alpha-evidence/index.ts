@@ -63,3 +63,11 @@ export { HELIOS_ALPHA11_DECAY_DETECTION } from './alpha11-decay-detection.ts';
 export { HELIOS_ALPHA12_CAPACITY } from './alpha12-capacity.ts';
 export { HELIOS_ALPHA13_PORTFOLIO_EVIDENCE } from './alpha13-portfolio-evidence.ts';
 export { HELIOS_ALPHA14_EVIDENCE_COMMITTEE } from './alpha14-evidence-committee.ts';
+export {
+  HELIOS_ALPHA17_CAMPAIGN_ORCHESTRATOR_SCHEMA,
+  HELIOS_ALPHA17_CAMPAIGN_ORCHESTRATOR_QUALIFIED,
+  HELIOS_ALPHA17_CAMPAIGN_ORCHESTRATOR_BLOCKED,
+  bindAlpha17CampaignEvidence,
+  evaluateAlpha17ForwardCampaignEvidenceQualification,
+  type Alpha17ForwardCampaignEvidenceRecord,
+} from './alpha17-campaign-orchestrator.ts';

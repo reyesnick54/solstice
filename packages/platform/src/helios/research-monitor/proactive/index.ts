@@ -21,10 +21,19 @@ export type {
   ProactiveResearchVoiContext,
   ProactiveResearchEnginePorts,
   ProactiveDispatchResult,
+  ProactiveForwardCampaignBinding,
+  ProactiveCampaignTickResult,
 } from './types.ts';
 
 export { ProactiveResearchEngineStore } from './store.ts';
-export { advanceSchedule, seedSchedule } from './scheduler.ts';
+export {
+  advanceSchedule,
+  seedSchedule,
+  advanceCampaignEvaluationSchedule,
+  advanceMarketSessionSchedule,
+  advanceOutcomeMaturitySchedule,
+  type ProactiveCampaignSchedule,
+} from './scheduler.ts';
 export {
   createEventSubscription,
   registrationMatchesEvent,
@@ -43,3 +52,7 @@ export {
   type Native08ProactiveResearchQualificationResult,
 } from './qualification.ts';
 export { OPENCHART_UPSTREAM, OPENCHART_MODULE_INSPIRATION } from './upstream-reference.ts';
+export {
+  ProactiveForwardCampaignCoordinator,
+  campaignTriggerLabel,
+} from './campaign-orchestrator-bridge.ts';
