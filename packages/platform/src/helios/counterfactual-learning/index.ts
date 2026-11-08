@@ -92,5 +92,10 @@ export { HELIOS_CF02_REJECTED_OPPORTUNITY_SHADOW_BOOK } from './cf02-rejected-op
 export { HELIOS_CF03_BEHAVIOR_POLICY_PROPENSITY } from './cf03-behavior-policy-propensity.ts';
 export { HELIOS_CF10_DECISION_ATTRIBUTION } from './cf10-decision-attribution.ts';
 export { HELIOS_CF11_CONSERVATIVE_POLICY_IMPROVEMENT } from './cf11-conservative-policy-improvement.ts';
+export {
+  HELIOS_ALPHA01_CF_FORWARD_EVIDENCE_BRIDGE_SCHEMA,
+  toAlpha01CounterfactualForwardEvidenceRef,
+  type Alpha01CounterfactualForwardEvidenceRef,
+} from './alpha01-forward-evidence-bridge.ts';
 export { HELIOS_CF12_EVOLUTION_MEMORY } from './cf12-evolution-memory.ts';
 export { HELIOS_CF13_AGENT_COMMITTEE } from './cf13-agent-committee.ts';
