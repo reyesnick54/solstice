@@ -102,9 +102,18 @@ export function evaluateDemotionTrigger(input: {
   }
 
   if (RESEARCH_EXPOSURE_STATES.has(input.currentState)) {
+    if (input.trigger === 'PERFORMANCE_LIMIT_BREACHED') {
+      if (
+        input.currentState === 'PAPER_ACTIVE' ||
+        input.currentState === 'PAPER_CHALLENGER' ||
+        input.currentState === 'PAPER_ELIGIBLE'
+      ) {
+        return 'REVIEW_REQUIRED';
+      }
+      return 'PAUSED';
+    }
     if (
       input.trigger === 'VALIDITY_PERIOD_EXPIRED' ||
-      input.trigger === 'PERFORMANCE_LIMIT_BREACHED' ||
       input.trigger === 'EVALUATION_DEFECT_DISCOVERED' ||
       input.trigger === 'DATA_QUALITY_PROBLEM'
     ) {

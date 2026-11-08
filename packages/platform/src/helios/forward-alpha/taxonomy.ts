@@ -4,7 +4,14 @@
 
 export const HELIOS_FORWARD_ALPHA_SCHEMA = 'sunrey.helios.forward-alpha.v1' as const;
 
-export const ALPHA_WORK_PACKAGES = Object.freeze(['ALPHA02', 'ALPHA06', 'ALPHA08', 'ALPHA11', 'ALPHA18'] as const);
+export const ALPHA_WORK_PACKAGES = Object.freeze([
+  'ALPHA02',
+  'ALPHA06',
+  'ALPHA08',
+  'ALPHA11',
+  'ALPHA18',
+  'ALPHA23',
+] as const);
 export type AlphaWorkPackageId = (typeof ALPHA_WORK_PACKAGES)[number];
 
 export const FORWARD_ALPHA_RETURN_LANES = Object.freeze([

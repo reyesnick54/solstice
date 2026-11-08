@@ -561,6 +561,73 @@ export class StrategyPromotionService {
     });
   }
 
+  /**
+   * HELIOS ALPHA23 — apply automatic research kill (paper→shadow, shadow→paused, fail-safe).
+   * Never increases risk limits or extends campaigns to seek favorable results.
+   */
+  recordAlpha23ResearchKill(input: {
+    readonly strategyId: string;
+    readonly version: string;
+    readonly killRequired: boolean;
+    readonly promotionTarget: StrategyPromotionState;
+    readonly trigger: DemotionTrigger;
+    readonly reason: string;
+    readonly alpha23DecisionId: string;
+    readonly permitsRiskIncrease?: boolean;
+  }): Result<StrategyPromotionRecord, StrategyFailure> {
+    if (input.permitsRiskIncrease === true) {
+      return err({
+        code: 'PROMOTION_GATE_FAILED',
+        message: 'ALPHA23 automatic demotion must not permit risk increase',
+      });
+    }
+    if (!input.killRequired) {
+      return err({
+        code: 'PROMOTION_GATE_FAILED',
+        message: 'ALPHA23 record requires killRequired',
+      });
+    }
+    const current = this.store.getPromotion(input.strategyId, input.version);
+    const capsule = this.store.getCapsule(input.strategyId, input.version);
+    if (!current || !capsule) {
+      return err({ code: 'UNVERSIONED_STRATEGY', message: 'Strategy Capsule is missing' });
+    }
+    const shadowDemotion =
+      input.promotionTarget === 'SHADOW_ACTIVE' ||
+      input.promotionTarget === 'SHADOW_ELIGIBLE' ||
+      input.promotionTarget === 'SHADOW_CHALLENGER';
+    const demotionTo: DemotionToState = shadowDemotion
+      ? 'REVIEW_REQUIRED'
+      : input.promotionTarget === 'PAUSED' ||
+          input.promotionTarget === 'REVIEW_REQUIRED' ||
+          input.promotionTarget === 'DEGRADED' ||
+          input.promotionTarget === 'DEMOTED'
+        ? input.promotionTarget
+        : 'PAUSED';
+    const demotion = buildDemotionRecord({
+      strategyId: input.strategyId,
+      strategyVersion: input.version,
+      capsuleFingerprint: capsule.fingerprint,
+      fromState: current.promotionState,
+      toState: demotionTo,
+      trigger: input.trigger,
+      reason: `${input.reason} [${input.alpha23DecisionId}]`,
+      actorId: 'qlsvc_alpha23',
+      decidedAt: this.clock.now(),
+      policyId: this.policy.policyId,
+      policyHash: this.policy.policyHash,
+    });
+    this.store.putDemotion(demotion);
+    return this.transition({
+      strategyId: input.strategyId,
+      version: input.version,
+      to: input.promotionTarget,
+      kind: 'DEGRADATION_DETECTED',
+      actorId: 'qlsvc_alpha23',
+      actorKind: 'QUALIFICATION_SERVICE',
+    });
+  }
+
   recommendPromotion(input: {
     readonly actorId: string;
     readonly strategyId: string;
