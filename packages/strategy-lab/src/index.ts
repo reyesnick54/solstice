@@ -988,6 +988,31 @@ export type {
   Evol10GenomeRegimeReport,
 } from './evol10/index.ts';
 export {
+  HELIOS_ALPHA10_FORWARD_GENERALIZATION_QUALIFIED,
+  HELIOS_ALPHA10_FORWARD_GENERALIZATION_BLOCKED,
+  HELIOS_ALPHA10_SCOPE_AXES,
+  EMPTY_FORWARD_REGIME_SCOPE,
+  scopeSliceKey,
+  buildForwardRegimeMatrix,
+  buildScopeSlicedForwardMatrices,
+  computeForwardRegimeConcentration,
+  computeForwardRegimeTransitionPerformance,
+  evaluateAlpha10ForwardRegimeReport,
+  evaluateAlpha10ForwardGeneralizationQualification,
+  computeForwardStressRegimeAssessment,
+} from './alpha10/index.ts';
+export type {
+  HeliosAlpha10ScopeAxis,
+  ForwardRegimeScopeSlice,
+  Alpha10CampaignRegimeDeclaration,
+  ForwardRegimeMatrixCell,
+  ForwardRegimeMatrix,
+  RegimeConcentration,
+  RegimeTransitionPerformance,
+  ForwardRegimePerformanceObservation,
+  Alpha10ForwardRegimeReport,
+} from './alpha10/index.ts';
+export {
   EVOL_CAPABILITY_IDS,
   HELIOS_STRATEGY_SELF_EVOLUTION_V1_BLOCKED,
   HELIOS_STRATEGY_SELF_EVOLUTION_V1_QUALIFIED,
