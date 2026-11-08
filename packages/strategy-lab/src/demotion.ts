@@ -110,7 +110,10 @@ export function evaluateDemotionTrigger(input: {
       ) {
         return 'REVIEW_REQUIRED';
       }
-      return 'PAUSED';
+      if (input.currentState === 'SHADOW_ACTIVE' || input.currentState === 'SHADOW_CHALLENGER') {
+        return 'PAUSED';
+      }
+      return 'REVIEW_REQUIRED';
     }
     if (
       input.trigger === 'VALIDITY_PERIOD_EXPIRED' ||
