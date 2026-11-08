@@ -1,23 +1,45 @@
 # Forward Alpha Reality Gate (AlphaRealityGate)
 
+**Qualification marker:** `HELIOS_FORWARD_ALPHA_EVIDENCE_V1_BLOCKED` (**engineering architecture qualified** — not investment-performance proof)
+
+**Git SHA:** `4956abda11aa786d430c32d71c28cac368209768`
+
+**Qualification timestamp (UTC):** `2026-11-08T12:49:40.142Z`
+
+**Evidence-derived reality status:** `FORWARD_CAMPAIGN_READY`
+
+**Subprocess gates:** BLOCKED (see gate table)
+
+**Posture:** `ENVIRONMENT=simulation`; `LIVE_TRADING_ENABLED=false`; `LIVE_INVESTMENT_EXECUTION=false`; `LIVE_CUSTODY_ENABLED=false`; `production_authorized=false`
+
+
+
+## Evidence-derived status (this repository)
+
+| Status | Claimed |
+|--------|---------|
+| `ARCHITECTURE_QUALIFIED` | via software qualification |
+| `FORWARD_CAMPAIGN_READY` | **Yes** — prospective infrastructure; no genuine campaign observations in-repo |
+| `FORWARD_EVIDENCE_ACCUMULATING` | **No** |
+| `FORWARD_EDGE_CANDIDATE` | **No** |
+| `FORWARD_ALPHA_SUPPORTED` | **No** |
+| `FORWARD_ROBUSTNESS_SUPPORTED` | **No** |
+| `PAPER_IMPLEMENTATION_SUPPORTED` | **No** |
+| `LIVE_ALPHA_SUPPORTED` | **No** — blocked while live flags remain false |
+
+**Resolved status:** `FORWARD_CAMPAIGN_READY`
+
 Implementation: `packages/platform/src/helios/forward-alpha-evidence/reality-gate.ts`
 
-## Status rules
+## ALPHA14 agentic committee
 
-1. **ARCHITECTURE_QUALIFIED** — software modules present and bounded.
-2. **FORWARD_CAMPAIGN_READY** — prospective infrastructure ready (may be achieved in simulation).
-3. **FORWARD_EVIDENCE_ACCUMULATING** — requires chronological forward decisions (`GENUINE_FORWARD_CAMPAIGN`).
-4. **FORWARD_EDGE_CANDIDATE** — preliminary positive forward evidence; **not** alpha proven.
-5. **FORWARD_ALPHA_SUPPORTED** — genuine forward sample + predeclared statistical policy.
-6. **FORWARD_ROBUSTNESS_SUPPORTED** — forward alpha + required regime coverage.
-7. **PAPER_IMPLEMENTATION_SUPPORTED** — forward paper after realistic costs.
-8. **LIVE_ALPHA_SUPPORTED** — regulated live capital; blocked when `LIVE_TRADING_ENABLED=false` or `LIVE_INVESTMENT_EXECUTION=false`.
-
-## Synthetic guard
-
-`synthetic-guard.ts` prevents `SYNTHETIC_HARNESS` and `HISTORICAL_FIXTURE` from yielding investment-performance proof statuses.
+| Item | Value |
+|------|-------|
+| Owner | `packages/agentic-capital-mesh/src/alpha-evidence-agentic-committee` |
+| Test | `tests/helios-alpha14-agentic-evidence-committee.test.ts` |
+| Gate | QUALIFIED |
 
 ## Separation
 
 - Architecture marker: `HELIOS_FORWARD_ALPHA_EVIDENCE_V1_QUALIFIED`
-- Evidence status: resolved independently via `resolveAlphaRealityGate`
+- Evidence status: `resolveAlphaRealityGate` — independent of architecture marker

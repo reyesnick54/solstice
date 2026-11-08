@@ -23,6 +23,8 @@ import {
   alphaWorkPackagesQualified,
   buildAlphaWorkPackageRegistry,
 } from './work-package-registry.ts';
+import { runCanonicalAlphaStackQualification } from './canonical-stack-qualification.ts';
+import type { CanonicalAlphaQualificationRow } from './canonical-stack-qualification.ts';
 import type { ForwardAlphaRealityGateResult } from './types.ts';
 
 export {
@@ -49,6 +51,7 @@ export type ForwardAlphaEvidenceQualificationResult = {
   readonly gitSha: string;
   readonly evaluatedAt: UtcInstant;
   readonly workPackages: ReturnType<typeof buildAlphaWorkPackageRegistry>;
+  readonly canonicalQualifications: readonly CanonicalAlphaQualificationRow[];
   readonly realityGate: ForwardAlphaRealityGateResult;
   readonly blockers: readonly string[];
 };
@@ -71,6 +74,17 @@ export function evaluateForwardAlphaEvidenceQualification(
 
   if (!alphaWorkPackagesQualified(workPackages)) {
     blockers.push(...alphaWorkPackageBlockers(workPackages));
+  }
+
+  const canonicalQualifications = runCanonicalAlphaStackQualification({
+    root: input.root,
+    gitSha: input.gitSha,
+    evaluatedAt: input.evaluatedAt,
+  });
+  for (const row of canonicalQualifications) {
+    if (!row.qualified) {
+      blockers.push(`${row.packageId}:${row.marker}:${row.blockers.join(',')}`);
+    }
   }
 
   const testPath = join(input.root, 'tests/helios-alpha15-forward-alpha-qualification.test.ts');
@@ -113,6 +127,7 @@ export function evaluateForwardAlphaEvidenceQualification(
     gitSha: input.gitSha,
     evaluatedAt: input.evaluatedAt,
     workPackages,
+    canonicalQualifications,
     realityGate,
     blockers: Object.freeze(blockers),
   });
