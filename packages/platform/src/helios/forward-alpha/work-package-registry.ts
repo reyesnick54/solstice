@@ -11,6 +11,10 @@ export type AlphaWorkPackageRow = {
 };
 
 const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly moduleRef: string }> = {
+  ALPHA02: {
+    title: 'Strategy pre-registration and forward campaign freeze',
+    moduleRef: 'packages/platform/src/helios/forward-alpha/alpha02/index.ts',
+  },
   ALPHA06: {
     title: 'Forward implementation and execution realism',
     moduleRef: 'packages/platform/src/helios/forward-alpha/alpha06/index.ts',
@@ -26,6 +30,7 @@ const MODULE_BY_PACKAGE: Record<string, { readonly title: string; readonly modul
 };
 
 const OPTIONAL_TESTS: Record<string, string> = {
+  ALPHA02: 'tests/helios-alpha02-forward-preregistration.test.ts',
   ALPHA06: 'tests/helios-alpha06-forward-execution-realism.test.ts',
   ALPHA08: 'tests/helios-forward-alpha08-data-snooping-firewall.test.ts',
   ALPHA11: 'tests/helios-alpha11-alpha-decay.test.ts',
