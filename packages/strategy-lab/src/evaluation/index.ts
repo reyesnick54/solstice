@@ -92,3 +92,9 @@ export {
   type ChronologicalEvaluationPointInTimeFeatureConfig,
   type PointInTimeFeatureEvaluationAttachment,
 } from './point-in-time-feature-fabric-seam.ts';
+export {
+  EVALUATION_MODE_TO_FORWARD_ALPHA_LANE,
+  forwardAlphaLaneForEvaluationMode,
+  assertEvaluationModeNotRelabeledAsForward,
+  sealedHoldoutForwardAlphaLane,
+} from './evidence-lanes.ts';

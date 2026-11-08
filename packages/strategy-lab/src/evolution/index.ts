@@ -70,3 +70,8 @@ export type {
   NoveltyAssessment,
   StrategyScientistObservation,
 } from './types.ts';
+export {
+  EVOL_FORWARD_ALPHA_LANE_BINDINGS,
+  assertEvolTrialLanesSeparated,
+} from './forward-alpha-bridge.ts';
+export type { EvolForwardAlphaLaneBinding } from './forward-alpha-bridge.ts';

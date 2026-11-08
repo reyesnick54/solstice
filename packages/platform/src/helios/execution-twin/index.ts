@@ -67,6 +67,12 @@ export {
   type Os02ExecutionTwinQualificationChecks,
   type Os02ExecutionTwinQualificationResult,
 } from './qualification.ts';
+export {
+  HELIOS_ALPHA01_EXECUTION_TWIN_FORWARD_BRIDGE_SCHEMA,
+  forwardAlphaLaneExecutionTwinEnvironment,
+  bindForwardAlphaLaneToExecutionTwin,
+  type Alpha01ExecutionTwinForwardBinding,
+} from './alpha01-forward-evidence-bridge.ts';
 
 /** OS03 — institutional paper execution and order-book simulation. */
 export * as heliosExecutionSimulation from './simulation/index.ts';

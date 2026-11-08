@@ -65,3 +65,9 @@ export {
   type ExecutionConnectivityQualificationInput,
   type ExecutionConnectivityQualificationResult,
 } from './exec15-qualification.ts';
+
+export {
+  HELIOS_ALPHA01_EXEC_CONNECTIVITY_FORWARD_BRIDGE_SCHEMA,
+  buildAlpha01ForwardCostEvidenceSlice,
+  type Alpha01ForwardCostEvidenceSlice,
+} from './alpha01-forward-evidence-bridge.ts';
