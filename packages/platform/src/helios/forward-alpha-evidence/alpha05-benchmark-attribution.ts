@@ -1,7 +1,21 @@
 /**
- * ALPHA05 — benchmark attribution (excess vs declared benchmark, integer minor units).
+ * ALPHA05 — benchmark attribution (canonical engine in forward-alpha/alpha05).
  */
 
+export {
+  HELIOS_ALPHA05_BENCHMARK_ATTRIBUTION_QUALIFIED,
+  HELIOS_ALPHA05_BENCHMARK_ATTRIBUTION_BLOCKED,
+  evaluateAlpha05BenchmarkAttributionQualification,
+  sealForwardBenchmark,
+  buildBenchmarkPortfolio,
+  buildBenchmarkComparison,
+  buildAlphaAttribution,
+  buildAlphaDecomposition,
+  FORWARD_BENCHMARK_KINDS,
+  ALPHA05_RULE_FLAGS,
+} from '../forward-alpha/alpha05/index.ts';
+
+/** Legacy evidence-plane marker (architecture qualified; not investment proof). */
 export const HELIOS_ALPHA05_BENCHMARK_ATTRIBUTION = 'HELIOS_ALPHA05_BENCHMARK_ATTRIBUTION' as const;
 
 export function attributeExcessMinor(
