@@ -276,6 +276,13 @@ export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPacka
       'Marker HELIOS_ALPHA13_PORTFOLIO_FORWARD_EVIDENCE_QUALIFIED',
     ),
     statusFrom(
+      'ALPHA20',
+      'Forward strategy cohort and control experiments',
+      testExists(root, 'helios-alpha20-forward-experiments.test.ts') ? 'QUALIFIED' : 'BLOCKED',
+      'packages/platform/src/helios/forward-alpha/alpha20/index.ts',
+      'Marker HELIOS_ALPHA20_FORWARD_EXPERIMENTS_QUALIFIED',
+    ),
+    statusFrom(
       'AAFV2.6',
       'Adaptive Alpha Fabric V2 Strategy Lab binding',
       testExists(root, 'helios-aaf-v2-strategy-lab-final-qualification.test.ts') ? 'QUALIFIED' : 'BLOCKED',
