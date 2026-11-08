@@ -276,6 +276,13 @@ export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPacka
       'Marker HELIOS_ALPHA13_PORTFOLIO_FORWARD_EVIDENCE_QUALIFIED',
     ),
     statusFrom(
+      'ALPHA17',
+      'Autonomous forward campaign orchestrator',
+      testExists(root, 'helios-alpha17-campaign-orchestrator.test.ts') ? 'QUALIFIED' : 'BLOCKED',
+      'packages/platform/src/helios/forward-alpha/alpha17/index.ts',
+      'Marker HELIOS_ALPHA17_CAMPAIGN_ORCHESTRATOR_QUALIFIED',
+    ),
+    statusFrom(
       'ALPHA20',
       'Forward strategy cohort and control experiments',
       testExists(root, 'helios-alpha20-forward-experiments.test.ts') ? 'QUALIFIED' : 'BLOCKED',
