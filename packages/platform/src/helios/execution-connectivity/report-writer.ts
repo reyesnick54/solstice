@@ -200,6 +200,7 @@ Live FIX sessions, production drop-copy feeds, or executed broker agreements.
 `,
   );
 
+  const exec08 = listExecWorkPackages(input.root).find((row) => row.packageId === 'EXEC08');
   const exec09 = listExecWorkPackages(input.root).find((row) => row.packageId === 'EXEC09');
   const exec11 = listExecWorkPackages(input.root).find((row) => row.packageId === 'EXEC11');
   const exec12 = listExecWorkPackages(input.root).find((row) => row.packageId === 'EXEC12');
@@ -210,7 +211,7 @@ Live FIX sessions, production drop-copy feeds, or executed broker agreements.
 
 | Capability | Canonical owner | Test owner | Gate |
 |------------|-----------------|------------|------|
-| EXEC08 segregation | \`${listExecWorkPackages(input.root).find((r) => r.packageId === 'EXEC08')?.moduleRef ?? ''}\` | \`${listExecWorkPackages(input.root).find((r) => r.packageId === 'EXEC08')?.testRef ?? ''}\` | ${packageGateFor('IMPLEMENTED')} |
+| EXEC08 segregation | \`${exec08?.moduleRef ?? ''}\` | \`${exec08?.testRef ?? ''}\` | ${exec08?.status === 'IMPLEMENTED' ? packageGateFor('IMPLEMENTED') : 'BLOCKED'} |
 | EXEC09 settlement | \`${exec09?.moduleRef ?? ''}\` | \`${exec09?.testRef ?? ''}\` | ${exec09?.status === 'IMPLEMENTED' ? packageGateFor('IMPLEMENTED') : 'BLOCKED'} |
 | EXEC11 custody isolation | \`${exec11?.moduleRef ?? ''}\` | \`${exec11?.testRef ?? ''}\` | ${exec11?.status === 'IMPLEMENTED' ? packageGateFor('IMPLEMENTED') : 'BLOCKED'} |
 | EXEC12 reconciliation | \`${exec12?.moduleRef ?? ''}\` | \`${exec12?.testRef ?? ''}\` | ${exec12?.status === 'IMPLEMENTED' ? packageGateFor('IMPLEMENTED') : 'BLOCKED'} |
