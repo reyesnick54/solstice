@@ -290,6 +290,13 @@ export function buildHeliosWorkPackageRegistry(root: string): readonly WorkPacka
       'Marker HELIOS_ALPHA20_FORWARD_EXPERIMENTS_QUALIFIED',
     ),
     statusFrom(
+      'ALPHA23',
+      'Automatic strategy demotion and fail-safe research control',
+      testExists(root, 'helios-alpha23-automatic-demotion.test.ts') ? 'QUALIFIED' : 'BLOCKED',
+      'packages/platform/src/helios/forward-alpha/alpha23/index.ts',
+      'Marker HELIOS_ALPHA23_AUTOMATIC_DEMOTION_QUALIFIED',
+    ),
+    statusFrom(
       'ALPHA24',
       'Automated forward research book and evidence reporting',
       testExists(root, 'helios-alpha24-research-book.test.ts') ? 'QUALIFIED' : 'BLOCKED',

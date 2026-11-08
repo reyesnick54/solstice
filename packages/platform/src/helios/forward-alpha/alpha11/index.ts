@@ -36,5 +36,6 @@ export { recommendAlphaDemotion } from './demotion-policy.ts';
 export {
   alpha11AutomaticDegradationEligible,
   alpha11ToStrategyLabDemotionTrigger,
+  alpha11PreferAlpha23FailSafeKill,
 } from './strategy-lab-bridge.ts';
 export * from './detectors/index.ts';
