@@ -12,6 +12,8 @@ export type AlphaWorkPackageRow = {
   readonly title: string;
   readonly status: 'QUALIFIED' | 'BLOCKED';
   readonly moduleRef: string;
+  readonly implementationOwner: string;
+  readonly qualificationTest: string;
 };
 
 export type ForwardAlphaDecisionRecord = {

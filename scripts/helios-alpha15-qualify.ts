@@ -13,7 +13,10 @@ import { asUtcInstant } from '../packages/domain/src/time.ts';
 import {
   HELIOS_FORWARD_ALPHA_EVIDENCE_V1_BLOCKED,
   HELIOS_FORWARD_ALPHA_EVIDENCE_V1_QUALIFIED,
+  CANONICAL_ALPHA_MODULES,
   evaluateForwardAlphaEvidenceQualification,
+  regenerateForwardAlphaReports,
+  type ForwardAlphaSubprocessGateResults,
 } from '../packages/platform/src/helios/forward-alpha-evidence/index.ts';
 import { lintHeliosBoundary } from '../tools/architectural-linter/src/helios-guards.ts';
 
@@ -111,6 +114,18 @@ function runNightlyBench(): boolean {
 }
 
 const nightlyBenchOk = runNightlyBench();
+
+const ALPHA_MODULE_TESTS = CANONICAL_ALPHA_MODULES.filter(
+  (row) => row.qualificationTest && row.packageId !== 'ALPHA15',
+).map((row) => row.qualificationTest!);
+
+let alphaModuleTestsOk = true;
+for (const rel of ALPHA_MODULE_TESTS) {
+  const label = rel.replace('tests/', '').replace('.test.ts', '');
+  const ok = runTest(`canonical ${label}`, rel);
+  if (!ok) alphaModuleTestsOk = false;
+}
+
 const alpha15Ok = runTest('ALPHA15 acceptance', 'tests/helios-alpha15-forward-alpha-qualification.test.ts');
 
 let typecheckOk = true;
@@ -128,25 +143,48 @@ if (!SKIP_SUBPROCESS) {
   console.log('[ALPHA15] HELIOS strict typecheck: skipped (--skip-subprocess)');
 }
 
+const subprocessGates: ForwardAlphaSubprocessGateResults = Object.freeze({
+  ci: ciOk,
+  heliosStrictTypecheck: typecheckOk,
+  architecture: architectureOk,
+  productionSafety: productionSafetyOk,
+  healthBaseline: healthOk,
+  aafV2: aafOk,
+  earnings: earnOk,
+  valuation: valOk,
+  evolution: evolOk,
+  counterfactual: cfOk,
+  alternativeData: altOk,
+  md14MarketData: md14Ok,
+  exec15Execution: exec15Ok,
+  strategyLab: strategyLabOk,
+  executionTwin: execTwinOk,
+  fuzzExtended: fuzzOk,
+  formalExtended: formalOk,
+  nightlyBench: nightlyBenchOk,
+  alphaModuleTests: alphaModuleTestsOk,
+});
+
 const subprocessGatesOk =
-  ciOk &&
-  productionSafetyOk &&
-  architectureOk &&
-  typecheckOk &&
-  aafOk &&
-  earnOk &&
-  healthOk &&
-  valOk &&
-  evolOk &&
-  cfOk &&
-  altOk &&
-  md14Ok &&
-  exec15Ok &&
-  strategyLabOk &&
-  execTwinOk &&
-  fuzzOk &&
-  formalOk &&
-  nightlyBenchOk &&
+  subprocessGates.ci &&
+  subprocessGates.productionSafety &&
+  subprocessGates.architecture &&
+  subprocessGates.heliosStrictTypecheck &&
+  subprocessGates.aafV2 &&
+  subprocessGates.earnings &&
+  subprocessGates.healthBaseline &&
+  subprocessGates.valuation &&
+  subprocessGates.evolution &&
+  subprocessGates.counterfactual &&
+  subprocessGates.alternativeData &&
+  subprocessGates.md14MarketData &&
+  subprocessGates.exec15Execution &&
+  subprocessGates.strategyLab &&
+  subprocessGates.executionTwin &&
+  subprocessGates.fuzzExtended &&
+  subprocessGates.formalExtended &&
+  subprocessGates.nightlyBench &&
+  subprocessGates.alphaModuleTests &&
   alpha15Ok;
 
 const qualification = evaluateForwardAlphaEvidenceQualification({
@@ -179,11 +217,20 @@ if (!subprocessGatesOk) {
   if (!fuzzOk) blockers.push('fuzz extended failed');
   if (!formalOk) blockers.push('formal extended failed');
   if (!nightlyBenchOk) blockers.push('nightly bench failed');
+  if (!alphaModuleTestsOk) blockers.push('canonical ALPHA02–ALPHA14 acceptance tests failed');
   if (!alpha15Ok) blockers.push('ALPHA15 acceptance test failed');
 }
 
 const qualified = blockers.length === 0;
 const marker = qualified ? HELIOS_FORWARD_ALPHA_EVIDENCE_V1_QUALIFIED : HELIOS_FORWARD_ALPHA_EVIDENCE_V1_BLOCKED;
+
+regenerateForwardAlphaReports({
+  root: ROOT,
+  gitSha: sha,
+  evaluatedAt: now,
+  qualification: { ...qualification, qualified: blockers.length === 0, blockers: Object.freeze(blockers) },
+  subprocessGates,
+});
 
 mkdirSync(OUT_DIR, { recursive: true });
 const jsonPath = join(OUT_DIR, `helios-alpha15-qualification-${sha.slice(0, 12)}.json`);
@@ -207,7 +254,7 @@ writeFileSync(
 console.log(
   JSON.stringify(
     {
-      command: 'helios:alpha15:qualify',
+      command: 'helios:alpha16:qualify',
       marker,
       qualified,
       jsonPath,

@@ -41,6 +41,19 @@ export {
   buildAlphaWorkPackageRegistry,
 } from './work-package-registry.ts';
 
+export { CANONICAL_ALPHA_MODULES, type CanonicalAlphaModuleRow } from './canonical-alpha-modules.ts';
+
+export {
+  runCanonicalAlphaStackQualification,
+  type CanonicalAlphaQualificationRow,
+} from './canonical-stack-qualification.ts';
+
+export {
+  regenerateForwardAlphaReports,
+  type ForwardAlphaReportRegenerationInput,
+  type ForwardAlphaSubprocessGateResults,
+} from './report-writer.ts';
+
 export { assertForwardAlphaProductionPosture } from './production-posture.ts';
 
 export {

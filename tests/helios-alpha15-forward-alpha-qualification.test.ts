@@ -62,6 +62,16 @@ describe('HELIOS ALPHA15 — forward alpha evidence qualification', () => {
     );
   });
 
+  it('binds ALPHA02–ALPHA14 to canonical forward-alpha owners (not evidence stubs)', () => {
+    const rows = buildAlphaWorkPackageRegistry(ROOT);
+    const alpha05 = rows.find((r) => r.workPackage === 'ALPHA05');
+    assert.ok(alpha05?.moduleRef.includes('forward-alpha/alpha05/index.ts'));
+    const alpha10 = rows.find((r) => r.workPackage === 'ALPHA10');
+    assert.ok(alpha10?.moduleRef.includes('strategy-lab/src/alpha10/index.ts'));
+    const alpha14 = rows.find((r) => r.workPackage === 'ALPHA14');
+    assert.ok(alpha14?.moduleRef.includes('agentic-capital-mesh/src/alpha-evidence-agentic-committee'));
+  });
+
   it('required forward-alpha docs exist', () => {
     const docs = [
       'docs/helios/alpha/HELIOS_FORWARD_ALPHA_FINAL_REPORT.md',
