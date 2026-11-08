@@ -1,6 +1,7 @@
 import type { Clock } from '@solstice/config';
 import type { UtcInstant } from '@solstice/domain';
 import type { EvidenceVault } from '@solstice/evidence';
+import type { CampaignRuntimeTickResult } from '@solstice/strategy-lab';
 import type { ResearchBudgetSnapshot } from '../../execution-types.ts';
 import type { EconomicWorkOrder } from '../../types.ts';
 import type {
@@ -21,6 +22,7 @@ import type {
 } from '../../open-source-integration/os08/types.ts';
 import type { ResearchMonitorTriggerEvent } from '../../open-source-integration/os07/research-monitor-contract.ts';
 import type { ResearchTriggerDedupeSnapshot } from '../../open-source-integration/os08/dedupe.ts';
+import type { ProactiveCampaignSchedule } from './scheduler.ts';
 
 export type ProactiveMonitorSchedule = {
   readonly intervalMs: number;
@@ -107,4 +109,25 @@ export type ProactiveDispatchResult = {
   readonly evaluation: ResearchMonitorEvaluation;
   readonly integrationTrigger: ResearchMonitorTriggerEvent | null;
   readonly routeResult: ResearchTriggerRunResult | null;
+};
+
+export type ProactiveForwardCampaignBinding = {
+  readonly bindingId: string;
+  readonly campaignId: string;
+  readonly ownerId: string;
+  readonly evaluationSchedule: ProactiveCampaignSchedule | null;
+  readonly marketSessionSchedule: ProactiveCampaignSchedule | null;
+  readonly outcomeMaturitySchedule: ProactiveCampaignSchedule | null;
+  readonly active: boolean;
+  readonly registeredAt: UtcInstant;
+  readonly updatedAt: UtcInstant;
+};
+
+export type ProactiveCampaignTickResult = {
+  readonly evaluationSchedulesFired: number;
+  readonly marketSessionSchedulesFired: number;
+  readonly outcomeMaturitySchedulesFired: number;
+  readonly eventTriggersEnqueued: number;
+  readonly runtimePasses: number;
+  readonly tickResults: readonly CampaignRuntimeTickResult[];
 };
