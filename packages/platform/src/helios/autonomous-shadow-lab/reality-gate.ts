@@ -40,6 +40,7 @@ export function evaluateShadowLabRealityGate(
   return Object.freeze({
     architectureQualified,
     forwardAlphaSupportedClaimed: isInvestmentPerformanceProofStatus(gate.status),
+    alphaRealityStatus: gate.status,
     notes: Object.freeze(notes),
   });
 }

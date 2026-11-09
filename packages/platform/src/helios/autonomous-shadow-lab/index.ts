@@ -20,6 +20,14 @@ export {
   evaluateAutonomousShadowLabQualification,
 } from './alpha25-qualification.ts';
 
+export { CANONICAL_SHADOW_MODULES } from './canonical-shadow-modules.ts';
+export type { CanonicalShadowQualificationRow } from './canonical-stack-qualification.ts';
+export { runCanonicalShadowStackQualification } from './canonical-stack-qualification.ts';
+export {
+  regenerateShadowLabReports,
+  type ShadowLabSubprocessGateResults,
+} from './report-writer.ts';
+
 export {
   buildShadowLabWorkPackageRegistry,
   shadowLabWorkPackageBlockers,

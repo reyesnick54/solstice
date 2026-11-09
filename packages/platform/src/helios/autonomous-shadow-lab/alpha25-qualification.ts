@@ -7,9 +7,12 @@ import { join } from 'node:path';
 
 import type { UtcInstant } from '@solstice/domain';
 
-import { evaluateForwardAlphaEvidenceQualification } from '../forward-alpha-evidence/alpha15-qualification.ts';
 import { assertForwardAlphaProductionPosture } from '../forward-alpha-evidence/production-posture.ts';
 
+import {
+  runCanonicalShadowStackQualification,
+  type CanonicalShadowQualificationRow,
+} from './canonical-stack-qualification.ts';
 import { runShadowLabChaosHarness } from './chaos/resilience-harness.ts';
 import { evaluateShadowLabRealityGate } from './reality-gate.ts';
 import { runShadowLabLongRun } from './simulation/long-run-harness.ts';
@@ -58,6 +61,7 @@ export type AutonomousShadowLabQualificationResult = {
   readonly gitSha: string;
   readonly evaluatedAt: UtcInstant;
   readonly workPackages: ReturnType<typeof buildShadowLabWorkPackageRegistry>;
+  readonly canonicalQualifications: readonly CanonicalShadowQualificationRow[];
   readonly longRun: ShadowLabLongRunResult;
   readonly chaos: ShadowLabChaosHarnessResult;
   readonly realityGate: ShadowLabRealityGateResult;
@@ -91,16 +95,15 @@ export function evaluateAutonomousShadowLabQualification(
     }
   }
 
-  const alpha15 = evaluateForwardAlphaEvidenceQualification({
+  const canonicalQualifications = runCanonicalShadowStackQualification({
     root: input.root,
     gitSha: input.gitSha,
     evaluatedAt: input.evaluatedAt,
-    subprocessGatesOk: true,
-    qualificationTestPresent: true,
   });
-  if (!alpha15.qualified) {
-    blockers.push('ALPHA16 prerequisite: ALPHA15 forward-alpha evidence not qualified');
-    blockers.push(...alpha15.blockers);
+  for (const row of canonicalQualifications) {
+    if (!row.qualified) {
+      blockers.push(`${row.packageId}:${row.marker}:${row.blockers.join(',')}`);
+    }
   }
 
   const longRun =
@@ -154,6 +157,7 @@ export function evaluateAutonomousShadowLabQualification(
     gitSha: input.gitSha,
     evaluatedAt: input.evaluatedAt,
     workPackages,
+    canonicalQualifications,
     longRun,
     chaos,
     realityGate,
