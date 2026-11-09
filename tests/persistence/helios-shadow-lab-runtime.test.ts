@@ -44,6 +44,12 @@ describePersistence('HELIOS OPS01 shadow lab runtime persistence', () => {
     });
     assert.equal(sealed.ok, true);
 
+    await store.releaseLease({
+      campaignId: CAMPAIGN,
+      workerId: 'persist-worker',
+      fencingToken: lease.fencingToken,
+    });
+
     const runtime2 = new HeliosDurableShadowLabRuntimeService({
       clock,
       store: new PgShadowLabDurableStore(pool),
