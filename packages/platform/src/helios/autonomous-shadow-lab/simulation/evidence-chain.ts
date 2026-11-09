@@ -59,7 +59,7 @@ export function checkpointFromChain(
 ): ShadowLabCheckpoint {
   const last = records[records.length - 1];
   return Object.freeze({
-    checkpointId: `chk:${campaignId}@g${generation}`,
+    checkpointId: `schk_${campaignId}_g${generation}`,
     sealedAt,
     decisionCount: records.length,
     lastContentHash: last?.contentHash ?? 'GENESIS',

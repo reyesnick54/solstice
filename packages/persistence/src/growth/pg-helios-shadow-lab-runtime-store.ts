@@ -1,17 +1,18 @@
 import type { Pool, PoolClient } from 'pg';
 
-import type { SealedDecisionRecord, ShadowLabCheckpoint } from '../../../platform/src/helios/autonomous-shadow-lab/types.ts';
 import type {
+  SealedDecisionRecord,
+  ShadowLabCheckpoint,
   ShadowLabCampaignLease,
   ShadowLabCampaignRegistration,
   ShadowLabDecisionCommitInput,
   ShadowLabDecisionCommitResult,
+  ShadowLabDurableStore,
   ShadowLabMaturedOutcome,
   ShadowLabPendingOutcome,
   ShadowLabShadowFill,
   ShadowLabStrategyVersionRecord,
-} from '../../../platform/src/helios/autonomous-shadow-lab/ops01/types.ts';
-import type { ShadowLabDurableStore } from '../../../platform/src/helios/autonomous-shadow-lab/ops01/ports.ts';
+} from '@solstice/platform';
 import { isUniqueViolation } from '../postgres/write.ts';
 import { withClient } from '../postgres/pools.ts';
 
