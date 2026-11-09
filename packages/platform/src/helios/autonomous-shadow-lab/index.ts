@@ -39,3 +39,22 @@ export { HELIOS_ALPHA21_CONTINUOUS_SHADOW_PORTFOLIO } from './alpha21-continuous
 export { HELIOS_ALPHA22_CONTROL_ROOM, projectControlRoom } from './alpha22-control-room.ts';
 export { HELIOS_ALPHA23_AUTOMATIC_DEMOTION } from './alpha23-automatic-demotion.ts';
 export { HELIOS_ALPHA24_RECURRING_EVIDENCE_REPORTS } from './alpha24-recurring-evidence-reports.ts';
+
+export {
+  HELIOS_DURABLE_SHADOW_LAB_RUNTIME_SCHEMA,
+  HELIOS_DURABLE_SHADOW_LAB_RUNTIME_V1_BLOCKED,
+  HELIOS_DURABLE_SHADOW_LAB_RUNTIME_V1_QUALIFIED,
+  HeliosDurableShadowLabRuntimeService,
+  InMemoryShadowLabDurableStore,
+  buildShadowLabRuntimeHealth,
+  buildShadowLabRuntimeReadiness,
+  evaluateDurableShadowLabRuntimeQualification,
+  runAllRestartCrashPoints,
+  runShadowLabRestartHarness,
+  createShadowLabHttpRuntime,
+  serveShadowLabHttpRuntime,
+  type DurableShadowLabRuntimeQualificationResult,
+  type ShadowLabDurableStore,
+  type ShadowLabRestartHarnessResult,
+  SHADOW_LAB_RESTART_CRASH_POINTS,
+} from './ops01/index.ts';
