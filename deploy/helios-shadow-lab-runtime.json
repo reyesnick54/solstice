@@ -1,0 +1,29 @@
+{
+  "schema": "deploy/helios-shadow-lab-runtime/v1",
+  "service": "helios-shadow-lab-runtime",
+  "environment": "simulation",
+  "liveTradingEnabled": false,
+  "image": "sunrey-simulation:latest",
+  "command": [
+    "node",
+    "--experimental-strip-types",
+    "--disable-warning=ExperimentalWarning",
+    "scripts/helios-shadow-lab-runtime-serve.ts"
+  ],
+  "ports": {
+    "http": 8791
+  },
+  "probes": {
+    "livenessPath": "/health",
+    "readinessPath": "/ready",
+    "metricsPath": "/metrics"
+  },
+  "env": {
+    "ENVIRONMENT": "simulation",
+    "SUNREY_DATABASE_CUSTOMER_URL": "${SUNREY_DATABASE_CUSTOMER_URL}",
+    "SHADOW_LAB_WORKER_ID": "${HOSTNAME}"
+  },
+  "gracefulShutdownSeconds": 45,
+  "replicas": 2,
+  "notes": "Research shadow lab only. Never enable LIVE_TRADING_ENABLED."
+}

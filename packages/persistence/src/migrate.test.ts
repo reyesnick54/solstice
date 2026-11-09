@@ -723,4 +723,20 @@ describe('versioned SQL migrations', () => {
     assert.match(v004.sql, /CREATE TABLE ledger\.account_coordinate/);
     assert.equal(/\bCREATE TABLE[\s\S]*\bbalance\b/i.test(v004.sql), false);
   });
+
+  it('customer V072 persists durable autonomous shadow lab runtime without live trading', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v072 = files.find((file) => file.version === 72);
+    assert.ok(v072);
+    assert.equal(v072.filename, 'V072__helios_autonomous_shadow_lab_runtime.sql');
+    assert.match(v072.sql, /CREATE TABLE growth\.helios_shadow_lab_campaign/);
+    assert.match(v072.sql, /CREATE TABLE growth\.helios_shadow_lab_sealed_decision/);
+    assert.match(v072.sql, /CREATE TABLE growth\.helios_shadow_lab_campaign_lease/);
+    assert.match(v072.sql, /evidence_hash TEXT PRIMARY KEY/);
+    assert.match(v072.sql, /decision_id TEXT PRIMARY KEY/);
+    assert.match(v072.sql, /outcome_id TEXT PRIMARY KEY/);
+    assert.match(v072.sql, /helios_shadow_lab_campaign_simulation/);
+    assert.match(v072.sql, /REVOKE UPDATE, DELETE, TRUNCATE ON TABLE growth\.helios_shadow_lab_sealed_decision/);
+    assert.equal(/CREATE TABLE growth\.helios_shadow_lab_journal/i.test(v072.sql), false);
+  });
 });

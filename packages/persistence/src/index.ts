@@ -94,6 +94,7 @@ export {
   loadHeliosPaperStrategyState,
   persistHeliosPaperStrategyState,
 } from './growth/pg-helios-paper-strategy-store.ts';
+export { PgShadowLabDurableStore } from './growth/pg-helios-shadow-lab-runtime-store.ts';
 export {
   loadDecisionValidityState,
   persistDecisionValidityState,
