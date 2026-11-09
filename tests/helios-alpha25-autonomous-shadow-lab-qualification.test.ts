@@ -100,6 +100,7 @@ describe('HELIOS ALPHA25 — autonomous shadow lab qualification', () => {
     const gate = evaluateShadowLabRealityGate(true, 'SYNTHETIC_HARNESS');
     assert.equal(gate.architectureQualified, true);
     assert.equal(gate.forwardAlphaSupportedClaimed, false);
+    assert.equal(gate.alphaRealityStatus, 'FORWARD_CAMPAIGN_READY');
     assert.ok(gate.notes.includes(AUTONOMOUS_SHADOW_LAB_ARCHITECTURE_QUALIFIED));
   });
 

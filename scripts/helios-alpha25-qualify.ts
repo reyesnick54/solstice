@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * HELIOS ALPHA25 — autonomous shadow investment laboratory final qualification.
+ * HELIOS ALPHA26 — current-main autonomous shadow investment laboratory final qualification.
  * Simulation only; does not enable live trading or claim FORWARD_ALPHA_SUPPORTED.
  */
 
@@ -14,6 +14,8 @@ import {
   HELIOS_AUTONOMOUS_SHADOW_LAB_V1_BLOCKED,
   HELIOS_AUTONOMOUS_SHADOW_LAB_V1_QUALIFIED,
   evaluateAutonomousShadowLabQualification,
+  regenerateShadowLabReports,
+  type ShadowLabSubprocessGateResults,
 } from '../packages/platform/src/helios/autonomous-shadow-lab/index.ts';
 import { lintHeliosBoundary } from '../tools/architectural-linter/src/helios-guards.ts';
 
@@ -153,11 +155,42 @@ const subprocessGatesOk =
   nightlyBenchOk &&
   alpha25Ok;
 
+const subprocessGates: ShadowLabSubprocessGateResults = {
+  ci: ciOk,
+  heliosStrictTypecheck: typecheckOk,
+  architecture: architectureOk,
+  productionSafety: productionSafetyOk,
+  healthBaseline: healthOk,
+  aafV2: aafOk,
+  earnings: earnOk,
+  valuation: valOk,
+  evolution: evolOk,
+  counterfactual: cfOk,
+  alternativeData: altOk,
+  md14MarketData: md14Ok,
+  exec16Execution: exec16Ok,
+  alpha16Prerequisite: alpha16Ok,
+  strategyLab: strategyLabOk,
+  executionTwin: execTwinOk,
+  fuzzExtended: fuzzOk,
+  formalExtended: formalOk,
+  nightlyBench: nightlyBenchOk,
+  alpha25Acceptance: alpha25Ok,
+};
+
 const qualification = evaluateAutonomousShadowLabQualification({
   root: ROOT,
   gitSha: sha,
   evaluatedAt: now,
   subprocessGatesOk,
+});
+
+regenerateShadowLabReports({
+  root: ROOT,
+  gitSha: sha,
+  evaluatedAt: now,
+  qualification,
+  subprocessGates,
 });
 
 const blockers = [...qualification.blockers];

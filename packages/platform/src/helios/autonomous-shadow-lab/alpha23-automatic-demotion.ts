@@ -1,19 +1,12 @@
 /**
  * ALPHA23 — automatic strategy demotion from forward decay signals.
+ * Canonical: `packages/platform/src/helios/forward-alpha/alpha23`.
  */
 
 export const HELIOS_ALPHA23_AUTOMATIC_DEMOTION = 'HELIOS_ALPHA23_AUTOMATIC_DEMOTION' as const;
 
-export type DemotionDecision = {
-  readonly strategyId: string;
-  readonly reason: string;
-  readonly liveExecutionPermitted: false;
-};
-
-export function automaticDemotionDecision(strategyId: string, reason: string): DemotionDecision {
-  return Object.freeze({
-    strategyId,
-    reason,
-    liveExecutionPermitted: false,
-  });
-}
+export {
+  evaluateAlpha23Qualification,
+  evaluateAlpha23AutomaticDemotion,
+  HELIOS_ALPHA23_AUTOMATIC_DEMOTION_QUALIFIED,
+} from '../forward-alpha/alpha23/index.ts';
