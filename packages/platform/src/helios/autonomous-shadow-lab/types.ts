@@ -1,5 +1,7 @@
 import type { UtcInstant } from '@solstice/domain';
 
+import type { ForwardAlphaRealityStatus } from '../forward-alpha-evidence/taxonomy.ts';
+
 import type {
   ShadowLabChaosScenario,
   ShadowLabLongRunStep,
@@ -11,6 +13,8 @@ export type ShadowLabWorkPackageRow = {
   readonly title: string;
   readonly status: 'QUALIFIED' | 'BLOCKED';
   readonly moduleRef: string;
+  readonly implementationOwner: string;
+  readonly qualificationTest: string;
 };
 
 export type SealedDecisionRecord = {
@@ -66,5 +70,6 @@ export type ShadowLabChaosHarnessResult = {
 export type ShadowLabRealityGateResult = {
   readonly architectureQualified: boolean;
   readonly forwardAlphaSupportedClaimed: boolean;
+  readonly alphaRealityStatus: ForwardAlphaRealityStatus;
   readonly notes: readonly string[];
 };

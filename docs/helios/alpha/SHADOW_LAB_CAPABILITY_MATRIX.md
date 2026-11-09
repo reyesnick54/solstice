@@ -1,16 +1,31 @@
 # Shadow Lab Capability Matrix (ALPHA16–ALPHA25)
 
-| Work package | Customer money | Live execution | Evidence | Qualified by |
-|--------------|------------------|----------------|----------|--------------|
-| ALPHA16 | No | No | ALPHA15 architecture closure | Module + ALPHA15 test |
-| ALPHA17 | No | No | Campaign lifecycle | Long-run step `START_CAMPAIGN` |
-| ALPHA18 | No | No | Chronological admission | Chaos: disconnect, gap, duplicate |
-| ALPHA19 | No | No | Outcome maturity queue | Long-run step `MATURE_OUTCOMES` |
-| ALPHA20 | No | No | Frozen cohort boundaries | Frozen strategy registration |
-| ALPHA21 | No | No | Shadow capital book | `MAINTAIN_SHADOW_CAPITAL` |
-| ALPHA22 | No | No | Read-only tiles | `canActivateLiveTrading: false` |
-| ALPHA23 | No | No | Demotion records | Deliberate degrading strategy demoted |
-| ALPHA24 | No | No | Daily / weekly reports | Report ids sealed |
-| ALPHA25 | No | No | Capstone marker | Full subprocess gate bundle |
+**Qualification marker:** `HELIOS_AUTONOMOUS_SHADOW_LAB_V1_BLOCKED` (**shadow lab architecture qualified** — not investment-performance proof)
 
-**Posture (required):** `LIVE_TRADING_ENABLED=false`, `LIVE_INVESTMENT_EXECUTION=false`, `LIVE_CUSTODY_ENABLED=false`, `production_authorized=false`.
+**Git SHA:** `596f47eb0e8d1379520c48f70857616100e6c61a`
+
+**Qualification timestamp (UTC):** `2026-11-09T07:20:18.637Z`
+
+**AlphaRealityGate status:** `FORWARD_CAMPAIGN_READY`
+
+**Subprocess gates:** BLOCKED (see gate table)
+
+**Posture:** `ENVIRONMENT=simulation`; `LIVE_TRADING_ENABLED=false`; `LIVE_INVESTMENT_EXECUTION=false`; `LIVE_CUSTODY_ENABLED=false`; `production_authorized=false`
+
+
+
+| Work package | Gate status | Customer money | Live execution | Qualified by |
+|--------------|-------------|----------------|----------------|--------------|
+| ALPHA16 | QUALIFIED (`HELIOS_FORWARD_ALPHA_EVIDENCE_V1_QUALIFIED`) | No | No | `tests/helios-alpha15-forward-alpha-qualification.test.ts` |
+| ALPHA17 | QUALIFIED (`HELIOS_ALPHA17_CAMPAIGN_ORCHESTRATOR_QUALIFIED`) | No | No | `tests/helios-alpha17-campaign-orchestrator.test.ts` |
+| ALPHA18 | QUALIFIED (`HELIOS_ALPHA18_FORWARD_DATA_ADMISSION_QUALIFIED`) | No | No | `tests/helios-forward-alpha-alpha18-forward-data-admission.test.ts` |
+| ALPHA19 | QUALIFIED (`HELIOS_ALPHA19_OUTCOME_MATURITY_QUALIFIED`) | No | No | `tests/helios-alpha19-outcome-maturity.test.ts` |
+| ALPHA20 | QUALIFIED (`HELIOS_ALPHA20_FORWARD_EXPERIMENTS_QUALIFIED`) | No | No | `tests/helios-alpha20-forward-experiments.test.ts` |
+| ALPHA21 | QUALIFIED (`HELIOS_ALPHA21_CONTINUOUS_SHADOW_RUNTIME_QUALIFIED`) | No | No | `tests/helios-alpha21-continuous-shadow-runtime.test.ts` |
+| ALPHA22 | QUALIFIED (`HELIOS_ALPHA22_SHADOW_CONTROL_ROOM_QUALIFIED`) | No | No | `tests/helios-alpha22-shadow-control-room.test.ts` |
+| ALPHA23 | QUALIFIED (`HELIOS_ALPHA23_AUTOMATIC_DEMOTION_QUALIFIED`) | No | No | `tests/helios-alpha23-automatic-demotion.test.ts` |
+| ALPHA24 | QUALIFIED (`HELIOS_ALPHA24_RESEARCH_BOOK_QUALIFIED`) | No | No | `tests/helios-alpha24-research-book.test.ts` |
+| ALPHA25 | QUALIFIED (`—`) | No | No | `tests/helios-alpha25-autonomous-shadow-lab-qualification.test.ts` |
+| ALPHA25 | BLOCKED | No | No | Subprocess gate bundle |
+
+**Posture (required):** live flags and `production_authorized` remain false.
