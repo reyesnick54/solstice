@@ -53,8 +53,13 @@ export async function startConsumerBff(input: {
     allowPreviewAuth: input.allowPreviewAuth === true,
     previewAuth: input.previewAuth ?? {},
   };
-  const server: Server = createServer(async (req, res) => {
-    await serve(input.runtime, req, res, options, input.durableInternalPayments, input.durableWallets);
+  const server: Server = createServer((req, res) => {
+    // One failing request must never take the process down: an escaped error
+    // becomes a logged 500 for that request only.
+    serve(input.runtime, req, res, options, input.durableInternalPayments, input.durableWallets).catch((error: unknown) => {
+      const origin = typeof req.headers.origin === 'string' ? req.headers.origin : undefined;
+      internalError(req, res, error, corsHeaders(origin, options).headers);
+    });
   });
   await new Promise<void>((resolve, reject) => {
     server.once('error', reject);
@@ -74,6 +79,37 @@ export async function startConsumerBff(input: {
         server.close((err) => (err ? reject(err) : resolve()));
       }),
   };
+}
+
+function internalError(req: IncomingMessage, res: ServerResponse, error: unknown, cors: Readonly<Record<string, string>>): void {
+  const requestId = `req_internal_${Date.now().toString(36)}`;
+  console.error(
+    JSON.stringify({
+      level: 'error',
+      service: 'sunrey-consumer-bff',
+      message: 'unhandled request error',
+      requestId,
+      method: req.method,
+      path: (req.url ?? '').split('?')[0],
+      error: error instanceof Error ? `${error.name}: ${error.message}` : String(error),
+    }),
+  );
+  if (res.headersSent) {
+    res.destroy();
+    return;
+  }
+  res.writeHead(500, { ...SECURITY_HEADERS, ...cors, 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' });
+  res.end(
+    JSON.stringify({
+      errorCode: 'INTERNAL',
+      category: 'INTERNAL',
+      message: 'an unexpected error occurred',
+      retryable: true,
+      detailsSafeForClient: {},
+      requestId,
+      apiVersion: 'v1',
+    }),
+  );
 }
 
 export async function serve(

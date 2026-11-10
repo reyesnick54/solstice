@@ -51,10 +51,19 @@ export async function persistAuthenticationSnapshot(pool: Pool, snapshot: Authen
       }
       for (const totp of snapshot.totp) {
         await client.query(
+          // One TOTP credential per identity. Restarting an unconfirmed enrollment
+          // replaces the pending credential; a confirmed credential is never
+          // overwritten by a different one (the service refuses that too).
           `INSERT INTO identity.totp_credential
              (credential_id, identity_id, secret_envelope, confirmed_at, created_at)
            VALUES ($1,$2,$3::jsonb,$4,$5)
-           ON CONFLICT (credential_id) DO UPDATE SET confirmed_at = EXCLUDED.confirmed_at`,
+           ON CONFLICT (identity_id) DO UPDATE SET
+             credential_id = EXCLUDED.credential_id,
+             secret_envelope = EXCLUDED.secret_envelope,
+             confirmed_at = EXCLUDED.confirmed_at,
+             created_at = EXCLUDED.created_at
+           WHERE identity.totp_credential.confirmed_at IS NULL
+              OR identity.totp_credential.credential_id = EXCLUDED.credential_id`,
           [totp.credentialId, totp.identityId, JSON.stringify(totp.secretEnvelope), totp.confirmedAt, totp.createdAt],
         );
       }
