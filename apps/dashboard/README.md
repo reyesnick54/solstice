@@ -69,13 +69,15 @@ the previous `main` SHA.
 2. **API token:** create a token scoped to *Account → Cloudflare Pages → Edit*
    only. Add repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`;
    optional variable `SUNREY_EXPLORER_URL`.
-3. **GitHub environments:** `dashboard-production` with required reviewers and
+3. **Enable deploys:** set repository variable `DASHBOARD_DEPLOY_ENABLED=true`
+   (deploy jobs are skipped until then; the build and guards always run).
+4. **GitHub environments:** `dashboard-production` with required reviewers and
    `main` only; `dashboard-preview` for PR previews.
-4. **Previews:** protect `*.sunrey-dashboard.pages.dev` with Cloudflare Access
+5. **Previews:** protect `*.sunrey-dashboard.pages.dev` with Cloudflare Access
    (Zero Trust → Access → Applications) so previews are not public.
-5. **Edge controls on `api.sunrey.xyz`:** WAF managed rules on; rate-limit
+6. **Edge controls on `api.sunrey.xyz`:** WAF managed rules on; rate-limit
    `POST /api/v1/auth/login|register|mfa/*` (e.g. 10/min per IP); Bot Fight Mode.
-6. **Backend (Hetzner, `deploy/sunrey-sandbox-hetzner`):**
+7. **Backend (Hetzner, `deploy/sunrey-sandbox-hetzner`):**
    ```
    SUNREY_API_ALLOWED_ORIGINS=https://app.sunrey.xyz,https://dashboard.sunrey.xyz
    SUNREY_CUSTOMER_AUTH_ENABLED=true

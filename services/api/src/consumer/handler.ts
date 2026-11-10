@@ -28,7 +28,6 @@ import { cachePolicyForPath } from './cache.ts';
 import { CONSUMER_RESOURCE_CATALOG } from './resources.ts';
 import type { ConsumerBff } from './orchestrator.ts';
 import { resolvePrincipal, type SessionDirectory } from './session.ts';
-import type { DurableCustomerAuth } from './durable-customer-auth.ts';
 import { listSandboxPersonas } from './sandbox-personas.ts';
 import type { IdentityService } from '../../../../packages/identity/src/service.ts';
 import type { PaymentPlatform } from '../../../../packages/payments/src/platform/orchestrator.ts';
@@ -143,8 +142,6 @@ export type ConsumerBffRuntime = {
   readonly bff: ConsumerBff;
   readonly sessions: SessionDirectory;
   readonly identity?: IdentityService;
-  /** Durable self-registered customers (hosted sandbox); see durable-customer-auth.ts. */
-  readonly customerAuth?: DurableCustomerAuth;
   readonly cardWebhook?: CardWebhookBridge;
   readonly payments?: PaymentPlatform;
   readonly agent?: AgentBffFacade;
@@ -176,6 +173,8 @@ export type ConsumerBffRuntime = {
   readonly subscriptions?: SubscriptionIntelligenceBff;
   readonly previewDiagnostics?: () => Readonly<Record<string, unknown>>;
   readonly providerDown?: Readonly<Record<string, boolean>>;
+  /** Durable self-registered customers (hosted sandbox); see durable-customer-auth.ts. */
+  readonly customerAuth?: import('./durable-customer-auth.ts').DurableCustomerAuth;
 };
 
 const STUB_GROUPS = [
