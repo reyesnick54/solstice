@@ -1,5 +1,7 @@
 # TradingAgents assimilation reference
 
+HELIOS does **not** run LangGraph or Python as a production runtime for capital research.
+
 | Field | Value |
 | --- | --- |
 | Repository | [TauricResearch/TradingAgents](https://github.com/TauricResearch/TradingAgents) |
