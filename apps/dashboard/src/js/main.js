@@ -1,6 +1,7 @@
 import { api, getSession, onSessionChange } from './api.js';
 import { authScreen, isStrong, requireStrong, signOut } from './auth.js';
 import { CONFIG } from './config.js';
+import { DEMO_SECTIONS, isDemo, setDemo } from './demo/state.js';
 import { setAssetDecimals } from './format.js';
 import { badge, clear, envBadge, h, svg } from './ui.js';
 
@@ -102,6 +103,18 @@ function pageHead(route) {
   );
 }
 
+function demoBanner(route) {
+  if (!isDemo()) return null;
+  const here = DEMO_SECTIONS.includes(route.path) || route.path === '/';
+  return h(
+    'aside',
+    { class: 'demo-banner', role: 'note' },
+    h('span', { class: 'badge badge-env' }, 'Demo data'),
+    h('p', null, route.path === '/' ? 'Digital assets, investments and agent proposals here are illustrative. Your cash balance and money activity are real sandbox data.' : here ? 'This page shows illustrative data. Nothing here is real money, a real trade or a real person, and no figure reflects performance.' : 'Helios, Grow, Exchange, Wallets, Financial Agent and Vault show illustrative data. This page shows your real sandbox data.'),
+    h('button', { class: 'btn btn-ghost btn-sm', onclick: () => { setDemo(false); render(); } }, 'Show my real data'),
+  );
+}
+
 function shell(route) {
   const session = getSession();
   const main = h('main', { class: 'main', id: 'main', tabindex: '-1' });
@@ -133,7 +146,7 @@ function shell(route) {
           h('button', { class: 'btn btn-ghost btn-sm', onclick: async () => { await signOut(); render(); } }, 'Sign out'),
         ),
       ),
-      h('div', { class: 'page' }, pageHead(route), main),
+      h('div', { class: 'page' }, demoBanner(route), pageHead(route), main),
     ),
   );
   return { layout, main };

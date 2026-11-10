@@ -8,6 +8,7 @@
 import { api, clearSession, friendlyMessage, getSession, setTokens, ApiError } from './api.js';
 import { CONFIG } from './config.js';
 import { act, dialog, field, h, note, toast } from './ui.js';
+import { onDemoSection } from './demo/state.js';
 
 const TERMS_VERSION = 'sunrey-sandbox-terms-2026-11';
 
@@ -208,6 +209,8 @@ export async function enrollTotp() {
  */
 export async function requireStrong(reason) {
   if (isStrong()) return true;
+  // Demo actions are answered locally and never reach the Kernel.
+  if (onDemoSection()) return true;
   const session = getSession();
   if (!session) return false;
   let status;

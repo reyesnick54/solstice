@@ -108,7 +108,9 @@ export function humanize(code) {
     .replace(/_/g, ' ')
     .toLowerCase()
     .replace(/^\w/, (c) => c.toUpperCase())
-    .replace(/\b(hin|fx|ai|kyc|aml|usd|eur|id|api|p&l|sr|mr|totp|mfa|pnl)\b/gi, (w) => w.toUpperCase());
+    .replace(/\b(hin|fx|ai|kyc|aml|usd|eur|id|api|p&l|sr|mr|totp|mfa|pnl|us|vwap|evm|erc20|bft)\b/gi, (w) => w.toUpperCase())
+    .replace(/\bsunrey\b/gi, 'SunRey')
+    .replace(/\bmoonrey\b/gi, 'MoonRey');
 }
 
 export function shortId(id, keep = 10) {

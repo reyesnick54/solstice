@@ -3,7 +3,7 @@
 // Risk Engine and Execution Authority decide. Paper results are labelled.
 
 import { api } from '../api.js';
-import { dateTime, humanize, money } from '../format.js';
+import { dateTime, humanize, money, relative } from '../format.js';
 import { badge, h, note, panel, table } from '../ui.js';
 import { autoKv, items, view } from './common.js';
 
@@ -25,14 +25,30 @@ export function heliosView() {
     panel({
       title: 'Specialist agents',
       subtitle: 'What the agents are doing and why',
+      wide: true,
       load: () => api.get('/grow/agent-state'),
-      render: (s) => h('div', { class: 'stack' }, s.summary ? h('p', null, s.summary) : null, autoKv(s, { skip: ['summary', 'customerId'], limit: 14 })),
-    }),
-    panel({
-      title: 'Capital',
-      subtitle: 'Available vs allocated paper capital',
-      load: () => api.get('/grow/active-capital'),
-      render: (d) => autoKv(d.activeCapital || d, { limit: 14 }),
+      render: (s) =>
+        h(
+          'div',
+          { class: 'stack' },
+          s.summary ? h('p', { class: 'muted' }, s.summary) : null,
+          Array.isArray(s.agents)
+            ? h(
+                'ul',
+                { class: 'agents' },
+                s.agents.map((a) =>
+                  h(
+                    'li',
+                    { class: 'agent' },
+                    h('div', { class: 'agent-top' }, h('strong', null, a.name), badge(a.status)),
+                    h('p', { class: 'muted small' }, a.role),
+                    h('p', { class: 'agent-task' }, a.currentTask),
+                    a.lastProposalAt ? h('p', { class: 'muted small' }, `Last proposal ${relative(a.lastProposalAt)}`) : null,
+                  ),
+                ),
+              )
+            : autoKv(s, { skip: ['summary', 'customerId'], limit: 14 }),
+        ),
     }),
     panel({
       title: 'Strategy ranking',
@@ -43,9 +59,14 @@ export function heliosView() {
       render: (d) =>
         table(
           [
+            { label: 'Rank', render: (s) => s.rank ?? '—' },
             { label: 'Strategy', render: (s) => s.displayName || s.name || s.strategyRef },
             { label: 'Markets', render: (s) => (s.markets || s.assetClasses || []).map(humanize).join(', ') || '—' },
             { label: 'Evidence', render: (s) => humanize(s.evidenceState || s.qualificationState || s.status) },
+            { label: 'Allocation', align: 'right', render: (s) => (s.allocation ? money(s.allocation) : '—') },
+            { label: 'Realised (paper)', align: 'right', render: (s) => (s.realisedPnl ? money(s.realisedPnl) : '—') },
+            { label: 'Worst drawdown', align: 'right', render: (s) => (s.maxDrawdown ? money(s.maxDrawdown) : '—') },
+            { label: 'Trades', align: 'right', render: (s) => s.trades ?? '—' },
             { label: 'Mode', render: (s) => badge(s.executionMode || s.mode || 'PAPER', 'info') },
           ],
           items(d),
@@ -61,6 +82,7 @@ export function heliosView() {
         table(
           [
             { label: 'Instrument', render: (p) => p.symbol || p.instrument || p.instrumentId },
+            { label: 'Strategy', render: (p) => p.strategy || '—' },
             { label: 'Quantity', align: 'right', render: (p) => p.quantity },
             { label: 'Cost basis', align: 'right', render: (p) => money(p.costBasis) },
             { label: 'Market value', align: 'right', render: (p) => money(p.marketValue) },
@@ -72,6 +94,12 @@ export function heliosView() {
         ),
     }),
     panel({
+      title: 'Capital',
+      subtitle: 'Available vs allocated paper capital',
+      load: () => api.get('/grow/active-capital'),
+      render: (d) => autoKv(d.activeCapital || d, { limit: 14 }),
+    }),
+    panel({
       title: 'Performance & risk',
       subtitle: 'Recorded observations: drawdown, exposure, costs',
       load: () => api.get('/grow/results'),
@@ -80,6 +108,7 @@ export function heliosView() {
     panel({
       title: 'Research & activity',
       subtitle: 'Agent research, proposed order intents and approvals',
+      wide: true,
       load: () => api.get('/grow/activity'),
       empty: (d) => items(d).length === 0 && 'No activity recorded yet.',
       render: (d) =>
@@ -87,6 +116,7 @@ export function heliosView() {
           [
             { label: 'When', render: (a) => dateTime(a.occurredAt || a.createdAt) },
             { label: 'Event', render: (a) => humanize(a.kind || a.type || a.event) },
+            { label: 'Detail', render: (a) => a.detail || '—' },
             { label: 'State', render: (a) => badge(a.state || a.status || 'RECORDED') },
           ],
           items(d),

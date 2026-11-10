@@ -4,9 +4,26 @@ import { CONFIG } from '../config.js';
 import { dateTime, humanize } from '../format.js';
 import { act, badge, h, kv, note, panel } from '../ui.js';
 import { autoKv, view } from './common.js';
+import { isDemo, setDemo } from '../demo/state.js';
+
+function demoPanel(refreshShell) {
+  const on = isDemo();
+  return h(
+    'section',
+    { class: 'panel panel-wide' },
+    h(
+      'header',
+      { class: 'panel-head' },
+      h('div', null, h('h3', null, 'Demo data'), h('p', null, 'Fill Helios, Grow, Exchange, Wallets, Financial Agent and Vault with illustrative data to show a populated experience. Nothing illustrative is sent to SunRey or mixed into your real balances.')),
+      h('div', { class: 'panel-actions' }, h('button', { class: `switch${on ? ' on' : ''}`, role: 'switch', 'aria-checked': String(on), 'aria-label': 'Demo data', onclick: () => { setDemo(!on); refreshShell(); } }, h('span', { class: 'switch-knob' }))),
+    ),
+    h('div', { class: 'panel-body' }, h('p', { class: 'muted small' }, on ? 'On. Those sections show illustrative data.' : 'Off. Every section shows your real sandbox data.')),
+  );
+}
 
 export function settingsView({ refreshShell }) {
   return view(
+    demoPanel(refreshShell),
     panel({
       title: 'Profile & identity',
       load: () => api.get('/auth/session'),

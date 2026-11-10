@@ -65,6 +65,21 @@ const TONE = {
   CANCELLED: 'muted',
   UNAVAILABLE: 'muted',
   DISABLED: 'muted',
+  CONNECTED: 'positive',
+  APPROVED: 'positive',
+  ALLOWED: 'positive',
+  PASSED: 'positive',
+  PROPOSED: 'warning',
+  AWAITING_APPROVAL: 'warning',
+  AWAITING_YOU: 'warning',
+  AWAITING_HUMAN_REVIEW: 'warning',
+  CONFIRMING: 'warning',
+  PARTIALLY_FILLED: 'warning',
+  CLIPPED: 'warning',
+  REVOKED: 'negative',
+  PAPER_TRADING: 'info',
+  ACTIVE_PAPER: 'info',
+  SHADOW: 'info',
 };
 
 export function badge(text, tone) {

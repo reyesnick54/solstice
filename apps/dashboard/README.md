@@ -15,6 +15,18 @@ Tokens live at the top of `src/styles.css` with the website's names. The three
 faces are self-hosted from `src/assets/fonts/` (OFL), so the CSP allows fonts
 and styles from `'self'` only; no third-party font request is made.
 
+**Demo mode (on by default).** Helios, Grow, Exchange, Wallets, Financial
+Agent and Vault can show an illustrative, fully populated experience. The demo
+layer lives in `src/js/demo/`: `api.js` answers those paths locally with data
+shaped exactly like the `/api/v1` responses, reads and writes alike, so nothing
+illustrative reaches the backend or mixes into real balances. A gold banner on
+every page says when data is illustrative; **Settings → Demo data** (or "Show my
+real data" on the banner) switches back to real sandbox data, remembered per
+browser. Demo data keeps the house rules: integer minor units and price units,
+no percentage-return or yield fields, fictional names for every person,
+merchant and sponsor, and "example APIs" for data sources that are not
+integrations or partnerships.
+
 | Section | Backend surfaces |
 |---|---|
 | Home | `/accounts`, `/exchange/portfolio`, `/grow/plan`, `/agent/actions`, `/me/capabilities`, `/economy/status` |
