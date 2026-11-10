@@ -28,8 +28,8 @@ services:
     dockerContext: .
     healthCheckPath: /health
     autoDeployTrigger: checksPass
-    domains:
-      - api.sunrey.xyz
+    # Custom domain api.sunrey.xyz is attached at DNS cutover, not here, so a
+    # domain problem cannot block creating the service.
     envVars:
       - key: SUNREY_DATABASE_URL
         fromDatabase:
@@ -52,8 +52,9 @@ services:
         value: 'true'
       - key: SUNREY_PREVIEW_AUTH_EMAIL
         value: preview@sunrey.xyz
-      - key: SUNREY_PREVIEW_AUTH_PASSWORD
-        sync: false # set in the Render dashboard to the current preview password
+      # SUNREY_PREVIEW_AUTH_PASSWORD is set only on the service's Environment
+      # page in Render (never in this file). Until it is set the shared preview
+      # login stays off; customer registration and login are unaffected.
       - key: SUNREY_PREVIEW_ALLOW_LOCAL_ORIGINS
         value: 'false'
       - key: SUNREY_EXTERNAL_AI_PREVIEW_ENABLED
@@ -88,8 +89,7 @@ services:
     buildCommand: node apps/dashboard/build.mjs
     staticPublishPath: ./apps/dashboard/dist
     autoDeployTrigger: checksPass
-    domains:
-      - dashboard.sunrey.xyz
+    # Custom domain dashboard.sunrey.xyz is attached at DNS cutover.
     envVars:
       - key: SUNREY_DASHBOARD_API_BASE
         value: https://api.sunrey.xyz
