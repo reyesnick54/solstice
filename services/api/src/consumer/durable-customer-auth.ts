@@ -12,10 +12,8 @@ import {
   type Customer,
   type UtcInstant,
 } from '@solstice/domain';
-import type { IdentityCapability } from '@solstice/identity';
+import { asSessionId, type AuthenticationService, type IdentityCapability } from '@solstice/identity';
 
-import type { AuthenticationService } from '../../../../packages/identity/src/authentication-service.ts';
-import { asSessionId } from '../../../../packages/identity/src/ids.ts';
 import type { SimulationRuntime } from '../../../accounts/src/runtime.ts';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import type { BffPrincipal } from './ports.ts';
@@ -53,16 +51,18 @@ const SANDBOX_VERIFICATION_TTL_MS = 365n * 24n * 60n * 60n * 1000n;
  * still evaluated by the Compliance Kernel, which requires a STRONG session
  * (password + TOTP step-up) for financial capabilities at the moment of use;
  * a capability is permission to ask, not authority to execute.
- * PAYMENT_REQUEST (external payments) is deliberately absent: enabling outbound
- * payments for self-registered users is a policy decision, not a default.
+ * Every money path in this runtime is simulated (ENVIRONMENT=simulation, all
+ * LIVE_* flags false), so these grants cannot move real funds. Activating any
+ * of them for real money remains a separate, human-approved gate.
  */
 export const REGISTRANT_CAPABILITIES: readonly IdentityCapability[] = Object.freeze([
   'VIEW_ACCOUNT',
   'MANAGE_PROFILE',
   'ACCOUNT_OPEN_REQUEST',
-  // Sandbox internal transfers and testnet SR/MR exchange orders. The Kernel
+  // Sandbox internal transfers, simulated payments and testnet SR/MR orders. The Kernel
   // still requires a STRONG (TOTP step-up) session when these are used.
   'TRANSFER_REQUEST',
+  'PAYMENT_REQUEST',
   'EXCHANGE_OPERATE_REQUEST',
   // A data subject may always see, and withdraw, their own consents and vault.
   'VAULT_VIEW_OWN',

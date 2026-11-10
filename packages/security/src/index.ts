@@ -440,3 +440,4 @@ export {
   createDevelopmentHsmSimulator,
   createDevelopmentKmsSimulator,
 } from './hsm-simulator.ts';
+export { deriveSimulationKeySecrets, MIN_SIMULATION_KEY_SEED_LENGTH } from './simulation-key-seed.ts';

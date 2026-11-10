@@ -12,9 +12,8 @@ import { createDurableExchangeSurface, type DurableExchangeSurface } from './con
 import { DurableWalletSurface } from './consumer/durable-wallets.ts';
 import { DurableCustomerAuth } from './consumer/durable-customer-auth.ts';
 import { refreshSimulatedActors, type SimulatedActorFreshnessReport } from './consumer/simulated-actor-freshness.ts';
-import { ENVIRONMENT } from '../../../packages/config/src/flags.ts';
-import { systemClock } from '../../../packages/config/src/clock.ts';
-import { deriveRuntimeKeySecrets } from './product-integration/runtime-key-seed.ts';
+import { ENVIRONMENT, systemClock } from '@solstice/config';
+import { deriveSimulationKeySecrets } from '@solstice/security';
 
 function parsePort(raw: string | undefined, fallback: number): number {
   if (!raw) return fallback;
@@ -67,7 +66,7 @@ const runtimeKeySeed = process.env.SUNREY_RUNTIME_KEY_SEED;
 if (customerAuthRequested && !runtimeKeySeed) {
   throw new Error('SUNREY_CUSTOMER_AUTH_ENABLED=true requires SUNREY_RUNTIME_KEY_SEED so stored credentials verify after restart');
 }
-const runtimeKeySecrets = runtimeKeySeed ? deriveRuntimeKeySecrets(runtimeKeySeed) : null;
+const runtimeKeySecrets = runtimeKeySeed ? deriveSimulationKeySecrets(runtimeKeySeed) : null;
 if (customerAuthRequested && runtimeClock !== 'SYSTEM') {
   throw new Error('SUNREY_CUSTOMER_AUTH_ENABLED=true requires SUNREY_RUNTIME_CLOCK=SYSTEM so sessions expire and TOTP verifies');
 }

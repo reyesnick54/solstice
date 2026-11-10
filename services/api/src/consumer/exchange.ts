@@ -105,8 +105,12 @@ export class ExchangeBffSurface {
     return { ...this.worldFor(principal).holdings(), requestId };
   }
 
-  fund(principal: BffPrincipal, requestId: string): Record<string, unknown> {
-    return { ...this.worldFor(principal).fundQuote(), requestId };
+  async fund(principal: BffPrincipal, requestId: string): Promise<Record<string, unknown>> {
+    const world = this.worldFor(principal);
+    const funded = world.fundQuote();
+    // Faucet credits are exchange state: persist so they survive a restart.
+    await this.persistWorld(principal.customerId, 'READY', world);
+    return { ...funded, requestId };
   }
 
   preview(principal: BffPrincipal, body: Record<string, unknown>, requestId: string): Record<string, unknown> | BffErrorEnvelope {
@@ -207,7 +211,7 @@ export class ExchangeBffSurface {
     return { ...this.worldFor(principal).stream(), requestId };
   }
 
-  quote(principal: BffPrincipal, body: Record<string, unknown>, requestId: string): Record<string, unknown> | BffErrorEnvelope {
+  async quote(principal: BffPrincipal, body: Record<string, unknown>, requestId: string): Promise<Record<string, unknown> | BffErrorEnvelope> {
     const side = body.side === 'SELL' ? 'SELL' : 'BUY';
     const marketId = str(body.marketId) ?? 'SRC-USD';
     const quantity = parseQty(body.quantity);
@@ -224,6 +228,8 @@ export class ExchangeBffSurface {
     if ('ok' in result && result.ok === false) {
       return this.fail(requestId, 'VALIDATION', String(result.reason));
     }
+    // Persist so a quote issued before a restart can still be confirmed after it.
+    await this.persistWorld(principal.customerId, 'READY', this.worldFor(principal));
     return { ...(result as object), requestId };
   }
 
@@ -247,19 +253,21 @@ export class ExchangeBffSurface {
     return { ...(result as object), requestId };
   }
 
-  cancelOrderById(principal: BffPrincipal, orderId: string, requestId: string): Record<string, unknown> | BffErrorEnvelope {
-    const result = this.worldFor(principal).cancelOrderById(orderId);
+  async cancelOrderById(principal: BffPrincipal, orderId: string, requestId: string): Promise<Record<string, unknown> | BffErrorEnvelope> {
+    const world = this.worldFor(principal);
+    const result = world.cancelOrderById(orderId);
     if ('ok' in result && result.ok === false) {
       return this.fail(requestId, 'POLICY', String(result.reason));
     }
+    await this.persistWorld(principal.customerId, 'READY', world);
     return { ...(result as object), requestId };
   }
 
-  submitConfirmedOrder(
+  async submitConfirmedOrder(
     principal: BffPrincipal,
     body: Record<string, unknown>,
     requestId: string,
-  ): Record<string, unknown> | BffErrorEnvelope {
+  ): Promise<Record<string, unknown> | BffErrorEnvelope> {
     if (principal.restricted) {
       return this.fail(requestId, 'POLICY', 'COMPLIANCE_BLOCKED');
     }
@@ -287,6 +295,9 @@ export class ExchangeBffSurface {
       }
       return this.fail(requestId, 'POLICY', reason);
     }
+    // Orders, reservations and fills are exchange state: persist before
+    // acknowledging so an accepted order survives a restart.
+    await this.persistWorld(principal.customerId, 'READY', this.worldFor(principal));
     return { ...(result as object), requestId };
   }
 

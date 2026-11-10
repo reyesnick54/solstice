@@ -65,7 +65,8 @@ export type ProductIntegrationOptions = {
    */
   readonly clock?: Clock;
   /**
-   * Per-purpose simulation key secrets (see runtime-key-seed.ts). Without
+   * Per-purpose simulation key secrets (see @solstice/security
+   * deriveSimulationKeySecrets). Without
    * them key material is random per process and persisted credentials do not
    * verify after a restart.
    */

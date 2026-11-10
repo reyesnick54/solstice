@@ -1,10 +1,18 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { createSimulationKeyProvider } from '../../../../packages/security/src/simulation.ts';
-import { APPLICATION_KEY_PURPOSES, PURPOSE_ALGORITHMS } from '../../../../packages/security/src/purposes.ts';
-import { handleLookupHash } from '../../../../packages/identity/src/login-handle.ts';
-import { deriveRuntimeKeySecrets } from './runtime-key-seed.ts';
+import { createHmac } from 'node:crypto';
+
+import { createSimulationKeyProvider } from './simulation.ts';
+import { APPLICATION_KEY_PURPOSES, PURPOSE_ALGORITHMS } from './purposes.ts';
+import { deriveSimulationKeySecrets as deriveRuntimeKeySecrets } from './simulation-key-seed.ts';
+
+// Mirrors identity's login-handle lookup: SESSION_SIGNING over the handle.
+function handleLookupHash(keys: ReturnType<typeof createSimulationKeyProvider>, kind: string, value: string) {
+  const signed = keys.sign('SESSION_SIGNING', `login-handle:${kind}:${value}`);
+  return signed.ok ? signed.value.hex : null;
+}
+void createHmac;
 
 const SEED = 'test-only-seed-0123456789abcdef-0123456789abcdef';
 const clock = { now: () => '2026-11-10T05:00:00.000Z' as never };
@@ -19,6 +27,10 @@ describe('runtime key seed', () => {
     const values = new Set<string>();
     for (const purpose of APPLICATION_KEY_PURPOSES) {
       const secret = secrets[purpose];
+      if (purpose === 'EXECUTION_AUTHORITY_SIGNING') {
+        assert.equal(secret, undefined, 'Execution Authority keys stay ephemeral');
+        continue;
+      }
       assert.ok(secret, `missing ${purpose}`);
       values.add(secret);
       const algorithm = (PURPOSE_ALGORITHMS as Record<string, string>)[purpose];
@@ -26,7 +38,7 @@ describe('runtime key seed', () => {
         assert.equal(Buffer.from(secret, 'utf8').length, 32, `${purpose} must be a 32-byte AES key`);
       }
     }
-    assert.equal(values.size, APPLICATION_KEY_PURPOSES.length);
+    assert.equal(values.size, APPLICATION_KEY_PURPOSES.length - 1);
     assert.notDeepEqual(deriveRuntimeKeySecrets(SEED), deriveRuntimeKeySecrets(`${SEED}-other`));
   });
 

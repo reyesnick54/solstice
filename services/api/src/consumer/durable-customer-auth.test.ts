@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { AuthenticationService } from '../../../../packages/identity/src/authentication-service.ts';
+import { AuthenticationService } from '@solstice/identity';
 import type { Customer } from '@solstice/domain';
 import { createSandboxWorld } from './fixtures.ts';
 import {
@@ -89,7 +89,7 @@ describe('durable customer registration and login', () => {
     for (const capability of REGISTRANT_CAPABILITIES) {
       assert.ok(granted.includes(capability), `missing ${capability}`);
     }
-    assert.equal(granted.includes('PAYMENT_REQUEST'), false, 'no payment capability by default');
+    assert.equal(granted.includes('ADD_WITHDRAWAL_DESTINATION'), false, 'no external withdrawal destinations');
   });
 
   it('logs in and resolves the signed access token to that customer only', async () => {
