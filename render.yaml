@@ -1,0 +1,131 @@
+# SunRey sandbox on Render (simulation only).
+#
+# One authoritative sandbox backend: this replaces the Hetzner sandbox once
+# api.sunrey.xyz points here. Do not run both against users at the same time.
+#   - sunrey-sandbox-db:   managed PostgreSQL, private network only
+#   - sunrey-api:          Consumer BFF (/api/v1), bootstraps + migrates on start
+#   - sunrey-dashboard:    static desktop dashboard (apps/dashboard)
+# ENVIRONMENT stays simulation; no LIVE_*, PRODUCTION_ACTIVE or MAINNET flag is
+# set. Real money, trading and mainnet remain separate human-approved gates.
+
+databases:
+  - name: sunrey-sandbox-db
+    region: frankfurt
+    plan: 0.1c-256mb
+    postgresMajorVersion: '16'
+    ipAllowList: [] # private network only
+
+services:
+  - type: web
+    name: sunrey-api
+    runtime: docker
+    region: frankfurt
+    plan: 1c-2g
+    repo: https://github.com/reyesnick54/solstice
+    branch: main
+    dockerfilePath: ./deploy/render/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeployTrigger: checksPass
+    domains:
+      - api.sunrey.xyz
+    envVars:
+      - key: SUNREY_DATABASE_URL
+        fromDatabase:
+          name: sunrey-sandbox-db
+          property: connectionString
+      - key: SUNREY_PRODUCT_INTEGRATION_MODE
+        value: DURABLE
+      - key: SUNREY_CUSTOMER_AUTH_ENABLED
+        value: 'true'
+      - key: SUNREY_RUNTIME_CLOCK
+        value: SYSTEM
+      - key: SUNREY_RUNTIME_KEY_SEED
+        generateValue: true # rotating it signs everyone out and clears TOTP
+      - key: SUNREY_API_ALLOWED_ORIGINS
+        value: https://app.sunrey.xyz,https://dashboard.sunrey.xyz
+      # app.sunrey.xyz (Lovable) still uses the shared preview login.
+      - key: SUNREY_PREVIEW_SANDBOX_PERSONAS
+        value: 'true'
+      - key: SUNREY_PREVIEW_AUTH_ENABLED
+        value: 'true'
+      - key: SUNREY_PREVIEW_AUTH_EMAIL
+        value: preview@sunrey.xyz
+      - key: SUNREY_PREVIEW_AUTH_PASSWORD
+        sync: false # set in the Render dashboard to the current preview password
+      - key: SUNREY_PREVIEW_ALLOW_LOCAL_ORIGINS
+        value: 'false'
+      - key: SUNREY_EXTERNAL_AI_PREVIEW_ENABLED
+        value: 'false'
+      # Bounded-domain roles created by bootstrap; names are fixed by migrations.
+      - key: SUNREY_PG_MIGRATOR_USER
+        value: solstice_migrator
+      - key: SUNREY_PG_MIGRATOR_PASSWORD
+        generateValue: true
+      - key: SUNREY_PG_CUSTOMER_USER
+        value: customer_app
+      - key: SUNREY_PG_CUSTOMER_PASSWORD
+        generateValue: true
+      - key: SUNREY_PG_LEDGER_USER
+        value: ledger_writer
+      - key: SUNREY_PG_LEDGER_PASSWORD
+        generateValue: true
+      - key: SUNREY_PG_EVIDENCE_USER
+        value: evidence_app
+      - key: SUNREY_PG_EVIDENCE_PASSWORD
+        generateValue: true
+      - key: SUNREY_PG_SECURITY_USER
+        value: security_app
+      - key: SUNREY_PG_SECURITY_PASSWORD
+        generateValue: true
+
+  - type: web
+    name: sunrey-dashboard
+    runtime: static
+    repo: https://github.com/reyesnick54/solstice
+    branch: main
+    buildCommand: node apps/dashboard/build.mjs
+    staticPublishPath: ./apps/dashboard/dist
+    autoDeployTrigger: checksPass
+    domains:
+      - dashboard.sunrey.xyz
+    envVars:
+      - key: SUNREY_DASHBOARD_API_BASE
+        value: https://api.sunrey.xyz
+      - key: SUNREY_DASHBOARD_ENV_LABEL
+        value: Sandbox
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: Content-Security-Policy
+        value: "default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://api.sunrey.xyz; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+      - path: /*
+        name: Strict-Transport-Security
+        value: max-age=63072000; includeSubDomains
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Referrer-Policy
+        value: no-referrer
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+      - path: /*
+        name: Cross-Origin-Opener-Policy
+        value: same-origin
+      - path: /*
+        name: X-Robots-Tag
+        value: noindex, nofollow
+      - path: /index.html
+        name: Cache-Control
+        value: no-store
+      - path: /js/*
+        name: Cache-Control
+        value: no-cache
