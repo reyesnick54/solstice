@@ -55,9 +55,9 @@ writeFileSync(
 const csp = [
   "default-src 'none'",
   "script-src 'self'",
-  "style-src 'self' https://fonts.googleapis.com",
+  "style-src 'self'",
   "style-src-attr 'unsafe-inline'",
-  "font-src https://fonts.gstatic.com",
+  "font-src 'self'",
   "img-src 'self' data:",
   `connect-src ${apiOrigin}`,
   "base-uri 'none'",

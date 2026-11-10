@@ -30,7 +30,7 @@ function candleChart(candles) {
   const span = max - min || 1;
   const pts = closes.map((v, i) => `${(i / (closes.length - 1)) * w},${hgt - 8 - ((v - min) / span) * (hgt - 16)}`).join(' ');
   // Display-only geometry; values are never fed back into any calculation.
-  return svg('svg', { class: 'chart', viewBox: `0 0 ${w} ${hgt}`, preserveAspectRatio: 'none', role: 'img', 'aria-label': 'Recorded trade prices' }, svg('polyline', { points: pts, fill: 'none', stroke: '#ffd21f', 'stroke-width': 2, 'vector-effect': 'non-scaling-stroke' }));
+  return svg('svg', { class: 'chart', viewBox: `0 0 ${w} ${hgt}`, preserveAspectRatio: 'none', role: 'img', 'aria-label': 'Recorded trade prices' }, svg('polyline', { points: pts, fill: 'none', stroke: 'currentColor', 'vector-effect': 'non-scaling-stroke' }));
 }
 
 export function exchangeView() {
@@ -51,7 +51,7 @@ export function exchangeView() {
         h(
           'div',
           { class: `book-row ${side}` },
-          h('span', { class: 'depth', style: `width:${Math.round(((Number(l.quantity) || 0) / maxQ) * 100)}%;background:${side === 'bid' ? '#2bd67b' : '#ff5c68'}` }),
+          h('span', { class: `depth depth-${side === 'bid' ? 'bid' : 'ask'}`, style: `width:${Math.round(((Number(l.quantity) || 0) / maxQ) * 100)}%` }),
           h('span', null, price(l.priceUnits)),
           h('span', { class: 'num' }, l.quantity),
         ),

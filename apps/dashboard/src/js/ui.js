@@ -200,7 +200,8 @@ export function kv(pairs) {
 }
 
 export function stat(label, value, note, tone) {
-  return h('div', { class: `stat ${tone ? 'stat-' + tone : ''}` }, h('span', { class: 'stat-label' }, label), h('span', { class: 'stat-value' }, value), note ? h('span', { class: 'stat-note' }, note) : null);
+  const isText = typeof value === 'string' && !/\d/.test(value) && value !== '—';
+  return h('div', { class: `stat ${tone ? 'stat-' + tone : ''}` }, h('span', { class: 'stat-label' }, label), h('span', { class: `stat-value${isText ? ' is-text' : ''}` }, value), note ? h('span', { class: 'stat-note' }, note) : null);
 }
 
 export function note(text, tone = 'info') {
