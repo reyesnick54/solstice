@@ -4,6 +4,7 @@ import { CONFIG } from '../config.js';
 import { assetLabel, dateTime, humanize, shortId, token } from '../format.js';
 import { act, badge, dialog, field, h, kv, note, panel, table, toast } from '../ui.js';
 import { autoKv, items, view } from './common.js';
+import { isDemo } from '../demo/state.js';
 
 const NATIVE = [
   { assetId: 'SUNREY_COIN', label: 'SunRey Coin', short: 'SRC', img: '/assets/sunrey-coin.webp' },
@@ -72,19 +73,23 @@ export function walletsView() {
         { class: 'stack' },
         h(
           'div',
-          { class: 'stats' },
+          { class: 'coin-cards' },
           [sr, mr].map((r, i) => {
             const meta = NATIVE[i];
-            if (r.status !== 'fulfilled') return h('div', { class: 'stat' }, h('span', { class: 'stat-label' }, meta.label), h('span', { class: 'stat-value' }, '—'), h('span', { class: 'stat-note' }, 'No balance view'));
-            const w = r.value;
-            const bal = w.balance || w.available || w.balances || w;
-            const qty = typeof bal === 'object' ? bal.available ?? bal.quantity ?? bal.finalized ?? null : bal;
+            const w = r.status === 'fulfilled' ? r.value : null;
+            const bal = w ? w.balance || w.available || w.balances || w : null;
+            const qty = bal && typeof bal === 'object' ? bal.available ?? bal.quantity ?? bal.finalized ?? null : bal;
             return h(
               'div',
-              { class: `stat ${i === 0 ? 'stat-gold' : 'stat-moon'}` },
-              h('span', { class: 'stat-label' }, h('img', { src: meta.img, alt: '', width: '16', height: '16' }), meta.label),
-              h('span', { class: 'stat-value' }, qty !== null && qty !== undefined ? token(qty, meta.assetId) : '—'),
-              h('span', { class: 'stat-note' }, humanize(w.network || w.chainEnvironment || w.environment || 'testnet')),
+              { class: `coin-card ${i === 0 ? 'coin-card-sun' : 'coin-card-moon'}` },
+              h('img', { class: 'coin-art', src: meta.img, alt: meta.label, width: '112', height: '120' }),
+              h(
+                'div',
+                { class: 'coin-card-body' },
+                h('span', { class: 'stat-label' }, `${meta.label} · ${meta.short}`),
+                h('span', { class: 'coin-card-value' }, qty !== null && qty !== undefined ? token(qty, meta.assetId, { maxFraction: 2 }) : '—'),
+                h('span', { class: 'stat-note' }, w ? humanize(w.network || w.chainEnvironment || w.environment || 'testnet') : 'No balance view'),
+              ),
             );
           }),
         ),
@@ -139,6 +144,8 @@ export function walletsView() {
           { label: 'Type', render: (t) => humanize(t.kind || t.type || t.direction) },
           { label: 'Amount', align: 'right', render: (t) => token(t.quantity ?? t.amount, t.assetId) },
           { label: 'Status', render: (t) => badge(t.status || t.finality) },
+          { label: 'Confirmations', align: 'right', render: (t) => t.confirmations ?? '—' },
+          { label: 'Block', align: 'right', render: (t) => t.blockHeight ?? '—' },
           { label: 'Tx', render: (t) => h('span', { class: 'mono' }, shortId(t.txHash || t.transactionId || t.id, 14)) },
           { label: '', render: (t) => explorerLink('tx', t.txHash || t.transactionId) },
         ],
@@ -148,6 +155,15 @@ export function walletsView() {
 
   return view(
     walletsPanel,
+    isDemo()
+      ? panel({
+          title: 'SunRey Chain',
+          subtitle: 'Network status',
+          wide: true,
+          load: () => api.get('/chain/status'),
+          render: (c) => h('div', { class: 'kv-grid' }, autoKv(c, { only: ['network', 'blockHeight', 'finalizedHeight', 'averageBlockTime', 'finality'] }), autoKv(c, { only: ['validators', 'transactionsInLastDay', 'pendingTransactions', 'mainnetActive'] })),
+        })
+      : null,
     txPanel,
     panel({
       title: 'SunRey Coin',

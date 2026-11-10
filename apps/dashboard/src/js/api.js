@@ -9,6 +9,8 @@
 //   duplicate a financial action.
 
 import { CONFIG } from './config.js';
+import { demoResponse } from './demo/data.js';
+import { isDemo } from './demo/state.js';
 
 const STORE_KEY = 'sunrey.dashboard.session.v1';
 
@@ -165,6 +167,15 @@ async function refreshOnce() {
 }
 
 export async function request(method, path, options = {}) {
+  // Demo mode: illustrative responses for the demo-served paths, answered
+  // locally. Nothing is sent to the backend for these, reads or writes.
+  if (isDemo() && options.auth !== false) {
+    const data = demoResponse(method, path, options.body);
+    if (data !== undefined) {
+      await new Promise((r) => setTimeout(r, 180));
+      return { data, headers: new Headers({ 'x-sunrey-demo': '1' }), status: 200 };
+    }
+  }
   try {
     return await raw(method, path, options);
   } catch (error) {

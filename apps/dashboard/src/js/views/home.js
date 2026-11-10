@@ -2,7 +2,7 @@
 // currencies: there is no live FX or token price to do so honestly.
 
 import { api } from '../api.js';
-import { money, token, dateTime, humanize, assetLabel } from '../format.js';
+import { money, token, dateTime, humanize, assetLabel, relative } from '../format.js';
 import { badge, clear, errorState, h, loading, note, panel, stat, table } from '../ui.js';
 import { isStrong, requireStrong } from '../auth.js';
 import { view, items, autoKv } from './common.js';
@@ -17,6 +17,12 @@ function cashByCurrency(accounts) {
     totals.set(posted.currency, prev + BigInt(posted.minorUnits));
   }
   return [...totals.entries()];
+}
+
+const OPEN_STATES = new Set(['PROPOSED', 'PENDING', 'PENDING_APPROVAL', 'AWAITING_APPROVAL']);
+/** Proposals still waiting for a decision. */
+function pending(d) {
+  return items(d).filter((r) => OPEN_STATES.has(String(r.state || r.status || '').toUpperCase()));
 }
 
 /** The headline figures, each class on its own, never summed. */
@@ -36,7 +42,7 @@ function positionStrip() {
       if (portfolio.status === 'fulfilled') {
         for (const a of portfolio.value.items || []) {
           const moon = a.assetId === 'MOONREY_COIN';
-          tiles.push(stat(assetLabel(a.assetId), token(a.available, a.assetId), `Available · ${token(a.reserved, a.assetId)} reserved`, moon ? 'moon' : 'gold'));
+          tiles.push(stat(assetLabel(a.assetId), token(a.available, a.assetId, { maxFraction: 0 }), `Available · ${token(a.reserved, a.assetId, { maxFraction: 0 })} reserved`, moon ? 'moon' : 'gold'));
         }
       } else tiles.push(stat('Digital assets', strong ? 'Unavailable' : 'Verify to view', strong ? 'Exchange portfolio did not load' : 'Needs two-step verification'));
       if (grow.status === 'fulfilled') tiles.push(stat('Investments', humanize(grow.value.state || 'Not started'), grow.value.exists ? 'Paper allocation' : 'No Grow plan yet'));
@@ -111,16 +117,21 @@ export function homeView({ navigate, refreshShell }) {
       subtitle: 'Proposals only. Nothing runs without your approval and the Kernel.',
       className: 'panel-third',
       load: () => api.get('/agent/actions'),
-      empty: (d) => items(d).length === 0 && 'No proposed actions.',
+      empty: (d) => pending(d).length === 0 && 'No proposals waiting for you.',
       render: (d) =>
-        table(
-          [
-            { label: 'Proposed', render: (r) => humanize(r.kind || r.actionType || r.type) },
-            { label: 'State', render: (r) => badge(r.state || r.status) },
-            { label: 'Created', render: (r) => dateTime(r.createdAt || r.proposedAt) },
-          ],
-          items(d),
-          { onRow: () => navigate('/agent') },
+        h(
+          'div',
+          { class: 'stack' },
+          table(
+            [
+              { label: 'Proposal', render: (r) => humanize(r.kind || r.actionType || r.type) },
+              { label: 'Amount', align: 'right', render: (r) => (r.amount ? money(r.amount) : r.compensation || '—') },
+              { label: 'When', align: 'right', render: (r) => relative(r.createdAt || r.proposedAt) },
+            ],
+            pending(d).slice(0, 5),
+            { onRow: () => navigate('/agent') },
+          ),
+          pending(d).length > 5 ? h('p', { class: 'muted small' }, `${pending(d).length - 5} more on the Financial Agent page.`) : null,
         ),
     }),
     panel({

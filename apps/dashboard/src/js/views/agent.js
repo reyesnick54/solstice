@@ -4,7 +4,7 @@
 
 import { api } from '../api.js';
 import { requireStrong } from '../auth.js';
-import { dateTime, humanize, shortId } from '../format.js';
+import { dateTime, humanize, money, shortId } from '../format.js';
 import { act, badge, dialog, h, note, panel, table, toast } from '../ui.js';
 import { autoKv, items, view } from './common.js';
 
@@ -54,6 +54,7 @@ export function agentView() {
         [
           { label: 'Action', render: (a) => humanize(a.kind || a.actionType || a.type) },
           { label: 'Why', render: (a) => a.explanation || a.reason || '—' },
+          { label: 'Amount', align: 'right', render: (a) => (a.amount ? money(a.amount) : a.compensation || '—') },
           { label: 'State', render: (a) => badge(a.state || a.status) },
           { label: 'Proposed', render: (a) => dateTime(a.createdAt || a.proposedAt) },
           { label: 'Id', render: (a) => h('span', { class: 'mono' }, shortId(a.id || a.actionId, 12)) },
@@ -117,7 +118,7 @@ export function agentView() {
       wide: true,
       load: () => api.get('/agent/escalations'),
       empty: (d) => items(d).length === 0 && 'No escalations.',
-      render: (d) => table([{ label: 'Item', render: (x) => humanize(x.kind || x.type) }, { label: 'State', render: (x) => badge(x.state || x.status) }, { label: 'When', render: (x) => dateTime(x.createdAt) }], items(d)),
+      render: (d) => table([{ label: 'Item', render: (x) => humanize(x.kind || x.type) }, { label: 'Detail', render: (x) => x.detail || '—' }, { label: 'State', render: (x) => badge(x.state || x.status) }, { label: 'When', render: (x) => dateTime(x.createdAt) }], items(d)),
     }),
   );
 }
