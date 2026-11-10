@@ -13,6 +13,7 @@ databases:
     region: frankfurt
     plan: 0.1c-256mb
     postgresMajorVersion: '16'
+    diskSizeGB: 5 # can grow later, never shrink; approved by Nick
     ipAllowList: [] # private network only
 
 services:
