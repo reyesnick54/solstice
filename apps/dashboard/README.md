@@ -7,6 +7,14 @@ formatted from integer minor-unit strings with string/BigInt arithmetic; no
 floating point touches amounts. Totals are never blended across asset classes or
 currencies, and SR/MR are never given a USD value.
 
+**Design.** The look is the sunrey.xyz design system (SunRey-website
+`CLAUDE.md` §5): black ground `#060505`, warm gold `#E3B23C` used sparingly,
+Jost for display, Inter for UI, JetBrains Mono for labels, and the light field
+(diagonal hairlines at ~18° from vertical, 120px apart, under one low sun).
+Tokens live at the top of `src/styles.css` with the website's names. The three
+faces are self-hosted from `src/assets/fonts/` (OFL), so the CSP allows fonts
+and styles from `'self'` only; no third-party font request is made.
+
 | Section | Backend surfaces |
 |---|---|
 | Home | `/accounts`, `/exchange/portfolio`, `/grow/plan`, `/agent/actions`, `/me/capabilities`, `/economy/status` |

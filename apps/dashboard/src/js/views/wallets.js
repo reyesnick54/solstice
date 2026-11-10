@@ -82,7 +82,7 @@ export function walletsView() {
             return h(
               'div',
               { class: `stat ${i === 0 ? 'stat-gold' : 'stat-moon'}` },
-              h('span', { class: 'stat-label' }, h('img', { src: meta.img, alt: '', width: '16', height: '16', style: 'vertical-align:-3px;margin-right:6px' }), meta.label),
+              h('span', { class: 'stat-label' }, h('img', { src: meta.img, alt: '', width: '16', height: '16' }), meta.label),
               h('span', { class: 'stat-value' }, qty !== null && qty !== undefined ? token(qty, meta.assetId) : '—'),
               h('span', { class: 'stat-note' }, humanize(w.network || w.chainEnvironment || w.environment || 'testnet')),
             );

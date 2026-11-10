@@ -28,7 +28,7 @@ export function autoKv(obj, { only, skip, limit = 14 } = {}) {
     const v = obj[key];
     if (v === undefined) continue;
     if (MONEY_SHAPE(v)) pairs.push([humanize(key), money(v)]);
-    else if (typeof v === 'boolean') pairs.push([humanize(key), v ? 'Yes' : 'No']);
+    else if (typeof v === 'boolean') pairs.push([humanize(key), h('span', { class: v ? 'flag flag-on' : 'flag' }, v ? 'On' : 'Off')]);
     else if (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(v)) pairs.push([humanize(key), dateTime(v)]);
     else if (typeof v === 'string' && /^[A-Z][A-Z0-9_]+$/.test(v)) pairs.push([humanize(key), badge(v)]);
     else if (typeof v === 'string' || typeof v === 'number') pairs.push([humanize(key), String(v)]);

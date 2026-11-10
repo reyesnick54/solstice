@@ -22,16 +22,12 @@ export function authScreen(onAuthenticated) {
   const host = h('div', { class: 'auth-card' });
 
   function render() {
-    host.replaceChildren(mode === 'login' ? loginForm() : registerForm());
-  }
-
-  function header(title, sub) {
-    return [
-      h('img', { src: '/assets/wordmark.svg', alt: 'SunRey', class: 'auth-wordmark', width: '180', height: '27' }),
-      h('h1', { class: 'auth-title' }, title),
-      h('p', { class: 'muted' }, sub),
-      h('p', { class: 'note note-info small' }, `${CONFIG.environmentLabel} environment. Balances, trades and tokens here are simulated and are not real money.`),
-    ];
+    const login = mode === 'login';
+    host.replaceChildren(
+      h('h1', { class: 'auth-title' }, login ? 'Welcome' : 'Open your', h('span', { class: 'accent' }, login ? 'back.' : 'SunRey account.')),
+      h('p', { class: 'muted' }, login ? 'Sign in to your SunRey dashboard.' : 'One account for banking, Grow, the Exchange and your Vault.'),
+      login ? loginForm() : registerForm(),
+    );
   }
 
   function loginForm() {
@@ -63,7 +59,6 @@ export function authScreen(onAuthenticated) {
           });
         },
       },
-      ...header('Sign in', 'Your SunRey dashboard'),
       field('Email', email),
       field('Password', password),
       error,
@@ -103,7 +98,6 @@ export function authScreen(onAuthenticated) {
           });
         },
       },
-      ...header('Create your account', 'One account for banking, Grow, the Exchange and your Vault.'),
       field('Email', email),
       field('Password', password, 'At least 12 characters.'),
       h(
@@ -119,7 +113,13 @@ export function authScreen(onAuthenticated) {
   }
 
   render();
-  return h('div', { class: 'auth-screen' }, host);
+  return h(
+    'div',
+    { class: 'auth-screen' },
+    h('header', { class: 'auth-top' }, h('img', { src: '/assets/wordmark.svg', alt: 'SunRey', width: '120', height: '18' }), h('span', { class: 'badge badge-env' }, CONFIG.environmentLabel)),
+    h('div', { class: 'auth-center' }, host),
+    h('p', { class: 'auth-foot' }, `${CONFIG.environmentLabel} environment. Balances, trades and tokens here are simulated and are not real money.`),
+  );
 }
 
 // ---- TOTP -----------------------------------------------------------------

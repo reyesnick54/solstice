@@ -3,7 +3,7 @@
 
 import { api } from '../api.js';
 import { money, token, dateTime, humanize, assetLabel } from '../format.js';
-import { badge, h, note, panel, stat, table } from '../ui.js';
+import { badge, clear, errorState, h, loading, note, panel, stat, table } from '../ui.js';
 import { view, items, autoKv } from './common.js';
 
 function cashByCurrency(accounts) {
@@ -18,38 +18,38 @@ function cashByCurrency(accounts) {
   return [...totals.entries()];
 }
 
+/** The headline figures, each class on its own, never summed. */
+function positionStrip() {
+  const body = h('div', null, loading('Loading your position'));
+  const root = h('section', { class: 'position', 'aria-label': 'Your position' }, body);
+  (async () => {
+    try {
+      const [accounts, portfolio, grow] = await Promise.allSettled([api.get('/accounts'), api.get('/exchange/portfolio'), api.get('/grow/plan')]);
+      const tiles = [];
+      if (accounts.status === 'fulfilled') {
+        const rows = cashByCurrency(items(accounts.value));
+        if (rows.length === 0) tiles.push(stat('Cash', '—', 'Open an account in Money & Banking'));
+        for (const [currency, minor] of rows) tiles.push(stat(`Cash · ${currency}`, money({ minorUnits: String(minor), currency }), 'Read from the ledger'));
+      } else tiles.push(stat('Cash', 'Unavailable', 'Accounts did not load'));
+      if (portfolio.status === 'fulfilled') {
+        for (const a of portfolio.value.items || []) {
+          const moon = a.assetId === 'MOONREY_COIN';
+          tiles.push(stat(assetLabel(a.assetId), token(a.available, a.assetId), `Available · ${token(a.reserved, a.assetId)} reserved`, moon ? 'moon' : 'gold'));
+        }
+      } else tiles.push(stat('Digital assets', 'Unavailable', 'Exchange portfolio did not load'));
+      if (grow.status === 'fulfilled') tiles.push(stat('Investments', humanize(grow.value.state || 'Not started'), grow.value.exists ? 'Paper allocation' : 'No Grow plan yet'));
+      else tiles.push(stat('Investments', 'Unavailable', 'Not enabled for this account'));
+      clear(body).append(h('div', { class: 'stats' }, tiles), h('p', { class: 'position-foot' }, 'SR and MR are testnet assets with no market value, so no dollar value is shown for them and nothing here is added together.'));
+    } catch (error) {
+      clear(body).append(errorState(error));
+    }
+  })();
+  return root;
+}
+
 export function homeView({ navigate }) {
   return view(
-    panel({
-      title: 'Your position',
-      subtitle: 'Each class is shown separately. Deposits, investments and digital assets are never added together.',
-      wide: true,
-      load: async () => {
-        const [accounts, portfolio, grow] = await Promise.allSettled([
-          api.get('/accounts'),
-          api.get('/exchange/portfolio'),
-          api.get('/grow/plan'),
-        ]);
-        return { accounts, portfolio, grow };
-      },
-      render: ({ accounts, portfolio, grow }) => {
-        const tiles = [];
-        if (accounts.status === 'fulfilled') {
-          const rows = cashByCurrency(items(accounts.value));
-          if (rows.length === 0) tiles.push(stat('Cash deposits', '—', 'No cash account yet'));
-          for (const [currency, minor] of rows) tiles.push(stat(`Cash · ${currency}`, money({ minorUnits: String(minor), currency }), 'Ledger-derived, simulated', 'gold'));
-        } else tiles.push(stat('Cash deposits', 'Unavailable', 'Accounts did not load'));
-        if (portfolio.status === 'fulfilled') {
-          for (const a of portfolio.value.items || []) {
-            tiles.push(stat(`${assetLabel(a.assetId)} · available`, token(a.available, a.assetId), `Reserved ${token(a.reserved, a.assetId)} · testnet`, a.assetId === 'MOONREY_COIN' ? 'moon' : 'gold'));
-          }
-        } else tiles.push(stat('Digital assets', 'Unavailable', 'Exchange portfolio did not load'));
-        if (grow.status === 'fulfilled') {
-          tiles.push(stat('Investments (Grow)', humanize(grow.value.state || 'Not requested'), grow.value.exists ? 'Paper / simulated' : 'No plan yet'));
-        } else tiles.push(stat('Investments (Grow)', 'Unavailable', 'Not enabled for this account'));
-        return h('div', null, h('div', { class: 'stats' }, tiles), h('p', { class: 'muted small', style: 'margin-top:12px' }, 'SR and MR are testnet assets with no real market value; no USD value is shown for them.'));
-      },
-    }),
+    positionStrip(),
     panel({
       title: 'Recent money activity',
       subtitle: 'From the canonical fiat ledger',
@@ -80,21 +80,9 @@ export function homeView({ navigate }) {
         ),
     }),
     panel({
-      title: 'Environment',
-      subtitle: 'Reported by the backend, not assumed',
-      className: 'panel-third',
-      load: () => api.get('/economy/status'),
-      render: (s) =>
-        h(
-          'div',
-          null,
-          autoKv(s, { only: ['marketData', 'hin', 'productiveOracle', 'live', 'delayed', 'unavailable'] }),
-          note('Live money movement, live trading and mainnet are switched off. Each needs licensing and a separate human approval.', 'gold'),
-        ),
-    }),
-    panel({
       title: 'Agent actions awaiting you',
       subtitle: 'Proposals only. Nothing runs without your approval and the Kernel.',
+      className: 'panel-third',
       load: () => api.get('/agent/actions'),
       empty: (d) => items(d).length === 0 && 'No proposed actions.',
       render: (d) =>
@@ -109,10 +97,28 @@ export function homeView({ navigate }) {
         ),
     }),
     panel({
+      title: 'Environment',
+      subtitle: 'Reported by the backend, not assumed',
+      className: 'panel-third',
+      load: () => api.get('/economy/status'),
+      render: (s) =>
+        h(
+          'div',
+          null,
+          autoKv(s, { only: ['marketData', 'hin', 'productiveOracle', 'live', 'delayed', 'unavailable'] }),
+          note('Live money movement, live trading and mainnet are switched off. Each needs licensing and a separate human approval.', 'gold'),
+        ),
+    }),
+    panel({
       title: 'Capabilities',
       subtitle: 'What the backend enables for your account right now',
+      className: 'panel-two-thirds',
       load: () => api.get('/me/capabilities'),
-      render: (c) => autoKv(c, { limit: 16 }),
+      render: (c) => {
+        const keys = Object.keys(c).filter((k) => typeof c[k] === 'boolean').slice(0, 16);
+        const half = Math.ceil(keys.length / 2);
+        return h('div', { class: 'kv-grid' }, autoKv(c, { only: keys.slice(0, half) }), autoKv(c, { only: keys.slice(half) }));
+      },
     }),
   );
 }

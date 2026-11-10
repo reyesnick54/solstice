@@ -104,9 +104,11 @@ export function relative(iso) {
 export function humanize(code) {
   if (code === null || code === undefined) return '—';
   return String(code)
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
     .replace(/_/g, ' ')
     .toLowerCase()
-    .replace(/^\w/, (c) => c.toUpperCase());
+    .replace(/^\w/, (c) => c.toUpperCase())
+    .replace(/\b(hin|fx|ai|kyc|aml|usd|eur|id|api|p&l|sr|mr|totp|mfa|pnl)\b/gi, (w) => w.toUpperCase());
 }
 
 export function shortId(id, keep = 10) {
