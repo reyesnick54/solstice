@@ -10,6 +10,11 @@ import { DurableInternalPaymentSurface } from './consumer/durable-internal-payme
 import { DurableMoneyAccountMutations } from './consumer/durable-money-account-mutations.ts';
 import { createDurableExchangeSurface, type DurableExchangeSurface } from './consumer/durable-exchange.ts';
 import { DurableWalletSurface } from './consumer/durable-wallets.ts';
+import { DurableCustomerAuth } from './consumer/durable-customer-auth.ts';
+import { refreshSimulatedActors, type SimulatedActorFreshnessReport } from './consumer/simulated-actor-freshness.ts';
+import { ENVIRONMENT } from '../../../packages/config/src/flags.ts';
+import { systemClock } from '../../../packages/config/src/clock.ts';
+import { deriveRuntimeKeySecrets } from './product-integration/runtime-key-seed.ts';
 
 function parsePort(raw: string | undefined, fallback: number): number {
   if (!raw) return fallback;
@@ -30,6 +35,12 @@ function parseOrigins(raw: string | undefined): readonly string[] {
   );
 }
 
+function requestedRuntimeClock(raw: string | undefined): 'FROZEN' | 'SYSTEM' {
+  const value = (raw ?? 'FROZEN').trim().toUpperCase();
+  if (value === 'FROZEN' || value === 'SYSTEM') return value;
+  throw new Error('SUNREY_RUNTIME_CLOCK must be FROZEN or SYSTEM');
+}
+
 function requestedProductIntegrationMode(raw: string | undefined): 'IN_MEMORY' | 'DURABLE' {
   const value = (raw ?? 'IN_MEMORY').trim().toUpperCase();
   if (value === 'DURABLE') return 'DURABLE';
@@ -46,6 +57,23 @@ const allowLocalOrigins = process.env.SUNREY_PREVIEW_ALLOW_LOCAL_ORIGINS !== 'fa
 const previewAuthEmail = process.env.SUNREY_PREVIEW_AUTH_EMAIL;
 const previewAuthPassword = process.env.SUNREY_PREVIEW_AUTH_PASSWORD;
 const productIntegrationMode = requestedProductIntegrationMode(process.env.SUNREY_PRODUCT_INTEGRATION_MODE);
+// Self-registered customer login. Requires DURABLE mode (identities and
+// customers live in PostgreSQL) and is off unless explicitly enabled.
+const customerAuthRequested = process.env.SUNREY_CUSTOMER_AUTH_ENABLED === 'true';
+// Real users need real time: session expiry and TOTP are evaluated against the
+// runtime clock. FROZEN (default) keeps the historical deterministic sandbox.
+const runtimeClock = requestedRuntimeClock(process.env.SUNREY_RUNTIME_CLOCK);
+const runtimeKeySeed = process.env.SUNREY_RUNTIME_KEY_SEED;
+if (customerAuthRequested && !runtimeKeySeed) {
+  throw new Error('SUNREY_CUSTOMER_AUTH_ENABLED=true requires SUNREY_RUNTIME_KEY_SEED so stored credentials verify after restart');
+}
+const runtimeKeySecrets = runtimeKeySeed ? deriveRuntimeKeySecrets(runtimeKeySeed) : null;
+if (customerAuthRequested && runtimeClock !== 'SYSTEM') {
+  throw new Error('SUNREY_CUSTOMER_AUTH_ENABLED=true requires SUNREY_RUNTIME_CLOCK=SYSTEM so sessions expire and TOTP verifies');
+}
+if (customerAuthRequested && productIntegrationMode !== 'DURABLE') {
+  throw new Error('SUNREY_CUSTOMER_AUTH_ENABLED=true requires SUNREY_PRODUCT_INTEGRATION_MODE=DURABLE');
+}
 
 let productIntegration: ProductIntegrationRuntime | null = null;
 let durableSeedReport: Awaited<ReturnType<typeof ensureDurableSandboxCoreState>> | null = null;
@@ -55,10 +83,32 @@ let durableInternalPayments: DurableInternalPaymentSurface | null = null;
 let durableMoneyAccountMutations: DurableMoneyAccountMutations | null = null;
 let durableWallets: DurableWalletSurface | null = null;
 let durableExchange: DurableExchangeSurface | null = null;
+let customerAuth: DurableCustomerAuth | null = null;
+let actorFreshness: SimulatedActorFreshnessReport | null = null;
 if (productIntegrationMode === 'DURABLE') {
-  productIntegration = await createProductIntegrationRuntime({ forceMode: 'DURABLE' });
+  productIntegration = await createProductIntegrationRuntime({
+    forceMode: 'DURABLE',
+    ...(runtimeClock === 'SYSTEM' ? { clock: systemClock } : {}),
+    ...(runtimeKeySecrets ? { keySecrets: runtimeKeySecrets } : {}),
+  });
   if (productIntegration.mode !== 'DURABLE' || !productIntegration.durableAccounts) {
     throw new Error('durable product integration was requested but PostgreSQL durable runtime was not created');
+  }
+  if (runtimeClock === 'SYSTEM') {
+    // Simulated actors age in real time on a wall clock; renew before the
+    // capability-ensure steps below, which require a usable STRONG session.
+    const durable = productIntegration.durableAccounts;
+    actorFreshness = refreshSimulatedActors(durable.runtime);
+    await durable.persistAuthentication();
+    const timer = setInterval(() => {
+      const report = refreshSimulatedActors(durable.runtime);
+      if (report.sessionsRenewed + report.grantsRenewed > 0) {
+        durable.persistAuthentication().catch((error: unknown) => {
+          console.error(JSON.stringify({ level: 'error', service: 'sunrey-consumer-bff', message: 'simulated actor refresh persist failed', error: String(error) }));
+        });
+      }
+    }, 10 * 60 * 1000);
+    timer.unref();
   }
   durableSeedReport = await ensureDurableSandboxCoreState(productIntegration.durableAccounts);
   durableAccountCapabilityReport = await ensureDurableSandboxAccountCapability(productIntegration.durableAccounts);
@@ -67,6 +117,11 @@ if (productIntegrationMode === 'DURABLE') {
   durableMoneyAccountMutations = new DurableMoneyAccountMutations(productIntegration.durableAccounts);
   durableWallets = await DurableWalletSurface.create(productIntegration.durableAccounts);
   durableExchange = await createDurableExchangeSurface(productIntegration.durableAccounts);
+  if (customerAuthRequested) {
+    customerAuth = new DurableCustomerAuth(productIntegration.durableAccounts, {
+      environment: ENVIRONMENT,
+    });
+  }
 }
 
 const api = await startSunReyPreview({
@@ -82,6 +137,7 @@ const api = await startSunReyPreview({
   ...(durableWallets ? { durableWallets } : {}),
   ...(durableExchange ? { durableExchange } : {}),
   ...(productIntegration ? { durableVault: productIntegration.vaultProduct } : {}),
+  ...(customerAuth ? { customerAuth } : {}),
   ...(previewAuthEmail ? { previewAuthEmail } : {}),
   ...(previewAuthPassword ? { previewAuthPassword } : {}),
 });
@@ -99,6 +155,10 @@ console.log(
     MAINNET_ACTIVE: false,
     sandboxPersonasExposed: allowSandboxPersonas,
     previewAuthEnabled: allowPreviewAuth,
+    customerAuthEnabled: customerAuth !== null,
+    runtimeClock,
+    runtimeKeysSeeded: runtimeKeySecrets !== null,
+    ...(actorFreshness ? { simulatedActorFreshness: actorFreshness } : {}),
     productIntegrationMode,
     durableProductRuntimeAttached: productIntegration?.mode === 'DURABLE',
     durableFinancialReadModelBound: Boolean(productIntegration),

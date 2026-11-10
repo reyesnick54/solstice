@@ -5,7 +5,7 @@
  * Sandbox fixtures remain the default for unit tests; staging uses durable mode.
  */
 
-import { FrozenClock } from '../../../../packages/config/src/clock.ts';
+import { FrozenClock, type Clock } from '../../../../packages/config/src/clock.ts';
 import { ENVIRONMENT } from '../../../../packages/config/src/flags.ts';
 import { asUtcInstant } from '../../../../packages/domain/src/time.ts';
 import { ConsentStore } from '../../../../packages/consent/src/store.ts';
@@ -58,6 +58,18 @@ export type ProductIntegrationRuntime = {
 
 export type ProductIntegrationOptions = {
   readonly now?: string;
+  /**
+   * Wall-clock override for hosted runtimes where real users authenticate
+   * (session expiry and TOTP need real time). Defaults to a FrozenClock at
+   * `now` so tests and rehearsals stay deterministic.
+   */
+  readonly clock?: Clock;
+  /**
+   * Per-purpose simulation key secrets (see runtime-key-seed.ts). Without
+   * them key material is random per process and persisted credentials do not
+   * verify after a restart.
+   */
+  readonly keySecrets?: Readonly<Record<string, string>>;
   readonly forceMode?: ProductIntegrationMode;
   readonly accounts?: SimulationRuntimeOptions;
 };
@@ -76,8 +88,11 @@ export async function createProductIntegrationRuntime(
 ): Promise<ProductIntegrationRuntime> {
   const mode = resolveProductIntegrationMode(options);
   const now = asUtcInstant(options.now ?? '2026-09-02T12:00:00.000Z');
-  const clock = new FrozenClock(now);
-  const keys = createSimulationKeyProvider({ clock: { now: () => clock.now() } });
+  const clock: Clock = options.clock ?? new FrozenClock(now);
+  const keys = createSimulationKeyProvider({
+    clock: { now: () => clock.now() },
+    ...(options.keySecrets ? { hmacSecrets: options.keySecrets as never } : {}),
+  });
   const events = new DomainEventLog();
   const evidence = new EvidenceVault(clock);
 

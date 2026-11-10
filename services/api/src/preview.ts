@@ -18,6 +18,7 @@ import type { DurableInternalPaymentSurface } from './consumer/durable-internal-
 import type { DurableMoneyAccountMutations } from './consumer/durable-money-account-mutations.ts';
 import type { DurableExchangeSurface } from './consumer/durable-exchange.ts';
 import type { DurableWalletSurface } from './consumer/durable-wallets.ts';
+import type { DurableCustomerAuth } from './consumer/durable-customer-auth.ts';
 import type { PersonalDataVaultProduct } from '@solstice/personal-data-vault';
 import type { SimulationRuntime } from '../../accounts/src/runtime.ts';
 
@@ -37,6 +38,8 @@ export type SunReyPreviewOptions = {
   readonly durableWallets?: DurableWalletSurface;
   readonly durableExchange?: DurableExchangeSurface;
   readonly durableVault?: PersonalDataVaultProduct;
+  /** Self-registered customer login (hosted sandbox only). Off unless configured. */
+  readonly customerAuth?: DurableCustomerAuth;
 };
 
 /**
@@ -52,7 +55,13 @@ export type SunReyPreviewOptions = {
 export function createSunReyPreviewRuntime(
   options: Pick<
     SunReyPreviewOptions,
-    'providerDown' | 'durableFinancialRuntime' | 'durableMoneyAccountMutations' | 'durableWallets' | 'durableExchange' | 'durableVault'
+    | 'providerDown'
+    | 'durableFinancialRuntime'
+    | 'durableMoneyAccountMutations'
+    | 'durableWallets'
+    | 'durableExchange'
+    | 'durableVault'
+    | 'customerAuth'
   > = {},
 ): ConsumerBffRuntime {
   const world = createSandboxWorld({ providerDown: options.providerDown === true });
@@ -99,6 +108,7 @@ export function createSunReyPreviewRuntime(
     bff,
     sessions: world.sessions,
     identity: world.runtime.identity.service,
+    ...(options.customerAuth ? { customerAuth: options.customerAuth } : {}),
     payments: world.payments,
     agent: world.agent,
     agentRuntime: world.agentRuntime,
@@ -141,6 +151,7 @@ export async function startSunReyPreview(
       ...(options.durableWallets ? { durableWallets: options.durableWallets } : {}),
       ...(options.durableExchange ? { durableExchange: options.durableExchange } : {}),
       ...(options.durableVault ? { durableVault: options.durableVault } : {}),
+      ...(options.customerAuth ? { customerAuth: options.customerAuth } : {}),
     }),
     ...(options.durableInternalPayments ? { durableInternalPayments: options.durableInternalPayments } : {}),
     ...(options.durableWallets ? { durableWallets: options.durableWallets } : {}),

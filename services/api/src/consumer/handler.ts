@@ -28,6 +28,7 @@ import { cachePolicyForPath } from './cache.ts';
 import { CONSUMER_RESOURCE_CATALOG } from './resources.ts';
 import type { ConsumerBff } from './orchestrator.ts';
 import { resolvePrincipal, type SessionDirectory } from './session.ts';
+import type { DurableCustomerAuth } from './durable-customer-auth.ts';
 import { listSandboxPersonas } from './sandbox-personas.ts';
 import type { IdentityService } from '../../../../packages/identity/src/service.ts';
 import type { PaymentPlatform } from '../../../../packages/payments/src/platform/orchestrator.ts';
@@ -142,6 +143,8 @@ export type ConsumerBffRuntime = {
   readonly bff: ConsumerBff;
   readonly sessions: SessionDirectory;
   readonly identity?: IdentityService;
+  /** Durable self-registered customers (hosted sandbox); see durable-customer-auth.ts. */
+  readonly customerAuth?: DurableCustomerAuth;
   readonly cardWebhook?: CardWebhookBridge;
   readonly payments?: PaymentPlatform;
   readonly agent?: AgentBffFacade;
@@ -314,6 +317,7 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
     requestId,
     directory: runtime.sessions,
     ...(runtime.identity ? { identity: runtime.identity } : {}),
+    ...(runtime.customerAuth ? { customerAuth: runtime.customerAuth } : {}),
   });
   if (isBffError(principal)) {
     return json(statusForError(principal), principal, headers);
