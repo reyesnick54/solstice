@@ -103,6 +103,12 @@ export async function persistIdentitySnapshot(pool: Pool, snapshot: IdentitySnap
               revoked_at, ip_hash, user_agent_hash)
            VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9,$10,$11,$12,$13,$14)
            ON CONFLICT (session_id) DO UPDATE SET
+             -- Step-up elevates an existing session and refresh extends it.
+             -- Without persisting these, a restart silently reverts every
+             -- elevated session to its original assurance and expiry.
+             authentication_strength = EXCLUDED.authentication_strength,
+             factors = EXCLUDED.factors,
+             expires_at = EXCLUDED.expires_at,
              last_used_at = EXCLUDED.last_used_at,
              risk_state = EXCLUDED.risk_state,
              revocation_state = EXCLUDED.revocation_state,

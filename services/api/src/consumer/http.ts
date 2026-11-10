@@ -8,7 +8,7 @@ import { createServer, type IncomingMessage, type Server, type ServerResponse } 
 
 import { asSessionId } from '../../../../packages/identity/src/ids.ts';
 import { SECURITY_HEADERS } from '../security.ts';
-import { isBffError, statusForError } from './errors.ts';
+import { bffError, isBffError, statusForError } from './errors.ts';
 import { handleConsumerBff, type ConsumerBffRuntime } from './handler.ts';
 import { evaluateConsumerBffReadiness } from './readiness.ts';
 import { issuePreviewSession, type PreviewAuthConfig } from './preview-auth.ts';
@@ -196,6 +196,126 @@ export async function serve(
 
   const authorization = typeof req.headers.authorization === 'string' ? req.headers.authorization : undefined;
 
+  if (
+    (url.pathname === '/api/v1/auth/register' ||
+      url.pathname === '/api/v1/auth/login' ||
+      url.pathname === '/api/v1/auth/refresh') &&
+    !runtime.customerAuth
+  ) {
+    notFound(res, cors.headers, 'req_customer_auth_disabled');
+    return;
+  }
+
+  if (runtime.customerAuth && method === 'POST' && url.pathname === '/api/v1/auth/register') {
+    const rec = bodyRecordOf(body);
+    const result = await runtime.customerAuth.register(
+      {
+        email: typeof rec.email === 'string' ? rec.email : undefined,
+        password: typeof rec.password === 'string' ? rec.password : '',
+        termsVersion: typeof rec.termsVersion === 'string' ? rec.termsVersion : '',
+        ...clientNetwork(req),
+      },
+      'req_customer_register',
+    );
+    if (isBffError(result)) {
+      write(res, statusForError(result), result, cors.headers);
+      return;
+    }
+    write(res, 201, result, { ...cors.headers, 'cache-control': 'no-store, no-cache, private' });
+    return;
+  }
+
+  if (runtime.customerAuth && method === 'POST' && url.pathname === '/api/v1/auth/login') {
+    const rec = bodyRecordOf(body);
+    const result = await runtime.customerAuth.login(
+      {
+        email: typeof rec.email === 'string' ? rec.email : undefined,
+        password: typeof rec.password === 'string' ? rec.password : '',
+        ...clientNetwork(req),
+      },
+      'req_customer_login',
+    );
+    if (isBffError(result)) {
+      write(res, statusForError(result), result, cors.headers);
+      return;
+    }
+    write(res, 200, result, { ...cors.headers, 'cache-control': 'no-store, no-cache, private' });
+    return;
+  }
+
+  if (runtime.customerAuth && method === 'POST' && url.pathname === '/api/v1/auth/refresh') {
+    const rec = bodyRecordOf(body);
+    const result = await runtime.customerAuth.refresh(
+      {
+        refreshToken: typeof rec.refreshToken === 'string' ? rec.refreshToken : '',
+        ...clientNetwork(req),
+      },
+      'req_customer_refresh',
+    );
+    if (isBffError(result)) {
+      write(res, statusForError(result), result, cors.headers);
+      return;
+    }
+    write(res, 200, result, { ...cors.headers, 'cache-control': 'no-store, no-cache, private' });
+    return;
+  }
+
+  if (url.pathname.startsWith('/api/v1/auth/mfa/') && !runtime.customerAuth) {
+    notFound(res, cors.headers, 'req_customer_auth_disabled');
+    return;
+  }
+
+  if (runtime.customerAuth && url.pathname.startsWith('/api/v1/auth/mfa/')) {
+    const auth = runtime.customerAuth;
+    const token = bearerToken(authorization) ?? '';
+    const rec = bodyRecordOf(body);
+    const noStore = { ...cors.headers, 'cache-control': 'no-store, no-cache, private' };
+    let result: unknown = null;
+    if (method === 'GET' && url.pathname === '/api/v1/auth/mfa/status') {
+      const status = auth.mfaStatus(token);
+      result =
+        status ??
+        bffError({
+          errorCode: 'AUTH_REQUIRED',
+          category: 'AUTHENTICATION',
+          message: 'customer session required',
+          retryable: false,
+          requestId: 'req_mfa_status',
+        });
+    } else if (method === 'POST' && url.pathname === '/api/v1/auth/mfa/enroll') {
+      result = await auth.enrollTotp(token, 'req_mfa_enroll');
+    } else if (method === 'POST' && url.pathname === '/api/v1/auth/mfa/enroll/confirm') {
+      result = await auth.confirmTotp(
+        token,
+        {
+          enrollToken: typeof rec.enrollToken === 'string' ? rec.enrollToken : '',
+          code: typeof rec.code === 'string' ? rec.code : '',
+        },
+        'req_mfa_confirm',
+      );
+    } else if (method === 'POST' && url.pathname === '/api/v1/auth/mfa/step-up') {
+      result = await auth.beginStepUp(token, 'req_mfa_step_up');
+    } else if (method === 'POST' && url.pathname === '/api/v1/auth/mfa/verify') {
+      result = await auth.verifyMfa(
+        {
+          mfaToken: typeof rec.mfaToken === 'string' ? rec.mfaToken : '',
+          code: typeof rec.code === 'string' ? rec.code : '',
+          ...clientNetwork(req),
+        },
+        'req_mfa_verify',
+      );
+    } else {
+      notFound(res, cors.headers, 'req_mfa_not_found');
+      return;
+    }
+    if (isBffError(result)) {
+      write(res, statusForError(result), result, cors.headers);
+      return;
+    }
+    write(res, 200, result, noStore);
+    return;
+  }
+
   if (url.pathname === '/api/v1/auth/preview/session' && method === 'POST') {
     const result = issuePreviewSession({
       body,
@@ -218,6 +338,7 @@ export async function serve(
       requestId: 'req_auth_session',
       directory: runtime.sessions,
       ...(runtime.identity ? { identity: runtime.identity } : {}),
+      ...(runtime.customerAuth ? { customerAuth: runtime.customerAuth } : {}),
     });
     if (isBffError(principal)) {
       write(res, statusForError(principal), principal, cors.headers);
@@ -249,12 +370,16 @@ export async function serve(
       requestId: 'req_auth_logout',
       directory: runtime.sessions,
       ...(runtime.identity ? { identity: runtime.identity } : {}),
+      ...(runtime.customerAuth ? { customerAuth: runtime.customerAuth } : {}),
     });
     if (isBffError(principal)) {
       write(res, statusForError(principal), principal, cors.headers);
       return;
     }
-    if (runtime.identity && runtime.identity.getSession(asSessionId(principal.sessionId))) {
+    const customerToken = bearerToken(authorization);
+    if (principal.sandboxPersona === null && runtime.customerAuth && customerToken && (await runtime.customerAuth.logout(customerToken))) {
+      // durable customer session revoked and persisted
+    } else if (runtime.identity && runtime.identity.getSession(asSessionId(principal.sessionId))) {
       runtime.identity.logout(asSessionId(principal.sessionId));
     } else {
       const token = bearerToken(authorization);
@@ -285,6 +410,7 @@ export async function serve(
       requestId,
       directory: runtime.sessions,
       ...(runtime.identity ? { identity: runtime.identity } : {}),
+      ...(runtime.customerAuth ? { customerAuth: runtime.customerAuth } : {}),
     });
     if (isBffError(principal)) {
       write(res, statusForError(principal), principal, cors.headers);
@@ -343,6 +469,7 @@ export async function serve(
       requestId,
       directory: runtime.sessions,
       ...(runtime.identity ? { identity: runtime.identity } : {}),
+      ...(runtime.customerAuth ? { customerAuth: runtime.customerAuth } : {}),
     });
     if (isBffError(principal)) {
       write(res, statusForError(principal), principal, cors.headers);
@@ -601,4 +728,21 @@ function readBody(req: IncomingMessage, limit: number): Promise<string> {
     });
     req.on('error', reject);
   });
+}
+
+function bodyRecordOf(body: unknown): Record<string, unknown> {
+  return body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
+}
+
+/** Client address for auth rate limiting; Cloudflare/nginx headers first. */
+function clientNetwork(req: IncomingMessage): { ip?: string; userAgent?: string } {
+  const cf = req.headers['cf-connecting-ip'];
+  const xff = req.headers['x-forwarded-for'];
+  const forwarded = typeof xff === 'string' ? xff.split(',')[0]?.trim() : undefined;
+  const ip = (typeof cf === 'string' && cf) || forwarded || req.socket.remoteAddress || undefined;
+  const ua = req.headers['user-agent'];
+  return {
+    ...(ip ? { ip } : {}),
+    ...(typeof ua === 'string' ? { userAgent: ua } : {}),
+  };
 }
