@@ -38,6 +38,39 @@ async function ensureRole(client: Client, name: string, password: string): Promi
   await client.query(`CREATE ROLE ${name} LOGIN PASSWORD '${password.replaceAll("'", "''")}'`);
 }
 
+/**
+ * Managed PostgreSQL (e.g. Render) gives a non-superuser with CREATEDB and
+ * CREATEROLE. Since PostgreSQL 16 such a creator holds ADMIN over the roles it
+ * creates but is not a member of them, so `CREATE DATABASE … OWNER <role>`
+ * fails with "must be able to SET ROLE". Grant the bootstrap user membership
+ * (with SET and INHERIT) in the owning role first. No-op for superusers, so
+ * self-hosted and CI behaviour is unchanged.
+ */
+async function ensureCanActAs(client: Client, role: string): Promise<void> {
+  const me = await client.query<{ super: boolean; member: boolean; version: number }>(
+    `SELECT r.rolsuper AS super,
+            pg_has_role(current_user, $1, 'SET') AS member,
+            current_setting('server_version_num')::int AS version
+       FROM pg_roles r WHERE r.rolname = current_user`,
+    [role],
+  );
+  const row = me.rows[0];
+  if (!row || row.super || row.member) {
+    return;
+  }
+  const grant =
+    row.version >= 160000
+      ? `GRANT ${role} TO CURRENT_USER WITH INHERIT TRUE, SET TRUE`
+      : `GRANT ${role} TO CURRENT_USER`;
+  await client.query(grant);
+  logPersistenceEvent({
+    level: 'info',
+    code: 'BOOTSTRAP_MEMBERSHIP_GRANTED',
+    domain: 'bootstrap',
+    message: `bootstrap user granted membership in ${role} (managed PostgreSQL without superuser)`,
+  });
+}
+
 async function waitForPostgres(env: PersistenceEnv): Promise<void> {
   let lastError: unknown;
   for (let attempt = 0; attempt < 30; attempt += 1) {
@@ -307,6 +340,7 @@ export async function bootstrapPersistence(env: PersistenceEnv): Promise<void> {
     await ensureRole(client, 'ledger_reader', env.ledgerPassword);
     await ensureRole(client, env.evidenceUser, env.evidencePassword);
     await ensureRole(client, env.securityUser, env.securityPassword);
+    await ensureCanActAs(client, env.migratorUser);
 
     for (const database of Object.values(DATABASES)) {
       if (!(await databaseExists(client, database))) {

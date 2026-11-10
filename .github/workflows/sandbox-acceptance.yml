@@ -1,0 +1,62 @@
+name: Sandbox acceptance (live)
+
+# Runs scripts/dashboard-acceptance.py against a deployed sandbox API.
+# Phase "journey" registers a throwaway customer, enrolls TOTP, opens and funds
+# a sandbox account through the Kernel, checks isolation and logout, and keeps
+# its state as an artifact so a later "after-restart" run can verify it.
+# Sandbox only: every amount is simulated and no live provider is contacted.
+
+on:
+  workflow_dispatch:
+    inputs:
+      api_url:
+        description: Base URL of the sandbox API (no /api/v1)
+        required: true
+        default: https://api.sunrey.xyz
+      origin:
+        description: Origin header to send (exercises CORS)
+        required: false
+        default: https://dashboard.sunrey.xyz
+      phase:
+        description: journey or after-restart
+        required: true
+        default: journey
+        type: choice
+        options: [journey, after-restart]
+      state_run_id:
+        description: For after-restart, the run id of the journey run whose state to reuse
+        required: false
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch journey state
+        if: inputs.phase == 'after-restart'
+        uses: actions/download-artifact@v4
+        with:
+          name: sandbox-acceptance-state
+          run-id: ${{ inputs.state_run_id }}
+          github-token: ${{ github.token }}
+          path: state
+      - name: Run acceptance
+        run: |
+          mkdir -p state
+          python3 -I scripts/dashboard-acceptance.py \
+            --api "${{ inputs.api_url }}" \
+            --origin "${{ inputs.origin }}" \
+            --phase "${{ inputs.phase }}" \
+            --state state/state.json \
+            --report state/report-${{ inputs.phase }}.json
+      - name: Keep state and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.phase == 'journey' && 'sandbox-acceptance-state' || 'sandbox-acceptance-after-restart' }}
+          path: state
+          retention-days: 7

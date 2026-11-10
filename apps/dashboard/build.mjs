@@ -30,7 +30,7 @@ function origin(url) {
 const apiBase = (process.env.SUNREY_DASHBOARD_API_BASE || 'https://api.sunrey.xyz').replace(/\/+$/, '');
 const explorerUrl = (process.env.SUNREY_DASHBOARD_EXPLORER_URL || '').replace(/\/+$/, '');
 const environmentLabel = process.env.SUNREY_DASHBOARD_ENV_LABEL || 'Sandbox';
-const release = (process.env.CF_PAGES_COMMIT_SHA || process.env.GITHUB_SHA || 'local').slice(0, 12);
+const release = (process.env.CF_PAGES_COMMIT_SHA || process.env.GITHUB_SHA || process.env.RENDER_GIT_COMMIT || 'local').slice(0, 12);
 const apiOrigin = origin(apiBase);
 if (!apiOrigin.startsWith('https://') && !/^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(apiOrigin)) {
   throw new Error('The dashboard API must be https (or a local http origin for development).');
