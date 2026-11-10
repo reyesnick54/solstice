@@ -169,3 +169,40 @@ describe('Consumer BFF HTTP adapter', () => {
     }
   });
 });
+
+describe('consumer BFF process safety', () => {
+  it('turns an escaped handler error into a 500 for that request and keeps serving', async () => {
+    const { runtime: consumerRuntime } = runtime();
+    const failing = {
+      ...consumerRuntime,
+      customerAuth: {
+        enrollTotp: async () => {
+          throw new Error('duplicate key value violates unique constraint "totp_credential_identity_id_key"');
+        },
+      },
+    } as unknown as typeof consumerRuntime;
+    const server = await startConsumerBff({ runtime: failing, allowedOrigins: ['https://dashboard.sunrey.xyz'] });
+    const originalError = console.error;
+    const logged: string[] = [];
+    console.error = (line: unknown) => logged.push(String(line));
+    try {
+      const res = await fetch(`${server.url}/api/v1/auth/mfa/enroll`, {
+        method: 'POST',
+        headers: { authorization: 'Bearer anything', origin: 'https://dashboard.sunrey.xyz', 'content-type': 'application/json' },
+        body: '{}',
+      });
+      assert.equal(res.status, 500);
+      assert.equal(res.headers.get('access-control-allow-origin'), 'https://dashboard.sunrey.xyz');
+      const body = (await res.json()) as { errorCode: string; message: string };
+      assert.equal(body.errorCode, 'INTERNAL');
+      assert.doesNotMatch(body.message, /constraint|duplicate/);
+      assert.ok(logged.some((l) => l.includes('unhandled request error')));
+
+      const after = await fetch(`${server.url}/api/v1/me/home`, { headers: { authorization: `Bearer ${sandboxToken('basic_verified')}` } });
+      assert.equal(after.status, 200, 'the server is still up after the failed request');
+    } finally {
+      console.error = originalError;
+      await server.close();
+    }
+  });
+});
