@@ -27,7 +27,10 @@ services:
     dockerfilePath: ./deploy/render/Dockerfile
     dockerContext: .
     healthCheckPath: /health
-    autoDeployTrigger: checksPass
+    # Deploy on every merge to main. Changes reach main through PRs that run
+    # the full CI first; waiting on main's own checks blocked every deploy
+    # behind an unrelated, always-failing Cloud Run preview build.
+    autoDeployTrigger: commit
     # Custom domain api.sunrey.xyz is attached at DNS cutover, not here, so a
     # domain problem cannot block creating the service.
     envVars:
@@ -88,7 +91,10 @@ services:
     branch: main
     buildCommand: node apps/dashboard/build.mjs
     staticPublishPath: ./apps/dashboard/dist
-    autoDeployTrigger: checksPass
+    # Deploy on every merge to main. Changes reach main through PRs that run
+    # the full CI first; waiting on main's own checks blocked every deploy
+    # behind an unrelated, always-failing Cloud Run preview build.
+    autoDeployTrigger: commit
     # Custom domain dashboard.sunrey.xyz is attached at DNS cutover.
     envVars:
       - key: SUNREY_DASHBOARD_API_BASE

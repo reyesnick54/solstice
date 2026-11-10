@@ -256,6 +256,23 @@ body.has-shell { --glow-left: var(--sidebar-w); }
 
 .section-title { grid-column: span 12; margin: 20px 0 -6px; font: 500 var(--text-micro)/1.4 var(--font-mono); letter-spacing: var(--tracking-micro); text-transform: uppercase; color: var(--sun-500); }
 
+/* Onboarding: one clear next step for a session that is not yet verified. */
+.onboard {
+  grid-column: span 12;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 28px;
+  border: 1px solid var(--line-gold);
+  border-radius: var(--radius-card);
+  background: linear-gradient(100deg, rgba(227, 178, 60, 0.08), rgba(12, 10, 8, 0.8) 60%);
+}
+.onboard h2 { margin: 0; font: 300 1.5rem/1.2 var(--font-display); letter-spacing: -0.015em; }
+.onboard p { margin: 8px 0 0; max-width: 62ch; color: var(--text-muted); font-size: 0.875rem; line-height: 1.55; }
+.onboard .btn { flex: none; }
+.state-verify { border-style: solid; border-color: var(--line-gold); background: var(--gold-wash); }
+
 /* --------------------------------------------------------------------------
    Figures — thin Jost numerals are the dashboard's signature.
    -------------------------------------------------------------------------- */
@@ -499,6 +516,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--l
   .panel-head { padding: 20px 20px 0; }
   .panel-body { padding: 16px 20px 22px; }
   .book { grid-template-columns: 1fr; }
+  .onboard { flex-direction: column; align-items: flex-start; padding: 20px; }
 }
 @media (max-width: 560px) {
   .rail { display: none; }

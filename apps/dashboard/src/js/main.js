@@ -1,5 +1,5 @@
 import { api, getSession, onSessionChange } from './api.js';
-import { authScreen, isStrong, signOut } from './auth.js';
+import { authScreen, isStrong, requireStrong, signOut } from './auth.js';
 import { CONFIG } from './config.js';
 import { setAssetDecimals } from './format.js';
 import { badge, clear, envBadge, h, svg } from './ui.js';
@@ -105,7 +105,9 @@ function pageHead(route) {
 function shell(route) {
   const session = getSession();
   const main = h('main', { class: 'main', id: 'main', tabindex: '-1' });
-  const strength = isStrong() ? badge('Verified', 'positive') : badge('Standard session', 'muted');
+  const strength = isStrong()
+    ? badge('Verified', 'positive')
+    : h('button', { class: 'btn btn-sm', title: 'Two-step verification unlocks digital assets, markets and money actions', onclick: async () => { if (await requireStrong('Unlocking your dashboard')) render(); } }, 'Verify session');
   const layout = h(
     'div',
     { class: 'layout' },

@@ -3,6 +3,7 @@
 
 import { ApiError, friendlyMessage } from './api.js';
 import { humanize } from './format.js';
+import { isStrong, requireStrong } from './auth.js';
 
 export function h(tag, attrs, ...children) {
   const el = document.createElement(tag);
@@ -124,6 +125,24 @@ const UNAVAILABLE_CODES = new Set([
 ]);
 
 export function errorState(error, retry) {
+  // A basic (password-only) session cannot see financial views. Offer the
+  // authenticator step instead of a dead end; the backend decides again after.
+  if (error instanceof ApiError && error.status === 403 && !isStrong()) {
+    const verify = h('button', { class: 'btn btn-primary btn-sm' }, 'Verify with authenticator');
+    verify.addEventListener('click', async () => {
+      if (await requireStrong('Viewing this')) {
+        if (retry) retry();
+        else location.reload();
+      }
+    });
+    return h(
+      'div',
+      { class: 'state state-verify' },
+      h('strong', null, 'Verify it’s you to see this'),
+      h('p', null, 'Balances, markets and investments need two-step verification. It takes a minute with any authenticator app.'),
+      verify,
+    );
+  }
   if (error instanceof ApiError && UNAVAILABLE_CODES.has(error.code)) {
     const reason = error.details && (error.details.growCode || error.details.reason || error.details.code);
     return h(
