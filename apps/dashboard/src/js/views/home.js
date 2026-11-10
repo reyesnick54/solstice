@@ -4,6 +4,7 @@
 import { api } from '../api.js';
 import { money, token, dateTime, humanize, assetLabel } from '../format.js';
 import { badge, clear, errorState, h, loading, note, panel, stat, table } from '../ui.js';
+import { isStrong, requireStrong } from '../auth.js';
 import { view, items, autoKv } from './common.js';
 
 function cashByCurrency(accounts) {
@@ -24,6 +25,7 @@ function positionStrip() {
   const root = h('section', { class: 'position', 'aria-label': 'Your position' }, body);
   (async () => {
     try {
+      const strong = isStrong();
       const [accounts, portfolio, grow] = await Promise.allSettled([api.get('/accounts'), api.get('/exchange/portfolio'), api.get('/grow/plan')]);
       const tiles = [];
       if (accounts.status === 'fulfilled') {
@@ -36,9 +38,9 @@ function positionStrip() {
           const moon = a.assetId === 'MOONREY_COIN';
           tiles.push(stat(assetLabel(a.assetId), token(a.available, a.assetId), `Available · ${token(a.reserved, a.assetId)} reserved`, moon ? 'moon' : 'gold'));
         }
-      } else tiles.push(stat('Digital assets', 'Unavailable', 'Exchange portfolio did not load'));
+      } else tiles.push(stat('Digital assets', strong ? 'Unavailable' : 'Verify to view', strong ? 'Exchange portfolio did not load' : 'Needs two-step verification'));
       if (grow.status === 'fulfilled') tiles.push(stat('Investments', humanize(grow.value.state || 'Not started'), grow.value.exists ? 'Paper allocation' : 'No Grow plan yet'));
-      else tiles.push(stat('Investments', 'Unavailable', 'Not enabled for this account'));
+      else tiles.push(stat('Investments', strong ? 'Unavailable' : 'Verify to view', strong ? 'Not enabled for this account' : 'Needs two-step verification'));
       clear(body).append(h('div', { class: 'stats' }, tiles), h('p', { class: 'position-foot' }, 'SR and MR are testnet assets with no market value, so no dollar value is shown for them and nothing here is added together.'));
     } catch (error) {
       clear(body).append(errorState(error));
@@ -47,8 +49,33 @@ function positionStrip() {
   return root;
 }
 
-export function homeView({ navigate }) {
+/** Shown until the session is verified: one clear next step, not a wall of "unavailable". */
+function verifyCard(refreshShell) {
+  if (isStrong()) return null;
+  const card = h('section', { class: 'onboard', 'aria-label': 'Finish setting up' });
+  const button = h('button', { class: 'btn btn-primary' }, 'Set up two-step verification');
+  button.addEventListener('click', async () => {
+    if (await requireStrong('Unlocking your dashboard')) refreshShell();
+  });
+  card.append(
+    h('div', null,
+      h('h2', null, 'Finish setting up your account'),
+      h('p', null, 'Add SunRey to an authenticator app to see your digital assets, markets and Grow plan, and to move sandbox money. You’ll enter a 6-digit code when you sign in.')),
+    button,
+  );
+  api.get('/auth/mfa/status').then((st) => {
+    if (st && st.totpEnrolled) {
+      card.querySelector('h2').textContent = 'Confirm it’s you';
+      card.querySelector('p').textContent = 'Enter a code from your authenticator app to unlock digital assets, markets and money actions for this session.';
+      button.textContent = 'Verify with authenticator';
+    }
+  }).catch(() => {});
+  return card;
+}
+
+export function homeView({ navigate, refreshShell }) {
   return view(
+    verifyCard(refreshShell),
     positionStrip(),
     panel({
       title: 'Recent money activity',
