@@ -30,7 +30,7 @@ function candleChart(candles) {
   const span = max - min || 1;
   const pts = closes.map((v, i) => `${(i / (closes.length - 1)) * w},${hgt - 8 - ((v - min) / span) * (hgt - 16)}`).join(' ');
   // Display-only geometry; values are never fed back into any calculation.
-  return svg('svg', { class: 'chart', viewBox: `0 0 ${w} ${hgt}`, preserveAspectRatio: 'none', role: 'img', 'aria-label': 'Recorded trade prices' }, svg('polyline', { points: pts, fill: 'none', stroke: 'currentColor', 'stroke-width': 1.25, 'vector-effect': 'non-scaling-stroke' }));
+  return svg('svg', { class: 'chart', viewBox: `0 0 ${w} ${hgt}`, preserveAspectRatio: 'none', role: 'img', 'aria-label': 'Recorded trade prices' }, svg('polyline', { points: pts, fill: 'none', stroke: 'currentColor', 'vector-effect': 'non-scaling-stroke' }));
 }
 
 export function exchangeView() {
